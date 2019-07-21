@@ -1,17 +1,25 @@
 import React from 'react';
-import logo from './logo.svg';
+import ReactDOM from 'react-dom';
 import './App.css';
+import SessionsList from './session_view';
 import 'typeface-roboto'
-import Control from './api_control'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props.api_url);
-        this.state = {api_control: new Control(props.api_url)}
+        this.state = {
+            api_control: props.api_control,
+            user_control: undefined,
+            session_control: undefined,
+            task_control: undefined,
+            vehicle_control: undefined,
+            note_control: undefined,
+        }
     }
 
     render() {
@@ -30,10 +38,20 @@ class App extends React.Component {
                         <TextField id="password_field">
                             Password
                         </TextField>
-                        <Button variant="contained" color="primary" onClick={() => {
+                        <Button variant="contained" color="primary" onClick={async () => {
                             this.state.api_control.login(document.getElementById("user_field").value, document.getElementById("password_field").value)
-
-                            console.log("aaaa")
+                            if (this.state.api_control.initialised) {
+                                this.state.user_control = this.state.api_control.users;
+                                this.state.session_control = this.state.api_control.sessions;
+                                this.state.task_control = this.state.api_control.tasks;
+                                this.state.vehicle_control = this.state.api_control.vehicles;
+                                this.state.note_control = this.state.api_control.notes;
+                                alert("Login successful");
+                            }
+                            else {
+                                alert("Login failed")
+                            }
+                            ReactDOM.render(<SessionsList />, document.getElementById('root'));
                         }}>
                             Login
                         </Button>

@@ -1,5 +1,3 @@
-import React, { Component } from 'react';
-
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
         return Promise.resolve(response)
@@ -26,7 +24,7 @@ function make_fetch(api_url, url, type, auth, content_type = undefined, data = u
     })
         .then(status)
         .then(json)
-        .then(function (data) {
+        .then((data) => {
             console.log('Request succeeded with JSON response', data);
             this.users = data;
             return data;
@@ -176,6 +174,8 @@ class Control {
     }
 
     async login(username, password) {
+
+        console.log(this)
         fetch(this.api_url + 'login', {
             method: 'post',
             headers: {
@@ -185,9 +185,8 @@ class Control {
         })
             .then(status)
             .then(json)
-            .then(function (data) {
+            .then((data) => {
                 console.log("Login successful");
-                console.log(this);
                 this.token = data['access_token'];
                 this.bearer = "Bearer " + this.token;
                 this.users = new User(this.bearer, this.api_url);
