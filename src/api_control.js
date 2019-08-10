@@ -18,7 +18,8 @@ function make_fetch(api_url, url, type, auth, content_type = undefined, data = u
         credentials: 'include',
         headers: new Headers({
             'Authorization': auth,
-            'Content-type': content_type ? content_type :  "text/html"
+            'Content-type': content_type ? content_type :  "text/html",
+            "Access-Control-Allow-Credentials": true
         }),
         body: data ? JSON.stringify(data) : undefined
     })
@@ -26,7 +27,6 @@ function make_fetch(api_url, url, type, auth, content_type = undefined, data = u
         .then(json)
         .then((data) => {
             console.log('Request succeeded with JSON response', data);
-            this.users = data;
             return data;
         }).catch(function (error) {
             console.log('Request failed', error);
@@ -60,7 +60,7 @@ class Location {
         this.api_url = api_url;
     }
 
-    async get_locations() {
+    async get_locations(function_to_call = undefined) {
         return make_fetch(this.api_url, "locations", "GET", this.bearer)
     }
 
@@ -145,7 +145,7 @@ class User {
         this.api_url = api_url;
     }
 
-    async get_users() {
+    async get_users(function_to_call = undefined) {
         return make_fetch(this.api_url, "users", "GET", this.bearer)
     }
 
@@ -175,8 +175,7 @@ class Control {
 
     async login(username, password) {
 
-        console.log(this)
-        fetch(this.api_url + 'login', {
+        return fetch(this.api_url + 'login', {
             method: 'post',
             headers: {
                 "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
@@ -191,6 +190,7 @@ class Control {
                 this.bearer = "Bearer " + this.token;
                 this.users = new User(this.bearer, this.api_url);
                 this.sessions = new Session(this.bearer, this.api_url);
+                console.log("asdfasdfa")
                 this.notes = new Note(this.bearer, this.api_url);
                 this.tasks = new Task(this.bearer, this.api_url);
                 this.vehicles = new Vehicle(this.bearer, this.api_url);

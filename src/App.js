@@ -12,16 +12,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            api_control: props.api_control,
-            user_control: undefined,
-            session_control: undefined,
-            task_control: undefined,
-            vehicle_control: undefined,
-            note_control: undefined,
-        }
     }
-
     render() {
         return (
             <React.Fragment>
@@ -38,20 +29,11 @@ class App extends React.Component {
                         <TextField id="password_field">
                             Password
                         </TextField>
-                        <Button variant="contained" color="primary" onClick={async () => {
-                            this.state.api_control.login(document.getElementById("user_field").value, document.getElementById("password_field").value)
-                            if (this.state.api_control.initialised) {
-                                this.state.user_control = this.state.api_control.users;
-                                this.state.session_control = this.state.api_control.sessions;
-                                this.state.task_control = this.state.api_control.tasks;
-                                this.state.vehicle_control = this.state.api_control.vehicles;
-                                this.state.note_control = this.state.api_control.notes;
-                                alert("Login successful");
-                            }
-                            else {
-                                alert("Login failed")
-                            }
-                            ReactDOM.render(<SessionsList />, document.getElementById('root'));
+                        <Button variant="contained" color="primary" onClick={() => {
+                            this.props.api_control.login(document.getElementById("user_field").value, document.getElementById("password_field").value)
+                            .then(()=> {
+                                ReactDOM.render(<SessionsList api_control={this.props.api_control} />, document.getElementById('root'));
+                            });
                         }}>
                             Login
                         </Button>
