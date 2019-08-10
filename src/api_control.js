@@ -11,7 +11,6 @@ function json(response) {
 }
 
 function make_fetch(api_url, url, type, auth, content_type = undefined, data = undefined) {
-    console.error(url, type, auth, content_type, data);
     return fetch(api_url + url, {
         method: type,
         withCredentials: true,
