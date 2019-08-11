@@ -22,6 +22,12 @@ const useStyles = makeStyles({
     },
 });
 
+function convertDate(timestamp) {
+    return new Date(timestamp).toString();
+    //return ts
+
+}
+
 export default function Sessions(props) {
     const classes = useStyles();
     return (
@@ -32,7 +38,7 @@ export default function Sessions(props) {
                     <CardContent>
                         <Typography className={classes.title}>Session {session.uuid}</Typography>
                         <Typography variant="body2" component="p">
-                            Session on {session.timestamp}
+                            {convertDate(session.timestamp)}
                         </Typography>
                     </CardContent>
                 </Card>
