@@ -11,12 +11,18 @@ class SessionsList extends React.Component {
     constructor(props) {
         super(props)
     }
+
     componentDidMount() {
         console.log(this.props.api_control.sessions)
-        this.props.api_control.sessions.get_sessions("327a4f17-68a1-427c-82e1-add95d9cbdb0")
-        .then((data) => {this.setState({sessions: data});
-        })
+        this.props.api_control.users.whoami()
+            .then((my_data) => {
+                this.props.api_control.sessions.get_sessions(my_data.uuid)
+                    .then((data) => {
+                        this.setState({sessions: data});
+                    })
+            })
     }
+
     state = {
         sessions: []
     };

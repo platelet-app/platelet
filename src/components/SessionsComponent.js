@@ -1,69 +1,43 @@
 import React from 'react'
 import {Typography} from "@material-ui/core";
-import { withStyles } from '@material-ui/core/styles';
-import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
-import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-const ExpansionPanel = withStyles({
-    root: {
-        border: '1px solid rgba(0, 0, 0, .125)',
-        boxShadow: 'none',
-        '&:not(:last-child)': {
-            borderBottom: 0,
-        },
-        '&:before': {
-            display: 'none',
-        },
-        '&$expanded': {
-            margin: 'auto',
-        },
-    },
-    expanded: {},
-})(MuiExpansionPanel);
+import { makeStyles } from '@material-ui/core/styles';
 
-const ExpansionPanelSummary = withStyles({
-    root: {
-        backgroundColor: 'rgba(0, 0, 0, .03)',
-        borderBottom: '1px solid rgba(0, 0, 0, .125)',
-        marginBottom: -1,
-        minHeight: 56,
-        '&$expanded': {
-            minHeight: 56,
-        },
-    },
-    content: {
-        '&$expanded': {
-            margin: '12px 0',
-        },
-    },
-    expanded: {},
-})(MuiExpansionPanelSummary);
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
-const ExpansionPanelDetails = withStyles(theme => ({
-    root: {
-        padding: theme.spacing(2),
+const useStyles = makeStyles({
+    card: {
+        minWidth: 275,
     },
-}))(MuiExpansionPanelDetails);
-class Sessions extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-    render() {
-        return (
-            <div>
-                <center><h1>Sessions</h1></center>
-                {this.props.sessions.map((session) => (
-                    <div key={session.uuid}>
-                        <ExpansionPanel square>
-                            <ExpansionPanelSummary>
-                                <Typography>{session.uuid}</Typography>
-                            </ExpansionPanelSummary>
-                        </ExpansionPanel>
-                    </div>
-                ))}
-            </div>
-        )
-    }
+    bullet: {
+        display: 'inline-block',
+        margin: '0 2px',
+        transform: 'scale(0.8)',
+    },
+    title: {
+        fontSize: 20,
+    },
+    pos: {
+        marginBottom: 12,
+    },
+});
+
+export default function Sessions(props) {
+    const classes = useStyles();
+    return (
+        <div>
+            <h1>Sessions</h1>
+            {props.sessions.map((session) => (
+                <Card className={classes.card} key={session.uuid}>
+                    <CardContent>
+                        <Typography className={classes.title}>Session {session.uuid}</Typography>
+                        <Typography variant="body2" component="p">
+                            Session on {session.timestamp}
+                        </Typography>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
+    )
 }
 
-export default Sessions;

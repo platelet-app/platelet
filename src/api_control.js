@@ -144,7 +144,7 @@ class User {
         this.api_url = api_url;
     }
 
-    async get_users(function_to_call = undefined) {
+    async get_users() {
         return make_fetch(this.api_url, "users", "GET", this.bearer)
     }
 
@@ -155,6 +155,10 @@ class User {
 
     async create_user(input_data) {
         return make_fetch(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
+    }
+
+    async whoami() {
+        return make_fetch(this.api_url, 'whoami', "GET", this.bearer)
     }
 }
 
@@ -200,6 +204,7 @@ class Control {
                 throw error
             });
     }
+
 }
 
 export default Control;
