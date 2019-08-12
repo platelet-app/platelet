@@ -10,6 +10,7 @@ class Menu extends React.Component {
                     <ul>
                         <li><Link to='/'>Home</Link></li>
                         <li><Link to='/sessions'>Sessions</Link></li>
+                        <li><Link to='/profile'>My Profile</Link></li>
                     </ul>
                 </nav>
             </header>

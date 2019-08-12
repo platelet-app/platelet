@@ -2,7 +2,7 @@ import React from 'react';
 import Main from './components/Main'
 import Menu from './components/Menu'
 import './App.css';
-import SessionsList from './session_view';
+import SessionsList from './components/SessionList';
 import 'typeface-roboto'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'

@@ -23,7 +23,7 @@ class Login extends React.Component {
                         <TextField color="primary" id="user_field">
                             Username
                         </TextField>
-                        <TextField id="password_field">
+                        <TextField id="password_field" type="password">
                             Password
                         </TextField>
                         <Button variant="contained" color="primary" onClick={() => {
