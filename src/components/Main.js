@@ -4,6 +4,7 @@ import Home from './Home'
 import SessionsList from './SessionList';
 import UserProfile from './UserProfile'
 import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
+import SessionDetail from "./SessionDetail";
 
 class Main extends React.Component {
     render() {
@@ -16,6 +17,9 @@ class Main extends React.Component {
                     />
                     <Route path='/profile'
                            render={(props) => <UserProfile {...props} api_control={this.props.api_control}/>}
+                    />
+                    <Route path='/session/:session_uuid'
+                           render={(props) => <SessionDetail {...props} api_control={this.props.api_control}/>}
                     />
                 </Switch>
             </main>
