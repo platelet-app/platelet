@@ -9,6 +9,7 @@ class Menu extends React.Component {
                 <nav>
                     <ul>
                         <li><Link to='/'>Home</Link></li>
+                        <li><Link to='/logout'>Logout</Link></li>
                         <li><Link to='/sessions'>Sessions</Link></li>
                         <li><Link to='/profile'>My Profile</Link></li>
                     </ul>

@@ -163,21 +163,26 @@ class User {
 }
 
 class Control {
-    constructor(api_url) {
+    constructor(api_url, bearer = undefined) {
+        this.login = this.login.bind(this);
+        this.initialiseClasses = this.initialiseClasses.bind(this);
+        this.logout = this.logout.bind(this);
         this.api_url = api_url;
         this.token = "";
         this.bearer = "";
-        this.sessions = undefined;
-        this.notes = undefined;
-        this.tasks = undefined;
-        this.vehicles = undefined;
-        this.initialised = false;
-        this.users = undefined;
-        this.login = this.login.bind(this);
+        if (bearer) {
+            this.initialiseClasses(bearer)
+        } else {
+            this.sessions = undefined;
+            this.notes = undefined;
+            this.tasks = undefined;
+            this.vehicles = undefined;
+            this.initialised = false;
+            this.users = undefined;
+        }
     }
 
     async login(username, password) {
-
         return fetch(this.api_url + 'login', {
             method: 'post',
             headers: {
@@ -190,14 +195,7 @@ class Control {
             .then((data) => {
                 console.log("Login successful");
                 this.token = data['access_token'];
-                this.bearer = "Bearer " + this.token;
-                this.users = new User(this.bearer, this.api_url);
-                this.sessions = new Session(this.bearer, this.api_url);
-                console.log("asdfasdfa")
-                this.notes = new Note(this.bearer, this.api_url);
-                this.tasks = new Task(this.bearer, this.api_url);
-                this.vehicles = new Vehicle(this.bearer, this.api_url);
-                this.initialised = true;
+                this.initialiseClasses(this.token)
             })
             .catch(function (error) {
                 console.log("Request failed", error);
@@ -205,6 +203,26 @@ class Control {
             });
     }
 
+    logout() {
+        this.bearer = "";
+        this.token = "";
+        this.sessions = undefined;
+        this.notes = undefined;
+        this.tasks = undefined;
+        this.vehicles = undefined;
+        this.initialised = false;
+        this.users = undefined;
+    }
+
+    initialiseClasses(token) {
+        this.bearer = "Bearer " + token;
+        this.users = new User(this.bearer, this.api_url);
+        this.sessions = new Session(this.bearer, this.api_url);
+        this.notes = new Note(this.bearer, this.api_url);
+        this.tasks = new Task(this.bearer, this.api_url);
+        this.vehicles = new Vehicle(this.bearer, this.api_url);
+        this.initialised = true;
+    }
 }
 
 export default Control;

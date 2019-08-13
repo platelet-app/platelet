@@ -6,7 +6,7 @@ import React from "react";
 class UserProfile extends React.Component {
     componentDidMount() {
         if (this.props.user_uuid === undefined) {
-            this.props.api_control.users.whoami()
+            this.props.apiControl.users.whoami()
                 .then((my_data) => {
                     console.log(my_data)
                     this.setState({user_profile: my_data});

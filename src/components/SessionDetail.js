@@ -28,7 +28,7 @@ function TaskCard(props) {
 
 class SessionDetail extends React.Component {
     componentDidMount() {
-        this.props.api_control.sessions.get_session(this.props.match.params.session_uuid)
+        this.props.apiControl.sessions.get_session(this.props.match.params.session_uuid)
             .then((session_data) => {
                 this.setState({tasks: session_data.tasks});
                 this.setState({timestamp: session_data.timestamp});

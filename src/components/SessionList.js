@@ -9,7 +9,7 @@ import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
 import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 import SessionDetail from "./SessionDetail";
-import Control from '../api_control'
+import Control from '../ApiControl'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -51,9 +51,9 @@ class SessionsList extends React.Component {
     }
 
     componentDidMount() {
-        this.props.api_control.users.whoami()
+        this.props.apiControl.users.whoami()
             .then((my_data) => {
-                this.props.api_control.sessions.get_sessions(my_data.uuid)
+                this.props.apiControl.sessions.get_sessions(my_data.uuid)
                     .then((data) => {
                         this.setState({sessions: data});
                     })

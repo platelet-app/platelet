@@ -6,10 +6,18 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import App from './App'
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Control from './ApiControl'
 import {BrowserRouter} from "react-router-dom";
+import {saveLogin} from "./utilities";
+import {withRouter} from 'react-router-dom';
+
 
 class Login extends React.Component {
+    state = {
+        apiControl: new Control(this.props.apiUrl),
+        isLogged: false
+    };
+
     render() {
         return (
             <React.Fragment>
@@ -27,13 +35,10 @@ class Login extends React.Component {
                             Password
                         </TextField>
                         <Button variant="contained" color="primary" onClick={() => {
-                            this.props.api_control.login(document.getElementById("user_field").value, document.getElementById("password_field").value)
-                                .then(()=> {
-                                    ReactDOM.render((
-                                        <BrowserRouter>
-                                            <App api_control={this.props.api_control} />
-                                        </BrowserRouter>),
-                                        document.getElementById('root'));
+                            this.state.apiControl.login(document.getElementById("user_field").value, document.getElementById("password_field").value)
+                                .then(() => {
+                                    saveLogin(this.state.apiControl.token);
+                                    this.setState({"isLogged": true})
                                 });
                         }}>
                             Login
@@ -49,8 +54,9 @@ class Login extends React.Component {
                     </header>
                 </div>
             </React.Fragment>
-        );
+        )
     }
+
 }
 
 export default Login;
