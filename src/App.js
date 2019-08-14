@@ -10,7 +10,8 @@ import 'typeface-roboto'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 
 
 class App extends React.Component {
@@ -34,6 +35,13 @@ class App extends React.Component {
     render() {
         if (this.state.apiControl.initialised) {
             return (
+            <>
+              <Switch>
+                <Route exact path='/logout'
+                  render={(props) => <App {...props} logout={true} apiUrl={this.props.apiUrl}/>}
+                />
+              </Switch>
+
                 <React.Fragment>
                     <CssBaseline/>
                     <div className="App">
@@ -47,6 +55,7 @@ class App extends React.Component {
                         </header>
                     </div>
                 </React.Fragment>
+              </>
             );
         }
         else {

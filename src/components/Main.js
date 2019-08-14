@@ -14,9 +14,6 @@ class Main extends React.Component {
             <main>
                 <Switch>
                     <Route exact path='/' component={Home}/>
-                    <Route exact path='/logout'
-                           render={(props) => <App {...props} logout={true} apiUrl={this.props.apiControl.api_url}/>}
-                    />
                     <Route path='/sessions'
                            render={(props) => <SessionsList {...props} apiControl={this.props.apiControl}/>}
                     />

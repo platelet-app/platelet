@@ -18,7 +18,16 @@ class Login extends React.Component {
         isLogged: false
     };
 
+
     render() {
+      if(this.state.isLogged) {
+        return (
+          <App apiUrl={this.state.apiControl.api_url}/>
+        )
+      }
+        else
+      {
+
         return (
             <React.Fragment>
                 <CssBaseline/>
@@ -55,6 +64,7 @@ class Login extends React.Component {
                 </div>
             </React.Fragment>
         )
+    }
     }
 
 }
