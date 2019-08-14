@@ -19,3 +19,9 @@ export const StyledCard = styled(Card)({
     color: 'white',
     padding: '0 30px',
 });
+
+export const Background = makeStyles({
+    default: {
+        background: 'red'
+    }
+});

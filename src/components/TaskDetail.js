@@ -6,40 +6,38 @@ import CardContent from '@material-ui/core/CardContent';
 import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
-import {BrowserRouter as Router, Route, Link} from "react-router-dom";
+
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-function TaskCard(props) {
+function DeliverableCard(props) {
     return (
         <StyledCard>
             <CardContent>
                 <h4>Task</h4>
                 <Typography variant="body2" component="p">
-                    {convertDate(props.task.timestamp)}
-                    <br></br>
-                    {props.task.contact_number}
+                    {props.task.name}
                 </Typography>
             </CardContent>
         </StyledCard>
     )
 }
 
-class SessionDetail extends React.Component {
+class TaskDetail extends React.Component {
     componentDidMount() {
-        this.props.apiControl.sessions.get_session(this.props.match.params.session_uuid)
-            .then((session_data) => {
-                this.setState({tasks: session_data.tasks});
-                this.setState({timestamp: session_data.timestamp});
-                this.setState({uuid: session_data.uuid});
+        this.props.apiControl.tasks.get_task(this.props.match.params.task_uuid)
+            .then((task_data) => {
+                this.setState({deliverables: task_data.deliverables});
+                this.setState({uuid: task_data.uuid});
+                this.setState({timestamp: task_data.timestamp});
             })
     }
 
     state = {
-        tasks: [],
-        timestamp: convertDate(new Date()),
-        uuid: ""
+        deliverables: [],
+        uuid: "",
+        timestamp: new Date()
     };
 
     render() {
@@ -47,14 +45,12 @@ class SessionDetail extends React.Component {
             <div>
                 <p>{convertDate(this.state.timestamp)}</p>
                 <p>{this.state.uuid}</p>
-                {this.state.tasks.map((task) => (
-                    <Link to={"/task/" + task.uuid}>
-                        <TaskCard task={task} key={task.uuid}/>
-                    </Link>
+                {this.state.deliverables.map((task) => (
+                    <DeliverableCard task={task} key={task.uuid}/>
                 ))}
             </div>
         )
     }
 }
 
-export default SessionDetail;
+export default TaskDetail;

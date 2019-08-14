@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import App from './App'
 import Control from './ApiControl'
+import {Background} from './css/common'
 import {BrowserRouter} from "react-router-dom";
 import {saveLogin} from "./utilities";
 import {withRouter} from 'react-router-dom';
@@ -31,7 +32,7 @@ class Login extends React.Component {
         return (
             <React.Fragment>
                 <CssBaseline/>
-                <div className="App">
+                <div className="App" classname>
                     <header className="App-header">
                         <meta
                             name="viewport"
