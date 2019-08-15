@@ -7,9 +7,11 @@ import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
 import {BrowserRouter as Router, Route, Link} from "react-router-dom";
+import Grid from "@material-ui/core/Grid";
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
+import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 
 function TaskCard(props) {
     return (
@@ -18,8 +20,6 @@ function TaskCard(props) {
                 <h4>Task</h4>
                 <Typography variant="body2" component="p">
                     {convertDate(props.task.timestamp)}
-                    <br></br>
-                    {props.task.contact_number}
                 </Typography>
             </CardContent>
         </StyledCard>
@@ -46,12 +46,25 @@ class SessionDetail extends React.Component {
         return (
             <div>
                 <p>{convertDate(this.state.timestamp)}</p>
-                <p>{this.state.uuid}</p>
-                {this.state.tasks.map((task) => (
-                    <Link to={"/task/" + task.uuid}>
-                        <TaskCard task={task} key={task.uuid}/>
-                    </Link>
-                ))}
+                <Grid container
+                      spacing={3}
+                      justify={"center"}
+                >
+                    <Grid item>
+                        <StyledCard>
+                        <CardContent>
+                            <AddCircleOutline style={{ fontSize: 100 }}></AddCircleOutline>
+                        </CardContent>
+                    </StyledCard>
+                    </Grid>
+                    {this.state.tasks.map((task) => (
+                        <Grid item>
+                            <Link to={"/task/" + task.uuid} style={{ textDecoration: 'none' }}>
+                                <TaskCard task={task} key={task.uuid}/>
+                            </Link>
+                        </Grid>
+                    ))}
+                </Grid>
             </div>
         )
     }

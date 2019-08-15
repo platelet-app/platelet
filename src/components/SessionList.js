@@ -70,7 +70,7 @@ class SessionsList extends React.Component {
                 <h1>Sessions</h1>
                 {this.state.sessions.map((session) => (
                     <div key={session.uuid}>
-                        <Link to={"/session/" + session.uuid}>
+                        <Link to={"/session/" + session.uuid} style={{ textDecoration: 'none' }}>
                             <SessionCard session={session}/>
                         </Link>
                     </div>
