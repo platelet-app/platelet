@@ -45,7 +45,6 @@ class SessionDetail extends React.Component {
     render() {
         return (
             <div>
-                <p>{convertDate(this.state.timestamp)}</p>
                 <Grid container
                       spacing={3}
                       justify={"center"}
