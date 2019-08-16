@@ -21,18 +21,14 @@ class Login extends React.Component {
 
 
     render() {
-      if(this.state.isLogged) {
-        return (
-          <App apiUrl={this.state.apiControl.api_url}/>
-        )
-      }
-        else
-      {
+        if (this.state.isLogged) {
+            return (
+                <App apiUrl={this.state.apiControl.api_url}/>
+            )
+        } else {
 
-        return (
-            <React.Fragment>
-                <CssBaseline/>
-                <div className="App" classname>
+            return (
+                <div>
                     <header className="App-header">
                         <meta
                             name="viewport"
@@ -63,9 +59,8 @@ class Login extends React.Component {
                         </a>
                     </header>
                 </div>
-            </React.Fragment>
-        )
-    }
+            )
+        }
     }
 
 }
