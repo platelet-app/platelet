@@ -2,6 +2,7 @@ import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
 import {StyledCard} from '../css/common';
+import {TaskCard} from "./TaskCardsColoured";
 import CardContent from '@material-ui/core/CardContent';
 import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from "@material-ui/core";
@@ -13,26 +14,16 @@ import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 
-function TaskCard(props) {
-    return (
-        <StyledCard>
-            <CardContent>
-                <h4>Task</h4>
-                <Typography variant="body2" component="p">
-                    {convertDate(props.task.timestamp)}
-                </Typography>
-            </CardContent>
-        </StyledCard>
-    )
-}
 
 class SessionDetail extends React.Component {
     componentDidMount() {
         this.props.apiControl.sessions.get_session(this.props.match.params.session_uuid)
             .then((session_data) => {
-                this.setState({tasks: session_data.tasks});
-                this.setState({timestamp: session_data.timestamp});
-                this.setState({uuid: session_data.uuid});
+                if (session_data) {
+                    this.setState({tasks: session_data.tasks});
+                    this.setState({timestamp: session_data.timestamp});
+                    this.setState({uuid: session_data.uuid});
+                }
             })
     }
 
@@ -51,14 +42,14 @@ class SessionDetail extends React.Component {
                 >
                     <Grid item>
                         <StyledCard>
-                        <CardContent>
-                            <AddCircleOutline style={{ fontSize: 100 }}></AddCircleOutline>
-                        </CardContent>
-                    </StyledCard>
+                            <CardContent>
+                                <AddCircleOutline style={{fontSize: 100}}></AddCircleOutline>
+                            </CardContent>
+                        </StyledCard>
                     </Grid>
                     {this.state.tasks.map((task) => (
                         <Grid item>
-                            <Link to={"/task/" + task.uuid} style={{ textDecoration: 'none' }}>
+                            <Link to={"/task/" + task.uuid} style={{textDecoration: 'none'}}>
                                 <TaskCard task={task} key={task.uuid}/>
                             </Link>
                         </Grid>

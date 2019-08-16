@@ -41,7 +41,7 @@ export const TaskAssigned = styled(Card)({
 
 export const TaskActive = styled(Card)({
 
-    background: 'amber',
+    background: 'orange',
     border: 0,
     borderRadius: 10,
     boxShadow: '0 3px 5px 2px #303030',

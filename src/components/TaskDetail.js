@@ -16,7 +16,7 @@ function DeliverableCard(props) {
     return (
         <StyledCard>
             <CardContent>
-                <h4>Task</h4>
+                <h4>Deliverable</h4>
                 <Typography variant="body2" component="p">
                     {props.task.name}
                 </Typography>
