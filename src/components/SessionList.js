@@ -53,7 +53,7 @@ class SessionsList extends React.Component {
     componentDidMount() {
         this.props.apiControl.users.whoami()
             .then((my_data) => {
-                this.props.apiControl.sessions.get_sessions(my_data.uuid)
+                this.props.apiControl.sessions.getSessions(my_data.uuid)
                     .then((data) => {
                         if (data) {
                             this.setState({sessions: data});

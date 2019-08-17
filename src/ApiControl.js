@@ -10,7 +10,7 @@ function json(response) {
     return response.json()
 }
 
-function make_fetch(api_url, url, type, auth, content_type = undefined, data = undefined) {
+function makeFetch(api_url, url, type, auth, content_type = undefined, data = undefined) {
     return fetch(api_url + url, {
         method: type,
         withCredentials: true,
@@ -40,16 +40,16 @@ class Vehicle {
         this.api_url = api_url;
     }
 
-    async get_vehicles(user_id) {
-        return make_fetch(this.api_url, "vehicles/" + user_id, "GET", this.bearer)
+    async getVehicles(user_id) {
+        return makeFetch(this.api_url, "vehicles/" + user_id, "GET", this.bearer)
     }
 
-    async get_vehicle(vehicle_id) {
-        return make_fetch(this.api_url, "vehicle/" + vehicle_id, "GET", this.bearer)
+    async getVehicle(vehicle_id) {
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "GET", this.bearer)
     }
 
-    async create_vehicle(input_data) {
-        return make_fetch(this.api_url,  "vehicles", "POST", this.bearer, "application/json", input_data)
+    async createVehicle(input_data) {
+        return makeFetch(this.api_url,  "vehicles", "POST", this.bearer, "application/json", input_data)
     }
 }
 
@@ -59,16 +59,16 @@ class Location {
         this.api_url = api_url;
     }
 
-    async get_locations(function_to_call = undefined) {
-        return make_fetch(this.api_url, "locations", "GET", this.bearer)
+    async getLocations(function_to_call = undefined) {
+        return makeFetch(this.api_url, "locations", "GET", this.bearer)
     }
 
-    async get_location(location_id) {
-        return make_fetch(this.api_url, "location/" + location_id, "GET", this.bearer)
+    async getLocation(location_id) {
+        return makeFetch(this.api_url, "location/" + location_id, "GET", this.bearer)
     }
 
-    async create_location(input_data) {
-        return make_fetch(this.api_url, "locations", "POST", this.bearer, "application/json", input_data)
+    async createLocation(input_data) {
+        return makeFetch(this.api_url, "locations", "POST", this.bearer, "application/json", input_data)
     }
 }
 
@@ -78,16 +78,16 @@ class Note {
         this.api_url = api_url;
     }
 
-    async get_notes(item_id) {
-        return make_fetch(this.api_url, "notes/" + item_id, "GET", this.bearer)
+    async getNotes(item_id) {
+        return makeFetch(this.api_url, "notes/" + item_id, "GET", this.bearer)
     }
 
-    async get_note(note_id) {
-        return make_fetch(this.api_url, "note/" + note_id, "GET", this.bearer)
+    async getNote(note_id) {
+        return makeFetch(this.api_url, "note/" + note_id, "GET", this.bearer)
     }
 
-    async create_note(input_data) {
-        return make_fetch(this.api_url, "notes", "POST", this.bearer, "application/json", input_data)
+    async createNote(input_data) {
+        return makeFetch(this.api_url, "notes", "POST", this.bearer, "application/json", input_data)
     }
 }
 
@@ -97,16 +97,16 @@ class Task {
         this.api_url = api_url;
     }
 
-    async get_tasks(session_id) {
-        return make_fetch(this.api_url, "tasks" + session_id, "GET", this.bearer)
+    async getTasks(session_id) {
+        return makeFetch(this.api_url, "tasks" + session_id, "GET", this.bearer)
     }
 
-    async get_task(task_id) {
-        return make_fetch(this.api_url, "task/" + task_id, "GET", this.bearer)
+    async getTask(task_id) {
+        return makeFetch(this.api_url, "task/" + task_id, "GET", this.bearer)
     }
 
-    async create_task(input_data) {
-        return make_fetch(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
+    async createTask(input_data) {
+        return makeFetch(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
     }
 }
 
@@ -117,21 +117,21 @@ class Session {
         this.api_url = api_url;
     }
 
-    async get_sessions(user_id) {
-        return make_fetch(this.api_url, "sessions/" + user_id, "GET", this.bearer)
+    async getSessions(user_id) {
+        return makeFetch(this.api_url, "sessions/" + user_id, "GET", this.bearer)
     }
 
-    async get_session(session_id) {
-        return make_fetch(this.api_url, "session/" + session_id, "GET", this.bearer)
+    async getSession(session_id) {
+        return makeFetch(this.api_url, "session/" + session_id, "GET", this.bearer)
 
     }
 
-    async create_session(input_data) {
+    async createSession(input_data) {
         if (input_data) {
-            return make_fetch(this.api_url, "sessions", "POST", this.bearer, "application/json", input_data)
+            return makeFetch(this.api_url, "sessions", "POST", this.bearer, "application/json", input_data)
         }
         else  {
-            return make_fetch(this.api_url, "sessions", "POST", this.bearer)
+            return makeFetch(this.api_url, "sessions", "POST", this.bearer)
         }
     }
 
@@ -144,21 +144,21 @@ class User {
         this.api_url = api_url;
     }
 
-    async get_users() {
-        return make_fetch(this.api_url, "users", "GET", this.bearer)
+    async getUsers() {
+        return makeFetch(this.api_url, "users", "GET", this.bearer)
     }
 
-    async get_user(user_id) {
-        return make_fetch(this.api_url, "user/" + user_id, "GET", this.bearer)
+    async getUser(user_id) {
+        return makeFetch(this.api_url, "user/" + user_id, "GET", this.bearer)
 
     }
 
-    async create_user(input_data) {
-        return make_fetch(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
+    async createUser(input_data) {
+        return makeFetch(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
     }
 
     async whoami() {
-        return make_fetch(this.api_url, 'whoami', "GET", this.bearer)
+        return makeFetch(this.api_url, 'whoami', "GET", this.bearer)
     }
 }
 

@@ -27,7 +27,7 @@ function DeliverableCard(props) {
 
 class TaskDetail extends React.Component {
     componentDidMount() {
-        this.props.apiControl.tasks.get_task(this.props.match.params.task_uuid)
+        this.props.apiControl.tasks.getTask(this.props.match.params.task_uuid)
             .then((task_data) => {
                 this.setState({deliverables: task_data.deliverables});
                 this.setState({uuid: task_data.uuid});

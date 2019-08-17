@@ -1,13 +1,12 @@
 import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledCard, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../css/common';
+import {StyledCard, TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../css/common';
 import CardContent from '@material-ui/core/CardContent';
 import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
 
 export function TaskCard(props) {
-    console.log(props.task.assigned_rider === null)
     if (props.task.assigned_rider === null){
         return (
             <TaskNew>
@@ -47,15 +46,30 @@ export function TaskCard(props) {
         )
 
     }
-    return (
-        <TaskDelivered>
-            <CardContent>
-                <h4>Task</h4>
-                <Typography variant="body2" component="p">
-                    {convertDate(props.task.timestamp)}
-                </Typography>
-            </CardContent>
-        </TaskDelivered>
-    )
+    else if (props.task.dropoff_time) {
+        return (
+            <TaskDelivered>
+                <CardContent>
+                    <h4>Task</h4>
+                    <Typography variant="body2" component="p">
+                        {convertDate(props.task.timestamp)}
+                    </Typography>
+                </CardContent>
+            </TaskDelivered>
+        )
+    }
+    else {
+        return (
+            <TaskAdded>
+                <CardContent>
+                    <h4>Task</h4>
+                    <Typography variant="body2" component="p">
+                        {convertDate(props.task.timestamp)}
+                    </Typography>
+                </CardContent>
+            </TaskAdded>
+        )
+
+    }
 }
 

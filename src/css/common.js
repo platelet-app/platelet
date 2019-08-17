@@ -19,6 +19,16 @@ export const StyledCard = styled(Card)({
     padding: '1vh 1vw',
 });
 
+export const TaskAdded = styled(Card)({
+
+    background: 'darkgrey',
+    border: 0,
+    borderRadius: 10,
+    boxShadow: '0 3px 5px 2px #303030',
+    color: 'white',
+    padding: '1vh 1vw',
+});
+
 export const TaskNew = styled(Card)({
 
     background: 'cornflowerblue',
