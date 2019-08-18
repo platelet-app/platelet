@@ -14,6 +14,15 @@ import TextField from '@material-ui/core/TextField'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import update from 'immutability-helper';
+import TaskDetail from "./TaskDetail";
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TaskDialog from "./TaskModal";
+
 
 function orderTaskList(tasks) {
     let tasksNew = [];
@@ -42,6 +51,7 @@ function orderTaskList(tasks) {
     return result;
 }
 
+
 class SessionDetail extends React.Component {
     componentDidMount() {
         this.props.apiControl.sessions.getSession(this.props.match.params.session_uuid)
@@ -64,11 +74,10 @@ class SessionDetail extends React.Component {
 
     emptyTask = {
         session_id: this.props.match.params.session_uuid,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
     };
 
     render() {
-        console.log(this.state.tasks)
         return (
             <div>
                 <Grid container
@@ -80,31 +89,41 @@ class SessionDetail extends React.Component {
                             <CardContent>
                                 <AddCircleOutline style={{fontSize: 100, cursor: "pointer"}}
                                                   onClick={() => {
-                                                      let date = new Date()
+                                                      let date = new Date();
                                                       let newTask = {...this.emptyTask};
-                                                      newTask.timestamp = date.toISOString()
-                                                      this.setState(prevState => ({
-                                                          tasks: [newTask, ...prevState.tasks]
-                                                      }))
+                                                      newTask.timestamp = date.toISOString();
+                                                      this.setState(({
+                                                          tasks: [newTask, ...this.state.tasks]
+                                                      }));
                                                       this.props.apiControl.tasks.createTask(newTask).then((data) => {
+                                                          const index = this.state.tasks.indexOf(newTask);
                                                           this.setState({
-                                                              tasks: update(this.state.tasks, {0: {uuid: {$set: data.uuid}}})
+                                                              tasks: update(this.state.tasks, {[index]: {uuid: {$set: data.uuid}}})
                                                           })
 
                                                       })
                                                   }
                                                   }
-                                ></AddCircleOutline>
+                                >a</AddCircleOutline>
                             </CardContent>
                         </StyledCard>
                     </Grid>
-                    {this.state.tasks.map((task) => (
-                        <Grid item>
-                            <Link to={"/task/" + task.uuid} style={{textDecoration: 'none'}}>
-                                <TaskCard task={task} key={task.uuid}/>
-                            </Link>
-                        </Grid>
-                    ))}
+                    {this.state.tasks.map(task => {
+                        if (task.uuid === undefined) {
+                            return (
+                                <Grid item key={task.uuid}>
+                                    <TaskDialog task={task} apiControl={this.props.apiControl}/>
+                                </Grid>
+                            )
+                        } else {
+                            return (
+                                <Grid item key={task.uuid}>
+                                    <TaskDialog task={task} apiControl={this.props.apiControl}/>
+                                </Grid>
+                            )
+                        }
+                    })
+                    }
 
 
                 </Grid>

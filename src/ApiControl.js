@@ -11,6 +11,7 @@ function json(response) {
 }
 
 function makeFetch(api_url, url, type, auth, content_type = undefined, data = undefined) {
+    console.log(data)
     return fetch(api_url + url, {
         method: type,
         withCredentials: true,
@@ -21,7 +22,9 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
             "Access-Control-Allow-Credentials": true
         }),
         body: data ? JSON.stringify(data) : undefined
-    })
+    }
+
+    )
         .then(status)
         .then(json)
         .then((data) => {

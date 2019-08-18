@@ -5,71 +5,75 @@ import {StyledCard, TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive}
 import CardContent from '@material-ui/core/CardContent';
 import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
+import TaskDialog from "./TaskModal";
 
 export function TaskCard(props) {
-    if (props.task.assigned_rider === null){
+    if (props.task.assigned_rider === null) {
         return (
-            <TaskNew>
-                <CardContent>
-                    <h4>Task</h4>
-                    <Typography variant="body2" component="p">
-                        {convertDate(props.task.timestamp)}
-                    </Typography>
-                </CardContent>
-            </TaskNew>
+            <div onClick={props.onClick}>
+                <TaskNew>
+                    <CardContent>
+                        <h4>Task</h4>
+                        <Typography variant="body2" component="p">
+                            {convertDate(props.task.timestamp)}
+                        </Typography>
+                    </CardContent>
+                </TaskNew>
+            </div>
         )
-    }
-    else if (props.task.assigned_rider && !props.task.pickup_time)
-    {
+    } else if (props.task.assigned_rider && !props.task.pickup_time) {
         return (
-            <TaskAssigned>
-                <CardContent>
-                    <h4>Task</h4>
-                    <Typography variant="body2" component="p">
-                        {convertDate(props.task.timestamp)}
-                    </Typography>
-                </CardContent>
-            </TaskAssigned>
+            <div onClick={props.onClick}>
+                <TaskAssigned>
+                    <CardContent>
+                        <h4>Task</h4>
+                        <Typography variant="body2" component="p">
+                            {convertDate(props.task.timestamp)}
+                        </Typography>
+                    </CardContent>
+                </TaskAssigned>
+            </div>
         )
-    }
-    else if (props.task.assigned_rider && props.task.pickup_time && !props.task.dropoff_time)
-    {
+    } else if (props.task.assigned_rider && props.task.pickup_time && !props.task.dropoff_time) {
         return (
-            <TaskActive>
-                <CardContent>
-                    <h4>Task</h4>
-                    <Typography variant="body2" component="p">
-                        {convertDate(props.task.timestamp)}
-                    </Typography>
-                </CardContent>
-            </TaskActive>
+            <div onClick={props.onClick}>
+                <TaskActive>
+                    <CardContent>
+                        <h4>Task</h4>
+                        <Typography variant="body2" component="p">
+                            {convertDate(props.task.timestamp)}
+                        </Typography>
+                    </CardContent>
+                </TaskActive>
+            </div>
         )
 
-    }
-    else if (props.task.dropoff_time) {
+    } else if (props.task.dropoff_time) {
         return (
-            <TaskDelivered>
-                <CardContent>
-                    <h4>Task</h4>
-                    <Typography variant="body2" component="p">
-                        {convertDate(props.task.timestamp)}
-                    </Typography>
-                </CardContent>
-            </TaskDelivered>
+            <div onClick={props.onClick}>
+                <TaskDelivered>
+                    <CardContent>
+                        <h4>Task</h4>
+                        <Typography variant="body2" component="p">
+                            {convertDate(props.task.timestamp)}
+                        </Typography>
+                    </CardContent>
+                </TaskDelivered>
+            </div>
         )
-    }
-    else {
+    } else {
         return (
-            <TaskAdded>
-                <CardContent>
-                    <h4>Task</h4>
-                    <Typography variant="body2" component="p">
-                        {convertDate(props.task.timestamp)}
-                    </Typography>
-                </CardContent>
-            </TaskAdded>
+            <div onClick={props.onClick}>
+                <TaskAdded>
+                    <CardContent>
+                        <h4>Task</h4>
+                        <Typography variant="body2" component="p">
+                            {convertDate(props.task.timestamp)}
+                        </Typography>
+                    </CardContent>
+                </TaskAdded>
+            </div>
         )
 
     }
 }
-
