@@ -55,7 +55,7 @@ class App extends React.Component {
                                 </Grid>
                                 <Grid item xs={12}>
                                 </Grid>
-                                <Main apiControl={this.state.apiControl}></Main>
+                                <Main apiControl={this.state.apiControl}/>
                             </Grid>
                         </div>
                     </React.Fragment>

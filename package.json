@@ -5,7 +5,10 @@
   "dependencies": {
     "@material-ui/core": "^4.2.1",
     "@material-ui/icons": "^4.2.1",
+    "downshift": "^3.2.12",
     "immutability-helper": "^3.0.1",
+    "lodash": "^4.17.15",
+    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.1",

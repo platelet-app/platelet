@@ -7,6 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {TaskCard} from "./TaskCardsColoured";
+import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
 
 export default function TaskDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -17,7 +18,7 @@ export default function TaskDialog(props) {
 
     function handleClose(data) {
         setOpen(false);
-        if(data) {
+        if(false) {
             saveDetails(data)
         }
     }
@@ -31,12 +32,13 @@ export default function TaskDialog(props) {
     return (
         <div>
             <TaskCard task={props.task} onClick={handleClickOpen}/>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog fullScreen={true} open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Task Detail</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Task {props.task.uuid} yay!
                     </DialogContentText>
+                    <FavouriteLocationsSelect apiControl={props.apiControl}/>
                     <TextField
                         autoFocus
                         margin="dense"

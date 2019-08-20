@@ -62,7 +62,7 @@ class Location {
         this.api_url = api_url;
     }
 
-    async getLocations(function_to_call = undefined) {
+    async getLocations() {
         return makeFetch(this.api_url, "locations", "GET", this.bearer)
     }
 
@@ -224,6 +224,7 @@ class Control {
         this.notes = new Note(this.bearer, this.api_url);
         this.tasks = new Task(this.bearer, this.api_url);
         this.vehicles = new Vehicle(this.bearer, this.api_url);
+        this.locations = new Location(this.bearer, this.api_url);
         this.initialised = true;
     }
 }
