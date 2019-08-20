@@ -8,6 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {TaskCard} from "./TaskCardsColoured";
 import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
+import AddressDetailExpansion from "./AddressDetail";
 
 export default function TaskDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -39,8 +40,8 @@ export default function TaskDialog(props) {
                         Task {props.task.uuid} yay!
                     </DialogContentText>
                     <FavouriteLocationsSelect apiControl={props.apiControl}/>
+                    <AddressDetailExpansion label={"Pickup Address Details"}/>
                     <TextField
-                        autoFocus
                         margin="dense"
                         id="note"
                         label="Add a note!"
