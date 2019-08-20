@@ -10,51 +10,67 @@ import {TaskCard} from "./TaskCardsColoured";
 import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
 import AddressDetailExpansion from "./AddressDetail";
 
-export default function TaskDialog(props) {
-    const [open, setOpen] = React.useState(false);
+export default class TaskDialog extends React.Component {
 
-    function handleClickOpen() {
-        setOpen(true);
-    }
-
-    function handleClose(data) {
-        setOpen(false);
-        if(false) {
-            saveDetails(data)
+    state = {
+        open: false,
+        pickupAddress: {
+            line1: "",
+            line2: "",
+            town: "",
+            county: "",
+            postcode: "",
+            country: "",
         }
+    };
+
+
+    handleClickOpen() {
+        this.setState({open: true});
     }
 
-    function saveDetails(inputData) {
-        props.apiControl.notes.createNote(inputData).then((data) => {
-            console.log(data);
-        })
+
+    handleClose() {
+        this.setState({open: false})
     }
 
-    return (
-        <div>
-            <TaskCard task={props.task} onClick={handleClickOpen}/>
-            <Dialog fullScreen={true} open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Task Detail</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Task {props.task.uuid} yay!
-                    </DialogContentText>
-                    <FavouriteLocationsSelect apiControl={props.apiControl}/>
-                    <AddressDetailExpansion label={"Pickup Address Details"}/>
-                    <TextField
-                        margin="dense"
-                        id="note"
-                        label="Add a note!"
-                        type="text"
-                        fullWidth
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => {handleClose({"task": props.task.uuid, "body": document.getElementById("note").value})}} color="primary">
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-    );
+    updatePickupAddress() {
+
+    }
+
+    render() {
+        return (
+            <div>
+                <TaskCard task={this.props.task} onClick={() => {this.handleClickOpen()}}/>
+                <Dialog fullScreen={true} open={this.state.open} onClose={() => {this.handleClose()}}
+                        aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Task Detail</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Task {this.props.task.uuid} yay!
+                        </DialogContentText>
+                        <FavouriteLocationsSelect apiControl={this.props.apiControl}/>
+                        <AddressDetailExpansion label={"Pickup Address Details"} address={this.state.pickupAddress}/>
+                        <TextField
+                            margin="dense"
+                            id="note"
+                            label="Add a note!"
+                            type="text"
+                            fullWidth
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => {
+                            this.handleClose({
+                                "task": this.props.task.uuid,
+                                "body": document.getElementById("note").value
+                            })
+                        }} color="primary">
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        );
+    }
 }

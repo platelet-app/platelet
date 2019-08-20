@@ -7,29 +7,92 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-export default class AddressDetailExpansion extends React.Component{
-    state = {
-        address: {
-            ward: "",
-            line1: "",
-            line2: "",
-            town: "",
-            county: "",
-            postcode: "",
-            country: ""
-        }
-    };
-    render() {
-        let classes = makeStyles(theme => ({
-            root: {
-                width: '100%',
-            },
-            heading: {
-                fontSize: theme.typography.pxToRem(15),
-                fontWeight: theme.typography.fontWeightRegular,
-            },
-        }));
-
+const useStyles = makeStyles(theme => ({
+    root: {
+        width: '100%',
+    },
+    heading: {
+        fontSize: theme.typography.pxToRem(15),
+        fontWeight: theme.typography.fontWeightRegular,
+    },
+}));
+export default function AddressDetailsCollapsible (props) {
+    const classes = useStyles();
+    if (props.address !== undefined) {
+    return (
+        <div className={classes.root}>
+            <ExpansionPanel>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon/>}
+                    aria-controls="address-content"
+                    id="address-header"
+                >
+                    <Typography className={classes.heading}>{props.label} Address</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <div>
+                        <TextField
+                            margin="dense"
+                            id="ward"
+                            label="Ward"
+                            type="text"
+                            value={props.address['ward']}
+                            fullWidth
+                        />
+                        <TextField
+                            margin="dense"
+                            id="line1"
+                            label="Address Line 1"
+                            type="text"
+                            value={props.address['line1']}
+                            fullWidth
+                        />
+                        <TextField
+                            margin="dense"
+                            id="line2"
+                            label="Address Line 2"
+                            type="text"
+                            value={props.address['line2']}
+                            fullWidth
+                        />
+                        <TextField
+                            margin="dense"
+                            id="town"
+                            label="Town"
+                            type="text"
+                            value={props.address['town']}
+                            fullWidth
+                        />
+                        <TextField
+                            margin="dense"
+                            id="county"
+                            label="County"
+                            type="text"
+                            value={props.address['county']}
+                            fullWidth
+                        />
+                        <TextField
+                            margin="dense"
+                            id="postcode"
+                            label="Postcode"
+                            type="text"
+                            value={props.address['postcode']}
+                            fullWidth
+                        />
+                        <TextField
+                            margin="dense"
+                            id="Country"
+                            label="Country"
+                            type="text"
+                            value={props.address['country']}
+                            fullWidth
+                        />
+                    </div>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+        </div>
+    )}
+        else {
         return (
             <div className={classes.root}>
                 <ExpansionPanel>
@@ -38,7 +101,7 @@ export default class AddressDetailExpansion extends React.Component{
                         aria-controls="address-content"
                         id="address-header"
                     >
-                        <Typography className={classes.heading}>{this.props.label} Address</Typography>
+                        <Typography className={classes.heading}>{props.label} Address</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <div>
@@ -47,7 +110,6 @@ export default class AddressDetailExpansion extends React.Component{
                                 id="ward"
                                 label="Ward"
                                 type="text"
-                                value={this.state.address['ward']}
                                 fullWidth
                             />
                             <TextField
@@ -55,7 +117,6 @@ export default class AddressDetailExpansion extends React.Component{
                                 id="line1"
                                 label="Address Line 1"
                                 type="text"
-                                value={this.state.address['line1']}
                                 fullWidth
                             />
                             <TextField
@@ -63,7 +124,6 @@ export default class AddressDetailExpansion extends React.Component{
                                 id="line2"
                                 label="Address Line 2"
                                 type="text"
-                                value={this.state.address['line2']}
                                 fullWidth
                             />
                             <TextField
@@ -71,7 +131,6 @@ export default class AddressDetailExpansion extends React.Component{
                                 id="town"
                                 label="Town"
                                 type="text"
-                                value={this.state.address['town']}
                                 fullWidth
                             />
                             <TextField
@@ -79,7 +138,6 @@ export default class AddressDetailExpansion extends React.Component{
                                 id="county"
                                 label="County"
                                 type="text"
-                                value={this.state.address['county']}
                                 fullWidth
                             />
                             <TextField
@@ -87,7 +145,6 @@ export default class AddressDetailExpansion extends React.Component{
                                 id="postcode"
                                 label="Postcode"
                                 type="text"
-                                value={this.state.address['postcode']}
                                 fullWidth
                             />
                             <TextField
@@ -95,13 +152,11 @@ export default class AddressDetailExpansion extends React.Component{
                                 id="Country"
                                 label="Country"
                                 type="text"
-                                value={this.state.address['country']}
                                 fullWidth
                             />
                         </div>
                     </ExpansionPanelDetails>
                 </ExpansionPanel>
             </div>
-        )
-    }
+        )}
 }
