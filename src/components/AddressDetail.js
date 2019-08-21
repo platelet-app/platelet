@@ -6,102 +6,75 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
 
-const useStyles = makeStyles(theme => ({
-    root: {
-        width: '100%',
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        fontWeight: theme.typography.fontWeightRegular,
-    },
-}));
-export default function AddressDetailsCollapsible (props) {
-    const classes = useStyles();
-    if (props.address !== undefined) {
-    return (
-        <div className={classes.root}>
-            <ExpansionPanel>
-                <ExpansionPanelSummary
-                    expandIcon={<ExpandMoreIcon/>}
-                    aria-controls="address-content"
-                    id="address-header"
-                >
-                    <Typography className={classes.heading}>{props.label} Address</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                    <div>
-                        <TextField
-                            margin="dense"
-                            id="ward"
-                            label="Ward"
-                            type="text"
-                            value={props.address['ward']}
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="line1"
-                            label="Address Line 1"
-                            type="text"
-                            value={props.address['line1']}
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="line2"
-                            label="Address Line 2"
-                            type="text"
-                            value={props.address['line2']}
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="town"
-                            label="Town"
-                            type="text"
-                            value={props.address['town']}
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="county"
-                            label="County"
-                            type="text"
-                            value={props.address['county']}
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="postcode"
-                            label="Postcode"
-                            type="text"
-                            value={props.address['postcode']}
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="Country"
-                            label="Country"
-                            type="text"
-                            value={props.address['country']}
-                            fullWidth
-                        />
-                    </div>
-                </ExpansionPanelDetails>
-            </ExpansionPanel>
-        </div>
-    )}
-        else {
+export default class AddressDetailsCollapsible extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onSelect = this.onSelect.bind(this);
+    }
+
+
+    classes = makeStyles(theme => ({
+        root: {
+            width: '100%',
+        },
+        heading: {
+            fontSize: theme.typography.pxToRem(15),
+            fontWeight: theme.typography.fontWeightRegular,
+        },
+    }));
+
+    state = {
+        ward: "",
+        line1: "",
+        line2: "",
+        town: "",
+        county: "",
+        postcode: "",
+        country: "",
+        locations: [],
+        suggestions: []
+    };
+
+    onSelect(selection) {
+        let result = this.state.locations.filter(location => location.name === selection);
+        console.log(this.state.locations)
+        console.log(result)
+
+        if (result.length === 1){
+            console.log(result[0]['line1'])
+        this.setState({
+                line1: result[0]['address']['line1']
+            }
+        )
+            console.log(this.state.line1)
+        }
+    }
+
+    componentDidMount() {
+        this.props.apiControl.locations.getLocations().then((data) => {
+            this.setState({locations: data});
+            let filtered_suggestions = [];
+            this.state.locations.map((location) => {
+                filtered_suggestions.push({"label": location.name})
+            });
+            this.setState({suggestions: filtered_suggestions})
+        });
+
+    }
+
+    render() {
         return (
-            <div className={classes.root}>
+            <div className={this.classes.root}>
+                <FavouriteLocationsSelect id="addressSelect" suggestions={this.state.suggestions} onSelect={this.onSelect}/>
                 <ExpansionPanel>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="address-content"
                         id="address-header"
                     >
-                        <Typography className={classes.heading}>{props.label} Address</Typography>
+                        <Typography className={this.classes.heading}>{this.props.label} Address</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <div>
@@ -110,6 +83,7 @@ export default function AddressDetailsCollapsible (props) {
                                 id="ward"
                                 label="Ward"
                                 type="text"
+                                value={this.state.ward}
                                 fullWidth
                             />
                             <TextField
@@ -117,6 +91,7 @@ export default function AddressDetailsCollapsible (props) {
                                 id="line1"
                                 label="Address Line 1"
                                 type="text"
+                                value={this.state.line1}
                                 fullWidth
                             />
                             <TextField
@@ -124,6 +99,7 @@ export default function AddressDetailsCollapsible (props) {
                                 id="line2"
                                 label="Address Line 2"
                                 type="text"
+                                value={this.state.line2}
                                 fullWidth
                             />
                             <TextField
@@ -131,6 +107,7 @@ export default function AddressDetailsCollapsible (props) {
                                 id="town"
                                 label="Town"
                                 type="text"
+                                value={this.state.town}
                                 fullWidth
                             />
                             <TextField
@@ -138,6 +115,7 @@ export default function AddressDetailsCollapsible (props) {
                                 id="county"
                                 label="County"
                                 type="text"
+                                value={this.state.county}
                                 fullWidth
                             />
                             <TextField
@@ -145,6 +123,7 @@ export default function AddressDetailsCollapsible (props) {
                                 id="postcode"
                                 label="Postcode"
                                 type="text"
+                                value={this.state.postcode}
                                 fullWidth
                             />
                             <TextField
@@ -152,11 +131,13 @@ export default function AddressDetailsCollapsible (props) {
                                 id="Country"
                                 label="Country"
                                 type="text"
+                                value={this.state.country}
                                 fullWidth
                             />
                         </div>
                     </ExpansionPanelDetails>
                 </ExpansionPanel>
             </div>
-        )}
+        )
+    }
 }

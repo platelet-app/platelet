@@ -4,47 +4,9 @@ import deburr from 'lodash/deburr';
 import Downshift from 'downshift';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
-import Chip from '@material-ui/core/Chip';
 
-const suggestions = [
-    { label: 'Afghanistan' },
-    { label: 'Aland Islands' },
-    { label: 'Albania' },
-    { label: 'Algeria' },
-    { label: 'American Samoa' },
-    { label: 'Andorra' },
-    { label: 'Angola' },
-    { label: 'Anguilla' },
-    { label: 'Antarctica' },
-    { label: 'Antigua and Barbuda' },
-    { label: 'Argentina' },
-    { label: 'Armenia' },
-    { label: 'Aruba' },
-    { label: 'Australia' },
-    { label: 'Austria' },
-    { label: 'Azerbaijan' },
-    { label: 'Bahamas' },
-    { label: 'Bahrain' },
-    { label: 'Bangladesh' },
-    { label: 'Barbados' },
-    { label: 'Belarus' },
-    { label: 'Belgium' },
-    { label: 'Belize' },
-    { label: 'Benin' },
-    { label: 'Bermuda' },
-    { label: 'Bhutan' },
-    { label: 'Bolivia, Plurinational State of' },
-    { label: 'Bonaire, Sint Eustatius and Saba' },
-    { label: 'Bosnia and Herzegovina' },
-    { label: 'Botswana' },
-    { label: 'Bouvet Island' },
-    { label: 'Brazil' },
-    { label: 'British Indian Ocean Territory' },
-    { label: 'Brunei Darussalam' },
-];
 
 function renderInput(inputProps) {
     const { InputProps, classes, ref, ...other } = inputProps;
@@ -124,24 +86,6 @@ function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
 
 
 export default class FavouriteLocationsSelect extends React.Component {
-
-    state = {
-        locations: [],
-        suggestions: []
-    };
-
-    componentDidMount() {
-        this.props.apiControl.locations.getLocations().then((data) => {
-            this.setState({locations: data});
-            let filtered_suggestions = [];
-            this.state.locations.map((location) => {
-                filtered_suggestions.push({"label": location.name})
-            });
-            this.setState({suggestions: filtered_suggestions})
-        });
-
-    }
-
     render() {
         let classes = makeStyles(theme => ({
             root: {
@@ -193,6 +137,7 @@ export default class FavouriteLocationsSelect extends React.Component {
                                 if (event.target.value === '') {
                                     clearSelection();
                                 }
+                                this.props.onSelect(event.target.value)
                             },
                             onFocus: openMenu,
                             placeholder: 'With the clear & show empty options',
@@ -212,7 +157,7 @@ export default class FavouriteLocationsSelect extends React.Component {
                                 <div {...getMenuProps()}>
                                     {isOpen ? (
                                         <Paper className={classes.paper} square>
-                                            {getSuggestions(this.state.suggestions, inputValue, {showEmpty: true}).map((suggestion, index) =>
+                                            {getSuggestions(this.props.suggestions, inputValue, {showEmpty: true}).map((suggestion, index) =>
                                                 renderSuggestion({
                                                     suggestion,
                                                     index,

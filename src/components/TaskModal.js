@@ -7,21 +7,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {TaskCard} from "./TaskCardsColoured";
-import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
-import AddressDetailExpansion from "./AddressDetail";
+import AddressDetailsCollapsible from "./AddressDetail";
 
 export default class TaskDialog extends React.Component {
 
     state = {
         open: false,
-        pickupAddress: {
-            line1: "",
-            line2: "",
-            town: "",
-            county: "",
-            postcode: "",
-            country: "",
-        }
     };
 
 
@@ -32,10 +23,6 @@ export default class TaskDialog extends React.Component {
 
     handleClose() {
         this.setState({open: false})
-    }
-
-    updatePickupAddress() {
-
     }
 
     render() {
@@ -49,8 +36,7 @@ export default class TaskDialog extends React.Component {
                         <DialogContentText>
                             Task {this.props.task.uuid} yay!
                         </DialogContentText>
-                        <FavouriteLocationsSelect apiControl={this.props.apiControl}/>
-                        <AddressDetailExpansion label={"Pickup Address Details"} address={this.state.pickupAddress}/>
+                        <AddressDetailsCollapsible label={"Pickup Address Details"} apiControl={this.props.apiControl} address={this.state.pickupAddress}/>
                         <TextField
                             margin="dense"
                             id="note"
