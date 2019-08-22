@@ -119,7 +119,7 @@ export default class FavouriteLocationsSelect extends React.Component {
         }));
         return (
             <div>
-                <Downshift id="downshift-options">
+                <Downshift id="downshift-options" onChange={this.props.onSelect}>
                     {({
                           clearSelection,
                           getInputProps,
@@ -137,7 +137,6 @@ export default class FavouriteLocationsSelect extends React.Component {
                                 if (event.target.value === '') {
                                     clearSelection();
                                 }
-                                this.props.onSelect(event.target.value)
                             },
                             onFocus: openMenu,
                             placeholder: 'With the clear & show empty options',

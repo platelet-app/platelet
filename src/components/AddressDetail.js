@@ -37,18 +37,24 @@ export default class AddressDetailsCollapsible extends React.Component {
         suggestions: []
     };
 
-    onSelect(selection) {
-        let result = this.state.locations.filter(location => location.name === selection);
-        console.log(this.state.locations)
-        console.log(result)
+    onSelect(selectedItem) {
+        let result = this.state.locations.filter(location => location.name === selectedItem);
+        console.log(this.state.locations);
+        console.log(result);
 
         if (result.length === 1){
-            console.log(result[0]['line1'])
+            console.log(result[0]['line1']);
         this.setState({
                 line1: result[0]['address']['line1']
             }
-        )
+
+        );
             console.log(this.state.line1)
+        }
+        else {
+            this.setState({
+                line1: ""
+            })
         }
     }
 
