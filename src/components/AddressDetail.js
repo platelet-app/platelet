@@ -11,10 +11,7 @@ import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
 export default class AddressDetailsCollapsible extends React.Component {
     constructor(props) {
         super(props);
-        this.onSelect = this.onSelect.bind(this);
     }
-
-
     classes = makeStyles(theme => ({
         root: {
             width: '100%',
@@ -25,62 +22,19 @@ export default class AddressDetailsCollapsible extends React.Component {
         },
     }));
 
-    state = {
-        ward: "",
-        line1: "",
-        line2: "",
-        town: "",
-        county: "",
-        postcode: "",
-        country: "",
-        locations: [],
-        suggestions: []
-    };
-
-    onSelect(selectedItem) {
-        let result = this.state.locations.filter(location => location.name === selectedItem);
-        console.log(this.state.locations);
-        console.log(result);
-
-        if (result.length === 1){
-            console.log(result[0]['line1']);
-        this.setState({
-                line1: result[0]['address']['line1']
-            }
-
-        );
-            console.log(this.state.line1)
-        }
-        else {
-            this.setState({
-                line1: ""
-            })
-        }
-    }
-
-    componentDidMount() {
-        this.props.apiControl.locations.getLocations().then((data) => {
-            this.setState({locations: data});
-            let filtered_suggestions = [];
-            this.state.locations.map((location) => {
-                filtered_suggestions.push({"label": location.name})
-            });
-            this.setState({suggestions: filtered_suggestions})
-        });
-
-    }
-
     render() {
+        console.log(this.props.address)
         return (
             <div className={this.classes.root}>
-                <FavouriteLocationsSelect id="addressSelect" suggestions={this.state.suggestions} onSelect={this.onSelect}/>
+                <FavouriteLocationsSelect id="addressSelect" suggestions={this.props.suggestions}
+                                          onSelect={this.props.onSelect}/>
                 <ExpansionPanel>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="address-content"
                         id="address-header"
                     >
-                        <Typography className={this.classes.heading}>{this.props.label} Address</Typography>
+                        <Typography className={this.classes.heading}>{this.props.label}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <div>
@@ -89,7 +43,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="ward"
                                 label="Ward"
                                 type="text"
-                                value={this.state.ward}
+                                value={this.props.address.ward}
                                 fullWidth
                             />
                             <TextField
@@ -97,7 +51,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="line1"
                                 label="Address Line 1"
                                 type="text"
-                                value={this.state.line1}
+                                value={this.props.address.line1}
                                 fullWidth
                             />
                             <TextField
@@ -105,7 +59,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="line2"
                                 label="Address Line 2"
                                 type="text"
-                                value={this.state.line2}
+                                value={this.props.address.line2}
                                 fullWidth
                             />
                             <TextField
@@ -113,7 +67,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="town"
                                 label="Town"
                                 type="text"
-                                value={this.state.town}
+                                value={this.props.address.town}
                                 fullWidth
                             />
                             <TextField
@@ -121,7 +75,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="county"
                                 label="County"
                                 type="text"
-                                value={this.state.county}
+                                value={this.props.address.county}
                                 fullWidth
                             />
                             <TextField
@@ -129,7 +83,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="postcode"
                                 label="Postcode"
                                 type="text"
-                                value={this.state.postcode}
+                                value={this.props.address.postcode}
                                 fullWidth
                             />
                             <TextField
@@ -137,7 +91,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="Country"
                                 label="Country"
                                 type="text"
-                                value={this.state.country}
+                                value={this.props.address.country}
                                 fullWidth
                             />
                         </div>

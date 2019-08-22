@@ -1,27 +1,14 @@
 import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledCard, TaskActive, TaskAdded, TaskAssigned, TaskDelivered, TaskNew} from '../css/common';
-import {TaskCard} from "./TaskCardsColoured";
+import {StyledCard} from '../css/common';
 import CardContent from '@material-ui/core/CardContent';
-import {makeStyles} from '@material-ui/core/styles';
-import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
-import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import CssBaseline from '@material-ui/core/CssBaseline';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import update from 'immutability-helper';
-import TaskDetail from "./TaskDetail";
-
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import TaskDialog from "./TaskModal";
+import {withRouter} from 'react-router-dom'
 
 
 function orderTaskList(tasks) {
@@ -63,13 +50,28 @@ class SessionDetail extends React.Component {
                         uuid: session_data.uuid
                     });
                 }
-            })
+            });
+        this.props.apiControl.locations.getLocations().then((data) => {
+            let filtered_suggestions = [];
+            data.map((location) => {
+                filtered_suggestions.push({"label": location.name})
+            });
+            this.setState({
+                filteredLocationSuggestions: filtered_suggestions,
+                locationSuggestions: data
+            });
+            console.log(this.state.filteredLocationSuggestions)
+            console.log(this.state.locationSuggestions)
+        });
+
     }
 
     state = {
         tasks: [],
         timestamp: convertDate(new Date()),
-        uuid: ""
+        uuid: "",
+        locationSuggestions: [],
+        filteredLocationSuggestions: []
     };
 
     emptyTask = {
@@ -112,13 +114,17 @@ class SessionDetail extends React.Component {
                         if (task.uuid === undefined) {
                             return (
                                 <Grid item key={task.uuid}>
-                                    <TaskDialog task={task} apiControl={this.props.apiControl}/>
+                                    <TaskDialog task={task} apiControl={this.props.apiControl}
+                                                locations={this.state.locationSuggestions}
+                                                suggestions={this.state.filteredLocationSuggestions}/>
                                 </Grid>
                             )
                         } else {
                             return (
                                 <Grid item key={task.uuid}>
-                                    <TaskDialog task={task} apiControl={this.props.apiControl}/>
+                                    <TaskDialog task={task} apiControl={this.props.apiControl}
+                                                locations={this.state.locationSuggestions}
+                                                suggestions={this.state.filteredLocationSuggestions}/>
                                 </Grid>
                             )
                         }
@@ -132,4 +138,4 @@ class SessionDetail extends React.Component {
     }
 }
 
-export default SessionDetail;
+export default withRouter(SessionDetail);

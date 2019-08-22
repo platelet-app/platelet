@@ -65,6 +65,7 @@ renderSuggestion.propTypes = {
 };
 
 function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
+    console.log(suggestions)
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
@@ -117,6 +118,7 @@ export default class FavouriteLocationsSelect extends React.Component {
                 height: theme.spacing(2),
             },
         }));
+        console.log(this.props.suggestions)
         return (
             <div>
                 <Downshift id="downshift-options" onChange={this.props.onSelect}>
@@ -139,7 +141,7 @@ export default class FavouriteLocationsSelect extends React.Component {
                                 }
                             },
                             onFocus: openMenu,
-                            placeholder: 'With the clear & show empty options',
+                            placeholder: 'Type to search',
                         });
 
                         return (
@@ -147,7 +149,7 @@ export default class FavouriteLocationsSelect extends React.Component {
                                 {renderInput({
                                     fullWidth: true,
                                     classes,
-                                    label: 'Saved Locations',
+                                    label: "Presets",
                                     InputLabelProps: getLabelProps({shrink: true}),
                                     InputProps: {onBlur, onChange, onFocus},
                                     inputProps,
