@@ -18,6 +18,7 @@ class TaskDialog extends React.Component {
         this.onSelectPickup = this.onSelectPickup.bind(this);
         this.onSelectDropoff = this.onSelectDropoff.bind(this);
     }
+
     state = {
         pickupAddress: {
             ward: "",
@@ -50,16 +51,16 @@ class TaskDialog extends React.Component {
         if (result.length === 1) {
             console.log(result[0]['line1']);
             this.setState({
-                pickupAddress: {
-                    ward: result[0]['ward'],
-                    line1: result[0]['address']['line1'],
-                    line2: result[0]['address']['line2'],
-                    town: result[0]['address']['town'],
-                    county: result[0]['address']['county'],
-                    country: result[0]['address']['country'],
-                    postcode: result[0]['address']['postcode'],
-                },
-                    pickupLabel:  this.state.pickupLabel + ' - ' + result[0]['address']['line1']
+                    pickupAddress: {
+                        ward: result[0]['ward'],
+                        line1: result[0]['address']['line1'],
+                        line2: result[0]['address']['line2'],
+                        town: result[0]['address']['town'],
+                        county: result[0]['address']['county'],
+                        country: result[0]['address']['country'],
+                        postcode: result[0]['address']['postcode'],
+                    },
+                    pickupLabel: this.state.pickupLabel + ' - ' + result[0]['address']['line1']
                 }
             );
             console.log(this.state.line1)
@@ -96,7 +97,7 @@ class TaskDialog extends React.Component {
                         country: result[0]['address']['country'],
                         postcode: result[0]['address']['postcode'],
                     },
-                    dropoffLabel:  this.state.dropoffLabel + ' - ' + result[0]['address']['line1']
+                    dropoffLabel: this.state.dropoffLabel + ' - ' + result[0]['address']['line1']
                 }
             );
             console.log(this.state.line1)
@@ -140,17 +141,16 @@ class TaskDialog extends React.Component {
                             Task {this.props.task.uuid} yay!
                         </DialogContentText>
                         <AddressDetailsCollapsible label={this.state.pickupLabel}
-                                                   apiControl={this.props.apiControl}
                                                    onSelect={this.onSelectPickup}
                                                    locations={this.props.locations}
                                                    suggestions={this.props.suggestions}
                                                    address={this.state.pickupAddress}
                         />
                         <br/>
-                        <AddressDetailsCollapsible label={this.state.dropoffLabel} apiControl={this.props.apiControl}
-                        onSelect={this.onSelectDropoff}
-                        locations={this.props.locations}
-                        suggestions={this.props.suggestions}
+                        <AddressDetailsCollapsible label={this.state.dropoffLabel}
+                                                   onSelect={this.onSelectDropoff}
+                                                   locations={this.props.locations}
+                                                   suggestions={this.props.suggestions}
                                                    address={this.state.dropoffAddress}/>
                         <TextField
                             margin="dense"
