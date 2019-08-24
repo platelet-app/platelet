@@ -42,7 +42,8 @@ export function TaskCard(props) {
             <div onClick={props.onClick}>
                 <TaskActive>
                     <CardContent>
-                        <h4>Task</h4>
+                        <h4>{props.title}</h4>
+                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
                             {convertDate(props.timestamp)}
                         </Typography>
@@ -56,7 +57,8 @@ export function TaskCard(props) {
             <div onClick={props.onClick}>
                 <TaskDelivered>
                     <CardContent>
-                        <h4>Task</h4>
+                        <h4>{props.title}</h4>
+                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
                             {convertDate(props.timestamp)}
                         </Typography>
@@ -69,7 +71,8 @@ export function TaskCard(props) {
             <div onClick={props.onClick}>
                 <TaskAdded>
                     <CardContent>
-                        <h4>Task</h4>
+                        <h4>{props.title}</h4>
+                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
                             {convertDate(props.timestamp)}
                         </Typography>
