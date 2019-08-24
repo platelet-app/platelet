@@ -19,7 +19,31 @@ class TaskDialog extends React.Component {
         this.onSelectDropoff = this.onSelectDropoff.bind(this);
     }
 
+    componentDidMount() {
+        if (this.props.task.pickup_address) {
+            this.setState({
+                pickupAddress: this.props.task.pickup_address
+            }
+            )
+        }
+        if (this.props.task.dropoff_address) {
+            this.setState({
+                    dropoffAddress: this.props.task.dropoff_address
+                }
+            )
+        }
+    }
+
+
     state = {
+        uuid: this.props.task.uuid,
+        assignedRider: this.props.task.assigned_rider,
+        contactNumber: this.props.task.contact_number,
+        contactName: this.props.task.contact_name,
+        dropoffTime: this.props.task.dropoff_time,
+        pickupTime: this.props.task.pickup_time,
+        timestamp: this.props.task.timestamp,
+
         pickupAddress: {
             ward: "",
             line1: "",
@@ -49,10 +73,9 @@ class TaskDialog extends React.Component {
         console.log(result);
 
         if (result.length === 1) {
-            console.log(result[0]['line1']);
             this.setState({
                     pickupAddress: {
-                        ward: result[0]['ward'],
+                        ward: result[0]['address']['ward'],
                         line1: result[0]['address']['line1'],
                         line2: result[0]['address']['line2'],
                         town: result[0]['address']['town'],
@@ -89,7 +112,7 @@ class TaskDialog extends React.Component {
             console.log(result[0]['line1']);
             this.setState({
                     dropoffAddress: {
-                        ward: result[0]['ward'],
+                        ward: result[0]['address']['ward'],
                         line1: result[0]['address']['line1'],
                         line2: result[0]['address']['line2'],
                         town: result[0]['address']['town'],
@@ -124,12 +147,28 @@ class TaskDialog extends React.Component {
 
     handleClose() {
         this.setState({open: false})
+        const payload = {
+            pickup_address: this.state.pickupAddress,
+            dropoff_address: this.state.dropoffAddress
+        };
+
+
+        this.props.apiControl.tasks.updateTask(this.state.uuid, payload)
     }
 
     render() {
         return (
             <div>
-                <TaskCard task={this.props.task} onClick={() => {
+                <TaskCard
+                          title={"Task"}
+                          pickupAddress={this.state.pickupAddress}
+                          dropoffAddress={this.state.dropoffAddress}
+                          assignedRider={this.state.assignedRider}
+                          pickupTime={this.state.pickupTime}
+                          dropoffTime={this.state.dropoffTime}
+                          timestamp={this.state.timestamp}
+
+                          onClick={() => {
                     this.handleClickOpen()
                 }}/>
                 <Dialog fullScreen={true} open={this.state.open} onClose={this.handleClose}

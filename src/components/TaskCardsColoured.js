@@ -8,54 +8,57 @@ import {convertDate} from '../utilities'
 import TaskDialog from "./TaskModal";
 
 export function TaskCard(props) {
-    if (props.task.assigned_rider === null) {
+    const pickupTitle = (props.pickupAddress.ward) ? props.pickupAddress.line1 + " | " + props.pickupAddress.ward : props.pickupAddress.line1;
+    const dropoffTitle = (props.dropoffAddress.ward) ? props.dropoffAddress.line1 + " | " + props.dropoffAddress.ward : props.dropoffAddress.line1;
+    if (props.assignedRider === null) {
         return (
             <div onClick={props.onClick}>
                 <TaskNew>
                     <CardContent>
-                        <h4>Task</h4>
+                        <h4>{props.title}</h4>
+                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.task.timestamp)}
+                            {convertDate(props.timestamp)}
                         </Typography>
                     </CardContent>
                 </TaskNew>
             </div>
         )
-    } else if (props.task.assigned_rider && !props.task.pickup_time) {
+    } else if (props.assignedRider && !props.pickupTime) {
         return (
             <div onClick={props.onClick}>
                 <TaskAssigned>
                     <CardContent>
                         <h4>Task</h4>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.task.timestamp)}
+                            {convertDate(props.timestamp)}
                         </Typography>
                     </CardContent>
                 </TaskAssigned>
             </div>
         )
-    } else if (props.task.assigned_rider && props.task.pickup_time && !props.task.dropoff_time) {
+    } else if (props.assignedRider && props.pickupTime && !props.dropoffTime) {
         return (
             <div onClick={props.onClick}>
                 <TaskActive>
                     <CardContent>
                         <h4>Task</h4>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.task.timestamp)}
+                            {convertDate(props.timestamp)}
                         </Typography>
                     </CardContent>
                 </TaskActive>
             </div>
         )
 
-    } else if (props.task.dropoff_time) {
+    } else if (props.dropoffTime) {
         return (
             <div onClick={props.onClick}>
                 <TaskDelivered>
                     <CardContent>
                         <h4>Task</h4>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.task.timestamp)}
+                            {convertDate(props.timestamp)}
                         </Typography>
                     </CardContent>
                 </TaskDelivered>
@@ -68,12 +71,11 @@ export function TaskCard(props) {
                     <CardContent>
                         <h4>Task</h4>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.task.timestamp)}
+                            {convertDate(props.timestamp)}
                         </Typography>
                     </CardContent>
                 </TaskAdded>
             </div>
         )
-
     }
 }

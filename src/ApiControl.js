@@ -11,7 +11,6 @@ function json(response) {
 }
 
 function makeFetch(api_url, url, type, auth, content_type = undefined, data = undefined) {
-    console.log(data)
     return fetch(api_url + url, {
         method: type,
         withCredentials: true,
@@ -110,6 +109,10 @@ class Task {
 
     async createTask(input_data) {
         return makeFetch(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
+    }
+
+    async updateTask(task_id, input_data) {
+        return makeFetch(this.api_url, "task/" + task_id, "PUT", this.bearer, "application/json", input_data)
     }
 }
 
