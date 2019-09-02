@@ -32,12 +32,22 @@ class TaskDialog extends React.Component {
                 }
             )
         }
+        if (this.props.task.rider) {
+            this.setState({
+                    assignedRider: this.props.task.rider
+                }
+            )
+        }
     }
 
 
     state = {
         uuid: this.props.task.uuid,
-        assignedRider: this.props.task.assigned_rider,
+        assignedRider: {
+            name: "",
+            patch: "",
+            vehicle: ""
+        },
         contactNumber: this.props.task.contact_number,
         contactName: this.props.task.contact_name,
         dropoffTime: this.props.task.dropoff_time,
@@ -69,9 +79,6 @@ class TaskDialog extends React.Component {
 
     onSelectPickup(selectedItem) {
         let result = this.props.locations.filter(location => location.name === selectedItem);
-        console.log(this.props.locations);
-        console.log(result);
-
         if (result.length === 1) {
             this.setState({
                     pickupAddress: {
@@ -86,7 +93,6 @@ class TaskDialog extends React.Component {
                     pickupLabel: this.state.pickupLabel + ' - ' + result[0]['address']['line1']
                 }
             );
-            console.log(this.state.line1)
         } else {
             this.setState({
                 pickupAddress: {
@@ -105,11 +111,8 @@ class TaskDialog extends React.Component {
 
     onSelectDropoff(selectedItem) {
         let result = this.props.locations.filter(location => location.name === selectedItem);
-        console.log(this.props.locations);
-        console.log(result);
 
         if (result.length === 1) {
-            console.log(result[0]['line1']);
             this.setState({
                     dropoffAddress: {
                         ward: result[0]['address']['ward'],
@@ -123,7 +126,6 @@ class TaskDialog extends React.Component {
                     dropoffLabel: this.state.dropoffLabel + ' - ' + result[0]['address']['line1']
                 }
             );
-            console.log(this.state.line1)
         } else {
             this.setState({
                 dropoffAddress: {
