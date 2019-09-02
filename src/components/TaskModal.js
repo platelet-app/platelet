@@ -9,6 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import {TaskCard} from "./TaskCardsColoured";
 import AddressDetailsCollapsible from "./AddressDetail";
 import {withRouter} from 'react-router-dom';
+import UsersSelect from "./UsersSelect";
 
 class TaskDialog extends React.Component {
     constructor(props) {
@@ -46,7 +47,8 @@ class TaskDialog extends React.Component {
         assignedRider: {
             name: "",
             patch: "",
-            vehicle: ""
+            vehicle: "",
+            uuid: ""
         },
         contactNumber: this.props.task.contact_number,
         contactName: this.props.task.contact_name,
@@ -152,8 +154,8 @@ class TaskDialog extends React.Component {
         const payload = {
             pickup_address: this.state.pickupAddress,
             dropoff_address: this.state.dropoffAddress
+            //assigned_rider: this.state.assignedRider.uuid
         };
-
 
         this.props.apiControl.tasks.updateTask(this.state.uuid, payload)
     }
@@ -193,6 +195,8 @@ class TaskDialog extends React.Component {
                                                    locations={this.props.locations}
                                                    suggestions={this.props.suggestions}
                                                    address={this.state.dropoffAddress}/>
+                        <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
+                                                  onSelect={this.props.onSelect}/>
                         <TextField
                             margin="dense"
                             id="note"

@@ -52,16 +52,26 @@ class SessionDetail extends React.Component {
                 }
             });
         this.props.apiControl.locations.getLocations().then((data) => {
-            let filtered_suggestions = [];
+            let filteredSuggestions = [];
             data.map((location) => {
-                filtered_suggestions.push({"label": location.name})
+                filteredSuggestions.push({"label": location.name})
             });
             this.setState({
-                filteredLocationSuggestions: filtered_suggestions,
+                filteredLocationSuggestions: filteredSuggestions,
                 locationSuggestions: data
             });
-            console.log(this.state.filteredLocationSuggestions)
-            console.log(this.state.locationSuggestions)
+        });
+        this.props.apiControl.users.getUsers().then((data) => {
+            let filteredUsers = [];
+            data.map((user) => {
+                if (user.roles.includes("rider")) {
+                    filteredUsers.push({"label": user.name})
+                }
+                this.setState({
+                    filteredUserSuggestions: filteredUsers,
+                    userSuggestions: data
+                })
+            });
         });
 
     }
@@ -71,7 +81,9 @@ class SessionDetail extends React.Component {
         timestamp: convertDate(new Date()),
         uuid: "",
         locationSuggestions: [],
-        filteredLocationSuggestions: []
+        filteredLocationSuggestions: [],
+        userSuggestions: [],
+        filteredUserSuggestions: []
     };
 
     emptyTask = {
@@ -116,7 +128,9 @@ class SessionDetail extends React.Component {
                                 <Grid item key={task.uuid}>
                                     <TaskDialog task={task} apiControl={this.props.apiControl}
                                                 locations={this.state.locationSuggestions}
-                                                suggestions={this.state.filteredLocationSuggestions}/>
+                                                suggestions={this.state.filteredLocationSuggestions}
+                                                users={this.state.userSuggestions}
+                                                userSuggestions={this.state.filteredUserSuggestions}/>
                                 </Grid>
                             )
                         } else {
@@ -124,7 +138,9 @@ class SessionDetail extends React.Component {
                                 <Grid item key={task.uuid}>
                                     <TaskDialog task={task} apiControl={this.props.apiControl}
                                                 locations={this.state.locationSuggestions}
-                                                suggestions={this.state.filteredLocationSuggestions}/>
+                                                suggestions={this.state.filteredLocationSuggestions}
+                                                users={this.state.userSuggestions}
+                                                userSuggestions={this.state.filteredUserSuggestions}/>
                                 </Grid>
                             )
                         }
