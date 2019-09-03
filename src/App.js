@@ -2,6 +2,7 @@ import React from 'react';
 import Main from './components/Main'
 import Menu from './components/Menu'
 import Login from './Login'
+import './index.css'
 import {deleteLogin, getLogin} from "./utilities";
 import Control from "./ApiControl";
 import './App.css';
@@ -36,7 +37,7 @@ class App extends React.Component {
     render() {
         if (this.state.apiControl.initialised) {
             return (
-                <>
+                <div className={'body'}>
                     <Switch>
                         <Route exact path='/logout'
                                render={(props) => <App {...props} logout={true} apiUrl={this.props.apiUrl}/>}
@@ -59,7 +60,7 @@ class App extends React.Component {
                             </Grid>
                         </div>
                     </React.Fragment>
-                </>
+                </div>
             );
         } else {
             return (

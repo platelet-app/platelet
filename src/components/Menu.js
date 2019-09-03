@@ -1,7 +1,7 @@
 import React from 'react';
 import 'typeface-roboto'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
+import '../index.css'
 import { makeStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';

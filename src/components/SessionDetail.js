@@ -98,10 +98,8 @@ class SessionDetail extends React.Component {
                       spacing={3}
                       justify={"center"}
                 >
-                    <Grid item>
-                        <StyledCard>
-                            <CardContent>
-                                <AddCircleOutline style={{fontSize: 100, cursor: "pointer"}}
+                    <Grid item><div style={{padding: '1vh 1vw 1vw 1vh'}}>
+                                <AddCircleOutline style={{fontSize: 100, cursor: "pointer", color: "darkblue"}}
                                                   onClick={() => {
                                                       let date = new Date();
                                                       let newTask = {...this.emptyTask};
@@ -119,8 +117,7 @@ class SessionDetail extends React.Component {
                                                   }
                                                   }
                                 >a</AddCircleOutline>
-                            </CardContent>
-                        </StyledCard>
+                    </div>
                     </Grid>
                     {this.state.tasks.map(task => {
                         if (task.uuid === undefined) {

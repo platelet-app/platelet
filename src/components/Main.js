@@ -1,6 +1,7 @@
 import React from 'react';
 import 'typeface-roboto'
 import Home from './Home'
+import '../index.css';
 import App from "../App";
 import SessionsList from './SessionList';
 import UserProfile from './UserProfile'
