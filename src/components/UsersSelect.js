@@ -42,7 +42,8 @@ function renderSuggestion(suggestionProps) {
     return (
         <MenuItem
             {...itemProps}
-            key={suggestion.label}
+            key={suggestion.uuid}
+            value={suggestion.uuid}
             selected={isHighlighted}
             component="div"
             style={{
@@ -57,6 +58,7 @@ function renderSuggestion(suggestionProps) {
 renderSuggestion.propTypes = {
     highlightedIndex: PropTypes.oneOfType([PropTypes.oneOf([null]), PropTypes.number]).isRequired,
     index: PropTypes.number.isRequired,
+    uuid: PropTypes.string.isRequired,
     itemProps: PropTypes.object.isRequired,
     selectedItem: PropTypes.string.isRequired,
     suggestion: PropTypes.shape({
@@ -65,7 +67,6 @@ renderSuggestion.propTypes = {
 };
 
 function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
-    console.log(suggestions)
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
@@ -118,10 +119,9 @@ export default class UsersSelect extends React.Component {
                 height: theme.spacing(2),
             },
         }));
-        console.log(this.props.suggestions)
         return (
             <div>
-                <Downshift id="downshift-options" onChange={this.props.onSelect}>
+                <Downshift id="downshift-options">
                     {({
                           clearSelection,
                           getInputProps,
@@ -134,11 +134,17 @@ export default class UsersSelect extends React.Component {
                           openMenu,
                           selectedItem,
                       }) => {
-                        const {onBlur, onChange, onFocus, ...inputProps} = getInputProps({
+                        const {onSelect, onBlur, onChange, onFocus, ...inputProps} = getInputProps({
                             onChange: event => {
                                 if (event.target.value === '') {
                                     clearSelection();
                                 }
+                            },
+                            onSelect: event => {
+                                if (event.target.id) {
+                                    this.props.onSelect(event.target.value);
+                                }
+
                             },
                             onFocus: openMenu,
                             placeholder: 'Type to search',
@@ -151,7 +157,7 @@ export default class UsersSelect extends React.Component {
                                     classes,
                                     label: "Assigned Rider",
                                     InputLabelProps: getLabelProps({shrink: true}),
-                                    InputProps: {onBlur, onChange, onFocus},
+                                    InputProps: {onBlur, onChange, onFocus, onSelect},
                                     inputProps,
                                 })}
 
@@ -178,4 +184,3 @@ export default class UsersSelect extends React.Component {
         );
     }
 }
-

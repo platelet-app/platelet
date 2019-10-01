@@ -18,13 +18,14 @@ class TaskDialog extends React.Component {
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.onSelectPickup = this.onSelectPickup.bind(this);
         this.onSelectDropoff = this.onSelectDropoff.bind(this);
+        this.onSelectRider = this.onSelectRider.bind(this);
     }
 
     componentDidMount() {
         if (this.props.task.pickup_address) {
             this.setState({
-                pickupAddress: this.props.task.pickup_address
-            }
+                    pickupAddress: this.props.task.pickup_address
+                }
             )
         }
         if (this.props.task.dropoff_address) {
@@ -144,6 +145,10 @@ class TaskDialog extends React.Component {
         }
     }
 
+    onSelectRider(selectedItem) {
+        //let result = this.props.users.filter(rider => rider.uuid === selectedItem.uuid);
+    }
+
     handleClickOpen() {
         this.setState({open: true});
     }
@@ -164,20 +169,30 @@ class TaskDialog extends React.Component {
         return (
             <div>
                 <TaskCard
-                          title={"Task"}
-                          pickupAddress={this.state.pickupAddress}
-                          dropoffAddress={this.state.dropoffAddress}
-                          assignedRider={this.state.assignedRider}
-                          pickupTime={this.state.pickupTime}
-                          dropoffTime={this.state.dropoffTime}
-                          timestamp={this.state.timestamp}
+                    title={"Task"}
+                    pickupAddress={this.state.pickupAddress}
+                    dropoffAddress={this.state.dropoffAddress}
+                    assignedRider={this.state.assignedRider}
+                    pickupTime={this.state.pickupTime}
+                    dropoffTime={this.state.dropoffTime}
+                    timestamp={this.state.timestamp}
 
-                          onClick={() => {
-                    this.handleClickOpen()
-                }}/>
+                    onClick={() => {
+                        this.handleClickOpen()
+                    }}/>
                 <Dialog fullScreen={true} open={this.state.open} onClose={this.handleClose}
 
                         aria-labelledby="form-dialog-title">
+                    <DialogActions>
+                        <Button onClick={() => {
+                            this.handleClose({
+                                "task": this.props.task.uuid,
+                                "body": document.getElementById("note").value
+                            })
+                        }} color="primary">
+                            Close
+                        </Button>
+                    </DialogActions>
                     <DialogTitle id="form-dialog-title">Task Detail</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -196,7 +211,7 @@ class TaskDialog extends React.Component {
                                                    suggestions={this.props.suggestions}
                                                    address={this.state.dropoffAddress}/>
                         <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
-                                                  onSelect={this.props.onSelect}/>
+                                     onSelect={this.onSelectRider}/>
                         <TextField
                             margin="dense"
                             id="note"
@@ -205,16 +220,6 @@ class TaskDialog extends React.Component {
                             fullWidth
                         />
                     </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => {
-                            this.handleClose({
-                                "task": this.props.task.uuid,
-                                "body": document.getElementById("note").value
-                            })
-                        }} color="primary">
-                            Close
-                        </Button>
-                    </DialogActions>
                 </Dialog>
             </div>
         );

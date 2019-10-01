@@ -65,7 +65,10 @@ class SessionDetail extends React.Component {
             let filteredUsers = [];
             data.map((user) => {
                 if (user.roles.includes("rider")) {
-                    filteredUsers.push({"label": user.name})
+                    filteredUsers.push({
+                        "label": user.name,
+                        "uuid": user.uuid
+                    })
                 }
                 this.setState({
                     filteredUserSuggestions: filteredUsers,
@@ -98,8 +101,8 @@ class SessionDetail extends React.Component {
                       spacing={3}
                       justify={"center"}
                 >
-                    <Grid item><div style={{padding: '1vh 1vw 1vw 1vh'}}>
-                                <AddCircleOutline style={{fontSize: 100, cursor: "pointer", color: "darkblue"}}
+                    <Grid item>
+                                <AddCircleOutline style={{cursor: "pointer", color: "darkblue", width: "280px", height: "180px", margin: "20px 20px 20px 20px"}}
                                                   onClick={() => {
                                                       let date = new Date();
                                                       let newTask = {...this.emptyTask};
@@ -117,7 +120,6 @@ class SessionDetail extends React.Component {
                                                   }
                                                   }
                                 >a</AddCircleOutline>
-                    </div>
                     </Grid>
                     {this.state.tasks.map(task => {
                         if (task.uuid === undefined) {

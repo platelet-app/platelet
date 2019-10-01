@@ -23,7 +23,6 @@ export default class AddressDetailsCollapsible extends React.Component {
     }));
 
     render() {
-        console.log(this.props.address)
         return (
             <div className={this.classes.root}>
                 <FavouriteLocationsSelect id="addressSelect" suggestions={this.props.suggestions}

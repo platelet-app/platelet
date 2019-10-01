@@ -65,7 +65,6 @@ renderSuggestion.propTypes = {
 };
 
 function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
-    console.log(suggestions)
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
@@ -118,10 +117,9 @@ export default class FavouriteLocationsSelect extends React.Component {
                 height: theme.spacing(2),
             },
         }));
-        console.log(this.props.suggestions)
         return (
             <div>
-                <Downshift id="downshift-options" onChange={this.props.onSelect}>
+                <Downshift id="downshift-options" onSelect={this.props.onSelect}>
                     {({
                           clearSelection,
                           getInputProps,
