@@ -146,7 +146,29 @@ class TaskDialog extends React.Component {
     }
 
     onSelectRider(selectedItem) {
-        //let result = this.props.users.filter(rider => rider.uuid === selectedItem.uuid);
+        let result = this.props.users.filter(rider => rider.name === selectedItem);
+        if (result.length === 1) {
+            console.log(this.props.users)
+            this.setState({
+                    assignedRider: {
+                        name: result[0]['name'],
+                        patch: result[0]['patch'],
+                        vehicle: result[0]['vehicle'],
+                        uuid: result[0]['uuid']
+                    },
+                }
+            );
+        } else {
+            this.setState({
+                assignedRider: {
+                    name: "",
+                    patch: "",
+                    vehicle: "",
+                    uuid: null
+                },
+            })
+        }
+        console.log(result)
     }
 
     handleClickOpen() {
@@ -158,8 +180,8 @@ class TaskDialog extends React.Component {
         this.setState({open: false})
         const payload = {
             pickup_address: this.state.pickupAddress,
-            dropoff_address: this.state.dropoffAddress
-            //assigned_rider: this.state.assignedRider.uuid
+            dropoff_address: this.state.dropoffAddress,
+            assigned_rider: this.state.assignedRider.uuid
         };
 
         this.props.apiControl.tasks.updateTask(this.state.uuid, payload)

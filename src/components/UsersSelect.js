@@ -140,9 +140,9 @@ export default class UsersSelect extends React.Component {
                                     clearSelection();
                                 }
                             },
-                            onSelect: event => {
+                            onSelect: (event, key) => {
                                 if (event.target.id) {
-                                    this.props.onSelect(event.target.value);
+                                    this.props.onSelect(selectedItem);
                                 }
 
                             },
