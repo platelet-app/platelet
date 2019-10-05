@@ -195,13 +195,15 @@ class TaskDialog extends React.Component {
 
 
     handleClose() {
-        this.setState({open: false})
+        this.setState({open: false});
         const payload = {
             pickup_address: this.state.pickupAddress,
             dropoff_address: this.state.dropoffAddress,
-            assigned_rider: this.state.assignedRider.uuid
+            assigned_rider: this.state.assignedRider.uuid,
+            pickup_time: this.state.pickupTime,
+            dropoff_time: this.state.dropoffTime
         };
-
+        console.log(payload)
         this.props.apiControl.tasks.updateTask(this.state.uuid, payload)
     }
 
@@ -253,9 +255,9 @@ class TaskDialog extends React.Component {
                         <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
                                      onSelect={this.onSelectRider}/>
 
-                        <ToggleTimeStamp label={"Picked Up"} onSelect={this.onSelectPickedUp}/>
+                        <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
                         {convertDate(this.state.pickupTime)}
-                        <ToggleTimeStamp label={"Delivered"} onSelect={this.onSelectDroppedOff}/>
+                        <ToggleTimeStamp label={"Delivered"}  status={!!this.state.pickupTime} onSelect={this.onSelectDroppedOff}/>
                         {convertDate(this.state.dropoffTime)}
                         <TextField
                             margin="dense"

@@ -4,7 +4,7 @@ import {convertDate} from '../utilities'
 
 export default class toggleTimeStamp extends React.Component {
     state = {
-        selected: false,
+        selected: this.props.status,
     };
 
     render() {

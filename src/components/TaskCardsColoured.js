@@ -17,6 +17,7 @@ export function TaskCard(props) {
             break;
         }
     }
+    console.log(props.pickupTime)
     if (!hasRider) {
         return (
             <div onClick={props.onClick}>
@@ -30,7 +31,7 @@ export function TaskCard(props) {
                 </TaskNew>
             </div>
         )
-    } else if (props.assignedRider && !props.pickupTime) {
+    } else if (hasRider && !props.pickupTime) {
         return (
             <div onClick={props.onClick}>
                 <TaskAssigned>
@@ -44,7 +45,7 @@ export function TaskCard(props) {
                 </TaskAssigned>
             </div>
         )
-    } else if (props.assignedRider && props.pickupTime && !props.dropoffTime) {
+    } else if (hasRider && props.pickupTime && !props.dropoffTime) {
         return (
             <div onClick={props.onClick}>
                 <TaskActive>
