@@ -11,6 +11,7 @@ import AddressDetailsCollapsible from "./AddressDetail";
 import {withRouter} from 'react-router-dom';
 import UsersSelect from "./UsersSelect";
 import ToggleTimeStamp from "./ToggleTimeStamp";
+import {convertDate} from "../utilities.js"
 
 class TaskDialog extends React.Component {
     constructor(props) {
@@ -252,10 +253,10 @@ class TaskDialog extends React.Component {
                         <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
                                      onSelect={this.onSelectRider}/>
 
-                        <ToggleTimeStamp label={"Has been picked up?"} onSelect={this.onSelectPickedUp}/>
-                        {this.state.pickupTime}
-                        <ToggleTimeStamp label={"Has been delivered?"} onSelect={this.onSelectDroppedOff}/>
-                        {this.state.dropoffTime}
+                        <ToggleTimeStamp label={"Picked Up"} onSelect={this.onSelectPickedUp}/>
+                        {convertDate(this.state.pickupTime)}
+                        <ToggleTimeStamp label={"Delivered"} onSelect={this.onSelectDroppedOff}/>
+                        {convertDate(this.state.dropoffTime)}
                         <TextField
                             margin="dense"
                             id="note"

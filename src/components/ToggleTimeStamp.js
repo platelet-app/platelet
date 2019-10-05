@@ -1,5 +1,4 @@
 import React from 'react';
-import CheckIcon from '@material-ui/icons/Check';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import {convertDate} from '../utilities'
 
@@ -11,7 +10,6 @@ export default class toggleTimeStamp extends React.Component {
     render() {
         return (
             <div>
-                {this.props.label}
             <ToggleButton
                 value="check"
                 selected={this.state.selected}
@@ -27,7 +25,7 @@ export default class toggleTimeStamp extends React.Component {
                 }
                 }
             >
-                <CheckIcon/>
+                {this.props.label}
             </ToggleButton>
                 </div>
         );
