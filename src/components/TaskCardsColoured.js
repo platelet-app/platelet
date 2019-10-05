@@ -10,7 +10,14 @@ export function TaskCard(props) {
     const pickupTitle = (props.pickupAddress.ward) ? props.pickupAddress.line1 + " | " + props.pickupAddress.ward : props.pickupAddress.line1;
     const dropoffTitle = (props.dropoffAddress.ward) ? props.dropoffAddress.line1 + " | " + props.dropoffAddress.ward : props.dropoffAddress.line1;
     const rider = (props.assignedRider.name) ? props.assignedRider.name + " | " + props.assignedRider.patch : "";
-    if (props.assignedRider === null) {
+    let hasRider = false;
+    for (const riderValue of Object.values(props.assignedRider)) {
+        if (riderValue !== "") {
+            hasRider = true;
+            break;
+        }
+    }
+    if (!hasRider) {
         return (
             <div onClick={props.onClick}>
                 <TaskNew>

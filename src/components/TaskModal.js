@@ -10,6 +10,7 @@ import {TaskCard} from "./TaskCardsColoured";
 import AddressDetailsCollapsible from "./AddressDetail";
 import {withRouter} from 'react-router-dom';
 import UsersSelect from "./UsersSelect";
+import ToggleTimeStamp from "./ToggleTimeStamp";
 
 class TaskDialog extends React.Component {
     constructor(props) {
@@ -19,6 +20,8 @@ class TaskDialog extends React.Component {
         this.onSelectPickup = this.onSelectPickup.bind(this);
         this.onSelectDropoff = this.onSelectDropoff.bind(this);
         this.onSelectRider = this.onSelectRider.bind(this);
+        this.onSelectPickedUp = this.onSelectPickedUp.bind(this);
+        this.onSelectDroppedOff = this.onSelectDroppedOff.bind(this);
     }
 
     componentDidMount() {
@@ -148,7 +151,6 @@ class TaskDialog extends React.Component {
     onSelectRider(selectedItem) {
         let result = this.props.users.filter(rider => rider.name === selectedItem);
         if (result.length === 1) {
-            console.log(this.props.users)
             this.setState({
                     assignedRider: {
                         name: result[0]['name'],
@@ -168,7 +170,22 @@ class TaskDialog extends React.Component {
                 },
             })
         }
-        console.log(result)
+    }
+
+    onSelectPickedUp(status) {
+        this.setState(
+            {
+                pickupTime: status ? new Date().toISOString() : ""
+            }
+        );
+    }
+
+    onSelectDroppedOff(status) {
+        this.setState(
+            {
+                dropoffTime: status ? new Date().toISOString() : ""
+            }
+        );
     }
 
     handleClickOpen() {
@@ -234,6 +251,11 @@ class TaskDialog extends React.Component {
                                                    address={this.state.dropoffAddress}/>
                         <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
                                      onSelect={this.onSelectRider}/>
+
+                        <ToggleTimeStamp label={"Has been picked up?"} onSelect={this.onSelectPickedUp}/>
+                        {this.state.pickupTime}
+                        <ToggleTimeStamp label={"Has been delivered?"} onSelect={this.onSelectDroppedOff}/>
+                        {this.state.dropoffTime}
                         <TextField
                             margin="dense"
                             id="note"

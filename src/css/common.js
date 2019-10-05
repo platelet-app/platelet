@@ -16,7 +16,7 @@ export const StyledCard = styled(Card)({
 });
 
 export const TaskAdded = styled(Card)({
-    background: 'linear-gradient(0deg, rgba(254, 255, 245,1) 90%, rgba(255,255,255,1) 90%, cornflowerblue 90%, rgba(100,149,237,1) 100%)',
+    background: 'linear-gradient(0deg, rgba(254, 255, 245,1) 90%, rgba(255,255,255,1) 90%, rgba(252, 231, 121, 1) 90%, rgba(252, 231, 121, 1) 100%)',
     border: 0,
     borderRadius: 10,
     boxShadow: '0 3px 5px 2px #303030',
@@ -27,7 +27,7 @@ export const TaskAdded = styled(Card)({
 });
 
 export const TaskNew = styled(Card)({
-    background: 'linear-gradient(0deg, rgba(254, 255, 245,1) 90%, rgba(255,255,255,1) 90%, cornflowerblue 90%, rgba(100,149,237,1) 100%)',
+    background: 'linear-gradient(0deg, rgba(254, 255, 245,1) 90%, rgba(255,255,255,1) 90%, rgba(252, 231, 121, 1) 90%, rgba(252, 231, 121, 1) 100%)',
     border: 0,
     borderRadius: 10,
     boxShadow: '0 3px 5px 2px #303030',
