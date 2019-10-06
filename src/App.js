@@ -21,6 +21,8 @@ class App extends React.Component {
         if (this.props.logout) {
             deleteLogin();
             this.setState({"apiControl": new Control(this.props.apiUrl)})
+            document.location.href = "/";
+
         } else {
             let savedBearer = getLogin();
             if (savedBearer) {
