@@ -176,7 +176,7 @@ class TaskDialog extends React.Component {
     onSelectPickedUp(status) {
         this.setState(
             {
-                pickupTime: status ? new Date().toISOString() : ""
+                pickupTime: status ? new Date().toISOString() : null
             }
         );
     }
@@ -184,7 +184,7 @@ class TaskDialog extends React.Component {
     onSelectDroppedOff(status) {
         this.setState(
             {
-                dropoffTime: status ? new Date().toISOString() : ""
+                dropoffTime: status ? new Date().toISOString() : null
             }
         );
     }
@@ -197,12 +197,12 @@ class TaskDialog extends React.Component {
     handleClose() {
         this.setState({open: false});
         const payload = {
-            pickup_address: this.state.pickupAddress,
-            dropoff_address: this.state.dropoffAddress,
-            assigned_rider: this.state.assignedRider.uuid,
-            pickup_time: this.state.pickupTime,
-            dropoff_time: this.state.dropoffTime
         };
+            if(this.state.pickupAddress) {payload.pickup_address = this.state.pickupAddress;}
+            if(this.state.dropoffAddress) {payload.dropoff_address = this.state.dropoffAddress;}
+            if(this.state.assignedRider.uuid) {payload.assigned_rider = this.state.assignedRider.uuid;}
+            if(this.state.pickupTime) {payload.pickup_time = this.state.pickupTime;}
+            if(this.state.dropoffTime) {payload.dropoff_time = this.state.dropoffTime;}
         console.log(payload)
         this.props.apiControl.tasks.updateTask(this.state.uuid, payload)
     }
@@ -257,7 +257,7 @@ class TaskDialog extends React.Component {
 
                         <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
                         {convertDate(this.state.pickupTime)}
-                        <ToggleTimeStamp label={"Delivered"}  status={!!this.state.pickupTime} onSelect={this.onSelectDroppedOff}/>
+                        <ToggleTimeStamp label={"Delivered"}  status={!!this.state.dropoffTime} onSelect={this.onSelectDroppedOff}/>
                         {convertDate(this.state.dropoffTime)}
                         <TextField
                             margin="dense"
