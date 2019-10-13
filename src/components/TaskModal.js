@@ -26,64 +26,26 @@ class TaskDialog extends React.Component {
         this.sendData = this.sendData.bind(this);
     }
 
-    componentDidMount() {
-        if (this.props.task.pickup_address) {
-            this.setState({
-                    pickupAddress: this.props.task.pickup_address
-                }
-            )
-        }
-        if (this.props.task.dropoff_address) {
-            this.setState({
-                    dropoffAddress: this.props.task.dropoff_address
-                }
-            )
-        }
-        if (this.props.task.rider) {
-            this.setState({
-                    assignedRider: this.props.task.rider
-                }
-            )
-        }
-    }
-
-
     state = {
-        uuid: this.props.task.uuid,
-        assignedRider: {
-            name: "",
-            patch: "",
-            vehicle: "",
-            uuid: ""
-        },
-        contactNumber: this.props.task.contact_number,
-        contactName: this.props.task.contact_name,
-        dropoffTime: this.props.task.dropoff_time,
-        pickupTime: this.props.task.pickup_time,
-        timestamp: this.props.task.timestamp,
-
-        pickupAddress: {
-            ward: "",
-            line1: "",
-            line2: "",
-            town: "",
-            county: "",
-            postcode: "",
-            country: "",
-        },
-        dropoffAddress: {
-            ward: "",
-            line1: "",
-            line2: "",
-            town: "",
-            county: "",
-            postcode: "",
-            country: "",
-        },
-        pickupLabel: "Pick up address",
-        dropoffLabel: "Drop off address",
         open: false,
+        pickupLabel: "Pickup address - ",
+        dropoffLabel: "Dropoff address - "
     };
+
+    componentDidMount() {
+        let pick = "";
+        let drop = "";
+        if (this.props.pickupAddress) {
+            pick = this.props.pickupAddress.line1
+        }
+        if (this.props.dropoffAddress) {
+            drop = this.props.dropoffAddress.line1
+        }
+        this.setState({
+            pickupLabel: this.state.pickupLabel + pick,
+            dropoffLabel: this.state.dropoffLabel + drop
+        })
+    }
 
     onSelectPickup(selectedItem) {
         let result = this.props.locations.filter(location => location.name === selectedItem);
@@ -98,12 +60,16 @@ class TaskDialog extends React.Component {
                 postcode: result[0]['address']['postcode'],
 
             };
+            this.sendData({pickup_address: pickup_address});
+            this.props.updateCallback(this.props.uuid, {pickup_address: pickup_address});
             this.setState({
-                    pickupAddress: pickup_address,
-                    pickupLabel: this.state.pickupLabel + ' - ' + result[0]['address']['line1']
-                }
-            );
-            this.sendData({pickup_address: pickup_address})
+                pickupLabel: "Pickup address - " + pickup_address.line1
+            });
+        }
+        else {
+            this.setState({
+                pickupLabel: "Pickup address - "
+            });
         }
     }
 
@@ -119,19 +85,24 @@ class TaskDialog extends React.Component {
                 county: result[0]['address']['county'],
                 country: result[0]['address']['country'],
                 postcode: result[0]['address']['postcode']}
+            this.sendData({dropoff_address: dropoff_address});
+            this.props.updateCallback(this.props.uuid, {dropoff_address: dropoff_address});
+
             this.setState({
-                    dropoffAddress: dropoff_address,
-                    dropoffLabel: this.state.dropoffLabel + ' - ' + result[0]['address']['line1']
-                }
-            );
-            this.sendData({dropoff_address: dropoff_address})
+                dropoffLabel: "Dropoff address" + dropoff_address.line1
+            });
+        }
+        else {
+            this.setState({
+                dropoffLabel: "Dropoff address - "
+            });
         }
 
     }
 
     sendData(payload) {
         console.log(payload)
-        this.props.apiControl.tasks.updateTask(this.state.uuid, payload)
+        this.props.apiControl.tasks.updateTask(this.props.uuid, payload)
     }
 
     onSelectRider(selectedItem) {
@@ -143,11 +114,9 @@ class TaskDialog extends React.Component {
                 vehicle: result[0]['vehicle'],
                 uuid: result[0]['uuid']
             };
-            this.setState({
-                    assignedRider: rider
-                }
-            );
             this.sendData({assigned_rider: rider.uuid})
+            console.log(rider)
+            this.props.updateCallback(this.props.uuid, {assigned_rider: rider.uuid, rider: rider});
         }
     }
 
@@ -159,16 +128,13 @@ class TaskDialog extends React.Component {
             }
         );
         this.sendData({pickup_time: pickup_time})
+        this.props.updateCallback(this.props.uuid, {pickup_time: pickup_time});
     }
 
     onSelectDroppedOff(status) {
         let dropoff_time = status ? new Date().toISOString() : null
-        this.setState(
-            {
-                dropoffTime: dropoff_time
-            }
-        );
         this.sendData({dropoff_time: dropoff_time})
+        this.props.updateCallback(this.props.uuid, {dropoff_time: dropoff_time});
     }
 
     handleClickOpen() {
@@ -185,12 +151,12 @@ class TaskDialog extends React.Component {
             <div>
                 <TaskCard
                     title={"Task"}
-                    pickupAddress={this.state.pickupAddress}
-                    dropoffAddress={this.state.dropoffAddress}
-                    assignedRider={this.state.assignedRider}
-                    pickupTime={this.state.pickupTime}
-                    dropoffTime={this.state.dropoffTime}
-                    timestamp={this.state.timestamp}
+                    pickupAddress={this.props.pickupAddress}
+                    dropoffAddress={this.props.dropoffAddress}
+                    assignedRider={this.props.assignedRider}
+                    pickupTime={this.props.pickupTime}
+                    dropoffTime={this.props.dropoffTime}
+                    timestamp={this.props.timestamp}
 
                     onClick={() => {
                         this.handleClickOpen()
@@ -201,7 +167,7 @@ class TaskDialog extends React.Component {
                     <DialogActions>
                         <Button onClick={() => {
                             this.handleClose({
-                                "task": this.props.task.uuid,
+                                "task": this.props.uuid,
                                 "body": document.getElementById("note").value
                             })
                         }} color="primary">
@@ -211,27 +177,27 @@ class TaskDialog extends React.Component {
                     <DialogTitle id="form-dialog-title">Task Detail</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Task {this.props.task.uuid} yay!
+                            Task {this.props.uuid} yay!
                         </DialogContentText>
                         <AddressDetailsCollapsible label={this.state.pickupLabel}
                                                    onSelect={this.onSelectPickup}
                                                    locations={this.props.locations}
                                                    suggestions={this.props.suggestions}
-                                                   address={this.state.pickupAddress}
+                                                   address={this.props.pickupAddress}
                         />
                         <br/>
                         <AddressDetailsCollapsible label={this.state.dropoffLabel}
                                                    onSelect={this.onSelectDropoff}
                                                    locations={this.props.locations}
                                                    suggestions={this.props.suggestions}
-                                                   address={this.state.dropoffAddress}/>
+                                                   address={this.props.dropoffAddress}/>
                         <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
                                      onSelect={this.onSelectRider}/>
 
-                        <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
-                        {convertDate(this.state.pickupTime)}
-                        <ToggleTimeStamp label={"Delivered"}  status={!!this.state.dropoffTime} onSelect={this.onSelectDroppedOff}/>
-                        {convertDate(this.state.dropoffTime)}
+                        <ToggleTimeStamp label={"Picked Up"} status={!!this.props.pickupTime} onSelect={this.onSelectPickedUp}/>
+                        {convertDate(this.props.pickupTime)}
+                        <ToggleTimeStamp label={"Delivered"}  status={!!this.props.dropoffTime} onSelect={this.onSelectDroppedOff}/>
+                        {convertDate(this.props.dropoffTime)}
                         <TextField
                             margin="dense"
                             id="note"

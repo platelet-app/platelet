@@ -42,7 +42,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="ward"
                                 label="Ward"
                                 type="text"
-                                value={this.props.address.ward}
+                                value={this.props.address ? this.props.address.ward : ""}
                                 fullWidth
                             />
                             <TextField
@@ -50,7 +50,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="line1"
                                 label="Address Line 1"
                                 type="text"
-                                value={this.props.address.line1}
+                                value={this.props.address ? this.props.address.line1 : ""}
                                 fullWidth
                             />
                             <TextField
@@ -58,7 +58,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="line2"
                                 label="Address Line 2"
                                 type="text"
-                                value={this.props.address.line2}
+                                value={this.props.address ? this.props.address.line2 : ""}
                                 fullWidth
                             />
                             <TextField
@@ -66,7 +66,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="town"
                                 label="Town"
                                 type="text"
-                                value={this.props.address.town}
+                                value={this.props.address ? this.props.address.town : ""}
                                 fullWidth
                             />
                             <TextField
@@ -74,7 +74,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="county"
                                 label="County"
                                 type="text"
-                                value={this.props.address.county}
+                                value={this.props.address ? this.props.address.county : ""}
                                 fullWidth
                             />
                             <TextField
@@ -82,7 +82,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="postcode"
                                 label="Postcode"
                                 type="text"
-                                value={this.props.address.postcode}
+                                value={this.props.address ? this.props.address.postcode : ""}
                                 fullWidth
                             />
                             <TextField
@@ -90,7 +90,7 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 id="Country"
                                 label="Country"
                                 type="text"
-                                value={this.props.address.country}
+                                value={this.props.address ? this.props.address.country : ""}
                                 fullWidth
                             />
                         </div>

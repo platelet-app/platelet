@@ -40,6 +40,11 @@ function orderTaskList(tasks) {
 
 
 class SessionDetail extends React.Component {
+    constructor(props) {
+        super(props)
+        this.updateCallback = this.updateCallback.bind(this);
+
+    }
     componentDidMount() {
         this.props.apiControl.sessions.getSession(this.props.match.params.session_uuid)
             .then((session_data) => {
@@ -94,6 +99,25 @@ class SessionDetail extends React.Component {
         timestamp: new Date().toISOString(),
     };
 
+    updateCallback(uuid, data) {
+        console.log("yaaaaaaaaaa")
+        console.log(uuid, data)
+        let result = this.state.tasks.filter(task => task.uuid === uuid);
+        console.log(result)
+        if (result.length === 1) {
+            const updated_item = {...result[0], ...data};
+            const index = this.state.tasks.indexOf(result[0]);
+            console.log(index)
+            const updated = update(this.state.tasks, {[index]: {$set: updated_item}});
+            const ordered = orderTaskList(updated)
+            console.log(updated)
+            this.setState({
+                tasks: ordered
+            });
+
+        }
+    }
+
     render() {
         return (
             <div>
@@ -125,21 +149,38 @@ class SessionDetail extends React.Component {
                         if (task.uuid === undefined) {
                             return (
                                 <Grid item key={task.uuid}>
-                                    <TaskDialog task={task} apiControl={this.props.apiControl}
+                                    <TaskDialog uuid={task.uuid}
+                                                timestamp={task.timestamp}
+                                                dropoffAddress={task.dropoff_address}
+                                                pickupAddress={task.pickup_address}
+                                                pickupTime={task.pickup_time}
+                                                dropoffTime={task.dropoff_time}
+                                                assignedRider={task.rider}
+                                                apiControl={this.props.apiControl}
                                                 locations={this.state.locationSuggestions}
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
-                                                userSuggestions={this.state.filteredUserSuggestions}/>
+                                                userSuggestions={this.state.filteredUserSuggestions}
+                                                updateCallback={this.updateCallback}/>
                                 </Grid>
                             )
                         } else {
+                            console.log(task.rider)
                             return (
                                 <Grid item key={task.uuid}>
-                                    <TaskDialog task={task} apiControl={this.props.apiControl}
+                                    <TaskDialog uuid={task.uuid}
+                                                timestamp={task.timestamp}
+                                                dropoffAddress={task.dropoff_address}
+                                                pickupAddress={task.pickup_address}
+                                                pickupTime={task.pickup_time}
+                                                dropoffTime={task.dropoff_time}
+                                                assignedRider={task.rider}
+                                                apiControl={this.props.apiControl}
                                                 locations={this.state.locationSuggestions}
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
-                                                userSuggestions={this.state.filteredUserSuggestions}/>
+                                                userSuggestions={this.state.filteredUserSuggestions}
+                                                updateCallback={this.updateCallback}/>
                                 </Grid>
                             )
                         }
