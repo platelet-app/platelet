@@ -23,6 +23,7 @@ class TaskDialog extends React.Component {
         this.onSelectRider = this.onSelectRider.bind(this);
         this.onSelectPickedUp = this.onSelectPickedUp.bind(this);
         this.onSelectDroppedOff = this.onSelectDroppedOff.bind(this);
+        this.sendData = this.sendData.bind(this);
     }
 
     componentDidMount() {
@@ -87,32 +88,22 @@ class TaskDialog extends React.Component {
     onSelectPickup(selectedItem) {
         let result = this.props.locations.filter(location => location.name === selectedItem);
         if (result.length === 1) {
+            let pickup_address = {
+                ward: result[0]['address']['ward'],
+                line1: result[0]['address']['line1'],
+                line2: result[0]['address']['line2'],
+                town: result[0]['address']['town'],
+                county: result[0]['address']['county'],
+                country: result[0]['address']['country'],
+                postcode: result[0]['address']['postcode'],
+
+            };
             this.setState({
-                    pickupAddress: {
-                        ward: result[0]['address']['ward'],
-                        line1: result[0]['address']['line1'],
-                        line2: result[0]['address']['line2'],
-                        town: result[0]['address']['town'],
-                        county: result[0]['address']['county'],
-                        country: result[0]['address']['country'],
-                        postcode: result[0]['address']['postcode'],
-                    },
+                    pickupAddress: pickup_address,
                     pickupLabel: this.state.pickupLabel + ' - ' + result[0]['address']['line1']
                 }
             );
-        } else {
-            this.setState({
-                pickupAddress: {
-                    ward: "",
-                    line1: "",
-                    line2: "",
-                    town: "",
-                    county: "",
-                    country: "",
-                    postcode: ""
-                },
-                pickupLabel: "Pick up address"
-            })
+            this.sendData({pickup_address: pickup_address})
         }
     }
 
@@ -120,73 +111,64 @@ class TaskDialog extends React.Component {
         let result = this.props.locations.filter(location => location.name === selectedItem);
 
         if (result.length === 1) {
+            let dropoff_address = {
+                ward: result[0]['address']['ward'],
+                line1: result[0]['address']['line1'],
+                line2: result[0]['address']['line2'],
+                town: result[0]['address']['town'],
+                county: result[0]['address']['county'],
+                country: result[0]['address']['country'],
+                postcode: result[0]['address']['postcode']}
             this.setState({
-                    dropoffAddress: {
-                        ward: result[0]['address']['ward'],
-                        line1: result[0]['address']['line1'],
-                        line2: result[0]['address']['line2'],
-                        town: result[0]['address']['town'],
-                        county: result[0]['address']['county'],
-                        country: result[0]['address']['country'],
-                        postcode: result[0]['address']['postcode'],
-                    },
+                    dropoffAddress: dropoff_address,
                     dropoffLabel: this.state.dropoffLabel + ' - ' + result[0]['address']['line1']
                 }
             );
-        } else {
-            this.setState({
-                dropoffAddress: {
-                    ward: "",
-                    line1: "",
-                    line2: "",
-                    town: "",
-                    county: "",
-                    country: "",
-                    postcode: ""
-                },
-                dropoffLabel: "Drop off address"
-            })
+            this.sendData({dropoff_address: dropoff_address})
         }
+
+    }
+
+    sendData(payload) {
+        console.log(payload)
+        this.props.apiControl.tasks.updateTask(this.state.uuid, payload)
     }
 
     onSelectRider(selectedItem) {
         let result = this.props.users.filter(rider => rider.name === selectedItem);
         if (result.length === 1) {
+            let rider = {
+                name: result[0]['name'],
+                patch: result[0]['patch'],
+                vehicle: result[0]['vehicle'],
+                uuid: result[0]['uuid']
+            };
             this.setState({
-                    assignedRider: {
-                        name: result[0]['name'],
-                        patch: result[0]['patch'],
-                        vehicle: result[0]['vehicle'],
-                        uuid: result[0]['uuid']
-                    },
+                    assignedRider: rider
                 }
             );
-        } else {
-            this.setState({
-                assignedRider: {
-                    name: "",
-                    patch: "",
-                    vehicle: "",
-                    uuid: null
-                },
-            })
+            this.sendData({assigned_rider: rider.uuid})
         }
     }
 
     onSelectPickedUp(status) {
+        let pickup_time = status ? new Date().toISOString() : null
         this.setState(
             {
-                pickupTime: status ? new Date().toISOString() : null
+                pickupTime: pickup_time
             }
         );
+        this.sendData({pickup_time: pickup_time})
     }
 
     onSelectDroppedOff(status) {
+        let dropoff_time = status ? new Date().toISOString() : null
         this.setState(
             {
-                dropoffTime: status ? new Date().toISOString() : null
+                dropoffTime: dropoff_time
             }
         );
+        this.sendData({dropoff_time: dropoff_time})
     }
 
     handleClickOpen() {
@@ -196,15 +178,6 @@ class TaskDialog extends React.Component {
 
     handleClose() {
         this.setState({open: false});
-        const payload = {
-        };
-            if(this.state.pickupAddress) {payload.pickup_address = this.state.pickupAddress;}
-            if(this.state.dropoffAddress) {payload.dropoff_address = this.state.dropoffAddress;}
-            if(this.state.assignedRider.uuid) {payload.assigned_rider = this.state.assignedRider.uuid;}
-            if(this.state.pickupTime) {payload.pickup_time = this.state.pickupTime;}
-            if(this.state.dropoffTime) {payload.dropoff_time = this.state.dropoffTime;}
-        console.log(payload)
-        this.props.apiControl.tasks.updateTask(this.state.uuid, payload)
     }
 
     render() {
