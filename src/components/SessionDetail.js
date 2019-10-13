@@ -100,17 +100,12 @@ class SessionDetail extends React.Component {
     };
 
     updateCallback(uuid, data) {
-        console.log("yaaaaaaaaaa")
-        console.log(uuid, data)
         let result = this.state.tasks.filter(task => task.uuid === uuid);
-        console.log(result)
         if (result.length === 1) {
             const updated_item = {...result[0], ...data};
             const index = this.state.tasks.indexOf(result[0]);
-            console.log(index)
             const updated = update(this.state.tasks, {[index]: {$set: updated_item}});
             const ordered = orderTaskList(updated)
-            console.log(updated)
             this.setState({
                 tasks: ordered
             });
@@ -129,8 +124,12 @@ class SessionDetail extends React.Component {
                                 <AddCircleOutline style={{cursor: "pointer", color: "darkblue", width: "280px", height: "180px", margin: "20px 20px 20px 20px"}}
                                                   onClick={() => {
                                                       let date = new Date();
+                                                      let nowUtc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+                                                          date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+                                                      let utcDate = new Date(nowUtc);
+                                                      console.log(utcDate)
                                                       let newTask = {...this.emptyTask};
-                                                      newTask.timestamp = date.toISOString();
+                                                      newTask.timestamp = utcDate.toISOString();
                                                       this.setState(({
                                                           tasks: [newTask, ...this.state.tasks]
                                                       }));

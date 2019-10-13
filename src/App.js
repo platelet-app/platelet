@@ -1,6 +1,7 @@
 import React from 'react';
 import Main from './components/Main'
 import Menu from './components/Menu'
+import {ResponsiveDrawer} from './components/Menu'
 import Login from './Login'
 import './index.css'
 import {deleteLogin, getLogin} from "./utilities";
@@ -49,17 +50,7 @@ class App extends React.Component {
                     <React.Fragment>
                         <CssBaseline/>
                         <div className="App">
-                            <Grid container
-                                  spacing={5}
-                                  justify="center"
-                            >
-                                <Grid item xs={12}>
-                                    <Menu></Menu>
-                                </Grid>
-                                <Grid item xs={12}>
-                                </Grid>
-                                <Main apiControl={this.state.apiControl}/>
-                            </Grid>
+                            <ResponsiveDrawer apiControl={this.state.apiControl}/>
                         </div>
                     </React.Fragment>
                 </div>

@@ -84,12 +84,12 @@ class TaskDialog extends React.Component {
                 town: result[0]['address']['town'],
                 county: result[0]['address']['county'],
                 country: result[0]['address']['country'],
-                postcode: result[0]['address']['postcode']}
+                postcode: result[0]['address']['postcode']};
             this.sendData({dropoff_address: dropoff_address});
             this.props.updateCallback(this.props.uuid, {dropoff_address: dropoff_address});
 
             this.setState({
-                dropoffLabel: "Dropoff address" + dropoff_address.line1
+                dropoffLabel: "Dropoff address - " + dropoff_address.line1
             });
         }
         else {

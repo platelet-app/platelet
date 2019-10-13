@@ -3,54 +3,146 @@ import 'typeface-roboto'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import '../index.css'
 import { makeStyles } from '@material-ui/core/styles';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import RestoreIcon from '@material-ui/icons/Restore';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
 
-const useStyles = makeStyles({
+
+
+import AppBar from '@material-ui/core/AppBar';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuIcon from '@material-ui/icons/Menu';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import { useTheme } from '@material-ui/core/styles';
+import Main from "./Main";
+
+
+
+
+
+const drawerWidth = 240;
+
+const useStyles = makeStyles(theme => ({
     root: {
-        width: 500,
+        display: 'flex',
     },
-});
+    drawer: {
+        [theme.breakpoints.up('sm')]: {
+            width: drawerWidth,
+            flexShrink: 0,
+        },
+    },
+    appBar: {
+        marginLeft: drawerWidth,
+        [theme.breakpoints.up('sm')]: {
+            width: `calc(100% - ${drawerWidth}px)`,
+        },
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.up('sm')]: {
+            display: 'none',
+        },
+    },
+    toolbar: theme.mixins.toolbar,
+    drawerPaper: {
+        width: drawerWidth,
+    },
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing(3),
+    },
+}));
 
-export function Mnu() {
+export function ResponsiveDrawer(props) {
+    const { container } = props;
     const classes = useStyles();
-    const [value, setValue] = React.useState(0);
+    const theme = useTheme();
+    const [mobileOpen, setMobileOpen] = React.useState(false);
+
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
+
+    const drawer = (
+        <div>
+            <div className={classes.toolbar} />
+            <Divider />
+            <List component="nav">
+                <ListItem component={Link} to="/" button>
+                    <ListItemIcon><InboxIcon/></ListItemIcon>
+                    <ListItemText primary={"Home"}/>
+                </ListItem>
+                <ListItem component={Link} to="/sessions" button>
+                    <ListItemIcon><InboxIcon/></ListItemIcon>
+                    <ListItemText primary={"Sessions"}/>
+                </ListItem>
+                <ListItem component={Link} to="/profile" button>
+                    <ListItemIcon><InboxIcon/></ListItemIcon>
+                    <ListItemText primary={"Profile"}/>
+                </ListItem>
+            </List>
+        </div>
+    );
 
     return (
-        <BottomNavigation
-            value={value}
-            onChange={(event, newValue) => {
-                setValue(newValue);
-            }}
-            showLabels
-            className={classes.root}
-        >
-            <BottomNavigationAction label="Home" icon={<RestoreIcon />} />
-            <BottomNavigationAction label="Sessions" icon={<FavoriteIcon />} />
-            <BottomNavigationAction to='/profile' label="Profile" icon={<LocationOnIcon />} />
-        </BottomNavigation>
+        <div className={classes.root}>
+            <CssBaseline />
+            <AppBar position="fixed" className={classes.appBar}>
+                <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                        className={classes.menuButton}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" noWrap>
+                        Freewheelers
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <nav className={classes.drawer} aria-label="mailbox folders">
+                {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+                <Hidden smUp implementation="css">
+                    <Drawer
+                        container={container}
+                        variant="temporary"
+                        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+                        open={mobileOpen}
+                        onClose={handleDrawerToggle}
+                        classes={{
+                            paper: classes.drawerPaper,
+                        }}
+                        ModalProps={{
+                            keepMounted: true, // Better open performance on mobile.
+                        }}
+                    >
+                        {drawer}
+                    </Drawer>
+                </Hidden>
+                <Hidden xsDown implementation="css">
+                    <Drawer
+                        classes={{
+                            paper: classes.drawerPaper,
+                        }}
+                        variant="permanent"
+                        open
+                    >
+                        {drawer}
+                    </Drawer>
+                </Hidden>
+            </nav>
+            <Main apiControl={props.apiControl}/>
+        </div>
     );
 }
-
-
-export default class Menu extends React.Component {
-    render() {
-        return (
-            <BottomNavigation>
-                <nav>
-                    <ul>
-                        <li><Link to='/'>Home</Link></li>
-                        <li><Link to='/logout'>Logout</Link></li>
-                        <li><Link to='/sessions'>Sessions</Link></li>
-                        <li><Link to='/profile'>My Profile</Link></li>
-                    </ul>
-                </nav>
-            </BottomNavigation>
-        )
-
-    }
-}
-
