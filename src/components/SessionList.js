@@ -37,10 +37,7 @@ function SessionCard(props) {
             <div key={props.session.uuid}>
                 <StyledCard className={classes.card}>
                     <CardContent>
-                        <Typography className={classes.title}>Session {props.session.uuid}</Typography>
-                        <Typography variant="body2" component="p">
-                            {convertDate(props.session.timestamp)}
-                        </Typography>
+                        <Typography className={classes.title}>Session on {convertDate(props.session.timestamp)} with {props.session.task_count} tasks recorded.</Typography>
                     </CardContent>
                 </StyledCard>
             </div>

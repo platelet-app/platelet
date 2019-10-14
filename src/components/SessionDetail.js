@@ -1,14 +1,17 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import '../App.css';
 import 'typeface-roboto'
 import {StyledCard} from '../css/common';
 import CardContent from '@material-ui/core/CardContent';
+import { withStyles } from '@material-ui/styles';
 import {convertDate} from '../utilities'
 import Grid from "@material-ui/core/Grid";
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import update from 'immutability-helper';
 import TaskDialog from "./TaskModal";
 import {withRouter} from 'react-router-dom'
+import PropTypes from 'prop-types';
 
 
 function orderTaskList(tasks) {
@@ -41,7 +44,7 @@ function orderTaskList(tasks) {
 
 class SessionDetail extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.updateCallback = this.updateCallback.bind(this);
 
     }
@@ -115,7 +118,7 @@ class SessionDetail extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100} }>
                 <Grid container
                       spacing={3}
                       justify={"center"}
@@ -127,7 +130,6 @@ class SessionDetail extends React.Component {
                                                       let nowUtc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
                                                           date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
                                                       let utcDate = new Date(nowUtc);
-                                                      console.log(utcDate)
                                                       let newTask = {...this.emptyTask};
                                                       newTask.timestamp = utcDate.toISOString();
                                                       this.setState(({
@@ -164,7 +166,6 @@ class SessionDetail extends React.Component {
                                 </Grid>
                             )
                         } else {
-                            console.log(task.rider)
                             return (
                                 <Grid item key={task.uuid}>
                                     <TaskDialog uuid={task.uuid}
@@ -193,4 +194,8 @@ class SessionDetail extends React.Component {
     }
 }
 
-export default withRouter(SessionDetail);
+SessionDetail.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default SessionDetail;

@@ -21,7 +21,6 @@ export function TaskCard(props) {
         rider = (props.assignedRider.name) ? props.assignedRider.name + " | " + props.assignedRider.patch : "";
         hasRider = true;
     }
-    console.log(props.pickupTime)
     if (!hasRider) {
         return (
             <div onClick={props.onClick}>

@@ -8,7 +8,6 @@ class UserProfile extends React.Component {
         if (this.props.user_uuid === undefined) {
             this.props.apiControl.users.whoami()
                 .then((my_data) => {
-                    console.log(my_data)
                     this.setState({user_profile: my_data});
                 })
         }
@@ -25,9 +24,6 @@ class UserProfile extends React.Component {
     };
 
     render() {
-
-        console.log(this.state.user_profile)
-
         return (
             <div>
                 <h1>Profile</h1>
