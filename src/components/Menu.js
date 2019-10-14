@@ -88,6 +88,10 @@ export function ResponsiveDrawer(props) {
                     <ListItemIcon><InboxIcon/></ListItemIcon>
                     <ListItemText primary={"Profile"}/>
                 </ListItem>
+                <ListItem component={Link} to="/logout" button>
+                    <ListItemIcon><InboxIcon/></ListItemIcon>
+                    <ListItemText primary={"Logout"}/>
+                </ListItem>
             </List>
         </div>
     );
