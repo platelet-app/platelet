@@ -5,41 +5,13 @@ import 'typeface-roboto'
 import {StyledCard} from '../css/common';
 import CardContent from '@material-ui/core/CardContent';
 import { withStyles } from '@material-ui/styles';
-import {convertDate} from '../utilities'
+import {convertDate, orderTaskList} from '../utilities'
 import Grid from "@material-ui/core/Grid";
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import update from 'immutability-helper';
 import TaskDialog from "./TaskModal";
 import {withRouter} from 'react-router-dom'
 import PropTypes from 'prop-types';
-
-
-function orderTaskList(tasks) {
-    let tasksNew = [];
-    let tasksActive = [];
-    let tasksPickedUp = [];
-    let tasksDelivered = [];
-    tasks.forEach((task) => {
-        if (task.assigned_rider === null) {
-            tasksNew.unshift(task);
-        } else if (task.assigned_rider && !task.pickup_time) {
-            tasksActive.unshift(task);
-        } else if (task.assigned_rider && task.pickup_time && !task.dropoff_time) {
-            tasksPickedUp.unshift(task);
-        } else if (task.dropoff_time) {
-            tasksDelivered.unshift(task);
-        } else {
-            tasksNew.unshift(task);
-        }
-    });
-
-    let result = [];
-    result = result.concat(tasksNew);
-    result = result.concat(tasksActive);
-    result = result.concat(tasksPickedUp);
-    result = result.concat(tasksDelivered);
-    return result;
-}
 
 
 class SessionDetail extends React.Component {
