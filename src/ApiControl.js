@@ -163,6 +163,10 @@ class User {
         return makeFetch(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
     }
 
+    async getAssignedTasks(user_id) {
+        return makeFetch(this.api_url, "user/" + user_id + '/tasks', "GET", this.bearer)
+    }
+
     async whoami() {
         return makeFetch(this.api_url, 'whoami', "GET", this.bearer)
     }

@@ -71,6 +71,7 @@ class SessionDetail extends React.Component {
         });
         this.props.apiControl.users.getUsers().then((data) => {
             let filteredUsers = [];
+            console.log(data)
             data.map((user) => {
                 if (user.roles.includes("rider")) {
                     filteredUsers.push({

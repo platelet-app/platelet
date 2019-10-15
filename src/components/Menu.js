@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'typeface-roboto'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import '../index.css'
@@ -66,6 +66,11 @@ export function ResponsiveDrawer(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [myUUID, setMyUUID] = useState("");
+
+    props.apiControl.users.whoami().then((data) => {
+        setMyUUID(data.uuid)
+    });
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -83,6 +88,10 @@ export function ResponsiveDrawer(props) {
                 <ListItem component={Link} to="/sessions" button>
                     <ListItemIcon><InboxIcon/></ListItemIcon>
                     <ListItemText primary={"Sessions"}/>
+                </ListItem>
+                <ListItem component={Link} to={"/user/" + myUUID + "/tasks"} button>
+                    <ListItemIcon><InboxIcon/></ListItemIcon>
+                    <ListItemText primary={"My Tasks"}/>
                 </ListItem>
                 <ListItem component={Link} to="/profile" button>
                     <ListItemIcon><InboxIcon/></ListItemIcon>

@@ -9,6 +9,7 @@ import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
 import SessionDetail from "./SessionDetail";
 import TaskDetail from "./TaskDetail";
 import Login from "../Login";
+import UsersTasks from "./UsersTasks";
 
 class Main extends React.Component {
     render() {
@@ -21,6 +22,9 @@ class Main extends React.Component {
                     />
                     <Route path='/profile'
                            render={(props) => <UserProfile {...props} apiControl={this.props.apiControl}/>}
+                    />
+                    <Route path='/user/:user_uuid/tasks'
+                           render={(props) => <UsersTasks {...props} apiControl={this.props.apiControl}/>}
                     />
                     <Route path='/session/:session_uuid'
                            render={(props) => <SessionDetail {...props} apiControl={this.props.apiControl}/>}
