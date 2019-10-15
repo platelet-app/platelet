@@ -67,43 +67,76 @@ export function ResponsiveDrawer(props) {
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [myUUID, setMyUUID] = useState("");
+    const [myRoles, setMyRoles] = useState("");
 
     props.apiControl.users.whoami().then((data) => {
         setMyUUID(data.uuid)
+        setMyRoles(data.roles)
     });
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
-    const drawer = (
-        <div>
-            <div className={classes.toolbar} />
-            <Divider />
-            <List component="nav">
-                <ListItem component={Link} to="/" button>
-                    <ListItemIcon><InboxIcon/></ListItemIcon>
-                    <ListItemText primary={"Home"}/>
-                </ListItem>
-                <ListItem component={Link} to="/sessions" button>
-                    <ListItemIcon><InboxIcon/></ListItemIcon>
-                    <ListItemText primary={"Sessions"}/>
-                </ListItem>
-                <ListItem component={Link} to={"/user/" + myUUID + "/tasks"} button>
-                    <ListItemIcon><InboxIcon/></ListItemIcon>
-                    <ListItemText primary={"My Tasks"}/>
-                </ListItem>
-                <ListItem component={Link} to="/profile" button>
-                    <ListItemIcon><InboxIcon/></ListItemIcon>
-                    <ListItemText primary={"Profile"}/>
-                </ListItem>
-                <ListItem component={Link} to="/logout" button>
-                    <ListItemIcon><InboxIcon/></ListItemIcon>
-                    <ListItemText primary={"Logout"}/>
-                </ListItem>
-            </List>
-        </div>
-    );
+    let drawer = {}
+
+    if (myRoles.includes("coordinator") || myRoles.includes("admin")) {
+        drawer = (
+            <div>
+                <div className={classes.toolbar}/>
+                <Divider/>
+                <List component="nav">
+                    <ListItem component={Link} to="/" button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"Home"}/>
+                    </ListItem>
+                    <ListItem component={Link} to="/sessions" button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"Sessions"}/>
+                    </ListItem>
+                    <ListItem component={Link} to={"/user/" + myUUID + "/tasks"} button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"My Tasks"}/>
+                    </ListItem>
+                    <ListItem component={Link} to="/profile" button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"Profile"}/>
+                    </ListItem>
+                    <ListItem component={Link} to="/logout" button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"Logout"}/>
+                    </ListItem>
+                </List>
+            </div>
+        );
+    }
+    else {
+        drawer = (
+            <div>
+                <div className={classes.toolbar}/>
+                <Divider/>
+                <List component="nav">
+                    <ListItem component={Link} to="/" button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"Home"}/>
+                    </ListItem>
+                    <ListItem component={Link} to={"/user/" + myUUID + "/tasks"} button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"My Tasks"}/>
+                    </ListItem>
+                    <ListItem component={Link} to="/profile" button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"Profile"}/>
+                    </ListItem>
+                    <ListItem component={Link} to="/logout" button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"Logout"}/>
+                    </ListItem>
+                </List>
+            </div>
+        );
+
+    }
 
     return (
         <div className={classes.root}>
