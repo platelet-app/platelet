@@ -24,9 +24,6 @@ import { useTheme } from '@material-ui/core/styles';
 import Main from "./Main";
 
 
-
-
-
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -68,10 +65,12 @@ export function ResponsiveDrawer(props) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [myUUID, setMyUUID] = useState("");
     const [myRoles, setMyRoles] = useState("");
+    const [myName, setMyName] = useState("");
 
     props.apiControl.users.whoami().then((data) => {
         setMyUUID(data.uuid)
         setMyRoles(data.roles)
+        setMyName(data.name)
     });
 
     const handleDrawerToggle = () => {
@@ -153,7 +152,7 @@ export function ResponsiveDrawer(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        Freewheelers
+                        Logged in as {myName}
                     </Typography>
                 </Toolbar>
             </AppBar>
