@@ -82,19 +82,15 @@ class SessionDetail extends React.Component {
             const updated_item = {...result[0], ...data};
             const index = this.state.tasks.indexOf(result[0]);
             const updated = update(this.state.tasks, {[index]: {$set: updated_item}});
+            const reordered = orderTaskList(updated);
             this.setState({
-                tasks: updated
+                tasks: reordered
             });
 
         }
     }
 
     reOrderCallback() {
-        const ordered = orderTaskList(this.state.tasks)
-        this.setState({
-            tasks: ordered
-        });
-
 
     }
 

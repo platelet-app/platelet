@@ -12,6 +12,7 @@ import {withRouter} from 'react-router-dom';
 import UsersSelect from "./UsersSelect";
 import ToggleTimeStamp from "./ToggleTimeStamp";
 import {convertDate} from "../utilities.js"
+import update from 'immutability-helper';
 
 class TaskDialog extends React.Component {
     constructor(props) {
@@ -29,7 +30,8 @@ class TaskDialog extends React.Component {
     state = {
         open: false,
         pickupLabel: "Pickup address - ",
-        dropoffLabel: "Dropoff address - "
+        dropoffLabel: "Dropoff address - ",
+        payLoad: {}
     };
 
     componentDidMount() {
@@ -43,7 +45,11 @@ class TaskDialog extends React.Component {
         }
         this.setState({
             pickupLabel: this.state.pickupLabel + pick,
-            dropoffLabel: this.state.dropoffLabel + drop
+            dropoffLabel: this.state.dropoffLabel + drop,
+            pickupTime: this.props.pickupTime,
+            dropoffTime: this.props.dropoffTime,
+            pickupAddress: this.props.pickupAddress,
+            dropoffAddress: this.props.dropoffAddress
         })
     }
 
@@ -61,9 +67,11 @@ class TaskDialog extends React.Component {
 
             };
             this.sendData({pickup_address: pickup_address});
-            this.props.updateCallback(this.props.uuid, {pickup_address: pickup_address});
+            const updated = update(this.state.payLoad, {pickup_address: {$set: pickup_address}})
             this.setState({
-                pickupLabel: "Pickup address - " + pickup_address.line1
+                payLoad: updated,
+                pickupLabel: "Pickup address - " + pickup_address.line1,
+                pickupAddress: pickup_address
             });
         }
         else {
@@ -86,11 +94,13 @@ class TaskDialog extends React.Component {
                 country: result[0]['address']['country'],
                 postcode: result[0]['address']['postcode']};
             this.sendData({dropoff_address: dropoff_address});
-            this.props.updateCallback(this.props.uuid, {dropoff_address: dropoff_address});
-
+            const updated = update(this.state.payLoad, {dropoff_address: {$set: dropoff_address}})
             this.setState({
+                payLoad: updated,
+                dropoffAddress: dropoff_address,
                 dropoffLabel: "Dropoff address - " + dropoff_address.line1
             });
+
         }
         else {
             this.setState({
@@ -101,7 +111,6 @@ class TaskDialog extends React.Component {
     }
 
     sendData(payload) {
-        console.log(payload)
         this.props.apiControl.tasks.updateTask(this.props.uuid, payload)
     }
 
@@ -114,9 +123,18 @@ class TaskDialog extends React.Component {
                 vehicle: result[0]['vehicle'],
                 uuid: result[0]['uuid']
             };
-            this.sendData({assigned_rider: rider.uuid})
-            console.log(rider)
-            this.props.updateCallback(this.props.uuid, {assigned_rider: rider.uuid, rider: rider});
+            this.sendData({assigned_rider: rider.uuid});
+            const updated = update(this.state.payLoad,
+                {
+                    rider:
+                        {$set: rider},
+                    assigned_rider:
+                        {$set: rider.uuid}
+                }
+            );
+            this.setState({
+                payLoad: updated,
+            });
         }
     }
 
@@ -127,14 +145,22 @@ class TaskDialog extends React.Component {
                 pickupTime: pickup_time
             }
         );
-        this.sendData({pickup_time: pickup_time})
-        this.props.updateCallback(this.props.uuid, {pickup_time: pickup_time});
+        this.sendData({pickup_time: pickup_time});
+        const updated = update(this.state.payLoad, {pickup_time: {$set: pickup_time}});
+        this.setState({
+            payLoad: updated,
+            pickupTime: pickup_time
+        });
     }
 
     onSelectDroppedOff(status) {
         let dropoff_time = status ? new Date().toISOString() : null
-        this.sendData({dropoff_time: dropoff_time})
-        this.props.updateCallback(this.props.uuid, {dropoff_time: dropoff_time});
+        this.sendData({dropoff_time: dropoff_time});
+        const updated = update(this.state.payLoad, {dropoff_time: {$set: dropoff_time}});
+        this.setState({
+            payLoad: updated,
+            dropoffTime: dropoff_time
+        });
     }
 
     handleClickOpen() {
@@ -143,8 +169,12 @@ class TaskDialog extends React.Component {
 
 
     handleClose() {
-        this.setState({open: false});
-        this.props.reOrderCallback();
+        console.log(this.state.payLoad);
+        this.props.updateCallback(this.props.uuid, this.state.payLoad);
+        this.setState({
+            open: false,
+            payLoad: {}
+        });
     }
 
     render() {
@@ -184,21 +214,21 @@ class TaskDialog extends React.Component {
                                                    onSelect={this.onSelectPickup}
                                                    locations={this.props.locations}
                                                    suggestions={this.props.suggestions}
-                                                   address={this.props.pickupAddress}
+                                                   address={this.state.pickupAddress}
                         />
                         <br/>
                         <AddressDetailsCollapsible label={this.state.dropoffLabel}
                                                    onSelect={this.onSelectDropoff}
                                                    locations={this.props.locations}
                                                    suggestions={this.props.suggestions}
-                                                   address={this.props.dropoffAddress}/>
+                                                   address={this.state.dropoffAddress}/>
                         <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
                                      onSelect={this.onSelectRider}/>
 
-                        <ToggleTimeStamp label={"Picked Up"} status={!!this.props.pickupTime} onSelect={this.onSelectPickedUp}/>
-                        {convertDate(this.props.pickupTime)}
-                        <ToggleTimeStamp label={"Delivered"}  status={!!this.props.dropoffTime} onSelect={this.onSelectDroppedOff}/>
-                        {convertDate(this.props.dropoffTime)}
+                        <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
+                        {convertDate(this.state.pickupTime)}
+                        <ToggleTimeStamp label={"Delivered"}  status={!!this.state.dropoffTime} onSelect={this.onSelectDroppedOff}/>
+                        {convertDate(this.state.dropoffTime)}
                         <TextField
                             margin="dense"
                             id="note"
