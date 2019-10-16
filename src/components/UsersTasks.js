@@ -47,9 +47,9 @@ class UsersTasks extends React.Component {
             const updated_item = {...result[0], ...data};
             const index = this.state.tasks.indexOf(result[0]);
             const updated = update(this.state.tasks, {[index]: {$set: updated_item}});
-            const ordered = orderTaskList(updated)
+            const reordered = orderTaskList(updated);
             this.setState({
-                tasks: ordered
+                tasks: reordered
             });
 
         }
@@ -77,7 +77,8 @@ class UsersTasks extends React.Component {
                                             suggestions={this.state.filteredLocationSuggestions}
                                             users={this.state.userSuggestions}
                                             userSuggestions={this.state.filteredUserSuggestions}
-                                            updateCallback={this.updateCallback}/>
+                                            updateCallback={this.updateCallback}
+                                            riderView={true}/>
                             </Grid>
                         )
                     })

@@ -31,6 +31,11 @@ class TaskDialog extends React.Component {
         open: false,
         pickupLabel: "Pickup address - ",
         dropoffLabel: "Dropoff address - ",
+        pickupTime: this.props.pickupTime,
+        dropoffTime: this.props.dropoffTime,
+        pickupAddress: this.props.pickupAddress,
+        dropoffAddress: this.props.dropoffAddress,
+        assignedRider: this.props.assignedRider,
         payLoad: {}
     };
 
@@ -46,10 +51,6 @@ class TaskDialog extends React.Component {
         this.setState({
             pickupLabel: this.state.pickupLabel + pick,
             dropoffLabel: this.state.dropoffLabel + drop,
-            pickupTime: this.props.pickupTime,
-            dropoffTime: this.props.dropoffTime,
-            pickupAddress: this.props.pickupAddress,
-            dropoffAddress: this.props.dropoffAddress
         })
     }
 
@@ -134,6 +135,7 @@ class TaskDialog extends React.Component {
             );
             this.setState({
                 payLoad: updated,
+                assignedRider: rider
             });
         }
     }
@@ -205,30 +207,39 @@ class TaskDialog extends React.Component {
                             Close
                         </Button>
                     </DialogActions>
-                    <DialogTitle id="form-dialog-title">Task Detail</DialogTitle>
+                    <DialogTitle id="form-dialog-title">
+                        {this.state.pickupAddress ? this.state.pickupAddress.line1 + " to " : ""} {this.state.dropoffAddress ? this.state.dropoffAddress.line1 + " " : ""} {this.state.assignedRider ? "assigned to " + this.state.assignedRider.name : ""}
+                    </DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
-                            Task {this.props.uuid} yay!
-                        </DialogContentText>
                         <AddressDetailsCollapsible label={this.state.pickupLabel}
                                                    onSelect={this.onSelectPickup}
                                                    locations={this.props.locations}
                                                    suggestions={this.props.suggestions}
                                                    address={this.state.pickupAddress}
+                                                   disabled={this.props.riderView}
                         />
                         <br/>
                         <AddressDetailsCollapsible label={this.state.dropoffLabel}
                                                    onSelect={this.onSelectDropoff}
                                                    locations={this.props.locations}
                                                    suggestions={this.props.suggestions}
-                                                   address={this.state.dropoffAddress}/>
+                                                   address={this.state.dropoffAddress}
+                                                   disabled={this.props.riderView}/>
                         <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
-                                     onSelect={this.onSelectRider}/>
+                                     onSelect={this.onSelectRider}
+                                     disabled={this.props.RiderView}/>
+                         <DialogContentText>
+                             {this.state.assignedRider ? "Currently assigned to " + this.state.assignedRider.name + "." : ""}
+                         </DialogContentText>
 
                         <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
-                        {convertDate(this.state.pickupTime)}
+                        <DialogContentText>
+                            {this.state.pickupTime ? "Picked up at " + convertDate(this.state.pickupTime) : ""}
+                        </DialogContentText>
                         <ToggleTimeStamp label={"Delivered"}  status={!!this.state.dropoffTime} onSelect={this.onSelectDroppedOff}/>
-                        {convertDate(this.state.dropoffTime)}
+                        <DialogContentText>
+                            {this.state.dropoffTime ? "Dropped off at " + convertDate(this.state.dropoffTime) : ""}
+                        </DialogContentText>
                         <TextField
                             margin="dense"
                             id="note"

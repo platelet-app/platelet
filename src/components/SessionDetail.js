@@ -18,7 +18,6 @@ class SessionDetail extends React.Component {
     constructor(props) {
         super(props);
         this.updateCallback = this.updateCallback.bind(this);
-        this.reOrderCallback = this.reOrderCallback.bind(this);
 
     }
     componentDidMount() {
@@ -90,10 +89,6 @@ class SessionDetail extends React.Component {
         }
     }
 
-    reOrderCallback() {
-
-    }
-
     render() {
         return (
             <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100} }>
@@ -140,8 +135,7 @@ class SessionDetail extends React.Component {
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
-                                                updateCallback={this.updateCallback}
-                                                reOrderCallback={this.reOrderCallback}/>
+                                                updateCallback={this.updateCallback}/>
                                 </Grid>
                             )
                         } else {
@@ -159,8 +153,7 @@ class SessionDetail extends React.Component {
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
-                                                updateCallback={this.updateCallback}
-                                                reOrderCallback={this.reOrderCallback}/>
+                                                updateCallback={this.updateCallback}/>
                                 </Grid>
                             )
                         }

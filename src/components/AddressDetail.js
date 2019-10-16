@@ -26,7 +26,8 @@ export default class AddressDetailsCollapsible extends React.Component {
         return (
             <div className={this.classes.root}>
                 <FavouriteLocationsSelect id="addressSelect" suggestions={this.props.suggestions}
-                                          onSelect={this.props.onSelect}/>
+                                          onSelect={this.props.onSelect}
+                                          disabled={this.props.disabled}/>
                 <ExpansionPanel>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon/>}
