@@ -18,6 +18,7 @@ class SessionDetail extends React.Component {
     constructor(props) {
         super(props);
         this.updateCallback = this.updateCallback.bind(this);
+        this.reOrderCallback = this.reOrderCallback.bind(this);
 
     }
     componentDidMount() {
@@ -81,12 +82,20 @@ class SessionDetail extends React.Component {
             const updated_item = {...result[0], ...data};
             const index = this.state.tasks.indexOf(result[0]);
             const updated = update(this.state.tasks, {[index]: {$set: updated_item}});
-            const ordered = orderTaskList(updated)
             this.setState({
-                tasks: ordered
+                tasks: updated
             });
 
         }
+    }
+
+    reOrderCallback() {
+        const ordered = orderTaskList(this.state.tasks)
+        this.setState({
+            tasks: ordered
+        });
+
+
     }
 
     render() {
@@ -135,7 +144,8 @@ class SessionDetail extends React.Component {
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
-                                                updateCallback={this.updateCallback}/>
+                                                updateCallback={this.updateCallback}
+                                                reOrderCallback={this.reOrderCallback}/>
                                 </Grid>
                             )
                         } else {
@@ -153,7 +163,8 @@ class SessionDetail extends React.Component {
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
-                                                updateCallback={this.updateCallback}/>
+                                                updateCallback={this.updateCallback}
+                                                reOrderCallback={this.reOrderCallback}/>
                                 </Grid>
                             )
                         }

@@ -19,11 +19,15 @@ export function deleteLogin() {
 }
 
 export function orderTaskList(tasks) {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAA")
     let tasksNew = [];
     let tasksActive = [];
     let tasksPickedUp = [];
     let tasksDelivered = [];
     tasks.forEach((task) => {
+        if (typeof(task.timestamp) === "string") {
+            task.timestamp = new Date(task.timestamp);
+        }
         if (task.assigned_rider === null) {
             tasksNew.unshift(task);
         } else if (task.assigned_rider && !task.pickup_time) {
@@ -39,24 +43,16 @@ export function orderTaskList(tasks) {
 
     let result = [];
     tasksNew.sort(function(a, b) {
-        a = new Date(a.timestamp);
-        b = new Date(b.timestamp);
-        return a>b ? -1 : a<b ? 1 : 0;
+        return a.timestamp>b.timestamp ? -1 : a.timestamp<b.timestamp ? 1 : 0;
     });
     tasksActive.sort(function(a, b) {
-        a = new Date(a.timestamp);
-        b = new Date(b.timestamp);
-        return a>b ? -1 : a<b ? 1 : 0;
+        return a.timestamp>b.timestamp ? -1 : a.timestamp<b.timestamp ? 1 : 0;
     });
     tasksPickedUp.sort(function(a, b) {
-        a = new Date(a.timestamp);
-        b = new Date(b.timestamp);
-        return a>b ? -1 : a<b ? 1 : 0;
+        return a.timestamp>b.timestamp ? -1 : a.timestamp<b.timestamp ? 1 : 0;
     });
     tasksDelivered.sort(function(a, b) {
-        a = new Date(a.timestamp);
-        b = new Date(b.timestamp);
-        return a>b ? -1 : a<b ? 1 : 0;
+        return a.timestamp>b.timestamp ? -1 : a.timestamp<b.timestamp ? 1 : 0;
     });
     result = result.concat(tasksNew);
     result = result.concat(tasksActive);
