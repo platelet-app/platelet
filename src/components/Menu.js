@@ -13,6 +13,10 @@ import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
+import AppsIcon from '@material-ui/icons/Apps';
+import HomeIcon from '@material-ui/icons/Home';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -82,7 +86,7 @@ export function ResponsiveDrawer(props) {
     if (myRoles.includes("coordinator") || myRoles.includes("admin")) {
         sessionLink =
             <ListItem component={Link} to="/sessions" button>
-                <ListItemIcon><InboxIcon/></ListItemIcon>
+                <ListItemIcon><AppsIcon/></ListItemIcon>
                 <ListItemText primary={"Sessions"}/>
             </ListItem>;
     }
@@ -92,7 +96,7 @@ export function ResponsiveDrawer(props) {
                 <Divider/>
                 <List component="nav">
                     <ListItem component={Link} to="/" button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemIcon><HomeIcon/></ListItemIcon>
                         <ListItemText primary={"Home"}/>
                     </ListItem>
                     {sessionLink}
@@ -101,11 +105,11 @@ export function ResponsiveDrawer(props) {
                         <ListItemText primary={"My Tasks"}/>
                     </ListItem>
                     <ListItem component={Link} to="/profile" button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemIcon><AccountCircleIcon/></ListItemIcon>
                         <ListItemText primary={"Profile"}/>
                     </ListItem>
                     <ListItem component={Link} to="/logout" button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemIcon><ExitToAppIcon/></ListItemIcon>
                         <ListItemText primary={"Logout"}/>
                     </ListItem>
                 </List>
