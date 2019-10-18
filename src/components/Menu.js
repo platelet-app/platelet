@@ -77,10 +77,16 @@ export function ResponsiveDrawer(props) {
         setMobileOpen(!mobileOpen);
     };
 
-    let drawer = {}
+    let sessionLink = <></>;
 
     if (myRoles.includes("coordinator") || myRoles.includes("admin")) {
-        drawer = (
+        sessionLink =
+            <ListItem component={Link} to="/sessions" button>
+                <ListItemIcon><InboxIcon/></ListItemIcon>
+                <ListItemText primary={"Sessions"}/>
+            </ListItem>;
+    }
+        let drawer = (
             <div>
                 <div className={classes.toolbar}/>
                 <Divider/>
@@ -89,10 +95,7 @@ export function ResponsiveDrawer(props) {
                         <ListItemIcon><InboxIcon/></ListItemIcon>
                         <ListItemText primary={"Home"}/>
                     </ListItem>
-                    <ListItem component={Link} to="/sessions" button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
-                        <ListItemText primary={"Sessions"}/>
-                    </ListItem>
+                    {sessionLink}
                     <ListItem component={Link} to={"/user/" + myUUID + "/tasks"} button>
                         <ListItemIcon><InboxIcon/></ListItemIcon>
                         <ListItemText primary={"My Tasks"}/>
@@ -108,34 +111,6 @@ export function ResponsiveDrawer(props) {
                 </List>
             </div>
         );
-    }
-    else {
-        drawer = (
-            <div>
-                <div className={classes.toolbar}/>
-                <Divider/>
-                <List component="nav">
-                    <ListItem component={Link} to="/" button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
-                        <ListItemText primary={"Home"}/>
-                    </ListItem>
-                    <ListItem component={Link} to={"/user/" + myUUID + "/tasks"} button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
-                        <ListItemText primary={"My Tasks"}/>
-                    </ListItem>
-                    <ListItem component={Link} to="/profile" button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
-                        <ListItemText primary={"Profile"}/>
-                    </ListItem>
-                    <ListItem component={Link} to="/logout" button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
-                        <ListItemText primary={"Logout"}/>
-                    </ListItem>
-                </List>
-            </div>
-        );
-
-    }
 
     return (
         <div className={classes.root}>

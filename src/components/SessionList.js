@@ -1,21 +1,14 @@
 import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledCard} from '../css/common';
-//import Card from '@material-ui/core/Card';
+import {StyledAddCircleOutline, StyledCard} from '../css/common';
 import CardContent from '@material-ui/core/CardContent';
 import {makeStyles} from '@material-ui/core/styles';
-import {Typography} from "@material-ui/core";
+import {Hidden, Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
 import Grid from "@material-ui/core/Grid";
-import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import update from 'immutability-helper';
-import {BrowserRouter as Router, Route, Link} from "react-router-dom";
-import SessionDetail from "./SessionDetail";
-import Control from '../ApiControl'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import CssBaseline from '@material-ui/core/CssBaseline';
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles({
     card: {
@@ -35,9 +28,9 @@ function SessionCard(props) {
     return (
         <div>
             <div key={props.session.uuid}>
-                <StyledCard className={classes.card}>
+                <StyledCard>
                     <CardContent>
-                        <Typography className={classes.title}>Session on {convertDate(props.session.timestamp)} with {props.session.task_count} tasks recorded.</Typography>
+                        <Typography className={classes.title}>Session on {convertDate(props.session.timestamp)} with {props.session.task_count ? props.session.task_count : 0} tasks recorded.</Typography>
                     </CardContent>
                 </StyledCard>
             </div>
@@ -58,16 +51,21 @@ class SessionsList extends React.Component {
                         if (data) {
                             this.setState({
                                 sessions: data,
-                                myUUID: my_data.uuid
+                                myUUID: my_data.uuid,
+                                loaded: true
                             });
                         }
+                        this.setState({
+                            loaded: true
+                        });
                     })
             })
     }
 
     state = {
         sessions: [],
-        myUUID: ""
+        myUUID: "",
+        loaded: false
     };
 
     emptySession = {
@@ -76,36 +74,45 @@ class SessionsList extends React.Component {
     };
 
     render() {
+        const circleAdd =
+            <StyledAddCircleOutline
+                                    onClick={() => {
+                                        let date = new Date();
+                                        let newSession = {...this.emptySession};
+                                        newSession.user_id = this.state.myUUID;
+                                        newSession.timestamp = date.toISOString();
+                                        this.setState(({
+                                            sessions: [newSession, ...this.state.sessions]
+                                        }));
+                                        this.props.apiControl.sessions.createSession(newSession).then((data) => {
+                                            const index = this.state.sessions.indexOf(newSession);
+                                            this.setState({
+                                                sessions: update(this.state.sessions, {[index]: {uuid: {$set: data.uuid}}})
+                                            })
+
+                                        })
+                                    }
+                                    }
+            />;
+        let addButton;
+        if (this.state.loaded) {
+            addButton = circleAdd
+        } else {
+            addButton = <></>
+        }
         return (
-            <div>
-                <h1>Sessions</h1>
+            <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100}}>
                 <Grid container
                       spacing={3}
-                      justify={"center"}
+                      direction={"row"}
+                      justify={"flex-start"}
+                      alignItems={"center"}
                 >
-                <Grid item>
-                    <AddCircleOutline style={{cursor: "pointer", color: "darkblue", width: "280px", height: "180px", margin: "20px 20px 20px 20px"}}
-                                      onClick={() => {
-                                          let date = new Date();
-                                          let newSession = {...this.emptySession};
-                                          newSession.user_id = this.state.myUUID;
-                                          newSession.timestamp = date.toISOString();
-                                          this.setState(({
-                                              sessions: [newSession, ...this.state.sessions]
-                                          }));
-                                          this.props.apiControl.sessions.createSession(newSession).then((data) => {
-                                              const index = this.state.sessions.indexOf(newSession);
-                                              this.setState({
-                                                  sessions: update(this.state.sessions, {[index]: {uuid: {$set: data.uuid}}})
-                                              })
-
-                                          })
-                                      }
-                                      }
-                    >a</AddCircleOutline>
+                <Grid item xs={10} sm={5} md={4} lg={3}>
+                    {addButton}
                 </Grid>
                 {this.state.sessions.map((session) => (
-                    <Grid item key={session.uuid}>
+                    <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>
                         <Link to={"/session/" + session.uuid} style={{ textDecoration: 'none' }}>
                             <SessionCard session={session}/>
                         </Link>

@@ -1,16 +1,11 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledCard} from '../css/common';
-import CardContent from '@material-ui/core/CardContent';
-import { withStyles } from '@material-ui/styles';
 import {convertDate, orderTaskList} from '../utilities'
+import {StyledAddCircleOutline} from "../css/common";
 import Grid from "@material-ui/core/Grid";
-import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import update from 'immutability-helper';
 import TaskDialog from "./TaskModal";
-import {withRouter} from 'react-router-dom'
 import PropTypes from 'prop-types';
 
 
@@ -27,9 +22,12 @@ class SessionDetail extends React.Component {
                     this.setState({
                         tasks: orderTaskList(session_data.tasks),
                         timestamp: session_data.timestamp,
-                        uuid: session_data.uuid
+                        uuid: session_data.uuid,
                     });
                 }
+                this.setState({
+                    loaded: true
+                })
             });
         this.props.apiControl.locations.getLocations().then((data) => {
             let filteredSuggestions = [];
@@ -43,7 +41,6 @@ class SessionDetail extends React.Component {
         });
         this.props.apiControl.users.getUsers().then((data) => {
             let filteredUsers = [];
-            console.log(data)
             data.map((user) => {
                 if (user.roles.includes("rider")) {
                     filteredUsers.push({
@@ -67,7 +64,8 @@ class SessionDetail extends React.Component {
         locationSuggestions: [],
         filteredLocationSuggestions: [],
         userSuggestions: [],
-        filteredUserSuggestions: []
+        filteredUserSuggestions: [],
+        loaded: false
     };
 
     emptyTask = {
@@ -90,6 +88,34 @@ class SessionDetail extends React.Component {
     }
 
     render() {
+        const circleAdd =
+            <StyledAddCircleOutline
+                onClick={() => {
+                    let date = new Date();
+                    let nowUtc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+                        date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+                    let utcDate = new Date(nowUtc);
+                    let newTask = {...this.emptyTask};
+                    newTask.timestamp = utcDate.toISOString();
+                    this.setState(({
+                        tasks: [newTask, ...this.state.tasks]
+                    }));
+                    this.props.apiControl.tasks.createTask(newTask).then((data) => {
+                        const index = this.state.tasks.indexOf(newTask);
+                        this.setState({
+                            tasks: update(this.state.tasks, {[index]: {uuid: {$set: data.uuid}}})
+                        })
+
+                    })
+                }
+                }
+            />;
+        let addButton;
+        if (this.state.loaded) {
+            addButton = circleAdd
+        } else {
+            addButton = <></>
+        }
         return (
             <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100} }>
                 <Grid container
@@ -99,27 +125,7 @@ class SessionDetail extends React.Component {
                       alignItems={"center"}
                 >
                     <Grid item xs={10} sm={5} md={4} lg={3}>
-                            <AddCircleOutline style={{cursor: "pointer", color: "darkblue", width: "150px", height: "150px", borderRadius: "50%", background:"white"}}
-                                              onClick={() => {
-                                                  let date = new Date();
-                                                  let nowUtc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
-                                                      date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-                                                  let utcDate = new Date(nowUtc);
-                                                  let newTask = {...this.emptyTask};
-                                                  newTask.timestamp = utcDate.toISOString();
-                                                  this.setState(({
-                                                      tasks: [newTask, ...this.state.tasks]
-                                                  }));
-                                                  this.props.apiControl.tasks.createTask(newTask).then((data) => {
-                                                      const index = this.state.tasks.indexOf(newTask);
-                                                      this.setState({
-                                                          tasks: update(this.state.tasks, {[index]: {uuid: {$set: data.uuid}}})
-                                                      })
-
-                                                  })
-                                              }
-                                              }
-                            />
+                        {addButton}
                     </Grid>
                     {this.state.tasks.map(task => {
                         if (task.uuid === undefined) {
