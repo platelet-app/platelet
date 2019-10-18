@@ -13,28 +13,30 @@ export const StyledAddCircleOutline = styled(AddCircleOutline)( {
     width: "150px",
     height: "150px",
     borderRadius: "50%",
-    background:"white"
+    background:"rgb(250, 248, 248)"
 });
 
 export const StyledCard = styled(Card)({
-    background: 'white',
+    background: "rgb(250, 248, 248)",
     border: 0,
     borderRadius: 10,
     boxShadow: '0 3px 5px 2px #303030',
     color: 'black',
     padding: '1vh 1vw',
     minHeight: '200px',
+    minWidth: '200px',
     height: "100%"
 });
 
 export const TaskAdded = styled(Card)({
-    background: 'linear-gradient(0deg, rgba(254, 255, 245,1) 90%, rgba(255,255,255,1) 90%, rgba(252, 231, 121, 1) 90%, rgba(252, 231, 121, 1) 100%)',
+    background: 'linear-gradient(0deg, rgba(250, 248, 248,1) 90%, rgba(255,255,255,1) 90%, rgba(252, 231, 121, 1) 90%, rgba(252, 231, 121, 1) 100%)',
     border: 0,
     borderRadius: 10,
     boxShadow: '0 3px 5px 2px #303030',
     color: 'black',
     padding: '1vh 1vw',
     minHeight: '200px',
+    minWidth: '200px',
     height: "100%",
     cursor: "pointer"
 });
@@ -47,6 +49,7 @@ export const TaskNew = styled(Card)({
     color: 'black',
     padding: '1vh 1vw',
     minHeight: '200px',
+    minWidth: '200px',
     height: "100%",
     cursor: "pointer"
 });
@@ -59,6 +62,7 @@ export const TaskAssigned = styled(Card)({
     color: 'black',
     padding: '1vh 1vw',
     minHeight: '200px',
+    minWidth: '200px',
     height: "100%",
     cursor: "pointer"
 });
@@ -71,6 +75,7 @@ export const TaskActive = styled(Card)({
     color: 'black',
     padding: '1vh 1vw',
     minHeight: '200px',
+    minWidth: '200px',
     height: "100%",
     cursor: "pointer"
 });
@@ -83,6 +88,7 @@ export const TaskDelivered = styled(Card)({
     color: 'black',
     padding: '1vh 1vw',
     minHeight: '200px',
+    minWidth: '200px',
     height: "100%",
     cursor: "pointer"
 });

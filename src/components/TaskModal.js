@@ -19,9 +19,6 @@ class TaskDialog extends React.Component {
         super(props);
         this.handleClose = this.handleClose.bind(this);
         this.handleClickOpen = this.handleClickOpen.bind(this);
-        this.onSelectPickup = this.onSelectPickup.bind(this);
-        this.onSelectDropoff = this.onSelectDropoff.bind(this);
-        this.onSelectRider = this.onSelectRider.bind(this);
         this.onSelectPickedUp = this.onSelectPickedUp.bind(this);
         this.onSelectDroppedOff = this.onSelectDroppedOff.bind(this);
         this.sendData = this.sendData.bind(this);
@@ -54,90 +51,9 @@ class TaskDialog extends React.Component {
         })
     }
 
-    onSelectPickup(selectedItem) {
-        let result = this.props.locations.filter(location => location.name === selectedItem);
-        if (result.length === 1) {
-            let pickup_address = {
-                ward: result[0]['address']['ward'],
-                line1: result[0]['address']['line1'],
-                line2: result[0]['address']['line2'],
-                town: result[0]['address']['town'],
-                county: result[0]['address']['county'],
-                country: result[0]['address']['country'],
-                postcode: result[0]['address']['postcode'],
-
-            };
-            this.sendData({pickup_address: pickup_address});
-            const updated = update(this.state.payLoad, {pickup_address: {$set: pickup_address}})
-            this.setState({
-                payLoad: updated,
-                pickupLabel: "Pickup address - " + pickup_address.line1,
-                pickupAddress: pickup_address
-            });
-        }
-        else {
-            this.setState({
-                pickupLabel: "Pickup address - "
-            });
-        }
-    }
-
-    onSelectDropoff(selectedItem) {
-        let result = this.props.locations.filter(location => location.name === selectedItem);
-
-        if (result.length === 1) {
-            let dropoff_address = {
-                ward: result[0]['address']['ward'],
-                line1: result[0]['address']['line1'],
-                line2: result[0]['address']['line2'],
-                town: result[0]['address']['town'],
-                county: result[0]['address']['county'],
-                country: result[0]['address']['country'],
-                postcode: result[0]['address']['postcode']};
-            this.sendData({dropoff_address: dropoff_address});
-            const updated = update(this.state.payLoad, {dropoff_address: {$set: dropoff_address}})
-            this.setState({
-                payLoad: updated,
-                dropoffAddress: dropoff_address,
-                dropoffLabel: "Dropoff address - " + dropoff_address.line1
-            });
-
-        }
-        else {
-            this.setState({
-                dropoffLabel: "Dropoff address - "
-            });
-        }
-
-    }
 
     sendData(payload) {
         this.props.apiControl.tasks.updateTask(this.props.uuid, payload)
-    }
-
-    onSelectRider(selectedItem) {
-        let result = this.props.users.filter(rider => rider.name === selectedItem);
-        if (result.length === 1) {
-            let rider = {
-                name: result[0]['name'],
-                patch: result[0]['patch'],
-                vehicle: result[0]['vehicle'],
-                uuid: result[0]['uuid']
-            };
-            this.sendData({assigned_rider: rider.uuid});
-            const updated = update(this.state.payLoad,
-                {
-                    rider:
-                        {$set: rider},
-                    assigned_rider:
-                        {$set: rider.uuid}
-                }
-            );
-            this.setState({
-                payLoad: updated,
-                assignedRider: rider
-            });
-        }
     }
 
     onSelectPickedUp(status) {
@@ -180,6 +96,17 @@ class TaskDialog extends React.Component {
     }
 
     render() {
+        let usersSelect = <></>;
+        if(!this.props.riderView) {
+            usersSelect = <>
+                <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
+                             onSelect={this.onSelectRider}
+                             disabled={this.props.RiderView}/>
+            <DialogContentText>
+                {this.state.assignedRider ? "Currently assigned to " + this.state.assignedRider.name + "." : ""}
+            </DialogContentText>;
+                </>
+        }
         return (
             <div>
                 <TaskCard
@@ -225,12 +152,7 @@ class TaskDialog extends React.Component {
                                                    suggestions={this.props.suggestions}
                                                    address={this.state.dropoffAddress}
                                                    disabled={this.props.riderView}/>
-                        <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
-                                     onSelect={this.onSelectRider}
-                                     disabled={this.props.RiderView}/>
-                         <DialogContentText>
-                             {this.state.assignedRider ? "Currently assigned to " + this.state.assignedRider.name + "." : ""}
-                         </DialogContentText>
+                        {usersSelect}
 
                         <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
                         <DialogContentText>
