@@ -22,7 +22,6 @@ export const TaskAdded = styled(Card)({
     boxShadow: '0 3px 5px 2px #303030',
     color: 'black',
     padding: '1vh 1vw',
-    minWidth: '300px',
     minHeight: '200px'
 });
 
@@ -33,7 +32,6 @@ export const TaskNew = styled(Card)({
     boxShadow: '0 3px 5px 2px #303030',
     color: 'black',
     padding: '1vh 1vw',
-    minWidth: '300px',
     minHeight: '200px'
 });
 
@@ -44,7 +42,6 @@ export const TaskAssigned = styled(Card)({
     boxShadow: '0 3px 5px 2px #303030',
     color: 'black',
     padding: '1vh 1vw',
-    minWidth: '300px',
     minHeight: '200px'
 });
 
@@ -55,7 +52,6 @@ export const TaskActive = styled(Card)({
     boxShadow: '0 3px 5px 2px #303030',
     color: 'black',
     padding: '1vh 1vw',
-    minWidth: '300px',
     minHeight: '200px'
 });
 
@@ -66,7 +62,6 @@ export const TaskDelivered = styled(Card)({
     boxShadow: '0 3px 5px 2px #303030',
     color: 'black',
     padding: '1vh 1vw',
-    minWidth: '300px',
     minHeight: '200px'
 });
 

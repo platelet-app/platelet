@@ -94,35 +94,37 @@ class SessionDetail extends React.Component {
             <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100} }>
                 <Grid container
                       spacing={3}
-                      justify={"center"}
+                      direction={"row"}
+                      justify={"flex-start"}
+                      alignItems={"center"}
                 >
-                    <Grid item>
-                                <AddCircleOutline style={{cursor: "pointer", color: "darkblue", width: "280px", height: "180px", margin: "20px 20px 20px 20px"}}
-                                                  onClick={() => {
-                                                      let date = new Date();
-                                                      let nowUtc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
-                                                          date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-                                                      let utcDate = new Date(nowUtc);
-                                                      let newTask = {...this.emptyTask};
-                                                      newTask.timestamp = utcDate.toISOString();
-                                                      this.setState(({
-                                                          tasks: [newTask, ...this.state.tasks]
-                                                      }));
-                                                      this.props.apiControl.tasks.createTask(newTask).then((data) => {
-                                                          const index = this.state.tasks.indexOf(newTask);
-                                                          this.setState({
-                                                              tasks: update(this.state.tasks, {[index]: {uuid: {$set: data.uuid}}})
-                                                          })
-
+                    <Grid item xs={10} sm={5} md={4} lg={3}>
+                            <AddCircleOutline style={{cursor: "pointer", color: "darkblue", width: "150px", height: "150px", borderRadius: "50%", background:"white"}}
+                                              onClick={() => {
+                                                  let date = new Date();
+                                                  let nowUtc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+                                                      date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+                                                  let utcDate = new Date(nowUtc);
+                                                  let newTask = {...this.emptyTask};
+                                                  newTask.timestamp = utcDate.toISOString();
+                                                  this.setState(({
+                                                      tasks: [newTask, ...this.state.tasks]
+                                                  }));
+                                                  this.props.apiControl.tasks.createTask(newTask).then((data) => {
+                                                      const index = this.state.tasks.indexOf(newTask);
+                                                      this.setState({
+                                                          tasks: update(this.state.tasks, {[index]: {uuid: {$set: data.uuid}}})
                                                       })
-                                                  }
-                                                  }
-                                >a</AddCircleOutline>
+
+                                                  })
+                                              }
+                                              }
+                            />
                     </Grid>
                     {this.state.tasks.map(task => {
                         if (task.uuid === undefined) {
                             return (
-                                <Grid item key={task.uuid}>
+                                <Grid item xs={10} sm={5} md={4} lg={3} key={task.uuid}>
                                     <TaskDialog uuid={task.uuid}
                                                 timestamp={task.timestamp}
                                                 dropoffAddress={task.dropoff_address}
@@ -140,7 +142,7 @@ class SessionDetail extends React.Component {
                             )
                         } else {
                             return (
-                                <Grid item key={task.uuid}>
+                                <Grid item xs={10} sm={5} md={4} lg={3} key={task.uuid}>
                                     <TaskDialog uuid={task.uuid}
                                                 timestamp={task.timestamp}
                                                 dropoffAddress={task.dropoff_address}
@@ -159,8 +161,6 @@ class SessionDetail extends React.Component {
                         }
                     })
                     }
-
-
                 </Grid>
             </div>
         )

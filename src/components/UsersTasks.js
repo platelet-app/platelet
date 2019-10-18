@@ -60,11 +60,13 @@ class UsersTasks extends React.Component {
             <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100}}>
                 <Grid container
                       spacing={3}
-                      justify={"center"}
+                      direction={"row"}
+                      justify={"flex-start"}
+                      alignItems={"center"}
                 >
                     {this.state.tasks.map(task => {
                         return (
-                            <Grid item key={task.uuid}>
+                            <Grid item xs={10} sm={5} md={4} lg={3} key={task.uuid}>
                                 <TaskDialog uuid={task.uuid}
                                             timestamp={task.timestamp}
                                             dropoffAddress={task.dropoff_address}
