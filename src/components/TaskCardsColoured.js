@@ -5,6 +5,7 @@ import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../cs
 import CardContent from '@material-ui/core/CardContent';
 import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
+import Moment from "react-moment";
 
 export function TaskCard(props) {
     let pickupTitle = "";
@@ -29,7 +30,7 @@ export function TaskCard(props) {
                         <h4>{rider}</h4>
                         <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.timestamp)}
+                            <Moment format={"llll"}>{props.timestamp}</Moment>
                         </Typography>
                     </CardContent>
                 </TaskNew>
@@ -43,7 +44,7 @@ export function TaskCard(props) {
                         <h4>{rider}</h4>
                         <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.timestamp)}
+                            <Moment format={"llll"}>{props.timestamp}</Moment>
                         </Typography>
                     </CardContent>
                 </TaskAssigned>
@@ -57,7 +58,7 @@ export function TaskCard(props) {
                         <h4>{rider}</h4>
                         <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.timestamp)}
+                            <Moment format={"llll"}>{props.timestamp}</Moment>
                         </Typography>
                     </CardContent>
                 </TaskActive>
@@ -72,7 +73,7 @@ export function TaskCard(props) {
                         <h4>{rider}</h4>
                         <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.timestamp)}
+                            <Moment format={"llll"}>{props.timestamp}</Moment>
                         </Typography>
                     </CardContent>
                 </TaskDelivered>
@@ -86,7 +87,7 @@ export function TaskCard(props) {
                         <h4>{rider}</h4>
                         <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
                         <Typography variant="body2" component="p">
-                            {convertDate(props.timestamp)}
+                            <Moment format={"llll"}>{props.timestamp}</Moment>
                         </Typography>
                     </CardContent>
                 </TaskAdded>

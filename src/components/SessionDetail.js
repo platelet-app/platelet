@@ -7,6 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import update from 'immutability-helper';
 import TaskDialog from "./TaskModal";
 import PropTypes from 'prop-types';
+import moment from 'moment/min/moment-with-locales';
 
 
 class SessionDetail extends React.Component {
@@ -91,12 +92,9 @@ class SessionDetail extends React.Component {
         const circleAdd =
             <StyledAddCircleOutline
                 onClick={() => {
-                    let date = new Date();
-                    let nowUtc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
-                        date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-                    let utcDate = new Date(nowUtc);
                     let newTask = {...this.emptyTask};
-                    newTask.timestamp = utcDate.toISOString();
+                    newTask.timestamp = moment.utc().toISOString();
+                    console.log(newTask)
                     this.setState(({
                         tasks: [newTask, ...this.state.tasks]
                     }));
@@ -143,7 +141,8 @@ class SessionDetail extends React.Component {
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
-                                                updateCallback={this.updateCallback}/>
+                                                updateCallback={this.updateCallback}
+                                                riderView={false}/>
                                 </Grid>
                             )
                         } else {
@@ -161,7 +160,8 @@ class SessionDetail extends React.Component {
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
-                                                updateCallback={this.updateCallback}/>
+                                                updateCallback={this.updateCallback}
+                                                riderView={false}/>
                                 </Grid>
                             )
                         }

@@ -4,11 +4,12 @@ import 'typeface-roboto'
 import {StyledAddCircleOutline, StyledCard} from '../css/common';
 import CardContent from '@material-ui/core/CardContent';
 import {makeStyles} from '@material-ui/core/styles';
-import {Hidden, Typography} from "@material-ui/core";
+import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
 import Grid from "@material-ui/core/Grid";
 import update from 'immutability-helper';
 import {Link} from "react-router-dom";
+import Moment from "react-moment";
 
 const useStyles = makeStyles({
     card: {
@@ -30,7 +31,7 @@ function SessionCard(props) {
             <div key={props.session.uuid}>
                 <StyledCard>
                     <CardContent>
-                        <Typography className={classes.title}>Session on {convertDate(props.session.timestamp)} with {props.session.task_count ? props.session.task_count : 0} tasks recorded.</Typography>
+                        <Typography className={classes.title}>Session on <Moment format={"llll"}>{props.session.timestamp}</Moment> with {props.session.task_count ? props.session.task_count : 0} tasks recorded.</Typography>
                     </CardContent>
                 </StyledCard>
             </div>

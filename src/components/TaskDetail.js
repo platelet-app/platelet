@@ -3,14 +3,9 @@ import '../App.css';
 import 'typeface-roboto'
 import {StyledCard} from '../css/common';
 import CardContent from '@material-ui/core/CardContent';
-import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from "@material-ui/core";
 import {convertDate} from '../utilities'
 import Grid from "@material-ui/core/Grid";
-
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import CssBaseline from '@material-ui/core/CssBaseline';
 
 function DeliverableCard(props) {
     return (

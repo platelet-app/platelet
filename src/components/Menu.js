@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import 'typeface-roboto'
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import '../index.css'
 import { makeStyles } from '@material-ui/core/styles';
-
+import Moment from "react-moment";
 
 
 import AppBar from '@material-ui/core/AppBar';
@@ -25,6 +25,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { useTheme } from '@material-ui/core/styles';
+import Grid from "@material-ui/core/Grid";
 import Main from "./Main";
 
 
@@ -130,9 +131,18 @@ export function ResponsiveDrawer(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
-                        Logged in as {myName}
-                    </Typography>
+                        <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+                            <Grid item>
+                                <Typography variant="h6" noWrap>
+                                    Logged in as {myName}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h6" noWrap>
+                                    <Moment interval={1000} format={"llll"}/>
+                                </Typography>
+                            </Grid>
+                        </Grid>
                 </Toolbar>
             </AppBar>
             <nav className={classes.drawer} aria-label="mailbox folders">
