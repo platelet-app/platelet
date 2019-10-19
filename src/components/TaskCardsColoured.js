@@ -22,17 +22,20 @@ export function TaskCard(props) {
         rider = (props.assignedRider.name) ? props.assignedRider.name + " | " + props.assignedRider.patch : "";
         hasRider = true;
     }
+    const cardInnerContent =
+        <CardContent>
+            <h4>{rider}</h4>
+            <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
+            <Typography variant="body2" component="p">
+                <Moment format={"llll"}>{props.timestamp}</Moment>
+            </Typography>
+            <h4>{props.priority}</h4>
+        </CardContent>;
     if (!hasRider) {
         return (
             <div onClick={props.onClick}>
                 <TaskNew>
-                    <CardContent>
-                        <h4>{rider}</h4>
-                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
-                        <Typography variant="body2" component="p">
-                            <Moment format={"llll"}>{props.timestamp}</Moment>
-                        </Typography>
-                    </CardContent>
+                    {cardInnerContent}
                 </TaskNew>
             </div>
         )
@@ -40,13 +43,7 @@ export function TaskCard(props) {
         return (
             <div onClick={props.onClick}>
                 <TaskAssigned>
-                    <CardContent>
-                        <h4>{rider}</h4>
-                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
-                        <Typography variant="body2" component="p">
-                            <Moment format={"llll"}>{props.timestamp}</Moment>
-                        </Typography>
-                    </CardContent>
+                    {cardInnerContent}
                 </TaskAssigned>
             </div>
         )
@@ -54,13 +51,7 @@ export function TaskCard(props) {
         return (
             <div onClick={props.onClick}>
                 <TaskActive>
-                    <CardContent>
-                        <h4>{rider}</h4>
-                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
-                        <Typography variant="body2" component="p">
-                            <Moment format={"llll"}>{props.timestamp}</Moment>
-                        </Typography>
-                    </CardContent>
+                    {cardInnerContent}
                 </TaskActive>
             </div>
         )
@@ -69,13 +60,7 @@ export function TaskCard(props) {
         return (
             <div onClick={props.onClick}>
                 <TaskDelivered>
-                    <CardContent>
-                        <h4>{rider}</h4>
-                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
-                        <Typography variant="body2" component="p">
-                            <Moment format={"llll"}>{props.timestamp}</Moment>
-                        </Typography>
-                    </CardContent>
+                    {cardInnerContent}
                 </TaskDelivered>
             </div>
         )
@@ -83,13 +68,7 @@ export function TaskCard(props) {
         return (
             <div onClick={props.onClick}>
                 <TaskAdded>
-                    <CardContent>
-                        <h4>{rider}</h4>
-                        <h5>{pickupTitle}<br/>{dropoffTitle}</h5>
-                        <Typography variant="body2" component="p">
-                            <Moment format={"llll"}>{props.timestamp}</Moment>
-                        </Typography>
-                    </CardContent>
+                    {cardInnerContent}
                 </TaskAdded>
             </div>
         )

@@ -143,6 +143,17 @@ class Session {
 
 }
 
+class Priority {
+    constructor(bearer, api_url){
+        this.bearer = bearer;
+        this.api_url = api_url;
+    }
+
+    async getPriorities() {
+        return makeFetch(this.api_url, "priorities", "GET", this.bearer)
+    }
+}
+
 class User {
     constructor(bearer, api_url){
         this.bearer = bearer;
@@ -232,6 +243,7 @@ class Control {
         this.tasks = new Task(this.bearer, this.api_url);
         this.vehicles = new Vehicle(this.bearer, this.api_url);
         this.locations = new Location(this.bearer, this.api_url);
+        this.priorities = new Priority(this.bearer, this.api_url);
         this.initialised = true;
     }
 }

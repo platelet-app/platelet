@@ -73,9 +73,11 @@ export function ResponsiveDrawer(props) {
     const [myName, setMyName] = useState("");
 
     props.apiControl.users.whoami().then((data) => {
-        setMyUUID(data.uuid)
-        setMyRoles(data.roles)
-        setMyName(data.name)
+        if(data) {
+            setMyUUID(data.uuid);
+            setMyRoles(data.roles);
+            setMyName(data.name);
+        }
     });
 
     const handleDrawerToggle = () => {

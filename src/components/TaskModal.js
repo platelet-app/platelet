@@ -15,6 +15,7 @@ import {convertDate} from "../utilities.js"
 import update from 'immutability-helper';
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
+import PrioritySelect from "./PrioritySelect";
 
 
 class TaskDialog extends React.Component {
@@ -27,6 +28,7 @@ class TaskDialog extends React.Component {
         this.onSelectRider = this.onSelectRider.bind(this);
         this.onSelectPickedUp = this.onSelectPickedUp.bind(this);
         this.onSelectDroppedOff = this.onSelectDroppedOff.bind(this);
+        this.onSelectPriority = this.onSelectPriority.bind(this);
         this.sendData = this.sendData.bind(this);
     }
 
@@ -39,6 +41,7 @@ class TaskDialog extends React.Component {
         pickupAddress: this.props.pickupAddress,
         dropoffAddress: this.props.dropoffAddress,
         assignedRider: this.props.assignedRider,
+        priority: this.props.priority,
         payLoad: {}
     };
 
@@ -115,7 +118,6 @@ class TaskDialog extends React.Component {
     }
 
     sendData(payload) {
-        console.log(payload)
         this.props.apiControl.tasks.updateTask(this.props.uuid, payload)
     }
 
@@ -141,6 +143,22 @@ class TaskDialog extends React.Component {
                 payLoad: updated,
                 assignedRider: rider
             });
+        }
+    }
+
+    onSelectPriority(selectedItemId) {
+        let result = this.props.availablePriorities.filter(item => item.id === selectedItemId);
+        this.sendData({priority_id: selectedItemId});
+        if (result.length === 1) {
+            this.setState({
+                priority: result[0].label
+            });
+            const updated = update(this.state.payLoad, {priority: {$set: result[0].label}});
+            console.log(updated)
+
+            this.setState({
+                payLoad: updated
+            })
         }
     }
 
@@ -174,7 +192,6 @@ class TaskDialog extends React.Component {
     }
 
     handleClose() {
-        console.log(this.state.payLoad);
         this.props.updateCallback(this.props.uuid, this.state.payLoad);
         this.setState({
             open: false,
@@ -213,6 +230,7 @@ class TaskDialog extends React.Component {
                     pickupTime={this.props.pickupTime}
                     dropoffTime={this.props.dropoffTime}
                     timestamp={this.props.timestamp}
+                    priority={this.props.priority}
 
                     onClick={() => {
                         this.handleClickOpen()
@@ -249,6 +267,8 @@ class TaskDialog extends React.Component {
                                                    address={this.state.dropoffAddress}
                                                    disabled={this.props.riderView}/>
                         {usersSelect}
+                        <PrioritySelect priority={this.props.priority} availablePriorities={this.props.availablePriorities} onSelect={this.onSelectPriority}/>
+
 
                         <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
                         <DialogContentText>

@@ -30,6 +30,13 @@ class SessionDetail extends React.Component {
                     loaded: true
                 })
             });
+        this.props.apiControl.priorities.getPriorities().then((data) => {
+            if (data) {
+                this.setState({
+                    availablePriorities: data
+                });
+            }
+        });
         this.props.apiControl.locations.getLocations().then((data) => {
             let filteredSuggestions = [];
             data.map((location) => {
@@ -66,6 +73,7 @@ class SessionDetail extends React.Component {
         filteredLocationSuggestions: [],
         userSuggestions: [],
         filteredUserSuggestions: [],
+        availablePriorities: [],
         loaded: false
     };
 
@@ -75,6 +83,7 @@ class SessionDetail extends React.Component {
     };
 
     updateCallback(uuid, data) {
+        console.log(data)
         let result = this.state.tasks.filter(task => task.uuid === uuid);
         if (result.length === 1) {
             const updated_item = {...result[0], ...data};
@@ -136,11 +145,13 @@ class SessionDetail extends React.Component {
                                                 pickupTime={task.pickup_time}
                                                 dropoffTime={task.dropoff_time}
                                                 assignedRider={task.rider}
+                                                priority={task.priority}
                                                 apiControl={this.props.apiControl}
                                                 locations={this.state.locationSuggestions}
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
+                                                availablePriorities={this.state.availablePriorities}
                                                 updateCallback={this.updateCallback}
                                                 riderView={false}/>
                                 </Grid>
@@ -155,11 +166,13 @@ class SessionDetail extends React.Component {
                                                 pickupTime={task.pickup_time}
                                                 dropoffTime={task.dropoff_time}
                                                 assignedRider={task.rider}
+                                                priority={task.priority}
                                                 apiControl={this.props.apiControl}
                                                 locations={this.state.locationSuggestions}
                                                 suggestions={this.state.filteredLocationSuggestions}
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
+                                                availablePriorities={this.state.availablePriorities}
                                                 updateCallback={this.updateCallback}
                                                 riderView={false}/>
                                 </Grid>
