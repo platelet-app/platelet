@@ -1,17 +1,10 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledCard} from '../css/common';
-import CardContent from '@material-ui/core/CardContent';
-import {withStyles} from '@material-ui/styles';
 import { orderTaskList } from '../utilities'
 import Grid from "@material-ui/core/Grid";
-import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import update from 'immutability-helper';
 import TaskDialog from "./TaskModal";
-import {withRouter} from 'react-router-dom'
-import PropTypes from 'prop-types';
 
 
 class UsersTasks extends React.Component {
@@ -30,6 +23,13 @@ class UsersTasks extends React.Component {
                     });
                 }
             });
+        this.props.apiControl.priorities.getPriorities().then((data) => {
+            if (data) {
+                this.setState({
+                    availablePriorities: data
+                });
+            }
+        });
     }
 
     state = {
@@ -74,6 +74,7 @@ class UsersTasks extends React.Component {
                                             pickupTime={task.pickup_time}
                                             dropoffTime={task.dropoff_time}
                                             assignedRider={task.rider}
+                                            priority={task.priority}
                                             apiControl={this.props.apiControl}
                                             locations={this.state.locationSuggestions}
                                             suggestions={this.state.filteredLocationSuggestions}

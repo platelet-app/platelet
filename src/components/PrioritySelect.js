@@ -23,9 +23,8 @@ const useStyles = makeStyles(theme => ({
 export default function PrioritySelect(props) {
     const classes = useStyles();
     let result = props.availablePriorities.filter(item => item.label === props.priority);
-    console.log(result[0].id)
     const [values, setValues] = React.useState({
-        priority: result[0].id
+        priority: result.length === 1 ? result[0].id : null
     });
 
 

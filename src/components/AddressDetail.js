@@ -101,6 +101,14 @@ export default class AddressDetailsCollapsible extends React.Component {
                                 value={this.props.address ? this.props.address.country : ""}
                                 fullWidth
                             />
+                            <TextField
+                                margin="dense"
+                                id="what3words"
+                                label="what3words"
+                                type="text"
+                                value={this.props.address ? this.props.address.what3words : ""}
+                                fullWidth
+                            />
                         </div>
                     </ExpansionPanelDetails>
                 </ExpansionPanel>

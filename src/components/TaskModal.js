@@ -212,6 +212,11 @@ class TaskDialog extends React.Component {
                     </DialogContentText>
                 </>;
         }
+        let prioritySelect = <PrioritySelect priority={this.props.priority} availablePriorities={this.props.availablePriorities} onSelect={this.onSelectPriority}/>;
+        if (this.props.riderView) {
+            prioritySelect = <><br/><DialogContentText>Priority {this.props.priority}</DialogContentText></>
+
+        }
         let pickupTimeNotice = <></>;
         if (this.state.pickupTime) {
             pickupTimeNotice = <>Picked up at <Moment format={"llll"}>{this.state.pickupTime}</Moment></>
@@ -267,7 +272,7 @@ class TaskDialog extends React.Component {
                                                    address={this.state.dropoffAddress}
                                                    disabled={this.props.riderView}/>
                         {usersSelect}
-                        <PrioritySelect priority={this.props.priority} availablePriorities={this.props.availablePriorities} onSelect={this.onSelectPriority}/>
+                        {prioritySelect}
 
 
                         <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
