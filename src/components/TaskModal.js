@@ -11,7 +11,6 @@ import AddressDetailsCollapsible from "./AddressDetail";
 import {withRouter} from 'react-router-dom';
 import UsersSelect from "./UsersSelect";
 import ToggleTimeStamp from "./ToggleTimeStamp";
-import {convertDate} from "../utilities.js"
 import update from 'immutability-helper';
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
@@ -212,10 +211,15 @@ class TaskDialog extends React.Component {
                     </DialogContentText>
                 </>;
         }
-        let prioritySelect = <PrioritySelect priority={this.props.priority} availablePriorities={this.props.availablePriorities} onSelect={this.onSelectPriority}/>;
+        let prioritySelect = <></>
         if (this.props.riderView) {
-            prioritySelect = <><br/><DialogContentText>Priority {this.props.priority}</DialogContentText></>
+            prioritySelect = this.props.priority ? <><br/><DialogContentText>Priority {this.props.priority}</DialogContentText></> : ""
 
+        }
+        else {
+            prioritySelect = <PrioritySelect priority={this.props.priority}
+                                                 availablePriorities={this.props.availablePriorities}
+                                                 onSelect={this.onSelectPriority}/>;
         }
         let pickupTimeNotice = <></>;
         if (this.state.pickupTime) {

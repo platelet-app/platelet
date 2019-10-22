@@ -139,11 +139,6 @@ export function ResponsiveDrawer(props) {
                                     Logged in as {myName}
                                 </Typography>
                             </Grid>
-                            <Grid item>
-                                <Typography variant="h6" noWrap>
-                                    <Moment interval={1000} format={"llll"}/>
-                                </Typography>
-                            </Grid>
                         </Grid>
                 </Toolbar>
             </AppBar>
