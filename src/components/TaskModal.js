@@ -275,14 +275,18 @@ class TaskDialog extends React.Component {
                                                    suggestions={this.props.suggestions}
                                                    address={this.state.dropoffAddress}
                                                    disabled={this.props.riderView}/>
+                        <br/>
                         {usersSelect}
+                        <br/>
                         {prioritySelect}
 
+                        <br/>
 
                         <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
                         <DialogContentText>
                             {pickupTimeNotice}
                         </DialogContentText>
+                        <br/>
                         <ToggleTimeStamp label={"Delivered"}  status={!!this.state.dropoffTime} onSelect={this.onSelectDroppedOff}/>
                         <DialogContentText>
                             {dropoffTimeNotice}
