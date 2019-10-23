@@ -121,7 +121,7 @@ class TaskDialog extends React.Component {
     }
 
     onSelectRider(selectedItem) {
-        let result = this.props.users.filter(rider => rider.name === selectedItem);
+        let result = this.props.users.filter(rider => rider.display_name === selectedItem);
         if (result.length === 1) {
             let rider = {
                 name: result[0]['name'],

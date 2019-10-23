@@ -52,7 +52,7 @@ class SessionDetail extends React.Component {
             data.map((user) => {
                 if (user.roles.includes("rider")) {
                     filteredUsers.push({
-                        "label": user.name,
+                        "label": user.display_name,
                         "uuid": user.uuid
                     })
                 }
