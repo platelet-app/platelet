@@ -16,6 +16,15 @@ export const StyledAddCircleOutline = styled(AddCircleOutline)( {
     background:"rgb(250, 248, 248)"
 });
 
+export const StyledAddCircleOutlineSmall = styled(AddCircleOutline)( {
+    cursor: "pointer",
+    color: "darkblue",
+    width: "50px",
+    height: "50px",
+    borderRadius: "50%",
+    background:"rgb(250, 248, 248)"
+});
+
 export const StyledCard = styled(Card)({
     background: "rgb(250, 248, 248)",
     border: 0,

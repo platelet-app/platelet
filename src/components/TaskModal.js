@@ -15,6 +15,7 @@ import update from 'immutability-helper';
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
 import PrioritySelect from "./PrioritySelect";
+import DeliverableGridSelect from "./DeliverableGridSelect";
 
 
 class TaskDialog extends React.Component {
@@ -279,6 +280,13 @@ class TaskDialog extends React.Component {
                         {usersSelect}
                         <br/>
                         {prioritySelect}
+
+                        <br/>
+
+                        <DialogContentText>
+                            Add a deliverable
+                        </DialogContentText>
+                        <DeliverableGridSelect apiControl={this.props.apiControl} taskId={this.props.uuid}/>
 
                         <br/>
 

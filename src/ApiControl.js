@@ -116,6 +116,29 @@ class Task {
     }
 }
 
+class Deliverable {
+    constructor(bearer, api_url){
+        this.bearer = bearer;
+        this.api_url = api_url;
+    }
+
+    async getDeliverables(task_id) {
+        return makeFetch(this.api_url, "deliverables" + task_id, "GET", this.bearer)
+    }
+
+    async getDeliverable(deliverable_id) {
+        return makeFetch(this.api_url, "deliverable/" + deliverable_id, "GET", this.bearer)
+    }
+
+    async createDeliverable(input_data) {
+        return makeFetch(this.api_url, "deliverables", "POST", this.bearer, "application/json", input_data)
+    }
+
+    async updateDeliverable(deliverable_id, input_data) {
+        return makeFetch(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
+    }
+}
+
 class Session {
     constructor(bearer, api_url) {
         this.bearer = bearer;
@@ -227,12 +250,15 @@ class Control {
     logout() {
         this.bearer = "";
         this.token = "";
+        this.users = undefined;
         this.sessions = undefined;
         this.notes = undefined;
         this.tasks = undefined;
+        this.deliverables = undefined;
         this.vehicles = undefined;
+        this.locations = undefined;
+        this.priorities = undefined;
         this.initialised = false;
-        this.users = undefined;
     }
 
     initialiseClasses(token) {
@@ -241,6 +267,7 @@ class Control {
         this.sessions = new Session(this.bearer, this.api_url);
         this.notes = new Note(this.bearer, this.api_url);
         this.tasks = new Task(this.bearer, this.api_url);
+        this.deliverables = new Deliverable(this.bearer, this.api_url);
         this.vehicles = new Vehicle(this.bearer, this.api_url);
         this.locations = new Location(this.bearer, this.api_url);
         this.priorities = new Priority(this.bearer, this.api_url);

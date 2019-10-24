@@ -103,14 +103,10 @@ class SessionDetail extends React.Component {
                 onClick={() => {
                     let newTask = {...this.emptyTask};
                     newTask.timestamp = moment.utc().toISOString();
-                    console.log(newTask)
-                    this.setState(({
-                        tasks: [newTask, ...this.state.tasks]
-                    }));
                     this.props.apiControl.tasks.createTask(newTask).then((data) => {
-                        const index = this.state.tasks.indexOf(newTask);
+                        newTask.uuid = data.uuid;
                         this.setState({
-                            tasks: update(this.state.tasks, {[index]: {uuid: {$set: data.uuid}}})
+                            tasks: [newTask, ...this.state.tasks]
                         })
 
                     })
