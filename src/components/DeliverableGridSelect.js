@@ -33,6 +33,14 @@ export default class DeliverableGridSelect extends React.Component {
     }
 
     onSelectDeliverableType(uuid, deliverableType) {
+        let result = this.state.deliverables.filter(deliverable => deliverable.uuid === uuid);
+        if (result.length === 1) {
+            const index = this.state.tasks.indexOf(result[0]);
+            const updated = update(this.state.deliverables, {[index]: {$set: {deliverableType: deliverableType}}});
+            this.setState({
+                deliverables: updated
+            });
+        }
         this.props.onSelect(uuid, deliverableType, "lol")
     }
 
@@ -41,7 +49,7 @@ export default class DeliverableGridSelect extends React.Component {
             <StyledAddCircleOutlineSmall
                 onClick={() => {
                     let newDeliverable = {...this.emptyDeliverable};
-                    console.log(newDeliverable)
+                    console.log(newDeliverable);
                     this.props.apiControl.deliverables.createDeliverable(newDeliverable).then((data) => {
                         newDeliverable.uuid = data.uuid;
                         this.setState({
@@ -66,7 +74,7 @@ export default class DeliverableGridSelect extends React.Component {
                     {circleAdd}
                 </Grid>
                 {this.state.deliverables.map(deliverable => {
-                    return <><Grid item><DeliverableDropSelect availableDeliverables={this.props.availableDeliverables} deliverableType={1} onSelect={this.props.onSelect} uuid={deliverable.uuid}/></Grid></>
+                    return <><Grid item><DeliverableDropSelect key={deliverable.uuid} availableDeliverables={this.props.availableDeliverables} deliverableType={deliverable.type} onSelect={this.props.onSelect} uuid={deliverable.uuid}/></Grid></>
 
                 })
                 }
