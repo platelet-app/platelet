@@ -41,7 +41,7 @@ export default function DeliverableDropSelect(props) {
             ...oldValues,
             [event.target.name]: event.target.value,
         }));
-        props.onSelect(event.target.value);
+        props.onSelect(props.uuid, event.target.value);
     };
 
     let menuItems = [];

@@ -32,13 +32,11 @@ export default class DeliverableGridSelect extends React.Component {
         })
     }
 
-    onSelectDeliverableType(deliverableType) {
-        this.props.onSelect(deliverableType, "lol")
+    onSelectDeliverableType(uuid, deliverableType) {
+        this.props.onSelect(uuid, deliverableType, "lol")
     }
 
     render() {
-        const deliverableSelectRow =
-            <DeliverableDropSelect availableDeliverables={this.props.availableDeliverables} deliverableType={1} onSelect={this.props.onSelect}/>;
         const circleAdd =
             <StyledAddCircleOutlineSmall
                 onClick={() => {
@@ -68,7 +66,8 @@ export default class DeliverableGridSelect extends React.Component {
                     {circleAdd}
                 </Grid>
                 {this.state.deliverables.map(deliverable => {
-                    return <><Grid item>{deliverableSelectRow}</Grid></>
+                    return <><Grid item><DeliverableDropSelect availableDeliverables={this.props.availableDeliverables} deliverableType={1} onSelect={this.props.onSelect} uuid={deliverable.uuid}/></Grid></>
+
                 })
                 }
             </Grid>

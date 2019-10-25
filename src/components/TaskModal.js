@@ -188,7 +188,12 @@ class TaskDialog extends React.Component {
         });
     }
 
-    onSelectDeliverable(selectedType, note) {
+    onSelectDeliverable(uuid, selectedType, note) {
+        console.log(uuid)
+        const payload = {
+            "type_id": selectedType
+        };
+        this.props.apiControl.deliverables.updateDeliverable(uuid, payload);
         console.log(selectedType, note)
     }
 
