@@ -29,6 +29,7 @@ class TaskDialog extends React.Component {
         this.onSelectPickedUp = this.onSelectPickedUp.bind(this);
         this.onSelectDroppedOff = this.onSelectDroppedOff.bind(this);
         this.onSelectPriority = this.onSelectPriority.bind(this);
+        this.onSelectDeliverable = this.onSelectDeliverable.bind(this);
         this.sendData = this.sendData.bind(this);
     }
 
@@ -187,6 +188,10 @@ class TaskDialog extends React.Component {
         });
     }
 
+    onSelectDeliverable(selectedType, note) {
+        console.log(selectedType, note)
+    }
+
     handleClickOpen() {
         this.setState({open: true});
     }
@@ -286,7 +291,7 @@ class TaskDialog extends React.Component {
                         <DialogContentText>
                             Add a deliverable
                         </DialogContentText>
-                        <DeliverableGridSelect apiControl={this.props.apiControl} taskId={this.props.uuid}/>
+                        <DeliverableGridSelect apiControl={this.props.apiControl} taskId={this.props.uuid} availableDeliverables={this.props.availableDeliverables} onSelect={this.onSelectDeliverable}/>
 
                         <br/>
 

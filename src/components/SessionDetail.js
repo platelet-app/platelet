@@ -37,6 +37,11 @@ class SessionDetail extends React.Component {
                 });
             }
         });
+        this.props.apiControl.deliverables.getAvailableDeliverables().then((data) => {
+            this.setState({
+                availableDeliverables: data
+            })
+        });
         this.props.apiControl.locations.getLocations().then((data) => {
             let filteredSuggestions = [];
             data.map((location) => {
@@ -74,6 +79,7 @@ class SessionDetail extends React.Component {
         userSuggestions: [],
         filteredUserSuggestions: [],
         availablePriorities: [],
+        availableDeliverables: [],
         loaded: false
     };
 
@@ -148,6 +154,7 @@ class SessionDetail extends React.Component {
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
                                                 availablePriorities={this.state.availablePriorities}
+                                                availableDeliverables={this.state.availableDeliverables}
                                                 updateCallback={this.updateCallback}
                                                 riderView={false}/>
                                 </Grid>
@@ -169,6 +176,7 @@ class SessionDetail extends React.Component {
                                                 users={this.state.userSuggestions}
                                                 userSuggestions={this.state.filteredUserSuggestions}
                                                 availablePriorities={this.state.availablePriorities}
+                                                availableDeliverables={this.state.availableDeliverables}
                                                 updateCallback={this.updateCallback}
                                                 riderView={false}/>
                                 </Grid>

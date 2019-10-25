@@ -1,11 +1,17 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import {StyledAddCircleOutlineSmall} from "../css/common";
+import DeliverableDropSelect from "./DeliverableDropSelect";
 import {Typography} from "@material-ui/core";
 import update from 'immutability-helper';
 
 
 export default class DeliverableGridSelect extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onSelectDeliverableType = this.onSelectDeliverableType.bind(this);
+    }
+
 
     state = {
         deliverables: []
@@ -26,7 +32,13 @@ export default class DeliverableGridSelect extends React.Component {
         })
     }
 
+    onSelectDeliverableType(deliverableType) {
+        this.props.onSelect(deliverableType, "lol")
+    }
+
     render() {
+        const deliverableSelectRow =
+            <DeliverableDropSelect availableDeliverables={this.props.availableDeliverables} deliverableType={1} onSelect={this.props.onSelect}/>;
         const circleAdd =
             <StyledAddCircleOutlineSmall
                 onClick={() => {
@@ -47,7 +59,7 @@ export default class DeliverableGridSelect extends React.Component {
 
         return (
             <Grid container
-                  spacing={3}
+                  spacing={0}
                   direction={"column"}
                   justify={"flex-start"}
                   alignItems={"flex-start"}
@@ -56,7 +68,7 @@ export default class DeliverableGridSelect extends React.Component {
                     {circleAdd}
                 </Grid>
                 {this.state.deliverables.map(deliverable => {
-                    return <Grid item>{deliverable.uuid}</Grid>
+                    return <><Grid item>{deliverableSelectRow}</Grid></>
                 })
                 }
             </Grid>

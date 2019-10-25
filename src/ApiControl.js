@@ -137,6 +137,9 @@ class Deliverable {
     async updateDeliverable(deliverable_id, input_data) {
         return makeFetch(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
     }
+    async getAvailableDeliverables() {
+        return makeFetch(this.api_url, "deliverables/available", "GET", this.bearer, "application/json")
+    }
 }
 
 class Session {
