@@ -30,6 +30,7 @@ class TaskDialog extends React.Component {
         this.onSelectDroppedOff = this.onSelectDroppedOff.bind(this);
         this.onSelectPriority = this.onSelectPriority.bind(this);
         this.onSelectDeliverable = this.onSelectDeliverable.bind(this);
+        this.onDeliverableNote = this.onDeliverableNote.bind(this);
         this.sendData = this.sendData.bind(this);
     }
 
@@ -188,13 +189,13 @@ class TaskDialog extends React.Component {
         });
     }
 
-    onSelectDeliverable(uuid, selectedType, note) {
+    onSelectDeliverable(uuid, type_id) {
         console.log(uuid)
-        const payload = {
-            "type_id": selectedType
-        };
-        this.props.apiControl.deliverables.updateDeliverable(uuid, payload);
-        console.log(selectedType, note)
+        this.props.apiControl.deliverables.updateDeliverable(uuid, {"type_id": type_id});
+    }
+    onDeliverableNote(uuid, value) {
+        this.props.apiControl.notes.updateNote(uuid, {"body": value});
+
     }
 
     handleClickOpen() {
@@ -296,7 +297,11 @@ class TaskDialog extends React.Component {
                         <DialogContentText>
                             Add a deliverable
                         </DialogContentText>
-                        <DeliverableGridSelect apiControl={this.props.apiControl} taskId={this.props.uuid} availableDeliverables={this.props.availableDeliverables} onSelect={this.onSelectDeliverable}/>
+                        <DeliverableGridSelect apiControl={this.props.apiControl}
+                                               taskId={this.props.uuid}
+                                               availableDeliverables={this.props.availableDeliverables}
+                                               onSelect={this.onSelectDeliverable}
+                                               onNoteChange={this.onDeliverableNote}/>
 
                         <br/>
 

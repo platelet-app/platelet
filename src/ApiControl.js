@@ -91,6 +91,9 @@ class Note {
     async createNote(input_data) {
         return makeFetch(this.api_url, "notes", "POST", this.bearer, "application/json", input_data)
     }
+    async updateNote(note_id, input_data) {
+        return makeFetch(this.api_url, "note/" + note_id, "PUT", this.bearer, "application/json", input_data)
+    }
 }
 
 class Task {

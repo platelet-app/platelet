@@ -20,6 +20,7 @@ export default class DeliverableGridSelect extends React.Component {
     emptyDeliverable = {
         task_id: this.props.taskId,
         timestamp: new Date().toISOString(),
+        desc_note_id: null
     };
 
     componentDidMount() {
@@ -52,8 +53,12 @@ export default class DeliverableGridSelect extends React.Component {
                     console.log(newDeliverable);
                     this.props.apiControl.deliverables.createDeliverable(newDeliverable).then((data) => {
                         newDeliverable.uuid = data.uuid;
-                        this.setState({
-                            deliverables: [newDeliverable, ...this.state.deliverables]
+                        this.props.apiControl.notes.createNote({"deliverable": data.uuid}).then((data) => {
+                            newDeliverable.desc_note_id = data.uuid
+                            this.setState({
+                                deliverables: [newDeliverable, ...this.state.deliverables]
+                            })
+
                         })
 
                     })
@@ -74,7 +79,14 @@ export default class DeliverableGridSelect extends React.Component {
                     {circleAdd}
                 </Grid>
                 {this.state.deliverables.map(deliverable => {
-                    return <><Grid item><DeliverableDropSelect key={deliverable.uuid} availableDeliverables={this.props.availableDeliverables} deliverableType={deliverable.type} onSelect={this.props.onSelect} uuid={deliverable.uuid}/></Grid></>
+                    return <><Grid item>
+                        <DeliverableDropSelect key={deliverable.uuid}
+                                               availableDeliverables={this.props.availableDeliverables}
+                                               deliverable={deliverable}
+                                               onSelect={this.props.onSelect}
+                                               onNoteChange={this.props.onNoteChange}
+                                               uuid={deliverable.uuid}/>
+                    </Grid></>
 
                 })
                 }

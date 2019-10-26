@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DeliverableDropSelect(props) {
     const classes = useStyles();
-    let result = props.availableDeliverables.filter(item => item.name === props.deliverableType);
+    let result = props.availableDeliverables.filter(item => item.name === props.deliverable.type);
     const [values, setValues] = React.useState({
         deliverable: result.length === 1 ? result[0].id : null
     });
@@ -42,6 +42,11 @@ export default function DeliverableDropSelect(props) {
             [event.target.name]: event.target.value,
         }));
         props.onSelect(props.uuid, event.target.value);
+    };
+
+    const handleDescChange = event => {
+        console.log(props.deliverable)
+        props.onNoteChange(props.deliverable.desc_note_id, event.target.value);
     };
 
     let menuItems = [];
@@ -73,7 +78,7 @@ export default function DeliverableDropSelect(props) {
                         </Select>
                     </Grid>
                     <Grid item>
-                        <TextField label={"Description"}/>
+                        <TextField label={"Description"} onChange={handleDescChange}/>
                     </Grid>
                 </Grid>
             </FormControl>
