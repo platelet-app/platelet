@@ -2,7 +2,6 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import {StyledAddCircleOutlineSmall} from "../css/common";
 import DeliverableDropSelect from "./DeliverableDropSelect";
-import {Typography} from "@material-ui/core";
 import update from 'immutability-helper';
 
 
@@ -50,10 +49,9 @@ export default class DeliverableGridSelect extends React.Component {
             <StyledAddCircleOutlineSmall
                 onClick={() => {
                     let newDeliverable = {...this.emptyDeliverable};
-                    console.log(newDeliverable);
                     this.props.apiControl.deliverables.createDeliverable(newDeliverable).then((data) => {
                         newDeliverable.uuid = data.uuid;
-                        this.props.apiControl.notes.createNote({"deliverable": data.uuid}).then((data) => {
+                        this.props.apiControl.notes.createNote({"deliverable_id": data.uuid}).then((data) => {
                             newDeliverable.desc_note_id = data.uuid
                             this.setState({
                                 deliverables: [newDeliverable, ...this.state.deliverables]
