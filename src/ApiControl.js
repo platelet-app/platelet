@@ -234,9 +234,15 @@ class Control {
         this.login = this.login.bind(this);
         this.initialiseClasses = this.initialiseClasses.bind(this);
         this.logout = this.logout.bind(this);
+        this.ping = this.ping.bind(this);
+        this.notifyDown = this.notifyDown.bind(this);
+        this.notifyUp = this.notifyUp.bind(this);
+        this.ping = this.ping.bind(this);
         this.api_url = api_url;
         this.token = "";
         this.bearer = "";
+        this.connected = true;
+        this.connectionReattempts = 0;
         if (bearer) {
             this.initialiseClasses(bearer)
         } else {
@@ -270,6 +276,85 @@ class Control {
             });
     }
 
+    ping() {
+        let self = this;
+        return fetch(this.api_url + 'ping', {
+            method: 'get',
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    if (!this.connected) {
+                        this.notifyUp();
+                        this.connected = true;
+                        this.connectionReattempts = 0;
+
+                    }
+                }
+                else {
+                    if (this.connected) {
+                        this.connectionReattempts = 0;
+                        this.connected = false;
+                        this.notifyDown();
+                    }
+                    else {
+                        if (this.connectionReattempts === 10) {
+                            this.notifyDown();
+                            this.connectionReattempts = 0;
+                        }
+                    }
+                    this.connectionReattempts += 1;
+                }
+            })
+            .catch(function (error) {
+                if (self.connected) {
+                    self.connectionReattempts = 0;
+                    self.connected = false;
+                    self.notifyDown();
+                }
+                else {
+                    if (self.connectionReattempts === 10) {
+                        self.notifyDown();
+                        self.connectionReattempts = 0;
+                    }
+                }
+                self.connectionReattempts += 1;
+                console.log("Request failed", error);
+            });
+    }
+
+    notifyDown() {
+        store.addNotification({
+            title: "Connection to the server has been lost.",
+            message: "Check your internet connection.",
+            type: "warning",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+                duration: 10000,
+                onScreen: true
+            }
+        });
+
+    }
+
+    notifyUp() {
+        store.addNotification({
+            title: "Connection status.",
+            message: "Connection has returned.",
+            type: "success",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+                duration: 10000,
+                onScreen: true
+            }
+        });
+    }
+
     logout() {
         this.bearer = "";
         this.token = "";
@@ -295,6 +380,7 @@ class Control {
         this.locations = new Location(this.bearer, this.api_url);
         this.priorities = new Priority(this.bearer, this.api_url);
         this.initialised = true;
+        setInterval(this.ping, 4000);
     }
 }
 
