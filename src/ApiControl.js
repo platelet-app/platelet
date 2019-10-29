@@ -1,3 +1,5 @@
+import { store } from 'react-notifications-component';
+
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
         return Promise.resolve(response)
@@ -31,6 +33,20 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
             return data;
         }).catch(function (error) {
             console.log('Request failed', error);
+            store.addNotification({
+                title: "An error has occurred.",
+                //TODO: proper error messages from the api
+                message: "For some reason.",
+                type: "danger",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animated", "fadeIn"],
+                animationOut: ["animated", "fadeOut"],
+                dismiss: {
+                    duration: 10000,
+                    onScreen: true
+                }
+            });
             return data;
         });
 

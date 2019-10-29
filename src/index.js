@@ -2,16 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Login from './Login'
 import * as serviceWorker from './serviceWorker';
-import Control from './ApiControl'
 import {BrowserRouter} from 'react-router-dom'
+import ReactNotification from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
 
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
 
 ReactDOM.render((
     <BrowserRouter>
+        <ReactNotification/>
         <App apiUrl={apiUrl}/>
     </BrowserRouter>),
         document.getElementById('root'));
