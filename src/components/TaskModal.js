@@ -16,6 +16,7 @@ import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
 import PrioritySelect from "./PrioritySelect";
 import DeliverableGridSelect from "./DeliverableGridSelect";
+import DeliverableInformation from "./DeliverableInformation";
 
 
 class TaskDialog extends React.Component {
@@ -241,6 +242,18 @@ class TaskDialog extends React.Component {
         if (this.state.dropoffTime) {
             dropoffTimeNotice = <>Dropped off at <Moment format={"llll"}>{this.state.dropoffTime}</Moment></>
         }
+        let deliverableSelect = <DeliverableInformation apiControl={this.props.apiControl} taskId={this.props.uuid}/>;
+        if (!this.props.riderView) {
+            deliverableSelect = <><DialogContentText>
+                Add a deliverable
+            </DialogContentText>
+            <DeliverableGridSelect apiControl={this.props.apiControl}
+            taskId={this.props.uuid}
+            availableDeliverables={this.props.availableDeliverables}
+            onSelect={this.onSelectDeliverable}
+            onNoteChange={this.onDeliverableNote}/>
+        </>;
+        }
         return (
             <div>
                 <TaskCard
@@ -294,15 +307,7 @@ class TaskDialog extends React.Component {
 
                         <br/>
 
-                        <DialogContentText>
-                            Add a deliverable
-                        </DialogContentText>
-                        <DeliverableGridSelect apiControl={this.props.apiControl}
-                                               taskId={this.props.uuid}
-                                               availableDeliverables={this.props.availableDeliverables}
-                                               onSelect={this.onSelectDeliverable}
-                                               onNoteChange={this.onDeliverableNote}/>
-
+                        {deliverableSelect}
                         <br/>
 
                         <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
