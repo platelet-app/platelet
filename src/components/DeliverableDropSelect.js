@@ -1,28 +1,4 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import TextField from "@material-ui/core/TextField";
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grid from "@material-ui/core/Grid";
-
-const useStyles = makeStyles(theme => ({
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
-    },
-}));
-
+/*
 export default class DeliverableDropSelect extends React.Component {
     constructor(props) {
         super(props);
@@ -41,15 +17,14 @@ export default class DeliverableDropSelect extends React.Component {
 
     state = {
         deliverableType: null,
-        description: this.props.deliverable.notes ? this.props.deliverable.notes[0].body : ""
+        description: this.props.deliverable.notes.length ? this.props.deliverable.notes[0].body : "",
+        labelWidth: 0
     };
 
 
-    //const inputLabel = React.useRef(null);
-    //const [labelWidth, setLabelWidth] = React.useState(0);
-    /*React.useEffect(() => {
+    React.useEffect(() => {
         setLabelWidth(inputLabel.current.offsetWidth);
-    }, []);*/
+    }, []);
 
      handleChange = event => {
             this.setState({
@@ -60,13 +35,14 @@ export default class DeliverableDropSelect extends React.Component {
 
     handleDescChange = event => {
         console.log(event)
-        /*if(data !== this.state.description){
+        if(data !== this.state.description){
             this.props.onNoteChange(this.props.deliverable.desc_note_id, data);
             this.setState({
                 description: data
             });
-        }*/
-    };
+        }
+    };*/
+/*
     render() {
 
         let menuItems = [];
@@ -105,4 +81,60 @@ export default class DeliverableDropSelect extends React.Component {
             </form>
         );
     }
+}
+
+*/
+
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
+const useStyles = makeStyles(theme => ({
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
+}));
+
+export default function DeliverableDropSelect(props) {
+    const classes = useStyles();
+    let result = props.availableDeliverables.filter(item => item.name === props.deliverable.type);
+    const [type, setType] = React.useState(result.length === 1 ? result[0].id : null);
+
+
+    let menuItems = [];
+    for (const item of props.availableDeliverables) {
+        menuItems.push(<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)
+    }
+
+
+    const handleChange = event => {
+        setType(event.target.value);
+        props.onSelect(props.uuid, event.target.value);
+    };
+
+    return (
+        <div>
+            <FormControl variant="filled" className={classes.formControl}>
+                <InputLabel id="demo-simple-select-filled-label">Deliverable</InputLabel>
+                <Select
+                    labelId="deliverable-label"
+                    id="deliverable-dropdown"
+                    value={type}
+                    onChange={handleChange}
+                >
+                    <MenuItem value="">
+                        <em>None</em>
+                    </MenuItem>
+                    {menuItems}
+                </Select>
+            </FormControl>
+        </div>
+    );
 }

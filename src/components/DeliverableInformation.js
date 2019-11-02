@@ -21,7 +21,7 @@ export default class DeliverableInformation extends React.Component {
 
     state = {
         deliverables: []
-    }
+    };
 
     render() {
         return (
@@ -34,7 +34,7 @@ export default class DeliverableInformation extends React.Component {
                 {this.state.deliverables.map(deliverable => {
                     return <><Grid item>
                         <DialogContentText>
-                            {deliverable.type ? deliverable.type : "Unknown deliverable type."} {deliverable.notes ? "|" : ""} {deliverable.notes ? deliverable.notes[0].body : ""}
+                            {deliverable.type ? deliverable.type : "Unknown deliverable type."} {deliverable.notes.length ? "|" : ""} {deliverable.notes.length ? deliverable.notes[0].body : ""}
                         </DialogContentText>
                     </Grid></>
 

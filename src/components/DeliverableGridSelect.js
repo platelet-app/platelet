@@ -52,7 +52,7 @@ export default class DeliverableGridSelect extends React.Component {
                     this.props.apiControl.deliverables.createDeliverable(newDeliverable).then((data) => {
                         newDeliverable.uuid = data.uuid;
                         this.props.apiControl.notes.createNote({"deliverable_id": data.uuid}).then((data) => {
-                            newDeliverable.desc_note_id = data.uuid
+                            newDeliverable.desc_note_id = data.uuid;
                             this.setState({
                                 deliverables: [newDeliverable, ...this.state.deliverables]
                             })
