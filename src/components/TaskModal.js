@@ -6,6 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Grid from "@material-ui/core/Grid";
 import {TaskCard} from "./TaskCardsColoured";
 import AddressDetailsCollapsible from "./AddressDetail";
 import {withRouter} from 'react-router-dom';
@@ -83,8 +84,7 @@ class TaskDialog extends React.Component {
                 pickupLabel: "Pickup address - " + pickup_address.line1,
                 pickupAddress: pickup_address
             });
-        }
-        else {
+        } else {
             this.setState({
                 pickupLabel: "Pickup address - "
             });
@@ -102,7 +102,8 @@ class TaskDialog extends React.Component {
                 town: result[0]['address']['town'],
                 county: result[0]['address']['county'],
                 country: result[0]['address']['country'],
-                postcode: result[0]['address']['postcode']};
+                postcode: result[0]['address']['postcode']
+            };
             this.sendData({dropoff_address: dropoff_address});
             const updated = update(this.state.payLoad, {dropoff_address: {$set: dropoff_address}})
             this.setState({
@@ -111,8 +112,7 @@ class TaskDialog extends React.Component {
                 dropoffLabel: "Dropoff address - " + dropoff_address.line1
             });
 
-        }
-        else {
+        } else {
             this.setState({
                 dropoffLabel: "Dropoff address - "
             });
@@ -194,6 +194,7 @@ class TaskDialog extends React.Component {
         console.log(uuid)
         this.props.apiControl.deliverables.updateDeliverable(uuid, {"type_id": type_id});
     }
+
     onDeliverableNote(uuid, value) {
         this.props.apiControl.notes.updateNote(uuid, {"body": value});
 
@@ -213,7 +214,7 @@ class TaskDialog extends React.Component {
 
     render() {
         let usersSelect = <></>;
-        if(!this.props.riderView) {
+        if (!this.props.riderView) {
             usersSelect =
                 <>
                     <UsersSelect id="userSelect" suggestions={this.props.userSuggestions}
@@ -224,15 +225,15 @@ class TaskDialog extends React.Component {
                     </DialogContentText>
                 </>;
         }
-        let prioritySelect = <></>
+        let prioritySelect = <></>;
         if (this.props.riderView) {
-            prioritySelect = this.props.priority ? <><br/><DialogContentText>Priority {this.props.priority}</DialogContentText></> : ""
+            prioritySelect = this.props.priority ? <>
+                <DialogContentText>Priority {this.props.priority}</DialogContentText></> : ""
 
-        }
-        else {
+        } else {
             prioritySelect = <PrioritySelect priority={this.props.priority}
-                                                 availablePriorities={this.props.availablePriorities}
-                                                 onSelect={this.onSelectPriority}/>;
+                                             availablePriorities={this.props.availablePriorities}
+                                             onSelect={this.onSelectPriority}/>;
         }
         let pickupTimeNotice = <></>;
         if (this.state.pickupTime) {
@@ -247,15 +248,15 @@ class TaskDialog extends React.Component {
             deliverableSelect = <><DialogContentText>
                 Add a deliverable
             </DialogContentText>
-            <DeliverableGridSelect apiControl={this.props.apiControl}
-            taskId={this.props.uuid}
-            availableDeliverables={this.props.availableDeliverables}
-            onSelect={this.onSelectDeliverable}
-            onNoteChange={this.onDeliverableNote}/>
-        </>;
+                <DeliverableGridSelect apiControl={this.props.apiControl}
+                                       taskId={this.props.uuid}
+                                       availableDeliverables={this.props.availableDeliverables}
+                                       onSelect={this.onSelectDeliverable}
+                                       onNoteChange={this.onDeliverableNote}/>
+            </>;
         }
         return (
-            <div>
+            <>
                 <TaskCard
                     title={"Task"}
                     pickupAddress={this.props.pickupAddress}
@@ -283,52 +284,81 @@ class TaskDialog extends React.Component {
                         </Button>
                     </DialogActions>
                     <DialogTitle id="form-dialog-title">
-                        {this.state.pickupAddress ? this.state.pickupAddress.line1 + " to " : ""} {this.state.dropoffAddress ? this.state.dropoffAddress.line1 + " " : ""} {this.state.assignedRider ? "assigned to " + this.state.assignedRider.name : ""}
+                        <Grid container
+                              spacing={2}
+                              direction={"column"}
+                              justify={"flex-start"}
+                              alignItems={"flex-start"}>
+                            <Grid item>
+                                {this.state.pickupAddress ? "FROM: " + this.state.pickupAddress.line1 + "." : ""}
+                            </Grid>
+                            <Grid item>
+                                {this.state.dropoffAddress ? "TO: " + this.state.dropoffAddress.line1 + "." : ""}
+                            </Grid>
+                            <Grid item>
+                                {this.state.assignedRider ? "Assigned to: " + this.state.assignedRider.display_name + "." : ""}
+                            </Grid>
+                        </Grid>
                     </DialogTitle>
                     <DialogContent>
-                        <AddressDetailsCollapsible label={this.state.pickupLabel}
-                                                   onSelect={this.onSelectPickup}
-                                                   locations={this.props.locations}
-                                                   suggestions={this.props.suggestions}
-                                                   address={this.state.pickupAddress}
-                                                   disabled={this.props.riderView}
-                        />
-                        <br/>
-                        <AddressDetailsCollapsible label={this.state.dropoffLabel}
-                                                   onSelect={this.onSelectDropoff}
-                                                   locations={this.props.locations}
-                                                   suggestions={this.props.suggestions}
-                                                   address={this.state.dropoffAddress}
-                                                   disabled={this.props.riderView}/>
-                        <br/>
-                        {usersSelect}
-                        <br/>
-                        {prioritySelect}
-
-                        <br/>
-
-                        {deliverableSelect}
-                        <br/>
-
-                        <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime} onSelect={this.onSelectPickedUp}/>
-                        <DialogContentText>
-                            {pickupTimeNotice}
-                        </DialogContentText>
-                        <br/>
-                        <ToggleTimeStamp label={"Delivered"}  status={!!this.state.dropoffTime} onSelect={this.onSelectDroppedOff}/>
-                        <DialogContentText>
-                            {dropoffTimeNotice}
-                        </DialogContentText>
-                        <TextField
-                            margin="dense"
-                            id="note"
-                            label="Add a note!"
-                            type="text"
-                            fullWidth
-                        />
+                        <Grid container
+                              spacing={3}
+                              direction={"column"}
+                              justify={"flex-start"}
+                              alignItems={"flex-start"}>
+                            <Grid item>
+                                <AddressDetailsCollapsible label={this.state.pickupLabel}
+                                                           onSelect={this.onSelectPickup}
+                                                           locations={this.props.locations}
+                                                           suggestions={this.props.suggestions}
+                                                           address={this.state.pickupAddress}
+                                                           disabled={this.props.riderView}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <AddressDetailsCollapsible label={this.state.dropoffLabel}
+                                                           onSelect={this.onSelectDropoff}
+                                                           locations={this.props.locations}
+                                                           suggestions={this.props.suggestions}
+                                                           address={this.state.dropoffAddress}
+                                                           disabled={this.props.riderView}/>
+                            </Grid>
+                            <Grid item>
+                                {usersSelect}
+                            </Grid>
+                            <Grid item>
+                                {prioritySelect}
+                            </Grid>
+                            <Grid item>
+                                {deliverableSelect}
+                            </Grid>
+                            <Grid item>
+                                <ToggleTimeStamp label={"Picked Up"} status={!!this.state.pickupTime}
+                                                 onSelect={this.onSelectPickedUp}/>
+                                <DialogContentText>
+                                    {pickupTimeNotice}
+                                </DialogContentText>
+                            </Grid>
+                            <Grid item>
+                                <ToggleTimeStamp label={"Delivered"} status={!!this.state.dropoffTime}
+                                                 onSelect={this.onSelectDroppedOff}/>
+                                <DialogContentText>
+                                    {dropoffTimeNotice}
+                                </DialogContentText>
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    margin="dense"
+                                    id="note"
+                                    label="Add a note!"
+                                    type="text"
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
                     </DialogContent>
                 </Dialog>
-            </div>
+            </>
         );
     }
 }

@@ -147,7 +147,7 @@ export default class UsersSelect extends React.Component {
 
                             },
                             onFocus: openMenu,
-                            placeholder: 'Type to search',
+                            placeholder: 'Type to search users',
                         });
 
                         return (
