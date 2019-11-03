@@ -51,13 +51,13 @@ export default function TaskDialog(props) {
             setPickupAddress(data.pickup_address);
             setDropoffAddress(data.dropoff_address);
             setPriority(data.priority_id);
-            if (data.pickup_address.line1)
+            if (data.pickup_address)
                 if (data.pickup_address.ward)
                     setPickupLabel(data.pickup_address.line1 + " - " + data.pickup_address.ward);
                 else
                     setPickupLabel(data.pickup_address.line1);
 
-            if (data.dropoff_address.line1)
+            if (data.dropoff_address)
                 if (data.dropoff_address.ward)
                     setDropoffLabel(data.dropoff_address.line1 + " - " + data.dropoff_address.ward);
                 else

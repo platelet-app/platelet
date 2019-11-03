@@ -12,49 +12,6 @@ import Login from "../Login";
 import UsersTasks from "./UsersTasks";
 import TaskDialog from "./TaskModal";
 
-function Modal() {
-    let history = useHistory();
-    let { task_id } = useParams();
-
-    let back = e => {
-        e.stopPropagation();
-        history.goBack();
-    };
-
-    return (
-        <div
-            onClick={back}
-            style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                bottom: 0,
-                right: 0,
-                background: "rgba(0, 0, 0, 0.15)"
-            }}
-        >
-            <div
-                className="modal"
-                style={{
-                    position: "absolute",
-                    background: "#fff",
-                    top: 25,
-                    left: "10%",
-                    right: "10%",
-                    padding: 15,
-                    border: "2px solid #444"
-                }}
-            >
-                YAAAAAAAAAAAAAAAAA {task_id}
-                <button type="button" onClick={back}>
-                    Close
-                </button>
-            </div>
-        </div>
-    );
-}
-
-
 export default function Main(_props) {
     let location = useLocation();
 
@@ -79,11 +36,11 @@ export default function Main(_props) {
                 <Route path="/task/:task_id"
                        render={(props) => <TaskDialog {...props} modal={false} apiControl={_props.apiControl}/>}
                    />
-                {background && <Route path="/task/:task_id"
-                    render={(props) => <TaskDialog {...props} modal={true} apiControl={_props.apiControl}/>}
-                  />}
 
             </Switch>
+            {background && <Route path="/task/:task_id"
+                                  render={(props) => <TaskDialog {...props} modal={true} apiControl={_props.apiControl}/>}
+            />}
         </main>
     )
 }
