@@ -73,13 +73,11 @@ export default function SessionDetail(props) {
             }
             }
         />;
-    let TaskDialog = <></>;
     let location = useLocation();
-    let background = location.state && location.state.background;
 
     if (loaded) {
         return (
-            <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100}}>
+            <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>
                 <Grid container
                       spacing={3}
                       direction={"row"}

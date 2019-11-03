@@ -76,8 +76,12 @@ export default function Main(_props) {
                 <Route path='/session/:session_uuid'
                        render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                 />
-                <Route path="/task/:task_id" children={<TaskDialog />} />
-                {background && <Route path="/task/:task_id" children={<TaskDialog />} />}
+                <Route path="/task/:task_id"
+                       render={(props) => <TaskDialog {...props} modal={false} apiControl={_props.apiControl}/>}
+                   />
+                {background && <Route path="/task/:task_id"
+                    render={(props) => <TaskDialog {...props} modal={true} apiControl={_props.apiControl}/>}
+                  />}
 
             </Switch>
         </main>
