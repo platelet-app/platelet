@@ -139,7 +139,7 @@ export default class FavouriteLocationsSelect extends React.Component {
                                 }
                             },
                             onFocus: openMenu,
-                            placeholder: 'Type to search',
+                            placeholder: 'Type to search locations',
                         });
 
                         return (

@@ -15,6 +15,7 @@
     "react-moment": "^0.9.6",
     "react-notifications-component": "^2.1.0",
     "react-router-dom": "^5.0.1",
+    "react-router-modal": "^1.5.2",
     "react-scripts": "3.0.1",
     "typeface-roboto": "0.0.75"
   },
