@@ -89,9 +89,10 @@ export default function SessionDetail(props) {
                                     key={task.uuid}
                                     to={{
                                         pathname: `/task/${task.uuid}`,
-                                        // This is the trick! This link sets
-                                        // the `background` in location state.
-                                        state: {background: location}
+                                        state: {
+                                            background: location,
+                                            view: "edit"
+                                        }
                                     }}
                                 >
                                     <TaskCard

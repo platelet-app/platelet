@@ -26,6 +26,7 @@ export default function TaskDialog(props) {
     const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
     const [availablePriorities, setAvailablePriorities] = useState([]);
     const [availableDeliverables, setAvailableDeliverables] = useState([]);
+    const [deliverables, setDeliverables] = useState([]);
 
     const [open, setOpen] = useState(false);
     const [pickupLabel, setPickupLabel] = useState("");
@@ -35,37 +36,17 @@ export default function TaskDialog(props) {
     const [pickupAddress, setPickupAddress] = useState("");
     const [dropoffAddress, setDropoffAddress] = useState("");
     const [assignedRider, setAssignedRider] = useState("");
-    const [priority, setPriority] = useState(0);
+    const [priority, setPriority] = useState("");
     const [payload, setPayload] = useState({});
     const taskId = props.match.params.task_id;
 
     let history = useHistory();
 
+    let editMode = props.view === "edit";
+
+    let priorityLabel = "";
 
     function componentDidMount() {
-        props.apiControl.tasks.getTask(taskId).then((data) => {
-            console.log(data)
-            setPickupTime(data.pickup_time);
-            setDropoffTime(data.dropoff_time);
-            setAssignedRider(data.rider);
-            setPickupAddress(data.pickup_address);
-            setDropoffAddress(data.dropoff_address);
-            setPriority(data.priority_id);
-            if (data.pickup_address)
-                if (data.pickup_address.ward)
-                    setPickupLabel(data.pickup_address.line1 + " - " + data.pickup_address.ward);
-                else
-                    setPickupLabel(data.pickup_address.line1);
-
-            if (data.dropoff_address)
-                if (data.dropoff_address.ward)
-                    setDropoffLabel(data.dropoff_address.line1 + " - " + data.dropoff_address.ward);
-                else
-                    setDropoffLabel(data.dropoff_address.line1);
-
-
-
-        });
         props.apiControl.priorities.getPriorities().then((data) => {
             if (data) {
                 setAvailablePriorities(data)
@@ -94,6 +75,30 @@ export default function TaskDialog(props) {
                 setFilteredUserSuggestions(filteredUsers);
                 setUserSuggestions(data);
             });
+        });
+        props.apiControl.tasks.getTask(taskId).then((data) => {
+            setPickupTime(data.pickup_time);
+            setDropoffTime(data.dropoff_time);
+            setAssignedRider(data.rider);
+            setPickupAddress(data.pickup_address);
+            setDropoffAddress(data.dropoff_address);
+            setPriority(data.priority_id);
+            priorityLabel = data.priority;
+            setDeliverables(data.deliverables)
+            if (data.pickup_address)
+                if (data.pickup_address.ward)
+                    setPickupLabel(data.pickup_address.line1 + " - " + data.pickup_address.ward);
+                else
+                    setPickupLabel(data.pickup_address.line1);
+
+            if (data.dropoff_address)
+                if (data.dropoff_address.ward)
+                    setDropoffLabel(data.dropoff_address.line1 + " - " + data.dropoff_address.ward);
+                else
+                    setDropoffLabel(data.dropoff_address.line1);
+
+
+
         });
     }
 
@@ -225,21 +230,20 @@ export default function TaskDialog(props) {
     };
 
     let usersSelect = <></>;
-    if (!props.riderView) {
+    if (editMode) {
         usersSelect =
             <>
                 <UsersSelect id="userSelect" suggestions={filteredUserSuggestions}
-                             onSelect={onSelectRider}
-                             disabled={props.riderView}/>
+                             onSelect={onSelectRider}/>
                 <DialogContentText>
                     {assignedRider ? "Currently assigned to " + assignedRider.display_name + "." : ""}
                 </DialogContentText>
             </>;
     }
     let prioritySelect = <></>;
-    if (props.riderView) {
+    if (!editMode) {
         prioritySelect = priority ? <>
-            <DialogContentText>Priority {priority}</DialogContentText></> : ""
+            <DialogContentText>Priority {priorityLabel}</DialogContentText></> : ""
 
     } else {
         prioritySelect = <PrioritySelect priority={priority}
@@ -255,12 +259,13 @@ export default function TaskDialog(props) {
         dropoffTimeNotice = <>Dropped off at <Moment format={"llll"}>{dropoffTime}</Moment></>
     }
     let deliverableSelect = <DeliverableInformation apiControl={props.apiControl} taskId={taskId}/>;
-    if (!props.riderView) {
+    if (editMode) {
         deliverableSelect = <><DialogContentText>
             Add a deliverable
         </DialogContentText>
             <DeliverableGridSelect apiControl={props.apiControl}
                                    taskId={taskId}
+                                   deliverables={deliverables}
                                    availableDeliverables={availableDeliverables}
                                    onSelect={onSelectDeliverable}
                                    onNoteChange={onDeliverableNote}/>
@@ -307,7 +312,7 @@ export default function TaskDialog(props) {
                                                            locations={locationSuggestions}
                                                            suggestions={filteredLocationSuggestions}
                                                            address={pickupAddress}
-                                                           disabled={props.riderView}
+                                                           disabled={!editMode}
                                 />
                             </Grid>
                             <Grid item>
@@ -316,7 +321,7 @@ export default function TaskDialog(props) {
                                                            locations={locationSuggestions}
                                                            suggestions={filteredLocationSuggestions}
                                                            address={dropoffAddress}
-                                                           disabled={props.riderView}/>
+                                                           disabled={!editMode}/>
                             </Grid>
                             <Grid item>
                                 {usersSelect}
@@ -385,7 +390,7 @@ export default function TaskDialog(props) {
                                                            locations={locationSuggestions}
                                                            suggestions={filteredLocationSuggestions}
                                                            address={pickupAddress}
-                                                           disabled={props.riderView}
+                                                           disabled={!editMode}
                                 />
                             </Grid>
                             <Grid item>
@@ -394,7 +399,7 @@ export default function TaskDialog(props) {
                                                            locations={locationSuggestions}
                                                            suggestions={filteredLocationSuggestions}
                                                            address={dropoffAddress}
-                                                           disabled={props.riderView}/>
+                                                           disabled={!editMode}/>
                             </Grid>
                             <Grid item>
                                 {usersSelect}

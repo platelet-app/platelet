@@ -1,97 +1,92 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import { orderTaskList } from '../utilities'
+import {convertDate, orderTaskList} from '../utilities'
+import {StyledAddCircleOutline} from "../css/common";
 import Grid from "@material-ui/core/Grid";
+import {TaskCard} from "./TaskCardsColoured";
 import update from 'immutability-helper';
 import TaskDialog from "./TaskModal";
+import PropTypes from 'prop-types';
+import moment from 'moment/min/moment-with-locales';
 
+import {
+    Link,
+    useLocation,
+} from "react-router-dom";
 
-class UsersTasks extends React.Component {
-    constructor(props) {
-        super(props);
-        this.updateCallback = this.updateCallback.bind(this);
+export default function SessionDetail(props) {
 
-    }
+    const [tasks, setTasks] = useState([]);
+    const [timestamp, setTimestamp] = useState(new Date());
+    const [uuid, setUUID] = useState("");
+    const [loaded, setLoaded] = useState(false);
 
-    componentDidMount() {
-        this.props.apiControl.users.getAssignedTasks(this.props.match.params.user_uuid)
+    function setup() {
+        props.apiControl.users.getAssignedTasks(props.match.params.user_uuid)
             .then((tasks_data) => {
                 if (tasks_data) {
-                    this.setState({
-                        tasks: orderTaskList(tasks_data)
-                    });
+                    setTasks(orderTaskList(tasks_data))
                 }
             });
-        this.props.apiControl.priorities.getPriorities().then((data) => {
-            if (data) {
-                this.setState({
-                    availablePriorities: data
-                });
-            }
-        });
     }
 
-    state = {
-        tasks: [],
-    };
+    useEffect(setup, []);
 
-    emptyTask = {
-        session_id: this.props.match.params.session_uuid,
-        timestamp: new Date().toISOString(),
-    };
 
-    updateCallback(uuid, data) {
-        let result = this.state.tasks.filter(task => task.uuid === uuid);
+    function updateCallback(uuid, data) {
+        console.log(data)
+        let result = tasks.filter(task => task.uuid === uuid);
         if (result.length === 1) {
             const updated_item = {...result[0], ...data};
-            const index = this.state.tasks.indexOf(result[0]);
-            const updated = update(this.state.tasks, {[index]: {$set: updated_item}});
+            const index = tasks.indexOf(result[0]);
+            const updated = update(tasks, {[index]: {$set: updated_item}});
             const reordered = orderTaskList(updated);
-            this.setState({
-                tasks: reordered
-            });
+            setTasks(reordered)
 
         }
     }
 
-    render() {
-        return (
-            <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100}}>
-                <Grid container
-                      spacing={3}
-                      direction={"row"}
-                      justify={"flex-start"}
-                      alignItems={"center"}
-                >
-                    {this.state.tasks.map(task => {
-                        return (
-                            <Grid item xs={10} sm={5} md={4} lg={3} key={task.uuid}>
-                                <TaskDialog uuid={task.uuid}
-                                            timestamp={task.timestamp}
-                                            dropoffAddress={task.dropoff_address}
-                                            pickupAddress={task.pickup_address}
-                                            pickupTime={task.pickup_time}
-                                            dropoffTime={task.dropoff_time}
-                                            assignedRider={task.rider}
-                                            priority={task.priority}
-                                            apiControl={this.props.apiControl}
-                                            locations={this.state.locationSuggestions}
-                                            suggestions={this.state.filteredLocationSuggestions}
-                                            users={this.state.userSuggestions}
-                                            userSuggestions={this.state.filteredUserSuggestions}
-                                            updateCallback={this.updateCallback}
-                                            riderView={true}/>
-                            </Grid>
-                        )
-                    })
-                    }
+    let location = useLocation();
 
+    return (
+        <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>
+            <Grid container
+                  spacing={3}
+                  direction={"row"}
+                  justify={"flex-start"}
+                  alignItems={"center"}
+            >
+                {tasks.map(task => {
+                    return (
+                        <Grid item xs={10} sm={5} md={4} lg={3} key={task.uuid}>
+                            <Link style={{textDecoration: 'none'}}
+                                  key={task.uuid}
+                                  to={{
+                                      pathname: `/task/${task.uuid}`,
+                                      state: {
+                                          background: location,
+                                          view: "simple"
+                                      }
+                                  }}
+                            >
+                                <TaskCard
+                                    title={"Task"}
+                                    pickupAddress={task.pickup_address}
+                                    dropoffAddress={task.dropoff_address}
+                                    assignedRider={task.rider}
+                                    pickupTime={task.pickup_time}
+                                    dropoffTime={task.dropoff_time}
+                                    timestamp={task.timestamp}
+                                    priority={task.priority}
+                                />
+                            </Link>
 
-                </Grid>
-            </div>
-        )
-    }
+                        </Grid>
+                    )
+                })
+                }
+            </Grid>
+        </div>
+    )
 }
-
-export default UsersTasks;
