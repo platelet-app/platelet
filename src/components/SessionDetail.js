@@ -6,9 +6,9 @@ import {StyledAddCircleOutline} from "../css/common";
 import Grid from "@material-ui/core/Grid";
 import {TaskCard} from "./TaskCardsColoured";
 import update from 'immutability-helper';
-import TaskDialog from "./TaskModal";
-import PropTypes from 'prop-types';
 import moment from 'moment/min/moment-with-locales';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {
     Link,
@@ -16,6 +16,8 @@ import {
 } from "react-router-dom";
 
 export default function SessionDetail(props) {
+    const theme = useTheme();
+    const fullScreenModal = !useMediaQuery(theme.breakpoints.up('md'));
 
     const [tasks, setTasks] = useState([]);
     const [timestamp, setTimestamp] = useState(new Date());
@@ -91,7 +93,8 @@ export default function SessionDetail(props) {
                                         pathname: `/task/${task.uuid}`,
                                         state: {
                                             background: location,
-                                            view: "edit"
+                                            view: "edit",
+                                            fullscreen: fullScreenModal
                                         }
                                     }}
                                 >

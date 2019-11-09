@@ -38,13 +38,16 @@ export default function TaskDialog(props) {
     const [assignedRider, setAssignedRider] = useState("");
     const [priority, setPriority] = useState("");
     const [priorityLabel, setPriorityLabel] = useState("");
-
     const [payload, setPayload] = useState({});
+
+
+
     const taskId = props.match.params.task_id;
 
     let history = useHistory();
 
     let editMode = props.view === "edit";
+    console.log(props.fullscreen)
 
 
     function componentDidMount() {
@@ -288,7 +291,7 @@ export default function TaskDialog(props) {
     if (props.modal) {
         return (
             <>
-                <Dialog fullScreen={false} open={true} onClose={handleClose}
+                <Dialog fullScreen={props.fullscreen} open={true} onClose={handleClose}
                         aria-labelledby="form-dialog-title">
                     <DialogActions>
                         <Button onClick={handleClose}

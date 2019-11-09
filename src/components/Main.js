@@ -39,7 +39,7 @@ export default function Main(_props) {
 
             </Switch>
             {background && <Route path="/task/:task_id"
-                                  render={(props) => <TaskDialog {...props}  modal={true} view={location.state.view} apiControl={_props.apiControl}/>}
+                                  render={(props) => <TaskDialog {...props} modal={true} fullscreen={location.state.fullscreen} view={location.state.view} apiControl={_props.apiControl}/>}
             />}
         </main>
     )
