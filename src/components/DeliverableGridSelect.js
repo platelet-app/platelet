@@ -5,42 +5,37 @@ import DeliverableDropSelect from "./DeliverableDropSelect";
 import update from 'immutability-helper';
 
 
-export default class DeliverableGridSelect extends React.Component {
-    constructor(props) {
-        super(props);
-        this.onSelectDeliverableType = this.onSelectDeliverableType.bind(this);
-    }
+export default function DeliverableGridSelect(props) {
 
-    emptyDeliverable = {
-        task_id: this.props.taskId,
+   let emptyDeliverable = {
+        task_id: props.taskId,
         timestamp: new Date().toISOString(),
         desc_note_id: null
     };
 
 
-    onSelectDeliverableType(uuid, deliverableType) {
-        this.props.onSelect(uuid, deliverableType)
+    function onSelectDeliverableType(uuid, deliverableType) {
+        props.onSelect(uuid, deliverableType)
     }
 
-    render() {
-        const circleAdd =
-            <StyledAddCircleOutlineSmall
-                onClick={() => {
-                    let newDeliverable = {...this.emptyDeliverable};
-                    this.props.apiControl.deliverables.createDeliverable(newDeliverable).then((data) => {
-                        newDeliverable.uuid = data.uuid;
-                        this.props.apiControl.notes.createNote({"deliverable_id": data.uuid}).then((data) => {
-                            newDeliverable.desc_note_id = data.uuid;
+    const circleAdd =
+        <StyledAddCircleOutlineSmall
+            onClick={() => {
+                let newDeliverable = {...emptyDeliverable};
+                props.apiControl.deliverables.createDeliverable(newDeliverable).then((data) => {
+                    newDeliverable.uuid = data.uuid;
+                    props.apiControl.notes.createNote({"deliverable_id": data.uuid}).then((data) => {
+                        newDeliverable.desc_note_id = data.uuid;
 
-                            this.props.onNew(newDeliverable);
-
-                        })
+                        props.onNew(newDeliverable);
 
                     })
 
-                }
-                }
-            />;
+                })
+
+            }
+            }
+        />;
 
 
         return (
@@ -53,13 +48,13 @@ export default class DeliverableGridSelect extends React.Component {
                 <Grid item>
                     {circleAdd}
                 </Grid>
-                {this.props.deliverables.map(deliverable => {
+                {props.deliverables.map(deliverable => {
                     return <><Grid item>
                         <DeliverableDropSelect key={deliverable.uuid}
-                                               availableDeliverables={this.props.availableDeliverables}
+                                               availableDeliverables={props.availableDeliverables}
                                                deliverable={deliverable}
-                                               onSelect={this.props.onSelect}
-                                               onNoteChange={this.props.onNoteChange}
+                                               onSelect={props.onSelect}
+                                               onNoteChange={props.onNoteChange}
                                                uuid={deliverable.uuid}/>
                     </Grid></>
 
@@ -68,5 +63,4 @@ export default class DeliverableGridSelect extends React.Component {
             </Grid>
         )
 
-    }
 }
