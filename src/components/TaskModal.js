@@ -207,14 +207,22 @@ export default function TaskDialog(props) {
         setDropoffTime(dropoff_time);
     }
 
+    function onNewDeliverable(newDeliverable) {
+        setDeliverables([newDeliverable, ...deliverables])
+    }
+
     function onSelectDeliverable(uuid, type_id) {
-        console.log(uuid)
+        let result = deliverables.filter(deliverable => deliverable.uuid === uuid);
+        if (result.length === 1) {
+            const index = deliverables.indexOf(result[0]);
+            const updated = update(deliverables, {[index]: {type_id: {$set: type_id}}});
+            setDeliverables(updated)
+        }
         props.apiControl.deliverables.updateDeliverable(uuid, {"type_id": type_id});
     }
 
     function onDeliverableNote(uuid, value) {
         props.apiControl.notes.updateNote(uuid, {"body": value});
-
     }
 
     function handleClickOpen() {
@@ -267,6 +275,7 @@ export default function TaskDialog(props) {
                                    taskId={taskId}
                                    deliverables={deliverables}
                                    availableDeliverables={availableDeliverables}
+                                   onNew={onNewDeliverable}
                                    onSelect={onSelectDeliverable}
                                    onNoteChange={onDeliverableNote}/>
         </>;

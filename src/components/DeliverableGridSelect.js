@@ -13,7 +13,7 @@ export default class DeliverableGridSelect extends React.Component {
 
 
     state = {
-        deliverables: []
+        deliverables: this.props.deliverables.reverse()
     };
 
     emptyDeliverable = {
@@ -22,26 +22,9 @@ export default class DeliverableGridSelect extends React.Component {
         desc_note_id: null
     };
 
-    componentDidMount() {
-        this.props.apiControl.tasks.getTask(this.props.taskId).then((data) => {
-            this.setState({
-                deliverables: data.deliverables
-                }
-
-            )
-        })
-    }
 
     onSelectDeliverableType(uuid, deliverableType) {
-        let result = this.state.deliverables.filter(deliverable => deliverable.uuid === uuid);
-        if (result.length === 1) {
-            const index = this.state.tasks.indexOf(result[0]);
-            const updated = update(this.state.deliverables, {[index]: {$set: {deliverableType: deliverableType}}});
-            this.setState({
-                deliverables: updated
-            });
-        }
-        this.props.onSelect(uuid, deliverableType, "lol")
+        this.props.onSelect(uuid, deliverableType)
     }
 
     render() {
@@ -53,9 +36,8 @@ export default class DeliverableGridSelect extends React.Component {
                         newDeliverable.uuid = data.uuid;
                         this.props.apiControl.notes.createNote({"deliverable_id": data.uuid}).then((data) => {
                             newDeliverable.desc_note_id = data.uuid;
-                            this.setState({
-                                deliverables: [newDeliverable, ...this.state.deliverables]
-                            })
+
+                            this.props.onNew(newDeliverable);
 
                         })
 
@@ -76,7 +58,7 @@ export default class DeliverableGridSelect extends React.Component {
                 <Grid item>
                     {circleAdd}
                 </Grid>
-                {this.state.deliverables.map(deliverable => {
+                {this.props.deliverables.map(deliverable => {
                     return <><Grid item>
                         <DeliverableDropSelect key={deliverable.uuid}
                                                availableDeliverables={this.props.availableDeliverables}
