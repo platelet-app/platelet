@@ -75,10 +75,17 @@ class Location {
     constructor(bearer, api_url){
         this.bearer = bearer;
         this.api_url = api_url;
+        this.availableLocations = [];
+        makeFetch(this.api_url, "locations", "GET", this.bearer)
+            .then((data) => {
+                this.availableLocations = data;
+            });
     }
 
     async getLocations() {
-        return makeFetch(this.api_url, "locations", "GET", this.bearer)
+        return new Promise((resolve, reject) => {
+            resolve(this.availableLocations);
+        });
     }
 
     async getLocation(location_id) {
@@ -139,6 +146,12 @@ class Deliverable {
     constructor(bearer, api_url){
         this.bearer = bearer;
         this.api_url = api_url;
+        this.availableDeliverables = [];
+
+        makeFetch(this.api_url, "deliverables/available", "GET", this.bearer, "application/json")
+            .then((data) => {
+                this.availableDeliverables = data;
+            });
     }
 
     async getDeliverables(task_id) {
@@ -154,11 +167,12 @@ class Deliverable {
     }
 
     async updateDeliverable(deliverable_id, input_data) {
-        console.log(input_data)
         return makeFetch(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
     }
     async getAvailableDeliverables() {
-        return makeFetch(this.api_url, "deliverables/available", "GET", this.bearer, "application/json")
+        return new Promise((resolve, reject) => {
+            resolve(this.availableDeliverables);
+        });
     }
 }
 
@@ -193,22 +207,36 @@ class Priority {
     constructor(bearer, api_url){
         this.bearer = bearer;
         this.api_url = api_url;
+        this.availablePriorities = [];
+
+        makeFetch(this.api_url, "priorities", "GET", this.bearer)
+            .then((data) => {
+                this.availablePriorities = data;
+            });
     }
 
     async getPriorities() {
-        return makeFetch(this.api_url, "priorities", "GET", this.bearer)
+        return new Promise((resolve, reject) => {
+            resolve(this.availablePriorities);
+        });
     }
 }
 
 class User {
     constructor(bearer, api_url){
         this.bearer = bearer;
-        this.users = undefined;
+        this.users = [];
         this.api_url = api_url;
+        makeFetch(this.api_url, "users", "GET", this.bearer)
+            .then((data) => {
+                this.users = data;
+            });
     }
 
     async getUsers() {
-        return makeFetch(this.api_url, "users", "GET", this.bearer)
+        return new Promise((resolve, reject) => {
+            resolve(this.users);
+        });
     }
 
     async getUser(user_id) {
@@ -243,6 +271,7 @@ class Control {
         this.bearer = "";
         this.connected = true;
         this.connectionReattempts = 0;
+
         if (bearer) {
             this.initialiseClasses(bearer)
         } else {

@@ -47,7 +47,6 @@ export default function TaskDialog(props) {
     let history = useHistory();
 
     let editMode = props.view === "edit";
-    console.log(props.fullscreen)
 
 
     function componentDidMount() {
