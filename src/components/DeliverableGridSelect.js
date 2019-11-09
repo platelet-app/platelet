@@ -11,11 +11,6 @@ export default class DeliverableGridSelect extends React.Component {
         this.onSelectDeliverableType = this.onSelectDeliverableType.bind(this);
     }
 
-
-    state = {
-        deliverables: this.props.deliverables.reverse()
-    };
-
     emptyDeliverable = {
         task_id: this.props.taskId,
         timestamp: new Date().toISOString(),

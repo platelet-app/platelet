@@ -37,6 +37,8 @@ export default function TaskDialog(props) {
     const [dropoffAddress, setDropoffAddress] = useState("");
     const [assignedRider, setAssignedRider] = useState("");
     const [priority, setPriority] = useState("");
+    const [priorityLabel, setPriorityLabel] = useState("");
+
     const [payload, setPayload] = useState({});
     const taskId = props.match.params.task_id;
 
@@ -44,7 +46,6 @@ export default function TaskDialog(props) {
 
     let editMode = props.view === "edit";
 
-    let priorityLabel = "";
 
     function componentDidMount() {
         props.apiControl.priorities.getPriorities().then((data) => {
@@ -83,8 +84,8 @@ export default function TaskDialog(props) {
             setPickupAddress(data.pickup_address);
             setDropoffAddress(data.dropoff_address);
             setPriority(data.priority_id);
-            priorityLabel = data.priority;
-            setDeliverables(data.deliverables)
+            setPriorityLabel(data.priority);
+            setDeliverables(data.deliverables);
             if (data.pickup_address)
                 if (data.pickup_address.ward)
                     setPickupLabel(data.pickup_address.line1 + " - " + data.pickup_address.ward);
@@ -161,10 +162,12 @@ export default function TaskDialog(props) {
         if (result.length === 1) {
             let rider = {
                 name: result[0]['name'],
+                display_name: result[0]['display_name'],
                 patch: result[0]['patch'],
                 vehicle: result[0]['vehicle'],
                 uuid: result[0]['uuid']
             };
+            console.log(rider)
             sendData({assigned_rider: rider.uuid});
             const updated = update(payload,
                 {
@@ -183,11 +186,12 @@ export default function TaskDialog(props) {
         let result = availablePriorities.filter(item => item.id === selectedItemId);
         sendData({priority_id: selectedItemId});
         if (result.length === 1) {
-            setPriority(result[0].label);
+            setPriorityLabel(result[0].label);
             const updated = update(payload, {priority: {$set: result[0].label}});
             console.log(updated);
             setPayload(updated)
         }
+        setPriority(selectedItemId)
     }
 
     function onSelectPickedUp(status) {
