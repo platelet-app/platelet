@@ -1,6 +1,6 @@
-import { all, call, delay, put, takeEvery } from 'redux-saga/effects'
-import api from "./api"
-import {addTask, ADD_TASK, ADD_TASK_SUCCESS, addTaskSuccess} from "./actions"
+import { all, call, put, takeEvery } from 'redux-saga/effects'
+import api from "./Api"
+import {ADD_TASK, addTaskSuccess} from "./Actions"
 
 
 export function* postNewTask(action) {

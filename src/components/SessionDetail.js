@@ -9,9 +9,9 @@ import update from 'immutability-helper';
 import moment from 'moment/min/moment-with-locales';
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { addTask } from '../redux/actions'
+import { addTask } from '../redux/Actions'
 import {connect} from "react-redux"
-import store from "../redux/store"
+import store from "../redux/Store"
 
 import {
     Link,

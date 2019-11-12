@@ -7,7 +7,7 @@ import {BrowserRouter} from 'react-router-dom'
 import ReactNotification from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css'
 import {Provider} from 'react-redux'
-import store from "./redux/store"
+import store from "./redux/Store"
 
 window.store = store;
 

@@ -5,6 +5,9 @@
 export const ADD_TASK = 'ADD_TASK';
 export const ADD_TASK_SUCCESS = 'ADD_TASK_SUCCESS';
 
+export const ADD_SESSION = 'ADD_SESSION';
+export const ADD_SESSION_SUCCESS = 'ADD_SESSION_SUCCESS';
+
 /*
  * other constants
  */
@@ -25,5 +28,13 @@ export function addTask(data) {
 
 export function addTaskSuccess(data) {
     return { type: ADD_TASK_SUCCESS, data }
+}
+
+export function addSession(data) {
+    return { type: ADD_SESSION, data }
+}
+
+export function addSessionSuccess(data) {
+    return { type: ADD_SESSION_SUCCESS, data }
 }
 
