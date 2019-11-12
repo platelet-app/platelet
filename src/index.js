@@ -7,9 +7,10 @@ import {BrowserRouter} from 'react-router-dom'
 import ReactNotification from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css'
 import {Provider} from 'react-redux'
-
 import store from "./redux/store"
+
 window.store = store;
+
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
 
@@ -26,3 +27,4 @@ ReactDOM.render((
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
