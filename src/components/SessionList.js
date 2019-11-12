@@ -12,6 +12,8 @@ import {Link} from "react-router-dom";
 import Moment from "react-moment";
 import {addSession} from "../redux/Actions";
 import {connect} from "react-redux"
+import {saveAllSessions} from "../redux/Actions";
+import { bindActionCreators } from "redux";
 
 const useStyles = makeStyles({
     card: {
@@ -49,8 +51,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAddSessionClick: session =>  dispatch(addSession(session))
-    }
+        onAddSessionClick: session =>  dispatch(addSession(session)),
+        getSessionsList: userId => dispatch(saveAllSessions(userId)),
+
+}
 };
 
 class SessList extends React.Component {
@@ -61,7 +65,11 @@ class SessList extends React.Component {
     componentDidMount() {
         this.props.apiControl.users.whoami()
             .then((my_data) => {
-                this.props.apiControl.sessions.getSessions(my_data.uuid)
+                this.props.getSessionsList({user_id: my_data.uuid})
+                this.setState(({
+                    myUUID: my_data.uuid
+                }))
+                /*this.props.apiControl.sessions.getSessions(my_data.uuid)
                     .then((data) => {
                         this.setState({loaded: true})
                         if (data) {
@@ -73,14 +81,14 @@ class SessList extends React.Component {
                         this.setState({
                             loaded: true
                         });
-                    })
+                    })*/
             })
     }
 
     state = {
         sessions: [],
         myUUID: "",
-        loaded: false
+        loaded: true
     };
 
     emptySession = {

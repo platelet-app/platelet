@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import {
-    ADD_TASK, ADD_TASK_SUCCESS, ADD_SESSION, ADD_SESSION_SUCCESS
+    ADD_TASK_SUCCESS, ADD_SESSION_SUCCESS, SAVE_SESSIONS_SUCCESS
 } from './Actions'
 
 
@@ -20,16 +20,19 @@ function tasks(state = [], action) {
 }
 
 function sessions(state = [], action) {
-    console.log("SESSIONS")
+    console.log("SESSIONSfasdjkljfksal")
     console.log(action.type)
+    console.log(state)
     switch (action.type) {
         case ADD_SESSION_SUCCESS:
             return [
-                ...state,
                 {
                     ...action.data
-                }
+                },
+                ...state
             ];
+        case SAVE_SESSIONS_SUCCESS:
+            return action.data;
         default:
             return state
 
