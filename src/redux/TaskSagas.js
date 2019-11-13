@@ -1,6 +1,6 @@
-import { all, call, put, takeEvery } from 'redux-saga/effects'
+import { all, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
 import api from "./Api"
-import {ADD_TASK, addTaskSuccess} from "./Actions"
+import {ADD_TASK, addTaskSuccess, UPDATE_TASK, updateTaskSuccess, GET_TASKS, getAllTasksSuccess} from "./Actions"
 
 
 export function* postNewTask(action) {
@@ -13,9 +13,21 @@ export function* watchPostNewTask() {
     const action = yield takeEvery(ADD_TASK, postNewTask)
 }
 
-// single entry point to start all Sagas at once
-export default function* rootSaga() {
-    yield all([
-        call(watchPostNewTask)
-    ])
+export function* updateTask(action) {
+    const result = yield call([api, api.tasks.updateTask], action.data);
+    yield put(updateTaskSuccess(action.data))
 }
+
+export function* watchUpdateTask() {
+    const action = yield takeEvery(UPDATE_TASK, updateTask)
+}
+
+export function* getTasks(action) {
+    const result = yield call([api, api.tasks.getTasks], action.data.session_id);
+    yield put(getAllTasksSuccess(result))
+}
+
+export function* watchGetTasks() {
+    const action = yield takeLatest(GET_TASKS, getTasks)
+}
+

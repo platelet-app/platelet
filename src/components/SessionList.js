@@ -12,7 +12,7 @@ import {Link} from "react-router-dom";
 import Moment from "react-moment";
 import {addSession} from "../redux/Actions";
 import {connect} from "react-redux"
-import {saveAllSessions} from "../redux/Actions";
+import {getAllSessions} from "../redux/Actions";
 import { bindActionCreators } from "redux";
 
 const useStyles = makeStyles({
@@ -52,7 +52,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onAddSessionClick: session =>  dispatch(addSession(session)),
-        getSessionsList: userId => dispatch(saveAllSessions(userId)),
+        getSessionsList: userId => dispatch(getAllSessions(userId)),
 
 }
 };

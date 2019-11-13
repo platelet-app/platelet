@@ -126,7 +126,7 @@ class Task {
     }
 
     async getTasks(session_id) {
-        return makeFetch(this.api_url, "tasks" + session_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "tasks/" + session_id, "GET", this.bearer)
     }
 
     async getTask(task_id) {

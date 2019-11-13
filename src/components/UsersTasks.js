@@ -6,9 +6,6 @@ import {StyledAddCircleOutline} from "../css/common";
 import Grid from "@material-ui/core/Grid";
 import {TaskCard} from "./TaskCardsColoured";
 import update from 'immutability-helper';
-import TaskDialog from "./TaskModal";
-import PropTypes from 'prop-types';
-import moment from 'moment/min/moment-with-locales';
 
 import {
     Link,

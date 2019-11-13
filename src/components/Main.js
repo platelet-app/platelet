@@ -10,7 +10,7 @@ import SessionDetail from "./SessionDetail";
 import TaskDetail from "./TaskDetail";
 import Login from "../Login";
 import UsersTasks from "./UsersTasks";
-import TaskDialog from "./TaskModal";
+import TaskModal from "./TaskModal";
 
 export default function Main(_props) {
     let location = useLocation();
@@ -34,12 +34,12 @@ export default function Main(_props) {
                        render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                 />
                 <Route path="/task/:task_id"
-                       render={(props) => <TaskDialog {...props} modal={false} apiControl={_props.apiControl}/>}
+                       render={(props) => <TaskModal {...props} modal={false} apiControl={_props.apiControl}/>}
                    />
 
             </Switch>
             {background && <Route path="/task/:task_id"
-                                  render={(props) => <TaskDialog {...props} modal={true} fullscreen={location.state.fullscreen} view={location.state.view} apiControl={_props.apiControl}/>}
+                                  render={(props) => <TaskModal {...props} modal={true} fullscreen={location.state.fullscreen} view={location.state.view} apiControl={_props.apiControl}/>}
             />}
         </main>
     )

@@ -9,7 +9,7 @@ import update from 'immutability-helper';
 import moment from 'moment/min/moment-with-locales';
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { addTask } from '../redux/Actions'
+import { addTask, getAllTasks } from '../redux/Actions'
 import {connect} from "react-redux"
 import store from "../redux/Store"
 
@@ -26,7 +26,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAddTaskClick: task =>  dispatch(addTask(task))
+        onAddTaskClick: task =>  dispatch(addTask(task)),
+        getTasksList: sessionId => dispatch(getAllTasks(sessionId)),
     }
 };
 
@@ -40,10 +41,10 @@ function Session(props) {
     const [loaded, setLoaded] = useState(false);
 
     function setup() {
+        props.getTasksList({session_id: props.match.params.session_uuid});
         props.apiControl.sessions.getSession(props.match.params.session_uuid)
             .then((session_data) => {
                 if (session_data) {
-                    //setTasks(orderTaskList(session_data.tasks));
                     setTimestamp(session_data.timestamp);
                     setUUID(session_data.uuid);
                 }
@@ -93,7 +94,7 @@ function Session(props) {
                     <Grid item xs={10} sm={5} md={4} lg={3}>
                         {circleAdd}
                     </Grid>
-                    {props.tasks.map(task => {
+                    {orderTaskList(props.tasks).map(task => {
                         return (
                             <Grid item xs={10} sm={5} md={4} lg={3} key={task.uuid}>
                                 <Link style={{ textDecoration: 'none' }}

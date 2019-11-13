@@ -17,9 +17,23 @@ import Moment from "react-moment";
 import PrioritySelect from "./PrioritySelect";
 import DeliverableGridSelect from "./DeliverableGridSelect";
 import DeliverableInformation from "./DeliverableInformation";
+import {updateTask} from "../redux/Actions";
+import { connect } from "react-redux"
 
+const mapStateToProps = state => {
+    return {
+        tasks: state.tasks
+    };
+};
 
-export default function TaskDialog(props) {
+const mapDispatchToProps = dispatch => {
+    return {
+        updateTask: task => dispatch(updateTask(task)),
+    }
+};
+
+function TaskDialog(props) {
+    const task = props.tasks.filter(task => task.uuid === props.match.params.task_id);
     const [locationSuggestions, setLocationSuggestions] = useState([]);
     const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
     const [userSuggestions, setUserSuggestions] = useState([]);
@@ -450,3 +464,9 @@ export default function TaskDialog(props) {
     }
 }
 
+const TaskModal = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(TaskDialog);
+
+export default TaskModal

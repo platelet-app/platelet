@@ -19,7 +19,6 @@ export function deleteLogin() {
 }
 
 export function orderTaskList(tasks) {
-    console.log("eyy")
     let tasksNew = [];
     let tasksActive = [];
     let tasksPickedUp = [];
