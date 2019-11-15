@@ -17,11 +17,16 @@ function tasks(state = [], action) {
                 }
             ];
         case UPDATE_TASK_SUCCESS:
-            let result = state.filter(task => task.uuid === action.data.task_id);
+            console.log("IS UPDATING LOL")
+            console.log(action.data)
+            let result = state.filter(task => task.uuid === action.data.taskId);
             if (result.length === 1) {
-                const updated_item = {...result[0], ...action.data};
-                const index = tasks.indexOf(result[0]);
-                return update(tasks, {[index]: {$set: updated_item}});
+                console.log(result)
+                const updated_item = {...result[0], ...action.data.updateData};
+                const index = state.indexOf(result[0]);
+                const update_result = update(state, {[index]: {$set: updated_item}});
+                console.log(update_result)
+                return update_result
                 }
             else {
                 return state

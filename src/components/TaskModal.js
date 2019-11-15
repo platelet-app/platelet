@@ -29,7 +29,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         getTasksList: sessionId => dispatch(getAllTasks(sessionId)),
-        updateTask: task => dispatch(updateTask(task)),
+        updateTask: dataObj => dispatch(updateTask(dataObj)),
     }
 };
 
@@ -45,13 +45,6 @@ function TaskDialog(props) {
     const [open, setOpen] = useState(false);
     const [pickupLabel, setPickupLabel] = useState("");
     const [dropoffLabel, setDropoffLabel] = useState("");
-    const [pickupTime, setPickupTime] = useState("");
-    const [dropoffTime, setDropoffTime] = useState("");
-    const [pickupAddress, setPickupAddress] = useState("");
-    const [dropoffAddress, setDropoffAddress] = useState("");
-    const [assignedRider, setAssignedRider] = useState("");
-    const [priority, setPriority] = useState("");
-    const [priorityLabel, setPriorityLabel] = useState("");
     const [payload, setPayload] = useState({});
 
 
@@ -141,7 +134,6 @@ function TaskDialog(props) {
             const updated = update(payload, {pickup_address: {$set: pickup_address}})
             setPayload(updated);
             setPickupLabel("Pickup address - " + pickup_address.line1);
-            setPickupAddress(pickup_address);
         } else {
             setPickupLabel("Pickup address - ");
         }
@@ -163,7 +155,6 @@ function TaskDialog(props) {
             sendData({dropoff_address: dropoff_address});
             const updated = update(payload, {dropoff_address: {$set: dropoff_address}});
             setPayload(updated);
-            setDropoffAddress(dropoff_address);
             setDropoffLabel("Dropoff address - " + dropoff_address.line1);
 
         } else {
@@ -172,8 +163,12 @@ function TaskDialog(props) {
 
     }
 
-    function sendData(payload) {
-        props.apiControl.tasks.updateTask(taskId, payload)
+    function sendData(payload, updateData) {
+        let blah = {...payload, task_id: taskId}
+        const updateDataCombined = {...payload, ...updateData}
+        console.log(blah)
+        props.updateTask({payload: payload, taskId: taskId, updateData: updateDataCombined ? updateDataCombined : {}});
+        //props.apiControl.tasks.updateTask(taskId, payload)
     }
 
     function onSelectRider(selectedItem) {
@@ -187,7 +182,7 @@ function TaskDialog(props) {
                 uuid: result[0]['uuid']
             };
             console.log(rider)
-            sendData({assigned_rider: rider.uuid});
+            sendData({assigned_rider: rider.uuid}, { rider: rider});
             const updated = update(payload,
                 {
                     rider:
@@ -197,29 +192,24 @@ function TaskDialog(props) {
                 }
             );
             setPayload(updated);
-            setAssignedRider(rider);
         }
     }
 
     function onSelectPriority(selectedItemId) {
         let result = availablePriorities.filter(item => item.id === selectedItemId);
-        sendData({priority_id: selectedItemId});
+        sendData({priority_id: selectedItemId, priority: result[0].label});
         if (result.length === 1) {
-            setPriorityLabel(result[0].label);
             const updated = update(payload, {priority: {$set: result[0].label}});
             console.log(updated);
             setPayload(updated)
         }
-        setPriority(selectedItemId)
     }
 
     function onSelectPickedUp(status) {
         let pickup_time = status ? moment.utc().toISOString() : null;
-        setPickupTime(pickup_time);
         sendData({pickup_time: pickup_time});
         const updated = update(payload, {pickup_time: {$set: pickup_time}});
         setPayload(updated);
-        setPickupTime(pickup_time);
     }
 
     function onSelectDroppedOff(status) {
@@ -227,7 +217,6 @@ function TaskDialog(props) {
         sendData({dropoff_time: dropoff_time});
         const updated = update(payload, {dropoff_time: {$set: dropoff_time}});
         setPayload(updated);
-        setDropoffTime(dropoff_time);
     }
 
     function onNewDeliverable(newDeliverable) {

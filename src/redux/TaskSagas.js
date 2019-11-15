@@ -1,4 +1,4 @@
-import { all, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
+import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
 import api from "./Api"
 import {ADD_TASK, addTaskSuccess, UPDATE_TASK, updateTaskSuccess, GET_TASKS, getAllTasksSuccess} from "./Actions"
 
@@ -14,12 +14,14 @@ export function* watchPostNewTask() {
 }
 
 export function* updateTask(action) {
-    const result = yield call([api, api.tasks.updateTask], action.data);
+    console.log(action.data.taskId)
+    yield call([api, api.tasks.updateTask], action.data.taskId, action.data.payload);
+    console.log(action.data)
     yield put(updateTaskSuccess(action.data))
 }
 
 export function* watchUpdateTask() {
-    const action = yield takeEvery(UPDATE_TASK, updateTask)
+    yield throttle(500, UPDATE_TASK, updateTask)
 }
 
 export function* getTasks(action) {
