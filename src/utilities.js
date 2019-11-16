@@ -46,13 +46,13 @@ export function orderTaskList(tasks) {
     tasksNew.sort(function(a, b) {
         return a.timestamp>b.timestamp ? -1 : a.timestamp<b.timestamp ? 1 : 0;
     });
-    tasksActive.sort(function(a, b) {
+    tasksActive.sort(function(b, a) {
         return a.timestamp>b.timestamp ? -1 : a.timestamp<b.timestamp ? 1 : 0;
     });
-    tasksPickedUp.sort(function(a, b) {
+    tasksPickedUp.sort(function(b, a) {
         return a.timestamp>b.timestamp ? -1 : a.timestamp<b.timestamp ? 1 : 0;
     });
-    tasksDelivered.sort(function(a, b) {
+    tasksDelivered.sort(function(b, a) {
         return a.timestamp>b.timestamp ? -1 : a.timestamp<b.timestamp ? 1 : 0;
     });
     result = result.concat(tasksNew);
