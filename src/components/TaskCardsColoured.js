@@ -4,7 +4,6 @@ import 'typeface-roboto'
 import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../css/common';
 import CardContent from '@material-ui/core/CardContent';
 import {Typography} from "@material-ui/core";
-import {convertDate} from '../utilities'
 import Moment from "react-moment";
 
 export function TaskCard(props) {
@@ -33,44 +32,34 @@ export function TaskCard(props) {
         </CardContent>;
     if (!hasRider) {
         return (
-            <div onClick={props.onClick}>
                 <TaskNew>
                     {cardInnerContent}
                 </TaskNew>
-            </div>
         )
     } else if (hasRider && !props.pickupTime) {
         return (
-            <div onClick={props.onClick}>
                 <TaskAssigned>
                     {cardInnerContent}
                 </TaskAssigned>
-            </div>
         )
     } else if (hasRider && props.pickupTime && !props.dropoffTime) {
         return (
-            <div onClick={props.onClick}>
                 <TaskActive>
                     {cardInnerContent}
                 </TaskActive>
-            </div>
         )
 
     } else if (props.dropoffTime) {
         return (
-            <div onClick={props.onClick}>
                 <TaskDelivered>
                     {cardInnerContent}
                 </TaskDelivered>
-            </div>
         )
     } else {
         return (
-            <div onClick={props.onClick}>
                 <TaskAdded>
                     {cardInnerContent}
                 </TaskAdded>
-            </div>
         )
     }
 }

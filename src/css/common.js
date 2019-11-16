@@ -12,6 +12,7 @@ export const StyledAddCircleOutline = styled(AddCircleOutline)( {
     color: "darkblue",
     width: "150px",
     height: "150px",
+    margin: "15px",
     borderRadius: "50%",
     background:"rgb(250, 248, 248)"
 });

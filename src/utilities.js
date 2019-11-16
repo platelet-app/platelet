@@ -57,5 +57,6 @@ export function orderTaskList(tasks) {
     result = result.concat(tasksActive);
     result = result.concat(tasksPickedUp);
     result = result.concat(tasksDelivered);
+    return {tasksNew: tasksNew, tasksActive: tasksActive, tasksPickedUp: tasksPickedUp, tasksDelivered: tasksDelivered}
     return result;
 }
