@@ -6,7 +6,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {addTask, getAllTasks} from '../redux/Actions'
 import {connect} from "react-redux"
 import { makeStyles } from "@material-ui/core/styles";
-import TasksGrid from "./TasksGrid";
+import TasksGrid from "../components/TasksGrid";
 
 
 

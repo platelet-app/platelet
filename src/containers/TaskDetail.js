@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import TaskDialog from "./TaskModal";
+import TaskDialog from "../components/TaskModal";
 
 
 export default function TaskDetail(props) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {ResponsiveDrawer} from './components/Menu'
+import {ResponsiveDrawer} from './containers/Menu'
 import Login from './Login'
 import './index.css'
 import {deleteLogin, getLogin} from "./utilities";
