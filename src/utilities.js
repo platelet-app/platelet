@@ -23,6 +23,8 @@ export function orderTaskList(tasks) {
     let tasksActive = [];
     let tasksPickedUp = [];
     let tasksDelivered = [];
+    if (!tasks)
+        return {tasksNew: [], tasksActive: [], tasksPickedUp: [], tasksDelivered: []}
     tasks.forEach((task) => {
         if (typeof(task.timestamp) === "string") {
             task.timestamp = new Date(task.timestamp);

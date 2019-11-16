@@ -15,13 +15,14 @@ import store from "../redux/Store"
 import {makeStyles} from "@material-ui/core/styles";
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
-
-
+import TaskItem from "./TaskItem";
+import TasksGrid from "./TasksGrid";
 import {
     Link,
     useLocation,
 } from "react-router-dom";
 import {Typography} from "@material-ui/core";
+import Container from "@material-ui/core/Container";
 
 const mapStateToProps = state => {
     return {
@@ -46,20 +47,6 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const getColumnTitle = key => {
-    console.log(key)
-
-    switch (key) {
-        case "tasksActive":
-            return <Typography><h3>Active</h3></Typography>;
-        case "tasksPickedUp":
-            return <Typography><h3>Picked up</h3></Typography>;
-        case "tasksDelivered":
-            return <Typography><h3>Delivered</h3></Typography>;
-        default:
-            return ""
-    }
-}
 
 function UsersSession(props) {
     const theme = useTheme();
@@ -85,78 +72,22 @@ function UsersSession(props) {
 
 
     let location = useLocation();
-
     if (loaded) {
-        const orderedTasks = orderTaskList(tasks)
-        const allTasksGrid =
-            <Grid container
-                  spacing={3}
-                  direction={"row"}
-                  justify={"flex-start"}
-                  alignItems={"stretch"}
-            >
-                {Object.entries(orderedTasks).map(taskList => {
-                    const title = getColumnTitle(taskList[0])
-                    if (taskList[0] !== "tasksNew") {
-                        return (
-                            <Grid item xs={10} sm={5} md={4} lg={3} key={taskList[0]}>
-                                <Box height={"100%"} bgcolor={"rgba(235, 235, 235, 0.7)"} padding={"20px"} border={4}
-                                     borderColor={"cornflowerblue"} borderRadius={20}>
-                                    {title}
-                                    <Grid container
-                                          spacing={3}
-                                          direction={"column"}
-                                          justify={"flex-start"}
-                                          alignItems={"center"}
-                                    >
-                                        {taskList[1].map(task => {
-                                            return (
-                                                <Grid item key={task.uuid}>
-
-                                                    <Link style={{textDecoration: 'none'}}
-                                                          key={task.uuid}
-                                                          to={{
-                                                              pathname: `/task/${task.uuid}`,
-                                                              state: {
-                                                                  background: location,
-                                                                  view: "simple",
-                                                                  fullscreen: fullScreenModal
-                                                              }
-                                                          }}
-                                                    >
-                                                        <TaskCard
-                                                            title={"Task"}
-                                                            pickupAddress={task.pickup_address}
-                                                            dropoffAddress={task.dropoff_address}
-                                                            assignedRider={task.rider}
-                                                            pickupTime={task.pickup_time}
-                                                            dropoffTime={task.dropoff_time}
-                                                            timestamp={task.timestamp}
-                                                            priority={task.priority}
-                                                        />
-                                                    </Link>
-
-                                                </Grid>
-                                            )
-                                        })}
-                                    </Grid>
-                                </Box>
-                            </Grid>
-                        )
-                    } else {
-                        return <></>
-                    }
-                })}
-            </Grid>;
         return (
             <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>
-                {allTasksGrid}
+                <TasksGrid tasks={tasks}
+                              location={location}
+                              fullScreenModal={fullScreenModal}
+                              modalView={"simple"}
+                              excludeColumnList={["tasksNew"]}
+                />
 
             </div>
         )
     } else {
         return <></>
     }
+
 }
 
 const UsersTasks = connect(
