@@ -1,38 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {convertDate, orderTaskList} from '../utilities'
-import {StyledAddCircleOutline} from "../css/common";
-import Grid from "@material-ui/core/Grid";
-import {TaskCard} from "./TaskCardsColoured";
-import update from 'immutability-helper';
-import moment from 'moment/min/moment-with-locales';
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {addTask, getAllTasks} from '../redux/Actions'
+import {getAllMyTasks} from '../redux/Actions'
 import {connect} from "react-redux"
-import store from "../redux/Store"
 import {makeStyles} from "@material-ui/core/styles";
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import TaskItem from "./TaskItem";
-import TasksGrid from "./TasksGrid";
+import TasksGrid from "../components/TasksGrid";
 import {
-    Link,
     useLocation,
 } from "react-router-dom";
-import {Typography} from "@material-ui/core";
-import Container from "@material-ui/core/Container";
 
 const mapStateToProps = state => {
     return {
-        tasksSoon: state.tasks
+        myTasks: state.tasks
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        getTasksList: sessionId => dispatch(getAllTasks(sessionId)),
+        getTasksList: sessionId => dispatch(getAllMyTasks(sessionId)),
     }
 };
 
@@ -58,24 +45,28 @@ function UsersSession(props) {
     const [loaded, setLoaded] = useState(false);
 
     function setup() {
-        props.apiControl.users.getAssignedTasks(props.match.params.user_uuid)
+        props.getTasksList();
+        setLoaded(true)
+        /*props.apiControl.users.getAssignedTasks(props.match.params.user_uuid)
             .then((tasks_data) => {
                 console.log(tasks_data)
                 if (tasks_data) {
                     setTasks(tasks_data)
                     setLoaded(true)
                 }
-            });
+            });*/
     }
 
     useEffect(setup, []);
 
 
     let location = useLocation();
+    console.log("asdf")
+    console.log(props.myTasks)
     if (loaded) {
         return (
             <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>
-                <TasksGrid tasks={tasks}
+                <TasksGrid tasks={props.myTasks}
                               location={location}
                               fullScreenModal={fullScreenModal}
                               modalView={"simple"}

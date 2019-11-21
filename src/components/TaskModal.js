@@ -62,7 +62,6 @@ function TaskDialog(props) {
     if (taskResult.length === 1) {
         task = taskResult[0];
     }
-    console.log(task.priority_id ? task.priority_id : "no")
     function componentDidMount() {
 
         props.apiControl.priorities.getPriorities().then((data) => {

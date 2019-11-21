@@ -2,10 +2,23 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import {StyledAddCircleOutlineSmall} from "../css/common";
 import DeliverableDropSelect from "./DeliverableDropSelect";
-import update from 'immutability-helper';
+import {addDeliverable, getDeliverables} from "../redux/Actions";
+import { connect } from "react-redux"
 
+const mapStateToProps = state => {
+    return {
+        deliverables: state.deliverables
+    };
+};
 
-export default function DeliverableGridSelect(props) {
+const mapDispatchToProps = dispatch => {
+    return {
+        onAddDeliverableClick: deliverable => dispatch(addDeliverable(deliverable)),
+        getDeliverablesList: taskId => dispatch(getDeliverables(taskId)),
+    }
+};
+
+function GridSelect(props) {
 
    let emptyDeliverable = {
         task_id: props.taskId,
@@ -17,21 +30,28 @@ export default function DeliverableGridSelect(props) {
     function onSelectDeliverableType(uuid, deliverableType) {
         props.onSelect(uuid, deliverableType)
     }
+    const setup = () => {
+        console.log("AAAAAAAAA")
+        console.log(props.taskId)
+        props.getDeliverablesList({"taskId": props.taskId})
+    };
+    React.useEffect(setup, [])
 
     const circleAdd =
         <StyledAddCircleOutlineSmall
             onClick={() => {
                 let newDeliverable = {...emptyDeliverable};
-                props.apiControl.deliverables.createDeliverable(newDeliverable).then((data) => {
-                    newDeliverable.uuid = data.uuid;
-                    props.apiControl.notes.createNote({"deliverable_id": data.uuid}).then((data) => {
-                        newDeliverable.desc_note_id = data.uuid;
+                props.onAddDeliverableClick(newDeliverable);
+               // props.apiControl.deliverables.createDeliverable(newDeliverable).then((data) => {
+               //     newDeliverable.uuid = data.uuid;
+               //     props.apiControl.notes.createNote({"deliverable_id": data.uuid}).then((data) => {
+               //         newDeliverable.desc_note_id = data.uuid;
 
-                        props.onNew(newDeliverable);
+               //         props.onNew(newDeliverable);
 
-                    })
+               //     })
 
-                })
+               // })
 
             }
             }
@@ -64,3 +84,10 @@ export default function DeliverableGridSelect(props) {
         )
 
 }
+
+const DeliverableGridSelect = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(GridSelect)
+
+export default DeliverableGridSelect

@@ -1,6 +1,6 @@
 import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
 import api from "./Api"
-import {ADD_TASK, addTaskSuccess, UPDATE_TASK, updateTaskSuccess, GET_TASKS, getAllTasksSuccess} from "./Actions"
+import {ADD_TASK, addTaskSuccess, UPDATE_TASK, updateTaskSuccess, GET_TASKS, getAllTasksSuccess, GET_MY_TASKS, getAllMyTasksSuccess} from "./Actions"
 
 
 export function* postNewTask(action) {
@@ -31,5 +31,15 @@ export function* getTasks(action) {
 
 export function* watchGetTasks() {
     const action = yield takeLatest(GET_TASKS, getTasks)
+}
+
+export function* getMyTasks(action) {
+    const whoami = yield call([api, api.users.whoami]);
+    const result = yield call([api, api.users.getAssignedTasks], whoami.uuid);
+    yield put(getAllMyTasksSuccess(result))
+}
+
+export function* watchGetMyTasks() {
+    const action = yield takeLatest(GET_MY_TASKS, getMyTasks)
 }
 

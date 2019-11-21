@@ -155,7 +155,7 @@ class Deliverable {
     }
 
     async getDeliverables(task_id) {
-        return makeFetch(this.api_url, "deliverables" + task_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "deliverables/" + task_id, "GET", this.bearer)
     }
 
     async getDeliverable(deliverable_id) {

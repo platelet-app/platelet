@@ -103,7 +103,7 @@ export function ResponsiveDrawer(props) {
                         <ListItemText primary={"Home"}/>
                     </ListItem>
                     {sessionLink}
-                    <ListItem component={Link} to={"/user/" + myUUID + "/tasks"} button>
+                    <ListItem component={Link} to={"/mytasks"} button>
                         <ListItemIcon><InboxIcon/></ListItemIcon>
                         <ListItemText primary={"My Tasks"}/>
                     </ListItem>

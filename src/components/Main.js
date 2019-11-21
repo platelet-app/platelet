@@ -9,7 +9,7 @@ import {BrowserRouter as Router, Route, Switch, useLocation, useHistory, usePara
 import SessionDetail from "../containers/SessionDetail";
 import TaskDetail from "../containers/TaskDetail";
 import Login from "../Login";
-import UsersTasks from "./UsersTasks";
+import UsersTasks from "../containers/UsersTasks";
 import TaskModal from "./TaskModal";
 
 export default function Main(_props) {
@@ -27,7 +27,7 @@ export default function Main(_props) {
                 <Route path='/profile'
                        render={(props) => <UserProfile {...props} apiControl={_props.apiControl}/>}
                 />
-                <Route path='/user/:user_uuid/tasks'
+                <Route path='/mytasks'
                        render={(props) => <UsersTasks {...props} apiControl={_props.apiControl}/>}
                 />
                 <Route path='/session/:session_uuid'
