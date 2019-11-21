@@ -23,7 +23,6 @@ export function* watchUpdateDeliverable() {
 }
 
 export function* getDeliverables(action) {
-    console.log(action.data.taskId)
     const result = yield call([api, api.deliverables.getDeliverables], action.data.taskId);
     yield put(getDeliverablesSuccess(result))
 }

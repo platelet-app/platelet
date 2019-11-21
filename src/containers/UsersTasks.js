@@ -61,8 +61,6 @@ function UsersSession(props) {
 
 
     let location = useLocation();
-    console.log("asdf")
-    console.log(props.myTasks)
     if (loaded) {
         return (
             <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>

@@ -7,7 +7,8 @@ import { connect } from "react-redux"
 
 const mapStateToProps = state => {
     return {
-        deliverables: state.deliverables
+        deliverables: state.deliverables,
+        availableDeliverables: state.availableDeliverables
     };
 };
 
@@ -19,6 +20,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 function GridSelect(props) {
+    const [availableDeliverables, setAvailableDeliverables] = React.useState([])
 
    let emptyDeliverable = {
         task_id: props.taskId,
@@ -31,9 +33,11 @@ function GridSelect(props) {
         props.onSelect(uuid, deliverableType)
     }
     const setup = () => {
-        console.log("AAAAAAAAA")
-        console.log(props.taskId)
-        props.getDeliverablesList({"taskId": props.taskId})
+        props.apiControl.deliverables.getAvailableDeliverables()
+            .then((data) => {
+                setAvailableDeliverables(data);
+                props.getDeliverablesList({"taskId": props.taskId})
+            })
     };
     React.useEffect(setup, [])
 
@@ -71,7 +75,7 @@ function GridSelect(props) {
                 {props.deliverables.map(deliverable => {
                     return <><Grid item>
                         <DeliverableDropSelect key={deliverable.uuid}
-                                               availableDeliverables={props.availableDeliverables}
+                                               availableDeliverables={availableDeliverables}
                                                deliverable={deliverable}
                                                onSelect={props.onSelect}
                                                onNoteChange={props.onNoteChange}

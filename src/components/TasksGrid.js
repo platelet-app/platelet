@@ -44,7 +44,6 @@ export default function TasksGrid(props) {
           alignItems={"stretch"}
     >
         {Object.entries(orderTaskList(props.tasks)).map(taskList => {
-            console.log(props.excludeColumnList)
             if (props.excludeColumnList && props.excludeColumnList.includes(taskList[0]))
                 return <></>
             let newTaskButton = "";
