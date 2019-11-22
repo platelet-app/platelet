@@ -34,7 +34,7 @@ export default function Main(_props) {
                        render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                 />
                 <Route path="/task/:task_id"
-                       render={(props) => <TaskModal {...props} modal={false} apiControl={_props.apiControl}/>}
+                       render={(props) => <TaskModal {...props} modal={true} apiControl={_props.apiControl}/>}
                    />
 
             </Switch>

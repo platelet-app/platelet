@@ -121,7 +121,7 @@ export default class UsersSelect extends React.Component {
         }));
         return (
             <div>
-                <Downshift id="downshift-options">
+                <Downshift id="downshift-options" onSelect={this.props.onSelect}>
                     {({
                           clearSelection,
                           getInputProps,
@@ -139,12 +139,6 @@ export default class UsersSelect extends React.Component {
                                 if (event.target.value === '') {
                                     clearSelection();
                                 }
-                            },
-                            onSelect: (event, key) => {
-                                if (event.target.id) {
-                                    this.props.onSelect(selectedItem);
-                                }
-
                             },
                             onFocus: openMenu,
                             placeholder: 'Type to search users',

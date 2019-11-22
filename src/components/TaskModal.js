@@ -168,6 +168,7 @@ function TaskDialog(props) {
     }
 
     function onSelectRider(selectedItem) {
+        console.log(selectedItem)
         let result = userSuggestions.filter(rider => rider.display_name === selectedItem);
         if (result.length === 1) {
             let rider = {
@@ -236,7 +237,6 @@ function TaskDialog(props) {
     }
 
     let handleClose = e => {
-        //props.updateCallback(taskId, payload);
         setOpen(false);
         setPayload({});
         e.stopPropagation();
