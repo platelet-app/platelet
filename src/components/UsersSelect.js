@@ -149,7 +149,7 @@ export default class UsersSelect extends React.Component {
                                 {renderInput({
                                     fullWidth: true,
                                     classes,
-                                    label: "Assigned Rider",
+                                    label: "Users",
                                     InputLabelProps: getLabelProps({shrink: true}),
                                     InputProps: {onBlur, onChange, onFocus, onSelect},
                                     inputProps,

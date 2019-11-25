@@ -130,6 +130,10 @@ function TaskDialog(props) {
 
     useEffect(componentDidMount, [])
 
+    function onSelectName(result) {
+
+    }
+
     function onSelectPickup(selectedItem) {
         let result = locationSuggestions.filter(location => location.name === selectedItem);
         if (result.length === 1) {
@@ -289,7 +293,7 @@ function TaskDialog(props) {
     let deliverableSelect = <DeliverableInformation apiControl={props.apiControl} taskId={taskId}/>;
     if (editMode) {
         deliverableSelect = <><DialogContentText>
-            Add a deliverable
+            Deliverables:
         </DialogContentText>
             <DeliverableGridSelect apiControl={props.apiControl}
                                    taskId={taskId}
@@ -338,6 +342,26 @@ function TaskDialog(props) {
 
                             <Grid item>
                                 <Box className={classes.box}>
+                                    <TextField
+                                        margin="dense"
+                                        id="name"
+                                        label="Name"
+                                        type="text"
+                                        fullWidth
+                                    />
+                                    <TextField
+                                        margin="dense"
+                                        id="contact-number"
+                                        label="Contact Number"
+                                        type="text"
+                                        fullWidth
+                                    />
+                                </Box>
+                            </Grid>
+
+                            <Grid item>
+                                <Box className={classes.box}>
+                                    <DialogContentText>From:</DialogContentText>
                                     <AddressDetailsCollapsible label={pickupLabel}
                                                                onSelect={onSelectPickup}
                                                                locations={locationSuggestions}
@@ -349,6 +373,7 @@ function TaskDialog(props) {
                             </Grid>
                             <Grid item>
                                 <Box className={classes.box}>
+                                    <DialogContentText>To:</DialogContentText>
                                     <AddressDetailsCollapsible label={dropoffLabel}
                                                                onSelect={onSelectDropoff}
                                                                locations={locationSuggestions}
@@ -359,6 +384,7 @@ function TaskDialog(props) {
                             </Grid>
                             <Grid item>
                                 <Box className={classes.box}>
+                                    <DialogContentText>Assigned rider:</DialogContentText>
                                     {usersSelect}
                                 </Box>
                             </Grid>
