@@ -5,6 +5,20 @@ import Box from "@material-ui/core/Box";
 import {StyledAddCircleOutline} from "../css/common";
 import TaskItem from "./TaskItem";
 import {orderTaskList} from "../utilities";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles(({
+    box: {
+        border: 0,
+        boxShadow: '0 4px 6px 3px rgba(100, 100, 100, .3)',
+        borderRadius: 5,
+        height: "100%",
+        minWidth: "250px",
+        maxWidth: "400px",
+        background: "rgba(255, 255, 255, 0.8)",
+        padding: "20px"
+    },
+}));
 
 const getColumnTitle = key => {
     switch (key) {
@@ -36,6 +50,7 @@ const circleAdd = (callback, sessionUUID) => {
 }
 
 export default function TasksGrid(props) {
+    const classes = useStyles();
     return (
     <Grid container
           spacing={3}
@@ -54,8 +69,7 @@ export default function TasksGrid(props) {
             const title = getColumnTitle(taskList[0]);
             return (
                 <Grid item xs sm md lg key={taskList[0]}>
-                    <Box height={"100%"} minWidth={"250px"} bgcolor={"rgba(235, 235, 235, 0.7)"} padding={"20px"}
-                         border={4} borderColor={"cornflowerblue"} borderRadius={20}>
+                    <Box className={classes.box}>
                         {title}
                         <Grid container
                               spacing={3}
