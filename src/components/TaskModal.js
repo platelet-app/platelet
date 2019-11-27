@@ -21,6 +21,7 @@ import {updateTask, getAllTasks} from "../redux/Actions";
 import {connect} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import TextFieldControlled from "./TextFieldControlled";
 
 const mapStateToProps = state => {
     return {
@@ -48,9 +49,9 @@ const useStyles = makeStyles(({
     },
 }));
 
+
 function TaskDialog(props) {
     const classes = useStyles();
-    console.log(classes)
     const [locationSuggestions, setLocationSuggestions] = useState([]);
     const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
     const [userSuggestions, setUserSuggestions] = useState([]);
@@ -69,14 +70,14 @@ function TaskDialog(props) {
 
     let editMode = props.view === "edit";
 
-
     const taskId = props.match.params.task_id;
 
     const taskResult = props.tasks.filter(task => task.uuid === props.match.params.task_id)
-    let task = {};
+    let newTask = {};
     if (taskResult.length === 1) {
-        task = taskResult[0];
+        newTask = taskResult[0];
     }
+    const [task, setTask] = useState(newTask);
 
     function componentDidMount() {
         props.apiControl.priorities.getPriorities().then((data) => {
@@ -128,9 +129,19 @@ function TaskDialog(props) {
         }
     }
 
-    useEffect(componentDidMount, [])
+    useEffect(componentDidMount, []);
 
-    function onSelectName(result) {
+    function onSelectContactNumber(event) {
+        console.log(event.target.value)
+
+        sendData({contact_number: event.target.value});
+
+    }
+
+    function onSelectName(event) {
+        console.log(event.target.value)
+
+        sendData({contact_name: event.target.value});
 
     }
 
@@ -342,20 +353,12 @@ function TaskDialog(props) {
 
                             <Grid item>
                                 <Box className={classes.box}>
-                                    <TextField
-                                        margin="dense"
-                                        id="name"
-                                        label="Name"
-                                        type="text"
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        margin="dense"
-                                        id="contact-number"
-                                        label="Contact Number"
-                                        type="text"
-                                        fullWidth
-                                    />
+                                    <TextFieldControlled
+                                        value={task.contact_name}
+                                        onSelect={onSelectName}/>
+                                    <TextFieldControlled
+                                        value={task.contact_number}
+                                        onSelect={onSelectContactNumber}/>
                                 </Box>
                             </Grid>
 

@@ -7,6 +7,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
+import TextFieldControlled from "./TextFieldControlled";
 
 export default class AddressDetailsCollapsible extends React.Component {
     constructor(props) {
