@@ -21,7 +21,7 @@ import {updateTask, getAllTasks} from "../redux/Actions";
 import {connect} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import TextFieldControlled from "./TextFieldControlled";
+import { TextFieldControlled } from "./TextFieldControlled";
 
 const mapStateToProps = state => {
     return {
@@ -132,10 +132,8 @@ function TaskDialog(props) {
     useEffect(componentDidMount, []);
 
     function onSelectContactNumber(event) {
-        console.log(event.target.value)
-
+        console.log(event.target.value);
         sendData({contact_number: event.target.value});
-
     }
 
     function onSelectName(event) {
@@ -145,45 +143,24 @@ function TaskDialog(props) {
 
     }
 
-    function onSelectPickup(selectedItem) {
-        let result = locationSuggestions.filter(location => location.name === selectedItem);
-        if (result.length === 1) {
-            let pickup_address = {
-                ward: result[0]['address']['ward'],
-                line1: result[0]['address']['line1'],
-                line2: result[0]['address']['line2'],
-                town: result[0]['address']['town'],
-                county: result[0]['address']['county'],
-                country: result[0]['address']['country'],
-                postcode: result[0]['address']['postcode'],
-
-            };
-            sendData({pickup_address: pickup_address});
-            const updated = update(payload, {pickup_address: {$set: pickup_address}})
+    function onSelectPickup(pickupAddress) {
+        if(pickupAddress) {
+            sendData({pickup_address: pickupAddress});
+            const updated = update(payload, {pickup_address: {$set: pickupAddress}})
             setPayload(updated);
-            setPickupLabel("Pickup address - " + pickup_address.line1);
+            setPickupLabel("Pickup address - " + pickupAddress.line1);
         } else {
             setPickupLabel("Pickup address - ");
         }
     }
 
-    function onSelectDropoff(selectedItem) {
-        let result = locationSuggestions.filter(location => location.name === selectedItem);
-
-        if (result.length === 1) {
-            let dropoff_address = {
-                ward: result[0]['address']['ward'],
-                line1: result[0]['address']['line1'],
-                line2: result[0]['address']['line2'],
-                town: result[0]['address']['town'],
-                county: result[0]['address']['county'],
-                country: result[0]['address']['country'],
-                postcode: result[0]['address']['postcode']
-            };
-            sendData({dropoff_address: dropoff_address});
-            const updated = update(payload, {dropoff_address: {$set: dropoff_address}});
+    function onSelectDropoff(dropoffAddress) {
+        console.log("AAAAAAAAAAA")
+        if(dropoffAddress) {
+            sendData({dropoff_address: dropoffAddress});
+            const updated = update(payload, {dropoff_address: {$set: dropoffAddress}});
             setPayload(updated);
-            setDropoffLabel("Dropoff address - " + dropoff_address.line1);
+            setDropoffLabel("Dropoff address - " + dropoffAddress.line1);
 
         } else {
             setDropoffLabel("Dropoff address - ")
@@ -355,8 +332,12 @@ function TaskDialog(props) {
                                 <Box className={classes.box}>
                                     <TextFieldControlled
                                         value={task.contact_name}
+                                        label={"Contact Name"}
+                                        id={"contact-name"}
                                         onSelect={onSelectName}/>
                                     <TextFieldControlled
+                                        label={"Contact Number"}
+                                        id={"contact-number"}
                                         value={task.contact_number}
                                         onSelect={onSelectContactNumber}/>
                                 </Box>
