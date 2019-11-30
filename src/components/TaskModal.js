@@ -58,7 +58,6 @@ function TaskDialog(props) {
     const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
     const [availablePriorities, setAvailablePriorities] = useState([]);
     const [availableDeliverables, setAvailableDeliverables] = useState([]);
-    const [deliverables, setDeliverables] = useState([]);
 
     const [open, setOpen] = useState(false);
     const [pickupLabel, setPickupLabel] = useState("");
@@ -77,7 +76,7 @@ function TaskDialog(props) {
     if (taskResult.length === 1) {
         newTask = taskResult[0];
     }
-    const [task, setTask] = useState(newTask);
+    const task = props.task || newTask;
 
     function componentDidMount() {
         props.apiControl.priorities.getPriorities().then((data) => {
@@ -144,6 +143,7 @@ function TaskDialog(props) {
     }
 
     function onSelectPickup(pickupAddress) {
+        console.log(pickupAddress)
         if(pickupAddress) {
             sendData({pickup_address: pickupAddress});
             const updated = update(payload, {pickup_address: {$set: pickupAddress}})
@@ -155,7 +155,6 @@ function TaskDialog(props) {
     }
 
     function onSelectDropoff(dropoffAddress) {
-        console.log("AAAAAAAAAAA")
         if(dropoffAddress) {
             sendData({dropoff_address: dropoffAddress});
             const updated = update(payload, {dropoff_address: {$set: dropoffAddress}});
@@ -220,24 +219,6 @@ function TaskDialog(props) {
         setPayload(updated);
     }
 
-    function onNewDeliverable(newDeliverable) {
-        setDeliverables([newDeliverable, ...deliverables])
-    }
-
-    function onSelectDeliverable(uuid, type_id) {
-        let result = deliverables.filter(deliverable => deliverable.uuid === uuid);
-        if (result.length === 1) {
-            const index = deliverables.indexOf(result[0]);
-            const updated = update(deliverables, {[index]: {type_id: {$set: type_id}}});
-            setDeliverables(updated)
-        }
-        props.apiControl.deliverables.updateDeliverable(uuid, {"type_id": type_id});
-    }
-
-    function onDeliverableNote(uuid, value) {
-        props.apiControl.notes.updateNote(uuid, {"body": value});
-    }
-
     function handleClickOpen() {
         setOpen(true);
     }
@@ -286,10 +267,7 @@ function TaskDialog(props) {
             <DeliverableGridSelect apiControl={props.apiControl}
                                    taskId={taskId}
                                    deliverables={task.deliverables ? task.deliverables : []}
-                                   availableDeliverables={availableDeliverables}
-                                   onNew={onNewDeliverable}
-                                   onSelect={onSelectDeliverable}
-                                   onNoteChange={onDeliverableNote}/>
+                                   availableDeliverables={availableDeliverables}/>
         </>;
     }
 

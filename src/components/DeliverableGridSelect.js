@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {StyledAddCircleOutlineSmall} from "../css/common";
 import DeliverableDropSelect from "./DeliverableDropSelect";
-import {addDeliverable, getDeliverables} from "../redux/Actions";
+import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/Actions";
 import {connect} from "react-redux"
+import update from "immutability-helper";
 
 const mapStateToProps = state => {
     return {
@@ -16,11 +17,29 @@ const mapDispatchToProps = dispatch => {
     return {
         onAddDeliverableClick: deliverable => dispatch(addDeliverable(deliverable)),
         getDeliverablesList: taskId => dispatch(getDeliverables(taskId)),
+        onUpdateDeliverable: deliverableId => dispatch(updateDeliverable(deliverableId))
     }
 };
 
+
+
 function GridSelect(props) {
     const [availableDeliverables, setAvailableDeliverables] = React.useState([]);
+    const [deliverables, setDeliverables] = useState([]);
+
+    const onSelectDeliverable = (uuid, type_id) => {
+        let result = deliverables.filter(deliverable => deliverable.uuid === uuid);
+        if (result.length === 1) {
+            const index = deliverables.indexOf(result[0]);
+            const updated = update(deliverables, {[index]: {type_id: {$set: type_id}}});
+            setDeliverables(updated)
+        }
+        props.apiControl.deliverables.updateDeliverable(uuid, {"type_id": type_id});
+    };
+
+    const onDeliverableNote = (uuid, value) => {
+        props.apiControl.notes.updateNote(uuid, {"body": value});
+    };
 
     let emptyDeliverable = {
         task_id: props.taskId,
@@ -64,7 +83,7 @@ function GridSelect(props) {
                     <DeliverableDropSelect key={deliverable.uuid}
                                            availableDeliverables={availableDeliverables}
                                            deliverable={deliverable}
-                                           onSelect={props.onSelect}
+                                           onSelect={onSelectDeliverable}
                                            onNoteChange={props.onNoteChange}
                                            uuid={deliverable.uuid}/>
                 </Grid></>

@@ -29,7 +29,6 @@ export default function AddressDetailsCollapsible(props){
     const onSelectPreset = selectedItem => {
         let result = props.locations.filter(location => location.name === selectedItem);
         if (result.length === 1) {
-            console.log("ASDJFKL;SAJFKL;AS")
             let newAddress = {
                 ward: result[0]['address']['ward'],
                 line1: result[0]['address']['line1'],

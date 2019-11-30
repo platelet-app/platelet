@@ -21,9 +21,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function PrioritySelect(props) {
     const classes = useStyles();
-    const [values, setValues] = React.useState({
-        priority: props.priority ? props.priority : null
-    });
+    const [value, setValue] = React.useState(props.priority || null);
 
 
     const inputLabel = React.useRef(null);
@@ -34,6 +32,7 @@ export default function PrioritySelect(props) {
 
     const handleChange = event => {
         props.onSelect(event.target.value);
+        setValue(event.target.value);
     };
 
     let menuItems = [];
@@ -48,7 +47,7 @@ export default function PrioritySelect(props) {
                     Priority
                 </InputLabel>
                 <Select
-                    value={props.priority}
+                    value={value || ""}
                     onChange={handleChange}
                     labelWidth={labelWidth}
                     inputProps={{
