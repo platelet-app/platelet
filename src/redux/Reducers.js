@@ -20,8 +20,9 @@ const apiUrl = 'http://localhost:5000/api/v0.1/';
 function apiControl(state = new Control(apiUrl), action) {
     switch (action.type) {
         case LOGIN:
-            return
-
+            return state
+        default:
+            return state
     }
 }
 
@@ -109,7 +110,7 @@ const rootReducer = combineReducers({
     tasks,
     sessions,
     deliverables,
-    login
+    apiControl
 });
 
 export default rootReducer

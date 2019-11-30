@@ -4,6 +4,23 @@ function status(response) {
     if (response.status >= 200 && response.status < 300) {
         return Promise.resolve(response)
     } else {
+        if(response.status > 400 || response.status < 500) {
+            store.addNotification({
+                title: "Unauthorised error.",
+                //TODO: proper error messages from the api
+                message: "Try logging in again.",
+                type: "danger",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animated", "fadeIn"],
+                animationOut: ["animated", "fadeOut"],
+                dismiss: {
+                    duration: 10000,
+                    onScreen: true
+                }
+            });
+
+        }
         return Promise.reject({ "status_code": response.status, "error": new Error(response.statusText), "response": response.json() })
     }
 }
