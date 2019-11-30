@@ -1,9 +1,29 @@
 import { combineReducers } from 'redux'
+import Control from "../ApiControl"
 import update from 'immutability-helper';
 import {
-    ADD_TASK_SUCCESS, GET_TASKS_SUCCESS, ADD_SESSION_SUCCESS, GET_SESSIONS_SUCCESS, UPDATE_TASK_SUCCESS, GET_MY_TASKS_SUCCESS, ADD_DELIVERABLE_SUCCESS, GET_DELIVERABLES_SUCCESS, UPDATE_DELIVERABLE_SUCCESS
+    ADD_TASK_SUCCESS,
+    GET_TASKS_SUCCESS,
+    ADD_SESSION_SUCCESS,
+    GET_SESSIONS_SUCCESS,
+    UPDATE_TASK_SUCCESS,
+    GET_MY_TASKS_SUCCESS,
+    ADD_DELIVERABLE_SUCCESS,
+    GET_DELIVERABLES_SUCCESS,
+    UPDATE_DELIVERABLE_SUCCESS,
+    LOGIN,
+    LOGIN_SUCCESS
 } from './Actions'
 
+const apiUrl = 'http://localhost:5000/api/v0.1/';
+
+function apiControl(state = new Control(apiUrl), action) {
+    switch (action.type) {
+        case LOGIN:
+            return
+
+    }
+}
 
 function tasks(state = [], action) {
     console.log("TASKS")
@@ -88,7 +108,8 @@ function sessions(state = [], action) {
 const rootReducer = combineReducers({
     tasks,
     sessions,
-    deliverables
+    deliverables,
+    login
 });
 
 export default rootReducer

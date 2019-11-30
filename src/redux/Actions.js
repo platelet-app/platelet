@@ -26,6 +26,11 @@ export const UPDATE_DELIVERABLE_SUCCESS = 'UPDATE_DELIVERABLE_SUCCESS';
 export const GET_DELIVERABLES = 'GET_DELIVERABLES';
 export const GET_DELIVERABLES_SUCCESS = 'GET_DELIVERABLES_SUCCESS';
 
+// LOGIN
+
+export const LOGIN = 'LOGIN';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+
 
 /*
  * other constants
@@ -40,6 +45,14 @@ export const VisibilityFilters = {
 /*
  * action creators
  */
+
+export function loginUser(data) {
+    return { type: ADD_DELIVERABLE, data }
+}
+
+export function loginUserSuccess(data) {
+    return { type: ADD_DELIVERABLE_SUCCESS, data }
+}
 
 export function addDeliverable(data) {
     return { type: ADD_DELIVERABLE, data }
