@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import TextField from '@material-ui/core/TextField';
 import {makeStyles} from "@material-ui/core";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -25,24 +25,47 @@ export default function AddressDetailsCollapsible(props){
     const classes = useStyles();
 
     const [address, setAddress] = useState(props.address);
+    const [what3words, setWhat3words] = useState(props.address ? props.address.what3words || "" : "");
+    const [ward, setWard] = useState(props.address ? props.address.ward || "" : "");
+    const [line1, setLine1] = useState(props.address ? props.address.line1 || "" :  "");
+    const [line2, setLine2] = useState(props.address ? props.address.line2 || "" : "");
+    const [town, setTown] = useState(props.address ? props.address.town || "" : "");
+    const [county, setCounty] = useState(props.address ? props.address.county || "" : "");
+    const [country, setCountry] = useState(props.address ? props.address.country || "" : "");
+    const [postcode, setPostcode] = useState(props.address ? props.address.country || "" : "");
 
     const onSelectPreset = selectedItem => {
         let result = props.locations.filter(location => location.name === selectedItem);
         if (result.length === 1) {
-            let newAddress = {
-                ward: result[0]['address']['ward'],
-                line1: result[0]['address']['line1'],
-                line2: result[0]['address']['line2'],
-                town: result[0]['address']['town'],
-                county: result[0]['address']['county'],
-                country: result[0]['address']['country'],
-                postcode: result[0]['address']['postcode'],
+            setWard(result[0]['address']['ward']);
+            setLine1(result[0]['address']['line1']);
+            setLine2(result[0]['address']['line2']);
+            setTown(result[0]['address']['town']);
+            setCounty(result[0]['address']['county']);
+            setCountry(result[0]['address']['country']);
+            setPostcode(result[0]['address']['postcode']);
 
-            };
-            setAddress(newAddress);
-            props.onSelect(newAddress);
         }
-    }
+    };
+    // useEffect(() => {props.onSelect({what3words: what3words})}, [what3words]);
+    // useEffect(() => {props.onSelect({ward: ward})}, [ward]);
+    // useEffect(() => {props.onSelect({line1: line1})}, [line1]);
+    // useEffect(() => {props.onSelect({line2: line2})}, [line2]);
+    // useEffect(() => {props.onSelect({town: town})}, [town]);
+    // useEffect(() => {props.onSelect({postcode: postcode})}, [postcode]);
+    // useEffect(() => {props.onSelect({country: country})}, [country]);
+
+    useEffect(() => {
+        props.onSelect({
+            ward: ward,
+            line1: line1,
+            line2: line2,
+            town: town,
+            county: county,
+            country: country,
+            postcode: postcode
+        })
+    }, [what3words, ward, line1, line2, town, county, country, postcode])
 
 
         let presetSelect = <></>;
@@ -68,82 +91,67 @@ export default function AddressDetailsCollapsible(props){
                             <TextFieldUncontrolled
                                 id={"what3words"}
                                 label={"what3words"}
-                                value={address ? address.what3words : ""}
+                                value={what3words}
                                 onChange={e => {
-                                    const updated = update(address, {what3words: {$set: e.target.value}})
-                                    setAddress(updated)
+                                    setWhat3words(e.target.value)
                                 }}
-                                onSelect={e => props.onSelect(address)}
                             />
                             <TextFieldUncontrolled
                                 id={"ward"}
                                 label={"Ward"}
-                                value={address ? address.ward : ""}
+                                value={ward}
                                 onChange={e => {
-                                    const updated = update(address, {ward: {$set: e.target.value}})
-                                    setAddress(updated)
+                                    setWard(e.target.value)
                                 }}
-                                onSelect={e => {console.log("YAY"); props.onSelect(address)}}
+                                //onSelect={onEditAddress}
                             />
                             <TextFieldUncontrolled
                                 id={"line1"}
                                 label={"Line one"}
-                                value={address ? address.line1 : ""}
+                                value={line1}
                                 onChange={e => {
-                                    const updated = update(address, {line1: {$set: e.target.value}})
-                                    setAddress(updated)
+                                    setLine1(e.target.value)
                                 }}
-                                onSelect={e => props.onSelect(address)}
                             />
                             <TextFieldUncontrolled
                                 id={"line2"}
                                 label={"Line two"}
-                                value={address ? address.line2 : ""}
+                                value={line2}
                                 onChange={e => {
-                                    const updated = update(address, {line2: {$set: e.target.value}})
-                                    setAddress(updated)
+                                    setLine2(e.target.value)
                                 }}
-                                onSelect={e => props.onSelect(address)}
                             />
                             <TextFieldUncontrolled
                                 id={"town"}
                                 label={"Town"}
-                                value={address ? address.town : ""}
+                                value={town}
                                 onChange={e => {
-                                    const updated = update(address, {town: {$set: e.target.value}})
-                                    setAddress(updated)
+                                    setTown(e.target.value)
                                 }}
-                                onSelect={e => props.onSelect(address)}
                             />
                             <TextFieldUncontrolled
                                 id={"county"}
                                 label={"County"}
-                                value={address ? address.county : ""}
+                                value={county}
                                 onChange={e => {
-                                    const updated = update(address, {county: {$set: e.target.value}})
-                                    setAddress(updated)
+                                    setCounty(e.target.value)
                                 }}
-                                onSelect={e => props.onSelect(address)}
                             />
                             <TextFieldUncontrolled
                                 id={"postcode"}
                                 label={"Postcode"}
-                                value={address ? address.postcode : ""}
+                                value={postcode}
                                 onChange={e => {
-                                    const updated = update(address, {postcode: {$set: e.target.value}})
-                                    setAddress(updated)
+                                    setPostcode(e.target.value)
                                 }}
-                                onSelect={e => props.onSelect(address)}
                             />
                             <TextFieldUncontrolled
                                 id={"county"}
                                 label={"Country"}
-                                value={address ? address.country : ""}
+                                value={country}
                                 onChange={e => {
-                                    const updated = update(address, {country: {$set: e.target.value}})
-                                    setAddress(updated)
+                                    setCountry(e.target.value)
                                 }}
-                                onSelect={e => props.onSelect(address)}
                             />
                         </div>
                     </ExpansionPanelDetails>

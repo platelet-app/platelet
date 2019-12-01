@@ -62,7 +62,6 @@ function TaskDialog(props) {
     const [open, setOpen] = useState(false);
     const [pickupLabel, setPickupLabel] = useState("");
     const [dropoffLabel, setDropoffLabel] = useState("");
-    const [payload, setPayload] = useState({});
 
 
     let history = useHistory();
@@ -146,8 +145,6 @@ function TaskDialog(props) {
         console.log(pickupAddress)
         if(pickupAddress) {
             sendData({pickup_address: pickupAddress});
-            const updated = update(payload, {pickup_address: {$set: pickupAddress}})
-            setPayload(updated);
             setPickupLabel("Pickup address - " + pickupAddress.line1);
         } else {
             setPickupLabel("Pickup address - ");
@@ -157,8 +154,6 @@ function TaskDialog(props) {
     function onSelectDropoff(dropoffAddress) {
         if(dropoffAddress) {
             sendData({dropoff_address: dropoffAddress});
-            const updated = update(payload, {dropoff_address: {$set: dropoffAddress}});
-            setPayload(updated);
             setDropoffLabel("Dropoff address - " + dropoffAddress.line1);
 
         } else {
@@ -184,39 +179,22 @@ function TaskDialog(props) {
                 uuid: result[0]['uuid']
             };
             sendData({assigned_rider: rider.uuid}, {rider: rider});
-            const updated = update(payload,
-                {
-                    rider:
-                        {$set: rider},
-                    assigned_rider:
-                        {$set: rider.uuid}
-                }
-            );
-            setPayload(updated);
         }
     }
 
     function onSelectPriority(selectedItemId) {
         let result = availablePriorities.filter(item => item.id === selectedItemId);
         sendData({priority_id: selectedItemId, priority: result[0].label});
-        if (result.length === 1) {
-            const updated = update(payload, {priority: {$set: result[0].label}});
-            setPayload(updated)
-        }
     }
 
     function onSelectPickedUp(status) {
         let pickup_time = status ? moment.utc().toISOString() : null;
         sendData({pickup_time: pickup_time});
-        const updated = update(payload, {pickup_time: {$set: pickup_time}});
-        setPayload(updated);
     }
 
     function onSelectDroppedOff(status) {
         let dropoff_time = status ? moment.utc().toISOString() : null;
         sendData({dropoff_time: dropoff_time});
-        const updated = update(payload, {dropoff_time: {$set: dropoff_time}});
-        setPayload(updated);
     }
 
     function handleClickOpen() {
@@ -225,7 +203,6 @@ function TaskDialog(props) {
 
     let handleClose = e => {
         setOpen(false);
-        setPayload({});
         e.stopPropagation();
         history.goBack();
     };
