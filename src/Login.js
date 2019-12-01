@@ -45,6 +45,7 @@ class Login extends React.Component {
                                 .then(() => {
                                     saveLogin(this.state.apiControl.token);
                                     this.setState({"isLogged": true})
+                                    document.location.href = "/";
                                 });
                         }}>
                             Login
