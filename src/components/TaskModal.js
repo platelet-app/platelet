@@ -60,8 +60,6 @@ function TaskDialog(props) {
     const [availableDeliverables, setAvailableDeliverables] = useState([]);
 
     const [open, setOpen] = useState(false);
-    const [pickupLabel, setPickupLabel] = useState("");
-    const [dropoffLabel, setDropoffLabel] = useState("");
 
 
     let history = useHistory();
@@ -107,18 +105,6 @@ function TaskDialog(props) {
                 setUserSuggestions(data);
             });
         });
-        if (task.pickup_address)
-            if (task.pickup_address.ward)
-                setPickupLabel(task.pickup_address.line1 + " - " + task.pickup_address.ward);
-            else
-                setPickupLabel(task.pickup_address.line1);
-
-        if (task.dropoff_address)
-            if (task.dropoff_address.ward)
-                setDropoffLabel(task.dropoff_address.line1 + " - " + task.dropoff_address.ward);
-            else
-                setDropoffLabel(task.dropoff_address.line1);
-
 
         if (!props.tasks.length) {
             props.apiControl.tasks.getTask(taskId).then((data) => {
@@ -143,22 +129,14 @@ function TaskDialog(props) {
 
     function onSelectPickup(pickupAddress) {
         console.log(pickupAddress)
-        if(pickupAddress) {
+        if(pickupAddress)
             sendData({pickup_address: pickupAddress});
-            setPickupLabel("Pickup address - " + pickupAddress.line1);
-        } else {
-            setPickupLabel("Pickup address - ");
-        }
     }
 
     function onSelectDropoff(dropoffAddress) {
-        if(dropoffAddress) {
+        if(dropoffAddress)
             sendData({dropoff_address: dropoffAddress});
-            setDropoffLabel("Dropoff address - " + dropoffAddress.line1);
 
-        } else {
-            setDropoffLabel("Dropoff address - ")
-        }
 
     }
 
@@ -301,7 +279,7 @@ function TaskDialog(props) {
                             <Grid item>
                                 <Box className={classes.box}>
                                     <DialogContentText>From:</DialogContentText>
-                                    <AddressDetailsCollapsible label={pickupLabel}
+                                    <AddressDetailsCollapsible label={"Pickup Address"}
                                                                onSelect={onSelectPickup}
                                                                locations={locationSuggestions}
                                                                suggestions={filteredLocationSuggestions}
@@ -313,7 +291,7 @@ function TaskDialog(props) {
                             <Grid item>
                                 <Box className={classes.box}>
                                     <DialogContentText>To:</DialogContentText>
-                                    <AddressDetailsCollapsible label={dropoffLabel}
+                                    <AddressDetailsCollapsible label={"Dropoff Address"}
                                                                onSelect={onSelectDropoff}
                                                                locations={locationSuggestions}
                                                                suggestions={filteredLocationSuggestions}
@@ -393,7 +371,7 @@ function TaskDialog(props) {
                       justify={"flex-start"}
                       alignItems={"flex-start"}>
                     <Grid item>
-                        <AddressDetailsCollapsible label={pickupLabel}
+                        <AddressDetailsCollapsible label={"Pickup Address"}
                                                    onSelect={onSelectPickup}
                                                    locations={locationSuggestions}
                                                    suggestions={filteredLocationSuggestions}
@@ -402,7 +380,7 @@ function TaskDialog(props) {
                         />
                     </Grid>
                     <Grid item>
-                        <AddressDetailsCollapsible label={dropoffLabel}
+                        <AddressDetailsCollapsible label={"Dropoff Address"}
                                                    onSelect={onSelectDropoff}
                                                    locations={locationSuggestions}
                                                    suggestions={filteredLocationSuggestions}

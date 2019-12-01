@@ -24,7 +24,6 @@ const useStyles = makeStyles(({
 export default function AddressDetailsCollapsible(props){
     const classes = useStyles();
 
-    const [address, setAddress] = useState(props.address);
     const [what3words, setWhat3words] = useState(props.address ? props.address.what3words || "" : "");
     const [ward, setWard] = useState(props.address ? props.address.ward || "" : "");
     const [line1, setLine1] = useState(props.address ? props.address.line1 || "" :  "");
@@ -84,7 +83,7 @@ export default function AddressDetailsCollapsible(props){
                         aria-controls="address-content"
                         id="address-header"
                     >
-                        <Typography className={classes.heading}>{props.label}</Typography>
+                        <Typography className={classes.heading}>{props.label} - {line1}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <div>
