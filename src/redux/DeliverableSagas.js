@@ -19,7 +19,7 @@ export function* updateDeliverable(action) {
 }
 
 export function* watchUpdateDeliverable() {
-    yield throttle(500, UPDATE_DELIVERABLE, updateDeliverable)
+    yield throttle(200, UPDATE_DELIVERABLE, updateDeliverable)
 }
 
 export function* getDeliverables(action) {
