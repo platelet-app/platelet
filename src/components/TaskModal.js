@@ -21,7 +21,8 @@ import {updateTask, getAllTasks} from "../redux/Actions";
 import {connect} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { TextFieldControlled } from "./TextFieldControlled";
+import {TextFieldControlled} from "./TextFieldControlled";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const mapStateToProps = state => {
     return {
@@ -36,21 +37,39 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-const useStyles = makeStyles(({
-    box: {
-        border: 0,
-        boxShadow: '0 3px 5px 2px rgba(100, 100, 100, .3)',
-        borderColor: "cornflowerblue",
-        borderRadius: 0,
-        height: "100%",
-        minWidth: "400px",
-        background: "rgba(235, 235, 235, 0.7)",
-        padding: "20px"
-    },
-}));
-
 
 function TaskDialog(props) {
+    let useStyles;
+    // TODO: Do this properly (withStyles)
+    if (!props.fullscreen) {
+        useStyles = makeStyles(({
+            box: {
+                border: 0,
+                boxShadow: '0 3px 5px 2px rgba(100, 100, 100, .3)',
+                borderColor: "cornflowerblue",
+                borderRadius: 0,
+                height: "100%",
+                minWidth: "400px",
+                background: "rgba(235, 235, 235, 0.7)",
+                padding: "20px"
+            },
+        }));
+    }
+    else {
+        useStyles = makeStyles(({
+            box: {
+                border: 0,
+                boxShadow: '0 3px 5px 2px rgba(100, 100, 100, .3)',
+                borderColor: "cornflowerblue",
+                borderRadius: 0,
+                height: "100%",
+                minWidth: "400px",
+                maxWidth: "400px",
+                background: "rgba(235, 235, 235, 0.7)",
+                padding: "20px"
+            },
+        }));
+    }
     const classes = useStyles();
     const [locationSuggestions, setLocationSuggestions] = useState([]);
     const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
@@ -129,12 +148,12 @@ function TaskDialog(props) {
 
     function onSelectPickup(pickupAddress) {
         console.log(pickupAddress)
-        if(pickupAddress)
+        if (pickupAddress)
             sendData({pickup_address: pickupAddress});
     }
 
     function onSelectDropoff(dropoffAddress) {
-        if(dropoffAddress)
+        if (dropoffAddress)
             sendData({dropoff_address: dropoffAddress});
 
 
