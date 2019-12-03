@@ -14,7 +14,7 @@ export function* watchPostNewTask() {
 }
 
 export function* updateTask(action) {
-    console.log(action.data.payload)
+    // TODO: make this unnecessary
     if (action.data.payload.priority)
         delete action.data.payload.priority;
 
