@@ -43,6 +43,7 @@ export default function AddressDetailsCollapsible(props){
             setCounty(result[0]['address']['county']);
             setCountry(result[0]['address']['country']);
             setPostcode(result[0]['address']['postcode']);
+            setWhat3words(result[0]['address']['what3words']);
 
         }
     };
@@ -62,9 +63,10 @@ export default function AddressDetailsCollapsible(props){
             town: town,
             county: county,
             country: country,
-            postcode: postcode
+            postcode: postcode,
+            what3words: what3words
         })
-    }, [what3words, ward, line1, line2, town, county, country, postcode])
+    }, [what3words, ward, line1, line2, town, county, country, postcode]);
 
 
         let presetSelect = <></>;
