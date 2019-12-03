@@ -14,12 +14,16 @@ export function* watchPostNewTask() {
 }
 
 export function* updateTask(action) {
+    console.log(action.data.payload)
+    if (action.data.payload.priority)
+        delete action.data.payload.priority;
+
     yield call([api, api.tasks.updateTask], action.data.taskId, action.data.payload);
     yield put(updateTaskSuccess(action.data))
 }
 
 export function* watchUpdateTask() {
-    yield throttle(500, UPDATE_TASK, updateTask)
+    yield throttle(300, UPDATE_TASK, updateTask)
 }
 
 export function* getTasks(action) {
