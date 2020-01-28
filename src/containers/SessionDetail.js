@@ -7,6 +7,7 @@ import {addTask, getAllTasks} from '../redux/Actions'
 import {connect} from "react-redux"
 import { makeStyles } from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
+import {decodeUUID} from "../utilities";
 
 
 
@@ -46,10 +47,11 @@ function Session(props) {
     const [timestamp, setTimestamp] = useState(new Date());
     const [uuid, setUUID] = useState("");
     const [loaded, setLoaded] = useState(false);
+    let session_uuid = decodeUUID(props.match.params.session_uuid)
 
     function setup() {
-        props.getTasksList({session_id: props.match.params.session_uuid});
-        props.apiControl.sessions.getSession(props.match.params.session_uuid)
+        props.getTasksList({session_id: session_uuid});
+        props.apiControl.sessions.getSession(session_uuid)
             .then((session_data) => {
                 if (session_data) {
                     setTimestamp(session_data.timestamp);
@@ -73,7 +75,7 @@ function Session(props) {
                               location={location}
                               fullScreenModal={fullScreenModal}
                               onAddTaskClick={props.onAddTaskClick}
-                              sessionUUID={props.match.params.session_uuid}
+                              sessionUUID={session_uuid}
                               modalView={"edit"}
                 />
 

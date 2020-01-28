@@ -33,12 +33,12 @@ export default function Main(_props) {
                 <Route path='/session/:session_uuid'
                        render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                 />
-                <Route path="/task/:task_id"
+                <Route path="/session/:session_id/task/:task_id"
                        render={(props) => <TaskModal {...props} modal={true} apiControl={_props.apiControl}/>}
                    />
 
             </Switch>
-            {background && <Route path="/task/:task_id"
+            {background && <Route path="/session/:session_id/task/:task_id"
                                   render={(props) => <TaskModal {...props} modal={true} fullscreen={location.state.fullscreen} view={location.state.view} apiControl={_props.apiControl}/>}
             />}
         </main>

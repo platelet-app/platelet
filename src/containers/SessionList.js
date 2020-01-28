@@ -13,6 +13,7 @@ import Moment from "react-moment";
 import {addSession} from "../redux/Actions";
 import {connect} from "react-redux"
 import {getAllSessions} from "../redux/Actions";
+import {encodeUUID} from "../utilities";
 import { bindActionCreators } from "redux";
 
 const useStyles = makeStyles({
@@ -128,7 +129,7 @@ class SessList extends React.Component {
                 </Grid>
                 {this.props.sessions.map((session) => (
                     <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>
-                        <Link to={"/session/" + session.uuid} style={{ textDecoration: 'none' }}>
+                        <Link to={"/session/" + encodeUUID(session.uuid)} style={{ textDecoration: 'none' }}>
                             <SessionCard session={session}/>
                         </Link>
                     </Grid>

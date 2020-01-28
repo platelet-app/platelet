@@ -3,6 +3,7 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import { Link } from "react-router-dom";
 import { TaskCard }from "./TaskCardsColoured"
+import {encodeUUID} from "../utilities";
 
 export default function TaskItem (props) {
     return (
@@ -11,7 +12,7 @@ export default function TaskItem (props) {
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
                       to={{
-                          pathname: `/task/${props.task.uuid}`,
+                          pathname: `/session/${encodeUUID(props.task.session_id)}/task/${encodeUUID(props.task.uuid)}`,
                           state: {
                               background: props.location,
                               view: props.view,

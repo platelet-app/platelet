@@ -23,6 +23,7 @@ import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {TextFieldControlled} from "./TextFieldControlled";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import {decodeUUID} from "../utilities";
 
 const mapStateToProps = state => {
     return {
@@ -85,9 +86,9 @@ function TaskDialog(props) {
 
     let editMode = props.view === "edit";
 
-    const taskId = props.match.params.task_id;
+    const taskId = decodeUUID(props.match.params.task_id);
 
-    const taskResult = props.tasks.filter(task => task.uuid === props.match.params.task_id)
+    const taskResult = props.tasks.filter(task => task.uuid === decodeUUID(props.match.params.task_id));
     let newTask = {};
     if (taskResult.length === 1) {
         newTask = taskResult[0];
@@ -160,7 +161,7 @@ function TaskDialog(props) {
     }
 
     function sendData(payload, updateData) {
-        const updateDataCombined = {...payload, ...updateData}
+        const updateDataCombined = {...payload, ...updateData};
         props.updateTask({payload: payload, taskId: taskId, updateData: updateDataCombined ? updateDataCombined : {}});
     }
 
