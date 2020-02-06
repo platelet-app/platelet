@@ -11,6 +11,10 @@ import {
     ADD_DELIVERABLE_SUCCESS,
     GET_DELIVERABLES_SUCCESS,
     UPDATE_DELIVERABLE_SUCCESS,
+    ADD_VEHICLE_SUCCESS,
+    UPDATE_VEHICLE_SUCCESS,
+    GET_VEHICLES_SUCCESS,
+    GET_VEHICLE_SUCCESS,
     LOGIN,
     LOGIN_SUCCESS
 } from './Actions'
@@ -20,9 +24,9 @@ const apiUrl = 'http://localhost:5000/api/v0.1/';
 function apiControl(state = new Control(apiUrl), action) {
     switch (action.type) {
         case LOGIN:
-            return state
+            return state;
         default:
-            return state
+            return state;
     }
 }
 
@@ -106,10 +110,48 @@ function sessions(state = [], action) {
     }
 }
 
+function vehicles(state = [], action) {
+    console.log("VEHICLES")
+    console.log(action.type)
+    switch (action.type) {
+        case ADD_VEHICLE_SUCCESS:
+            console.log("AAA")
+            return [
+                ...state,
+                {
+                    ...action.data
+                }
+            ];
+        case UPDATE_VEHICLE_SUCCESS:
+            console.log("bbb")
+            let result = state.filter(vehicle => vehicle.uuid === action.data.vehicleId);
+            if (result.length === 1) {
+                const updated_item = {...result[0], ...action.data.updateData};
+                const index = state.indexOf(result[0]);
+                return update(state, {[index]: {$set: updated_item}});
+            }
+            else {
+                return state
+            }
+
+        case GET_VEHICLES_SUCCESS:
+            console.log("ccc")
+            return action.data;
+
+        case GET_VEHICLE_SUCCESS:
+            console.log("ddd")
+            return action.data;
+
+        default:
+            return state
+    }
+}
+
 const rootReducer = combineReducers({
     tasks,
     sessions,
     deliverables,
+    vehicles,
     apiControl
 });
 

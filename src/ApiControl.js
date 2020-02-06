@@ -76,7 +76,7 @@ class Vehicle {
     }
 
     async getVehicles(user_id) {
-        return makeFetch(this.api_url, "vehicles/" + user_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "vehicles", "GET", this.bearer)
     }
 
     async getVehicle(vehicle_id) {
@@ -424,7 +424,7 @@ class Control {
         this.locations = new Location(this.bearer, this.api_url);
         this.priorities = new Priority(this.bearer, this.api_url);
         this.initialised = true;
-        setInterval(this.ping, 4000);
+        //setInterval(this.ping, 4000);
     }
 }
 

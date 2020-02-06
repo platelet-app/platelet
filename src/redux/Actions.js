@@ -12,6 +12,16 @@ export const GET_TASKS_SUCCESS = 'GET_TASKS_SUCCESS';
 export const GET_MY_TASKS = 'GET_MY_TASKS';
 export const GET_MY_TASKS_SUCCESS = 'GET_MY_TASKS_SUCCESS';
 
+// VEHICLES
+export const ADD_VEHICLE = 'ADD_VEHICLE';
+export const ADD_VEHICLE_SUCCESS = 'ADD_VEHICLE_SUCCESS';
+export const UPDATE_VEHICLE = 'UPDATE_VEHICLE';
+export const UPDATE_VEHICLE_SUCCESS = 'UPDATE_VEHICLE_SUCCESS';
+export const GET_VEHICLES = 'GET_VEHICLES';
+export const GET_VEHICLES_SUCCESS = 'GET_VEHICLES_SUCCESS';
+export const GET_VEHICLE = 'GET_VEHICLE';
+export const GET_VEHICLE_SUCCESS = 'GET_VEHICLE_SUCCESS';
+
 // SESSIONS
 export const ADD_SESSION = 'ADD_SESSION';
 export const ADD_SESSION_SUCCESS = 'ADD_SESSION_SUCCESS';
@@ -124,4 +134,37 @@ export function getAllSessions(data) {
 
 export function getAllSessionsSuccess(data) {
     return { type: GET_SESSIONS_SUCCESS, data }
+}
+
+
+export function addVehicle(data) {
+    return { type: ADD_VEHICLE, data }
+}
+
+export function addVehicleSuccess(data) {
+    return { type: ADD_VEHICLE_SUCCESS, data }
+}
+
+export function updateVehicle(data) {
+    return { type: UPDATE_VEHICLE, data }
+}
+
+export function updateVehicleSuccess(data) {
+    return { type: UPDATE_VEHICLE_SUCCESS, data }
+}
+
+export function getVehicle(data) {
+    return { type: GET_VEHICLE, data }
+}
+
+export function getVehicleSuccess(data) {
+    return { type: GET_VEHICLE_SUCCESS, data }
+}
+
+export function getAllVehicles(data) {
+    return { type: GET_VEHICLES, data }
+}
+
+export function getAllVehiclesSuccess(data) {
+    return { type: GET_VEHICLES_SUCCESS, data }
 }

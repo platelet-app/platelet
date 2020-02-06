@@ -107,6 +107,10 @@ export function ResponsiveDrawer(props) {
                         <ListItemIcon><InboxIcon/></ListItemIcon>
                         <ListItemText primary={"My Tasks"}/>
                     </ListItem>
+                    <ListItem component={Link} to="/vehicles" button>
+                        <ListItemIcon><AccountCircleIcon/></ListItemIcon>
+                        <ListItemText primary={"Vehicles"}/>
+                    </ListItem>
                     <ListItem component={Link} to="/profile" button>
                         <ListItemIcon><AccountCircleIcon/></ListItemIcon>
                         <ListItemText primary={"Profile"}/>

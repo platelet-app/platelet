@@ -10,7 +10,7 @@ export function* postNewTask(action) {
 }
 
 export function* watchPostNewTask() {
-    const action = yield takeEvery(ADD_TASK, postNewTask)
+    yield takeEvery(ADD_TASK, postNewTask)
 }
 
 export function* updateTask(action) {
@@ -32,7 +32,7 @@ export function* getTasks(action) {
 }
 
 export function* watchGetTasks() {
-    const action = yield takeLatest(GET_TASKS, getTasks)
+    yield takeLatest(GET_TASKS, getTasks)
 }
 
 export function* getMyTasks(action) {
@@ -42,6 +42,6 @@ export function* getMyTasks(action) {
 }
 
 export function* watchGetMyTasks() {
-    const action = yield takeLatest(GET_MY_TASKS, getMyTasks)
+    yield takeLatest(GET_MY_TASKS, getMyTasks)
 }
 
