@@ -87,8 +87,7 @@ function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
 
 
 
-export default class UsersSelect extends React.Component {
-    render() {
+export default function UsersSelect(props) {
         let classes = makeStyles(theme => ({
             root: {
                 flexGrow: 1,
@@ -121,7 +120,7 @@ export default class UsersSelect extends React.Component {
         }));
         return (
             <div>
-                <Downshift id="downshift-options" onSelect={this.props.onSelect}>
+                <Downshift id="downshift-options" onSelect={props.onSelect}>
                     {({
                           clearSelection,
                           getInputProps,
@@ -158,7 +157,7 @@ export default class UsersSelect extends React.Component {
                                 <div {...getMenuProps()}>
                                     {isOpen ? (
                                         <Paper className={classes.paper} square>
-                                            {getSuggestions(this.props.suggestions, inputValue, {showEmpty: true}).map((suggestion, index) =>
+                                            {getSuggestions(props.suggestions, inputValue, {showEmpty: true}).map((suggestion, index) =>
                                                 renderSuggestion({
                                                     suggestion,
                                                     index,
@@ -176,5 +175,4 @@ export default class UsersSelect extends React.Component {
                 </Downshift>
             </div>
         );
-    }
 }
