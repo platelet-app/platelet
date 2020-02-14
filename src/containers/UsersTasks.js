@@ -4,67 +4,33 @@ import 'typeface-roboto'
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {getAllMyTasks} from '../redux/Actions'
-import {connect} from "react-redux"
-import {makeStyles} from "@material-ui/core/styles";
+import {useDispatch, useSelector} from "react-redux"
 import TasksGrid from "../components/TasksGrid";
 import {
     useLocation,
 } from "react-router-dom";
 
-const mapStateToProps = state => {
-    return {
-        myTasks: state.tasks
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        getTasksList: sessionId => dispatch(getAllMyTasks(sessionId)),
-    }
-};
-
-const useStyles = makeStyles(theme => ({
-    root: {
-        flexGrow: 1,
-    },
-    paper: {
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    },
-}));
-
-
-function UsersSession(props) {
+function UsersTasks() {
+    const dispatch = useDispatch();
     const theme = useTheme();
     const fullScreenModal = !useMediaQuery(theme.breakpoints.up('md'));
 
-    const [tasks, setTasks] = useState([]);
-    const [timestamp, setTimestamp] = useState(new Date());
-    const [uuid, setUUID] = useState("");
     const [loaded, setLoaded] = useState(false);
 
-    function setup() {
-        props.getTasksList();
+    function componentDidMount() {
+        dispatch(getAllMyTasks());
         setLoaded(true)
-        /*props.apiControl.users.getAssignedTasks(props.match.params.user_uuid)
-            .then((tasks_data) => {
-                console.log(tasks_data)
-                if (tasks_data) {
-                    setTasks(tasks_data)
-                    setLoaded(true)
-                }
-            });*/
     }
+    const tasks = useSelector(state => state.tasks);
 
-    useEffect(setup, []);
+    useEffect(componentDidMount, []);
 
 
     let location = useLocation();
     if (loaded) {
         return (
             <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>
-                <TasksGrid tasks={props.myTasks}
+                <TasksGrid tasks={tasks}
                               location={location}
                               fullScreenModal={fullScreenModal}
                               modalView={"simple"}
@@ -78,10 +44,5 @@ function UsersSession(props) {
     }
 
 }
-
-const UsersTasks = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(UsersSession);
 
 export default UsersTasks
