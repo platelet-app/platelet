@@ -14,7 +14,7 @@ export function* watchPostNewSession() {
 }
 
 export function* getSessions(action) {
-    const result = yield call([api, api.sessions.getSessions], action.data.user_id);
+    const result = yield call([api, api.sessions.getSessions], action.data);
     yield put(getAllSessionsSuccess(result))
 }
 

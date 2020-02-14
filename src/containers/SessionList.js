@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
 import {StyledAddCircleOutline, StyledCard} from '../css/common';
@@ -10,8 +10,8 @@ import Grid from "@material-ui/core/Grid";
 import update from 'immutability-helper';
 import {Link} from "react-router-dom";
 import Moment from "react-moment";
-import {addSession} from "../redux/Actions";
-import {connect} from "react-redux"
+import {addSession, getAllVehicles} from "../redux/Actions";
+import {connect, useDispatch, useSelector} from "react-redux"
 import {getAllSessions} from "../redux/Actions";
 import {encodeUUID} from "../utilities";
 import { bindActionCreators } from "redux";
@@ -44,107 +44,71 @@ function SessionCard(props) {
     )
 }
 
-const mapStateToProps = state => {
-    return {
-        sessions: state.sessions
-    };
-};
 
-const mapDispatchToProps = dispatch => {
-    return {
-        onAddSessionClick: session =>  dispatch(addSession(session)),
-        getSessionsList: userId => dispatch(getAllSessions(userId)),
+function SessionList(props) {
+    const dispatch = useDispatch();
+    // TODO: Figure out loaded stuff
+    const [loaded, setLoaded] = React.useState(true);
+    const [myUUID, setMyUUID] = React.useState("");
 
-}
-};
+    const sessions = useSelector(state => state.sessions);
 
-class SessList extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-
-    componentDidMount() {
-        this.props.apiControl.users.whoami()
+    function componentDidMount() {
+        props.apiControl.users.whoami()
             .then((my_data) => {
-                this.props.getSessionsList({user_id: my_data.uuid})
-                this.setState(({
-                    myUUID: my_data.uuid
-                }))
-                /*this.props.apiControl.sessions.getSessions(my_data.uuid)
-                    .then((data) => {
-                        this.setState({loaded: true})
-                        if (data) {
-                            this.setState({
-                                myUUID: my_data.uuid,
-                                loaded: true
-                            });
-                        }
-                        this.setState({
-                            loaded: true
-                        });
-                    })*/
+                setMyUUID(my_data.uuid);
+                dispatch(getAllSessions(my_data.uuid));
+
             })
     }
+    useEffect(componentDidMount, []);
 
-    state = {
-        sessions: [],
-        myUUID: "",
-        loaded: true
-    };
-
-    emptySession = {
-        user_id: this.state.myUUID,
+    let emptySession = {
+        user_id: myUUID,
         timestamp: new Date().toISOString(),
     };
 
-    render() {
-        const circleAdd =
-            <StyledAddCircleOutline
-                                    onClick={() => {
-                                        let date = new Date();
-                                        let newSession = {...this.emptySession};
-                                        newSession.user_id = this.state.myUUID;
-                                        newSession.timestamp = date.toISOString();
-                                        this.props.onAddSessionClick(newSession)
+    const circleAdd =
+        <StyledAddCircleOutline
+                                onClick={() => {
+                                    let date = new Date();
+                                    let newSession = {...emptySession};
+                                    newSession.user_id = myUUID;
+                                    newSession.timestamp = date.toISOString();
+                                    props.onAddSessionClick(newSession)
 
-                                    }
-                                    }
-            />;
-        let addButton;
-        if (this.state.loaded) {
-            addButton = circleAdd
-        } else {
-            addButton = <></>
-        }
-        return (
-            <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100}}>
-                <Grid container
-                      spacing={3}
-                      direction={"row"}
-                      justify={"flex-start"}
-                      alignItems={"center"}
-                >
-                <Grid item xs={10} sm={5} md={4} lg={3}>
-                    {addButton}
-                </Grid>
-                {this.props.sessions.map((session) => (
-                    <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>
-                        <Link to={"/session/" + encodeUUID(session.uuid)} style={{ textDecoration: 'none' }}>
-                            <SessionCard session={session}/>
-                        </Link>
-                    </Grid>
-                ))
-                }
-                </Grid>
-
-            </div>
-        )
+                                }
+                                }
+        />;
+    let addButton;
+    if (loaded) {
+        addButton = circleAdd
+    } else {
+        addButton = <></>
     }
-}
+    return (
+        <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100}}>
+            <Grid container
+                  spacing={3}
+                  direction={"row"}
+                  justify={"flex-start"}
+                  alignItems={"center"}
+            >
+            <Grid item xs={10} sm={5} md={4} lg={3}>
+                {addButton}
+            </Grid>
+            {sessions.map((session) => (
+                <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>
+                    <Link to={"/session/" + encodeUUID(session.uuid)} style={{ textDecoration: 'none' }}>
+                        <SessionCard session={session}/>
+                    </Link>
+                </Grid>
+            ))
+            }
+            </Grid>
 
-const SessionList = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SessList);
+        </div>
+    )
+}
 
 export default SessionList
