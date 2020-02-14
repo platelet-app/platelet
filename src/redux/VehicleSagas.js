@@ -2,6 +2,7 @@ import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
 import api from "./Api"
 import {ADD_VEHICLE, addVehicleSuccess, UPDATE_VEHICLE, updateVehicleSuccess, GET_VEHICLES, getAllVehiclesSuccess, GET_VEHICLE, getVehicleSuccess} from "./Actions"
 
+// TODO: This needs to be adapted to vehicles!
 
 export function* postNewVehicle(action) {
     const result = yield call([api, api.tasks.createVehicle], action.data);
@@ -23,19 +24,17 @@ export function* watchUpdateVehicle() {
 }
 
 export function* getVehicles(action) {
-    console.log("iiiiiiiiiiiiii")
     const result = yield call([api, api.vehicles.getVehicles]);
     yield put(getAllVehiclesSuccess(result))
 }
 
 export function* watchGetVehicles() {
-    console.log("AYAYAYAYAYA")
     yield takeLatest(GET_VEHICLES, getVehicles)
 }
 
 export function* getVehicle(action) {
-    const whoami = yield call([api, api.users.whoami]);
-    const result = yield call([api, api.users.getAssignedVehicles], whoami.uuid);
+    console.log(action.data)
+    const result = yield call([api, api.vehicles.getVehicle], action.data);
     yield put(getVehicleSuccess(result))
 }
 

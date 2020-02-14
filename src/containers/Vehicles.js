@@ -36,7 +36,9 @@ function VehicleCard(props) {
             <div key={props.vehicle.uuid}>
                 <StyledCard>
                     <CardContent>
-                        <Typography className={classes.title}>Vehicle {props.vehicle.name}</Typography>
+                        <Typography className={classes.title}>{props.vehicle.name}</Typography>
+                        <Typography className={classes.title}>{props.vehicle.manufacturer} {props.vehicle.model}</Typography>
+                        <Typography className={classes.title}>{props.vehicle.registration_number}</Typography>
                     </CardContent>
                 </StyledCard>
             </div>

@@ -12,6 +12,7 @@ import Login from "../Login";
 import UsersTasks from "../containers/UsersTasks";
 import TaskModal from "./TaskModal";
 import VehicleList from "../containers/Vehicles";
+import VehicleDetail from "../containers/VehicleDetail";
 
 export default function Main(_props) {
     let location = useLocation();
@@ -30,6 +31,9 @@ export default function Main(_props) {
                 />
                 <Route path='/vehicles'
                        render={(props) => <VehicleList {...props} apiControl={_props.apiControl}/>}
+                />
+                <Route path='/vehicle/:vehicle_id'
+                       render={(props) => <VehicleDetail {...props} apiControl={_props.apiControl}/>}
                 />
                 <Route path='/mytasks'
                        render={(props) => <UsersTasks {...props} apiControl={_props.apiControl}/>}

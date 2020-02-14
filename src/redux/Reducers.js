@@ -111,6 +111,16 @@ function sessions(state = [], action) {
 }
 
 function vehicles(state = [], action) {
+    switch (action.type) {
+        case GET_VEHICLES_SUCCESS:
+            return action.data;
+        default:
+            return state
+    }
+}
+
+
+    function vehicle(state = [], action) {
     console.log("VEHICLES")
     console.log(action.type)
     switch (action.type) {
@@ -134,12 +144,8 @@ function vehicles(state = [], action) {
                 return state
             }
 
-        case GET_VEHICLES_SUCCESS:
-            console.log("ccc")
-            return action.data;
-
         case GET_VEHICLE_SUCCESS:
-            console.log("ddd")
+            console.log(action)
             return action.data;
 
         default:
@@ -152,6 +158,7 @@ const rootReducer = combineReducers({
     sessions,
     deliverables,
     vehicles,
+    vehicle,
     apiControl
 });
 
