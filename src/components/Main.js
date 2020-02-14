@@ -11,7 +11,7 @@ import TaskDetail from "../containers/TaskDetail";
 import Login from "../Login";
 import UsersTasks from "../containers/UsersTasks";
 import TaskModal from "./TaskModal";
-import VehicleList from "../containers/Vehicles";
+import VehicleList from "../containers/VehiclesList";
 import VehicleDetail from "../containers/VehicleDetail";
 
 export default function Main(_props) {
