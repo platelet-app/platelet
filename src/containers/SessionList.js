@@ -75,7 +75,7 @@ function SessionList(props) {
                                     let newSession = {...emptySession};
                                     newSession.user_id = myUUID;
                                     newSession.timestamp = date.toISOString();
-                                    props.onAddSessionClick(newSession)
+                                    dispatch(addSession(newSession));
 
                                 }
                                 }
