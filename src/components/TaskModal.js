@@ -16,7 +16,14 @@ import Moment from "react-moment";
 import PrioritySelect from "./PrioritySelect";
 import DeliverableGridSelect from "./DeliverableGridSelect";
 import DeliverableInformation from "./DeliverableInformation";
-import {updateTask, getAllTasks, getTask, getAvailableDeliverables} from "../redux/Actions";
+import {
+    updateTask,
+    getAllTasks,
+    getTask,
+    getAvailableDeliverables,
+    getAvailablePriorities,
+    getAvailableLocations
+} from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -38,7 +45,6 @@ const mapDispatchToProps = dispatch => {
 
 
 function TaskDialog(props) {
-    const tasks = useSelector(state => state.tasks);
     const dispatch = useDispatch();
     let useStyles;
     // TODO: Do this properly (withStyles)
@@ -76,9 +82,10 @@ function TaskDialog(props) {
     const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
     const [userSuggestions, setUserSuggestions] = useState([]);
     const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
-    const [availablePriorities, setAvailablePriorities] = useState([]);
 
-    const availableDeliverables = useSelector(state => state.vehicles);
+    const tasks = useSelector(state => state.tasks);
+    const availablePriorities = useSelector(state => state.availablePriorities);
+    const availableLocations = useSelector(state => state.availableLocations);
     const [open, setOpen] = useState(false);
 
 
@@ -96,20 +103,9 @@ function TaskDialog(props) {
     const task = props.task || newTask;
 
     function componentDidMount() {
-        props.apiControl.priorities.getPriorities().then((data) => {
-            if (data) {
-                setAvailablePriorities(data)
-            }
-        });
+        dispatch(getAvailablePriorities());
         dispatch(getAvailableDeliverables());
-        props.apiControl.locations.getLocations().then((data) => {
-            let filteredSuggestions = [];
-            data.map((location) => {
-                filteredSuggestions.push({"label": location.name})
-            });
-            setFilteredLocationSuggestions(filteredSuggestions);
-            setLocationSuggestions(data)
-        });
+        dispatch(getAvailableLocations());
         props.apiControl.users.getUsers().then((data) => {
             let filteredUsers = [];
             data.map((user) => {
@@ -132,6 +128,14 @@ function TaskDialog(props) {
     }
 
     useEffect(componentDidMount, []);
+    useEffect(() => {
+        let filteredSuggestions = [];
+        availableLocations.map((location) => {
+            filteredSuggestions.push({"label": location.name})
+        });
+        setFilteredLocationSuggestions(filteredSuggestions);
+
+    }, [availableLocations]);
 
     function onSelectContactNumber(event) {
         sendData({contact_number: event.target.value});
@@ -216,6 +220,8 @@ function TaskDialog(props) {
             <DialogContentText>Priority {task.priority}</DialogContentText></> : ""
 
     } else {
+        console.log("asdfasdf")
+        console.log(availablePriorities)
         prioritySelect = <PrioritySelect priority={task.priority_id}
                                          availablePriorities={availablePriorities}
                                          onSelect={onSelectPriority}/>;
@@ -235,8 +241,7 @@ function TaskDialog(props) {
         </DialogContentText>
             <DeliverableGridSelect apiControl={props.apiControl}
                                    taskId={taskId}
-                                   deliverables={task.deliverables ? task.deliverables : []}
-                                   availableDeliverables={availableDeliverables}/>
+                                   deliverables={task.deliverables ? task.deliverables : []}/>
         </>;
     }
 
@@ -295,7 +300,7 @@ function TaskDialog(props) {
                                     <DialogContentText>From:</DialogContentText>
                                     <AddressDetailsCollapsible label={"Pickup Address"}
                                                                onSelect={onSelectPickup}
-                                                               locations={locationSuggestions}
+                                                               locations={availableLocations}
                                                                suggestions={filteredLocationSuggestions}
                                                                address={task.pickup_address}
                                                                disabled={!editMode}
@@ -307,7 +312,7 @@ function TaskDialog(props) {
                                     <DialogContentText>To:</DialogContentText>
                                     <AddressDetailsCollapsible label={"Dropoff Address"}
                                                                onSelect={onSelectDropoff}
-                                                               locations={locationSuggestions}
+                                                               locations={availableLocations}
                                                                suggestions={filteredLocationSuggestions}
                                                                address={task.dropoff_address}
                                                                disabled={!editMode}/>
@@ -387,7 +392,7 @@ function TaskDialog(props) {
                     <Grid item>
                         <AddressDetailsCollapsible label={"Pickup Address"}
                                                    onSelect={onSelectPickup}
-                                                   locations={locationSuggestions}
+                                                   locations={availableLocations}
                                                    suggestions={filteredLocationSuggestions}
                                                    address={task.pickup_address}
                                                    disabled={!editMode}
@@ -396,7 +401,7 @@ function TaskDialog(props) {
                     <Grid item>
                         <AddressDetailsCollapsible label={"Dropoff Address"}
                                                    onSelect={onSelectDropoff}
-                                                   locations={locationSuggestions}
+                                                   locations={availableLocations}
                                                    suggestions={filteredLocationSuggestions}
                                                    address={task.dropoff_address}
                                                    disabled={!editMode}/>

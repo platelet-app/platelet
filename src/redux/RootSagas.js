@@ -9,6 +9,8 @@ import {
 import {watchPostNewVehicle, watchGetVehicles, watchUpdateVehicle, watchVehicle} from "./VehicleSagas"
 
 import { all, call } from 'redux-saga/effects'
+import {watchGetAvailablePriorities} from "./PrioritiesSagas";
+import {watchGetAvailableLocations} from "./LocationsSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -21,6 +23,8 @@ export default function* rootSaga() {
         call(watchGetMyTasks),
         call(watchGetDeliverables),
         call(watchGetAvailableDeliverables),
+        call(watchGetAvailablePriorities),
+        call(watchGetAvailableLocations),
         call(watchPostNewDeliverable),
         call(watchUpdateDeliverable),
         call(watchGetVehicles),

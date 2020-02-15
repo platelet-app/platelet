@@ -13,6 +13,8 @@ import {
     GET_DELIVERABLES_SUCCESS,
     UPDATE_DELIVERABLE_SUCCESS,
     GET_AVAILABLE_DELIVERABLES_SUCCESS,
+    GET_AVAILABLE_PRIORITIES_SUCCESS,
+    GET_AVAILABLE_LOCATIONS_SUCCESS,
     ADD_VEHICLE_SUCCESS,
     UPDATE_VEHICLE_SUCCESS,
     GET_VEHICLES_SUCCESS,
@@ -110,6 +112,24 @@ function availableDeliverables(state = [], action) {
 
 }
 
+function availablePriorities(state = [], action) {
+    switch (action.type) {
+        case GET_AVAILABLE_PRIORITIES_SUCCESS:
+            return action.data;
+        default:
+            return state
+    }
+}
+
+function availableLocations(state = [], action) {
+    switch (action.type) {
+        case GET_AVAILABLE_LOCATIONS_SUCCESS:
+            return action.data;
+        default:
+            return state
+    }
+}
+
 function sessions(state = [], action) {
     switch (action.type) {
         case ADD_SESSION_SUCCESS:
@@ -171,6 +191,8 @@ const rootReducer = combineReducers({
     sessions,
     deliverables,
     availableDeliverables,
+    availablePriorities,
+    availableLocations,
     vehicles,
     vehicle,
     apiControl

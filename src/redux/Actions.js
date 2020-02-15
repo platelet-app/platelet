@@ -3,6 +3,7 @@
  */
 
 // TASKS
+
 export const GET_TASK = 'GET_TASK';
 export const GET_TASK_SUCCESS = 'GET_TASK_SUCCESS';
 export const ADD_TASK = 'ADD_TASK';
@@ -55,6 +56,7 @@ export function getAllMyTasksSuccess(data) {
 }
 
 // VEHICLES
+
 export const ADD_VEHICLE = 'ADD_VEHICLE';
 export const ADD_VEHICLE_SUCCESS = 'ADD_VEHICLE_SUCCESS';
 export const UPDATE_VEHICLE = 'UPDATE_VEHICLE';
@@ -97,6 +99,7 @@ export function getAllVehiclesSuccess(data) {
 }
 
 // SESSIONS
+
 export const ADD_SESSION = 'ADD_SESSION';
 export const ADD_SESSION_SUCCESS = 'ADD_SESSION_SUCCESS';
 export const GET_SESSIONS = 'GET_SESSIONS';
@@ -120,6 +123,7 @@ export function getAllSessionsSuccess(data) {
 
 
 // DELIVERABLES
+
 export const ADD_DELIVERABLE = 'ADD_DELIVERABLE';
 export const ADD_DELIVERABLE_SUCCESS = 'ADD_DELIVERABLE_SUCCESS';
 export const UPDATE_DELIVERABLE = 'UPDATE_DELIVERABLE';
@@ -161,6 +165,7 @@ export function getAvailableDeliverablesSuccess(data) {
     return { type: GET_AVAILABLE_DELIVERABLES_SUCCESS, data }
 }
 
+
 // LOGIN
 
 export const LOGIN = 'LOGIN';
@@ -175,5 +180,29 @@ export function loginUserSuccess(data) {
 }
 
 
+// PRIORITIES
+
+export const GET_AVAILABLE_PRIORITIES = 'GET_AVAILABLE_PRIORITIES';
+export const GET_AVAILABLE_PRIORITIES_SUCCESS = 'GET_AVAILABLE_PRIORITIES_SUCCESS';
+
+export function getAvailablePriorities() {
+    return { type: GET_AVAILABLE_PRIORITIES }
+}
+
+export function getAvailablePrioritiesSuccess(data) {
+    return { type: GET_AVAILABLE_PRIORITIES_SUCCESS, data }
+}
 
 
+// LOCATIONS
+
+export const GET_AVAILABLE_LOCATIONS = 'GET_AVAILABLE_LOCATIONS';
+export const GET_AVAILABLE_LOCATIONS_SUCCESS = 'GET_AVAILABLE_LOCATIONS_SUCCESS';
+
+export function getAvailableLocations() {
+    return { type: GET_AVAILABLE_LOCATIONS }
+}
+
+export function getAvailableLocationsSuccess(data) {
+    return { type: GET_AVAILABLE_LOCATIONS_SUCCESS, data }
+}

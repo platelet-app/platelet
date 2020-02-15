@@ -93,13 +93,14 @@ class Location {
         this.bearer = bearer;
         this.api_url = api_url;
         this.availableLocations = [];
-        makeFetch(this.api_url, "locations", "GET", this.bearer)
+        /*makeFetch(this.api_url, "locations", "GET", this.bearer)
             .then((data) => {
                 this.availableLocations = data;
-            });
+            });*/
     }
 
-    async getLocations() {
+    async getAvailableLocations() {
+        return makeFetch(this.api_url, "locations", "GET", this.bearer);
         return new Promise((resolve, reject) => {
             resolve(this.availableLocations);
         });
@@ -224,13 +225,14 @@ class Priority {
         this.api_url = api_url;
         this.availablePriorities = [];
 
-        makeFetch(this.api_url, "priorities", "GET", this.bearer)
+        /*makeFetch(this.api_url, "priorities", "GET", this.bearer)
             .then((data) => {
                 this.availablePriorities = data;
-            });
+            });*/
     }
 
-    async getPriorities() {
+    async getAvailablePriorities() {
+        return makeFetch(this.api_url, "priorities", "GET", this.bearer);
         return new Promise((resolve, reject) => {
             resolve(this.availablePriorities);
         });
