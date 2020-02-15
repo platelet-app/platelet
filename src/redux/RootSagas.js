@@ -11,6 +11,7 @@ import {watchPostNewVehicle, watchGetVehicles, watchUpdateVehicle, watchVehicle}
 import { all, call } from 'redux-saga/effects'
 import {watchGetAvailablePriorities} from "./PrioritiesSagas";
 import {watchGetAvailableLocations} from "./LocationsSagas";
+import {watchGetUsers} from "./UserSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -30,6 +31,8 @@ export default function* rootSaga() {
         call(watchGetVehicles),
         call(watchUpdateVehicle),
         call(watchPostNewVehicle),
-        call(watchVehicle)
+        call(watchVehicle),
+        call(watchGetUsers)
+
     ])
 }

@@ -5,7 +5,7 @@ import {ADD_VEHICLE, addVehicleSuccess, UPDATE_VEHICLE, updateVehicleSuccess, GE
 // TODO: This needs to be adapted to vehicles!
 
 export function* postNewVehicle(action) {
-    const result = yield call([api, api.tasks.createVehicle], action.data);
+    const result = yield call([api, api.vehicles.createVehicle], action.data);
     const task = {...action.data, "uuid": result.uuid};
     yield put(addVehicleSuccess(task))
 }
@@ -15,7 +15,7 @@ export function* watchPostNewVehicle() {
 }
 
 export function* updateVehicle(action) {
-    yield call([api, api.tasks.updateVehicle], action.data.taskId, action.data.payload);
+    yield call([api, api.vehicles.updateVehicle], action.data.taskId, action.data.payload);
     yield put(updateVehicleSuccess(action.data))
 }
 
@@ -23,7 +23,7 @@ export function* watchUpdateVehicle() {
     yield throttle(300, UPDATE_VEHICLE, updateVehicle)
 }
 
-export function* getVehicles(action) {
+export function* getVehicles() {
     const result = yield call([api, api.vehicles.getVehicles]);
     yield put(getAllVehiclesSuccess(result))
 }
@@ -33,7 +33,6 @@ export function* watchGetVehicles() {
 }
 
 export function* getVehicle(action) {
-    console.log(action.data)
     const result = yield call([api, api.vehicles.getVehicle], action.data);
     yield put(getVehicleSuccess(result))
 }

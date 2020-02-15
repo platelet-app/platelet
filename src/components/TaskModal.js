@@ -22,7 +22,8 @@ import {
     getTask,
     getAvailableDeliverables,
     getAvailablePriorities,
-    getAvailableLocations
+    getAvailableLocations,
+    getUsers
 } from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
@@ -78,14 +79,13 @@ function TaskDialog(props) {
         }));
     }
     const classes = useStyles();
-    const [locationSuggestions, setLocationSuggestions] = useState([]);
     const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
-    const [userSuggestions, setUserSuggestions] = useState([]);
     const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
 
     const tasks = useSelector(state => state.tasks);
     const availablePriorities = useSelector(state => state.availablePriorities);
     const availableLocations = useSelector(state => state.availableLocations);
+    const userSuggestions = useSelector(state => state.users);
     const [open, setOpen] = useState(false);
 
 
@@ -106,19 +106,7 @@ function TaskDialog(props) {
         dispatch(getAvailablePriorities());
         dispatch(getAvailableDeliverables());
         dispatch(getAvailableLocations());
-        props.apiControl.users.getUsers().then((data) => {
-            let filteredUsers = [];
-            data.map((user) => {
-                if (user.roles.includes("rider")) {
-                    filteredUsers.push({
-                        "label": user.display_name,
-                        "uuid": user.uuid
-                    })
-                }
-                setFilteredUserSuggestions(filteredUsers);
-                setUserSuggestions(data);
-            });
-        });
+        dispatch(getUsers());
 
         if (!props.tasks.length) {
             props.apiControl.tasks.getTask(taskId).then((data) => {
@@ -131,13 +119,26 @@ function TaskDialog(props) {
     useEffect(() => {
         let filteredSuggestions = [];
         availableLocations.map((location) => {
-            filteredSuggestions.push({"label": location.name})
+            if (location.name != null)
+                filteredSuggestions.push({"label": location.name})
         });
         setFilteredLocationSuggestions(filteredSuggestions);
 
     }, [availableLocations]);
+    useEffect(() => {
+        let filteredUsers = [];
+        userSuggestions.map((user) => {
+            if (user.display_name !== null && user.roles.includes("rider")) {
+                filteredUsers.push({
+                    "label": user.display_name,
+                    "uuid": user.uuid
+                })
+            }
+            setFilteredUserSuggestions(filteredUsers);
 
-    function onSelectContactNumber(event) {
+        })}, [userSuggestions]);
+
+        function onSelectContactNumber(event) {
         sendData({contact_number: event.target.value});
     }
 

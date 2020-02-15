@@ -19,6 +19,7 @@ import {
     UPDATE_VEHICLE_SUCCESS,
     GET_VEHICLES_SUCCESS,
     GET_VEHICLE_SUCCESS,
+    GET_USERS_SUCCESS,
     LOGIN,
     LOGIN_SUCCESS
 } from './Actions'
@@ -157,7 +158,7 @@ function vehicles(state = [], action) {
 }
 
 
-    function vehicle(state = [], action) {
+function vehicle(state = [], action) {
     switch (action.type) {
         case ADD_VEHICLE_SUCCESS:
             return [
@@ -185,6 +186,16 @@ function vehicles(state = [], action) {
     }
 }
 
+function users(state = [], action) {
+    switch (action.type) {
+        case GET_USERS_SUCCESS:
+            return action.data;
+        default:
+            return state
+    }
+}
+
+
 const rootReducer = combineReducers({
     task,
     tasks,
@@ -195,6 +206,7 @@ const rootReducer = combineReducers({
     availableLocations,
     vehicles,
     vehicle,
+    users,
     apiControl
 });
 
