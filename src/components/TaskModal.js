@@ -16,7 +16,7 @@ import Moment from "react-moment";
 import PrioritySelect from "./PrioritySelect";
 import DeliverableGridSelect from "./DeliverableGridSelect";
 import DeliverableInformation from "./DeliverableInformation";
-import {updateTask, getAllTasks, getTask} from "../redux/Actions";
+import {updateTask, getAllTasks, getTask, getAvailableDeliverables} from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -77,8 +77,8 @@ function TaskDialog(props) {
     const [userSuggestions, setUserSuggestions] = useState([]);
     const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
     const [availablePriorities, setAvailablePriorities] = useState([]);
-    const [availableDeliverables, setAvailableDeliverables] = useState([]);
 
+    const availableDeliverables = useSelector(state => state.vehicles);
     const [open, setOpen] = useState(false);
 
 
@@ -101,9 +101,7 @@ function TaskDialog(props) {
                 setAvailablePriorities(data)
             }
         });
-        props.apiControl.deliverables.getAvailableDeliverables().then((data) => {
-            setAvailableDeliverables(data)
-        });
+        dispatch(getAvailableDeliverables());
         props.apiControl.locations.getLocations().then((data) => {
             let filteredSuggestions = [];
             data.map((location) => {
@@ -136,19 +134,16 @@ function TaskDialog(props) {
     useEffect(componentDidMount, []);
 
     function onSelectContactNumber(event) {
-        console.log(event.target.value);
         sendData({contact_number: event.target.value});
     }
 
     function onSelectName(event) {
-        console.log(event.target.value)
 
         sendData({contact_name: event.target.value});
 
     }
 
     function onSelectPickup(pickupAddress) {
-        console.log(pickupAddress)
         if (pickupAddress)
             sendData({pickup_address: pickupAddress});
     }
@@ -166,7 +161,6 @@ function TaskDialog(props) {
     }
 
     function onSelectRider(selectedItem) {
-        console.log(selectedItem)
         let result = userSuggestions.filter(rider => rider.display_name === selectedItem);
         if (result.length === 1) {
             let rider = {

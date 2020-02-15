@@ -12,6 +12,7 @@ import {
     ADD_DELIVERABLE_SUCCESS,
     GET_DELIVERABLES_SUCCESS,
     UPDATE_DELIVERABLE_SUCCESS,
+    GET_AVAILABLE_DELIVERABLES_SUCCESS,
     ADD_VEHICLE_SUCCESS,
     UPDATE_VEHICLE_SUCCESS,
     GET_VEHICLES_SUCCESS,
@@ -32,8 +33,6 @@ function apiControl(state = new Control(apiUrl), action) {
 }
 
 function task(state = {}, action) {
-    console.log("TASK")
-    console.log(action.type)
     switch (action.type) {
         case GET_TASK_SUCCESS:
             return action.data;
@@ -42,9 +41,8 @@ function task(state = {}, action) {
             return state
     }
 }
+
 function tasks(state = [], action) {
-    console.log("TASKS")
-    console.log(action.type)
     switch (action.type) {
         case ADD_TASK_SUCCESS:
             return [
@@ -76,8 +74,6 @@ function tasks(state = [], action) {
 }
 
 function deliverables(state = [], action) {
-    console.log("DELIVERABLES")
-    console.log(action.type)
     switch (action.type) {
         case ADD_DELIVERABLE_SUCCESS:
             return [
@@ -87,9 +83,10 @@ function deliverables(state = [], action) {
                 }
             ];
         case UPDATE_DELIVERABLE_SUCCESS:
-            let result = state.filter(deliverable => deliverable.uuid === action.data.deliverableId);
+            let result = state.filter(deliverable => deliverable.uuid === action.data.deliverableUUID);
             if (result.length === 1) {
-                const updated_item = {...result[0], ...action.data.updateData};
+                console.log(action.data)
+                const updated_item = {...result[0], ...action.data.payload};
                 const index = state.indexOf(result[0]);
                 return update(state, {[index]: {$set: updated_item}});
             }
@@ -103,9 +100,17 @@ function deliverables(state = [], action) {
             return state
 }}
 
+function availableDeliverables(state = [], action) {
+    switch (action.type) {
+        case GET_AVAILABLE_DELIVERABLES_SUCCESS:
+            return action.data;
+        default:
+            return state
+    }
+
+}
+
 function sessions(state = [], action) {
-    console.log("SESSIONS")
-    console.log(action.type)
     switch (action.type) {
         case ADD_SESSION_SUCCESS:
             return [
@@ -133,11 +138,8 @@ function vehicles(state = [], action) {
 
 
     function vehicle(state = [], action) {
-    console.log("VEHICLES")
-    console.log(action.type)
     switch (action.type) {
         case ADD_VEHICLE_SUCCESS:
-            console.log("AAA")
             return [
                 ...state,
                 {
@@ -145,7 +147,6 @@ function vehicles(state = [], action) {
                 }
             ];
         case UPDATE_VEHICLE_SUCCESS:
-            console.log("bbb")
             let result = state.filter(vehicle => vehicle.uuid === action.data.vehicleId);
             if (result.length === 1) {
                 const updated_item = {...result[0], ...action.data.updateData};
@@ -157,7 +158,6 @@ function vehicles(state = [], action) {
             }
 
         case GET_VEHICLE_SUCCESS:
-            console.log(action)
             return action.data;
 
         default:
@@ -170,6 +170,7 @@ const rootReducer = combineReducers({
     tasks,
     sessions,
     deliverables,
+    availableDeliverables,
     vehicles,
     vehicle,
     apiControl

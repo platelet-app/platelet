@@ -2,39 +2,17 @@ import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {StyledAddCircleOutlineSmall} from "../css/common";
 import DeliverableDropSelect from "./DeliverableDropSelect";
-import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/Actions";
-import {connect} from "react-redux"
-import update from "immutability-helper";
-
-const mapStateToProps = state => {
-    return {
-        deliverables: state.deliverables,
-        availableDeliverables: state.availableDeliverables
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onAddDeliverableClick: deliverable => dispatch(addDeliverable(deliverable)),
-        getDeliverablesList: taskId => dispatch(getDeliverables(taskId)),
-        onUpdateDeliverable: deliverableId => dispatch(updateDeliverable(deliverableId))
-    }
-};
+import {addDeliverable, getDeliverables, updateDeliverable, getAvailableDeliverables} from "../redux/Actions";
+import {connect, useDispatch, useSelector} from "react-redux"
 
 
-
-function GridSelect(props) {
-    const [availableDeliverables, setAvailableDeliverables] = React.useState([]);
-    const [deliverables, setDeliverables] = useState([]);
+function DeliverableGridSelect(props) {
+    const dispatch = useDispatch();
+    const availableDeliverables = useSelector(state => state.availableDeliverables);
+    const deliverables = useSelector(state => state.deliverables);
 
     const onSelectDeliverable = (uuid, type_id) => {
-        let result = deliverables.filter(deliverable => deliverable.uuid === uuid);
-        if (result.length === 1) {
-            const index = deliverables.indexOf(result[0]);
-            const updated = update(deliverables, {[index]: {type_id: {$set: type_id}}});
-            setDeliverables(updated)
-        }
-        props.apiControl.deliverables.updateDeliverable(uuid, {"type_id": type_id});
+        dispatch(updateDeliverable({"deliverableUUID": uuid, "payload": {"type_id": type_id}}));
     };
 
     const onDeliverableNote = (uuid, value) => {
@@ -48,21 +26,23 @@ function GridSelect(props) {
     };
 
 
-    const setup = () => {
-        props.apiControl.deliverables.getAvailableDeliverables()
-            .then((data) => {
-                setAvailableDeliverables(data);
-                props.getDeliverablesList({"taskId": props.taskId})
-            })
+    const componentDidMount = () => {
+        dispatch(getAvailableDeliverables());
     };
-    React.useEffect(setup, [])
+    React.useEffect(componentDidMount, [])
+    React.useEffect(() => {
+        if (availableDeliverables.length > 0)
+            console.log("AAAAA")
+            dispatch(getDeliverables(props.taskId))
+
+    }, [availableDeliverables]);
+    console.log(deliverables)
 
     const circleAdd =
         <StyledAddCircleOutlineSmall
             onClick={() => {
                 let newDeliverable = {...emptyDeliverable};
-                props.onAddDeliverableClick(newDeliverable);
-
+                dispatch(addDeliverable(newDeliverable))
             }
             }
         />;
@@ -78,7 +58,7 @@ function GridSelect(props) {
             <Grid item>
                 {circleAdd}
             </Grid>
-            {props.deliverables.map(deliverable => {
+            {deliverables.map(deliverable => {
                 return <><Grid item>
                     <DeliverableDropSelect key={deliverable.uuid}
                                            availableDeliverables={availableDeliverables}
@@ -95,9 +75,5 @@ function GridSelect(props) {
 
 }
 
-const DeliverableGridSelect = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(GridSelect);
 
 export default DeliverableGridSelect

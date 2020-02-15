@@ -1,6 +1,11 @@
 import {watchGetSessions, watchPostNewSession} from "./SessionSagas"
 import {watchPostNewTask, watchGetTasks, watchUpdateTask, watchGetMyTasks, watchGetTask} from "./TaskSagas"
-import {watchGetDeliverables, watchPostNewDeliverable, watchUpdateDeliverable} from "./DeliverableSagas"
+import {
+    watchGetAvailableDeliverables,
+    watchGetDeliverables,
+    watchPostNewDeliverable,
+    watchUpdateDeliverable
+} from "./DeliverableSagas"
 import {watchPostNewVehicle, watchGetVehicles, watchUpdateVehicle, watchVehicle} from "./VehicleSagas"
 
 import { all, call } from 'redux-saga/effects'
@@ -15,6 +20,7 @@ export default function* rootSaga() {
         call(watchUpdateTask),
         call(watchGetMyTasks),
         call(watchGetDeliverables),
+        call(watchGetAvailableDeliverables),
         call(watchPostNewDeliverable),
         call(watchUpdateDeliverable),
         call(watchGetVehicles),
