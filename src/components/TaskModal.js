@@ -11,18 +11,16 @@ import {useHistory} from "react-router-dom";
 import AddressDetailsCollapsible from "./AddressDetail";
 import UsersSelect from "./UsersSelect";
 import ToggleTimeStamp from "./ToggleTimeStamp";
-import update from 'immutability-helper';
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
 import PrioritySelect from "./PrioritySelect";
 import DeliverableGridSelect from "./DeliverableGridSelect";
 import DeliverableInformation from "./DeliverableInformation";
-import {updateTask, getAllTasks} from "../redux/Actions";
-import {connect} from "react-redux"
+import {updateTask, getAllTasks, getTask} from "../redux/Actions";
+import {connect, useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {TextFieldControlled} from "./TextFieldControlled";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {decodeUUID} from "../utilities";
 
 const mapStateToProps = state => {
@@ -40,6 +38,8 @@ const mapDispatchToProps = dispatch => {
 
 
 function TaskDialog(props) {
+    const tasks = useSelector(state => state.tasks);
+    const dispatch = useDispatch();
     let useStyles;
     // TODO: Do this properly (withStyles)
     if (!props.fullscreen) {
@@ -88,7 +88,7 @@ function TaskDialog(props) {
 
     const taskId = decodeUUID(props.match.params.task_id);
 
-    const taskResult = props.tasks.filter(task => task.uuid === decodeUUID(props.match.params.task_id));
+    const taskResult = tasks.filter(task => task.uuid === decodeUUID(props.match.params.task_id));
     let newTask = {};
     if (taskResult.length === 1) {
         newTask = taskResult[0];
@@ -128,7 +128,7 @@ function TaskDialog(props) {
 
         if (!props.tasks.length) {
             props.apiControl.tasks.getTask(taskId).then((data) => {
-                props.getTasksList({session_id: data.session_id});
+                dispatch(getAllTasks(data.session_id));
             });
         }
     }

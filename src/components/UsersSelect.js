@@ -87,7 +87,7 @@ function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
 
 
 
-export default function UsersSelect(props) {
+function UsersSelect(props) {
         let classes = makeStyles(theme => ({
             root: {
                 flexGrow: 1,
@@ -176,3 +176,5 @@ export default function UsersSelect(props) {
             </div>
         );
 }
+
+export default UsersSelect

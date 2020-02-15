@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import Control from "../ApiControl"
 import update from 'immutability-helper';
 import {
+    GET_TASK_SUCCESS,
     ADD_TASK_SUCCESS,
     GET_TASKS_SUCCESS,
     ADD_SESSION_SUCCESS,
@@ -30,6 +31,17 @@ function apiControl(state = new Control(apiUrl), action) {
     }
 }
 
+function task(state = {}, action) {
+    console.log("TASK")
+    console.log(action.type)
+    switch (action.type) {
+        case GET_TASK_SUCCESS:
+            return action.data;
+
+        default:
+            return state
+    }
+}
 function tasks(state = [], action) {
     console.log("TASKS")
     console.log(action.type)
@@ -154,6 +166,7 @@ function vehicles(state = [], action) {
 }
 
 const rootReducer = combineReducers({
+    task,
     tasks,
     sessions,
     deliverables,

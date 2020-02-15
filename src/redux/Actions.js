@@ -3,6 +3,8 @@
  */
 
 // TASKS
+export const GET_TASK = 'GET_TASK';
+export const GET_TASK_SUCCESS = 'GET_TASK_SUCCESS';
 export const ADD_TASK = 'ADD_TASK';
 export const ADD_TASK_SUCCESS = 'ADD_TASK_SUCCESS';
 export const UPDATE_TASK = 'UPDATE_TASK';
@@ -86,6 +88,14 @@ export function updateDeliverable(data) {
 
 export function updateDeliverableSuccess(data) {
     return { type: UPDATE_DELIVERABLE_SUCCESS, data }
+}
+
+export function getTask(data) {
+    return { type: GET_TASK, data }
+}
+
+export function getTaskSuccess(data) {
+    return { type: GET_TASK_SUCCESS, data }
 }
 
 export function addTask(data) {
