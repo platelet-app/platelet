@@ -1,6 +1,6 @@
 import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import api from "./Api"
-import {ADD_SESSION, addSessionSuccess, GET_SESSIONS, getAllSessionsSuccess} from "./Actions"
+import {ADD_SESSION, addSessionSuccess, GET_SESSIONS, getAllSessionsSuccess, GET_SESSION, getSessionSuccess} from "./Actions"
 
 
 export function* postNewSession(action) {
@@ -10,7 +10,7 @@ export function* postNewSession(action) {
 }
 
 export function* watchPostNewSession() {
-    const action = yield takeEvery(ADD_SESSION, postNewSession)
+    yield takeEvery(ADD_SESSION, postNewSession)
 }
 
 export function* getSessions(action) {
@@ -19,5 +19,14 @@ export function* getSessions(action) {
 }
 
 export function* watchGetSessions() {
-    const action = yield takeLatest(GET_SESSIONS, getSessions)
+    yield takeLatest(GET_SESSIONS, getSessions)
+}
+
+export function* getSession(action) {
+    const result = yield call([api, api.sessions.getSession], action.data);
+    yield put(getSessionSuccess(result))
+}
+
+export function* watchGetSession() {
+    yield takeLatest(GET_SESSION, getSession)
 }

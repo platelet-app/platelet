@@ -21,7 +21,9 @@ import {
     GET_VEHICLE_SUCCESS,
     GET_USERS_SUCCESS,
     LOGIN,
-    LOGIN_SUCCESS
+    GET_ACTIVE_TASK_UUID,
+    SET_ACTIVE_TASK_UUID,
+    LOGIN_SUCCESS, GET_SESSION_SUCCESS
 } from './Actions'
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
@@ -148,6 +150,16 @@ function sessions(state = [], action) {
     }
 }
 
+function session(state = {}, action) {
+    switch (action.type) {
+        case GET_SESSION_SUCCESS:
+            return action.data;
+        default:
+            return state
+
+    }
+}
+
 function vehicles(state = [], action) {
     switch (action.type) {
         case GET_VEHICLES_SUCCESS:
@@ -158,7 +170,7 @@ function vehicles(state = [], action) {
 }
 
 
-function vehicle(state = [], action) {
+function vehicle(state = {}, action) {
     switch (action.type) {
         case ADD_VEHICLE_SUCCESS:
             return [
@@ -195,11 +207,23 @@ function users(state = [], action) {
     }
 }
 
+function sessionActiveTaskUUID(state = "", action) {
+    switch (action.type) {
+        case GET_ACTIVE_TASK_UUID:
+            return state;
+        case SET_ACTIVE_TASK_UUID:
+            return action.data;
+        default:
+            return state
+    }
+}
+
 
 const rootReducer = combineReducers({
     task,
     tasks,
     sessions,
+    session,
     deliverables,
     availableDeliverables,
     availablePriorities,
@@ -207,6 +231,7 @@ const rootReducer = combineReducers({
     vehicles,
     vehicle,
     users,
+    sessionActiveTaskUUID,
     apiControl
 });
 

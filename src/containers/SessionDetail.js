@@ -3,30 +3,15 @@ import '../App.css';
 import 'typeface-roboto'
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {addTask, getAllTasks} from '../redux/Actions'
+import {addTask, getAllTasks, SET_ACTIVE_TASK_UUID, setActiveTaskUUID, getSession} from '../redux/Actions'
 import {connect} from "react-redux"
 import { makeStyles } from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID} from "../utilities";
-
-
-
+import { useDispatch, useSelector} from "react-redux"
 import {
     useLocation,
 } from "react-router-dom";
-
-const mapStateToProps = state => {
-    return {
-        tasks: state.tasks
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onAddTaskClick: task => dispatch(addTask(task)),
-        getTasksList: sessionId => dispatch(getAllTasks(sessionId)),
-    }
-};
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -39,29 +24,27 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function Session(props) {
+function SessionDetail(props) {
+    const dispatch = useDispatch();
+    const tasks = useSelector(state => state.tasks);
+    //TODO: This could put data into title
+    const session = useSelector(state => state.session);
+    let session_uuid = decodeUUID(props.match.params.session_uuid);
+    //TODO: Maybe use this to show a particular task when navigating to the task URL directly
+    const activeTask = useSelector(state => state.sessionActiveTaskUUID);
+    dispatch(setActiveTaskUUID(props.match.params.task_id));
     const theme = useTheme();
     const fullScreenModal = !useMediaQuery(theme.breakpoints.up('md'));
 
-    const [tasks, setTasks] = useState([]);
-    const [timestamp, setTimestamp] = useState(new Date());
-    const [uuid, setUUID] = useState("");
     const [loaded, setLoaded] = useState(false);
-    let session_uuid = decodeUUID(props.match.params.session_uuid)
 
-    function setup() {
-        props.getTasksList({session_id: session_uuid});
-        props.apiControl.sessions.getSession(session_uuid)
-            .then((session_data) => {
-                if (session_data) {
-                    setTimestamp(session_data.timestamp);
-                    setUUID(session_data.uuid);
-                }
-                setLoaded(true);
-            });
+    function componentDidMount() {
+        dispatch(getAllTasks(session_uuid));
+        dispatch(getSession(session_uuid));
+        setLoaded(true);
     }
 
-    useEffect(setup, []);
+    useEffect(componentDidMount, []);
 
 
     let location = useLocation();
@@ -71,10 +54,12 @@ function Session(props) {
     if (loaded) {
         return (
             <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>
-                <TasksGrid tasks={props.tasks}
+                <TasksGrid tasks={tasks}
                               location={location}
                               fullScreenModal={fullScreenModal}
-                              onAddTaskClick={props.onAddTaskClick}
+                              onAddTaskClick={(task) => {
+                                  dispatch(addTask(task));
+                              }}
                               sessionUUID={session_uuid}
                               modalView={"edit"}
                 />
@@ -85,10 +70,5 @@ function Session(props) {
         return <></>
     }
 }
-
-const SessionDetail = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Session)
 
 export default SessionDetail

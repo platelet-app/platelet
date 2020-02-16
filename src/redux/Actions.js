@@ -104,6 +104,8 @@ export const ADD_SESSION = 'ADD_SESSION';
 export const ADD_SESSION_SUCCESS = 'ADD_SESSION_SUCCESS';
 export const GET_SESSIONS = 'GET_SESSIONS';
 export const GET_SESSIONS_SUCCESS = 'GET_SESSIONS_SUCCESS';
+export const GET_SESSION = 'GET_SESSION';
+export const GET_SESSION_SUCCESS = 'GET_SESSION_SUCCESS';
 
 export function addSession(data) {
     return { type: ADD_SESSION, data }
@@ -119,6 +121,14 @@ export function getAllSessions(data) {
 
 export function getAllSessionsSuccess(data) {
     return { type: GET_SESSIONS_SUCCESS, data }
+}
+
+export function getSession(data) {
+    return { type: GET_SESSION, data }
+}
+
+export function getSessionSuccess(data) {
+    return { type: GET_SESSION_SUCCESS, data }
 }
 
 
@@ -219,4 +229,15 @@ export function getUsers() {
 
 export function getUsersSuccess(data) {
     return { type: GET_USERS_SUCCESS, data }
+}
+
+export const GET_ACTIVE_TASK_UUID = 'GET_ACTIVE_TASK_UUID';
+export const SET_ACTIVE_TASK_UUID = 'GET_ACTIVE_TASK_UUID';
+
+export function getActiveTaskUUID() {
+    return { type: GET_ACTIVE_TASK_UUID }
+}
+
+export function setActiveTaskUUID() {
+    return { type: SET_ACTIVE_TASK_UUID }
 }

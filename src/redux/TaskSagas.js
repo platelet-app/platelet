@@ -36,7 +36,7 @@ export function* watchGetTask() {
 }
 
 export function* getTasks(action) {
-    const result = yield call([api, api.tasks.getTasks], action.data.session_id);
+    const result = yield call([api, api.tasks.getTasks], action.data);
     yield put(getAllTasksSuccess(result))
 }
 

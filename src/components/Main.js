@@ -35,11 +35,11 @@ export default function Main(_props) {
                 <Route path='/mytasks'
                        render={(props) => <UsersTasks {...props} apiControl={_props.apiControl}/>}
                 />
-                <Route path='/session/:session_uuid'
+                <Route exact path='/session/:session_uuid'
                        render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                 />
-                <Route path="/session/:session_id/task/:task_id"
-                       render={(props) => <TaskModal {...props} modal={true} apiControl={_props.apiControl}/>}
+                <Route exact path="/session/:session_uuid/task/:task_id"
+                       render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                    />
 
             </Switch>
