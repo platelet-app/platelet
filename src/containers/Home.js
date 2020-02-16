@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Home(props) {
     return (
-        <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100, textAlign: "left"}}>
+        <div style={{textAlign: "left"}}>
             <h1>Instructions for use</h1>
             <p>
                 Use the menu to the left to navigate.

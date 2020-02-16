@@ -21,6 +21,7 @@ function UsersTasks() {
         dispatch(getAllMyTasks());
         setLoaded(true)
     }
+
     const tasks = useSelector(state => state.tasks);
 
     useEffect(componentDidMount, []);
@@ -29,15 +30,13 @@ function UsersTasks() {
     let location = useLocation();
     if (loaded) {
         return (
-            <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>
-                <TasksGrid tasks={tasks}
-                              location={location}
-                              fullScreenModal={fullScreenModal}
-                              modalView={"simple"}
-                              excludeColumnList={["tasksNew"]}
-                />
+            <TasksGrid tasks={tasks}
+                       location={location}
+                       fullScreenModal={fullScreenModal}
+                       modalView={"simple"}
+                       excludeColumnList={["tasksNew"]}
+            />
 
-            </div>
         )
     } else {
         return <></>

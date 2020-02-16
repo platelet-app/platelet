@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
 import {getAllVehicles} from "../redux/Actions";
 import {encodeUUID} from "../utilities";
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
 const useStyles = makeStyles({
     card: {
@@ -32,7 +32,8 @@ function VehicleCard(props) {
                 <StyledCard>
                     <CardContent>
                         <Typography className={classes.title}>{props.vehicle.name}</Typography>
-                        <Typography className={classes.title}>{props.vehicle.manufacturer} {props.vehicle.model}</Typography>
+                        <Typography
+                            className={classes.title}>{props.vehicle.manufacturer} {props.vehicle.model}</Typography>
                         <Typography className={classes.title}>{props.vehicle.registration_number}</Typography>
                     </CardContent>
                 </StyledCard>
@@ -46,6 +47,7 @@ function VehicleList() {
     const dispatch = useDispatch();
     // TODO: Figure out loaded stuff
     const [loaded, setLoaded] = React.useState(true);
+
     function componentDidMount() {
         dispatch(getAllVehicles());
     }
@@ -70,27 +72,25 @@ function VehicleList() {
         addButton = <></>
     }
     return (
-        <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100}}>
-            <Grid container
-                  spacing={3}
-                  direction={"row"}
-                  justify={"flex-start"}
-                  alignItems={"center"}
-            >
-                <Grid item xs={10} sm={5} md={4} lg={3}>
-                    {addButton}
-                </Grid>
-                {vehicles.map((vehicle) => (
-                    <Grid item xs={10} sm={5} md={4} lg={3} key={vehicle.uuid}>
-                        <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{ textDecoration: 'none' }}>
-                            <VehicleCard vehicle={vehicle}/>
-                        </Link>
-                    </Grid>
-                ))
-                }
+        <Grid container
+              spacing={3}
+              direction={"row"}
+              justify={"flex-start"}
+              alignItems={"center"}
+        >
+            <Grid item xs={10} sm={5} md={4} lg={3}>
+                {addButton}
             </Grid>
+            {vehicles.map((vehicle) => (
+                <Grid item xs={10} sm={5} md={4} lg={3} key={vehicle.uuid}>
+                    <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{textDecoration: 'none'}}>
+                        <VehicleCard vehicle={vehicle}/>
+                    </Link>
+                </Grid>
+            ))
+            }
+        </Grid>
 
-        </div>
     )
 }
 

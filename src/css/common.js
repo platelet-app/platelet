@@ -3,9 +3,37 @@ import '../App.css';
 import 'typeface-roboto'
 import Card from '@material-ui/core/Card';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
+import Container from "@material-ui/core/Container";
 import {styled} from '@material-ui/styles';
 
 import {makeStyles} from '@material-ui/core/styles';
+
+export function MainWindowContainer(props) {
+    const styles = makeStyles({
+        root: {
+            paddingLeft: 30,
+            paddingTop: 100,
+            paddingRight: 30,
+            paddingBottom: 100,
+            background: "rgb(230, 230, 230)",
+            align: "left",
+            width: "100%",
+            height: "100%"
+        },
+        content: {
+            maxWidth: "1920px",
+            height: "100%"
+        }
+    });
+    const classes = styles()
+    return (
+        <div className={classes.root}>
+            <div className={classes.content}>
+                {props.children}
+            </div>
+        </div>
+    )
+};
 
 export const StyledAddCircleOutline = styled(AddCircleOutline)( {
     cursor: "pointer",

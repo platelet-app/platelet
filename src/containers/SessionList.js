@@ -14,7 +14,7 @@ import {addSession, getAllVehicles} from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import {getAllSessions} from "../redux/Actions";
 import {encodeUUID} from "../utilities";
-import { bindActionCreators } from "redux";
+import {bindActionCreators} from "redux";
 
 const useStyles = makeStyles({
     card: {
@@ -36,7 +36,9 @@ function SessionCard(props) {
             <div key={props.session.uuid}>
                 <StyledCard>
                     <CardContent>
-                        <Typography className={classes.title}>Session on <Moment format={"llll"}>{props.session.timestamp}</Moment> with {props.session.task_count ? props.session.task_count : 0} tasks recorded.</Typography>
+                        <Typography className={classes.title}>Session on <Moment
+                            format={"llll"}>{props.session.timestamp}</Moment> with {props.session.task_count ? props.session.task_count : 0} tasks
+                            recorded.</Typography>
                     </CardContent>
                 </StyledCard>
             </div>
@@ -61,6 +63,7 @@ function SessionList(props) {
 
             })
     }
+
     useEffect(componentDidMount, []);
 
     let emptySession = {
@@ -70,15 +73,15 @@ function SessionList(props) {
 
     const circleAdd =
         <StyledAddCircleOutline
-                                onClick={() => {
-                                    let date = new Date();
-                                    let newSession = {...emptySession};
-                                    newSession.user_id = myUUID;
-                                    newSession.timestamp = date.toISOString();
-                                    dispatch(addSession(newSession));
+            onClick={() => {
+                let date = new Date();
+                let newSession = {...emptySession};
+                newSession.user_id = myUUID;
+                newSession.timestamp = date.toISOString();
+                dispatch(addSession(newSession));
 
-                                }
-                                }
+            }
+            }
         />;
     let addButton;
     if (loaded) {
@@ -87,27 +90,25 @@ function SessionList(props) {
         addButton = <></>
     }
     return (
-        <div style={{marginLeft: 30, marginTop: 100, marginRight: 30, marginBottom: 100}}>
-            <Grid container
-                  spacing={3}
-                  direction={"row"}
-                  justify={"flex-start"}
-                  alignItems={"center"}
-            >
+        <Grid container
+              spacing={3}
+              direction={"row"}
+              justify={"flex-start"}
+              alignItems={"center"}
+        >
             <Grid item xs={10} sm={5} md={4} lg={3}>
                 {addButton}
             </Grid>
             {sessions.map((session) => (
                 <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>
-                    <Link to={"/session/" + encodeUUID(session.uuid)} style={{ textDecoration: 'none' }}>
+                    <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>
                         <SessionCard session={session}/>
                     </Link>
                 </Grid>
             ))
             }
-            </Grid>
+        </Grid>
 
-        </div>
     )
 }
 

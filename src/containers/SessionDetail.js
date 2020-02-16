@@ -9,6 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID} from "../utilities";
 import { useDispatch, useSelector} from "react-redux"
+import {MainWindowContainer} from "../css/common";
 import {
     useLocation,
 } from "react-router-dom";
@@ -53,7 +54,6 @@ function SessionDetail(props) {
 
     if (loaded) {
         return (
-            <div style={{paddingLeft: 30, paddingTop: 100, paddingRight: 30, paddingBottom: 100}}>
                 <TasksGrid tasks={tasks}
                               location={location}
                               fullScreenModal={fullScreenModal}
@@ -64,7 +64,6 @@ function SessionDetail(props) {
                               modalView={"edit"}
                 />
 
-            </div>
         )
     } else {
         return <></>
