@@ -1,6 +1,6 @@
 import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
 import api from "./Api"
-import {ADD_VEHICLE, addVehicleSuccess, UPDATE_VEHICLE, updateVehicleSuccess, GET_VEHICLES, getAllVehiclesSuccess, GET_VEHICLE, getVehicleSuccess} from "./Actions"
+import {ADD_VEHICLE_REQUEST, addVehicleSuccess, UPDATE_VEHICLE_REQUEST, updateVehicleSuccess, GET_VEHICLES_REQUEST, getAllVehiclesSuccess, GET_VEHICLE_REQUEST, getVehicleSuccess} from "./Actions"
 
 // TODO: This needs to be adapted to vehicles!
 
@@ -11,7 +11,7 @@ export function* postNewVehicle(action) {
 }
 
 export function* watchPostNewVehicle() {
-    yield takeEvery(ADD_VEHICLE, postNewVehicle)
+    yield takeEvery(ADD_VEHICLE_REQUEST, postNewVehicle)
 }
 
 export function* updateVehicle(action) {
@@ -20,7 +20,7 @@ export function* updateVehicle(action) {
 }
 
 export function* watchUpdateVehicle() {
-    yield throttle(300, UPDATE_VEHICLE, updateVehicle)
+    yield throttle(300, UPDATE_VEHICLE_REQUEST, updateVehicle)
 }
 
 export function* getVehicles() {
@@ -29,7 +29,7 @@ export function* getVehicles() {
 }
 
 export function* watchGetVehicles() {
-    yield takeLatest(GET_VEHICLES, getVehicles)
+    yield takeLatest(GET_VEHICLES_REQUEST, getVehicles)
 }
 
 export function* getVehicle(action) {
@@ -38,5 +38,5 @@ export function* getVehicle(action) {
 }
 
 export function* watchVehicle() {
-    yield takeLatest(GET_VEHICLE, getVehicle)
+    yield takeLatest(GET_VEHICLE_REQUEST, getVehicle)
 }

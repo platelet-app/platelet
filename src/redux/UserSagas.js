@@ -1,6 +1,6 @@
 import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
 import api from "./Api";
-import {GET_USERS, getUsersSuccess} from "./Actions";
+import {GET_USERSA_REQUEST, getUsersSuccess} from "./Actions";
 
 export function* getUsers() {
     const result = yield call([api, api.users.getUsers]);
@@ -8,5 +8,5 @@ export function* getUsers() {
 }
 
 export function* watchGetUsers() {
-    yield takeLatest(GET_USERS, getUsers)
+    yield takeLatest(GET_USERSA_REQUEST, getUsers)
 }

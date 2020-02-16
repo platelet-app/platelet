@@ -1,6 +1,6 @@
 import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
 import api from "./Api"
-import {ADD_TASK, addTaskSuccess, UPDATE_TASK, updateTaskSuccess, GET_TASKS, getAllTasksSuccess, GET_MY_TASKS, getAllMyTasksSuccess, GET_TASK, getTaskSuccess} from "./Actions"
+import {ADD_TASK_REQUEST, addTaskSuccess, UPDATE_TASK_REQUEST, updateTaskSuccess, GET_TASKS_REQUEST, getAllTasksSuccess, GET_MY_TASKS_REQUEST, getAllMyTasksSuccess, GET_TASK_REQUEST, getTaskSuccess} from "./Actions"
 
 
 export function* postNewTask(action) {
@@ -10,7 +10,7 @@ export function* postNewTask(action) {
 }
 
 export function* watchPostNewTask() {
-    yield takeEvery(ADD_TASK, postNewTask)
+    yield takeEvery(ADD_TASK_REQUEST, postNewTask)
 }
 
 export function* updateTask(action) {
@@ -23,7 +23,7 @@ export function* updateTask(action) {
 }
 
 export function* watchUpdateTask() {
-    yield throttle(300, UPDATE_TASK, updateTask)
+    yield throttle(300, UPDATE_TASK_REQUEST, updateTask)
 }
 
 export function* getTask(action) {
@@ -32,7 +32,7 @@ export function* getTask(action) {
 }
 
 export function* watchGetTask() {
-    yield takeLatest(GET_TASK, getTask)
+    yield takeLatest(GET_TASK_REQUEST, getTask)
 }
 
 export function* getTasks(action) {
@@ -41,7 +41,7 @@ export function* getTasks(action) {
 }
 
 export function* watchGetTasks() {
-    yield takeLatest(GET_TASKS, getTasks)
+    yield takeLatest(GET_TASKS_REQUEST, getTasks)
 }
 
 export function* getMyTasks(action) {
@@ -51,6 +51,6 @@ export function* getMyTasks(action) {
 }
 
 export function* watchGetMyTasks() {
-    yield takeLatest(GET_MY_TASKS, getMyTasks)
+    yield takeLatest(GET_MY_TASKS_REQUEST, getMyTasks)
 }
 

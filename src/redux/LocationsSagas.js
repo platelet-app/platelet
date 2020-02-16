@@ -5,7 +5,7 @@ import {
     addPrioritySuccess,
     UPDATE_PRIORITY,
     updatePrioritySuccess,
-    GET_AVAILABLE_LOCATIONS,
+    GET_AVAILABLE_LOCATIONS_REQUEST,
     getAvailableLocationsSuccess,
     getAvailableDeliverablesSuccess
 } from "./Actions"
@@ -17,5 +17,5 @@ export function* getAvailableLocations() {
 }
 
 export function* watchGetAvailableLocations() {
-    yield takeLatest(GET_AVAILABLE_LOCATIONS, getAvailableLocations)
+    yield takeLatest(GET_AVAILABLE_LOCATIONS_REQUEST, getAvailableLocations)
 }

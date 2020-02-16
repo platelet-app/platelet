@@ -13,6 +13,7 @@ import {MainWindowContainer} from "../css/common";
 import {
     useLocation,
 } from "react-router-dom";
+import { createLoadingSelector } from '../redux/selectors';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -28,12 +29,13 @@ const useStyles = makeStyles(theme => ({
 function SessionDetail(props) {
     const dispatch = useDispatch();
     const tasks = useSelector(state => state.tasks);
+    console.log("WOOOOOOOOOOOOOOOOOOOOT")
     //TODO: This could put data into title
     const session = useSelector(state => state.session);
     let session_uuid = decodeUUID(props.match.params.session_uuid);
     //TODO: Maybe use this to show a particular task when navigating to the task URL directly
-    const activeTask = useSelector(state => state.sessionActiveTaskUUID);
-    dispatch(setActiveTaskUUID(props.match.params.task_id));
+    //const activeTask = useSelector(state => state.sessionActiveTaskUUID);
+    //dispatch(setActiveTaskUUID(props.match.params.task_id));
     const theme = useTheme();
     const fullScreenModal = !useMediaQuery(theme.breakpoints.up('md'));
 
@@ -52,7 +54,8 @@ function SessionDetail(props) {
 
     const classes = useStyles();
 
-    if (loaded) {
+    console.log(props.isFetching)
+    if (!props.isFetching) {
         return (
                 <TasksGrid tasks={tasks}
                               location={location}
@@ -70,4 +73,6 @@ function SessionDetail(props) {
     }
 }
 
-export default SessionDetail
+const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION", "GET_AVAILABLE_DELIVERABLES", "GET_DELIVERABLES"]);
+const mapStateToProps = (state) => ({ isFetching: loadingSelector(state) });
+export default connect(mapStateToProps)(SessionDetail);

@@ -1,6 +1,6 @@
 import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
 import api from "./Api"
-import {ADD_DELIVERABLE, addDeliverableSuccess, UPDATE_DELIVERABLE, updateDeliverableSuccess, GET_DELIVERABLES, getDeliverablesSuccess, GET_AVAILABLE_DELIVERABLES, getAvailableDeliverablesSuccess} from "./Actions"
+import {ADD_DELIVERABLE_REQUEST, addDeliverableSuccess, UPDATE_DELIVERABLE_REQUEST, updateDeliverableSuccess, GET_DELIVERABLES_REQUEST, getDeliverablesSuccess, GET_AVAILABLE_DELIVERABLES_REQUEST, getAvailableDeliverablesSuccess} from "./Actions"
 
 
 export function* postNewDeliverable(action) {
@@ -10,7 +10,7 @@ export function* postNewDeliverable(action) {
 }
 
 export function* watchPostNewDeliverable() {
-    yield takeEvery(ADD_DELIVERABLE, postNewDeliverable)
+    yield takeEvery(ADD_DELIVERABLE_REQUEST, postNewDeliverable)
 }
 
 export function* updateDeliverable(action) {
@@ -19,7 +19,7 @@ export function* updateDeliverable(action) {
 }
 
 export function* watchUpdateDeliverable() {
-    yield throttle(200, UPDATE_DELIVERABLE, updateDeliverable)
+    yield throttle(200, UPDATE_DELIVERABLE_REQUEST, updateDeliverable)
 }
 
 export function* getDeliverables(action) {
@@ -28,7 +28,7 @@ export function* getDeliverables(action) {
 }
 
 export function* watchGetDeliverables() {
-    yield takeLatest(GET_DELIVERABLES, getDeliverables)
+    yield takeLatest(GET_DELIVERABLES_REQUEST, getDeliverables)
 }
 
 export function* getAvailableDeliverables() {
@@ -37,5 +37,5 @@ export function* getAvailableDeliverables() {
 }
 
 export function* watchGetAvailableDeliverables() {
-    yield takeLatest(GET_AVAILABLE_DELIVERABLES, getAvailableDeliverables)
+    yield takeLatest(GET_AVAILABLE_DELIVERABLES_REQUEST, getAvailableDeliverables)
 }

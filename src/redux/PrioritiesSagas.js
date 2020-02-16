@@ -5,7 +5,7 @@ import {
     addPrioritySuccess,
     UPDATE_PRIORITY,
     updatePrioritySuccess,
-    GET_AVAILABLE_PRIORITIES,
+    GET_AVAILABLE_PRIORITIES_REQUEST,
     getAvailablePrioritiesSuccess,
     getAvailableDeliverablesSuccess
 } from "./Actions"
@@ -17,5 +17,5 @@ export function* getAvailablePriorities() {
 }
 
 export function* watchGetAvailablePriorities() {
-    yield takeLatest(GET_AVAILABLE_PRIORITIES, getAvailablePriorities)
+    yield takeLatest(GET_AVAILABLE_PRIORITIES_REQUEST, getAvailablePriorities)
 }
