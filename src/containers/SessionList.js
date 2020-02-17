@@ -15,6 +15,9 @@ import {connect, useDispatch, useSelector} from "react-redux"
 import {getAllSessions} from "../redux/Actions";
 import {encodeUUID} from "../utilities";
 import {bindActionCreators} from "redux";
+import {createLoadingSelector} from "../redux/selectors";
+
+import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 
 const useStyles = makeStyles({
     card: {
@@ -89,27 +92,33 @@ function SessionList(props) {
     } else {
         addButton = <></>
     }
-    return (
-        <Grid container
-              spacing={3}
-              direction={"row"}
-              justify={"flex-start"}
-              alignItems={"center"}
-        >
-            <Grid item xs={10} sm={5} md={4} lg={3}>
-                {addButton}
-            </Grid>
-            {sessions.map((session) => (
-                <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>
-                    <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>
-                        <SessionCard session={session}/>
-                    </Link>
+    if (props.isFetching) {
+        return (
+            <CardsGridSkeleton/>
+        )
+    } else {
+        return (
+            <Grid container
+                  spacing={3}
+                  direction={"row"}
+                  justify={"flex-start"}
+                  alignItems={"center"}
+            >
+                <Grid item xs={10} sm={5} md={4} lg={3}>
+                    {addButton}
                 </Grid>
-            ))
-            }
-        </Grid>
-
-    )
+                {sessions.map((session) => (
+                    <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>
+                        <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>
+                            <SessionCard session={session}/>
+                        </Link>
+                    </Grid>
+                ))
+                }
+            </Grid>)
+    }
 }
 
-export default SessionList
+const loadingSelector = createLoadingSelector(["GET_SESSIONS"]);
+const mapStateToProps = (state) => ({isFetching: loadingSelector(state)});
+export default connect(mapStateToProps)(SessionList);
