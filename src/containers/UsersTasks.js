@@ -21,7 +21,6 @@ function UsersTasks() {
     const fullScreenModal = !useMediaQuery(theme.breakpoints.up('md'));
 
     function componentDidMount() {
-        dispatch(clearLoading());
         dispatch(getAllMyTasks());
     }
 

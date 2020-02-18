@@ -61,7 +61,6 @@ function SessionList(props) {
     const sessions = useSelector(state => state.sessions);
 
     function componentDidMount() {
-        dispatch(clearLoading());
         props.apiControl.users.whoami()
             .then((my_data) => {
                 setMyUUID(my_data.uuid);

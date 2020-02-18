@@ -43,7 +43,6 @@ function SessionDetail(props) {
 
 
     function componentDidMount() {
-        dispatch(clearLoading());
         dispatch(getAllTasks(session_uuid));
         dispatch(getSession(session_uuid));
     }

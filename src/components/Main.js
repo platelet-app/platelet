@@ -11,9 +11,13 @@ import TaskModal from "./TaskModal";
 import VehicleList from "../containers/VehiclesList";
 import VehicleDetail from "../containers/VehicleDetail";
 import {MainWindowContainer} from "../css/common";
+import {clearLoading} from "../redux/Actions";
+import {useDispatch} from "react-redux";
 
 export default function Main(_props) {
     let location = useLocation();
+    const dispatch = useDispatch();
+    dispatch(clearLoading());
 
     let background = location.state && location.state.background;
     return (
