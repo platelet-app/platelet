@@ -23,7 +23,7 @@ import {
     LOGIN,
     GET_ACTIVE_TASK_UUID,
     SET_ACTIVE_TASK_UUID,
-    LOGIN_SUCCESS, GET_SESSION_SUCCESS
+    LOGIN_SUCCESS, GET_SESSION_SUCCESS, CLEAR_LOADING
 } from './Actions'
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
@@ -219,6 +219,9 @@ function sessionActiveTaskUUID(state = "", action) {
 }
 
 const loadingReducer = (state = {}, action) => {
+    if (action.type === CLEAR_LOADING) {
+        return {}
+    }
     const { type } = action;
     const matches = /(.*)_(REQUEST|SUCCESS|FAILURE)/.exec(type);
     console.log("LOADING REDUCER")

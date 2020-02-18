@@ -161,6 +161,7 @@ function TaskDialog(props) {
     }
 
     function sendData(payload, updateData) {
+            return
         const updateDataCombined = {...payload, ...updateData};
         props.updateTask({payload: payload, taskId: taskId, updateData: updateDataCombined ? updateDataCombined : {}});
     }

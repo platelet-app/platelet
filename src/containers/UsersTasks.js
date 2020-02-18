@@ -4,22 +4,24 @@ import 'typeface-roboto'
 import {Skeleton} from "@material-ui/lab";
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {getAllMyTasks} from '../redux/Actions'
+import {clearLoading, getAllMyTasks} from '../redux/Actions'
 import {connect, useDispatch, useSelector} from "react-redux"
 import TasksGrid from "../components/TasksGrid";
 import {
     useLocation,
 } from "react-router-dom";
 import {createLoadingSelector} from "../redux/selectors";
-import TasksGridSkeleton, {TasksGridSkelenton} from "../loadingComponents/TasksGridSkeleton"
+import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton"
 
-function UsersTasks(props) {
-    console.log(props.isFetching)
+function UsersTasks() {
     const dispatch = useDispatch();
+    const loadingSelector = createLoadingSelector(['GET_MY_TASKS']);
+    const isFetching = useSelector(state => loadingSelector(state));
     const theme = useTheme();
     const fullScreenModal = !useMediaQuery(theme.breakpoints.up('md'));
 
     function componentDidMount() {
+        dispatch(clearLoading());
         dispatch(getAllMyTasks());
     }
 
@@ -28,7 +30,9 @@ function UsersTasks(props) {
     useEffect(componentDidMount, []);
 
     let location = useLocation();
-    if (props.isFetching) {
+    console.log("FUCK")
+    console.log(isFetching)
+    if (isFetching) {
         return <TasksGridSkeleton count={3}/>
     }
     else {
@@ -45,6 +49,4 @@ function UsersTasks(props) {
 
 }
 
-const loadingSelector = createLoadingSelector(['GET_MY_TASKS']);
-const mapStateToProps = (state) => ({ isFetching: loadingSelector(state) });
-export default connect(mapStateToProps)(UsersTasks);
+export default UsersTasks;

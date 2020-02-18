@@ -3,7 +3,7 @@ import '../App.css';
 import 'typeface-roboto'
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {addTask, getAllTasks, SET_ACTIVE_TASK_UUID, setActiveTaskUUID, getSession} from '../redux/Actions'
+import {addTask, getAllTasks, SET_ACTIVE_TASK_UUID, setActiveTaskUUID, getSession, clearLoading} from '../redux/Actions'
 import {connect} from "react-redux"
 import {makeStyles} from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
@@ -28,7 +28,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SessionDetail(props) {
+    const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION", "GET_AVAILABLE_DELIVERABLES", "GET_DELIVERABLES"]);
     const dispatch = useDispatch();
+    const isFetching = useSelector(state => loadingSelector(state));
     const tasks = useSelector(state => state.tasks);
     //TODO: This could put data into title
     const session = useSelector(state => state.session);
@@ -41,6 +43,7 @@ function SessionDetail(props) {
 
 
     function componentDidMount() {
+        dispatch(clearLoading());
         dispatch(getAllTasks(session_uuid));
         dispatch(getSession(session_uuid));
     }
@@ -52,7 +55,7 @@ function SessionDetail(props) {
 
     const classes = useStyles();
 
-    if (props.isFetching) {
+    if (isFetching) {
         return <TasksGridSkeleton count={4}/>
     } else {
         return (
@@ -70,6 +73,4 @@ function SessionDetail(props) {
     }
 }
 
-const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION", "GET_AVAILABLE_DELIVERABLES", "GET_DELIVERABLES"]);
-const mapStateToProps = (state) => ({isFetching: loadingSelector(state)});
-export default connect(mapStateToProps)(SessionDetail);
+export default SessionDetail;

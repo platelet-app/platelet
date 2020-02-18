@@ -10,7 +10,7 @@ import Grid from "@material-ui/core/Grid";
 import update from 'immutability-helper';
 import {Link} from "react-router-dom";
 import Moment from "react-moment";
-import {addSession, getAllVehicles} from "../redux/Actions";
+import {addSession, clearLoading, getAllVehicles} from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import {getAllSessions} from "../redux/Actions";
 import {encodeUUID} from "../utilities";
@@ -52,6 +52,8 @@ function SessionCard(props) {
 
 function SessionList(props) {
     const dispatch = useDispatch();
+    const loadingSelector = createLoadingSelector(["GET_SESSIONS"]);
+    const isFetching = useSelector(state => loadingSelector(state));
     // TODO: Figure out loaded stuff
     const [loaded, setLoaded] = React.useState(true);
     const [myUUID, setMyUUID] = React.useState("");
@@ -59,6 +61,7 @@ function SessionList(props) {
     const sessions = useSelector(state => state.sessions);
 
     function componentDidMount() {
+        dispatch(clearLoading());
         props.apiControl.users.whoami()
             .then((my_data) => {
                 setMyUUID(my_data.uuid);
@@ -92,7 +95,7 @@ function SessionList(props) {
     } else {
         addButton = <></>
     }
-    if (props.isFetching) {
+    if (isFetching) {
         return (
             <CardsGridSkeleton/>
         )
@@ -119,6 +122,4 @@ function SessionList(props) {
     }
 }
 
-const loadingSelector = createLoadingSelector(["GET_SESSIONS"]);
-const mapStateToProps = (state) => ({isFetching: loadingSelector(state)});
-export default connect(mapStateToProps)(SessionList);
+export default SessionList;

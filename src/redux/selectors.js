@@ -1,13 +1,26 @@
 import _ from 'lodash';
-export const createLoadingSelector = (actions) => (state) => {
-    console.log("LOADING SELECTOR")
-    console.log(actions)
-    console.log(state)
-    // returns true only when all actions is not loading
-    console.log(_.get(state, 'loadingReducer').length)
-    if (Object.entries(_.get(state, 'loadingReducer')).length === 0) {
-        return true
+export const createErrorMessageSelector = actions => (state) => {
+    const errors = actions.map(action => state.error[action]);
+    if (errors && errors[0]) {
+        return errors[0];
     }
-    return _(actions)
-        .some((action) => _.get(state, `loadingReducer.${action}`));
+    return '';
+};
+export const createLoadingSelector = actions => state => {
+    console.log(state)
+    if (Object.entries(_.get(state, 'loadingReducer')).length === 0) {
+        return true;
+    }
+    let found = false;
+    for (let value of actions) {
+        console.log(value)
+        if (value in state.loadingReducer) {
+            found = true;
+            break;
+        }
+    }
+    if (found)
+        return actions.some(action => state.loadingReducer[action]);
+    else
+        return true
 };

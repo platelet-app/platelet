@@ -241,3 +241,9 @@ export function getActiveTaskUUID() {
 export function setActiveTaskUUID() {
     return { type: SET_ACTIVE_TASK_UUID }
 }
+
+export const CLEAR_LOADING = 'CLEAR_LOADING'
+
+export function clearLoading() {
+    return { type: CLEAR_LOADING }
+}
