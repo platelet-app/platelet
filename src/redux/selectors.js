@@ -7,13 +7,11 @@ export const createErrorMessageSelector = actions => (state) => {
     return '';
 };
 export const createLoadingSelector = actions => state => {
-    console.log(state)
     if (Object.entries(_.get(state, 'loadingReducer')).length === 0) {
-        return true;
+        return false;
     }
     let found = false;
     for (let value of actions) {
-        console.log(value)
         if (value in state.loadingReducer) {
             found = true;
             break;

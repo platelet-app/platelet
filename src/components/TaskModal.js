@@ -161,7 +161,6 @@ function TaskDialog(props) {
     }
 
     function sendData(payload, updateData) {
-            return
         const updateDataCombined = {...payload, ...updateData};
         props.updateTask({payload: payload, taskId: taskId, updateData: updateDataCombined ? updateDataCombined : {}});
     }
@@ -222,8 +221,6 @@ function TaskDialog(props) {
             <DialogContentText>Priority {task.priority}</DialogContentText></> : ""
 
     } else {
-        console.log("asdfasdf")
-        console.log(availablePriorities)
         prioritySelect = <PrioritySelect priority={task.priority_id}
                                          availablePriorities={availablePriorities}
                                          onSelect={onSelectPriority}/>;

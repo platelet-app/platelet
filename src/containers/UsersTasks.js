@@ -29,8 +29,6 @@ function UsersTasks() {
     useEffect(componentDidMount, []);
 
     let location = useLocation();
-    console.log("FUCK")
-    console.log(isFetching)
     if (isFetching) {
         return <TasksGridSkeleton count={3}/>
     }

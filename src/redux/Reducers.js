@@ -90,7 +90,6 @@ function deliverables(state = [], action) {
         case UPDATE_DELIVERABLE_SUCCESS:
             let result = state.filter(deliverable => deliverable.uuid === action.data.deliverableUUID);
             if (result.length === 1) {
-                console.log(action.data)
                 const updated_item = {...result[0], ...action.data.payload};
                 const index = state.indexOf(result[0]);
                 return update(state, {[index]: {$set: updated_item}});
@@ -220,18 +219,15 @@ function sessionActiveTaskUUID(state = "", action) {
 
 const loadingReducer = (state = {}, action) => {
     if (action.type === CLEAR_LOADING) {
-        return {}
+        return {};
     }
     const { type } = action;
     const matches = /(.*)_(REQUEST|SUCCESS|FAILURE)/.exec(type);
-    console.log("LOADING REDUCER")
-    console.log(type)
 
     // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
     if (!matches) return state;
 
     const [, requestName, requestState] = matches;
-    console.log(requestState)
     return {
         ...state,
         // Store whether a request is happening at the moment or not

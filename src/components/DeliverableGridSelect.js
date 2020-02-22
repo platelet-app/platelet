@@ -32,11 +32,9 @@ function DeliverableGridSelect(props) {
     React.useEffect(componentDidMount, [])
     React.useEffect(() => {
         if (availableDeliverables.length > 0)
-            console.log("AAAAA")
             dispatch(getDeliverables(props.taskId))
 
     }, [availableDeliverables]);
-    console.log(deliverables)
 
     const circleAdd =
         <StyledAddCircleOutlineSmall

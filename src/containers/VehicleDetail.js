@@ -13,7 +13,6 @@ function VehicleDetail(props) {
 
     useEffect(componentDidMount, []);
     const vehicle = useSelector(state => state.vehicle);
-    console.log(vehicle)
     if (vehicle) {
         return (
             <>
