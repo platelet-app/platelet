@@ -3,41 +3,55 @@ import {connect} from "react-redux";
 import {getVehicle} from "../redux/Actions";
 import {decodeUUID} from "../utilities";
 import { useDispatch, useSelector } from "react-redux";
+import {TextFieldControlled} from "../components/TextFieldControlled";
+import Box from "@material-ui/core/Box";
+import {createLoadingSelector} from "../redux/selectors";
+import FormSkeleton from "../loadingComponents/FormSkeleton";
 
 function VehicleDetail(props) {
     const dispatch = useDispatch();
+    const loadingSelector = createLoadingSelector(["GET_VEHICLE"]);
+    const isFetching = useSelector(state => loadingSelector(state));
     function componentDidMount() {
-        //const vehicleResult = props.tasks.filter(task => task.uuid === decodeUUID(props.match.params.task_id));
         dispatch(getVehicle(decodeUUID(props.match.params.vehicle_id)));
     }
 
     useEffect(componentDidMount, []);
     const vehicle = useSelector(state => state.vehicle);
-    if (vehicle) {
+    if (isFetching) {
         return (
-            <>
-                <br>
-                </br>
-                <br>
-                </br>
-                <br>
-                </br>
-                {vehicle.name}
-            </>
+            <FormSkeleton/>
         )
     }
     else {
         return (
             <>
-
-            <br>
-            </br>
-            <br>
-            </br>
-        <br>
-        </br>
-                </>
-    )
+                <TextFieldControlled
+                    value={vehicle.name}
+                    label={"Name"}
+                    id={"vehicle-name"}
+                    onSelect={() => {
+                    }}/>
+                <TextFieldControlled
+                    value={vehicle.manufacturer}
+                    label={"Manufacturer"}
+                    id={"vehicle-manufacturer"}
+                    onSelect={() => {
+                    }}/>
+                <TextFieldControlled
+                    value={vehicle.model}
+                    label={"Model"}
+                    id={"vehicle-model"}
+                    onSelect={() => {
+                    }}/>
+                <TextFieldControlled
+                    value={vehicle.registration_number}
+                    label={"Registration"}
+                    id={"vehicle-registration"}
+                    onSelect={() => {
+                    }}/>
+            </>
+        )
     }
 
 

@@ -10,6 +10,8 @@ import {Link} from "react-router-dom";
 import {getAllVehicles} from "../redux/Actions";
 import {encodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
+import {createLoadingSelector} from "../redux/selectors";
+import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 
 const useStyles = makeStyles({
     card: {
@@ -45,8 +47,8 @@ function VehicleCard(props) {
 
 function VehicleList() {
     const dispatch = useDispatch();
-    // TODO: Figure out loaded stuff
-    const [loaded, setLoaded] = React.useState(true);
+    const loadingSelector = createLoadingSelector(["GET_VEHICLES"]);
+    const isFetching = useSelector(state => loadingSelector(state));
 
     function componentDidMount() {
         dispatch(getAllVehicles());
@@ -65,33 +67,34 @@ function VehicleList() {
             }
             }
         />;
-    let addButton;
-    if (loaded) {
-        addButton = circleAdd
-    } else {
-        addButton = <></>
+    if (isFetching) {
+        return (
+            <CardsGridSkeleton/>
+        )
     }
-    return (
-        <Grid container
-              spacing={3}
-              direction={"row"}
-              justify={"flex-start"}
-              alignItems={"center"}
-        >
-            <Grid item xs={10} sm={5} md={4} lg={3}>
-                {addButton}
-            </Grid>
-            {vehicles.map((vehicle) => (
-                <Grid item xs={10} sm={5} md={4} lg={3} key={vehicle.uuid}>
-                    <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{textDecoration: 'none'}}>
-                        <VehicleCard vehicle={vehicle}/>
-                    </Link>
+    else {
+        return (
+            <Grid container
+                  spacing={3}
+                  direction={"row"}
+                  justify={"flex-start"}
+                  alignItems={"center"}
+            >
+                <Grid item xs={10} sm={5} md={4} lg={3}>
+                    {circleAdd}
                 </Grid>
-            ))
-            }
-        </Grid>
+                {vehicles.map((vehicle) => (
+                    <Grid item xs={10} sm={5} md={4} lg={3} key={vehicle.uuid}>
+                        <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{textDecoration: 'none'}}>
+                            <VehicleCard vehicle={vehicle}/>
+                        </Link>
+                    </Grid>
+                ))
+                }
+            </Grid>
 
-    )
+        )
+    }
 }
 
 export default VehicleList
