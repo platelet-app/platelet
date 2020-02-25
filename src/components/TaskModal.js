@@ -49,7 +49,11 @@ const mapDispatchToProps = dispatch => {
 
 function TaskDialog(props) {
     const dispatch = useDispatch();
-    const loadingSelector = createLoadingSelector(["GET_TASK", "GET_AVAILABLE_LOCATIONS", "GET_AVAILABLE_PRIORITIES", "GET_USERS", "GET_AVAILABLE_LOCATIONS"]);
+    const loadingSelector = createLoadingSelector(["GET_TASK",
+        "GET_AVAILABLE_LOCATIONS",
+        "GET_AVAILABLE_PRIORITIES",
+        "GET_USERS",
+        "GET_AVAILABLE_LOCATIONS"]);
     const isFetching = useSelector(state => loadingSelector(state));
     let useStyles;
     // TODO: Do this properly (withStyles)
@@ -147,9 +151,7 @@ function TaskDialog(props) {
     }
 
     function onSelectName(event) {
-
         sendData({contact_name: event.target.value});
-
     }
 
     function onSelectPickup(pickupAddress) {
@@ -160,8 +162,6 @@ function TaskDialog(props) {
     function onSelectDropoff(dropoffAddress) {
         if (dropoffAddress)
             sendData({dropoff_address: dropoffAddress});
-
-
     }
 
     function sendData(payload, updateData) {
@@ -249,7 +249,30 @@ function TaskDialog(props) {
     }
 
     if (props.modal) {
-        const modalContents = isFetching ? <FormSkeleton/> :
+        const modalContents = isFetching ?
+            <div style={{width: "600px"}}>
+                <DialogTitle id="form-dialog-title">
+                    <Grid container
+                          spacing={2}
+                          direction={"column"}
+                          justify={"flex-start"}
+                          alignItems={"flex-start"}>
+                        <Grid item>
+                            {task.pickup_address ? "FROM: " + task.pickup_address.line1 + "." : ""}
+                        </Grid>
+                        <Grid item>
+                            {task.dropoff_address ? "TO: " + task.dropoff_address.line1 + "." : ""}
+                        </Grid>
+                        <Grid item>
+                            {task.rider ? "Assigned to: " + task.rider.display_name + "." : ""}
+                        </Grid>
+                    </Grid>
+                </DialogTitle>
+                <DialogContent>
+                    <FormSkeleton/>
+                </DialogContent>
+            </div> :
+
             <>
                 <DialogTitle id="form-dialog-title">
                     <Grid container

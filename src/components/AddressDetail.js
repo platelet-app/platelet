@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import TextField from '@material-ui/core/TextField';
 import {makeStyles} from "@material-ui/core";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -32,6 +32,8 @@ export default function AddressDetailsCollapsible(props){
     const [county, setCounty] = useState(props.address ? props.address.county || "" : "");
     const [country, setCountry] = useState(props.address ? props.address.country || "" : "");
     const [postcode, setPostcode] = useState(props.address ? props.address.country || "" : "");
+    const firstUpdate = useRef(true);
+
 
     const onSelectPreset = selectedItem => {
         let result = props.locations.filter(location => location.name === selectedItem);
@@ -56,6 +58,10 @@ export default function AddressDetailsCollapsible(props){
     // useEffect(() => {props.onSelect({country: country})}, [country]);
 
     useEffect(() => {
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        }
         props.onSelect({
             ward: ward,
             line1: line1,

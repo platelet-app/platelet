@@ -16,8 +16,6 @@ import {useDispatch} from "react-redux";
 
 export default function Main(_props) {
     let location = useLocation();
-    const dispatch = useDispatch();
-    dispatch(clearLoading());
 
     let background = location.state && location.state.background;
     return (
@@ -49,7 +47,7 @@ export default function Main(_props) {
                        />
 
                 </Switch>
-                {background && <Route exact path="/session/:session_id/task/:task_id"
+                {background && <Route exact path="/session/:session_uuid/task/:task_id"
                                       render={(props) => <TaskModal {...props} modal={true} fullscreen={location.state.fullscreen} view={location.state.view} apiControl={_props.apiControl}/>}
                 />}
             </main>
