@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react';
 import 'typeface-roboto'
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import '../index.css'
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Moment from "react-moment";
 
 
@@ -24,9 +24,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { useTheme } from '@material-ui/core/styles';
+import {useTheme} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import Main from "../components/Main";
+import {createLoadingSelector} from "../redux/selectors";
+import {useDispatch, useSelector} from "react-redux";
+import {getUsers, getWhoami} from "../redux/Actions";
+import MenuSkeleton from "../loadingComponents/MenuSkeleton";
 
 
 const drawerWidth = 240;
@@ -64,36 +68,39 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ResponsiveDrawer(props) {
-    const { container } = props;
+    // TODO: Put this into App.js instead so whoami state is ready on login
+    const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
+    const dispatch = useDispatch();
+    const isFetching = useSelector(state => loadingSelector(state));
+    const whoami = useSelector(state => state.whoami);
+    const {container} = props;
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [myUUID, setMyUUID] = useState("");
-    const [myRoles, setMyRoles] = useState("");
-    const [myName, setMyName] = useState("");
 
-    props.apiControl.users.whoami().then((data) => {
-        if(data) {
-            setMyUUID(data.uuid);
-            setMyRoles(data.roles);
-            setMyName(data.name);
-        }
-    });
+    function componentDidMount() {
+        dispatch(getWhoami());
+
+    }
+
+    useEffect(componentDidMount, []);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
     let sessionLink = <></>;
+    let drawer = <MenuSkeleton/>;
 
-    if (myRoles.includes("coordinator") || myRoles.includes("admin")) {
-        sessionLink =
-            <ListItem component={Link} to="/sessions" button>
-                <ListItemIcon><AppsIcon/></ListItemIcon>
-                <ListItemText primary={"Sessions"}/>
-            </ListItem>;
-    }
-        let drawer = (
+    if (!isFetching) {
+        if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
+            sessionLink =
+                <ListItem component={Link} to="/sessions" button>
+                    <ListItemIcon><AppsIcon/></ListItemIcon>
+                    <ListItemText primary={"Sessions"}/>
+                </ListItem>;
+        }
+        drawer = (
             <div>
                 <div className={classes.toolbar}/>
                 <Divider/>
@@ -122,10 +129,11 @@ export function ResponsiveDrawer(props) {
                 </List>
             </div>
         );
-
+    }
+    console.log(isFetching)
     return (
         <div className={classes.root}>
-            <CssBaseline />
+            <CssBaseline/>
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
                     <IconButton
@@ -135,15 +143,15 @@ export function ResponsiveDrawer(props) {
                         onClick={handleDrawerToggle}
                         className={classes.menuButton}
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
-                        <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
-                            <Grid item>
-                                <Typography variant="h6" noWrap>
-                                    Logged in as {myName}
-                                </Typography>
-                            </Grid>
+                    <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+                        <Grid item>
+                            <Typography variant="h6" noWrap>
+                                Logged in as {whoami.name}
+                            </Typography>
                         </Grid>
+                    </Grid>
                 </Toolbar>
             </AppBar>
             <nav className={classes.drawer} aria-label="mailbox folders">

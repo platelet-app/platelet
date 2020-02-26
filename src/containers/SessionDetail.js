@@ -28,8 +28,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SessionDetail(props) {
-    let loadingSelector = () => {return false;};
-    loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
+    const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
     const dispatch = useDispatch();
     const isFetching = useSelector(state => loadingSelector(state));
     const tasks = useSelector(state => state.tasks);

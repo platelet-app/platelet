@@ -54,25 +54,19 @@ function SessionList(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_SESSIONS"]);
     const isFetching = useSelector(state => loadingSelector(state));
-    // TODO: Figure out loaded stuff
-    const [loaded, setLoaded] = React.useState(true);
-    const [myUUID, setMyUUID] = React.useState("");
-
     const sessions = useSelector(state => state.sessions);
+    const whoami = useSelector(state => state.whoami);
 
-    function componentDidMount() {
-        props.apiControl.users.whoami()
-            .then((my_data) => {
-                setMyUUID(my_data.uuid);
-                dispatch(getAllSessions(my_data.uuid));
-
-            })
+    function updateSessionsList() {
+        if (whoami.uuid)
+            dispatch(getAllSessions(whoami.uuid))
     }
 
-    useEffect(componentDidMount, []);
+    useEffect(updateSessionsList, [whoami]);
+
 
     let emptySession = {
-        user_id: myUUID,
+        user_id: whoami.uuid,
         timestamp: new Date().toISOString(),
     };
 
@@ -81,19 +75,13 @@ function SessionList(props) {
             onClick={() => {
                 let date = new Date();
                 let newSession = {...emptySession};
-                newSession.user_id = myUUID;
+                newSession.user_id = whoami.uuid;
                 newSession.timestamp = date.toISOString();
                 dispatch(addSession(newSession));
 
             }
             }
         />;
-    let addButton;
-    if (loaded) {
-        addButton = circleAdd
-    } else {
-        addButton = <></>
-    }
     if (isFetching) {
         return (
             <CardsGridSkeleton/>
@@ -107,7 +95,7 @@ function SessionList(props) {
                   alignItems={"center"}
             >
                 <Grid item xs={10} sm={5} md={4} lg={3}>
-                    {addButton}
+                    {circleAdd}
                 </Grid>
                 {sessions.map((session) => (
                     <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>

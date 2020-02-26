@@ -8,7 +8,7 @@ export const createErrorMessageSelector = actions => (state) => {
 };
 export const createLoadingSelector = actions => state => {
     if (Object.entries(_.get(state, 'loadingReducer')).length === 0) {
-        return false;
+        return true;
     }
     let found = false;
     for (let value of actions) {

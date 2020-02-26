@@ -23,7 +23,7 @@ import {
     LOGIN,
     GET_ACTIVE_TASK_UUID,
     SET_ACTIVE_TASK_UUID,
-    LOGIN_SUCCESS, GET_SESSION_SUCCESS, CLEAR_LOADING
+    LOGIN_SUCCESS, GET_SESSION_SUCCESS, CLEAR_LOADING, GET_WHOAMI_SUCCESS
 } from './Actions'
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
@@ -206,6 +206,15 @@ function users(state = [], action) {
     }
 }
 
+function whoami(state = {roles: [], name: ""}, action) {
+    switch (action.type) {
+        case GET_WHOAMI_SUCCESS:
+            return action.data;
+        default:
+            return state
+    }
+}
+
 function sessionActiveTaskUUID(state = "", action) {
     switch (action.type) {
         case GET_ACTIVE_TASK_UUID:
@@ -249,6 +258,7 @@ const rootReducer = combineReducers({
     vehicles,
     vehicle,
     users,
+    whoami,
     sessionActiveTaskUUID,
     loadingReducer,
     apiControl

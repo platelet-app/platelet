@@ -220,11 +220,11 @@ export function getAvailableLocationsSuccess(data) {
 
 // USERS
 
-export const GET_USERSA_REQUEST = 'GET_USERS_REQUEST';
+export const GET_USERS_REQUEST = 'GET_USERS_REQUEST';
 export const GET_USERS_SUCCESS = 'GET_USERS_SUCCESS';
 
 export function getUsers() {
-    return { type: GET_USERSA_REQUEST }
+    return { type: GET_USERS_REQUEST }
 }
 
 export function getUsersSuccess(data) {
@@ -242,8 +242,19 @@ export function setActiveTaskUUID() {
     return { type: SET_ACTIVE_TASK_UUID }
 }
 
-export const CLEAR_LOADING = 'CLEAR_LOADING'
+export const CLEAR_LOADING = 'CLEAR_LOADING';
 
 export function clearLoading() {
     return { type: CLEAR_LOADING }
+}
+
+export const GET_WHOAMI = 'GET_WHOAMI';
+export const GET_WHOAMI_SUCCESS = 'GET_WHOAMI_SUCCESS';
+
+export function getWhoami() {
+    return { type: GET_WHOAMI }
+}
+
+export function getWhoamiSuccess(data) {
+    return { type: GET_WHOAMI_SUCCESS, data }
 }
