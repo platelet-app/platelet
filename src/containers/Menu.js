@@ -68,19 +68,22 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ResponsiveDrawer(props) {
+    const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
+    const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami);
     const {container} = props;
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
-
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
     let sessionLink = <></>;
+    let drawer = <MenuSkeleton/>;
 
+    if (!isFetching) {
         if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
             sessionLink =
                 <ListItem component={Link} to="/sessions" button>
@@ -88,7 +91,7 @@ export function ResponsiveDrawer(props) {
                     <ListItemText primary={"Sessions"}/>
                 </ListItem>;
         }
-        const drawer = (
+        drawer = (
             <div>
                 <div className={classes.toolbar}/>
                 <Divider/>
@@ -117,6 +120,8 @@ export function ResponsiveDrawer(props) {
                 </List>
             </div>
         );
+    }
+    console.log(isFetching)
     return (
         <div className={classes.root}>
             <CssBaseline/>

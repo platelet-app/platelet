@@ -49,7 +49,13 @@ const mapDispatchToProps = dispatch => {
 
 function TaskDialog(props) {
     const dispatch = useDispatch();
-    const isFetching = false;
+    // Leave this here in case app.js dispatchers haven't finished before the modal is opened
+    const loadingSelector = createLoadingSelector(["GET_TASK",
+        "GET_AVAILABLE_LOCATIONS",
+        "GET_AVAILABLE_PRIORITIES",
+        "GET_USERS",
+        "GET_AVAILABLE_LOCATIONS"]);
+    const isFetching = useSelector(state => loadingSelector(state));
     let useStyles;
     // TODO: Do this properly (withStyles)
     if (!props.fullscreen) {

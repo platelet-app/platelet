@@ -5,6 +5,7 @@ import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../cs
 import CardContent from '@material-ui/core/CardContent';
 import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
+import TaskContextMenu from "./TaskContextMenu";
 
 export function TaskCard(props) {
     let pickupTitle = "";

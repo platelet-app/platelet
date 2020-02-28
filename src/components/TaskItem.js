@@ -1,14 +1,14 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import { Link } from "react-router-dom";
-import { TaskCard }from "./TaskCardsColoured"
+import {Link} from "react-router-dom";
+import {TaskCard} from "./TaskCardsColoured"
 import {encodeUUID} from "../utilities";
+import TaskContextMenu from "./TaskContextMenu";
 
-export default function TaskItem (props) {
+export default function TaskItem(props) {
     return (
-            <Grid item key={props.task.uuid}>
-
+        <Grid item key={props.task.uuid}>
+            <TaskContextMenu taskUUID={props.task.uuid}>
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
                       to={{
@@ -31,7 +31,8 @@ export default function TaskItem (props) {
                         priority={props.task.priority}
                     />
                 </Link>
+            </TaskContextMenu>
 
-            </Grid>
+        </Grid>
     )
 };
