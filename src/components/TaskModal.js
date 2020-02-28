@@ -49,12 +49,7 @@ const mapDispatchToProps = dispatch => {
 
 function TaskDialog(props) {
     const dispatch = useDispatch();
-    const loadingSelector = createLoadingSelector(["GET_TASK",
-        "GET_AVAILABLE_LOCATIONS",
-        "GET_AVAILABLE_PRIORITIES",
-        "GET_USERS",
-        "GET_AVAILABLE_LOCATIONS"]);
-    const isFetching = useSelector(state => loadingSelector(state));
+    const isFetching = false;
     let useStyles;
     // TODO: Do this properly (withStyles)
     if (!props.fullscreen) {
@@ -110,11 +105,6 @@ function TaskDialog(props) {
     const task = props.task || newTask;
 
     function componentDidMount() {
-        dispatch(getAvailablePriorities());
-        dispatch(getAvailableDeliverables());
-        dispatch(getAvailableLocations());
-        dispatch(getUsers());
-
         if (!props.tasks.length) {
             props.apiControl.tasks.getTask(taskId).then((data) => {
                 dispatch(getAllTasks(data.session_id));

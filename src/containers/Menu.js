@@ -68,31 +68,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ResponsiveDrawer(props) {
-    // TODO: Put this into App.js instead so whoami state is ready on login
-    const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
-    const dispatch = useDispatch();
-    const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami);
     const {container} = props;
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
-    function componentDidMount() {
-        dispatch(getWhoami());
-
-    }
-
-    useEffect(componentDidMount, []);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
     let sessionLink = <></>;
-    let drawer = <MenuSkeleton/>;
 
-    if (!isFetching) {
         if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
             sessionLink =
                 <ListItem component={Link} to="/sessions" button>
@@ -100,7 +88,7 @@ export function ResponsiveDrawer(props) {
                     <ListItemText primary={"Sessions"}/>
                 </ListItem>;
         }
-        drawer = (
+        const drawer = (
             <div>
                 <div className={classes.toolbar}/>
                 <Divider/>
@@ -129,8 +117,6 @@ export function ResponsiveDrawer(props) {
                 </List>
             </div>
         );
-    }
-    console.log(isFetching)
     return (
         <div className={classes.root}>
             <CssBaseline/>

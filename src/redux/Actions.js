@@ -178,15 +178,16 @@ export function getAvailableDeliverablesSuccess(data) {
 
 // LOGIN
 
-export const LOGIN = 'LOGIN';
+export const LOGIN_REQUEST = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGOUT = 'LOGOUT';
 
 export function loginUser(data) {
-    return { type: ADD_DELIVERABLE_REQUEST, data }
+    return { type: LOGIN_REQUEST, data }
 }
 
 export function loginUserSuccess(data) {
-    return { type: ADD_DELIVERABLE_SUCCESS, data }
+    return { type: LOGIN_SUCCESS, data }
 }
 
 

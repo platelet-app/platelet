@@ -13,6 +13,7 @@ import {watchGetAvailablePriorities} from "./PrioritiesSagas";
 import {watchGetAvailableLocations} from "./LocationsSagas";
 import {watchGetUsers} from "./UserSagas";
 import {watchGetWhoami} from "./WhoamiSaga";
+import {watchLogin} from "./LoginSagas"
 
 export default function* rootSaga() {
     yield all([
@@ -35,7 +36,8 @@ export default function* rootSaga() {
         call(watchPostNewVehicle),
         call(watchVehicle),
         call(watchGetUsers),
-        call(watchGetWhoami)
+        call(watchGetWhoami),
+        call(watchLogin)
 
     ])
 }

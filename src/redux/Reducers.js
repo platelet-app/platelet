@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux'
+import {combineReducers} from 'redux'
 import Control from "../ApiControl"
 import update from 'immutability-helper';
 import {
@@ -21,17 +21,46 @@ import {
     GET_VEHICLE_SUCCESS,
     GET_USERS_SUCCESS,
     LOGIN,
+    LOGIN_SUCCESS,
+    LOGOUT,
     GET_ACTIVE_TASK_UUID,
     SET_ACTIVE_TASK_UUID,
-    LOGIN_SUCCESS, GET_SESSION_SUCCESS, CLEAR_LOADING, GET_WHOAMI_SUCCESS
+    GET_SESSION_SUCCESS,
+    CLEAR_LOADING,
+    GET_WHOAMI_SUCCESS
 } from './Actions'
+import {store} from "react-notifications-component";
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
 
 function apiControl(state = new Control(apiUrl), action) {
     switch (action.type) {
-        case LOGIN:
-            return state;
+        case LOGIN_SUCCESS:
+            state.login(action.data.username, action.data.password).then(() => {
+                return state;
+            /*}).catch(function (error) {
+                console.log('Request failed', error);
+
+                store.addNotification({
+                    title: "Incorrect name or password.",
+                    //TODO: proper error messages from the api
+                    message: "For some reason.",
+                    type: "danger",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animated", "fadeIn"],
+                    animationOut: ["animated", "fadeOut"],
+                    dismiss: {
+                        duration: 10000,
+                        onScreen: true
+                    }
+                });
+                return state;*/
+            });
+
+        case LOGOUT:
+            state.logout();
+
         default:
             return state;
     }
@@ -62,8 +91,7 @@ function tasks(state = [], action) {
                 const updated_item = {...result[0], ...action.data.updateData};
                 const index = state.indexOf(result[0]);
                 return update(state, {[index]: {$set: updated_item}});
-                }
-            else {
+            } else {
                 return state
             }
 
@@ -93,8 +121,7 @@ function deliverables(state = [], action) {
                 const updated_item = {...result[0], ...action.data.payload};
                 const index = state.indexOf(result[0]);
                 return update(state, {[index]: {$set: updated_item}});
-            }
-            else {
+            } else {
                 return state
             }
         case GET_DELIVERABLES_SUCCESS:
@@ -102,7 +129,8 @@ function deliverables(state = [], action) {
 
         default:
             return state
-}}
+    }
+}
 
 function availableDeliverables(state = [], action) {
     switch (action.type) {
@@ -184,8 +212,7 @@ function vehicle(state = {}, action) {
                 const updated_item = {...result[0], ...action.data.updateData};
                 const index = state.indexOf(result[0]);
                 return update(state, {[index]: {$set: updated_item}});
-            }
-            else {
+            } else {
                 return state
             }
 
@@ -226,11 +253,11 @@ function sessionActiveTaskUUID(state = "", action) {
     }
 }
 
-const loadingReducer = (state = {}, action) => {
+function loadingReducer(state = {}, action) {
     if (action.type === CLEAR_LOADING) {
         return {};
     }
-    const { type } = action;
+    const {type} = action;
     const matches = /(.*)_(REQUEST|SUCCESS|FAILURE)/.exec(type);
 
     // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
@@ -244,7 +271,8 @@ const loadingReducer = (state = {}, action) => {
         //      and false when receiving GET_TODOS_SUCCESS / GET_TODOS_FAILURE
         [requestName]: requestState === 'REQUEST',
     };
-};
+}
+
 
 const rootReducer = combineReducers({
     task,

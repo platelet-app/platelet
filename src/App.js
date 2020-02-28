@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {ResponsiveDrawer} from './containers/Menu'
 import Login from './Login'
 import './index.css'
@@ -8,51 +8,63 @@ import './App.css';
 import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {
+    getAvailableDeliverables,
+    getAvailableLocations,
+    getAvailablePriorities,
+    getUsers,
+    getWhoami
+} from "./redux/Actions";
 
 
-class App extends React.Component {
-    componentDidMount() {
-        if (this.props.logout) {
+function App(props) {
+    const [apiControl, setApiControl] = useState(new Control((props.apiUrl)));
+    const dispatch = useDispatch();
+
+    function componentDidMount() {
+        if (props.logout) {
             deleteLogin();
-            this.setState({"apiControl": new Control(this.props.apiUrl)})
+            setApiControl(new Control(props.apiUrl));
             document.location.href = "/";
 
         } else {
             let savedBearer = getLogin();
             if (savedBearer) {
-                let control = new Control(this.props.apiUrl, savedBearer);
-                this.setState({"apiControl": control});
+                let control = new Control(props.apiUrl, savedBearer);
+                setApiControl(control);
+                dispatch(getAvailablePriorities());
+                dispatch(getAvailableDeliverables());
+                dispatch(getAvailableLocations());
+                dispatch(getUsers());
+                dispatch(getWhoami());
             }
         }
     }
+    useEffect(componentDidMount, [])
 
-    state = {
-        "apiControl": new Control(this.props.apiUrl)
-    };
 
-    render() {
-        if (this.state.apiControl.initialised) {
-            return (
-                <div className={'body'}>
-                    <Switch>
-                        <Route exact path='/logout'
-                               render={(props) => <App {...props} logout={true} apiUrl={this.props.apiUrl}/>}
-                        />
-                    </Switch>
+    if (apiControl.initialised) {
+        return (
+            <div className={'body'}>
+                <Switch>
+                    <Route exact path='/logout'
+                           render={(props) => <App {...props} logout={true} apiUrl={props.apiUrl}/>}
+                    />
+                </Switch>
 
-                    <React.Fragment>
-                        <CssBaseline/>
-                        <div className="App">
-                            <ResponsiveDrawer apiControl={this.state.apiControl}/>
-                        </div>
-                    </React.Fragment>
-                </div>
-            );
-        } else {
-            return (
-                <Login apiUrl={this.props.apiUrl}/>
-            )
-        }
+                <React.Fragment>
+                    <CssBaseline/>
+                    <div className="App">
+                        <ResponsiveDrawer apiControl={apiControl}/>
+                    </div>
+                </React.Fragment>
+            </div>
+        );
+    } else {
+        return (
+            <Login apiUrl={props.apiUrl}/>
+        )
     }
 }
 
