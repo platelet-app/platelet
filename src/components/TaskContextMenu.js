@@ -60,7 +60,7 @@ export default function TaskContextMenu(props) {
                         : undefined
                 }
             >
-                <MenuItem disabled={props.task.pickup_time} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
+                <MenuItem disabled={props.task.pickup_time || !props.task.assigned_rider} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
                 <MenuItem disabled={(props.task.dropoff_time || !props.task.pickup_time)} onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
                 <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onSelectDelete}>Delete</MenuItem>
             </Menu>
