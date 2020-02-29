@@ -8,7 +8,7 @@ import TaskContextMenu from "./TaskContextMenu";
 export default function TaskItem(props) {
     return (
         <Grid item key={props.task.uuid}>
-            <TaskContextMenu taskUUID={props.task.uuid}>
+            <TaskContextMenu task={props.task}>
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
                       to={{

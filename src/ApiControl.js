@@ -158,6 +158,10 @@ class Task {
     async updateTask(task_id, input_data) {
         return makeFetch(this.api_url, "task/" + task_id, "PUT", this.bearer, "application/json", input_data)
     }
+
+    async deleteTask(task_id) {
+        return makeFetch(this.api_url, "task/" + task_id, "DELETE", this.bearer, "application/json")
+    }
 }
 
 class Deliverable {

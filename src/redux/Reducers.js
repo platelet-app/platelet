@@ -27,7 +27,7 @@ import {
     SET_ACTIVE_TASK_UUID,
     GET_SESSION_SUCCESS,
     CLEAR_LOADING,
-    GET_WHOAMI_SUCCESS
+    GET_WHOAMI_SUCCESS, DELETE_TASK_SUCCESS
 } from './Actions'
 import {store} from "react-notifications-component";
 
@@ -36,6 +36,7 @@ const apiUrl = 'http://localhost:5000/api/v0.1/';
 function apiControl(state = new Control(apiUrl), action) {
     switch (action.type) {
         case LOGIN_SUCCESS:
+            // this needs to go in a saga not here!
             state.login(action.data.username, action.data.password).then(() => {
                 return state;
             /*}).catch(function (error) {
@@ -60,6 +61,7 @@ function apiControl(state = new Control(apiUrl), action) {
 
         case LOGOUT:
             state.logout();
+            return state;
 
         default:
             return state;
@@ -92,7 +94,16 @@ function tasks(state = [], action) {
                 const index = state.indexOf(result[0]);
                 return update(state, {[index]: {$set: updated_item}});
             } else {
-                return state
+                return state;
+            }
+
+        case DELETE_TASK_SUCCESS:
+            let result_delete = state.filter(task => task.uuid === action.data);
+            if (result_delete.length === 1) {
+                const index = state.indexOf(result_delete[0]);
+                return update(state, { $splice: [[index, 1]] });
+            } else {
+                return state;
             }
 
         case GET_TASKS_SUCCESS:

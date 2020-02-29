@@ -1,5 +1,12 @@
 import {watchGetSessions, watchPostNewSession, watchGetSession} from "./SessionSagas"
-import {watchPostNewTask, watchGetTasks, watchUpdateTask, watchGetMyTasks, watchGetTask} from "./TaskSagas"
+import {
+    watchPostNewTask,
+    watchGetTasks,
+    watchUpdateTask,
+    watchGetMyTasks,
+    watchGetTask,
+    watchDeleteTask
+} from "./TaskSagas"
 import {
     watchGetAvailableDeliverables,
     watchGetDeliverables,
@@ -19,6 +26,7 @@ export default function* rootSaga() {
     yield all([
         call(watchPostNewSession),
         call(watchPostNewTask),
+        call(watchDeleteTask),
         call(watchGetSessions),
         call(watchGetSession),
         call(watchGetTask),

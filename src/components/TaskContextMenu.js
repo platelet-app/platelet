@@ -2,7 +2,7 @@ import React from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import moment from 'moment/min/moment-with-locales';
-import {updateTask} from "../redux/Actions";
+import {deleteTask, updateTask} from "../redux/Actions";
 import {useDispatch} from "react-redux";
 
 const initialState = {
@@ -25,20 +25,20 @@ export default function TaskContextMenu(props) {
 
     function sendData(payload, updateData) {
         const updateDataCombined = {...payload, ...updateData};
-        dispatch(updateTask({payload: payload, taskId: props.taskUUID, updateData: updateDataCombined ? updateDataCombined : {}}));
+        dispatch(updateTask({payload: payload, taskId: props.task.uuid, updateData: updateDataCombined ? updateDataCombined : {}}));
     }
 
-    function onSelectPickedUp(status) {
+    function onSelectPickedUp() {
         sendData({pickup_time: moment.utc().toISOString()});
         handleClose();
     }
 
-    function onSelectDroppedOff(status) {
+    function onSelectDroppedOff() {
         sendData({dropoff_time: moment.utc().toISOString()});
         handleClose();
     }
     function onSelectDelete() {
-        console.log("Not implemented yet!")
+        dispatch(deleteTask(props.task.uuid));
         handleClose();
     }
 
@@ -60,9 +60,9 @@ export default function TaskContextMenu(props) {
                         : undefined
                 }
             >
-                <MenuItem onClick={onSelectPickedUp}>Mark picked up</MenuItem>
-                <MenuItem onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
-                <MenuItem onClick={onSelectDelete}>Delete</MenuItem>
+                <MenuItem disabled={props.task.pickup_time} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
+                <MenuItem disabled={(props.task.dropoff_time || !props.task.pickup_time)} onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
+                <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onSelectDelete}>Delete</MenuItem>
             </Menu>
         </div>
     );
