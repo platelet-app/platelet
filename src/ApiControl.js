@@ -314,16 +314,27 @@ class Control {
             },
             body: 'username=' + username + '&password=' + password
         })
-            .then(status)
+    .then(status)
             .then(json)
             .then((data) => {
-                console.log("Login successful");
-                this.token = data['access_token'];
-                this.initialiseClasses(this.token)
-            })
-            .catch(function (error) {
-                console.log("Request failed", error);
-                throw error
+                console.log('Request succeeded with JSON response', data);
+                return data;
+            }).catch(function (error) {
+                console.log('Request failed', error);
+                store.addNotification({
+                    title: "An error has occurred.",
+                    //TODO: proper error messages from the api
+                    message: "For some reason.",
+                    type: "danger",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animated", "fadeIn"],
+                    animationOut: ["animated", "fadeOut"],
+                    dismiss: {
+                        duration: 10000,
+                        onScreen: true
+                    }
+                });
             });
     }
 

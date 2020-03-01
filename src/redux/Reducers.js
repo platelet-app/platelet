@@ -30,39 +30,22 @@ import {
     GET_WHOAMI_SUCCESS, DELETE_TASK_SUCCESS
 } from './Actions'
 import {store} from "react-notifications-component";
+import {deleteLogin, saveLogin} from "../utilities";
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
 
 function apiControl(state = new Control(apiUrl), action) {
     switch (action.type) {
         case LOGIN_SUCCESS:
-            // this needs to go in a saga not here!
-            state.login(action.data.username, action.data.password).then(() => {
-                return state;
-            /*}).catch(function (error) {
-                console.log('Request failed', error);
-
-                store.addNotification({
-                    title: "Incorrect name or password.",
-                    //TODO: proper error messages from the api
-                    message: "For some reason.",
-                    type: "danger",
-                    insert: "top",
-                    container: "top-right",
-                    animationIn: ["animated", "fadeIn"],
-                    animationOut: ["animated", "fadeOut"],
-                    dismiss: {
-                        duration: 10000,
-                        onScreen: true
-                    }
-                });
-                return state;*/
-            });
-
+            console.log("AAAAAAAAAAAAAA")
+            state.initialiseClasses(action.data.access_token);
+            console.log(state.initialised)
+            saveLogin(action.data.access_token)
+            return state;
         case LOGOUT:
             state.logout();
+            deleteLogin();
             return state;
-
         default:
             return state;
     }

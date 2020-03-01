@@ -2,13 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {ResponsiveDrawer} from './containers/Menu'
 import Login from './Login'
 import './index.css'
+import connect from "react-redux";
 import {deleteLogin, getLogin} from "./utilities";
 import Control from "./ApiControl";
 import './App.css';
 import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
     getAvailableDeliverables,
     getAvailableLocations,
@@ -16,43 +17,38 @@ import {
     getUsers,
     getWhoami
 } from "./redux/Actions";
+import mapStateToProps from "react-redux/lib/connect/mapStateToProps";
 
 
 function App(props) {
-    const [apiControl, setApiControl] = useState(new Control((props.apiUrl)));
-    const dispatch = useDispatch();
+    const apiControl = useSelector(state => state.apiControl);
+    const isInitialised = useSelector(state => state.apiControl.initialised);
+    const dispatch = useDispatch()
 
     function componentDidMount() {
         if (props.logout) {
-            deleteLogin();
-            setApiControl(new Control(props.apiUrl));
             document.location.href = "/";
+        }
 
-        } else {
-            let savedBearer = getLogin();
-            if (savedBearer) {
-                let control = new Control(props.apiUrl, savedBearer);
-                setApiControl(control);
-                dispatch(getAvailablePriorities());
-                dispatch(getAvailableDeliverables());
-                dispatch(getAvailableLocations());
-                dispatch(getUsers());
-                dispatch(getWhoami());
-            }
+    }
+
+    function getStaticData() {
+        if (isInitialised) {
+            dispatch(getAvailablePriorities());
+            dispatch(getAvailableDeliverables());
+            dispatch(getAvailableLocations());
+            dispatch(getUsers());
+            dispatch(getWhoami());
         }
     }
-    useEffect(componentDidMount, [])
+
+    useEffect(componentDidMount, []);
+    useEffect(getStaticData, [isInitialised]);
 
 
-    if (apiControl.initialised) {
+    if (isInitialised) {
         return (
             <div className={'body'}>
-                <Switch>
-                    <Route exact path='/logout'
-                           render={(props) => <App {...props} logout={true} apiUrl={props.apiUrl}/>}
-                    />
-                </Switch>
-
                 <React.Fragment>
                     <CssBaseline/>
                     <div className="App">

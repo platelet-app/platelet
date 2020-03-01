@@ -200,6 +200,9 @@ export function loginUserSuccess(data) {
     return { type: LOGIN_SUCCESS, data }
 }
 
+export function logoutUser() {
+    return { type: LOGOUT }
+}
 
 // PRIORITIES
 

@@ -13,6 +13,7 @@ import VehicleDetail from "../containers/VehicleDetail";
 import {MainWindowContainer} from "../css/common";
 import {clearLoading} from "../redux/Actions";
 import {useDispatch} from "react-redux";
+import App from "../App";
 
 export default function Main(_props) {
     let location = useLocation();
@@ -45,6 +46,9 @@ export default function Main(_props) {
                     <Route exact path="/session/:session_uuid/task/:task_id"
                            render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                        />
+                    <Route exact path='/logout'
+                           render={(props) => <App {...props} logout={true}/>}
+                    />
 
                 </Switch>
                 {background && <Route exact path="/session/:session_uuid/task/:task_id"

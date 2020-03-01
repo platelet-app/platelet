@@ -1,9 +1,10 @@
-import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects'
-import api from "./Api"
+import { all, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {ADD_SESSION_REQUEST, addSessionSuccess, GET_SESSIONS_REQUEST, getAllSessionsSuccess, GET_SESSION_REQUEST, getSessionSuccess} from "./Actions"
+import { getApiControl } from "./Api";
 
 
 export function* postNewSession(action) {
+    const api = yield select(getApiControl);
     const result = yield call([api, api.sessions.createSession], action.data);
     const session = {...action.data, "uuid": result.uuid};
     yield put(addSessionSuccess(session))
@@ -14,6 +15,7 @@ export function* watchPostNewSession() {
 }
 
 export function* getSessions(action) {
+    const api = yield select(getApiControl);
     const result = yield call([api, api.sessions.getSessions], action.data);
     yield put(getAllSessionsSuccess(result))
 }
@@ -23,6 +25,7 @@ export function* watchGetSessions() {
 }
 
 export function* getSession(action) {
+    const api = yield select(getApiControl);
     const result = yield call([api, api.sessions.getSession], action.data);
     yield put(getSessionSuccess(result))
 }

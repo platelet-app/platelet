@@ -1,5 +1,4 @@
-import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
-import api from "./Api"
+import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
 import {ADD_TASK_REQUEST,
     addTaskSuccess,
     UPDATE_TASK_REQUEST,
@@ -13,8 +12,10 @@ import {ADD_TASK_REQUEST,
     GET_TASK_REQUEST,
     getTaskSuccess} from "./Actions"
 
+import { getApiControl } from "./Api"
 
 export function* postNewTask(action) {
+    const api = yield select(getApiControl);
     const result = yield call([api, api.tasks.createTask], action.data);
     const task = {...action.data, "uuid": result.uuid};
     yield put(addTaskSuccess(task))
@@ -25,6 +26,7 @@ export function* watchPostNewTask() {
 }
 
 function* deleteTask(action) {
+    const api = yield select(getApiControl);
     yield call([api, api.tasks.deleteTask], action.data);
     yield put(deleteTaskSuccess(action.data))
 }
@@ -35,6 +37,7 @@ export function* watchDeleteTask() {
 
 export function* updateTask(action) {
     // TODO: make this unnecessary
+    const api = yield select(getApiControl);
     if (action.data.payload.priority)
         delete action.data.payload.priority;
 
@@ -47,6 +50,7 @@ export function* watchUpdateTask() {
 }
 
 export function* getTask(action) {
+    const api = yield select(getApiControl);
     const result = yield call([api, api.tasks.getTask], action.data.task_id);
     yield put(getTaskSuccess(result))
 }
@@ -56,6 +60,7 @@ export function* watchGetTask() {
 }
 
 export function* getTasks(action) {
+    const api = yield select(getApiControl);
     const result = yield call([api, api.tasks.getTasks], action.data);
     yield put(getAllTasksSuccess(result))
 }
@@ -65,6 +70,7 @@ export function* watchGetTasks() {
 }
 
 export function* getMyTasks(action) {
+    const api = yield select(getApiControl);
     const whoami = yield call([api, api.users.whoami]);
     const result = yield call([api, api.users.getAssignedTasks], whoami.uuid);
     yield put(getAllMyTasksSuccess(result))

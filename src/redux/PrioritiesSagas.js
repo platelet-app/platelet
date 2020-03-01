@@ -1,5 +1,4 @@
-import { throttle, call, put, takeEvery , takeLatest} from 'redux-saga/effects'
-import api from "./Api"
+import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
 import {
     ADD_PRIORITIY,
     addPrioritySuccess,
@@ -10,8 +9,10 @@ import {
     getAvailableDeliverablesSuccess
 } from "./Actions"
 
+import { getApiControl } from "./Api";
 
 export function* getAvailablePriorities() {
+    const api = yield select(getApiControl);
     const result = yield call([api, api.priorities.getAvailablePriorities]);
     yield put(getAvailablePrioritiesSuccess(result))
 }
