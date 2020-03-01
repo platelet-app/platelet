@@ -31,16 +31,15 @@ import {
 } from './Actions'
 import {store} from "react-notifications-component";
 import {deleteLogin, saveLogin} from "../utilities";
+import { getLogin } from "../utilities";
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
 
-function apiControl(state = new Control(apiUrl), action) {
+function apiControl(state = new Control(apiUrl, getLogin()), action) {
     switch (action.type) {
         case LOGIN_SUCCESS:
-            console.log("AAAAAAAAAAAAAA")
             state.initialiseClasses(action.data.access_token);
-            console.log(state.initialised)
-            saveLogin(action.data.access_token)
+            saveLogin(action.data.access_token);
             return state;
         case LOGOUT:
             state.logout();

@@ -15,21 +15,18 @@ import {
     getAvailableLocations,
     getAvailablePriorities,
     getUsers,
-    getWhoami
+    getWhoami, logoutUser
 } from "./redux/Actions";
-import mapStateToProps from "react-redux/lib/connect/mapStateToProps";
 
 
 function App(props) {
     const apiControl = useSelector(state => state.apiControl);
     const isInitialised = useSelector(state => state.apiControl.initialised);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
-    function componentDidMount() {
-        if (props.logout) {
-            document.location.href = "/";
-        }
-
+    if (props.logout) {
+        dispatch(logoutUser());
+        document.location.href = "/";
     }
 
     function getStaticData() {
@@ -42,7 +39,6 @@ function App(props) {
         }
     }
 
-    useEffect(componentDidMount, []);
     useEffect(getStaticData, [isInitialised]);
 
 

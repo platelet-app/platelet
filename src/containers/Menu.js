@@ -121,7 +121,6 @@ export function ResponsiveDrawer(props) {
             </div>
         );
     }
-    console.log(isFetching)
     return (
         <div className={classes.root}>
             <CssBaseline/>
