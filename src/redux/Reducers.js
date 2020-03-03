@@ -70,7 +70,7 @@ function tasks(state = [], action) {
                 }
             ];
         case UPDATE_TASK_SUCCESS:
-            let result = state.filter(task => task.uuid === action.data.taskId);
+            let result = state.filter(task => task.uuid === action.data.taskUUID);
             if (result.length === 1) {
                 const updated_item = {...result[0], ...action.data.updateData};
                 const index = state.indexOf(result[0]);

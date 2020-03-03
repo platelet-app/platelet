@@ -34,10 +34,10 @@ function SessionDetail(props) {
     const tasks = useSelector(state => state.tasks);
     //TODO: This could put data into title
     const session = useSelector(state => state.session);
-    let session_uuid = decodeUUID(props.match.params.session_uuid);
+    let session_uuid = decodeUUID(props.match.params.session_uuid_b62);
     //TODO: Maybe use this to show a particular task when navigating to the task URL directly
     //const activeTask = useSelector(state => state.sessionActiveTaskUUID);
-    //dispatch(setActiveTaskUUID(props.match.params.task_id));
+    //dispatch(setActiveTaskUUID(props.match.params.task_uuid_b62));
     const theme = useTheme();
     const fullScreenModal = !useMediaQuery(theme.breakpoints.up('md'));
 

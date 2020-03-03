@@ -25,7 +25,7 @@ export default function TaskContextMenu(props) {
 
     function sendData(payload, updateData) {
         const updateDataCombined = {...payload, ...updateData};
-        dispatch(updateTask({payload: payload, taskId: props.task.uuid, updateData: updateDataCombined ? updateDataCombined : {}}));
+        dispatch(updateTask({payload: payload, taskUUID: props.task.uuid, updateData: updateDataCombined ? updateDataCombined : {}}));
     }
 
     function onSelectPickedUp() {

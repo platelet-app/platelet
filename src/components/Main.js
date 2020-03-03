@@ -34,16 +34,16 @@ export default function Main(_props) {
                     <Route path='/vehicles'
                            render={(props) => <VehicleList {...props} apiControl={_props.apiControl}/>}
                     />
-                    <Route path='/vehicle/:vehicle_id'
+                    <Route path='/vehicle/:vehicle_uuid_b62'
                            render={(props) => <VehicleDetail {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route path='/mytasks'
                            render={(props) => <UsersTasks {...props} apiControl={_props.apiControl}/>}
                     />
-                    <Route exact path='/session/:session_uuid'
+                    <Route exact path='/session/:session_uuid_b62'
                            render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                     />
-                    <Route exact path="/session/:session_uuid/task/:task_id"
+                    <Route exact path="/session/:session_uuid_b62/task/:task_uuid_b62"
                            render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                        />
                     <Route exact path='/logout'
@@ -51,7 +51,7 @@ export default function Main(_props) {
                     />
 
                 </Switch>
-                {background && <Route exact path="/session/:session_uuid/task/:task_id"
+                {background && <Route exact path="/session/:session_uuid_b62/task/:task_uuid_b62"
                                       render={(props) => <TaskModal {...props} modal={true} fullscreen={location.state.fullscreen} view={location.state.view} apiControl={_props.apiControl}/>}
                 />}
             </main>

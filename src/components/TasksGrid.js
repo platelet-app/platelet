@@ -37,7 +37,7 @@ const getColumnTitle = key => {
 
 const circleAdd = (callback, sessionUUID) => {
     const emptyTask = {
-        session_id: sessionUUID,
+        session_uuid: sessionUUID,
         timestamp: new Date().toISOString(),
     };
     return (

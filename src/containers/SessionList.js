@@ -66,7 +66,7 @@ function SessionList(props) {
 
 
     let emptySession = {
-        user_id: whoami.uuid,
+        user_uuid: whoami.uuid,
         timestamp: new Date().toISOString(),
     };
 
@@ -75,7 +75,7 @@ function SessionList(props) {
             onClick={() => {
                 let date = new Date();
                 let newSession = {...emptySession};
-                newSession.user_id = whoami.uuid;
+                newSession.user_uuid = whoami.uuid;
                 newSession.timestamp = date.toISOString();
                 dispatch(addSession(newSession));
 

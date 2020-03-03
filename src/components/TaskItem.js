@@ -12,7 +12,7 @@ export default function TaskItem(props) {
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
                       to={{
-                          pathname: `/session/${encodeUUID(props.task.session_id)}/task/${encodeUUID(props.task.uuid)}`,
+                          pathname: `/session/${encodeUUID(props.task.session_uuid)}/task/${encodeUUID(props.task.uuid)}`,
                           state: {
                               background: props.location,
                               view: props.view,

@@ -41,7 +41,7 @@ export function* updateTask(action) {
     if (action.data.payload.priority)
         delete action.data.payload.priority;
 
-    yield call([api, api.tasks.updateTask], action.data.taskId, action.data.payload);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskSuccess(action.data))
 }
 
@@ -51,7 +51,7 @@ export function* watchUpdateTask() {
 
 export function* getTask(action) {
     const api = yield select(getApiControl);
-    const result = yield call([api, api.tasks.getTask], action.data.task_id);
+    const result = yield call([api, api.tasks.getTask], action.data.task_uuid);
     yield put(getTaskSuccess(result))
 }
 

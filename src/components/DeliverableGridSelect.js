@@ -20,7 +20,7 @@ function DeliverableGridSelect(props) {
     };
 
     let emptyDeliverable = {
-        task_id: props.taskId,
+        task_uuid: props.taskUUID,
         timestamp: new Date().toISOString(),
         desc_note_id: null
     };
@@ -32,7 +32,7 @@ function DeliverableGridSelect(props) {
     React.useEffect(componentDidMount, [])
     React.useEffect(() => {
         if (availableDeliverables.length > 0)
-            dispatch(getDeliverables(props.taskId))
+            dispatch(getDeliverables(props.taskUUID))
 
     }, [availableDeliverables]);
 

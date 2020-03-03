@@ -13,7 +13,7 @@ function VehicleDetail(props) {
     const loadingSelector = createLoadingSelector(["GET_VEHICLE"]);
     const isFetching = useSelector(state => loadingSelector(state));
     function componentDidMount() {
-        dispatch(getVehicle(decodeUUID(props.match.params.vehicle_id)));
+        dispatch(getVehicle(decodeUUID(props.match.params.vehicle_uuid_b62)));
     }
 
     useEffect(componentDidMount, []);

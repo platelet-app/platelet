@@ -9,7 +9,7 @@ export default function DeliverableInformation(props) {
     const dispatch = useDispatch();
     const deliverables = useSelector(state => state.deliverables);
     function componentDidMount() {
-        dispatch(getDeliverables(props.taskId));
+        dispatch(getDeliverables(props.taskUUID));
 
     }
 

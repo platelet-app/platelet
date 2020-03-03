@@ -101,9 +101,9 @@ function TaskDialog(props) {
 
     let editMode = props.view === "edit";
 
-    const taskId = decodeUUID(props.match.params.task_id);
+    const taskUUID = decodeUUID(props.match.params.task_uuid_b62);
 
-    const taskResult = tasks.filter(task => task.uuid === decodeUUID(props.match.params.task_id));
+    const taskResult = tasks.filter(task => task.uuid === taskUUID);
     let newTask = {};
     if (taskResult.length === 1) {
         newTask = taskResult[0];
@@ -112,8 +112,8 @@ function TaskDialog(props) {
 
     function componentDidMount() {
         if (!props.tasks.length) {
-            props.apiControl.tasks.getTask(taskId).then((data) => {
-                dispatch(getAllTasks(data.session_id));
+            props.apiControl.tasks.getTask(taskUUID).then((data) => {
+                dispatch(getAllTasks(data.session_uuid));
             });
         }
     }
@@ -162,7 +162,7 @@ function TaskDialog(props) {
 
     function sendData(payload, updateData) {
         const updateDataCombined = {...payload, ...updateData};
-        props.updateTask({payload: payload, taskId: taskId, updateData: updateDataCombined ? updateDataCombined : {}});
+        props.updateTask({payload: payload, taskUUID: taskUUID, updateData: updateDataCombined ? updateDataCombined : {}});
     }
 
     function onSelectRider(selectedItem) {
@@ -233,13 +233,13 @@ function TaskDialog(props) {
     if (task.dropoff_time) {
         dropoffTimeNotice = <>Dropped off at <Moment format={"llll"}>{task.dropoff_time}</Moment></>
     }
-    let deliverableSelect = <DeliverableInformation apiControl={props.apiControl} taskId={taskId}/>;
+    let deliverableSelect = <DeliverableInformation apiControl={props.apiControl} taskUUID={taskUUID}/>;
     if (editMode) {
         deliverableSelect = <><DialogContentText>
             Deliverables:
         </DialogContentText>
             <DeliverableGridSelect apiControl={props.apiControl}
-                                   taskId={taskId}
+                                   taskUUID={taskUUID}
                                    deliverables={task.deliverables ? task.deliverables : []}/>
         </>;
     }
