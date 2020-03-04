@@ -4,6 +4,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import moment from 'moment/min/moment-with-locales';
 import {deleteTask, updateTask} from "../redux/Actions";
 import {useDispatch} from "react-redux";
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import IconButton from '@material-ui/core/IconButton';
+
 
 const initialState = {
     mouseX: null,
@@ -16,7 +19,6 @@ export default function TaskContextMenu(props) {
     const dispatch = useDispatch();
 
     const handleClick = event => {
-        event.preventDefault();
         setState({
             mouseX: event.clientX - 2,
             mouseY: event.clientY - 4,
@@ -25,7 +27,7 @@ export default function TaskContextMenu(props) {
 
     function sendData(payload, updateData) {
         const updateDataCombined = {...payload, ...updateData};
-        dispatch(updateTask({payload: payload, taskUUID: props.task.uuid, updateData: updateDataCombined ? updateDataCombined : {}}));
+        dispatch(updateTask({payload: payload, taskUUID: props.taskUUID, updateData: updateDataCombined ? updateDataCombined : {}}));
     }
 
     function onSelectPickedUp() {
@@ -38,7 +40,7 @@ export default function TaskContextMenu(props) {
         handleClose();
     }
     function onSelectDelete() {
-        dispatch(deleteTask(props.task.uuid));
+        dispatch(deleteTask(props.taskUUID));
         handleClose();
     }
 
@@ -47,8 +49,17 @@ export default function TaskContextMenu(props) {
     };
 
     return (
-        <div onContextMenu={handleClick} style={{ cursor: 'context-menu' }}>
+        <div style={{ cursor: 'context-menu', position: "relative" }}>
             {props.children}
+            <div style={{ cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex:1000}}>
+            <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+            >
+                <MoreVertIcon />
+            </IconButton>
             <Menu
                 keepMounted
                 open={state.mouseY !== null}
@@ -60,10 +71,11 @@ export default function TaskContextMenu(props) {
                         : undefined
                 }
             >
-                <MenuItem disabled={props.task.pickup_time || !props.task.assigned_rider} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
-                <MenuItem disabled={(props.task.dropoff_time || !props.task.pickup_time)} onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
+                <MenuItem disabled={props.pickupTime || !props.assignedRider} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
+                <MenuItem disabled={(props.dropoffTime || !props.pickupTime)} onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
                 <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onSelectDelete}>Delete</MenuItem>
             </Menu>
+        </div>
         </div>
     );
 }

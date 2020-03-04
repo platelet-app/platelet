@@ -31,6 +31,9 @@ import {createLoadingSelector} from "../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {getUsers, getWhoami} from "../redux/Actions";
 import MenuSkeleton from "../loadingComponents/MenuSkeleton";
+import MotorcycleIcon from '@material-ui/icons/Motorcycle';
+
+
 
 
 const drawerWidth = 240;
@@ -106,7 +109,7 @@ export function ResponsiveDrawer(props) {
                         <ListItemText primary={"My Tasks"}/>
                     </ListItem>
                     <ListItem component={Link} to="/vehicles" button>
-                        <ListItemIcon><AccountCircleIcon/></ListItemIcon>
+                        <ListItemIcon><MotorcycleIcon/></ListItemIcon>
                         <ListItemText primary={"Vehicles"}/>
                     </ListItem>
                     <ListItem component={Link} to="/profile" button>

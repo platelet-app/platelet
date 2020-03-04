@@ -4,11 +4,16 @@ import {Link} from "react-router-dom";
 import {TaskCard} from "./TaskCardsColoured"
 import {encodeUUID} from "../utilities";
 import TaskContextMenu from "./TaskContextMenu";
+import CardContent from "@material-ui/core/CardContent";
 
 export default function TaskItem(props) {
     return (
         <Grid item key={props.task.uuid}>
-            <TaskContextMenu task={props.task}>
+            <TaskContextMenu
+                taskUUID={props.task.uuid}
+                pickupTime={props.task.pickup_time}
+                dropoffTime={props.task.dropoff_time}
+                assignedRider={props.task.assigned_rider}>
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
                       to={{
