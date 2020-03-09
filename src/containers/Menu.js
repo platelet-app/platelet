@@ -141,7 +141,7 @@ export function ResponsiveDrawer(props) {
                     <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
                         <Grid item>
                             <Typography variant="h6" noWrap>
-                                Logged in as {whoami.name}
+                                Logged in as {whoami.display_name}
                             </Typography>
                         </Grid>
                     </Grid>

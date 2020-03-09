@@ -6,7 +6,7 @@ import {addDeliverable, getDeliverables, updateDeliverable, getAvailableDelivera
 import {connect, useDispatch, useSelector} from "react-redux"
 
 
-function DeliverableGridSelect(props) {
+export default function DeliverableGridSelect(props) {
     const dispatch = useDispatch();
     const availableDeliverables = useSelector(state => state.availableDeliverables);
     const deliverables = useSelector(state => state.deliverables);
@@ -25,11 +25,6 @@ function DeliverableGridSelect(props) {
         desc_note_id: null
     };
 
-
-    const componentDidMount = () => {
-        dispatch(getAvailableDeliverables());
-    };
-    React.useEffect(componentDidMount, [])
     React.useEffect(() => {
         if (availableDeliverables.length > 0)
             dispatch(getDeliverables(props.taskUUID))
@@ -73,5 +68,3 @@ function DeliverableGridSelect(props) {
 
 }
 
-
-export default DeliverableGridSelect

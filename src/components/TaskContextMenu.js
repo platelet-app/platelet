@@ -6,6 +6,7 @@ import {deleteTask, updateTask} from "../redux/Actions";
 import {useDispatch} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
+import DeleteConfirmationDialog from "./DeleteConfirmationModal";
 
 
 const initialState = {
@@ -15,6 +16,7 @@ const initialState = {
 
 export default function TaskContextMenu(props) {
     const [state, setState] = React.useState(initialState);
+    const [confirmDialog, setConfirmDialog] = React.useState(false);
 
     const dispatch = useDispatch();
 
@@ -40,8 +42,13 @@ export default function TaskContextMenu(props) {
         handleClose();
     }
     function onSelectDelete() {
-        dispatch(deleteTask(props.taskUUID));
+        setConfirmDialog(true)
         handleClose();
+    }
+    function doDelete(result) {
+        setConfirmDialog(false)
+        if (result)
+            dispatch(deleteTask(props.taskUUID));
     }
 
     const handleClose = () => {
@@ -49,6 +56,8 @@ export default function TaskContextMenu(props) {
     };
 
     return (
+        <>
+        <DeleteConfirmationDialog open={confirmDialog} onSelect={doDelete} label={"task"}/>
         <div style={{ cursor: 'context-menu', position: "relative" }}>
             {props.children}
             <div style={{ cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex:1000}}>
@@ -77,5 +86,6 @@ export default function TaskContextMenu(props) {
             </Menu>
         </div>
         </div>
+            </>
     );
 }

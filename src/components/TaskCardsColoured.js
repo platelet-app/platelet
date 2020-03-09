@@ -20,7 +20,7 @@ export function TaskCard(props) {
     let rider = "";
     let hasRider = false;
     if (props.assignedRider) {
-        rider = (props.assignedRider.name) ? props.assignedRider.name + " | " + props.assignedRider.patch : "";
+        rider = (props.assignedRider.display_name) ? props.assignedRider.display_name + " | " + props.assignedRider.patch : "";
         hasRider = true;
     }
     const cardInnerContent =
