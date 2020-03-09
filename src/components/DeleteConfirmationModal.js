@@ -8,10 +8,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function DeleteConfirmationDialog(props) {
     return (
-
         <Dialog
             open={props.open}
-            onClose={props.onSelect}
+            onClose={props.onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
@@ -24,12 +23,14 @@ export default function DeleteConfirmationDialog(props) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => {
-                    props.onSelect(false)
+                    props.onSelect(false);
+                    props.onClose();
                 }} color="primary">
                     No
                 </Button>
                 <Button onClick={() => {
-                    props.onSelect(true)
+                    props.onSelect(true);
+                    props.onClose();
                 }} color="primary" autoFocus>
                     Yes
                 </Button>

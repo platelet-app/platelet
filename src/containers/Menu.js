@@ -28,13 +28,13 @@ import {useTheme} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import Main from "../components/Main";
 import {createLoadingSelector} from "../redux/selectors";
+import Button from "@material-ui/core/Button";
 import {useDispatch, useSelector} from "react-redux";
 import {getUsers, getWhoami} from "../redux/Actions";
 import MenuSkeleton from "../loadingComponents/MenuSkeleton";
 import MotorcycleIcon from '@material-ui/icons/Motorcycle';
-
-
-
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const drawerWidth = 240;
 
@@ -112,18 +112,12 @@ export function ResponsiveDrawer(props) {
                         <ListItemIcon><MotorcycleIcon/></ListItemIcon>
                         <ListItemText primary={"Vehicles"}/>
                     </ListItem>
-                    <ListItem component={Link} to="/profile" button>
-                        <ListItemIcon><AccountCircleIcon/></ListItemIcon>
-                        <ListItemText primary={"Profile"}/>
-                    </ListItem>
-                    <ListItem component={Link} to="/logout" button>
-                        <ListItemIcon><ExitToAppIcon/></ListItemIcon>
-                        <ListItemText primary={"Logout"}/>
-                    </ListItem>
                 </List>
             </div>
         );
     }
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
     return (
         <div className={classes.root}>
             <CssBaseline/>
@@ -136,12 +130,47 @@ export function ResponsiveDrawer(props) {
                         onClick={handleDrawerToggle}
                         className={classes.menuButton}
                     >
-                        <MenuIcon/>
                     </IconButton>
-                    <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+                    <Grid container direction={"row-reverse"} justify={"right"} alignItems={"center"}>
+                        <Grid item>
+                            <div>
+                                <IconButton
+                                    color="inherit"
+                                    aria-controls="simple-menu"
+                                    aria-haspopup="true"
+                                    onClick={(event) => {
+                                        setAnchorEl(event.currentTarget);
+                                    }}>
+                                    <MenuIcon/>
+                                </IconButton>
+                                <Menu
+                                    id="profile-menu"
+                                    anchorEl={anchorEl}
+                                    keepMounted
+                                    open={Boolean(anchorEl)}
+                                    onClose={() => {
+                                        setAnchorEl(null);
+                                    }}
+                                >
+                                    <MenuItem onClick={() => {
+                                        setAnchorEl(null);
+                                    }} component={Link} to="/profile">
+                                        <AccountCircleIcon/>Profile
+                                    </MenuItem>
+                                    <MenuItem onClick={() => {
+                                        setAnchorEl(null);
+                                    }} component={Link} to="/logout">
+                                        <ExitToAppIcon/>Logout
+                                    </MenuItem>
+                                </Menu>
+                            </div>
+                        </Grid>
+                        <Grid item>
+                            <div style={{width: "20px"}}/>
+                        </Grid>
                         <Grid item>
                             <Typography variant="h6" noWrap>
-                                Logged in as {whoami.display_name}
+                                {whoami.display_name}
                             </Typography>
                         </Grid>
                     </Grid>

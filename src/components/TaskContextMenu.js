@@ -46,7 +46,7 @@ export default function TaskContextMenu(props) {
         handleClose();
     }
     function doDelete(result) {
-        setConfirmDialog(false)
+        setConfirmDialog(false);
         if (result)
             dispatch(deleteTask(props.taskUUID));
     }
@@ -57,7 +57,7 @@ export default function TaskContextMenu(props) {
 
     return (
         <>
-        <DeleteConfirmationDialog open={confirmDialog} onSelect={doDelete} label={"task"}/>
+        <DeleteConfirmationDialog open={confirmDialog} onSelect={doDelete} onClose={() => {setConfirmDialog(false)}} label={"task"}/>
         <div style={{ cursor: 'context-menu', position: "relative" }}>
             {props.children}
             <div style={{ cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex:1000}}>
