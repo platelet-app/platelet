@@ -35,6 +35,7 @@ import MenuSkeleton from "../loadingComponents/MenuSkeleton";
 import MotorcycleIcon from '@material-ui/icons/Motorcycle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const drawerWidth = 240;
 
@@ -78,9 +79,11 @@ export function ResponsiveDrawer(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const mobileView = !useMediaQuery(theme.breakpoints.up('sm'));
 
     const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
+        if (mobileView)
+            setMobileOpen(!mobileOpen);
     };
 
     let sessionLink = <></>;
@@ -89,7 +92,7 @@ export function ResponsiveDrawer(props) {
     if (!isFetching) {
         if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
             sessionLink =
-                <ListItem component={Link} to="/sessions" button>
+                <ListItem onClick={handleDrawerToggle}  component={Link} to="/sessions" button>
                     <ListItemIcon><AppsIcon/></ListItemIcon>
                     <ListItemText primary={"Sessions"}/>
                 </ListItem>;
@@ -99,16 +102,16 @@ export function ResponsiveDrawer(props) {
                 <div className={classes.toolbar}/>
                 <Divider/>
                 <List component="nav">
-                    <ListItem component={Link} to="/" button>
+                    <ListItem onClick={handleDrawerToggle} component={Link} to="/" button>
                         <ListItemIcon><HomeIcon/></ListItemIcon>
                         <ListItemText primary={"Home"}/>
                     </ListItem>
                     {sessionLink}
-                    <ListItem component={Link} to={"/mytasks"} button>
+                    <ListItem onClick={handleDrawerToggle}  component={Link} to={"/mytasks"} button>
                         <ListItemIcon><InboxIcon/></ListItemIcon>
                         <ListItemText primary={"My Tasks"}/>
                     </ListItem>
-                    <ListItem component={Link} to="/vehicles" button>
+                    <ListItem onClick={handleDrawerToggle}  component={Link} to="/vehicles" button>
                         <ListItemIcon><MotorcycleIcon/></ListItemIcon>
                         <ListItemText primary={"Vehicles"}/>
                     </ListItem>
@@ -130,6 +133,7 @@ export function ResponsiveDrawer(props) {
                         onClick={handleDrawerToggle}
                         className={classes.menuButton}
                     >
+                        <MenuIcon/>
                     </IconButton>
                     <Grid container direction={"row-reverse"} justify={"right"} alignItems={"center"}>
                         <Grid item>
@@ -155,12 +159,12 @@ export function ResponsiveDrawer(props) {
                                     <MenuItem onClick={() => {
                                         setAnchorEl(null);
                                     }} component={Link} to="/profile">
-                                        <AccountCircleIcon/>Profile
+                                        Profile
                                     </MenuItem>
                                     <MenuItem onClick={() => {
                                         setAnchorEl(null);
                                     }} component={Link} to="/logout">
-                                        <ExitToAppIcon/>Logout
+                                        Logout
                                     </MenuItem>
                                 </Menu>
                             </div>

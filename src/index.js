@@ -8,6 +8,7 @@ import ReactNotification from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css'
 import {Provider} from 'react-redux'
 import store from "./redux/Store"
+import {SnackbarProvider} from "notistack";
 
 window.store = store;
 
@@ -18,7 +19,9 @@ ReactDOM.render((
         <Provider store={store}>
             <BrowserRouter>
                 <ReactNotification/>
-                <App apiUrl={apiUrl}/>
+                <SnackbarProvider maxSnack={3}>
+                    <App apiUrl={apiUrl}/>
+                </SnackbarProvider>
             </BrowserRouter>
         </Provider>),
     document.getElementById('root'));

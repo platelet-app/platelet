@@ -6,7 +6,8 @@ import {deleteTask, updateTask} from "../redux/Actions";
 import {useDispatch} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteConfirmationDialog from "./DeleteConfirmationModal";
+import Button from "@material-ui/core/Button";
+import { withSnackbar } from 'notistack';
 
 
 const initialState = {
@@ -14,9 +15,8 @@ const initialState = {
     mouseY: null,
 };
 
-export default function TaskContextMenu(props) {
+function TaskContextMenu(props) {
     const [state, setState] = React.useState(initialState);
-    const [confirmDialog, setConfirmDialog] = React.useState(false);
 
     const dispatch = useDispatch();
 
@@ -41,23 +41,32 @@ export default function TaskContextMenu(props) {
         sendData({dropoff_time: moment.utc().toISOString()});
         handleClose();
     }
-    function onSelectDelete() {
-        setConfirmDialog(true)
-        handleClose();
+
+    function undoDelete(key) {
+        props.closeSnackbar(key)
     }
-    function doDelete(result) {
-        setConfirmDialog(false);
+
+    function onDelete(result) {
+        handleClose();
         if (result)
             dispatch(deleteTask(props.taskUUID));
+        const action = key => (
+            <React.Fragment>
+                <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
+                    UNDO
+                </Button>
+            </React.Fragment>
+        );
+        props.enqueueSnackbar('Task deleted.',  { variant: "info", action, autoHideDuration: 8000 });
     }
 
     const handleClose = () => {
         setState(initialState);
     };
 
+
     return (
         <>
-        <DeleteConfirmationDialog open={confirmDialog} onSelect={doDelete} onClose={() => {setConfirmDialog(false)}} label={"task"}/>
         <div style={{ cursor: 'context-menu', position: "relative" }}>
             {props.children}
             <div style={{ cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex:1000}}>
@@ -82,10 +91,12 @@ export default function TaskContextMenu(props) {
             >
                 <MenuItem disabled={props.pickupTime || !props.assignedRider} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
                 <MenuItem disabled={(props.dropoffTime || !props.pickupTime)} onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
-                <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onSelectDelete}>Delete</MenuItem>
+                <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>
             </Menu>
         </div>
         </div>
             </>
     );
 }
+
+export default withSnackbar(TaskContextMenu)
