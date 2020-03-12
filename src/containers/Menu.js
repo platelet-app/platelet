@@ -3,7 +3,6 @@ import 'typeface-roboto'
 import {Link} from "react-router-dom";
 import '../index.css'
 import {makeStyles} from '@material-ui/core/styles';
-import Moment from "react-moment";
 
 
 import AppBar from '@material-ui/core/AppBar';
@@ -15,8 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import AppsIcon from '@material-ui/icons/Apps';
 import HomeIcon from '@material-ui/icons/Home';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -28,9 +26,7 @@ import {useTheme} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import Main from "../components/Main";
 import {createLoadingSelector} from "../redux/selectors";
-import Button from "@material-ui/core/Button";
-import {useDispatch, useSelector} from "react-redux";
-import {getUsers, getWhoami} from "../redux/Actions";
+import {useSelector} from "react-redux";
 import MenuSkeleton from "../loadingComponents/MenuSkeleton";
 import MotorcycleIcon from '@material-ui/icons/Motorcycle';
 import Menu from '@material-ui/core/Menu';
@@ -145,7 +141,7 @@ export function ResponsiveDrawer(props) {
                                     onClick={(event) => {
                                         setAnchorEl(event.currentTarget);
                                     }}>
-                                    <MenuIcon/>
+                                    <ArrowDropDownIcon/>
                                 </IconButton>
                                 <Menu
                                     id="profile-menu"
@@ -168,9 +164,6 @@ export function ResponsiveDrawer(props) {
                                     </MenuItem>
                                 </Menu>
                             </div>
-                        </Grid>
-                        <Grid item>
-                            <div style={{width: "20px"}}/>
                         </Grid>
                         <Grid item>
                             <Typography variant="h6" noWrap>

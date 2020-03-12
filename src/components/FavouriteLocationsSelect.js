@@ -1,15 +1,16 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import deburr from 'lodash/deburr';
 import Downshift from 'downshift';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
+import {useSelector} from "react-redux";
 
 
 function renderInput(inputProps) {
-    const { InputProps, classes, ref, ...other } = inputProps;
+    const {InputProps, classes, ref, ...other} = inputProps;
 
     return (
         <TextField
@@ -35,7 +36,7 @@ renderInput.propTypes = {
 };
 
 function renderSuggestion(suggestionProps) {
-    const { suggestion, index, itemProps, highlightedIndex, selectedItem } = suggestionProps;
+    const {suggestion, index, itemProps, highlightedIndex, selectedItem} = suggestionProps;
     const isHighlighted = highlightedIndex === index;
     const isSelected = (selectedItem || '').indexOf(suggestion.label) > -1;
 
@@ -64,7 +65,7 @@ renderSuggestion.propTypes = {
     }).isRequired,
 };
 
-function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
+function getSuggestions(suggestions, value, {showEmpty = false} = {}) {
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
@@ -84,96 +85,111 @@ function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
 }
 
 
+export default function FavouriteLocationsSelect(props) {
+    const availableLocations = useSelector(state => state.availableLocations);
+    const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
+    const onSelect = selectedItem => {
+        let result = availableLocations.filter(location => location.name === selectedItem);
+        if (result.length === 1)
+            props.onSelect(result[0]);
+    };
 
-export default class FavouriteLocationsSelect extends React.Component {
-    render() {
-        let classes = makeStyles(theme => ({
-            root: {
-                flexGrow: 1,
-                height: 250,
-            },
-            container: {
-                flexGrow: 1,
-                position: 'relative',
-            },
-            paper: {
-                position: 'absolute',
-                zIndex: 1,
-                marginTop: theme.spacing(1),
-                left: 0,
-                right: 0,
-            },
-            chip: {
-                margin: theme.spacing(0.5, 0.25),
-            },
-            inputRoot: {
-                flexWrap: 'wrap',
-            },
-            inputInput: {
-                width: 'auto',
-                flexGrow: 1,
-            },
-            divider: {
-                height: theme.spacing(2),
-            },
-        }));
-        return (
-            <div>
-                <Downshift id="downshift-options" onSelect={this.props.onSelect}>
-                    {({
-                          clearSelection,
-                          getInputProps,
-                          getItemProps,
-                          getLabelProps,
-                          getMenuProps,
-                          highlightedIndex,
-                          inputValue,
-                          isOpen,
-                          openMenu,
-                          selectedItem,
-                      }) => {
-                        const {onBlur, onChange, onFocus, ...inputProps} = getInputProps({
-                            onChange: event => {
-                                if (event.target.value === '') {
-                                    clearSelection();
-                                }
-                            },
-                            onFocus: openMenu,
-                            placeholder: 'Type to search locations',
-                        });
+    useEffect(() => {
+        let filteredSuggestions = [];
+        availableLocations.map((location) => {
+            if (location.name != null)
+                filteredSuggestions.push({"label": location.name})
+        });
+        setFilteredLocationSuggestions(filteredSuggestions);
 
-                        return (
-                            <div className={classes.container}>
-                                {renderInput({
-                                    fullWidth: true,
-                                    classes,
-                                    label: "Presets",
-                                    InputLabelProps: getLabelProps({shrink: true}),
-                                    InputProps: {onBlur, onChange, onFocus},
-                                    inputProps,
-                                })}
+    }, [availableLocations]);
 
-                                <div {...getMenuProps()}>
-                                    {isOpen ? (
-                                        <Paper className={classes.paper} square>
-                                            {getSuggestions(this.props.suggestions, inputValue, {showEmpty: true}).map((suggestion, index) =>
-                                                renderSuggestion({
-                                                    suggestion,
-                                                    index,
-                                                    itemProps: getItemProps({item: suggestion.label}),
-                                                    highlightedIndex,
-                                                    selectedItem,
-                                                }),
-                                            )}
-                                        </Paper>
-                                    ) : null}
-                                </div>
+    let classes = makeStyles(theme => ({
+        root: {
+            flexGrow: 1,
+            height: 250,
+        },
+        container: {
+            flexGrow: 1,
+            position: 'relative',
+        },
+        paper: {
+            position: 'absolute',
+            zIndex: 1,
+            marginTop: theme.spacing(1),
+            left: 0,
+            right: 0,
+        },
+        chip: {
+            margin: theme.spacing(0.5, 0.25),
+        },
+        inputRoot: {
+            flexWrap: 'wrap',
+        },
+        inputInput: {
+            width: 'auto',
+            flexGrow: 1,
+        },
+        divider: {
+            height: theme.spacing(2),
+        },
+    }));
+    return (
+        <div>
+            <Downshift id="downshift-options" onSelect={onSelect}>
+                {({
+                      clearSelection,
+                      getInputProps,
+                      getItemProps,
+                      getLabelProps,
+                      getMenuProps,
+                      highlightedIndex,
+                      inputValue,
+                      isOpen,
+                      openMenu,
+                      selectedItem,
+                  }) => {
+                    const {onBlur, onChange, onFocus, ...inputProps} = getInputProps({
+                        onChange: event => {
+                            if (event.target.value === '') {
+                                clearSelection();
+                            }
+                        },
+                        onFocus: openMenu,
+                        placeholder: 'Type to search locations',
+                    });
+
+                    return (
+                        <div className={classes.container}>
+                            {renderInput({
+                                fullWidth: true,
+                                classes,
+                                label: "Presets",
+                                InputLabelProps: getLabelProps({shrink: true}),
+                                InputProps: {onBlur, onChange, onFocus},
+                                inputProps,
+                            })}
+
+                            <div {...getMenuProps()}>
+                                {isOpen ? (
+                                    <Paper className={classes.paper} square>
+                                        {getSuggestions(filteredLocationSuggestions, inputValue, {showEmpty: true}).map((suggestion, index) =>
+                                            renderSuggestion({
+                                                suggestion,
+                                                index,
+                                                itemProps: getItemProps({item: suggestion.label}),
+                                                highlightedIndex,
+                                                selectedItem,
+                                            }),
+                                        )}
+                                    </Paper>
+                                ) : null}
                             </div>
-                        );
-                    }}
-                </Downshift>
-            </div>
-        );
-    }
+                        </div>
+                    );
+                }}
+            </Downshift>
+        </div>
+    );
 }
 

@@ -86,6 +86,10 @@ class Vehicle {
     async createVehicle(input_data) {
         return makeFetch(this.api_url,  "vehicles", "POST", this.bearer, "application/json", input_data)
     }
+
+    async updateVehicle(vehicle_id, input_data) {
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "PUT", this.bearer, "application/json", input_data)
+    }
 }
 
 class Location {

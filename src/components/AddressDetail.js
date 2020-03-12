@@ -36,18 +36,17 @@ export default function AddressDetailsCollapsible(props){
 
 
     const onSelectPreset = selectedItem => {
-        let result = props.locations.filter(location => location.name === selectedItem);
-        if (result.length === 1) {
-            setWard(result[0]['address']['ward']);
-            setLine1(result[0]['address']['line1']);
-            setLine2(result[0]['address']['line2']);
-            setTown(result[0]['address']['town']);
-            setCounty(result[0]['address']['county']);
-            setCountry(result[0]['address']['country']);
-            setPostcode(result[0]['address']['postcode']);
-            setWhat3words(result[0]['address']['what3words']);
-
+        if (selectedItem && selectedItem['address']) {
+            setWard(selectedItem['address']['ward']);
+            setLine1(selectedItem['address']['line1']);
+            setLine2(selectedItem['address']['line2']);
+            setTown(selectedItem['address']['town']);
+            setCounty(selectedItem['address']['county']);
+            setCountry(selectedItem['address']['country']);
+            setPostcode(selectedItem['address']['postcode']);
+            setWhat3words(selectedItem['address']['what3words']);
         }
+
     };
     // useEffect(() => {props.onSelect({what3words: what3words})}, [what3words]);
     // useEffect(() => {props.onSelect({ward: ward})}, [ward]);

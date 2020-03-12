@@ -33,16 +33,38 @@ function TaskContextMenu(props) {
     }
 
     function onSelectPickedUp() {
-        sendData({pickup_time: moment.utc().toISOString()});
         handleClose();
+        sendData({pickup_time: moment.utc().toISOString()});
+        const action = key => (
+            <React.Fragment>
+                <Button color="secondary" size="small" onClick={() => {undoPickup(key)}}>
+                    UNDO
+                </Button>
+            </React.Fragment>
+        );
+        props.enqueueSnackbar('Task marked picked up.',  { variant: "info", action, autoHideDuration: 8000 });
     }
 
     function onSelectDroppedOff() {
-        sendData({dropoff_time: moment.utc().toISOString()});
         handleClose();
+        sendData({dropoff_time: moment.utc().toISOString()});
+        const action = key => (
+            <React.Fragment>
+                <Button color="secondary" size="small" onClick={() => {undoDropoff(key)}}>
+                    UNDO
+                </Button>
+            </React.Fragment>
+        );
+        props.enqueueSnackbar('Task marked delivered.',  { variant: "info", action, autoHideDuration: 8000 });
     }
 
     function undoDelete(key) {
+        props.closeSnackbar(key)
+    }
+    function undoPickup(key) {
+        props.closeSnackbar(key)
+    }
+    function undoDropoff(key) {
         props.closeSnackbar(key)
     }
 

@@ -19,11 +19,6 @@ import DeliverableInformation from "./DeliverableInformation";
 import {
     updateTask,
     getAllTasks,
-    getTask,
-    getAvailableDeliverables,
-    getAvailablePriorities,
-    getAvailableLocations,
-    getUsers
 } from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
@@ -87,13 +82,8 @@ function TaskDialog(props) {
         }));
     }
     const classes = useStyles();
-    const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
-    const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
 
     const tasks = useSelector(state => state.tasks);
-    const availablePriorities = useSelector(state => state.availablePriorities);
-    const availableLocations = useSelector(state => state.availableLocations);
-    const userSuggestions = useSelector(state => state.users);
     const [open, setOpen] = useState(false);
 
 
@@ -119,28 +109,6 @@ function TaskDialog(props) {
     }
 
     useEffect(componentDidMount, []);
-    useEffect(() => {
-        let filteredSuggestions = [];
-        availableLocations.map((location) => {
-            if (location.name != null)
-                filteredSuggestions.push({"label": location.name})
-        });
-        setFilteredLocationSuggestions(filteredSuggestions);
-
-    }, [availableLocations]);
-    useEffect(() => {
-        let filteredUsers = [];
-        userSuggestions.map((user) => {
-            if (user.display_name !== null && user.roles.includes("rider")) {
-                filteredUsers.push({
-                    "label": user.display_name,
-                    "uuid": user.uuid
-                })
-            }
-            setFilteredUserSuggestions(filteredUsers);
-
-        })
-    }, [userSuggestions]);
 
     function onSelectContactNumber(event) {
         sendData({contact_number: event.target.value});
@@ -165,23 +133,13 @@ function TaskDialog(props) {
         props.updateTask({payload: payload, taskUUID: taskUUID, updateData: updateDataCombined ? updateDataCombined : {}});
     }
 
-    function onSelectRider(selectedItem) {
-        let result = userSuggestions.filter(rider => rider.display_name === selectedItem);
-        if (result.length === 1) {
-            let rider = {
-                name: result[0]['name'],
-                display_name: result[0]['display_name'],
-                patch: result[0]['patch'],
-                vehicle: result[0]['vehicle'],
-                uuid: result[0]['uuid']
-            };
+    function onSelectRider(rider) {
+        if (rider)
             sendData({assigned_rider: rider.uuid}, {rider: rider});
-        }
     }
 
-    function onSelectPriority(selectedItemId) {
-        let result = availablePriorities.filter(item => item.id === selectedItemId);
-        sendData({priority_id: selectedItemId, priority: result[0].label});
+    function onSelectPriority(selectedItemId, label) {
+        sendData({priority_id: selectedItemId, priority: label});
     }
 
     function onSelectPickedUp(status) {
@@ -208,7 +166,7 @@ function TaskDialog(props) {
     if (editMode) {
         usersSelect =
             <>
-                <UsersSelect id="userSelect" suggestions={filteredUserSuggestions}
+                <UsersSelect id="userSelect"
                              onSelect={onSelectRider}/>
                 <DialogContentText>
                     {task.rider ? "Currently assigned to " + task.rider.display_name + "." : ""}
@@ -222,7 +180,6 @@ function TaskDialog(props) {
 
     } else {
         prioritySelect = <PrioritySelect priority={task.priority_id}
-                                         availablePriorities={availablePriorities}
                                          onSelect={onSelectPriority}/>;
     }
     let pickupTimeNotice = <></>;
@@ -314,8 +271,6 @@ function TaskDialog(props) {
                                 <DialogContentText>From:</DialogContentText>
                                 <AddressDetailsCollapsible label={"Pickup Address"}
                                                            onSelect={onSelectPickup}
-                                                           locations={availableLocations}
-                                                           suggestions={filteredLocationSuggestions}
                                                            address={task.pickup_address}
                                                            disabled={!editMode}
                                 />
@@ -326,8 +281,6 @@ function TaskDialog(props) {
                                 <DialogContentText>To:</DialogContentText>
                                 <AddressDetailsCollapsible label={"Dropoff Address"}
                                                            onSelect={onSelectDropoff}
-                                                           locations={availableLocations}
-                                                           suggestions={filteredLocationSuggestions}
                                                            address={task.dropoff_address}
                                                            disabled={!editMode}/>
                             </Box>
@@ -431,8 +384,6 @@ function TaskDialog(props) {
                         <Grid item>
                             <AddressDetailsCollapsible label={"Pickup Address"}
                                                        onSelect={onSelectPickup}
-                                                       locations={availableLocations}
-                                                       suggestions={filteredLocationSuggestions}
                                                        address={task.pickup_address}
                                                        disabled={!editMode}
                             />
@@ -440,8 +391,6 @@ function TaskDialog(props) {
                         <Grid item>
                             <AddressDetailsCollapsible label={"Dropoff Address"}
                                                        onSelect={onSelectDropoff}
-                                                       locations={availableLocations}
-                                                       suggestions={filteredLocationSuggestions}
                                                        address={task.dropoff_address}
                                                        disabled={!editMode}/>
                         </Grid>

@@ -3,7 +3,7 @@ import {ADD_VEHICLE_REQUEST, addVehicleSuccess, UPDATE_VEHICLE_REQUEST, updateVe
 import { getApiControl } from "./Api";
 // TODO: This needs to be adapted to vehicles!
 
-export function* postNewVehicle(action) {
+function* postNewVehicle(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.vehicles.createVehicle], action.data);
     const task = {...action.data, "uuid": result.uuid};
@@ -14,9 +14,9 @@ export function* watchPostNewVehicle() {
     yield takeEvery(ADD_VEHICLE_REQUEST, postNewVehicle)
 }
 
-export function* updateVehicle(action) {
+function* updateVehicle(action) {
     const api = yield select(getApiControl);
-    yield call([api, api.vehicles.updateVehicle], action.data.taskId, action.data.payload);
+    yield call([api, api.vehicles.updateVehicle], action.data.vehicleUUID, action.data.payload);
     yield put(updateVehicleSuccess(action.data))
 }
 
@@ -24,7 +24,7 @@ export function* watchUpdateVehicle() {
     yield throttle(300, UPDATE_VEHICLE_REQUEST, updateVehicle)
 }
 
-export function* getVehicles() {
+function* getVehicles() {
     const api = yield select(getApiControl);
     const result = yield call([api, api.vehicles.getVehicles]);
     yield put(getAllVehiclesSuccess(result))
@@ -34,7 +34,7 @@ export function* watchGetVehicles() {
     yield takeLatest(GET_VEHICLES_REQUEST, getVehicles)
 }
 
-export function* getVehicle(action) {
+function* getVehicle(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.vehicles.getVehicle], action.data);
     yield put(getVehicleSuccess(result))

@@ -4,6 +4,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -22,6 +23,7 @@ const useStyles = makeStyles(theme => ({
 export default function PrioritySelect(props) {
     const classes = useStyles();
     const [value, setValue] = React.useState(props.priority || null);
+    const availablePriorities = useSelector(state => state.availablePriorities);
 
 
     const inputLabel = React.useRef(null);
@@ -31,12 +33,13 @@ export default function PrioritySelect(props) {
     }, []);
 
     const handleChange = event => {
-        props.onSelect(event.target.value);
+        let result = availablePriorities.filter(item => item.id === event.target.value);
+        props.onSelect(event.target.value, result[0].label);
         setValue(event.target.value);
     };
 
     let menuItems = [];
-    for (const item of props.availablePriorities) {
+    for (const item of availablePriorities) {
         menuItems.push(<MenuItem key={item.id} value={item.id}>{item.label}</MenuItem>)
     }
 

@@ -1,12 +1,13 @@
 import React, {useEffect} from 'react';
 import {connect} from "react-redux";
-import {getVehicle} from "../redux/Actions";
+import {getVehicle, updateVehicle} from "../redux/Actions";
 import {decodeUUID} from "../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import {TextFieldControlled} from "../components/TextFieldControlled";
 import Box from "@material-ui/core/Box";
 import {createLoadingSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
+import UsersSelect from "../components/UsersSelect";
 
 function VehicleDetail(props) {
     const dispatch = useDispatch();
@@ -18,6 +19,11 @@ function VehicleDetail(props) {
 
     useEffect(componentDidMount, []);
     const vehicle = useSelector(state => state.vehicle);
+    function onAssignUser(selectedUser) {
+        if (selectedUser)
+            dispatch(updateVehicle({vehicleUUID: vehicle.uuid, payload: {assigned_user_uuid: selectedUser.uuid}}));
+        console.log(selectedUser)
+    }
     if (isFetching) {
         return (
             <FormSkeleton/>
@@ -50,6 +56,7 @@ function VehicleDetail(props) {
                     id={"vehicle-registration"}
                     onSelect={() => {
                     }}/>
+                    <UsersSelect onSelect={onAssignUser}/>
             </>
         )
     }
