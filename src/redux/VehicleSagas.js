@@ -1,7 +1,6 @@
 import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
 import {ADD_VEHICLE_REQUEST, addVehicleSuccess, UPDATE_VEHICLE_REQUEST, updateVehicleSuccess, GET_VEHICLES_REQUEST, getAllVehiclesSuccess, GET_VEHICLE_REQUEST, getVehicleSuccess} from "./Actions"
 import { getApiControl } from "./Api";
-// TODO: This needs to be adapted to vehicles!
 
 function* postNewVehicle(action) {
     const api = yield select(getApiControl);
@@ -16,6 +15,10 @@ export function* watchPostNewVehicle() {
 
 function* updateVehicle(action) {
     const api = yield select(getApiControl);
+    if (action.data.payload.assigned_user) {
+        action.data.payload.assigned_user_uuid = action.data.payload.assigned_user.uuid;
+    }
+
     yield call([api, api.vehicles.updateVehicle], action.data.vehicleUUID, action.data.payload);
     yield put(updateVehicleSuccess(action.data))
 }

@@ -7,6 +7,7 @@ import Container from "@material-ui/core/Container";
 import {styled} from '@material-ui/styles';
 
 import {makeStyles} from '@material-ui/core/styles';
+import {Paper} from "@material-ui/core";
 
 export function MainWindowContainer(props) {
     const styles = makeStyles({
@@ -35,23 +36,23 @@ export function MainWindowContainer(props) {
     )
 };
 
-export const StyledAddCircleOutline = styled(AddCircleOutline)( {
+export const StyledAddCircleOutline = styled(AddCircleOutline)({
     cursor: "pointer",
     color: "darkblue",
     width: "150px",
     height: "150px",
     margin: "15px",
     borderRadius: "50%",
-    background:"rgb(250, 248, 248)"
+    background: "rgb(250, 248, 248)"
 });
 
-export const StyledAddCircleOutlineSmall = styled(AddCircleOutline)( {
+export const StyledAddCircleOutlineSmall = styled(AddCircleOutline)({
     cursor: "pointer",
     color: "darkblue",
     width: "50px",
     height: "50px",
     borderRadius: "50%",
-    background:"rgb(250, 248, 248)"
+    background: "rgb(250, 248, 248)"
 });
 
 export const StyledCard = styled(Card)({
@@ -132,3 +133,13 @@ export const Background = makeStyles({
         background: 'red'
     }
 });
+
+export function PaddedPaper(props) {
+    const padding = props.padding ? props.padding : "30px";
+    const maxWidth = props.maxWidth ? props.maxWidth : "1000px";
+    return (
+        <Paper style={{maxWidth: maxWidth, padding: padding}}>
+            {props.children}
+        </Paper>
+    )
+}

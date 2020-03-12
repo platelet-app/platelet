@@ -1,63 +1,119 @@
-import React, {useEffect} from 'react';
-import {connect} from "react-redux";
+import React, {useEffect, useRef, useState} from 'react';
 import {getVehicle, updateVehicle} from "../redux/Actions";
 import {decodeUUID} from "../utilities";
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {TextFieldControlled} from "../components/TextFieldControlled";
-import Box from "@material-ui/core/Box";
 import {createLoadingSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
 import UsersSelect from "../components/UsersSelect";
+import {PaddedPaper} from "../css/common";
+import EditIcon from '@material-ui/icons/Edit';
+import Grid from "@material-ui/core/Grid";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+
 
 function VehicleDetail(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_VEHICLE"]);
     const isFetching = useSelector(state => loadingSelector(state));
+    const [editMode, setEditMode] = useState(false);
+    const [assignedUserDisplayName, setAssignedUserDisplayName] = useState(undefined);
+    const vehicle = useSelector(state => state.vehicle);
+    const assignedUser = useSelector(state => state.vehicle.assigned_user);
+    const whoami = useSelector(state => state.whoami);
+    const firstUpdate = useRef(true);
+
     function componentDidMount() {
         dispatch(getVehicle(decodeUUID(props.match.params.vehicle_uuid_b62)));
     }
 
     useEffect(componentDidMount, []);
-    const vehicle = useSelector(state => state.vehicle);
+
     function onAssignUser(selectedUser) {
         if (selectedUser)
-            dispatch(updateVehicle({vehicleUUID: vehicle.uuid, payload: {assigned_user_uuid: selectedUser.uuid}}));
-        console.log(selectedUser)
+            dispatch(updateVehicle({vehicleUUID: vehicle.uuid, payload: {assigned_user: selectedUser}}));
     }
+
+    const userAssign = editMode ? <UsersSelect onSelect={onAssignUser}/> : <></>;
+    let editToggle = <></>;
+    if (whoami.roles.includes("admin")) {
+        editToggle = editMode ?
+            <IconButton
+                color="inherit"
+                aria-controls="simple-menu"
+                aria-haspopup="true"
+                onClick={() => {
+                    setEditMode(!editMode);
+                }}>
+                <EditIcon/>
+            </IconButton> :
+            <IconButton
+                color="gray"
+                aria-controls="simple-menu"
+                aria-haspopup="true"
+                onClick={() => {
+                    setEditMode(!editMode);
+                }}>
+                <EditIcon/>
+            </IconButton>;
+        }
+
+    let header = assignedUserDisplayName ? <h3>{vehicle.name} assigned to {assignedUserDisplayName}.</h3> :
+        <h2>{vehicle.name} assigned to nobody.</h2>;
+
+    useEffect(() => {setAssignedUserDisplayName(assignedUser ? assignedUser.display_name : "")}, [assignedUser]);
+    console.log(vehicle)
+
+
     if (isFetching) {
         return (
             <FormSkeleton/>
         )
-    }
-    else {
+    } else {
         return (
-            <>
-                <TextFieldControlled
-                    value={vehicle.name}
-                    label={"Name"}
-                    id={"vehicle-name"}
-                    onSelect={() => {
-                    }}/>
-                <TextFieldControlled
-                    value={vehicle.manufacturer}
-                    label={"Manufacturer"}
-                    id={"vehicle-manufacturer"}
-                    onSelect={() => {
-                    }}/>
-                <TextFieldControlled
-                    value={vehicle.model}
-                    label={"Model"}
-                    id={"vehicle-model"}
-                    onSelect={() => {
-                    }}/>
-                <TextFieldControlled
-                    value={vehicle.registration_number}
-                    label={"Registration"}
-                    id={"vehicle-registration"}
-                    onSelect={() => {
-                    }}/>
-                    <UsersSelect onSelect={onAssignUser}/>
-            </>
+            <PaddedPaper>
+                <Grid container direction={"row"} justify={"space-between"} alignItems={"top"} spacing={3}>
+                    <Grid item>
+                        {header}
+                    </Grid>
+                    <Grid item>
+                        {editToggle}
+                    </Grid>
+                    <Grid item>
+                        <TextFieldControlled
+                            value={vehicle.name}
+                            label={"Name"}
+                            id={"vehicle-name"}
+                            disabled={!editMode}
+                            onSelect={() => {
+                            }}/>
+                        <TextFieldControlled
+                            value={vehicle.manufacturer}
+                            label={"Manufacturer"}
+                            id={"vehicle-manufacturer"}
+                            disabled={!editMode}
+                            onSelect={() => {
+                            }}/>
+                        <TextFieldControlled
+                            value={vehicle.model}
+                            label={"Model"}
+                            id={"vehicle-model"}
+                            disabled={!editMode}
+                            onSelect={() => {
+                            }}/>
+                        <TextFieldControlled
+                            value={vehicle.registration_number}
+                            label={"Registration"}
+                            id={"vehicle-registration"}
+                            disabled={!editMode}
+                            onSelect={() => {
+                            }}/>
+                        {userAssign}
+                    </Grid>
+                </Grid>
+            </PaddedPaper>
         )
     }
 

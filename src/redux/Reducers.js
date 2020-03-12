@@ -200,14 +200,7 @@ function vehicle(state = {}, action) {
                 }
             ];
         case UPDATE_VEHICLE_SUCCESS:
-            let result = state.filter(vehicle => vehicle.uuid === action.data.vehicleId);
-            if (result.length === 1) {
-                const updated_item = {...result[0], ...action.data.updateData};
-                const index = state.indexOf(result[0]);
-                return update(state, {[index]: {$set: updated_item}});
-            } else {
-                return state
-            }
+            return Object.assign(state, action.data.payload);
 
         case GET_VEHICLE_SUCCESS:
             return action.data;

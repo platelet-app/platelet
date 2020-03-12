@@ -15,6 +15,7 @@ export function TextFieldControlled(props) {
             onChange={e => {
                 setCurrentValue(e.target.value);
             }}
+            disabled={props.disabled ? props.disabled : false}
         />
     )
 }
@@ -30,6 +31,7 @@ export function TextFieldUncontrolled(props) {
             value={props.value || ''}
             onSelect={props.onSelect}
             onChange={props.onChange}
+            disabled={props.disabled ? props.disabled : false}
         />
     )
 }
