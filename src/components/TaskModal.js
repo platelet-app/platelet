@@ -167,6 +167,7 @@ function TaskDialog(props) {
         usersSelect =
             <>
                 <UsersSelect id="userSelect"
+                             vehicleAssignedUsersFirst={true}
                              onSelect={onSelectRider}/>
                 <DialogContentText>
                     {task.rider ? "Currently assigned to " + task.rider.display_name + "." : ""}

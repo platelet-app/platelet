@@ -60,12 +60,10 @@ function VehicleDetail(props) {
             </IconButton>;
         }
 
-    let header = assignedUserDisplayName ? <h3>{vehicle.name} assigned to {assignedUserDisplayName}.</h3> :
+    let header = assignedUserDisplayName ? <h2>{vehicle.name} assigned to {assignedUserDisplayName}.</h2> :
         <h2>{vehicle.name} assigned to nobody.</h2>;
 
     useEffect(() => {setAssignedUserDisplayName(assignedUser ? assignedUser.display_name : "")}, [assignedUser]);
-    console.log(vehicle)
-
 
     if (isFetching) {
         return (

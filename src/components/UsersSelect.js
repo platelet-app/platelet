@@ -121,17 +121,27 @@ function UsersSelect(props) {
     const userSuggestions = useSelector(state => state.users);
     const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
     useEffect(() => {
+        let reorderedUsers = [];
+        if (props.vehicleAssignedUsersFirst) {
+            const vehicleUsers = userSuggestions.filter(item => item.assigned_vehicles.length !== 0)
+            const noVehicleUsers = userSuggestions.filter(item => item.assigned_vehicles.length === 0);
+            reorderedUsers = vehicleUsers.concat(noVehicleUsers);
+        }
+        else {
+            reorderedUsers = userSuggestions
+        }
         let filteredUsers = [];
-        userSuggestions.map((user) => {
+        console.log(reorderedUsers)
+        reorderedUsers.map((user) => {
             if (user.display_name !== null && user.roles.includes("rider")) {
                 filteredUsers.push({
                     "label": user.display_name,
                     "uuid": user.uuid
                 })
             }
-            setFilteredUserSuggestions(filteredUsers);
+        });
 
-        })
+        setFilteredUserSuggestions(filteredUsers);
     }, [userSuggestions]);
 
     function onSelect(selectedItem) {
