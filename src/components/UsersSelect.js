@@ -131,7 +131,6 @@ function UsersSelect(props) {
             reorderedUsers = userSuggestions
         }
         let filteredUsers = [];
-        console.log(reorderedUsers)
         reorderedUsers.map((user) => {
             if (user.display_name !== null && user.roles.includes("rider")) {
                 filteredUsers.push({
@@ -190,7 +189,7 @@ function UsersSelect(props) {
                             {renderInput({
                                 fullWidth: true,
                                 classes,
-                                label: "Users",
+                                label: props.label ? props.label : "Users",
                                 InputLabelProps: getLabelProps({shrink: true}),
                                 InputProps: {onBlur, onChange, onFocus, onSelect},
                                 inputProps,

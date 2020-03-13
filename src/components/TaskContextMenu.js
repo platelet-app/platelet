@@ -86,6 +86,7 @@ function TaskContextMenu(props) {
         setState(initialState);
     };
 
+    const deleteOption = props.deleteDisabled ? <></> : <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>
 
     return (
         <>
@@ -113,7 +114,7 @@ function TaskContextMenu(props) {
             >
                 <MenuItem disabled={props.pickupTime || !props.assignedRider} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
                 <MenuItem disabled={(props.dropoffTime || !props.pickupTime)} onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
-                <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>
+                {deleteOption}
             </Menu>
         </div>
         </div>

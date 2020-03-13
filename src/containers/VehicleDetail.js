@@ -9,9 +9,7 @@ import UsersSelect from "../components/UsersSelect";
 import {PaddedPaper} from "../css/common";
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from "@material-ui/core/Grid";
-import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 
 
 function VehicleDetail(props) {
@@ -23,7 +21,6 @@ function VehicleDetail(props) {
     const vehicle = useSelector(state => state.vehicle);
     const assignedUser = useSelector(state => state.vehicle.assigned_user);
     const whoami = useSelector(state => state.whoami);
-    const firstUpdate = useRef(true);
 
     function componentDidMount() {
         dispatch(getVehicle(decodeUUID(props.match.params.vehicle_uuid_b62)));
@@ -36,7 +33,7 @@ function VehicleDetail(props) {
             dispatch(updateVehicle({vehicleUUID: vehicle.uuid, payload: {assigned_user: selectedUser}}));
     }
 
-    const userAssign = editMode ? <UsersSelect onSelect={onAssignUser}/> : <></>;
+    const userAssign = editMode ? <UsersSelect label={"Assign this vehicle to a user."} onSelect={onAssignUser}/> : <></>;
     let editToggle = <></>;
     if (whoami.roles.includes("admin")) {
         editToggle = editMode ?
@@ -63,7 +60,12 @@ function VehicleDetail(props) {
     let header = assignedUserDisplayName ? <h2>{vehicle.name} assigned to {assignedUserDisplayName}.</h2> :
         <h2>{vehicle.name} assigned to nobody.</h2>;
 
-    useEffect(() => {setAssignedUserDisplayName(assignedUser ? assignedUser.display_name : "")}, [assignedUser]);
+    useEffect(() => {
+        if (assignedUser)
+            setAssignedUserDisplayName(assignedUser.uuid === whoami.uuid ? "you" : assignedUser.display_name)
+        else
+            setAssignedUserDisplayName("")
+    }, [assignedUser]);
 
     if (isFetching) {
         return (

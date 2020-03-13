@@ -81,7 +81,7 @@ export default function TasksGrid(props) {
                             {taskList[1].map(task => {
                                 return (
                                     <TaskItem task={task} view={props.modalView} fullScreenModal={props.fullScreenModal}
-                                              location={props.location}/>
+                                              location={props.location} deleteDisabled={props.deleteDisabled}/>
                                 )
                             })}
                         </Grid>

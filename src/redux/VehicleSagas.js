@@ -1,6 +1,17 @@
 import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
-import {ADD_VEHICLE_REQUEST, addVehicleSuccess, UPDATE_VEHICLE_REQUEST, updateVehicleSuccess, GET_VEHICLES_REQUEST, getAllVehiclesSuccess, GET_VEHICLE_REQUEST, getVehicleSuccess} from "./Actions"
-import { getApiControl } from "./Api";
+import {
+    ADD_VEHICLE_REQUEST,
+    addVehicleSuccess,
+    UPDATE_VEHICLE_REQUEST,
+    updateVehicleSuccess,
+    GET_VEHICLES_REQUEST,
+    getAllVehiclesSuccess,
+    GET_VEHICLE_REQUEST,
+    getVehicleSuccess,
+    getWhoamiSuccess
+} from "./Actions"
+import {getUsersSuccess} from "./Actions"
+import { getApiControl, getWhoami } from "./Api";
 
 function* postNewVehicle(action) {
     const api = yield select(getApiControl);
@@ -20,6 +31,15 @@ function* updateVehicle(action) {
     }
 
     yield call([api, api.vehicles.updateVehicle], action.data.vehicleUUID, action.data.payload);
+    if (action.data.payload.assigned_user) {
+        const whoami = yield select(getWhoami);
+        const result = yield call([api, api.users.getUsers]);
+        yield put(getUsersSuccess(result))
+        if (action.data.payload.assigned_user_uuid === whoami.uuid) {
+            const whoamiResult = yield call([api, api.users.whoami]);
+            yield put(getWhoamiSuccess(whoamiResult))
+        }
+    }
     yield put(updateVehicleSuccess(action.data))
 }
 

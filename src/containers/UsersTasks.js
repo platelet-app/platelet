@@ -36,6 +36,7 @@ function UsersTasks() {
         return (
             <TasksGrid tasks={tasks}
                        location={location}
+                       deleteDisabled={true}
                        fullScreenModal={fullScreenModal}
                        modalView={"simple"}
                        excludeColumnList={["tasksNew"]}
