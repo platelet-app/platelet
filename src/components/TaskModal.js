@@ -28,21 +28,7 @@ import {decodeUUID} from "../utilities";
 import {createLoadingSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
 
-const mapStateToProps = state => {
-    return {
-        tasks: state.tasks
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        getTasksList: sessionId => dispatch(getAllTasks(sessionId)),
-        updateTask: dataObj => dispatch(updateTask(dataObj)),
-    }
-};
-
-
-function TaskDialog(props) {
+export default function TaskModal(props) {
     const dispatch = useDispatch();
     // Leave this here in case app.js dispatchers haven't finished before the modal is opened
     const loadingSelector = createLoadingSelector(["GET_TASK",
@@ -101,7 +87,7 @@ function TaskDialog(props) {
     const task = props.task || newTask;
 
     function componentDidMount() {
-        if (!props.tasks.length) {
+        if (!tasks.length) {
             props.apiControl.tasks.getTask(taskUUID).then((data) => {
                 dispatch(getAllTasks(data.session_uuid));
             });
@@ -130,7 +116,7 @@ function TaskDialog(props) {
 
     function sendData(payload, updateData) {
         const updateDataCombined = {...payload, ...updateData};
-        props.updateTask({payload: payload, taskUUID: taskUUID, updateData: updateDataCombined ? updateDataCombined : {}});
+        dispatch(updateTask({payload: payload, taskUUID: taskUUID, updateData: updateDataCombined ? updateDataCombined : {}}));
     }
 
     function onSelectRider(rider) {
@@ -430,9 +416,3 @@ function TaskDialog(props) {
     }
 }
 
-const TaskModal = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(TaskDialog);
-
-export default TaskModal

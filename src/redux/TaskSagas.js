@@ -1,4 +1,4 @@
-import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
+import { throttle, call, put, delay, take, fork, takeEvery , takeLatest, select} from 'redux-saga/effects'
 import {ADD_TASK_REQUEST,
     addTaskSuccess,
     UPDATE_TASK_REQUEST,
@@ -13,6 +13,27 @@ import {ADD_TASK_REQUEST,
     getTaskSuccess} from "./Actions"
 
 import { getApiControl } from "./Api"
+
+function* throttlePerKey(pattern, selector, timeout, saga) {
+    const set = new Set()
+
+    while(true) {
+        const action = yield take(pattern)
+        const id = selector(action)
+        const throttled = set.has(id)
+        if (throttled) {
+            // Do nothing, action throttled
+        } else {
+            set.add(id)
+            // Expire items after timeout
+            yield fork(function* () {
+                yield delay(timeout)
+                set.delete(id)
+            })
+            yield call(saga, action)
+        }
+    }
+}
 
 export function* postNewTask(action) {
     const api = yield select(getApiControl);
@@ -36,11 +57,7 @@ export function* watchDeleteTask() {
 }
 
 export function* updateTask(action) {
-    // TODO: make this unnecessary
     const api = yield select(getApiControl);
-    if (action.data.payload.priority)
-        delete action.data.payload.priority;
-
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskSuccess(action.data))
 }
