@@ -114,9 +114,8 @@ export default function TaskModal(props) {
             sendData({dropoff_address: dropoffAddress});
     }
 
-    function sendData(payload, updateData) {
-        const updateDataCombined = {...payload, ...updateData};
-        dispatch(updateTask({payload: payload, taskUUID: taskUUID, updateData: updateDataCombined ? updateDataCombined : {}}));
+    function sendData(payload) {
+        dispatch(updateTask({payload: payload, taskUUID: taskUUID}));
     }
 
     function onSelectRider(rider) {
