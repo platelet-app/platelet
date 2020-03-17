@@ -2,10 +2,14 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import {StyledAddCircleOutline} from "../css/common";
+import {AddCircleButton} from "../components/Buttons";
 import TaskItem from "./TaskItem";
 import {orderTaskList} from "../utilities";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import IconButton from "@material-ui/core/IconButton";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles(({
     box: {
@@ -35,21 +39,16 @@ const getColumnTitle = key => {
     }
 };
 
-const circleAdd = (callback, sessionUUID) => {
-    const emptyTask = {
-        session_uuid: sessionUUID,
-        timestamp: new Date().toISOString(),
-    };
-    return (
-    <StyledAddCircleOutline
-        onClick={() => {
-            callback(emptyTask)
-        }
-        }
-    />);
-}
+
 
 export default function TasksGrid(props) {
+    const loadingSelector = createPostingSelector(["ADD_TASK"]);
+    const isPosting = useSelector(state => loadingSelector(state));
+    console.log(isPosting);
+    const emptyTask = {
+        session_uuid: props.sessionUUID,
+        timestamp: new Date().toISOString(),
+    };
     const classes = useStyles();
     return (
     <Grid container
@@ -63,7 +62,7 @@ export default function TasksGrid(props) {
                 return <></>
             let newTaskButton = "";
             if (props.sessionUUID && taskList[0] === "tasksNew") {
-                newTaskButton = circleAdd(props.onAddTaskClick, props.sessionUUID)
+                newTaskButton = <AddCircleButton disabled={isPosting} onClick={() => {props.onAddTaskClick(emptyTask)}}/>
 
             }
             const title = getColumnTitle(taskList[0]);

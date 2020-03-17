@@ -1,15 +1,18 @@
 import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import {StyledAddCircleOutlineSmall} from "../css/common";
 import DeliverableDropSelect from "./DeliverableDropSelect";
-import {addDeliverable, getDeliverables, updateDeliverable, getAvailableDeliverables} from "../redux/Actions";
+import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
+import {AddCircleButtonSmall} from "./Buttons";
+import {createPostingSelector} from "../redux/selectors";
 
 
 export default function DeliverableGridSelect(props) {
     const dispatch = useDispatch();
     const availableDeliverables = useSelector(state => state.availableDeliverables);
     const deliverables = useSelector(state => state.deliverables);
+    const postingSelector = createPostingSelector(["ADD_DELIVERABLE"]);
+    const isPosting = useSelector(state => postingSelector(state));
 
     const onSelectDeliverable = (uuid, type_id) => {
         dispatch(updateDeliverable({"deliverableUUID": uuid, "payload": {"type_id": type_id}}));
@@ -32,7 +35,8 @@ export default function DeliverableGridSelect(props) {
     }, [availableDeliverables]);
 
     const circleAdd =
-        <StyledAddCircleOutlineSmall
+        <AddCircleButtonSmall
+            disabled={isPosting}
             onClick={() => {
                 let newDeliverable = {...emptyDeliverable};
                 dispatch(addDeliverable(newDeliverable))

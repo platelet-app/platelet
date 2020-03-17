@@ -1,7 +1,8 @@
 import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledAddCircleOutline, StyledCard} from '../css/common';
+import {StyledCard} from '../css/common';
+import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
 import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from "@material-ui/core";
@@ -59,7 +60,7 @@ function VehicleList() {
 
 
     const circleAdd =
-        <StyledAddCircleOutline
+        <AddCircleButton
             onClick={() => {
                 console.log("add vehicle here!")
                 //this.props.onAddSessionClick(newSession)

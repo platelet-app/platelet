@@ -3,11 +3,12 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import moment from 'moment/min/moment-with-locales';
 import {deleteTask, updateTask} from "../redux/Actions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import { withSnackbar } from 'notistack';
+import {createPostingSelector} from "../redux/selectors";
 
 
 const initialState = {
@@ -17,6 +18,8 @@ const initialState = {
 
 function TaskContextMenu(props) {
     const [state, setState] = React.useState(initialState);
+    const postingSelector = createPostingSelector(["UPDATE_TASK"]);
+    const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
 
@@ -98,6 +101,7 @@ function TaskContextMenu(props) {
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}
+                disabled={isPosting}
             >
                 <MoreVertIcon />
             </IconButton>

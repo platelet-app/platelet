@@ -35,7 +35,7 @@ function* throttlePerKey(pattern, selector, timeout, saga) {
     }
 }
 
-export function* postNewTask(action) {
+function* postNewTask(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.tasks.createTask], action.data);
     const task = {...action.data, "uuid": result.uuid};
@@ -56,7 +56,7 @@ export function* watchDeleteTask() {
     yield takeEvery(DELETE_TASK_REQUEST, deleteTask)
 }
 
-export function* updateTask(action) {
+function* updateTask(action) {
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskSuccess(action.data))
@@ -66,7 +66,7 @@ export function* watchUpdateTask() {
     yield throttle(300, UPDATE_TASK_REQUEST, updateTask)
 }
 
-export function* getTask(action) {
+function* getTask(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.tasks.getTask], action.data.task_uuid);
     yield put(getTaskSuccess(result))
@@ -76,7 +76,7 @@ export function* watchGetTask() {
     yield takeLatest(GET_TASK_REQUEST, getTask)
 }
 
-export function* getTasks(action) {
+function* getTasks(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.tasks.getTasks], action.data);
     yield put(getAllTasksSuccess(result))
@@ -86,7 +86,7 @@ export function* watchGetTasks() {
     yield takeLatest(GET_TASKS_REQUEST, getTasks)
 }
 
-export function* getMyTasks(action) {
+function* getMyTasks(action) {
     const api = yield select(getApiControl);
     const whoami = yield call([api, api.users.whoami]);
     const result = yield call([api, api.users.getAssignedTasks], whoami.uuid);

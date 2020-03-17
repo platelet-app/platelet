@@ -22,3 +22,7 @@ export const createLoadingSelector = actions => state => {
     else
         return true
 };
+
+export const createPostingSelector = actions => state => {
+    return actions.some(action => state.postingReducer[action]);
+};

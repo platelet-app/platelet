@@ -119,8 +119,9 @@ export default function TaskModal(props) {
     }
 
     function onSelectRider(rider) {
+        console.log(rider)
         if (rider)
-            sendData({assigned_rider: rider.uuid}, {rider: rider});
+            sendData({assigned_rider: rider.uuid, rider: rider});
     }
 
     function onSelectPriority(selectedItemId, label) {

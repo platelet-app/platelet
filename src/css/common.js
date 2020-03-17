@@ -8,6 +8,7 @@ import {styled} from '@material-ui/styles';
 
 import {makeStyles} from '@material-ui/core/styles';
 import {Paper} from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
 
 export function MainWindowContainer(props) {
     const styles = makeStyles({
@@ -15,7 +16,7 @@ export function MainWindowContainer(props) {
             paddingLeft: 30,
             paddingTop: 100,
             paddingRight: 30,
-            paddingBottom: 100,
+            paddingBottom: "100%",
             background: "rgb(230, 230, 230)",
             align: "left",
             width: "100%",
@@ -36,15 +37,17 @@ export function MainWindowContainer(props) {
     )
 };
 
+
 export const StyledAddCircleOutline = styled(AddCircleOutline)({
     cursor: "pointer",
     color: "darkblue",
-    width: "150px",
-    height: "150px",
+    width: "100px",
+    height: "100px",
     margin: "15px",
     borderRadius: "50%",
-    background: "rgb(250, 248, 248)"
+    background: "white"
 });
+
 
 export const StyledAddCircleOutlineSmall = styled(AddCircleOutline)({
     cursor: "pointer",
@@ -52,7 +55,16 @@ export const StyledAddCircleOutlineSmall = styled(AddCircleOutline)({
     width: "50px",
     height: "50px",
     borderRadius: "50%",
-    background: "rgb(250, 248, 248)"
+    background: "white"
+});
+
+export const StyledAddCircleOutlineDisabled = styled(StyledAddCircleOutline)({
+    color: "grey",
+});
+
+
+export const StyledAddCircleOutlineSmallDisabled = styled(StyledAddCircleOutlineSmall)({
+    color: "grey",
 });
 
 export const StyledCard = styled(Card)({

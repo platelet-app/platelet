@@ -1,7 +1,8 @@
 import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledAddCircleOutline, StyledCard} from '../css/common';
+import {StyledCard} from '../css/common';
+import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
 import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from "@material-ui/core";
@@ -15,7 +16,7 @@ import {connect, useDispatch, useSelector} from "react-redux"
 import {getAllSessions} from "../redux/Actions";
 import {encodeUUID} from "../utilities";
 import {bindActionCreators} from "redux";
-import {createLoadingSelector} from "../redux/selectors";
+import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 
@@ -54,6 +55,8 @@ function SessionList(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_SESSIONS"]);
     const isFetching = useSelector(state => loadingSelector(state));
+    const postingSelector = createPostingSelector(["ADD_SESSION"]);
+    const isPosting = useSelector(state => postingSelector(state));
     const sessions = useSelector(state => state.sessions);
     const whoami = useSelector(state => state.whoami);
 
@@ -64,24 +67,22 @@ function SessionList(props) {
 
     useEffect(updateSessionsList, [whoami]);
 
-
     let emptySession = {
         user_uuid: whoami.uuid,
         timestamp: new Date().toISOString(),
     };
-
     const circleAdd =
-        <StyledAddCircleOutline
-            onClick={() => {
-                let date = new Date();
-                let newSession = {...emptySession};
-                newSession.user_uuid = whoami.uuid;
-                newSession.timestamp = date.toISOString();
-                dispatch(addSession(newSession));
+    <AddCircleButton disabled={isPosting} onClick={
+        () => {
+        let date = new Date();
+        let newSession = {...emptySession};
+        newSession.user_uuid = whoami.uuid;
+        newSession.timestamp = date.toISOString();
+        dispatch(addSession(newSession));
 
-            }
-            }
-        />;
+    }
+    }/>
+
     if (isFetching) {
         return (
             <CardsGridSkeleton/>
