@@ -2,27 +2,29 @@ import React, { useState } from "react";
 import { DateTimePicker, KeyboardDateTimePicker } from "@material-ui/pickers";
 
 export function DateAndTimePicker(props) {
-    const [selectedDate, setSelectedDate] = useState(props.dateTime ? props.dateTime : null);
 
-    function handleDateChange(event) {
-        console.log(event)
-        setSelectedDate(event)
+    function handleDateChange(value) {
+        props.onChange(value)
     }
+    if (props.visible) {
 
-    return (
-        <>
-            <KeyboardDateTimePicker
-                variant="inline"
-                ampm={false}
-                label={props.label}
-                value={selectedDate}
-                onChange={handleDateChange}
-                onError={console.log}
-                disablePast
-                format="yyyy/MM/dd HH:mm"
-            />
-        </>
-    );
+        return (
+            <>
+                <KeyboardDateTimePicker
+                    variant="inline"
+                    ampm={false}
+                    label={props.label}
+                    value={props.value}
+                    onChange={handleDateChange}
+                    onError={console.log}
+                    format="yyyy/MM/dd HH:mm"
+                />
+            </>
+        );
+    }
+    else {
+        return <></>
+    }
 }
 
 

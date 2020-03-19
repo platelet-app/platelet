@@ -130,10 +130,6 @@ export default function TaskModal(props) {
         }
     }
 
-    function sendData(payload) {
-        dispatch(updateTask({payload: payload, taskUUID: taskUUID}));
-    }
-
     function onSelectRider(rider) {
         if (rider) {
             const payload = {assigned_rider: rider.uuid, rider};
@@ -142,7 +138,8 @@ export default function TaskModal(props) {
     }
 
     function onSelectPriority(priority_id, priority) {
-        dispatch(updateTaskPriority({ taskUUID, payload: { priority_id, priority } }));
+        const payload = {priority_id, priority};
+        dispatch(updateTaskPriority({ taskUUID, payload }));
     }
 
     function onSelectPickedUp(status) {
@@ -309,6 +306,11 @@ export default function TaskModal(props) {
                             <Box className={classes.box}>
                                 <ToggleTimeStamp label={"Picked Up"} status={!!task.pickup_time}
                                                  onSelect={onSelectPickedUp}/>
+                                <DateAndTimePicker visible={!!task.pickup_time} value={task.pickup_time} label={"Pickup Time"} onChange={(pickup_time) => {
+                                    const payload = {pickup_time};
+                                    dispatch(updateTaskPickupTime({taskUUID, payload}))
+                                }
+                                }/>
                                 <DialogContentText>
                                     {pickupTimeNotice}
                                 </DialogContentText>
@@ -316,7 +318,13 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                                <DateAndTimePicker label={"Dropoff Time"} onChange={() => {console.log("yayayaya")}}/>
+                                <ToggleTimeStamp label={"Dropped Off"} status={!!task.dropoff_time}
+                                                 onSelect={onSelectDroppedOff}/>
+                                <DateAndTimePicker visible={!!task.dropoff_time} value={task.dropoff_time} label={"Dropoff Time"} onChange={(dropoff_time) => {
+                                    const payload = {dropoff_time};
+                                    dispatch(updateTaskDropoffTime({taskUUID, payload}))
+                                }
+                                }/>
                                 <DialogContentText>
                                     {dropoffTimeNotice}
                                 </DialogContentText>
