@@ -19,6 +19,14 @@ import DeliverableInformation from "./DeliverableInformation";
 import {
     updateTask,
     getAllTasks,
+    updateTaskPickupTime,
+    updateTaskPriority,
+    updateTaskAssignedRider,
+    updateTaskContactName,
+    updateTaskContactNumber,
+    updateTaskDropoffAddress,
+    updateTaskDropoffTime,
+    updateTaskPickupAddress
 } from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
@@ -27,6 +35,8 @@ import {TextFieldControlled} from "./TextFieldControlled";
 import {decodeUUID} from "../utilities";
 import {createLoadingSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
+import {DateAndTimePicker} from "./DateTimePickers";
+import {watchUpdateTaskPickupTime} from "../redux/TaskSagas";
 
 export default function TaskModal(props) {
     const dispatch = useDispatch();
@@ -97,21 +107,27 @@ export default function TaskModal(props) {
     useEffect(componentDidMount, []);
 
     function onSelectContactNumber(event) {
-        sendData({contact_number: event.target.value});
+        const payload = { contact_number: event.target.value };
+        dispatch(updateTaskContactNumber({taskUUID, payload}));
     }
 
     function onSelectName(event) {
-        sendData({contact_name: event.target.value});
+        const payload = { contact_name: event.target.value };
+        dispatch(updateTaskContactName({taskUUID, payload}));
     }
 
     function onSelectPickup(pickupAddress) {
-        if (pickupAddress)
-            sendData({pickup_address: pickupAddress});
+        if (pickupAddress) {
+            const payload = {pickup_address: pickupAddress};
+            dispatch(updateTaskPickupAddress({taskUUID, payload}));
+        }
     }
 
     function onSelectDropoff(dropoffAddress) {
-        if (dropoffAddress)
-            sendData({dropoff_address: dropoffAddress});
+        if (dropoffAddress) {
+            const payload = {dropoff_address: dropoffAddress};
+            dispatch(updateTaskDropoffAddress({taskUUID, payload}));
+        }
     }
 
     function sendData(payload) {
@@ -119,23 +135,24 @@ export default function TaskModal(props) {
     }
 
     function onSelectRider(rider) {
-        console.log(rider)
-        if (rider)
-            sendData({assigned_rider: rider.uuid, rider: rider});
+        if (rider) {
+            const payload = {assigned_rider: rider.uuid, rider};
+            dispatch(updateTaskAssignedRider({taskUUID, payload}))
+        }
     }
 
-    function onSelectPriority(selectedItemId, label) {
-        sendData({priority_id: selectedItemId, priority: label});
+    function onSelectPriority(priority_id, priority) {
+        dispatch(updateTaskPriority({ taskUUID, payload: { priority_id, priority } }));
     }
 
     function onSelectPickedUp(status) {
-        let pickup_time = status ? moment.utc().toISOString() : null;
-        sendData({pickup_time: pickup_time});
+        const payload = {pickup_time: status ? moment.utc().toISOString() : null};
+        dispatch(updateTaskPickupTime({ taskUUID, payload }));
     }
 
     function onSelectDroppedOff(status) {
-        let dropoff_time = status ? moment.utc().toISOString() : null;
-        sendData({dropoff_time: dropoff_time});
+        const payload = {dropoff_time: status ? moment.utc().toISOString() : null};
+        dispatch(updateTaskDropoffTime({ taskUUID, payload }));
     }
 
     function handleClickOpen() {
@@ -299,8 +316,7 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                                <ToggleTimeStamp label={"Delivered"} status={!!task.dropoff_time}
-                                                 onSelect={onSelectDroppedOff}/>
+                                <DateAndTimePicker label={"Dropoff Time"} onChange={() => {console.log("yayayaya")}}/>
                                 <DialogContentText>
                                     {dropoffTimeNotice}
                                 </DialogContentText>

@@ -1,6 +1,5 @@
 import React from 'react';
 import ToggleButton from '@material-ui/lab/ToggleButton';
-import {convertDate} from '../utilities'
 
 export default class toggleTimeStamp extends React.Component {
     state = {

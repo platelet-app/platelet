@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@date-io/date-fns": "^1.3.13",
+    "@date-io/moment": "^1.3.13",
     "@material-ui/core": "^4.2.1",
     "@material-ui/icons": "^4.2.1",
     "@material-ui/lab": "^4.0.0-alpha.28",
+    "@material-ui/pickers": "^3.2.10",
+    "date-fns": "^2.11.0",
     "downshift": "^3.2.12",
     "immutability-helper": "^3.0.1",
     "lodash": "^4.17.15",

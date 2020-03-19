@@ -9,6 +9,9 @@ import 'react-notifications-component/dist/theme.css'
 import {Provider} from 'react-redux'
 import store from "./redux/Store"
 import {SnackbarProvider} from "notistack";
+import MomentUtils from '@date-io/moment';
+import {MuiPickersUtilsProvider} from '@material-ui/pickers';
+import DateFnsUtils from "@date-io/date-fns";
 
 window.store = store;
 
@@ -18,10 +21,12 @@ const apiUrl = 'http://localhost:5000/api/v0.1/';
 ReactDOM.render((
         <Provider store={store}>
             <BrowserRouter>
-                <ReactNotification/>
-                <SnackbarProvider maxSnack={3}>
-                    <App apiUrl={apiUrl}/>
-                </SnackbarProvider>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <ReactNotification/>
+                    <SnackbarProvider maxSnack={3}>
+                        <App apiUrl={apiUrl}/>
+                    </SnackbarProvider>
+                </MuiPickersUtilsProvider>
             </BrowserRouter>
         </Provider>),
     document.getElementById('root'));

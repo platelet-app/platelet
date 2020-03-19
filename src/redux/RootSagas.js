@@ -5,7 +5,17 @@ import {
     watchUpdateTask,
     watchGetMyTasks,
     watchGetTask,
-    watchDeleteTask
+    watchDeleteTask,
+    watchDeleteTaskUndoable,
+    watchUndoDeleteTask,
+    watchUpdateTaskAssignedRider,
+    watchUpdateTaskContactName,
+    watchUpdateTaskContactNumber,
+    watchUpdateTaskDropoffAddress,
+    watchUpdateTaskDropoffTime,
+    watchUpdateTaskPickupTime,
+    watchUpdateTaskPickupAddress,
+    watchUpdateTaskPriority
 } from "./TaskSagas"
 import {
     watchGetAvailableDeliverables,
@@ -32,6 +42,14 @@ export default function* rootSaga() {
         call(watchGetTask),
         call(watchGetTasks),
         call(watchUpdateTask),
+        call(watchUpdateTaskAssignedRider),
+        call(watchUpdateTaskContactName),
+        call(watchUpdateTaskContactNumber),
+        call(watchUpdateTaskDropoffAddress),
+        call(watchUpdateTaskPickupAddress),
+        call(watchUpdateTaskDropoffTime),
+        call(watchUpdateTaskPickupTime),
+        call(watchUpdateTaskPriority),
         call(watchGetMyTasks),
         call(watchGetDeliverables),
         call(watchGetAvailableDeliverables),
@@ -45,7 +63,8 @@ export default function* rootSaga() {
         call(watchVehicle),
         call(watchGetUsers),
         call(watchGetWhoami),
-        call(watchLogin)
-
+        call(watchLogin),
+        call(watchDeleteTaskUndoable),
+        call(watchUndoDeleteTask),
     ])
 }

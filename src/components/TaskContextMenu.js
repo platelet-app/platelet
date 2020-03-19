@@ -2,7 +2,14 @@ import React from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import moment from 'moment/min/moment-with-locales';
-import {deleteTask, updateTask} from "../redux/Actions";
+import {
+    deleteTask,
+    deleteTaskUndoable,
+    undoDeleteTask,
+    updateTask,
+    updateTaskDropoffTime,
+    updateTaskPickupTime
+} from "../redux/Actions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
@@ -37,7 +44,8 @@ function TaskContextMenu(props) {
 
     function onSelectPickedUp() {
         handleClose();
-        sendData({pickup_time: moment.utc().toISOString()});
+        const payload = {pickup_time: moment.utc().toISOString()};
+        dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoPickup(key)}}>
@@ -50,7 +58,8 @@ function TaskContextMenu(props) {
 
     function onSelectDroppedOff() {
         handleClose();
-        sendData({dropoff_time: moment.utc().toISOString()});
+        const payload = {dropoff_time: moment.utc().toISOString()};
+        dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoDropoff(key)}}>
@@ -63,6 +72,9 @@ function TaskContextMenu(props) {
 
     function undoDelete(key) {
         props.closeSnackbar(key)
+        return
+        const undoId = `UNDO_TASK_${props.taskUUID}`;
+        dispatch(undoDeleteTask({undoId: undoId, taskUUID: props.taskUUID}));
     }
     function undoPickup(key) {
         props.closeSnackbar(key)

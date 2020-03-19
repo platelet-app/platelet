@@ -4,18 +4,42 @@
 
 // TASKS
 
+import {throttle} from "redux-saga/effects";
+
 export const GET_TASK_REQUEST = 'GET_TASK_REQUEST';
 export const GET_TASK_SUCCESS = 'GET_TASK_SUCCESS';
 export const ADD_TASK_REQUEST = 'ADD_TASK_REQUEST';
 export const ADD_TASK_SUCCESS = 'ADD_TASK_SUCCESS';
 export const DELETE_TASK_REQUEST = 'DELETE_TASK_REQUEST';
 export const DELETE_TASK_SUCCESS = 'DELETE_TASK_SUCCESS';
+export const DELETE_TASK = 'DELETE_TASK';
+export const DELETE_TASK_UNDO = 'DELETE_TASK_UNDO';
+
+
+export const UPDATE_TASK_CONTACT_NAME = "UPDATE_TASK_CONTACT_NAME";
+export const UPDATE_TASK_CONTACT_NUMBER = "UPDATE_TASK_CONTACT_NUMBER";
+export const UPDATE_TASK_PICKUP_ADDRESS = "UPDATE_TASK_PICKUP_ADDRESS";
+export const UPDATE_TASK_DROPOFF_ADDRESS = "UPDATE_TASK_DROPOFF_ADDRESS";
+export const UPDATE_TASK_PICKUP_TIME = "UPDATE_TASK_PICKUP_TIME";
+export const UPDATE_TASK_DROPOFF_TIME = "UPDATE_TASK_DROPOFF_TIME";
+export const UPDATE_TASK_ASSIGNED_RIDER = "UPDATE_TASK_ASSIGNED_RIDER";
+export const UPDATE_TASK_PRIORITY = "UPDATE_TASK_PRIORITY";
+
+
 export const UPDATE_TASK_REQUEST = 'UPDATE_TASK_REQUEST';
 export const UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS';
 export const GET_TASKS_REQUEST = 'GET_TASKS_REQUEST';
 export const GET_TASKS_SUCCESS = 'GET_TASKS_SUCCESS';
 export const GET_MY_TASKS_REQUEST = 'GET_MY_TASKS_REQUEST';
 export const GET_MY_TASKS_SUCCESS = 'GET_MY_TASKS_SUCCESS';
+
+export function deleteTaskUndoable(data) {
+    return { type: DELETE_TASK, data }
+}
+
+export function undoDeleteTask(data) {
+    return { type: DELETE_TASK_UNDO, data }
+}
 
 export function getTask(data) {
     return { type: GET_TASK_REQUEST, data }
@@ -43,6 +67,32 @@ export function deleteTaskSuccess(data) {
 
 export function updateTask(data) {
     return { type: UPDATE_TASK_REQUEST, data }
+}
+
+
+export function updateTaskContactName(data) {
+    return { type: UPDATE_TASK_CONTACT_NAME, data }
+}
+export function updateTaskContactNumber(data) {
+    return { type: UPDATE_TASK_CONTACT_NUMBER, data }
+}
+export function updateTaskPickupAddress(data) {
+    return { type: UPDATE_TASK_PICKUP_ADDRESS, data }
+}
+export function updateTaskDropoffAddress(data) {
+    return { type: UPDATE_TASK_DROPOFF_ADDRESS, data }
+}
+export function updateTaskPickupTime(data) {
+    return { type: UPDATE_TASK_PICKUP_TIME, data }
+}
+export function updateTaskDropoffTime(data) {
+    return { type: UPDATE_TASK_DROPOFF_TIME, data }
+}
+export function updateTaskAssignedRider(data) {
+    return { type: UPDATE_TASK_ASSIGNED_RIDER, data }
+}
+export function updateTaskPriority(data) {
+    return { type: UPDATE_TASK_PRIORITY, data }
 }
 
 export function updateTaskSuccess(data) {
