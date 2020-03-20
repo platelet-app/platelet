@@ -15,7 +15,7 @@ import {
     watchUpdateTaskDropoffTime,
     watchUpdateTaskPickupTime,
     watchUpdateTaskPickupAddress,
-    watchUpdateTaskPriority
+    watchUpdateTaskPriority, watchUpdateTaskCancelledTime, watchUpdateTaskRejectedTime
 } from "./TaskSagas"
 import {
     watchGetAvailableDeliverables,
@@ -50,6 +50,8 @@ export default function* rootSaga() {
         call(watchUpdateTaskDropoffTime),
         call(watchUpdateTaskPickupTime),
         call(watchUpdateTaskPriority),
+        call(watchUpdateTaskCancelledTime),
+        call(watchUpdateTaskRejectedTime),
         call(watchGetMyTasks),
         call(watchGetDeliverables),
         call(watchGetAvailableDeliverables),

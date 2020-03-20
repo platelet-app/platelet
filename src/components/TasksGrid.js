@@ -34,6 +34,12 @@ const getColumnTitle = key => {
             return <Typography><h3>Picked up</h3></Typography>;
         case "tasksDelivered":
             return <Typography><h3>Delivered</h3></Typography>;
+        case "tasksRejected":
+            return <Typography><h3>Rejected</h3></Typography>;
+        case "tasksCancelled":
+            return <Typography><h3>Cancelled</h3></Typography>;
+        case "tasksRejectedCancelled":
+            return <Typography><h3>Rejected/Cancelled</h3></Typography>;
         default:
             return ""
     }

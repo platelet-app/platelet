@@ -13,7 +13,10 @@ export default function TaskItem(props) {
                 deleteDisabled={props.deleteDisabled}
                 pickupTime={props.task.pickup_time}
                 dropoffTime={props.task.dropoff_time}
-                assignedRider={props.task.assigned_rider}>
+                assignedRider={props.task.assigned_rider}
+                cancelledTime={props.task.cancelled_time}
+                rejectedTime={props.task.rejected_time}
+            >
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
                       to={{

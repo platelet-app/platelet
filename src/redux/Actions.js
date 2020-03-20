@@ -22,6 +22,8 @@ export const UPDATE_TASK_PICKUP_ADDRESS = "UPDATE_TASK_PICKUP_ADDRESS";
 export const UPDATE_TASK_DROPOFF_ADDRESS = "UPDATE_TASK_DROPOFF_ADDRESS";
 export const UPDATE_TASK_PICKUP_TIME = "UPDATE_TASK_PICKUP_TIME";
 export const UPDATE_TASK_DROPOFF_TIME = "UPDATE_TASK_DROPOFF_TIME";
+export const UPDATE_TASK_CANCELLED_TIME = "UPDATE_TASK_CANCELLED_TIME";
+export const UPDATE_TASK_REJECTED_TIME = "UPDATE_TASK_REJECTED_TIME";
 export const UPDATE_TASK_ASSIGNED_RIDER = "UPDATE_TASK_ASSIGNED_RIDER";
 export const UPDATE_TASK_PRIORITY = "UPDATE_TASK_PRIORITY";
 
@@ -87,6 +89,12 @@ export function updateTaskPickupTime(data) {
 }
 export function updateTaskDropoffTime(data) {
     return { type: UPDATE_TASK_DROPOFF_TIME, data }
+}
+export function updateTaskCancelledTime(data) {
+    return { type: UPDATE_TASK_CANCELLED_TIME, data }
+}
+export function updateTaskRejectedTime(data) {
+    return { type: UPDATE_TASK_REJECTED_TIME, data }
 }
 export function updateTaskAssignedRider(data) {
     return { type: UPDATE_TASK_ASSIGNED_RIDER, data }

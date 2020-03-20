@@ -6,9 +6,9 @@ import {
     deleteTask,
     deleteTaskUndoable,
     undoDeleteTask,
-    updateTask,
+    updateTask, updateTaskCancelledTime,
     updateTaskDropoffTime,
-    updateTaskPickupTime
+    updateTaskPickupTime, updateTaskRejectedTime
 } from "../redux/Actions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -69,6 +69,33 @@ function TaskContextMenu(props) {
         );
         props.enqueueSnackbar('Task marked delivered.',  { variant: "info", action, autoHideDuration: 8000 });
     }
+    function onSelectCancelled() {
+        handleClose();
+        const payload = {cancelled_time: moment.utc().toISOString()};
+        dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
+        const action = key => (
+            <React.Fragment>
+                <Button color="secondary" size="small" onClick={() => {undoCancelled(key)}}>
+                    UNDO
+                </Button>
+            </React.Fragment>
+        );
+        props.enqueueSnackbar('Task marked cancelled.',  { variant: "info", action, autoHideDuration: 8000 });
+    }
+
+    function onSelectRejected() {
+        handleClose();
+        const payload = {rejected_time: moment.utc().toISOString()};
+        dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
+        const action = key => (
+            <React.Fragment>
+                <Button color="secondary" size="small" onClick={() => {undoRejected(key)}}>
+                    UNDO
+                </Button>
+            </React.Fragment>
+        );
+        props.enqueueSnackbar('Task marked rejected.',  { variant: "info", action, autoHideDuration: 8000 });
+    }
 
     function undoDelete(key) {
         props.closeSnackbar(key)
@@ -80,6 +107,12 @@ function TaskContextMenu(props) {
         props.closeSnackbar(key)
     }
     function undoDropoff(key) {
+        props.closeSnackbar(key)
+    }
+    function undoRejected(key) {
+        props.closeSnackbar(key)
+    }
+    function undoCancelled(key) {
         props.closeSnackbar(key)
     }
 
@@ -128,8 +161,10 @@ function TaskContextMenu(props) {
                         : undefined
                 }
             >
-                <MenuItem disabled={props.pickupTime || !props.assignedRider} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
-                <MenuItem disabled={(props.dropoffTime || !props.pickupTime)} onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
+                <MenuItem disabled={ (props.pickupTime || !props.assignedRider || props.rejectedTime || props.cancelledTime)} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
+                <MenuItem disabled={ (props.dropoffTime || !props.pickupTime || props.rejectedTime || props.cancelledTime) } onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
+                <MenuItem disabled={ props.rejectedTime || props.cancelledTime } onClick={onSelectRejected}>Mark rejected</MenuItem>
+                <MenuItem disabled={ props.cancelledTime || props.rejectedTime } onClick={onSelectCancelled}>Mark cancelled</MenuItem>
                 {deleteOption}
             </Menu>
         </div>

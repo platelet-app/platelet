@@ -11,6 +11,8 @@ import {ADD_TASK_REQUEST,
     UPDATE_TASK_CONTACT_NAME,
     UPDATE_TASK_PICKUP_TIME,
     UPDATE_TASK_DROPOFF_TIME,
+    UPDATE_TASK_CANCELLED_TIME,
+    UPDATE_TASK_REJECTED_TIME,
     UPDATE_TASK_PRIORITY,
     DELETE_TASK,
     DELETE_TASK_UNDO,
@@ -99,6 +101,12 @@ export function* watchUpdateTaskAssignedRider() {
 }
 export function* watchUpdateTaskPriority() {
     yield throttle(500, UPDATE_TASK_PRIORITY, updateTask)
+}
+export function* watchUpdateTaskCancelledTime() {
+    yield throttle(500, UPDATE_TASK_CANCELLED_TIME, updateTask)
+}
+export function* watchUpdateTaskRejectedTime() {
+    yield throttle(500, UPDATE_TASK_REJECTED_TIME, updateTask)
 }
 
 function* getTask(action) {
