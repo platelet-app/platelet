@@ -14,8 +14,8 @@ import {ADD_TASK_REQUEST,
     UPDATE_TASK_CANCELLED_TIME,
     UPDATE_TASK_REJECTED_TIME,
     UPDATE_TASK_PRIORITY,
-    DELETE_TASK,
-    DELETE_TASK_UNDO,
+    RESTORE_TASK_REQUEST,
+    restoreTaskSuccess,
     DELETE_TASK_REQUEST,
     deleteTaskSuccess,
     GET_TASKS_REQUEST,
@@ -68,6 +68,18 @@ function* deleteTask(action) {
 export function* watchDeleteTask() {
     yield takeEvery(DELETE_TASK_REQUEST, deleteTask)
 }
+
+function* restoreTask(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.restoreTask], action.data);
+    const result = yield call([api, api.tasks.getTask], action.data);
+    yield put(restoreTaskSuccess(result))
+}
+
+export function* watchRestoreTask() {
+    yield takeEvery(RESTORE_TASK_REQUEST, restoreTask)
+}
+
 
 function* updateTask(action) {
     const api = yield select(getApiControl);
@@ -140,44 +152,3 @@ export function* watchGetMyTasks() {
     yield takeLatest(GET_MY_TASKS_REQUEST, getMyTasks)
 }
 
-export function* watchDeleteTaskUndoable() {
-    const action = yield take(DELETE_TASK)
-    yield spawn(deleteTaskUndoable, action);
-}
-
-export function* watchUndoDeleteTask() {
-    const action = yield take(DELETE_TASK_UNDO)
-    yield spawn(deleteTaskUndoable, action);
-}
-
-function* deleteTaskUndoable(action) {
-    const api = yield select(getApiControl);
-
-    const taskUUID = action.data.taskUUID;
-    const undoId = `UNDO_TASK_${taskUUID}`;
-
-    const task = { task_uuid: taskUUID, deleted: true };
-
-
-    // optimistically mark the thread as `archived`
-    yield put(actions.updateTaskSuccess(task));
-
-    // allow the user 5 seconds to perform undo.
-    // after 5 seconds, 'archive' will be the winner of the race-condition
-    const { undo, doDelete } = yield race({
-        undo: take(action => action.type === DELETE_TASK_UNDO && action.data.undoId === undoId),
-        doDelete: delay(5000)
-    });
-
-    console.log("aaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAA")
-    console.log(undo, doDelete)
-
-    if (undo) {
-        // revert thread to previous state
-        // call undelete to api here?
-        yield put(actions.updateTaskSuccess({ task_uuid: taskUUID, deleted: false }))
-    } else if (doDelete) {
-        // make the API call to apply the changes remotely
-        yield call([api, api.tasks.deleteTask], taskUUID);
-    }
-}

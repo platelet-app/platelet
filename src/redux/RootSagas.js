@@ -6,8 +6,7 @@ import {
     watchGetMyTasks,
     watchGetTask,
     watchDeleteTask,
-    watchDeleteTaskUndoable,
-    watchUndoDeleteTask,
+    watchRestoreTask,
     watchUpdateTaskAssignedRider,
     watchUpdateTaskContactName,
     watchUpdateTaskContactNumber,
@@ -66,7 +65,6 @@ export default function* rootSaga() {
         call(watchGetUsers),
         call(watchGetWhoami),
         call(watchLogin),
-        call(watchDeleteTaskUndoable),
-        call(watchUndoDeleteTask),
+        call(watchRestoreTask)
     ])
 }

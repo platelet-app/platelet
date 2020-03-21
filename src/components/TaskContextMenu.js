@@ -4,8 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import moment from 'moment/min/moment-with-locales';
 import {
     deleteTask,
-    deleteTaskUndoable,
-    undoDeleteTask,
+    restoreTask,
     updateTask, updateTaskCancelledTime,
     updateTaskDropoffTime,
     updateTaskPickupTime, updateTaskRejectedTime
@@ -99,9 +98,7 @@ function TaskContextMenu(props) {
 
     function undoDelete(key) {
         props.closeSnackbar(key)
-        return
-        const undoId = `UNDO_TASK_${props.taskUUID}`;
-        dispatch(undoDeleteTask({undoId: undoId, taskUUID: props.taskUUID}));
+        dispatch(restoreTask(props.taskUUID));
     }
     function undoPickup(key) {
         props.closeSnackbar(key)

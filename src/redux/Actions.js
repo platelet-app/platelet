@@ -12,9 +12,8 @@ export const ADD_TASK_REQUEST = 'ADD_TASK_REQUEST';
 export const ADD_TASK_SUCCESS = 'ADD_TASK_SUCCESS';
 export const DELETE_TASK_REQUEST = 'DELETE_TASK_REQUEST';
 export const DELETE_TASK_SUCCESS = 'DELETE_TASK_SUCCESS';
-export const DELETE_TASK = 'DELETE_TASK';
-export const DELETE_TASK_UNDO = 'DELETE_TASK_UNDO';
-
+export const RESTORE_TASK_REQUEST = 'RESTORE_TASK_REQUEST';
+export const RESTORE_TASK_SUCCESS = 'RESTORE_TASK_SUCCESS';
 
 export const UPDATE_TASK_CONTACT_NAME = "UPDATE_TASK_CONTACT_NAME";
 export const UPDATE_TASK_CONTACT_NUMBER = "UPDATE_TASK_CONTACT_NUMBER";
@@ -27,7 +26,6 @@ export const UPDATE_TASK_REJECTED_TIME = "UPDATE_TASK_REJECTED_TIME";
 export const UPDATE_TASK_ASSIGNED_RIDER = "UPDATE_TASK_ASSIGNED_RIDER";
 export const UPDATE_TASK_PRIORITY = "UPDATE_TASK_PRIORITY";
 
-
 export const UPDATE_TASK_REQUEST = 'UPDATE_TASK_REQUEST';
 export const UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS';
 export const GET_TASKS_REQUEST = 'GET_TASKS_REQUEST';
@@ -35,12 +33,12 @@ export const GET_TASKS_SUCCESS = 'GET_TASKS_SUCCESS';
 export const GET_MY_TASKS_REQUEST = 'GET_MY_TASKS_REQUEST';
 export const GET_MY_TASKS_SUCCESS = 'GET_MY_TASKS_SUCCESS';
 
-export function deleteTaskUndoable(data) {
-    return { type: DELETE_TASK, data }
+export function restoreTask(data) {
+    return { type: RESTORE_TASK_REQUEST, data }
 }
 
-export function undoDeleteTask(data) {
-    return { type: DELETE_TASK_UNDO, data }
+export function restoreTaskSuccess(data) {
+    return { type: RESTORE_TASK_SUCCESS, data }
 }
 
 export function getTask(data) {

@@ -27,7 +27,7 @@ import {
     SET_ACTIVE_TASK_UUID,
     GET_SESSION_SUCCESS,
     CLEAR_LOADING,
-    GET_WHOAMI_SUCCESS, DELETE_TASK_SUCCESS
+    GET_WHOAMI_SUCCESS, DELETE_TASK_SUCCESS, RESTORE_TASK_SUCCESS
 } from './Actions'
 import {store} from "react-notifications-component";
 import {deleteLogin, saveLogin} from "../utilities";
@@ -63,6 +63,14 @@ function task(state = {}, action) {
 function tasks(state = [], action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
+            return [
+                ...state,
+                {
+                    ...action.data
+                }
+            ];
+        case RESTORE_TASK_SUCCESS:
+            //TODO: should this check that the task matches the session? it's unlikely a task will be deleted from anything other than it's own session view
             return [
                 ...state,
                 {
