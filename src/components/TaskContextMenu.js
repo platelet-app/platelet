@@ -101,15 +101,23 @@ function TaskContextMenu(props) {
         dispatch(restoreTask(props.taskUUID));
     }
     function undoPickup(key) {
+        const payload = {pickup_time: null};
+        dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key)
     }
     function undoDropoff(key) {
+        const payload = {dropoff_time: null};
+        dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key)
     }
     function undoRejected(key) {
+        const payload = {rejected_time: null};
+        dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key)
     }
     function undoCancelled(key) {
+        const payload = {cancelled_time: null};
+        dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key)
     }
 
