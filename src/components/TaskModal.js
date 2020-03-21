@@ -26,7 +26,7 @@ import {
     updateTaskContactNumber,
     updateTaskDropoffAddress,
     updateTaskDropoffTime,
-    updateTaskPickupAddress
+    updateTaskPickupAddress, updateTaskCancelledTime
 } from "../redux/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
@@ -191,6 +191,36 @@ export default function TaskModal(props) {
     if (task.dropoff_time) {
         dropoffTimeNotice = <>Dropped off at <Moment format={"llll"}>{task.dropoff_time}</Moment></>
     }
+    let cancelledStatus = <></>
+    if (task.cancelled_time) {
+        cancelledStatus =
+            <Box className={classes.box}>
+                <DialogContentText>
+                    Cancelled at <Moment format={"llll"}>{task.cancelled_time}</Moment>
+                </DialogContentText>
+                <ToggleTimeStamp label={"UNDO"} status={!!task.cancelled_time}
+                                 onSelect={() => {
+                                     const payload = {cancelled_time: null};
+                                     dispatch(updateTaskCancelledTime({ taskUUID, payload }));
+                                 }
+                }/>
+            </Box>
+    }
+    let rejectedStatus = <></>
+    if (task.rejected_time) {
+        rejectedStatus =
+            <Box className={classes.box}>
+                <DialogContentText>
+                    Rejected at <Moment format={"llll"}>{task.rejected_time}</Moment>
+                </DialogContentText>
+                <ToggleTimeStamp label={"UNDO"} status={!!task.rejected_time}
+                                 onSelect={() => {
+                                     const payload = {rejected_time: null};
+                                     dispatch(updateTaskCancelledTime({ taskUUID, payload }));
+                                 }
+                                 }/>
+            </Box>
+    }
     let deliverableSelect = <DeliverableInformation apiControl={props.apiControl} taskUUID={taskUUID}/>;
     if (editMode) {
         deliverableSelect = <><DialogContentText>
@@ -251,7 +281,12 @@ export default function TaskModal(props) {
                           direction={"column"}
                           justify={"flex-start"}
                           alignItems={"flex-start"}>
-
+                        <Grid item>
+                            {rejectedStatus}
+                        </Grid>
+                        <Grid item>
+                            {cancelledStatus}
+                        </Grid>
                         <Grid item>
                             <Box className={classes.box}>
                                 <TextFieldControlled

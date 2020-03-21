@@ -3,7 +3,7 @@ import 'typeface-roboto'
 import Home from '../containers/Home'
 import '../index.css';
 import SessionsList from '../containers/SessionList';
-import UserProfile from '../containers/UserProfile'
+import MyUserProfile from '../containers/MyUserProfile'
 import {BrowserRouter as Router, Route, Switch, useLocation, useHistory, useParams} from "react-router-dom";
 import SessionDetail from "../containers/SessionDetail";
 import UsersTasks from "../containers/UsersTasks";
@@ -29,7 +29,7 @@ export default function Main(_props) {
                            render={(props) => <SessionsList {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route path='/profile'
-                           render={(props) => <UserProfile {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => <MyUserProfile {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route path='/vehicles'
                            render={(props) => <VehicleList {...props} apiControl={_props.apiControl}/>}
