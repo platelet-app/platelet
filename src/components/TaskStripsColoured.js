@@ -1,12 +1,13 @@
 import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive, StyledStrip} from '../css/TaskStrips';
+import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../css/TaskStrips';
 import CardContent from '@material-ui/core/CardContent';
-import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
+import {Typography} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 
 export function TaskStrip(props) {
     const itemsList = [];
@@ -26,14 +27,16 @@ export function TaskStrip(props) {
         itemsList.push(props.priority);
     const divider = <Grid item><Divider orientation="vertical" flexItem/></Grid>;
     const cardInnerContent =
-        <CardContent style={{fontWeight: "bold"}}>
+        <CardContent>
             <Grid container spacing={1} direction={"row"} justify={"flex-start"}>
-                {itemsList.map((entry) => (
+                {itemsList.map((entry, i, arr) => (
                     <>
                     <Grid item>
-                        {entry}
+                        <Typography style={{maxWidth: "400px"}} noWrap={true}>
+                            {entry}
+                        </Typography>
                     </Grid>
-                    {divider}
+                    {arr.length - 1 !== i ? divider : <></>}
                     </>
                 ))}
             </Grid>

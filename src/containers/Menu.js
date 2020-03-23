@@ -34,6 +34,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Switch from "@material-ui/core/Switch";
 import {setKanbanMode} from "../redux/Actions";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 const drawerWidth = 240;
 
@@ -166,14 +168,21 @@ export function ResponsiveDrawer(props) {
                                     }} component={Link} to="/logout">
                                         Logout
                                     </MenuItem>
-                                    <Switch
-                                        checked={kanbanMode}
-                                        onChange={() => {
-                                            dispatch(setKanbanMode(!kanbanMode))
-                                        }}
-                                        name="checkedA"
-                                        inputProps={{'aria-label': 'secondary checkbox'}}
-                                    />
+                                    <MenuItem>
+                                    <FormControl component="fieldset">
+                                        <FormControlLabel control={
+                                            <Switch
+                                                checked={kanbanMode}
+                                                onChange={() => {
+                                                    dispatch(setKanbanMode(!kanbanMode))
+                                                }}
+                                                name="kanbanSwitch"
+                                                inputProps={{'aria-label': 'secondary checkbox'}}
+                                            />
+
+                                        } label={"Kanban"} labelPlacement={"end"}/>
+                                    </FormControl>
+                                    </MenuItem>
                                 </Menu>
                             </div>
                         </Grid>

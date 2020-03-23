@@ -1,6 +1,5 @@
 import React from 'react';
 import '../App.css';
-import 'typeface-roboto'
 import TaskDialog from "../components/TaskModal";
 
 
