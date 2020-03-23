@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../css/common';
+import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../css/TaskCards';
 import CardContent from '@material-ui/core/CardContent';
 import {Typography} from "@material-ui/core";
 import Moment from "react-moment";

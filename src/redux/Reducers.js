@@ -20,18 +20,18 @@ import {
     GET_VEHICLES_SUCCESS,
     GET_VEHICLE_SUCCESS,
     GET_USERS_SUCCESS,
-    LOGIN,
     LOGIN_SUCCESS,
     LOGOUT,
     GET_ACTIVE_TASK_UUID,
     SET_ACTIVE_TASK_UUID,
     GET_SESSION_SUCCESS,
     CLEAR_LOADING,
-    GET_WHOAMI_SUCCESS, DELETE_TASK_SUCCESS, RESTORE_TASK_SUCCESS
+    GET_WHOAMI_SUCCESS,
+    DELETE_TASK_SUCCESS,
+    RESTORE_TASK_SUCCESS,
+    SET_KANBAN_MODE
 } from './Actions'
-import {store} from "react-notifications-component";
-import {deleteLogin, saveLogin} from "../utilities";
-import { getLogin } from "../utilities";
+import {deleteLogin, getLogin, getKanbanMode, saveLogin} from "../utilities";
 
 const apiUrl = 'http://localhost:5000/api/v0.1/';
 
@@ -227,6 +227,16 @@ function users(state = [], action) {
     }
 }
 
+//TODO: Figure out why it doesn't work to get this from localstorage..
+function kanbanMode(state = false, action) {
+    switch (action.type) {
+        case SET_KANBAN_MODE:
+            return action.data;
+        default:
+            return state
+    }
+}
+
 function whoami(state = {roles: [], name: ""}, action) {
     switch (action.type) {
         case GET_WHOAMI_SUCCESS:
@@ -301,7 +311,8 @@ const rootReducer = combineReducers({
     sessionActiveTaskUUID,
     loadingReducer,
     postingReducer,
-    apiControl
+    apiControl,
+    kanbanMode
 });
 
 export default rootReducer

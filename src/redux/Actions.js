@@ -5,6 +5,7 @@
 // TASKS
 
 import {throttle} from "redux-saga/effects";
+import {saveKanbanMode} from "../utilities";
 
 export const GET_TASK_REQUEST = 'GET_TASK_REQUEST';
 export const GET_TASK_SUCCESS = 'GET_TASK_SUCCESS';
@@ -367,4 +368,11 @@ export function getWhoami() {
 
 export function getWhoamiSuccess(data) {
     return { type: GET_WHOAMI_SUCCESS, data }
+}
+
+export const SET_KANBAN_MODE = 'SET_KANBAN_MODE';
+
+export function setKanbanMode(data) {
+    saveKanbanMode(data);
+    return { type: SET_KANBAN_MODE, data }
 }
