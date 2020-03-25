@@ -36,12 +36,12 @@ import {decodeUUID} from "../utilities";
 import {createLoadingSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
 import {DateAndTimePicker} from "./DateTimePickers";
-import {watchUpdateTaskPickupTime} from "../redux/TaskSagas";
 
 export default function TaskModal(props) {
     const dispatch = useDispatch();
     // Leave this here in case app.js dispatchers haven't finished before the modal is opened
-    const loadingSelector = createLoadingSelector(["GET_TASK",
+    const loadingSelector = createLoadingSelector([
+        "GET_TASK",
         "GET_AVAILABLE_LOCATIONS",
         "GET_AVAILABLE_PRIORITIES",
         "GET_USERS",
@@ -80,8 +80,6 @@ export default function TaskModal(props) {
     const classes = useStyles();
 
     const tasks = useSelector(state => state.tasks);
-    const [open, setOpen] = useState(false);
-
 
     let history = useHistory();
 
@@ -152,12 +150,7 @@ export default function TaskModal(props) {
         dispatch(updateTaskDropoffTime({ taskUUID, payload }));
     }
 
-    function handleClickOpen() {
-        setOpen(true);
-    }
-
     let handleClose = e => {
-        setOpen(false);
         e.stopPropagation();
         history.goBack();
     };

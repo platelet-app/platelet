@@ -4,10 +4,9 @@ import {Link} from "react-router-dom";
 import {TaskCard} from "./TaskCardsColoured"
 import {encodeUUID} from "../utilities";
 import TaskContextMenu from "./TaskContextMenu";
-import {TaskStrip} from "./TaskStripsColoured";
 
 export default function TaskItem(props) {
-    const task = props.kanban ?
+    const task =
     <TaskCard
         title={"Task"}
         pickupAddress={props.task.pickup_address}
@@ -17,17 +16,7 @@ export default function TaskItem(props) {
         dropoffTime={props.task.dropoff_time}
         timestamp={props.task.timestamp}
         priority={props.task.priority}
-    /> :
-        <TaskStrip
-            title={"Task"}
-            pickupAddress={props.task.pickup_address}
-            dropoffAddress={props.task.dropoff_address}
-            assignedRider={props.task.rider}
-            pickupTime={props.task.pickup_time}
-            dropoffTime={props.task.dropoff_time}
-            timestamp={props.task.timestamp}
-            priority={props.task.priority}
-        />
+    />;
 
     return (
         <Grid item key={props.task.uuid}>

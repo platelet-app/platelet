@@ -30,26 +30,6 @@ const getColumnTitle = key => {
     }
 };
 
-function Column(props)
-{
-    if (props.kanbanMode) {
-        return (
-            <TasksKanbanColumn>
-                {props.children}
-            </TasksKanbanColumn>
-        )
-    } else {
-        return(
-            <TasksSheetColumn>
-                {props.children}
-            </TasksSheetColumn>
-        )
-
-    }
-
-}
-
-
 export default function TasksGrid(props) {
     const loadingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => loadingSelector(state));
@@ -76,7 +56,7 @@ export default function TasksGrid(props) {
             const title = getColumnTitle(taskList[0]);
             return (
                 <Grid item xs sm md lg key={taskList[0]}>
-                    <Column kanbanMode={kanbanMode}>
+                    <TasksKanbanColumn>
                         {title}
                         <Grid container
                               spacing={kanbanMode ? 3 : 0}
@@ -87,14 +67,14 @@ export default function TasksGrid(props) {
                             {newTaskButton}
                             {taskList[1].map(task => {
                                 return (
-                                    <TaskItem task={task} kanban={kanbanMode} view={props.modalView} fullScreenModal={props.fullScreenModal}
+                                    <TaskItem task={task} view={props.modalView} fullScreenModal={props.fullScreenModal}
                                               location={props.location} deleteDisabled={props.deleteDisabled}/>
                                 )
                             })}
                         </Grid>
-                    </Column>
+                    </TasksKanbanColumn>
                 </Grid>
-            )
+        )
         })}
     </Grid>
     )

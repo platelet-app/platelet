@@ -13,6 +13,7 @@
     "downshift": "^3.2.12",
     "immutability-helper": "^3.0.1",
     "lodash": "^4.17.15",
+    "material-table": "^1.57.2",
     "material-ui-popup-state": "^1.5.3",
     "moment": "^2.24.0",
     "notistack": "^0.9.9",

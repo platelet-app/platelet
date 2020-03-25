@@ -15,6 +15,7 @@ import {
 } from "react-router-dom";
 import {createLoadingSelector} from '../redux/selectors';
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
+import TasksTable from "../components/TasksTable";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -32,6 +33,7 @@ function SessionDetail(props) {
     const dispatch = useDispatch();
     const isFetching = useSelector(state => loadingSelector(state));
     const tasks = useSelector(state => state.tasks);
+    const kanbanMode = useSelector(state => state.kanbanMode);
     //TODO: This could put data into title
     const session = useSelector(state => state.session);
     let session_uuid = decodeUUID(props.match.params.session_uuid_b62);
@@ -56,7 +58,7 @@ function SessionDetail(props) {
 
     if (isFetching) {
         return <TasksGridSkeleton count={4}/>
-    } else {
+    } else if (kanbanMode) {
         return (
             <TasksGrid tasks={tasks}
                        location={location}
@@ -69,6 +71,21 @@ function SessionDetail(props) {
             />
 
         )
+    }
+    else {
+        return (
+            <TasksTable tasks={tasks}
+                       location={location}
+                       fullScreenModal={fullScreenModal}
+                       onAddTaskClick={(task) => {
+                           dispatch(addTask(task));
+                       }}
+                       sessionUUID={session_uuid}
+                       modalView={"edit"}
+            />
+
+        )
+
     }
 }
 
