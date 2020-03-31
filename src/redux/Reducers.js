@@ -29,7 +29,8 @@ import {
     GET_WHOAMI_SUCCESS,
     DELETE_TASK_SUCCESS,
     RESTORE_TASK_SUCCESS,
-    SET_KANBAN_MODE
+    SET_VIEW_MODE,
+    SET_MOBILE_VIEW
 } from './Actions'
 import {deleteLogin, getLogin, getKanbanMode, saveLogin} from "../utilities";
 
@@ -228,9 +229,18 @@ function users(state = [], action) {
 }
 
 //TODO: Figure out why it doesn't work to get this from localstorage..
-function kanbanMode(state = false, action) {
+function viewMode(state = "table", action) {
     switch (action.type) {
-        case SET_KANBAN_MODE:
+        case SET_VIEW_MODE:
+            return action.data;
+        default:
+            return state
+    }
+}
+
+function mobileView(state = false, action) {
+    switch (action.type) {
+        case SET_MOBILE_VIEW:
             return action.data;
         default:
             return state
@@ -312,7 +322,8 @@ const rootReducer = combineReducers({
     loadingReducer,
     postingReducer,
     apiControl,
-    kanbanMode
+    viewMode,
+    mobileView
 });
 
 export default rootReducer

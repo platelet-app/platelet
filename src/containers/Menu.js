@@ -76,11 +76,11 @@ export function ResponsiveDrawer(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami);
     const kanbanMode = useSelector(state => state.kanbanMode);
+    const mobileView = useSelector(state => state.mobileView);
     const {container} = props;
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const mobileView = !useMediaQuery(theme.breakpoints.up('sm'));
     const dispatch = useDispatch();
 
     const handleDrawerToggle = () => {
@@ -167,21 +167,6 @@ export function ResponsiveDrawer(props) {
                                         setAnchorEl(null);
                                     }} component={Link} to="/logout">
                                         Logout
-                                    </MenuItem>
-                                    <MenuItem>
-                                    <FormControl component="fieldset">
-                                        <FormControlLabel control={
-                                            <Switch
-                                                checked={kanbanMode}
-                                                onChange={() => {
-                                                    dispatch(setKanbanMode(!kanbanMode))
-                                                }}
-                                                name="kanbanSwitch"
-                                                inputProps={{'aria-label': 'secondary checkbox'}}
-                                            />
-
-                                        } label={"Kanban"} labelPlacement={"end"}/>
-                                    </FormControl>
                                     </MenuItem>
                                 </Menu>
                             </div>

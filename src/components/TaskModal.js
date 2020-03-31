@@ -130,7 +130,7 @@ export default function TaskModal(props) {
 
     function onSelectRider(rider) {
         if (rider) {
-            const payload = {assigned_rider: rider.uuid, rider};
+            const payload = {patch_id: rider.patch_id, assigned_rider: rider.uuid, rider};
             dispatch(updateTaskAssignedRider({taskUUID, payload}))
         }
     }

@@ -33,7 +33,6 @@ const getColumnTitle = key => {
 export default function TasksGrid(props) {
     const loadingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => loadingSelector(state));
-    const kanbanMode = useSelector(state => state.kanbanMode);
     const emptyTask = {
         session_uuid: props.sessionUUID,
         timestamp: new Date().toISOString(),
@@ -41,7 +40,7 @@ export default function TasksGrid(props) {
     return (
     <Grid container
           spacing={3}
-          direction={ kanbanMode ? "row" : "column"}
+          direction={"row"}
           justify={"flex-start"}
           alignItems={"stretch"}
     >
@@ -59,7 +58,7 @@ export default function TasksGrid(props) {
                     <TasksKanbanColumn>
                         {title}
                         <Grid container
-                              spacing={kanbanMode ? 3 : 0}
+                              spacing={3}
                               direction={"column"}
                               justify={"flex-start"}
                               alignItems={"center"}

@@ -1,21 +1,34 @@
 import React, {useEffect, useState} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {useTheme} from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {addTask, getAllTasks, SET_ACTIVE_TASK_UUID, setActiveTaskUUID, getSession, clearLoading} from '../redux/Actions'
-import {connect} from "react-redux"
+import Grid from "@material-ui/core/Grid";
+import {
+    addTask,
+    getAllTasks,
+    SET_ACTIVE_TASK_UUID,
+    setActiveTaskUUID,
+    getSession,
+    setKanbanMode, setViewMode
+} from '../redux/Actions'
 import {makeStyles} from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
-import {MainWindowContainer} from "../css/common";
 import {
+    Link,
     useLocation,
 } from "react-router-dom";
 import {createLoadingSelector} from '../redux/selectors';
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
 import TasksTable from "../components/TasksTable";
+import FormControl from "@material-ui/core/FormControl";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import Menu from "@material-ui/core/Menu";
+import {Typography} from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -28,20 +41,32 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+function GetViewTitle(props) {
+    console.log(props.type)
+    switch (props.type) {
+        case "kanban":
+            return <Typography>Kanban</Typography>
+        case "table":
+            return <Typography>Table</Typography>
+        default:
+            return <Typography></Typography>
+
+    }
+}
+
 function SessionDetail(props) {
     const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
     const dispatch = useDispatch();
     const isFetching = useSelector(state => loadingSelector(state));
     const tasks = useSelector(state => state.tasks);
-    const kanbanMode = useSelector(state => state.kanbanMode);
+    const viewMode = useSelector(state => state.viewMode);
+    const mobileView = useSelector(state => state.mobileView);
     //TODO: This could put data into title
     const session = useSelector(state => state.session);
     let session_uuid = decodeUUID(props.match.params.session_uuid_b62);
     //TODO: Maybe use this to show a particular task when navigating to the task URL directly
     //const activeTask = useSelector(state => state.sessionActiveTaskUUID);
     //dispatch(setActiveTaskUUID(props.match.params.task_uuid_b62));
-    const theme = useTheme();
-    const fullScreenModal = !useMediaQuery(theme.breakpoints.up('md'));
 
 
     function componentDidMount() {
@@ -54,35 +79,85 @@ function SessionDetail(props) {
 
     let location = useLocation();
 
-    const classes = useStyles();
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const modeToggle = mobileView ? <></> :
+        <Grid container
+              spacing={1}
+              direction={"row"}
+              justify={"flex-start"}
+              alignItems={"center"}
+        >
+            <Grid item>
+                <GetViewTitle type={viewMode}/>
+            </Grid>
+            <Grid item>
+            <IconButton
+                color="inherit"
+                aria-controls="simple-menu"
+                aria-haspopup="true"
+                onClick={(event) => {
+                    setAnchorEl(event.currentTarget);
+                }}>
+                <ArrowDropDownIcon/>
+            </IconButton>
+            <Menu
+                id="profile-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={() => {
+                    setAnchorEl(null);
+                }}
+            >
+                    <MenuItem onClick={() => {
+                        setAnchorEl(null);
+                        dispatch(setViewMode("kanban"))
+                    }}>
+                        <Typography>Kanban</Typography>
+                    </MenuItem>
+                <MenuItem onClick={() => {
+                    setAnchorEl(null);
+                    dispatch(setViewMode("table"))
+                }}>
+                    <Typography>Table</Typography>
+                </MenuItem>
+            </Menu>
+            </Grid>
+            </Grid>
+    ;
 
     if (isFetching) {
         return <TasksGridSkeleton count={4}/>
-    } else if (kanbanMode) {
+    } else if (viewMode === "kanban" || mobileView) {
         return (
-            <TasksGrid tasks={tasks}
-                       location={location}
-                       fullScreenModal={fullScreenModal}
-                       onAddTaskClick={(task) => {
-                           dispatch(addTask(task));
-                       }}
-                       sessionUUID={session_uuid}
-                       modalView={"edit"}
-            />
+            <>
+                {modeToggle}
+                <TasksGrid tasks={tasks}
+                           location={location}
+                           fullScreenModal={mobileView}
+                           onAddTaskClick={(task) => {
+                               dispatch(addTask(task));
+                           }}
+                           sessionUUID={session_uuid}
+                           modalView={"edit"}
+                />
+            </>
 
         )
-    }
-    else {
+    } else if (viewMode == "table") {
         return (
-            <TasksTable tasks={tasks}
-                       location={location}
-                       fullScreenModal={fullScreenModal}
-                       onAddTaskClick={(task) => {
-                           dispatch(addTask(task));
-                       }}
-                       sessionUUID={session_uuid}
-                       modalView={"edit"}
-            />
+            <>
+                {modeToggle}
+                <TasksTable tasks={tasks}
+                            location={location}
+                            fullScreenModal={mobileView}
+                            onAddTaskClick={(task) => {
+                                dispatch(addTask(task));
+                            }}
+                            sessionUUID={session_uuid}
+                            modalView={"edit"}
+                />
+            </>
 
         )
 

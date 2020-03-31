@@ -61,8 +61,8 @@ function SessionList(props) {
     const whoami = useSelector(state => state.whoami);
 
     function updateSessionsList() {
-        if (whoami.uuid)
-            dispatch(getAllSessions(whoami.uuid))
+        if (props.user_uuid || whoami.uuid)
+            dispatch(getAllSessions(props.user_uuid ? props.user_uuid : whoami.uuid))
     }
 
     useEffect(updateSessionsList, [whoami]);
@@ -99,7 +99,7 @@ function SessionList(props) {
                     {circleAdd}
                 </Grid>
                 {sessions.map((session) => (
-                    <Grid item xs={10} sm={5} md={4} lg={3} key={session.uuid}>
+                    <Grid item key={session.uuid}>
                         <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>
                             <SessionCard session={session}/>
                         </Link>

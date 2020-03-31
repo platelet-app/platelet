@@ -15,8 +15,10 @@ import {
     getAvailableLocations,
     getAvailablePriorities,
     getUsers,
-    getWhoami, logoutUser
+    getWhoami, logoutUser, setMobileView
 } from "./redux/Actions";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import {useTheme} from "@material-ui/core/styles";
 
 
 function App(props) {
@@ -41,6 +43,8 @@ function App(props) {
 
     useEffect(getStaticData, [isInitialised]);
 
+    const theme = useTheme();
+    dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up('sm'))));
 
     if (isInitialised) {
         return (

@@ -370,9 +370,15 @@ export function getWhoamiSuccess(data) {
     return { type: GET_WHOAMI_SUCCESS, data }
 }
 
-export const SET_KANBAN_MODE = 'SET_KANBAN_MODE';
+export const SET_VIEW_MODE = 'SET_VIEW_MODE';
 
-export function setKanbanMode(data) {
+export function setViewMode(data) {
     saveKanbanMode(data);
-    return { type: SET_KANBAN_MODE, data }
+    return { type: SET_VIEW_MODE, data }
+}
+
+export const SET_MOBILE_VIEW = 'SET_MOBILE_VIEW';
+
+export function setMobileView(data) {
+    return { type: SET_MOBILE_VIEW, data }
 }
