@@ -47,6 +47,7 @@ export default function TaskModal(props) {
         "GET_USERS",
         "GET_AVAILABLE_LOCATIONS"]);
     const isFetching = useSelector(state => loadingSelector(state));
+    const availablePatches = useSelector(state => state.availablePatches);
     let useStyles;
     // TODO: Do this properly (withStyles)
     if (!props.fullscreen) {
@@ -130,7 +131,9 @@ export default function TaskModal(props) {
 
     function onSelectRider(rider) {
         if (rider) {
-            const payload = {patch_id: rider.patch_id, assigned_rider: rider.uuid, rider};
+            const patchFilter = availablePatches.filter(patch => patch.id === rider.patch_id);
+            const patchLabel = patchFilter.length === 1 ? patchFilter[0].label : "";
+            const payload = {patch_id: rider.patch_id, patch: patchLabel, assigned_rider: rider.uuid, rider};
             dispatch(updateTaskAssignedRider({taskUUID, payload}))
         }
     }

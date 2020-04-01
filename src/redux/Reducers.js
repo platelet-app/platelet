@@ -30,7 +30,8 @@ import {
     DELETE_TASK_SUCCESS,
     RESTORE_TASK_SUCCESS,
     SET_VIEW_MODE,
-    SET_MOBILE_VIEW
+    SET_MOBILE_VIEW,
+    GET_AVAILABLE_PATCHES_SUCCESS
 } from './Actions'
 import {deleteLogin, getLogin, getKanbanMode, saveLogin} from "../utilities";
 
@@ -153,6 +154,15 @@ function availablePriorities(state = [], action) {
     }
 }
 
+function availablePatches(state = [], action) {
+    switch (action.type) {
+        case GET_AVAILABLE_PATCHES_SUCCESS:
+            return action.data;
+        default:
+            return state
+    }
+}
+
 function availableLocations(state = [], action) {
     switch (action.type) {
         case GET_AVAILABLE_LOCATIONS_SUCCESS:
@@ -229,7 +239,7 @@ function users(state = [], action) {
 }
 
 //TODO: Figure out why it doesn't work to get this from localstorage..
-function viewMode(state = "table", action) {
+function viewMode(state = "kanban", action) {
     switch (action.type) {
         case SET_VIEW_MODE:
             return action.data;
@@ -313,6 +323,7 @@ const rootReducer = combineReducers({
     deliverables,
     availableDeliverables,
     availablePriorities,
+    availablePatches,
     availableLocations,
     vehicles,
     vehicle,

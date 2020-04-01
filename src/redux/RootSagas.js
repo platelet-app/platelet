@@ -30,6 +30,7 @@ import {watchGetAvailableLocations} from "./LocationsSagas";
 import {watchGetUsers} from "./UserSagas";
 import {watchGetWhoami} from "./WhoamiSaga";
 import {watchLogin} from "./LoginSagas"
+import {watchGetAvailablePatches} from "./PatchesSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -65,6 +66,7 @@ export default function* rootSaga() {
         call(watchGetUsers),
         call(watchGetWhoami),
         call(watchLogin),
-        call(watchRestoreTask)
+        call(watchRestoreTask),
+        call(watchGetAvailablePatches)
     ])
 }

@@ -5,11 +5,36 @@ import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../cs
 import CardContent from '@material-ui/core/CardContent';
 import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
-import TaskContextMenu from "./TaskContextMenu";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Divider from "@material-ui/core/Divider";
 
+const useStyles = makeStyles({
+    titleText: {
+        fontSize: "13px",
+        width: "20px"
+    },
+    cardText: {
+        fontSize: "14px",
+    }
+});
+
+function GridItem(props) {
+    const classes = useStyles();
+    return (
+        <Grid item>
+            <Grid container spacing={1} direction={"row"} alignItems={"flex-end"} justify={"space-between"}>
+                <Grid item>
+                    <Typography className={classes.titleText}>{props.label}:</Typography>
+                </Grid>
+                <Grid item>
+                    <Typography style={{width: props.width ? props.width : "193px"}} align={"right"} noWrap={true} className={classes.cardText}>{props.children}</Typography>
+                </Grid>
+            </Grid>
+        </Grid>
+    )
+
+}
 export function TaskCard(props) {
     let pickupTitle = "";
     if (props.pickupAddress) {
@@ -30,40 +55,17 @@ export function TaskCard(props) {
     let rider = "";
     let hasRider = false;
     if (props.assignedRider) {
-        rider = (props.assignedRider.display_name) ? props.assignedRider.display_name + " | " + props.assignedRider.patch : "";
+        rider = (props.assignedRider.display_name) ? props.assignedRider.display_name : "";
         hasRider = true;
     }
-    const useStyles = makeStyles({
-        titleText: {
-            fontSize: "13px",
-            width: "20px"
-        },
-        cardText: {
-            fontSize: "15px",
-            width: "200px"
-        }
-    });
-    const classes = useStyles();
+    const patch = props.patch ? props.patch : "";
     const divider = <Grid item><Divider orientation="horizontal" flexItem/></Grid>;
-    function GridItem(props) {
-        return (
-        <Grid item>
-            <Grid container spacing={1} direction={"row"} justify={"space-between"}>
-                <Grid item>
-                    <Typography className={classes.titleText}>{props.label}:</Typography>
-                </Grid>
-                <Grid item>
-                    <Typography align={"right"} noWrap={true} className={classes.cardText}>{props.children}</Typography>
-                </Grid>
-            </Grid>
-        </Grid>
-        )
-
-    }
     const cardInnerContent =
         <CardContent>
             <Grid containerspacing={1} direction={"column"}>
-                <GridItem label={"Assignee"}>{rider}</GridItem>
+                <GridItem width={"170px"} label={"Assignee"}>{rider}</GridItem>
+                {divider}
+                <GridItem label={"Patch"}>{patch}</GridItem>
                 {divider}
                 <GridItem label={"From"}>{pickupTitle}</GridItem>
                 {divider}
@@ -75,7 +77,7 @@ export function TaskCard(props) {
                 {divider}
                 <GridItem label={"TOC"}><Moment format={"llll"}>{props.timestamp}</Moment></GridItem>
                 {divider}
-                <GridItem label={"Priority"}>{props.priority}</GridItem>
+                <GridItem width={"185px"} label={"Priority"}>{props.priority}</GridItem>
             </Grid>
         </CardContent>;
     if (!hasRider) {

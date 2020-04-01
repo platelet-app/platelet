@@ -12,7 +12,7 @@ import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {
     getAvailableDeliverables,
-    getAvailableLocations,
+    getAvailableLocations, getAvailablePatches,
     getAvailablePriorities,
     getUsers,
     getWhoami, logoutUser, setMobileView
@@ -38,6 +38,7 @@ function App(props) {
             dispatch(getAvailableLocations());
             dispatch(getUsers());
             dispatch(getWhoami());
+            dispatch(getAvailablePatches())
         }
     }
 

@@ -52,7 +52,7 @@ export const StyledCard = styled(Card)({
     borderRadius: 10,
     boxShadow: '0 3px 5px 2px #303030',
     color: 'black',
-    padding: '1vh 1vw',
+    padding: '20px',
     height: '250px',
     width: '300px',
     cursor: "pointer"

@@ -251,6 +251,18 @@ class Priority {
     }
 }
 
+class Patch {
+    constructor(bearer, api_url){
+        this.bearer = bearer;
+        this.api_url = api_url;
+    }
+
+    async getAvailablePatches() {
+        return makeFetch(this.api_url, "patches", "GET", this.bearer);
+    }
+}
+
+
 class User {
     constructor(bearer, api_url){
         this.bearer = bearer;
@@ -438,6 +450,7 @@ class Control {
         this.vehicles = undefined;
         this.locations = undefined;
         this.priorities = undefined;
+        this.patches = undefined;
         this.initialised = false;
     }
 
@@ -451,6 +464,7 @@ class Control {
         this.vehicles = new Vehicle(this.bearer, this.api_url);
         this.locations = new Location(this.bearer, this.api_url);
         this.priorities = new Priority(this.bearer, this.api_url);
+        this.patches = new Patch(this.bearer, this.api_url);
         this.initialised = true;
         //setInterval(this.ping, 4000);
     }

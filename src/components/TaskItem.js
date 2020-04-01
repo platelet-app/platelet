@@ -16,6 +16,7 @@ export default function TaskItem(props) {
         dropoffTime={props.task.dropoff_time}
         timestamp={props.task.timestamp}
         priority={props.task.priority}
+        patch={props.task.patch}
     />;
 
     return (
