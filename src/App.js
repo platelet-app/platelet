@@ -2,21 +2,19 @@ import React, {useEffect, useState} from 'react';
 import {ResponsiveDrawer} from './containers/Menu'
 import Login from './Login'
 import './index.css'
-import connect from "react-redux";
-import {deleteLogin, getLogin} from "./utilities";
-import Control from "./ApiControl";
 import './App.css';
 import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
-import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    getAvailableDeliverables,
-    getAvailableLocations, getAvailablePatches,
-    getAvailablePriorities,
-    getUsers,
-    getWhoami, logoutUser, setMobileView
+    getWhoami, setMobileView
 } from "./redux/Actions";
+import {logoutUser} from "./redux/login/Actions";
+import {getAvailableDeliverables} from "./redux/deliverables/Actions";
+import {getAvailableLocations} from "./redux/locations/Actions";
+import {getAvailablePatches} from "./redux/patches/Actions";
+import {getAvailablePriorities} from "./redux/priorities/Actions";
+import {getUsers} from "./redux/users/Actions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 

@@ -11,9 +11,8 @@ import Grid from "@material-ui/core/Grid";
 import update from 'immutability-helper';
 import {Link} from "react-router-dom";
 import Moment from "react-moment";
-import {addSession, clearLoading, getAllVehicles} from "../redux/Actions";
+import {addSession, getAllSessions} from "../redux/sessions/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
-import {getAllSessions} from "../redux/Actions";
 import {encodeUUID} from "../utilities";
 import {bindActionCreators} from "redux";
 import {createLoadingSelector, createPostingSelector} from "../redux/selectors";

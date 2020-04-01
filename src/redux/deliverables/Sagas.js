@@ -1,7 +1,16 @@
 import { throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
-import {ADD_DELIVERABLE_REQUEST, addDeliverableSuccess, UPDATE_DELIVERABLE_REQUEST, updateDeliverableSuccess, GET_DELIVERABLES_REQUEST, getDeliverablesSuccess, GET_AVAILABLE_DELIVERABLES_REQUEST, getAvailableDeliverablesSuccess} from "./Actions"
+import {
+    ADD_DELIVERABLE_REQUEST,
+    addDeliverableSuccess,
+    UPDATE_DELIVERABLE_REQUEST,
+    updateDeliverableSuccess,
+    GET_DELIVERABLES_REQUEST,
+    getDeliverablesSuccess,
+    GET_AVAILABLE_DELIVERABLES_REQUEST,
+    getAvailableDeliverablesSuccess
+} from "./Actions"
 
-import { getApiControl } from "./Api";
+import { getApiControl } from "../Api";
 
 export function* postNewDeliverable(action) {
     const api = yield select(getApiControl);

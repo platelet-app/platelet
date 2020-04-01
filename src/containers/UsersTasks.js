@@ -4,7 +4,7 @@ import 'typeface-roboto'
 import {Skeleton} from "@material-ui/lab";
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {clearLoading, getAllMyTasks} from '../redux/Actions'
+import {getAllMyTasks} from '../redux/tasks/Actions'
 import {connect, useDispatch, useSelector} from "react-redux"
 import TasksGrid from "../components/TasksGrid";
 import {

@@ -190,7 +190,7 @@ function UsersSelect(props) {
                             {renderInput({
                                 fullWidth: true,
                                 classes,
-                                label: props.label ? props.label : "Users",
+                                label: props.label ? props.label : "users",
                                 InputLabelProps: getLabelProps({shrink: true}),
                                 InputProps: {onBlur, onChange, onFocus, onSelect},
                                 inputProps,

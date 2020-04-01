@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import DeliverableDropSelect from "./DeliverableDropSelect";
-import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/Actions";
+import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/deliverables/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import {AddCircleButtonSmall} from "./Buttons";
 import {createPostingSelector} from "../redux/selectors";

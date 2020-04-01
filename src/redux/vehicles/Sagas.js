@@ -8,10 +8,11 @@ import {
     getAllVehiclesSuccess,
     GET_VEHICLE_REQUEST,
     getVehicleSuccess,
-    getWhoamiSuccess
 } from "./Actions"
-import {getUsersSuccess} from "./Actions"
-import { getApiControl, getWhoami } from "./Api";
+
+import {getWhoamiSuccess} from "../Actions"
+import {getUsersSuccess} from "../users/Actions"
+import { getApiControl, getWhoami } from "../Api";
 
 function* postNewVehicle(action) {
     const api = yield select(getApiControl);

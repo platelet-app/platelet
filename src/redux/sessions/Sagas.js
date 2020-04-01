@@ -1,6 +1,6 @@
 import { all, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {ADD_SESSION_REQUEST, addSessionSuccess, GET_SESSIONS_REQUEST, getAllSessionsSuccess, GET_SESSION_REQUEST, getSessionSuccess} from "./Actions"
-import { getApiControl } from "./Api";
+import { getApiControl } from "../Api";
 
 
 export function* postNewSession(action) {

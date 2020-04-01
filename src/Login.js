@@ -1,18 +1,12 @@
 import React, {useState} from 'react';
-import ReactDOM from 'react-dom';
 import './App.css';
 import 'typeface-roboto'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import CssBaseline from '@material-ui/core/CssBaseline';
 import App from './App'
 import Control from './ApiControl'
-import {Background} from './css/common'
-import {BrowserRouter} from "react-router-dom";
-import {saveLogin} from "./utilities";
-import {withRouter} from 'react-router-dom';
 import {useDispatch} from "react-redux";
-import {loginUser} from "./redux/Actions";
+import {loginUser} from "./redux/login/Actions";
 
 
 export default function Login(props) {

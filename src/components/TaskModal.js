@@ -27,7 +27,7 @@ import {
     updateTaskDropoffAddress,
     updateTaskDropoffTime,
     updateTaskPickupAddress, updateTaskCancelledTime
-} from "../redux/Actions";
+} from "../redux/tasks/Actions";
 import {connect, useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";

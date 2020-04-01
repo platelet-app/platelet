@@ -2,7 +2,6 @@ import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/e
 import {
     GET_USERS_REQUEST,
     getUsersSuccess,
-    UPDATE_TASK_CONTACT_NAME,
     updateUserSuccess,
     UPDATE_USER_NAME_REQUEST,
     UPDATE_USER_USERNAME_REQUEST,
@@ -14,7 +13,7 @@ import {
     UPDATE_USER_PATCH_REQUEST,
     UPDATE_USER_ADDRESS_REQUEST,
 } from "./Actions";
-import { getApiControl } from "./Api"
+import { getApiControl } from "../Api"
 
 function* getUsers() {
     const api = yield select(getApiControl);

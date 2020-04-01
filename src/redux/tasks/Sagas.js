@@ -1,5 +1,4 @@
 import { throttle, call, put, delay, take, fork, takeEvery , takeLatest, select, race, spawn} from 'redux-saga/effects'
-import * as actions from "./Actions"
 import {ADD_TASK_REQUEST,
     addTaskSuccess,
     UPDATE_TASK_REQUEST,
@@ -25,7 +24,7 @@ import {ADD_TASK_REQUEST,
     GET_TASK_REQUEST,
     getTaskSuccess} from "./Actions"
 
-import { getApiControl } from "./Api"
+import { getApiControl } from "../Api"
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()

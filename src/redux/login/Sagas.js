@@ -4,13 +4,11 @@ import {
     loginUserSuccess
 } from "./Actions"
 
-import { getApiControl } from "./Api";
+import { getApiControl } from "../Api";
 
 function* login(action) {
-    console.log("LOGGING IN NOW")
     const api = yield select(getApiControl);
     const result = yield call([api, api.login], action.data.username, action.data.password);
-    console.log(api.initialised)
     yield put(loginUserSuccess(result))
 }
 

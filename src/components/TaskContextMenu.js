@@ -8,7 +8,7 @@ import {
     updateTask, updateTaskCancelledTime,
     updateTaskDropoffTime,
     updateTaskPickupTime, updateTaskRejectedTime
-} from "../redux/Actions";
+} from "../redux/tasks/Actions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';

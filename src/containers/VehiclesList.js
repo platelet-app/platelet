@@ -8,7 +8,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
-import {getAllVehicles} from "../redux/Actions";
+import {getAllVehicles} from "../redux/vehicles/Actions";
 import {encodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";

@@ -5,11 +5,9 @@ import Grid from "@material-ui/core/Grid";
 import {
     addTask,
     getAllTasks,
-    SET_ACTIVE_TASK_UUID,
-    setActiveTaskUUID,
-    getSession,
-    setKanbanMode, setViewMode
-} from '../redux/Actions'
+} from '../redux/tasks/Actions'
+import {setViewMode} from "../redux/Actions";
+import {getSession} from "../redux/sessions/Actions";
 import {makeStyles} from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID} from "../utilities";

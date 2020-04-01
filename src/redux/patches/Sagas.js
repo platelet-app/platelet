@@ -4,7 +4,7 @@ import {
     getAvailablePatchesSuccess,
 } from "./Actions"
 
-import { getApiControl } from "./Api";
+import { getApiControl } from "../Api";
 
 export function* getAvailablePatches() {
     const api = yield select(getApiControl);

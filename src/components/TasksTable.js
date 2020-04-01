@@ -15,7 +15,7 @@ import PrioritySelect from "./PrioritySelect";
 import ToggleTimeStamp from "./ToggleTimeStamp";
 import Box from "@material-ui/core/Box";
 import UsersSelect from "./UsersSelect";
-import {updateTaskAssignedRider} from "../redux/Actions";
+import {updateTaskAssignedRider} from "../redux/tasks/Actions";
 import {TextFieldControlled} from "./TextFieldControlled";
 
 

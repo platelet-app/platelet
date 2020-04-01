@@ -6,10 +6,9 @@ import {
     updatePrioritySuccess,
     GET_AVAILABLE_PRIORITIES_REQUEST,
     getAvailablePrioritiesSuccess,
-    getAvailableDeliverablesSuccess
 } from "./Actions"
 
-import { getApiControl } from "./Api";
+import { getApiControl } from "../Api";
 
 export function* getAvailablePriorities() {
     const api = yield select(getApiControl);
