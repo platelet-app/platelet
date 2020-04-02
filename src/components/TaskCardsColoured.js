@@ -7,34 +7,9 @@ import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import CardItem from "./CardItem"
 import Divider from "@material-ui/core/Divider";
 
-const useStyles = makeStyles({
-    titleText: {
-        fontSize: "13px",
-        width: "20px"
-    },
-    cardText: {
-        fontSize: "14px",
-    }
-});
-
-function GridItem(props) {
-    const classes = useStyles();
-    return (
-        <Grid item>
-            <Grid container spacing={1} direction={"row"} alignItems={"flex-end"} justify={"space-between"}>
-                <Grid item>
-                    <Typography className={classes.titleText}>{props.label}:</Typography>
-                </Grid>
-                <Grid item>
-                    <Typography style={{width: props.width ? props.width : "193px"}} align={"right"} noWrap={true} className={classes.cardText}>{props.children}</Typography>
-                </Grid>
-            </Grid>
-        </Grid>
-    )
-
-}
 export function TaskCard(props) {
     let pickupTitle = "";
     if (props.pickupAddress) {
@@ -59,25 +34,17 @@ export function TaskCard(props) {
         hasRider = true;
     }
     const patch = props.patch ? props.patch : "";
-    const divider = <Grid item><Divider orientation="horizontal" flexItem/></Grid>;
     const cardInnerContent =
         <CardContent>
             <Grid containerspacing={1} direction={"column"}>
-                <GridItem width={"170px"} label={"Assignee"}>{rider}</GridItem>
-                {divider}
-                <GridItem label={"Patch"}>{patch}</GridItem>
-                {divider}
-                <GridItem label={"From"}>{pickupTitle}</GridItem>
-                {divider}
-                <GridItem label={"Ward"}>{pickupWard}</GridItem>
-                {divider}
-                <GridItem label={"To"}>{dropoffTitle}</GridItem>
-                {divider}
-                <GridItem label={"Ward"}>{dropoffWard}</GridItem>
-                {divider}
-                <GridItem label={"TOC"}><Moment format={"llll"}>{props.timestamp}</Moment></GridItem>
-                {divider}
-                <GridItem width={"185px"} label={"Priority"}>{props.priority}</GridItem>
+                <CardItem width={"170px"} label={"Assignee"}>{rider}</CardItem>
+                <CardItem label={"Patch"}>{patch}</CardItem>
+                <CardItem label={"From"}>{pickupTitle}</CardItem>
+                <CardItem label={"Ward"}>{pickupWard}</CardItem>
+                <CardItem label={"To"}>{dropoffTitle}</CardItem>
+                <CardItem label={"Ward"}>{dropoffWard}</CardItem>
+                <CardItem label={"TOC"}><Moment format={"llll"}>{props.timestamp}</Moment></CardItem>
+                <CardItem width={"185px"} label={"Priority"}>{props.priority}</CardItem>
             </Grid>
         </CardContent>;
     if (!hasRider) {

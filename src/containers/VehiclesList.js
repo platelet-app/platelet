@@ -4,8 +4,6 @@ import 'typeface-roboto'
 import {StyledCard} from '../css/common';
 import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
-import {makeStyles} from '@material-ui/core/styles';
-import {Typography} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
 import {getAllVehicles} from "../redux/vehicles/Actions";
@@ -14,31 +12,24 @@ import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
-
-const useStyles = makeStyles({
-    card: {
-        minWidth: 275,
-    },
-    title: {
-        fontSize: 20,
-    },
-    pos: {
-        marginBottom: 12,
-    },
-});
+import CardItem from "../components/CardItem";
 
 
 function VehicleCard(props) {
-    const classes = useStyles();
     return (
         <div>
             <div key={props.vehicle.uuid}>
-                <StyledCard>
+                <StyledCard style={{height: "160px"}}>
                     <CardContent>
-                        <Typography className={classes.title}>{props.vehicle.name}</Typography>
-                        <Typography
-                            className={classes.title}>{props.vehicle.manufacturer} {props.vehicle.model}</Typography>
-                        <Typography className={classes.title}>{props.vehicle.registration_number}</Typography>
+                        <Grid containerspacing={1} direction={"column"}>
+                            <CardItem label={"Name"}>{props.vehicle.name ? props.vehicle.name : ""}</CardItem>
+                            <CardItem
+                                label={"Manufacturer"}>{props.vehicle.manufacturer ? props.vehicle.manufacturer : ""}</CardItem>
+                            <CardItem
+                                label={"Registration"}>{props.vehicle.registration_number ? props.vehicle.registration_number : ""}</CardItem>
+                            <CardItem
+                                label={"Assignee"}>{props.vehicle.assigned_user ? props.vehicle.assigned_user.display_name : ""}</CardItem>
+                        </Grid>
                     </CardContent>
                 </StyledCard>
             </div>
@@ -57,7 +48,9 @@ function VehicleList() {
     }
 
     useEffect(componentDidMount, []);
-    useEffect(() => {dispatch(setMenuIndex(4))}, []);
+    useEffect(() => {
+        dispatch(setMenuIndex(4))
+    }, []);
     const vehicles = useSelector(state => state.vehicles);
 
 
@@ -74,26 +67,29 @@ function VehicleList() {
         return (
             <CardsGridSkeleton/>
         )
-    }
-    else {
+    } else {
         return (
-            <Grid container
-                  spacing={3}
-                  direction={"row"}
-                  justify={"flex-start"}
-                  alignItems={"center"}
-            >
-                <Grid item xs={10} sm={5} md={4} lg={3}>
+            <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
+                <Grid item>
                     {circleAdd}
                 </Grid>
-                {vehicles.map((vehicle) => (
-                    <Grid item xs={10} sm={5} md={4} lg={3} key={vehicle.uuid}>
-                        <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{textDecoration: 'none'}}>
-                            <VehicleCard vehicle={vehicle}/>
-                        </Link>
+                <Grid item>
+                    <Grid container
+                          spacing={3}
+                          direction={"row"}
+                          justify={"flex-start"}
+                          alignItems={"center"}
+                    >
+                        {vehicles.map((vehicle) => (
+                            <Grid item key={vehicle.uuid}>
+                                <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{textDecoration: 'none'}}>
+                                    <VehicleCard vehicle={vehicle}/>
+                                </Link>
+                            </Grid>
+                        ))
+                        }
                     </Grid>
-                ))
-                }
+                </Grid>
             </Grid>
 
         )

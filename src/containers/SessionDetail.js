@@ -24,6 +24,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
+import CardItem from "../components/CardItem";
 
 const useStyles = makeStyles(theme => ({
     root: {

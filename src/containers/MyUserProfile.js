@@ -1,6 +1,3 @@
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import {Typography} from "@material-ui/core";
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
@@ -12,8 +9,8 @@ export default function MyUserProfile() {
     const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
     const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami);
-    const dispatch = useDispatch()
-    useEffect(() => {dispatch(setMenuIndex(0))}, []);
+    const dispatch = useDispatch();
+    useEffect(() => {dispatch(setMenuIndex(0));}, []);
     if (isFetching) {
         return (
             <FormSkeleton/>
