@@ -15,6 +15,7 @@ import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
 import CardItem from "../components/CardItem";
+import SessionContextMenu from "../components/SessionContextMenu";
 
 function SessionCard(props) {
     return (
@@ -22,8 +23,10 @@ function SessionCard(props) {
             <StyledCard style={{height: "100px"}}>
                 <CardContent>
                     <Grid containerspacing={1} direction={"column"}>
-                        <CardItem label={"Started"}><Moment format={"llll"}>{props.session.timestamp}</Moment></CardItem>
-                        <CardItem label={"Tasks"}>{props.session.task_count ? props.session.task_count : "0"}</CardItem>
+                        <CardItem label={"Started"}><Moment
+                            format={"llll"}>{props.session.timestamp}</Moment></CardItem>
+                        <CardItem
+                            label={"Tasks"}>{props.session.task_count ? props.session.task_count : "0"}</CardItem>
                     </Grid>
                 </CardContent>
             </StyledCard>
@@ -86,9 +89,11 @@ function SessionList(props) {
                     >
                         {sessions.map((session) => (
                             <Grid item key={session.uuid}>
-                                <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>
-                                    <SessionCard session={session}/>
-                                </Link>
+                                <SessionContextMenu sessionUUID={session.uuid}>
+                                    <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>
+                                        <SessionCard session={session}/>
+                                    </Link>
+                                </SessionContextMenu>
                             </Grid>
                         ))
                         }

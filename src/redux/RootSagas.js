@@ -1,4 +1,10 @@
-import {watchGetSessions, watchPostNewSession, watchGetSession} from "./sessions/Sagas"
+import {
+    watchGetSessions,
+    watchPostNewSession,
+    watchGetSession,
+    watchDeleteSession,
+    watchRestoreSession
+} from "./sessions/Sagas"
 import {
     watchPostNewTask,
     watchGetTasks,
@@ -39,6 +45,8 @@ export default function* rootSaga() {
         call(watchDeleteTask),
         call(watchGetSessions),
         call(watchGetSession),
+        call(watchDeleteSession),
+        call(watchRestoreSession),
         call(watchGetTask),
         call(watchGetTasks),
         call(watchUpdateTask),
@@ -67,6 +75,6 @@ export default function* rootSaga() {
         call(watchGetWhoami),
         call(watchLogin),
         call(watchRestoreTask),
-        call(watchGetAvailablePatches)
+        call(watchGetAvailablePatches),
     ])
 }

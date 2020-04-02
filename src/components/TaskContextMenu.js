@@ -36,11 +36,6 @@ function TaskContextMenu(props) {
         });
     };
 
-    function sendData(payload, updateData) {
-        const updateDataCombined = {...payload, ...updateData};
-        dispatch(updateTask({payload: payload, taskUUID: props.taskUUID, updateData: updateDataCombined ? updateDataCombined : {}}));
-    }
-
     function onSelectPickedUp() {
         handleClose();
         const payload = {pickup_time: moment.utc().toISOString()};
@@ -97,31 +92,32 @@ function TaskContextMenu(props) {
     }
 
     function undoDelete(key) {
-        props.closeSnackbar(key)
+        props.closeSnackbar(key);
         dispatch(restoreTask(props.taskUUID));
     }
     function undoPickup(key) {
         const payload = {pickup_time: null};
         dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
-        props.closeSnackbar(key)
+        props.closeSnackbar(key);
     }
     function undoDropoff(key) {
         const payload = {dropoff_time: null};
         dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
-        props.closeSnackbar(key)
+        props.closeSnackbar(key);
     }
     function undoRejected(key) {
         const payload = {rejected_time: null};
         dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
-        props.closeSnackbar(key)
+        props.closeSnackbar(key);
     }
     function undoCancelled(key) {
         const payload = {cancelled_time: null};
         dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
-        props.closeSnackbar(key)
+        props.closeSnackbar(key);
     }
 
     function onDelete(result) {
+        console.log(result)
         handleClose();
         if (result)
             dispatch(deleteTask(props.taskUUID));

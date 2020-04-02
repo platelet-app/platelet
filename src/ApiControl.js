@@ -228,6 +228,13 @@ class Session {
             return makeFetch(this.api_url, "sessions", "POST", this.bearer)
         }
     }
+    async deleteSession(session_id) {
+        return makeFetch(this.api_url, "session/" + session_id, "DELETE", this.bearer, "application/json")
+    }
+
+    async restoreSession(session_id) {
+        return makeFetch(this.api_url, "session/" + session_id + "/restore", "PUT", this.bearer, "application/json")
+    }
 
 }
 
