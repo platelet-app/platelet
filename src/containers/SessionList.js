@@ -18,6 +18,7 @@ import {bindActionCreators} from "redux";
 import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
+import {setMenuIndex} from "../redux/Actions";
 
 const useStyles = makeStyles({
     card: {
@@ -65,6 +66,8 @@ function SessionList(props) {
     }
 
     useEffect(updateSessionsList, [whoami]);
+    useEffect(() => {dispatch(setMenuIndex(2))}, []);
+
 
     let emptySession = {
         user_uuid: whoami.uuid,

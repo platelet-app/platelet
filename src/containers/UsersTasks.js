@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import {createLoadingSelector} from "../redux/selectors";
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton"
+import {setMenuIndex} from "../redux/Actions";
 
 function UsersTasks() {
     const dispatch = useDispatch();
@@ -23,6 +24,7 @@ function UsersTasks() {
     function componentDidMount() {
         dispatch(getAllMyTasks());
     }
+    useEffect(() => {dispatch(setMenuIndex(3))}, []);
 
     const tasks = useSelector(state => state.tasks);
 

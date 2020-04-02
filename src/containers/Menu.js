@@ -31,11 +31,6 @@ import MenuSkeleton from "../loadingComponents/MenuSkeleton";
 import MotorcycleIcon from '@material-ui/icons/Motorcycle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Switch from "@material-ui/core/Switch";
-import {setKanbanMode} from "../redux/Actions";
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
 
 const drawerWidth = 240;
 
@@ -75,13 +70,13 @@ export function ResponsiveDrawer(props) {
     const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
     const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami);
-    const kanbanMode = useSelector(state => state.kanbanMode);
     const mobileView = useSelector(state => state.mobileView);
+    const menuIndex = useSelector(state => state.menuIndex);
     const {container} = props;
     const classes = useStyles();
     const theme = useTheme();
+    const [selectedIndex, setSelectedIndex] = React.useState(1);
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const dispatch = useDispatch();
 
     const handleDrawerToggle = () => {
         if (mobileView)
@@ -94,7 +89,7 @@ export function ResponsiveDrawer(props) {
     if (!isFetching) {
         if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
             sessionLink =
-                <ListItem onClick={handleDrawerToggle}  component={Link} to="/sessions" button>
+                <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 2)} component={Link} to="/sessions" button>
                     <ListItemIcon><AppsIcon/></ListItemIcon>
                     <ListItemText primary={"Sessions"}/>
                 </ListItem>;
@@ -104,16 +99,16 @@ export function ResponsiveDrawer(props) {
                 <div className={classes.toolbar}/>
                 <Divider/>
                 <List component="nav">
-                    <ListItem onClick={handleDrawerToggle} component={Link} to="/" button>
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 1)} component={Link} to="/" button>
                         <ListItemIcon><HomeIcon/></ListItemIcon>
                         <ListItemText primary={"Home"}/>
                     </ListItem>
                     {sessionLink}
-                    <ListItem onClick={handleDrawerToggle}  component={Link} to={"/mytasks"} button>
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 3)} component={Link} to={"/mytasks"} button>
                         <ListItemIcon><InboxIcon/></ListItemIcon>
                         <ListItemText primary={"My Tasks"}/>
                     </ListItem>
-                    <ListItem onClick={handleDrawerToggle}  component={Link} to="/vehicles" button>
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 4)} component={Link} to="/vehicles" button>
                         <ListItemIcon><MotorcycleIcon/></ListItemIcon>
                         <ListItemText primary={"Vehicles"}/>
                     </ListItem>

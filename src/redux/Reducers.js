@@ -6,6 +6,7 @@ import {
     GET_WHOAMI_SUCCESS,
     SET_VIEW_MODE,
     SET_MOBILE_VIEW,
+    SET_MENU_INDEX
 } from './Actions'
 import {task, tasks} from "./tasks/Reducers"
 import {session, sessions} from "./sessions/Reducers"
@@ -22,6 +23,15 @@ import {vehicle, vehicles} from "./vehicles/Reducers";
 function viewMode(state = "kanban", action) {
     switch (action.type) {
         case SET_VIEW_MODE:
+            return action.data;
+        default:
+            return state
+    }
+}
+
+function menuIndex(state = 1, action) {
+    switch (action.type) {
+        case SET_MENU_INDEX:
             return action.data;
         default:
             return state
@@ -114,7 +124,8 @@ const rootReducer = combineReducers({
     postingReducer,
     apiControl,
     viewMode,
-    mobileView
+    mobileView,
+    menuIndex
 });
 
 export default rootReducer

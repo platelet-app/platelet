@@ -13,6 +13,7 @@ import {encodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
+import {setMenuIndex} from "../redux/Actions";
 
 const useStyles = makeStyles({
     card: {
@@ -56,6 +57,7 @@ function VehicleList() {
     }
 
     useEffect(componentDidMount, []);
+    useEffect(() => {dispatch(setMenuIndex(4))}, []);
     const vehicles = useSelector(state => state.vehicles);
 
 

@@ -10,6 +10,7 @@ import {PaddedPaper} from "../css/common";
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
+import {setMenuIndex} from "../redux/Actions";
 
 
 function VehicleDetail(props) {
@@ -27,6 +28,7 @@ function VehicleDetail(props) {
     }
 
     useEffect(componentDidMount, []);
+    useEffect(() => {dispatch(setMenuIndex(4))}, []);
 
     function onAssignUser(selectedUser) {
         if (selectedUser)

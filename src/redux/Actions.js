@@ -41,3 +41,9 @@ export const SET_MOBILE_VIEW = 'SET_MOBILE_VIEW';
 export function setMobileView(data) {
     return { type: SET_MOBILE_VIEW, data }
 }
+
+export const SET_MENU_INDEX = 'SET_MENU_INDEX';
+
+export function setMenuIndex(data) {
+    return { type: SET_MENU_INDEX, data }
+}

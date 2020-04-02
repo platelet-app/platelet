@@ -6,7 +6,7 @@ import {
     addTask,
     getAllTasks,
 } from '../redux/tasks/Actions'
-import {setViewMode} from "../redux/Actions";
+import {setMenuIndex, setViewMode} from "../redux/Actions";
 import {getSession} from "../redux/sessions/Actions";
 import {makeStyles} from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
@@ -19,9 +19,6 @@ import {
 import {createLoadingSelector} from '../redux/selectors';
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
 import TasksTable from "../components/TasksTable";
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
@@ -73,6 +70,7 @@ function SessionDetail(props) {
     }
 
     useEffect(componentDidMount, []);
+    useEffect(() => {dispatch(setMenuIndex(2))}, []);
 
 
     let location = useLocation();
