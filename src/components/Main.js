@@ -7,7 +7,7 @@ import MyUserProfile from '../containers/MyUserProfile'
 import {BrowserRouter as Router, Route, Switch, useLocation, useHistory, useParams} from "react-router-dom";
 import SessionDetail from "../containers/SessionDetail";
 import UsersTasks from "../containers/UsersTasks";
-import TaskModal from "./TaskModal";
+import TaskModal from "./taskdialog/TaskModal";
 import VehicleList from "../containers/VehiclesList";
 import VehicleDetail from "../containers/VehicleDetail";
 import {MainWindowContainer} from "../css/common";

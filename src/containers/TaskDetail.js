@@ -1,6 +1,6 @@
 import React from 'react';
 import '../App.css';
-import TaskDialog from "../components/TaskModal";
+import TaskDialog from "../components/taskdialog/TaskModal";
 
 
 export default function TaskDetail(props) {

@@ -1,4 +1,4 @@
-import { throttle, call, put, delay, take, fork, takeEvery , takeLatest, select, race, spawn} from 'redux-saga/effects'
+import { throttle, debounce, call, put, delay, take, fork, takeEvery , takeLatest, select, race, spawn} from 'redux-saga/effects'
 import {ADD_TASK_REQUEST,
     addTaskSuccess,
     UPDATE_TASK_REQUEST,
@@ -90,34 +90,34 @@ export function* watchUpdateTask() {
     yield takeEvery(UPDATE_TASK_REQUEST, updateTask)
 }
 export function* watchUpdateTaskContactName() {
-    yield throttle(500, UPDATE_TASK_CONTACT_NAME, updateTask)
+    yield debounce(500, UPDATE_TASK_CONTACT_NAME, updateTask)
 }
 export function* watchUpdateTaskContactNumber() {
-    yield throttle(500, UPDATE_TASK_CONTACT_NUMBER, updateTask)
+    yield debounce(500, UPDATE_TASK_CONTACT_NUMBER, updateTask)
 }
 export function* watchUpdateTaskPickupAddress() {
-    yield throttle(500, UPDATE_TASK_PICKUP_ADDRESS, updateTask)
+    yield debounce(500, UPDATE_TASK_PICKUP_ADDRESS, updateTask)
 }
 export function* watchUpdateTaskDropoffAddress() {
-    yield throttle(500, UPDATE_TASK_DROPOFF_ADDRESS, updateTask)
+    yield debounce(500, UPDATE_TASK_DROPOFF_ADDRESS, updateTask)
 }
 export function* watchUpdateTaskPickupTime() {
-    yield throttle(500, UPDATE_TASK_PICKUP_TIME, updateTask)
+    yield debounce(500, UPDATE_TASK_PICKUP_TIME, updateTask)
 }
 export function* watchUpdateTaskDropoffTime() {
-    yield throttle(500, UPDATE_TASK_DROPOFF_TIME, updateTask)
+    yield debounce(500, UPDATE_TASK_DROPOFF_TIME, updateTask)
 }
 export function* watchUpdateTaskAssignedRider() {
-    yield throttle(500, UPDATE_TASK_ASSIGNED_RIDER, updateTask)
+    yield debounce(500, UPDATE_TASK_ASSIGNED_RIDER, updateTask)
 }
 export function* watchUpdateTaskPriority() {
-    yield throttle(500, UPDATE_TASK_PRIORITY, updateTask)
+    yield debounce(500, UPDATE_TASK_PRIORITY, updateTask)
 }
 export function* watchUpdateTaskCancelledTime() {
-    yield throttle(500, UPDATE_TASK_CANCELLED_TIME, updateTask)
+    yield debounce(500, UPDATE_TASK_CANCELLED_TIME, updateTask)
 }
 export function* watchUpdateTaskRejectedTime() {
-    yield throttle(500, UPDATE_TASK_REJECTED_TIME, updateTask)
+    yield debounce(500, UPDATE_TASK_REJECTED_TIME, updateTask)
 }
 
 function* getTask(action) {

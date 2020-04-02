@@ -8,16 +8,15 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from "@material-ui/core/Grid";
 import {useHistory} from "react-router-dom";
-import AddressDetailsCollapsible from "./AddressDetail";
-import UsersSelect from "./UsersSelect";
-import ToggleTimeStamp from "./ToggleTimeStamp";
+import AddressDetailsCollapsible from "../AddressDetail";
+import UsersSelect from "../UsersSelect";
+import ToggleTimeStamp from "../ToggleTimeStamp";
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
-import PrioritySelect from "./PrioritySelect";
-import DeliverableGridSelect from "./DeliverableGridSelect";
-import DeliverableInformation from "./DeliverableInformation";
+import PrioritySelect from "../PrioritySelect";
+import DeliverableGridSelect from "../DeliverableGridSelect";
+import DeliverableInformation from "../DeliverableInformation";
 import {
-    updateTask,
     getAllTasks,
     updateTaskPickupTime,
     updateTaskPriority,
@@ -27,15 +26,17 @@ import {
     updateTaskDropoffAddress,
     updateTaskDropoffTime,
     updateTaskPickupAddress, updateTaskCancelledTime
-} from "../redux/tasks/Actions";
-import {connect, useDispatch, useSelector} from "react-redux"
+} from "../../redux/tasks/Actions";
+import {useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {TextFieldControlled} from "./TextFieldControlled";
-import {decodeUUID} from "../utilities";
-import {createLoadingSelector} from "../redux/selectors";
-import FormSkeleton from "../loadingComponents/FormSkeleton";
-import {DateAndTimePicker} from "./DateTimePickers";
+import {TextFieldControlled} from "../TextFieldControlled";
+import {decodeUUID} from "../../utilities";
+import {createLoadingSelector} from "../../redux/selectors";
+import FormSkeleton from "../../loadingComponents/FormSkeleton";
+import {DateAndTimePicker} from "../DateTimePickers";
+import TaskModalTimePicker from "./TaskModalTimePicker";
+import TaskModalNameAndContactNumber from "./TaskModalNameAndContactNumber";
 
 export default function TaskModal(props) {
     const dispatch = useDispatch();
@@ -285,16 +286,12 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                                <TextFieldControlled
-                                    value={task.contact_name}
-                                    label={"Contact Name"}
-                                    id={"contact-name"}
-                                    onSelect={onSelectName}/>
-                                <TextFieldControlled
-                                    label={"Contact Number"}
-                                    id={"contact-number"}
-                                    value={task.contact_number}
-                                    onSelect={onSelectContactNumber}/>
+                                <TaskModalNameAndContactNumber
+                                    contactName={task.contact_name}
+                                    contactNumber={task.contact_number}
+                                    onSelectName={onSelectName}
+                                    onSelectContactNumber={onSelectContactNumber}
+                                />
                             </Box>
                         </Grid>
 
@@ -335,13 +332,10 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                                <ToggleTimeStamp label={"Picked Up"} status={!!task.pickup_time}
-                                                 onSelect={onSelectPickedUp}/>
-                                <DateAndTimePicker visible={!!task.pickup_time} value={task.pickup_time} label={"Pickup Time"} onChange={(pickup_time) => {
-                                    const payload = {pickup_time};
-                                    dispatch(updateTaskPickupTime({taskUUID, payload}))
-                                }
-                                }/>
+                            <TaskModalTimePicker label={"Picked Up"} time={task.pickup_time} onToggle={onSelectPickedUp} onChange={(pickup_time) => {
+                                const payload = {pickup_time};
+                                dispatch(updateTaskPickupTime({taskUUID, payload}))
+                            }}/>
                                 <DialogContentText>
                                     {pickupTimeNotice}
                                 </DialogContentText>
@@ -349,13 +343,10 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                                <ToggleTimeStamp label={"Dropped Off"} status={!!task.dropoff_time}
-                                                 onSelect={onSelectDroppedOff}/>
-                                <DateAndTimePicker visible={!!task.dropoff_time} value={task.dropoff_time} label={"Dropoff Time"} onChange={(dropoff_time) => {
+                                <TaskModalTimePicker label={"Dropped Off"} time={task.dropoff_time} onToggle={onSelectDroppedOff} onChange={(dropoff_time) => {
                                     const payload = {dropoff_time};
                                     dispatch(updateTaskDropoffTime({taskUUID, payload}))
-                                }
-                                }/>
+                                }}/>
                                 <DialogContentText>
                                     {dropoffTimeNotice}
                                 </DialogContentText>

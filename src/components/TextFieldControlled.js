@@ -11,9 +11,9 @@ export function TextFieldControlled(props) {
             type="text"
             fullWidth
             value={currentValue || ''}
-            onSelect={props.onSelect}
             onChange={e => {
                 setCurrentValue(e.target.value);
+                props.onSelect(e)
             }}
             disabled={props.disabled ? props.disabled : false}
         />
