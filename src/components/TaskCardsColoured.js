@@ -43,7 +43,7 @@ export function TaskCard(props) {
                 <CardItem label={"Ward"}>{pickupWard}</CardItem>
                 <CardItem label={"To"}>{dropoffTitle}</CardItem>
                 <CardItem label={"Ward"}>{dropoffWard}</CardItem>
-                <CardItem label={"TOC"}><Moment format={"llll"}>{props.timestamp}</Moment></CardItem>
+                <CardItem label={"TOC"}><Moment calendar>{props.timestamp}</Moment></CardItem>
                 <CardItem width={"185px"} label={"Priority"}>{props.priority}</CardItem>
             </Grid>
         </CardContent>;
