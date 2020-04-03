@@ -164,22 +164,22 @@ export function* watchUpdateTaskDropoffAddress() {
     yield debounce(500, UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, updateTaskDropoffAddress)
 }
 export function* watchUpdateTaskPickupTime() {
-    yield debounce(500, UPDATE_TASK_PICKUP_TIME_REQUEST, updateTaskPickupTime)
+    yield takeEvery(UPDATE_TASK_PICKUP_TIME_REQUEST, updateTaskPickupTime)
 }
 export function* watchUpdateTaskDropoffTime() {
-    yield debounce(500, UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
+    yield takeEvery(UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
 }
 export function* watchUpdateTaskAssignedRider() {
-    yield debounce(500, UPDATE_TASK_ASSIGNED_RIDER_REQUEST, updateTaskAssignedRider)
+    yield takeEvery(UPDATE_TASK_ASSIGNED_RIDER_REQUEST, updateTaskAssignedRider)
 }
 export function* watchUpdateTaskPriority() {
-    yield debounce(500, UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
+    yield takeEvery(UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
 }
 export function* watchUpdateTaskCancelledTime() {
-    yield debounce(500, UPDATE_TASK_CANCELLED_TIME_REQUEST, updateTaskCancelledTime)
+    yield takeEvery(UPDATE_TASK_CANCELLED_TIME_REQUEST, updateTaskCancelledTime)
 }
 export function* watchUpdateTaskRejectedTime() {
-    yield debounce(500, UPDATE_TASK_REJECTED_TIME_REQUEST, updateTaskRejectedTime)
+    yield takeEvery(UPDATE_TASK_REJECTED_TIME_REQUEST, updateTaskRejectedTime)
 }
 
 function* getTask(action) {

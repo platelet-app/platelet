@@ -24,18 +24,6 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
-import CardItem from "../components/CardItem";
-
-const useStyles = makeStyles(theme => ({
-    root: {
-        flexGrow: 1,
-    },
-    paper: {
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    },
-}));
 
 function GetViewTitle(props) {
     console.log(props.type)
@@ -106,17 +94,23 @@ function SessionDetail(props) {
                     setAnchorEl(null);
                 }}
             >
-                    <MenuItem onClick={() => {
+                    <MenuItem selected={viewMode === "kanban"}  onClick={() => {
                         setAnchorEl(null);
                         dispatch(setViewMode("kanban"))
                     }}>
                         <Typography>Kanban</Typography>
                     </MenuItem>
-                <MenuItem onClick={() => {
+                <MenuItem selected={viewMode === "table"} onClick={() => {
                     setAnchorEl(null);
                     dispatch(setViewMode("table"))
                 }}>
                     <Typography>Table</Typography>
+                </MenuItem>
+                <MenuItem selected={viewMode === "stats"} onClick={() => {
+                    setAnchorEl(null);
+                    dispatch(setViewMode("stats"))
+                }}>
+                    <Typography>Stats</Typography>
                 </MenuItem>
             </Menu>
             </Grid>

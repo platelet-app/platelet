@@ -1,22 +1,58 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import {AddCircleButton} from "../components/Buttons";
 import TaskItem from "./TaskItem";
 import {orderTaskList} from "../utilities";
 import {createPostingSelector} from "../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
-import {TasksKanbanColumn, TasksSheetColumn} from "../css/TaskColumns";
-import MaterialTable from 'material-table';
+import {TasksSheetColumn} from "../css/TaskColumns";
+import MaterialTable, {MTableCell} from 'material-table';
 import moment from "moment";
-import Moment from "react-moment";
-import {DateAndTimePicker} from "./DateTimePickers";
-import PrioritySelect from "./PrioritySelect";
-import ToggleTimeStamp from "./ToggleTimeStamp";
 import Box from "@material-ui/core/Box";
-import UsersSelect from "./UsersSelect";
-import {updateTaskAssignedRider} from "../redux/tasks/Actions";
-import {TextFieldControlled} from "./TextFieldControlled";
+import {updateTaskAssignedRider, updateTask} from "../redux/tasks/Actions";
+
+import {forwardRef} from 'react';
+
+import AddBox from '@material-ui/icons/AddBox';
+import ArrowDownward from '@material-ui/icons/ArrowDownward';
+import Check from '@material-ui/icons/Check';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import ChevronRight from '@material-ui/icons/ChevronRight';
+import Clear from '@material-ui/icons/Clear';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import Edit from '@material-ui/icons/Edit';
+import FilterList from '@material-ui/icons/FilterList';
+import FirstPage from '@material-ui/icons/FirstPage';
+import LastPage from '@material-ui/icons/LastPage';
+import Remove from '@material-ui/icons/Remove';
+import SaveAlt from '@material-ui/icons/SaveAlt';
+import Search from '@material-ui/icons/Search';
+import ViewColumn from '@material-ui/icons/ViewColumn';
+
+
+import TaskContextMenu from "./TaskContextMenu";
+import {Typography} from "@material-ui/core";
+import Moment from "react-moment";
+
+const tableIcons = {
+    Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
+    Check: forwardRef((props, ref) => <Check {...props} ref={ref}/>),
+    Clear: forwardRef((props, ref) => <Clear {...props} ref={ref}/>),
+    Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref}/>),
+    DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref}/>),
+    Edit: forwardRef((props, ref) => <Edit {...props} ref={ref}/>),
+    Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref}/>),
+    Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref}/>),
+    FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref}/>),
+    LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref}/>),
+    NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref}/>),
+    PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref}/>),
+    ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref}/>),
+    Search: forwardRef((props, ref) => <Search {...props} ref={ref}/>),
+    SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref}/>),
+    ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref}/>),
+    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref}/>)
+};
 
 
 const getColumnTitle = key => {
@@ -40,111 +76,147 @@ const getColumnTitle = key => {
     }
 };
 
+function getStatusColour(task) {
+
+    let hasRider = false;
+    if (task.assigned_rider) {
+        hasRider = true;
+    }
+    if (task.cancelled_time || task.rejected_time) {
+        return {index: 4, colour: "gray"}
+    } else if (!task.assigned_rider) {
+        return {index: 0, colour: "rgba(252, 231, 121, 1)"}
+    } else if (task.assigned_rider && !task.pickup_time) {
+        return {index: 1, colour: "cornflowerblue"}
+    } else if (hasRider && task.pickup_time && !task.dropoff_time) {
+        return {index: 2, colour: "orange"}
+    } else if (task.dropoff_time) {
+        return {index: 3, colour: "lightgreen"}
+    }
+}
+
+function tasksDataColumns (tasks) {
+    return (tasks.map(task => {
+        return {
+            colourCode: getStatusColour(task),
+            timestamp: task.timestamp ? task.timestamp : "",
+            assignee: task.rider ? task.rider.display_name : "",
+            contactName: task.contact_name ? task.contact_name : "",
+            contactNumber: task.contact_number ? task.contact_number : "",
+            pickupAddress: task.pickup_address ? task.pickup_address.line1 : "",
+            pickupWard : task.pickup_address ? task.pickup_address.ward : "",
+            dropoffAddress: task.dropoff_address ? task.dropoff_address.line1 : "",
+            dropoffWard : task.dropoff_address ? task.dropoff_address.ward : "",
+            priority: task.priority,
+            pickupTime: task.pickup_time ? task.pickup_time : "",
+            dropoffTime: task.dropoff_time ? task.dropoff_time : "",
+            patch: task.rider ? task.rider.patch : "",
+            contextMenu: <TaskContextMenu taskUUID={task.uuid}
+                                          pickupTime={task.pickup_time}
+                                          dropoffTime={task.dropoff_time}
+                                          cancelledTime={task.cancelled_time}
+                                          rejectedTime={task.rejected_time}
+                                          assignedRider={task.assigned_rider}/>
+        }
+    }))
+};
 
 export default function TasksTable(props) {
     const dispatch = useDispatch();
-    const [state, setState] = React.useState({
-        columns: [
-            {title: 'Name', field: 'name'},
-            {title: 'Surname', field: 'surname'},
-            {title: 'Birth Year', field: 'birthYear', type: 'numeric'},
-            {
-                title: 'Birth Place',
-                field: 'birthCity',
-                lookup: {34: 'İstanbul', 63: 'Şanlıurfa'},
-            },
-        ],
-        data: [
-            {name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63},
-            {
-                name: 'Zerya Betül',
-                surname: 'Baran',
-                birthYear: 2017,
-                birthCity: 34,
-            },
-        ],
-    });
-
-    function onSelectRider(rider, taskUUID) {
-        if (rider) {
-            const payload = {assigned_rider: rider.uuid, rider};
-            dispatch(updateTaskAssignedRider({taskUUID, payload}))
+    moment.locale('en', {
+        calendar : {
+            lastDay : '[Yesterday at] LT',
+            sameDay : '[Today at] LT',
+            nextDay : '[Tomorrow at] LT',
+            lastWeek : '[last] dddd [at] LT',
+            nextWeek : 'dddd [at] LT',
+            sameElse : 'L'
         }
-    }
-
+    });
     const columns = [
+        {
+            title: "",
+            field: "colourCode",
+            width: "0px",
+            render: rowData => <Box style={{
+                borderRadius: "50%",
+                width: "20px",
+                height: "20px",
+                backgroundColor: rowData.colourCode.colour
+            }}/>,
+            customSort: (a, b) => a.colourCode.index < b.colourCode.index ? -1 : 1
+
+        },
         {title: "Assignee", field: "assignee"},
-        {title: "Time of Call", field: "timestamp"},
+        {
+            title: "Time of Call",
+            width: "220px",
+            field: "timestamp",
+            render: rowData =>
+                <Moment calendar style={{fontSize: "14px"}}>{rowData.timestamp ? rowData.timestamp : ""}</Moment>,
+            defaultSort: "desc"
+        },
         {title: "Contact Name", field: "contactName"},
         {title: "Contact Number", field: "contactNumber"},
+        {title: "Pickup Address", field: "pickupAddress"},
+        {title: "Pickup Ward", field: "pickupWard"},
+        {title: "Dropoff Address", field: "dropoffAddress"},
+        {title: "Dropoff Ward", field: "dropoffWard"},
         {title: "Priority", field: "priority"},
-        {title: "Pickup Time", field: "pickupTime"},
-        {title: "Dropoff Time", field: "dropoffTime"},
+        {title: "Pickup Time", field: "pickupTime", width: "240px", render: rowData => rowData.pickupTime ? <Moment calendar style={{fontSize: "14px"}}>{rowData.pickupTime}</Moment> : ""},
+        {title: "Dropoff Time", field: "dropoffTime", width: "240px", render: rowData => rowData.dropoffTime ? <Moment calendar style={{fontSize: "14px"}}>{rowData.dropoffTime}</Moment> : ""},
         {title: "Patch", field: "patch"},
+        {title: "", field: "contextMenu", width: "0px", sorting: false}
     ];
-    const tasksDataColumns = props.tasks.map(task => {
-        return {
-            assignee: <UsersSelect onSelect={onSelectRider} vehicleAssignedUsersFirst={true}/>,
-            timestamp: task.timestamp ?
-                <DateAndTimePicker visible={true} value={task.timestamp} label={"TOC"}/> : "",
-            contactName: <TextFieldControlled value={task.contact_name ? task.contact_name : ""}/>,
-            contactNumber: <TextFieldControlled value={task.contact_number ? task.contact_number : ""}/>,
-            priority: <PrioritySelect priority={task.priority_id}/>,
-            pickupTime: task.pickup_time ?
-                <DateAndTimePicker visible={true} value={task.pickup_time} label={"Pickup Time"}/> :
-                <ToggleTimeStamp label={"Picked Up"} status={!!task.pickup_time} onSelect={() => {
-                }}/>,
-            dropoffTime: task.dropoff_time ?
-                <DateAndTimePicker visible={true} value={task.dropoff_time} label={"Dropoff Time"}/> :
-                <ToggleTimeStamp label={"Dropped Off"} status={!!task.dropoff_time} onSelect={() => {
-                }}/>,
-            patch: task.rider ? task.rider.patch : "",
-        }
-    });
+    const [data, setData] = useState(tasksDataColumns(props.tasks));
+
+    useEffect(() => setData(tasksDataColumns(props.tasks)), [props.tasks]);
+
 
     return (
         <MaterialTable
-            title={"All Tasks"}
+            icons={tableIcons}
+            title=""
             columns={columns}
-            data={tasksDataColumns}
+            data={data}
+            options={{actionsColumnIndex: 1, pageSize: 10}}
             editable={{
                 onRowAdd: newData =>
-                    new Promise(resolve => {
+                    new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            resolve();
-                            setState(prevState => {
-                                const data = [...prevState.data];
-                                data.push(newData);
-                                return {...prevState, data};
-                            });
-                        }, 600);
+                            {
+                                const dataCopy = data;
+                                dataCopy.push(newData);
+                                setData(() => resolve());
+                            }
+                            resolve()
+                        }, 1000)
                     }),
                 onRowUpdate: (newData, oldData) =>
-                    new Promise(resolve => {
+                    new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            resolve();
-                            if (oldData) {
-                                setState(prevState => {
-                                    const data = [...prevState.data];
-                                    data[data.indexOf(oldData)] = newData;
-                                    return {...prevState, data};
-                                });
+                            {
+                                dispatch(updateTask(newData));
                             }
-                        }, 600);
+                            resolve()
+                        }, 1000)
                     }),
                 onRowDelete: oldData =>
-                    new Promise(resolve => {
+                    new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            resolve();
-                            setState(prevState => {
-                                const data = [...prevState.data];
-                                data.splice(data.indexOf(oldData), 1);
-                                return {...prevState, data};
-                            });
-                        }, 600);
+                            {
+                                let dataCopy = data;
+                                const index = dataCopy.indexOf(oldData);
+                                dataCopy.splice(index, 1);
+                                setData(() => resolve());
+                            }
+                            resolve()
+                        }, 1000)
                     }),
             }}
-        />)
+        />
+    )
+
 }
 
 export function TasksTablae(props) {

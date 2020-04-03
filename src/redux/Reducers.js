@@ -20,7 +20,7 @@ import {vehicle, vehicles} from "./vehicles/Reducers";
 
 
 //TODO: Figure out why it doesn't work to get this from localstorage..
-function viewMode(state = "kanban", action) {
+function viewMode(state = "table", action) {
     switch (action.type) {
         case SET_VIEW_MODE:
             return action.data;

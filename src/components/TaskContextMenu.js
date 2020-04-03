@@ -145,9 +145,6 @@ function TaskContextMenu(props) {
 
     return (
         <>
-        <div style={{ cursor: 'context-menu', position: "relative" }}>
-            {props.children}
-            <div style={{ cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex:1000}}>
             <IconButton
                 aria-label="more"
                 aria-controls="long-menu"
@@ -174,8 +171,6 @@ function TaskContextMenu(props) {
                 <MenuItem disabled={ props.cancelledTime || props.rejectedTime } onClick={onSelectCancelled}>Mark cancelled</MenuItem>
                 {deleteOption}
             </Menu>
-        </div>
-        </div>
             </>
     );
 }

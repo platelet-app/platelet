@@ -21,15 +21,7 @@ export default function TaskItem(props) {
 
     return (
         <Grid item key={props.task.uuid}>
-            <TaskContextMenu
-                taskUUID={props.task.uuid}
-                deleteDisabled={props.deleteDisabled}
-                pickupTime={props.task.pickup_time}
-                dropoffTime={props.task.dropoff_time}
-                assignedRider={props.task.assigned_rider}
-                cancelledTime={props.task.cancelled_time}
-                rejectedTime={props.task.rejected_time}
-            >
+            <div style={{ cursor: 'context-menu', position: "relative" }}>
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
                       to={{
@@ -43,7 +35,19 @@ export default function TaskItem(props) {
                 >
                     {task}
                 </Link>
+                <div style={{ cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex:1000}}>
+            <TaskContextMenu
+                taskUUID={props.task.uuid}
+                deleteDisabled={props.deleteDisabled}
+                pickupTime={props.task.pickup_time}
+                dropoffTime={props.task.dropoff_time}
+                assignedRider={props.task.assigned_rider}
+                cancelledTime={props.task.cancelled_time}
+                rejectedTime={props.task.rejected_time}
+            >
             </TaskContextMenu>
+                </div>
+            </div>
 
         </Grid>
     )
