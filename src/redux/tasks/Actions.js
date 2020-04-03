@@ -7,16 +7,27 @@ export const DELETE_TASK_SUCCESS = 'DELETE_TASK_SUCCESS';
 export const RESTORE_TASK_REQUEST = 'RESTORE_TASK_REQUEST';
 export const RESTORE_TASK_SUCCESS = 'RESTORE_TASK_SUCCESS';
 
-export const UPDATE_TASK_CONTACT_NAME = "UPDATE_TASK_CONTACT_NAME";
-export const UPDATE_TASK_CONTACT_NUMBER = "UPDATE_TASK_CONTACT_NUMBER";
-export const UPDATE_TASK_PICKUP_ADDRESS = "UPDATE_TASK_PICKUP_ADDRESS";
-export const UPDATE_TASK_DROPOFF_ADDRESS = "UPDATE_TASK_DROPOFF_ADDRESS";
-export const UPDATE_TASK_PICKUP_TIME = "UPDATE_TASK_PICKUP_TIME";
-export const UPDATE_TASK_DROPOFF_TIME = "UPDATE_TASK_DROPOFF_TIME";
-export const UPDATE_TASK_CANCELLED_TIME = "UPDATE_TASK_CANCELLED_TIME";
-export const UPDATE_TASK_REJECTED_TIME = "UPDATE_TASK_REJECTED_TIME";
-export const UPDATE_TASK_ASSIGNED_RIDER = "UPDATE_TASK_ASSIGNED_RIDER";
-export const UPDATE_TASK_PRIORITY = "UPDATE_TASK_PRIORITY";
+export const UPDATE_TASK_CONTACT_NAME_REQUEST = "UPDATE_TASK_CONTACT_NAME_REQUEST";
+export const UPDATE_TASK_CONTACT_NUMBER_REQUEST = "UPDATE_TASK_CONTACT_NUMBER_REQUEST";
+export const UPDATE_TASK_PICKUP_ADDRESS_REQUEST = "UPDATE_TASK_PICKUP_ADDRESS_REQUEST";
+export const UPDATE_TASK_DROPOFF_ADDRESS_REQUEST = "UPDATE_TASK_DROPOFF_ADDRESS_REQUEST";
+export const UPDATE_TASK_PICKUP_TIME_REQUEST = "UPDATE_TASK_PICKUP_TIME_REQUEST";
+export const UPDATE_TASK_DROPOFF_TIME_REQUEST = "UPDATE_TASK_DROPOFF_TIME_REQUEST";
+export const UPDATE_TASK_CANCELLED_TIME_REQUEST = "UPDATE_TASK_CANCELLED_TIME_REQUEST";
+export const UPDATE_TASK_REJECTED_TIME_REQUEST = "UPDATE_TASK_REJECTED_TIME_REQUEST";
+export const UPDATE_TASK_ASSIGNED_RIDER_REQUEST = "UPDATE_TASK_ASSIGNED_RIDER_REQUEST";
+export const UPDATE_TASK_PRIORITY_REQUEST = "UPDATE_TASK_PRIORITY_REQUEST";
+
+export const UPDATE_TASK_CONTACT_NAME_SUCCESS = "UPDATE_TASK_CONTACT_NAME_SUCCESS";
+export const UPDATE_TASK_CONTACT_NUMBER_SUCCESS = "UPDATE_TASK_CONTACT_NUMBER_SUCCESS";
+export const UPDATE_TASK_PICKUP_ADDRESS_SUCCESS = "UPDATE_TASK_PICKUP_ADDRESS_SUCCESS";
+export const UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS = "UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS";
+export const UPDATE_TASK_PICKUP_TIME_SUCCESS = "UPDATE_TASK_PICKUP_TIME_SUCCESS";
+export const UPDATE_TASK_DROPOFF_TIME_SUCCESS = "UPDATE_TASK_DROPOFF_TIME_SUCCESS";
+export const UPDATE_TASK_CANCELLED_TIME_SUCCESS = "UPDATE_TASK_CANCELLED_TIME_SUCCESS";
+export const UPDATE_TASK_REJECTED_TIME_SUCCESS = "UPDATE_TASK_REJECTED_TIME_SUCCESS";
+export const UPDATE_TASK_ASSIGNED_RIDER_SUCCESS = "UPDATE_TASK_ASSIGNED_RIDER_SUCCESS";
+export const UPDATE_TASK_PRIORITY_SUCCESS = "UPDATE_TASK_PRIORITY_SUCCESS";
 
 export const UPDATE_TASK_REQUEST = 'UPDATE_TASK_REQUEST';
 export const UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS';
@@ -63,34 +74,65 @@ export function updateTask(data) {
 
 
 export function updateTaskContactName(data) {
-    return { type: UPDATE_TASK_CONTACT_NAME, data }
+    return { type: UPDATE_TASK_CONTACT_NAME_REQUEST, data }
 }
 export function updateTaskContactNumber(data) {
-    return { type: UPDATE_TASK_CONTACT_NUMBER, data }
+    return { type: UPDATE_TASK_CONTACT_NUMBER_REQUEST, data }
 }
 export function updateTaskPickupAddress(data) {
-    return { type: UPDATE_TASK_PICKUP_ADDRESS, data }
+    return { type: UPDATE_TASK_PICKUP_ADDRESS_REQUEST, data }
 }
 export function updateTaskDropoffAddress(data) {
-    return { type: UPDATE_TASK_DROPOFF_ADDRESS, data }
+    return { type: UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, data }
 }
 export function updateTaskPickupTime(data) {
-    return { type: UPDATE_TASK_PICKUP_TIME, data }
+    return { type: UPDATE_TASK_PICKUP_TIME_REQUEST, data }
 }
 export function updateTaskDropoffTime(data) {
-    return { type: UPDATE_TASK_DROPOFF_TIME, data }
+    return { type: UPDATE_TASK_DROPOFF_TIME_REQUEST, data }
 }
 export function updateTaskCancelledTime(data) {
-    return { type: UPDATE_TASK_CANCELLED_TIME, data }
+    return { type: UPDATE_TASK_CANCELLED_TIME_REQUEST, data }
 }
 export function updateTaskRejectedTime(data) {
-    return { type: UPDATE_TASK_REJECTED_TIME, data }
+    return { type: UPDATE_TASK_REJECTED_TIME_REQUEST, data }
 }
 export function updateTaskAssignedRider(data) {
-    return { type: UPDATE_TASK_ASSIGNED_RIDER, data }
+    return { type: UPDATE_TASK_ASSIGNED_RIDER_REQUEST, data }
 }
 export function updateTaskPriority(data) {
-    return { type: UPDATE_TASK_PRIORITY, data }
+    return { type: UPDATE_TASK_PRIORITY_REQUEST, data }
+}
+
+export function updateTaskContactNameSuccess(data) {
+    return { type: UPDATE_TASK_CONTACT_NAME_SUCCESS, data }
+}
+export function updateTaskContactNumberSuccess(data) {
+    return { type: UPDATE_TASK_CONTACT_NUMBER_SUCCESS, data }
+}
+export function updateTaskPickupAddressSuccess(data) {
+    return { type: UPDATE_TASK_PICKUP_ADDRESS_SUCCESS, data }
+}
+export function updateTaskDropoffAddressSuccess(data) {
+    return { type: UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS, data }
+}
+export function updateTaskPickupTimeSuccess(data) {
+    return { type: UPDATE_TASK_PICKUP_TIME_SUCCESS, data }
+}
+export function updateTaskDropoffTimeSuccess(data) {
+    return { type: UPDATE_TASK_DROPOFF_TIME_SUCCESS, data }
+}
+export function updateTaskCancelledTimeSuccess(data) {
+    return { type: UPDATE_TASK_CANCELLED_TIME_SUCCESS, data }
+}
+export function updateTaskRejectedTimeSuccess(data) {
+    return { type: UPDATE_TASK_REJECTED_TIME_SUCCESS, data }
+}
+export function updateTaskAssignedRiderSuccess(data) {
+    return { type: UPDATE_TASK_ASSIGNED_RIDER_SUCCESS, data }
+}
+export function updateTaskPrioritySuccess(data) {
+    return { type: UPDATE_TASK_PRIORITY_SUCCESS, data }
 }
 
 export function updateTaskSuccess(data) {

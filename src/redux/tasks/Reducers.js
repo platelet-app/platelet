@@ -1,8 +1,17 @@
 import {
     ADD_TASK_SUCCESS,
-    DELETE_TASK_SUCCESS, GET_MY_TASKS_SUCCESS,
-    GET_TASK_SUCCESS, GET_TASKS_SUCCESS,
+    DELETE_TASK_SUCCESS,
+    GET_MY_TASKS_SUCCESS,
+    GET_TASK_SUCCESS,
+    GET_TASKS_SUCCESS,
     RESTORE_TASK_SUCCESS,
+    UPDATE_TASK_ASSIGNED_RIDER_SUCCESS,
+    UPDATE_TASK_CANCELLED_TIME_SUCCESS,
+    UPDATE_TASK_CONTACT_NAME_SUCCESS,
+    UPDATE_TASK_CONTACT_NUMBER_SUCCESS,
+    UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS, UPDATE_TASK_DROPOFF_TIME_SUCCESS,
+    UPDATE_TASK_PICKUP_ADDRESS_SUCCESS,
+    UPDATE_TASK_PICKUP_TIME_SUCCESS, UPDATE_TASK_REJECTED_TIME_SUCCESS,
     UPDATE_TASK_SUCCESS
 } from "./Actions";
 import update from "immutability-helper";
@@ -34,6 +43,15 @@ export function tasks(state = [], action) {
                 }
             ];
         case UPDATE_TASK_SUCCESS:
+        case UPDATE_TASK_CONTACT_NAME_SUCCESS:
+        case UPDATE_TASK_CONTACT_NUMBER_SUCCESS:
+        case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
+        case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
+        case UPDATE_TASK_REJECTED_TIME_SUCCESS:
+        case UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS:
+        case UPDATE_TASK_PICKUP_ADDRESS_SUCCESS:
+        case UPDATE_TASK_PICKUP_TIME_SUCCESS:
+        case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
             let result = state.filter(task => task.uuid === action.data.taskUUID);
             if (result.length === 1) {
                 const updated_item = {...result[0], ...action.data.payload};

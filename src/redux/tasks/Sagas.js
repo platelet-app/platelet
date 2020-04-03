@@ -1,18 +1,19 @@
 import { throttle, debounce, call, put, delay, take, fork, takeEvery , takeLatest, select, race, spawn} from 'redux-saga/effects'
-import {ADD_TASK_REQUEST,
+import {
+    ADD_TASK_REQUEST,
     addTaskSuccess,
     UPDATE_TASK_REQUEST,
     updateTaskSuccess,
-    UPDATE_TASK_ASSIGNED_RIDER,
-    UPDATE_TASK_CONTACT_NUMBER,
-    UPDATE_TASK_DROPOFF_ADDRESS,
-    UPDATE_TASK_PICKUP_ADDRESS,
-    UPDATE_TASK_CONTACT_NAME,
-    UPDATE_TASK_PICKUP_TIME,
-    UPDATE_TASK_DROPOFF_TIME,
-    UPDATE_TASK_CANCELLED_TIME,
-    UPDATE_TASK_REJECTED_TIME,
-    UPDATE_TASK_PRIORITY,
+    UPDATE_TASK_ASSIGNED_RIDER_REQUEST,
+    UPDATE_TASK_CONTACT_NUMBER_REQUEST,
+    UPDATE_TASK_DROPOFF_ADDRESS_REQUEST,
+    UPDATE_TASK_PICKUP_ADDRESS_REQUEST,
+    UPDATE_TASK_CONTACT_NAME_REQUEST,
+    UPDATE_TASK_PICKUP_TIME_REQUEST,
+    UPDATE_TASK_DROPOFF_TIME_REQUEST,
+    UPDATE_TASK_CANCELLED_TIME_REQUEST,
+    UPDATE_TASK_REJECTED_TIME_REQUEST,
+    UPDATE_TASK_PRIORITY_REQUEST,
     RESTORE_TASK_REQUEST,
     restoreTaskSuccess,
     DELETE_TASK_REQUEST,
@@ -22,7 +23,18 @@ import {ADD_TASK_REQUEST,
     GET_MY_TASKS_REQUEST,
     getAllMyTasksSuccess,
     GET_TASK_REQUEST,
-    getTaskSuccess} from "./Actions"
+    getTaskSuccess,
+    updateTaskContactNameSuccess,
+    updateTaskContactNumberSuccess,
+    updateTaskPickupAddressSuccess,
+    updateTaskDropoffAddressSuccess,
+    updateTaskPickupTimeSuccess,
+    updateTaskDropoffTimeSuccess,
+    updateTaskAssignedRiderSuccess,
+    updateTaskPrioritySuccess,
+    updateTaskCancelledTimeSuccess,
+    updateTaskRejectedTimeSuccess
+} from "./Actions"
 
 import { getApiControl } from "../Api"
 
@@ -85,39 +97,89 @@ function* updateTask(action) {
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskSuccess(action.data))
 }
+function* updateTaskContactName(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskContactNameSuccess(action.data))
+}
+function* updateTaskContactNumber(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskContactNumberSuccess(action.data))
+}
+function* updateTaskPickupAddress(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskPickupAddressSuccess(action.data))
+}
+function* updateTaskDropoffAddress(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskDropoffAddressSuccess(action.data))
+}
+function* updateTaskPickupTime(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskPickupTimeSuccess(action.data))
+}
+function* updateTaskDropoffTime(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskDropoffTimeSuccess(action.data))
+}
+function* updateTaskAssignedRider(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskAssignedRiderSuccess(action.data))
+}
+function* updateTaskPriority(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskPrioritySuccess(action.data))
+}
+function* updateTaskCancelledTime(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskCancelledTimeSuccess(action.data))
+}
+function* updateTaskRejectedTime(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskRejectedTimeSuccess(action.data))
+}
 
 export function* watchUpdateTask() {
     yield takeEvery(UPDATE_TASK_REQUEST, updateTask)
 }
 export function* watchUpdateTaskContactName() {
-    yield debounce(500, UPDATE_TASK_CONTACT_NAME, updateTask)
+    yield debounce(500, UPDATE_TASK_CONTACT_NAME_REQUEST, updateTaskContactName)
 }
 export function* watchUpdateTaskContactNumber() {
-    yield debounce(500, UPDATE_TASK_CONTACT_NUMBER, updateTask)
+    yield debounce(500, UPDATE_TASK_CONTACT_NUMBER_REQUEST, updateTaskContactNumber)
 }
 export function* watchUpdateTaskPickupAddress() {
-    yield debounce(500, UPDATE_TASK_PICKUP_ADDRESS, updateTask)
+    yield debounce(500, UPDATE_TASK_PICKUP_ADDRESS_REQUEST, updateTaskPickupAddress)
 }
 export function* watchUpdateTaskDropoffAddress() {
-    yield debounce(500, UPDATE_TASK_DROPOFF_ADDRESS, updateTask)
+    yield debounce(500, UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, updateTaskDropoffAddress)
 }
 export function* watchUpdateTaskPickupTime() {
-    yield debounce(500, UPDATE_TASK_PICKUP_TIME, updateTask)
+    yield debounce(500, UPDATE_TASK_PICKUP_TIME_REQUEST, updateTaskPickupTime)
 }
 export function* watchUpdateTaskDropoffTime() {
-    yield debounce(500, UPDATE_TASK_DROPOFF_TIME, updateTask)
+    yield debounce(500, UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
 }
 export function* watchUpdateTaskAssignedRider() {
-    yield debounce(500, UPDATE_TASK_ASSIGNED_RIDER, updateTask)
+    yield debounce(500, UPDATE_TASK_ASSIGNED_RIDER_REQUEST, updateTaskAssignedRider)
 }
 export function* watchUpdateTaskPriority() {
-    yield debounce(500, UPDATE_TASK_PRIORITY, updateTask)
+    yield debounce(500, UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
 }
 export function* watchUpdateTaskCancelledTime() {
-    yield debounce(500, UPDATE_TASK_CANCELLED_TIME, updateTask)
+    yield debounce(500, UPDATE_TASK_CANCELLED_TIME_REQUEST, updateTaskCancelledTime)
 }
 export function* watchUpdateTaskRejectedTime() {
-    yield debounce(500, UPDATE_TASK_REJECTED_TIME, updateTask)
+    yield debounce(500, UPDATE_TASK_REJECTED_TIME_REQUEST, updateTaskRejectedTime)
 }
 
 function* getTask(action) {

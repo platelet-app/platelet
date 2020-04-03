@@ -32,7 +32,7 @@ import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {TextFieldControlled} from "../TextFieldControlled";
 import {decodeUUID} from "../../utilities";
-import {createLoadingSelector} from "../../redux/selectors";
+import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import FormSkeleton from "../../loadingComponents/FormSkeleton";
 import {DateAndTimePicker} from "../DateTimePickers";
 import TaskModalTimePicker from "./TaskModalTimePicker";
@@ -43,11 +43,21 @@ export default function TaskModal(props) {
     // Leave this here in case app.js dispatchers haven't finished before the modal is opened
     const loadingSelector = createLoadingSelector([
         "GET_TASK",
+        "GET_TASKS",
         "GET_AVAILABLE_LOCATIONS",
         "GET_AVAILABLE_PRIORITIES",
         "GET_USERS",
         "GET_AVAILABLE_LOCATIONS"]);
+    const isPostingPickupSelector = createPostingSelector([
+        "UPDATE_TASK_PICKUP_TIME"
+        ]);
+    const isPostingDropoffSelector = createPostingSelector([
+        "UPDATE_TASK_DROPOFF_TIME"
+        ]);
     const isFetching = useSelector(state => loadingSelector(state));
+    const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
+    const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
+    console.log(isPostingDropoffTime)
     const availablePatches = useSelector(state => state.availablePatches);
     let useStyles;
     // TODO: Do this properly (withStyles)
@@ -171,7 +181,7 @@ export default function TaskModal(props) {
                 </DialogContentText>
             </>;
     }
-    let prioritySelect = <></>;
+    let prioritySelect;
     if (!editMode) {
         prioritySelect = task.priority ? <>
             <DialogContentText>Priority {task.priority}</DialogContentText></> : ""
@@ -232,46 +242,12 @@ export default function TaskModal(props) {
     if (props.modal) {
         const modalContents = isFetching ?
             <div style={{width: "600px"}}>
-                <DialogTitle id="form-dialog-title">
-                    <Grid container
-                          spacing={2}
-                          direction={"column"}
-                          justify={"flex-start"}
-                          alignItems={"flex-start"}>
-                        <Grid item>
-                            {task.pickup_address ? "FROM: " + task.pickup_address.line1 + "." : ""}
-                        </Grid>
-                        <Grid item>
-                            {task.dropoff_address ? "TO: " + task.dropoff_address.line1 + "." : ""}
-                        </Grid>
-                        <Grid item>
-                            {task.rider ? "Assigned to: " + task.rider.display_name + "." : ""}
-                        </Grid>
-                    </Grid>
-                </DialogTitle>
                 <DialogContent>
                     <FormSkeleton/>
                 </DialogContent>
             </div> :
 
             <>
-                <DialogTitle id="form-dialog-title">
-                    <Grid container
-                          spacing={2}
-                          direction={"column"}
-                          justify={"flex-start"}
-                          alignItems={"flex-start"}>
-                        <Grid item>
-                            {task.pickup_address ? "FROM: " + task.pickup_address.line1 + "." : ""}
-                        </Grid>
-                        <Grid item>
-                            {task.dropoff_address ? "TO: " + task.dropoff_address.line1 + "." : ""}
-                        </Grid>
-                        <Grid item>
-                            {task.rider ? "Assigned to: " + task.rider.display_name + "." : ""}
-                        </Grid>
-                    </Grid>
-                </DialogTitle>
                 <DialogContent>
                     <Grid container
                           spacing={3}
@@ -332,7 +308,7 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                            <TaskModalTimePicker label={"Picked Up"} time={task.pickup_time} onToggle={onSelectPickedUp} onChange={(pickup_time) => {
+                            <TaskModalTimePicker disabled={isPostingPickupTime} label={"Picked Up"} time={task.pickup_time} onToggle={onSelectPickedUp} onChange={(pickup_time) => {
                                 const payload = {pickup_time};
                                 dispatch(updateTaskPickupTime({taskUUID, payload}))
                             }}/>
@@ -343,7 +319,7 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                                <TaskModalTimePicker label={"Dropped Off"} time={task.dropoff_time} onToggle={onSelectDroppedOff} onChange={(dropoff_time) => {
+                                <TaskModalTimePicker disabled={isPostingDropoffTime} label={"Dropped Off"} time={task.dropoff_time} onToggle={onSelectDroppedOff} onChange={(dropoff_time) => {
                                     const payload = {dropoff_time};
                                     dispatch(updateTaskDropoffTime({taskUUID, payload}))
                                 }}/>

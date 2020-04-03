@@ -11,6 +11,7 @@ export function DateAndTimePicker(props) {
         return (
             <>
                 <KeyboardDateTimePicker
+                    disabled={props.disabled}
                     variant="inline"
                     ampm={false}
                     label={props.label}

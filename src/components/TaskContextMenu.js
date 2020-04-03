@@ -5,7 +5,7 @@ import moment from 'moment/min/moment-with-locales';
 import {
     deleteTask,
     restoreTask,
-    updateTask, updateTaskCancelledTime,
+    updateTaskCancelledTime,
     updateTaskDropoffTime,
     updateTaskPickupTime, updateTaskRejectedTime
 } from "../redux/tasks/Actions";
@@ -24,7 +24,14 @@ const initialState = {
 
 function TaskContextMenu(props) {
     const [state, setState] = React.useState(initialState);
-    const postingSelector = createPostingSelector(["UPDATE_TASK"]);
+    const postingSelector = createPostingSelector([
+        "DELETE_TASK",
+        "RESTORE_TASK",
+        "UPDATE_TASK",
+        "UPDATE_TASK_PICKUP_TIME",
+        "UPDATE_TASK_DROPOFF_TIME",
+        "UPDATE_TASK_CANCELLED_TIME",
+        "UPDATE_TASK_REJECTED_TIME"]);
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
@@ -117,7 +124,6 @@ function TaskContextMenu(props) {
     }
 
     function onDelete(result) {
-        console.log(result)
         handleClose();
         if (result)
             dispatch(deleteTask(props.taskUUID));

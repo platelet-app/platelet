@@ -1,33 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 
-export default class toggleTimeStamp extends React.Component {
-    state = {
-        selected: this.props.status,
-    };
+export default function ToggleTimeStamp(props) {
+    const [selected, setSelected] = useState(props.status);
 
-    render() {
         return (
             <div>
             <ToggleButton
                 value="check"
-                selected={this.state.selected}
+                selected={selected}
+                disabled={props.disabled}
                 onChange={() => {
-                    this.setState({
-                            selected: !this.state.selected,
-
-                        }
-                        , function () {
-                            this.props.onSelect(this.state.selected);
-                        }
-                    );
+                    props.onSelect(!selected);
+                    setSelected(!selected);
                 }
                 }
             >
-                {this.props.label}
+                {props.label}
             </ToggleButton>
                 </div>
         );
 
-    }
 }
