@@ -65,8 +65,8 @@ function VehicleDetail(props) {
             </IconButton>;
         }
 
-    let header = assignedUserDisplayName ? <h2>{vehicle.name} assigned to {assignedUserDisplayName}.</h2> :
-        <h2>{vehicle.name} assigned to nobody.</h2>;
+    let header = assignedUserDisplayName ? <h2>{vehicle.name ? vehicle.name : "No name"} assigned to {assignedUserDisplayName}.</h2> :
+        <h2>{vehicle.name ? vehicle.name : "No name"} assigned to nobody.</h2>;
 
     useEffect(() => {
         if (assignedUser)

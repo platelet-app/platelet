@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import TextField from "@material-ui/core/TextField";
 
 export function TextFieldControlled(props) {
-    const [currentValue, setCurrentValue] = useState(props.forceUppercase ? props.value.toUpperCase() : props.value);
+    const [currentValue, setCurrentValue] = useState(props.forceUppercase && props.value ? props.value.toUpperCase() : props.value);
     return (
         <TextField
             margin="dense"
