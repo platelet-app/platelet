@@ -9,7 +9,6 @@ import 'react-notifications-component/dist/theme.css'
 import {Provider} from 'react-redux'
 import store from "./redux/Store"
 import {SnackbarProvider} from "notistack";
-import MomentUtils from '@date-io/moment';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import DateFnsUtils from "@date-io/date-fns";
 import 'typeface-roboto'

@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import TextField from "@material-ui/core/TextField";
 
 export function TextFieldControlled(props) {
-    const [currentValue, setCurrentValue] = useState(props.value);
+    const [currentValue, setCurrentValue] = useState(props.forceUppercase ? props.value.toUpperCase() : props.value);
     return (
         <TextField
             margin="dense"
@@ -11,8 +11,11 @@ export function TextFieldControlled(props) {
             type="text"
             fullWidth
             value={currentValue || ''}
+            inputProps={{
+                maxLength: props.maxLength
+            }}
             onChange={e => {
-                setCurrentValue(e.target.value);
+                setCurrentValue(props.forceUppercase ? e.target.value.toUpperCase() : e.target.value);
                 props.onSelect(e)
             }}
             disabled={props.disabled ? props.disabled : false}

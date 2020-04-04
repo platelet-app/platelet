@@ -1,5 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {getVehicle, updateVehicle} from "../redux/vehicles/Actions";
+import {
+    getVehicle,
+    updateVehicle,
+    updateVehicleManufacturer,
+    updateVehicleModel,
+    updateVehicleName, updateVehicleRegistration
+} from "../redux/vehicles/Actions";
 import {decodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldControlled} from "../components/TextFieldControlled";
@@ -89,28 +95,42 @@ function VehicleDetail(props) {
                             label={"Name"}
                             id={"vehicle-name"}
                             disabled={!editMode}
-                            onSelect={() => {
+                            onSelect={(e) => {
+                                const payload = {name: e.target.value};
+                                const vehicleUUID = vehicle.uuid;
+                                dispatch(updateVehicleName({vehicleUUID, payload}))
                             }}/>
                         <TextFieldControlled
                             value={vehicle.manufacturer}
                             label={"Manufacturer"}
                             id={"vehicle-manufacturer"}
                             disabled={!editMode}
-                            onSelect={() => {
+                            onSelect={(e) => {
+                                const payload = {manufacturer: e.target.value};
+                                const vehicleUUID = vehicle.uuid;
+                                dispatch(updateVehicleManufacturer({vehicleUUID, payload}))
                             }}/>
                         <TextFieldControlled
                             value={vehicle.model}
                             label={"Model"}
                             id={"vehicle-model"}
                             disabled={!editMode}
-                            onSelect={() => {
+                            onSelect={(e) => {
+                                const payload = {model: e.target.value};
+                                const vehicleUUID = vehicle.uuid;
+                                dispatch(updateVehicleModel({vehicleUUID, payload}))
                             }}/>
                         <TextFieldControlled
                             value={vehicle.registration_number}
                             label={"Registration"}
                             id={"vehicle-registration"}
                             disabled={!editMode}
-                            onSelect={() => {
+                            maxLength={10}
+                            forceUppercase={true}
+                            onSelect={(e) => {
+                                const payload = {registration_number: e.target.value};
+                                const vehicleUUID = vehicle.uuid;
+                                dispatch(updateVehicleRegistration({vehicleUUID, payload}))
                             }}/>
                         {userAssign}
                     </Grid>

@@ -33,7 +33,11 @@ import {
     watchGetVehicles,
     watchUpdateVehicle,
     watchVehicle,
-    watchDeleteVehicle, watchRestoreVehicle
+    watchDeleteVehicle,
+    watchRestoreVehicle,
+    watchUpdateVehicleName,
+    watchUpdateVehicleManufacturer,
+    watchUpdateVehicleModel, watchUpdateVehicleRegistration
 } from "./vehicles/Sagas"
 
 import { all, call } from 'redux-saga/effects'
@@ -75,6 +79,10 @@ export default function* rootSaga() {
         call(watchUpdateDeliverable),
         call(watchGetVehicles),
         call(watchUpdateVehicle),
+        call(watchUpdateVehicleName),
+        call(watchUpdateVehicleManufacturer),
+        call(watchUpdateVehicleModel),
+        call(watchUpdateVehicleRegistration),
         call(watchPostNewVehicle),
         call(watchVehicle),
         call(watchDeleteVehicle),

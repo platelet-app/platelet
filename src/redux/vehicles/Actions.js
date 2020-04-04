@@ -2,6 +2,14 @@ export const ADD_VEHICLE_REQUEST = 'ADD_VEHICLE_REQUEST';
 export const ADD_VEHICLE_SUCCESS = 'ADD_VEHICLE_SUCCESS';
 export const UPDATE_VEHICLE_REQUEST = 'UPDATE_VEHICLE_REQUEST';
 export const UPDATE_VEHICLE_SUCCESS = 'UPDATE_VEHICLE_SUCCESS';
+export const UPDATE_VEHICLE_NAME_REQUEST = 'UPDATE_VEHICLE_NAME_REQUEST';
+export const UPDATE_VEHICLE_NAME_SUCCESS = 'UPDATE_VEHICLE_NAME_SUCCESS';
+export const UPDATE_VEHICLE_MANUFACTURER_REQUEST = 'UPDATE_VEHICLE_MANUFACTURER_REQUEST';
+export const UPDATE_VEHICLE_MANUFACTURER_SUCCESS = 'UPDATE_VEHICLE_MANUFACTURER_SUCCESS';
+export const UPDATE_VEHICLE_MODEL_REQUEST = 'UPDATE_VEHICLE_MODEL_REQUEST';
+export const UPDATE_VEHICLE_MODEL_SUCCESS = 'UPDATE_VEHICLE_MODEL_SUCCESS';
+export const UPDATE_VEHICLE_REGISTRATION_REQUEST = 'UPDATE_VEHICLE_REGISTRATION_REQUEST';
+export const UPDATE_VEHICLE_REGISTRATION_SUCCESS = 'UPDATE_VEHICLE_REGISTRATION_SUCCESS';
 export const GET_VEHICLES_REQUEST = 'GET_VEHICLES_REQUEST';
 export const GET_VEHICLES_SUCCESS = 'GET_VEHICLES_SUCCESS';
 export const GET_VEHICLE_REQUEST = 'GET_VEHICLE_REQUEST';
@@ -25,6 +33,38 @@ export function updateVehicle(data) {
 
 export function updateVehicleSuccess(data) {
     return { type: UPDATE_VEHICLE_SUCCESS, data }
+}
+
+export function updateVehicleName(data) {
+    return { type: UPDATE_VEHICLE_NAME_REQUEST, data }
+}
+
+export function updateVehicleNameSuccess(data) {
+    return { type: UPDATE_VEHICLE_NAME_SUCCESS, data }
+}
+
+export function updateVehicleManufacturer(data) {
+    return { type: UPDATE_VEHICLE_MANUFACTURER_REQUEST, data }
+}
+
+export function updateVehicleManufacturerSuccess(data) {
+    return { type: UPDATE_VEHICLE_MANUFACTURER_SUCCESS, data }
+}
+
+export function updateVehicleModel(data) {
+    return { type: UPDATE_VEHICLE_MODEL_REQUEST, data }
+}
+
+export function updateVehicleModelSuccess(data) {
+    return { type: UPDATE_VEHICLE_MODEL_SUCCESS, data }
+}
+
+export function updateVehicleRegistration(data) {
+    return { type: UPDATE_VEHICLE_REGISTRATION_REQUEST, data }
+}
+
+export function updateVehicleRegistrationSuccess(data) {
+    return { type: UPDATE_VEHICLE_REGISTRATION_SUCCESS, data }
 }
 
 export function getVehicle(data) {

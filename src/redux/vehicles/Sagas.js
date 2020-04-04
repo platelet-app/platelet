@@ -1,4 +1,4 @@
-import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
+import { throttle, call, put, takeEvery , takeLatest, select, debounce} from 'redux-saga/effects'
 import {
     ADD_VEHICLE_REQUEST,
     addVehicleSuccess,
@@ -11,13 +11,16 @@ import {
     RESTORE_VEHICLE_REQUEST,
     restoreVehicleSuccess,
     DELETE_VEHICLE_REQUEST,
-    deleteVehicleSuccess
+    deleteVehicleSuccess,
+    UPDATE_VEHICLE_NAME_REQUEST,
+    UPDATE_VEHICLE_MODEL_REQUEST,
+    UPDATE_VEHICLE_REGISTRATION_REQUEST,
+    UPDATE_VEHICLE_MANUFACTURER_REQUEST
 } from "./Actions"
 
 import {getWhoamiSuccess} from "../Actions"
 import {getUsersSuccess} from "../users/Actions"
 import { getApiControl, getWhoami } from "../Api";
-import {deleteSessionSuccess} from "../sessions/Actions";
 
 function* postNewVehicle(action) {
     const api = yield select(getApiControl);
@@ -32,6 +35,7 @@ export function* watchPostNewVehicle() {
 
 function* updateVehicle(action) {
     const api = yield select(getApiControl);
+    console.log(action)
     if (action.data.payload.assigned_user) {
         action.data.payload.assigned_user_uuid = action.data.payload.assigned_user.uuid;
     }
@@ -51,6 +55,22 @@ function* updateVehicle(action) {
 
 export function* watchUpdateVehicle() {
     yield throttle(300, UPDATE_VEHICLE_REQUEST, updateVehicle)
+}
+
+export function* watchUpdateVehicleName() {
+    yield debounce(500, UPDATE_VEHICLE_NAME_REQUEST, updateVehicle)
+}
+
+export function* watchUpdateVehicleManufacturer() {
+    yield debounce(500, UPDATE_VEHICLE_MANUFACTURER_REQUEST, updateVehicle)
+}
+
+export function* watchUpdateVehicleModel() {
+    yield debounce(500, UPDATE_VEHICLE_MODEL_REQUEST, updateVehicle)
+}
+
+export function* watchUpdateVehicleRegistration() {
+    yield debounce(500, UPDATE_VEHICLE_REGISTRATION_REQUEST, updateVehicle)
 }
 
 function* getVehicles() {
