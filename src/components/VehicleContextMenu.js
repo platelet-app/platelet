@@ -2,9 +2,9 @@ import React from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
-    deleteSession,
-    restoreSession
-} from "../redux/sessions/Actions";
+    deleteVehicle,
+    restoreVehicle
+} from "../redux/vehicles/Actions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,9 +18,9 @@ const initialState = {
     mouseY: null,
 };
 
-function SessionContextMenu(props) {
+function VehicleContextMenu(props) {
     const [state, setState] = React.useState(initialState);
-    const postingSelector = createPostingSelector(["DELETE_SESSION"]);
+    const postingSelector = createPostingSelector(["DELETE_VEHICLE"]);
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
@@ -35,12 +35,12 @@ function SessionContextMenu(props) {
 
     function undoDelete(key) {
         props.closeSnackbar(key);
-        dispatch(restoreSession(props.sessionUUID));
+        dispatch(restoreVehicle(props.vehicleUUID));
     }
 
     function onDelete() {
         handleClose();
-        dispatch(deleteSession(props.sessionUUID));
+        dispatch(deleteVehicle(props.vehicleUUID));
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
@@ -48,7 +48,7 @@ function SessionContextMenu(props) {
                 </Button>
             </React.Fragment>
         );
-        props.enqueueSnackbar('Session deleted.',  { variant: "info", action, autoHideDuration: 8000 });
+        props.enqueueSnackbar('Vehicle deleted.',  { variant: "info", action, autoHideDuration: 8000 });
     }
 
     const handleClose = () => {
@@ -85,4 +85,4 @@ function SessionContextMenu(props) {
     );
 }
 
-export default withSnackbar(SessionContextMenu)
+export default withSnackbar(VehicleContextMenu)

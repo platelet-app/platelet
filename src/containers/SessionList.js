@@ -98,11 +98,14 @@ function SessionList(props) {
                     >
                         {sessions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((session) => (
                             <Grid item key={session.uuid}>
-                                <SessionContextMenu sessionUUID={session.uuid}>
+                                <div style={{ cursor: 'context-menu', position: "relative" }}>
                                     <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>
                                         <SessionCard session={session}/>
                                     </Link>
-                                </SessionContextMenu>
+                                    <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>
+                                        <SessionContextMenu sessionUUID={session.uuid}/>
+                                    </div>
+                                </div>
                             </Grid>
                         ))
                         }

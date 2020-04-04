@@ -90,6 +90,14 @@ class Vehicle {
     async updateVehicle(vehicle_id, input_data) {
         return makeFetch(this.api_url, "vehicle/" + vehicle_id, "PUT", this.bearer, "application/json", input_data)
     }
+
+    async deleteVehicle(vehicle_id) {
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "DELETE", this.bearer, "application/json")
+    }
+
+    async restoreVehicle(vehicle_id) {
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id + "/restore", "PUT", this.bearer, "application/json")
+    }
 }
 
 class Location {

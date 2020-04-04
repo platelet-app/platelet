@@ -6,6 +6,10 @@ export const GET_VEHICLES_REQUEST = 'GET_VEHICLES_REQUEST';
 export const GET_VEHICLES_SUCCESS = 'GET_VEHICLES_SUCCESS';
 export const GET_VEHICLE_REQUEST = 'GET_VEHICLE_REQUEST';
 export const GET_VEHICLE_SUCCESS = 'GET_VEHICLE_SUCCESS';
+export const RESTORE_VEHICLE_REQUEST = 'RESTORE_VEHICLE_REQUEST';
+export const RESTORE_VEHICLE_SUCCESS = 'RESTORE_VEHICLE_SUCCESS';
+export const DELETE_VEHICLE_REQUEST = 'DELETE_VEHICLE_REQUEST';
+export const DELETE_VEHICLE_SUCCESS = 'DELETE_VEHICLE_SUCCESS';
 
 export function addVehicle(data) {
     return { type: ADD_VEHICLE_REQUEST, data }
@@ -29,6 +33,22 @@ export function getVehicle(data) {
 
 export function getVehicleSuccess(data) {
     return { type: GET_VEHICLE_SUCCESS, data }
+}
+
+export function restoreVehicle(data) {
+    return { type: RESTORE_VEHICLE_REQUEST, data }
+}
+
+export function restoreVehicleSuccess(data) {
+    return { type: RESTORE_VEHICLE_SUCCESS, data }
+}
+
+export function deleteVehicle(data) {
+    return { type: DELETE_VEHICLE_REQUEST, data }
+}
+
+export function deleteVehicleSuccess(data) {
+    return { type: DELETE_VEHICLE_SUCCESS, data }
 }
 
 export function getAllVehicles(data) {

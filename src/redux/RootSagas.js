@@ -28,7 +28,13 @@ import {
     watchPostNewDeliverable,
     watchUpdateDeliverable
 } from "./deliverables/Sagas"
-import {watchPostNewVehicle, watchGetVehicles, watchUpdateVehicle, watchVehicle} from "./vehicles/Sagas"
+import {
+    watchPostNewVehicle,
+    watchGetVehicles,
+    watchUpdateVehicle,
+    watchVehicle,
+    watchDeleteVehicle, watchRestoreVehicle
+} from "./vehicles/Sagas"
 
 import { all, call } from 'redux-saga/effects'
 import {watchGetAvailablePriorities} from "./priorities/Sagas";
@@ -71,6 +77,8 @@ export default function* rootSaga() {
         call(watchUpdateVehicle),
         call(watchPostNewVehicle),
         call(watchVehicle),
+        call(watchDeleteVehicle),
+        call(watchRestoreVehicle),
         call(watchGetUsers),
         call(watchGetWhoami),
         call(watchLogin),

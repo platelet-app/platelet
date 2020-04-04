@@ -5,7 +5,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from "@material-ui/core/Grid";
 import {useHistory} from "react-router-dom";
 import AddressDetailsCollapsible from "../AddressDetail";
@@ -30,11 +29,9 @@ import {
 import {useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {TextFieldControlled} from "../TextFieldControlled";
 import {decodeUUID} from "../../utilities";
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import FormSkeleton from "../../loadingComponents/FormSkeleton";
-import {DateAndTimePicker} from "../DateTimePickers";
 import TaskModalTimePicker from "./TaskModalTimePicker";
 import TaskModalNameAndContactNumber from "./TaskModalNameAndContactNumber";
 
@@ -57,7 +54,6 @@ export default function TaskModal(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
-    console.log(isPostingDropoffTime)
     const availablePatches = useSelector(state => state.availablePatches);
     let useStyles;
     // TODO: Do this properly (withStyles)

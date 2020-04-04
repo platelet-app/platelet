@@ -6,20 +6,21 @@ import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
-import {getAllVehicles} from "../redux/vehicles/Actions";
+import {addVehicle, getAllVehicles} from "../redux/vehicles/Actions";
 import {encodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
 import CardItem from "../components/CardItem";
+import VehicleContextMenu from "../components/VehicleContextMenu";
 
 
 function VehicleCard(props) {
     return (
         <div>
             <div key={props.vehicle.uuid}>
-                <StyledCard style={{height: "160px"}}>
+                <StyledCard style={{height: "170px"}}>
                     <CardContent>
                         <Grid containerspacing={1} direction={"column"}>
                             <CardItem label={"Name"}>{props.vehicle.name ? props.vehicle.name : ""}</CardItem>
@@ -57,9 +58,7 @@ function VehicleList() {
     const circleAdd =
         <AddCircleButton
             onClick={() => {
-                console.log("add vehicle here!")
-                //this.props.onAddSessionClick(newSession)
-
+                dispatch(addVehicle({}))
             }
             }
         />;
@@ -82,9 +81,20 @@ function VehicleList() {
                     >
                         {vehicles.map((vehicle) => (
                             <Grid item key={vehicle.uuid}>
-                                <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{textDecoration: 'none'}}>
-                                    <VehicleCard vehicle={vehicle}/>
-                                </Link>
+                                <div style={{cursor: 'context-menu', position: "relative"}}>
+                                    <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{textDecoration: 'none'}}>
+                                        <VehicleCard vehicle={vehicle}/>
+                                    </Link>
+                                    <div style={{
+                                        cursor: 'context-menu',
+                                        position: "absolute",
+                                        bottom: 0,
+                                        right: 0,
+                                        zIndex: 1000
+                                    }}>
+                                        <VehicleContextMenu vehicleUUID={vehicle.uuid}/>
+                                    </div>
+                                </div>
                             </Grid>
                         ))
                         }
