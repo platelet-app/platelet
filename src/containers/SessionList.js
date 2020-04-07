@@ -20,9 +20,9 @@ import moment from "moment";
 
 function SessionCard(props) {
     const momentDisplay =
-        moment(props.session.timestamp).isAfter(moment().subtract(3, "days")) ?
-            <Moment fromNow>{props.session.timestamp}</Moment> :
-            <Moment format={"llll"}>{props.session.timestamp}</Moment>;
+        moment(props.session.time_created).isAfter(moment().subtract(3, "days")) ?
+            <Moment fromNow>{props.session.time_created}</Moment> :
+            <Moment format={"llll"}>{props.session.time_created}</Moment>;
 
     return (
         <div key={props.session.uuid}>
@@ -30,7 +30,7 @@ function SessionCard(props) {
                 <CardContent>
                     <Grid containerspacing={1} direction={"column"}>
                         <CardItem label={"Started"}>
-                            {momentDisplay}
+                            <Moment calendar>{props.session.timestamp}</Moment>
                         </CardItem>
                         <CardItem
                             label={"Tasks"}>{props.session.task_count ? props.session.task_count : "0"}
@@ -70,10 +70,8 @@ function SessionList(props) {
     const circleAdd =
         <AddCircleButton disabled={isPosting} onClick={
             () => {
-                let date = new Date();
                 let newSession = {...emptySession};
                 newSession.user_uuid = whoami.uuid;
-                newSession.timestamp = date.toISOString();
                 dispatch(addSession(newSession));
 
             }
@@ -96,7 +94,7 @@ function SessionList(props) {
                           justify={"flex-start"}
                           alignItems={"center"}
                     >
-                        {sessions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((session) => (
+                        {sessions.sort((a, b) => new Date(b.time_created) - new Date(a.time_created)).map((session) => (
                             <Grid item key={session.uuid}>
                                 <div style={{ cursor: 'context-menu', position: "relative" }}>
                                     <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>

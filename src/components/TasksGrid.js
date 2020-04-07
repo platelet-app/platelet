@@ -35,7 +35,7 @@ export default function TasksGrid(props) {
     const isPosting = useSelector(state => loadingSelector(state));
     const emptyTask = {
         session_uuid: props.sessionUUID,
-        timestamp: new Date().toISOString(),
+        time_of_call: new Date().toISOString(),
     };
     return (
     <Grid container

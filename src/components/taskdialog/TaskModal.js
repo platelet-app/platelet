@@ -151,12 +151,12 @@ export default function TaskModal(props) {
     }
 
     function onSelectPickedUp(status) {
-        const payload = {pickup_time: status ? moment.utc().toISOString() : null};
+        const payload = {time_picked_up: status ? moment.utc().toISOString() : null};
         dispatch(updateTaskPickupTime({ taskUUID, payload }));
     }
 
     function onSelectDroppedOff(status) {
-        const payload = {dropoff_time: status ? moment.utc().toISOString() : null};
+        const payload = {time_dropped_off: status ? moment.utc().toISOString() : null};
         dispatch(updateTaskDropoffTime({ taskUUID, payload }));
     }
 
@@ -187,38 +187,38 @@ export default function TaskModal(props) {
                                          onSelect={onSelectPriority}/>;
     }
     let pickupTimeNotice = <></>;
-    if (task.pickup_time) {
-        pickupTimeNotice = <>Picked up at <Moment format={"llll"}>{task.pickup_time}</Moment></>
+    if (task.time_picked_up) {
+        pickupTimeNotice = <>Picked up at <Moment format={"llll"}>{task.time_picked_up}</Moment></>
     }
     let dropoffTimeNotice = <></>;
-    if (task.dropoff_time) {
-        dropoffTimeNotice = <>Dropped off at <Moment format={"llll"}>{task.dropoff_time}</Moment></>
+    if (task.time_dropped_off) {
+        dropoffTimeNotice = <>Dropped off at <Moment format={"llll"}>{task.time_dropped_off}</Moment></>
     }
     let cancelledStatus = <></>
-    if (task.cancelled_time) {
+    if (task.time_cancelled) {
         cancelledStatus =
             <Box className={classes.box}>
                 <DialogContentText>
-                    Cancelled at <Moment format={"llll"}>{task.cancelled_time}</Moment>
+                    Cancelled at <Moment format={"llll"}>{task.time_cancelled}</Moment>
                 </DialogContentText>
-                <ToggleTimeStamp label={"UNDO"} status={!!task.cancelled_time}
+                <ToggleTimeStamp label={"UNDO"} status={!!task.time_cancelled}
                                  onSelect={() => {
-                                     const payload = {cancelled_time: null};
+                                     const payload = {time_cancelled: null};
                                      dispatch(updateTaskCancelledTime({ taskUUID, payload }));
                                  }
                 }/>
             </Box>
     }
     let rejectedStatus = <></>
-    if (task.rejected_time) {
+    if (task.time_rejected) {
         rejectedStatus =
             <Box className={classes.box}>
                 <DialogContentText>
-                    Rejected at <Moment format={"llll"}>{task.rejected_time}</Moment>
+                    Rejected at <Moment format={"llll"}>{task.time_rejected}</Moment>
                 </DialogContentText>
-                <ToggleTimeStamp label={"UNDO"} status={!!task.rejected_time}
+                <ToggleTimeStamp label={"UNDO"} status={!!task.time_rejected}
                                  onSelect={() => {
-                                     const payload = {rejected_time: null};
+                                     const payload = {time_rejected: null};
                                      dispatch(updateTaskCancelledTime({ taskUUID, payload }));
                                  }
                                  }/>
@@ -304,8 +304,8 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                            <TaskModalTimePicker disabled={isPostingPickupTime} label={"Picked Up"} time={task.pickup_time} onToggle={onSelectPickedUp} onChange={(pickup_time) => {
-                                const payload = {pickup_time};
+                            <TaskModalTimePicker disabled={isPostingPickupTime} label={"Picked Up"} time={task.time_picked_up} onToggle={onSelectPickedUp} onChange={(time_picked_up) => {
+                                const payload = {time_picked_up};
                                 dispatch(updateTaskPickupTime({taskUUID, payload}))
                             }}/>
                                 <DialogContentText>
@@ -315,8 +315,8 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                                <TaskModalTimePicker disabled={isPostingDropoffTime} label={"Dropped Off"} time={task.dropoff_time} onToggle={onSelectDroppedOff} onChange={(dropoff_time) => {
-                                    const payload = {dropoff_time};
+                                <TaskModalTimePicker disabled={isPostingDropoffTime} label={"Dropped Off"} time={task.time_dropped_off} onToggle={onSelectDroppedOff} onChange={(time_dropped_off) => {
+                                    const payload = {time_dropped_off};
                                     dispatch(updateTaskDropoffTime({taskUUID, payload}))
                                 }}/>
                                 <DialogContentText>
@@ -409,12 +409,12 @@ export default function TaskModal(props) {
                             {deliverableSelect}
                         </Grid>
                         <Grid item>
-                            <ToggleTimeStamp label={"Picked Up"} status={!!task.pickup_time}
+                            <ToggleTimeStamp label={"Picked Up"} status={!!task.time_picked_up}
                                              onSelect={onSelectPickedUp}/>
                             {pickupTimeNotice}
                         </Grid>
                         <Grid item>
-                            <ToggleTimeStamp label={"Delivered"} status={!!task.dropoff_time}
+                            <ToggleTimeStamp label={"Delivered"} status={!!task.time_dropped_off}
                                              onSelect={onSelectDroppedOff}/>
                             {dropoffTimeNotice}
                         </Grid>

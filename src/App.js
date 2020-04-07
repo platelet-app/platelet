@@ -17,6 +17,9 @@ import {getAvailablePriorities} from "./redux/priorities/Actions";
 import {getUsers} from "./redux/users/Actions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
+import moment from 'moment/min/moment-with-locales';
+import Moment from "react-moment"
+
 
 
 function App(props) {
@@ -28,6 +31,14 @@ function App(props) {
         dispatch(logoutUser());
         document.location.href = "/";
     }
+
+    function componentDidMount() {
+        Moment.globalMoment = moment;
+        //TODO: get this from server settings table once implemented
+        Moment.globalLocale = 'en-GB';
+
+    }
+    useEffect(componentDidMount, []);
 
     function getStaticData() {
         if (isInitialised) {

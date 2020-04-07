@@ -49,20 +49,20 @@ export function orderTaskList(tasks) {
     if (!tasks)
         return {tasksNew: [], tasksActive: [], tasksPickedUp: [], tasksDelivered: []}
     tasks.forEach((task) => {
-        if (typeof (task.timestamp) === "string") {
-            task.timestamp = new Date(task.timestamp);
+        if (typeof (task.time_of_call) === "string") {
+            task.time_of_call = new Date(task.time_of_call);
         }
-        if (task.cancelled_time) {
+        if (task.time_cancelled) {
             tasksCancelled.unshift(task);
-        } else if (task.rejected_time) {
+        } else if (task.time_rejected) {
             tasksRejected.unshift(task);
         } else if (task.assigned_rider === null) {
             tasksNew.unshift(task);
-        } else if (task.assigned_rider && !task.pickup_time) {
+        } else if (task.assigned_rider && !task.time_picked_up) {
             tasksActive.unshift(task);
-        } else if (task.assigned_rider && task.pickup_time && !task.dropoff_time) {
+        } else if (task.assigned_rider && task.time_picked_up && !task.time_dropped_off) {
             tasksPickedUp.unshift(task);
-        } else if (task.dropoff_time) {
+        } else if (task.time_dropped_off) {
             tasksDelivered.unshift(task);
         } else {
             tasksNew.unshift(task);
@@ -71,22 +71,22 @@ export function orderTaskList(tasks) {
 
     let result = [];
     tasksNew.sort(function (a, b) {
-        return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0;
+        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
     tasksCancelled.sort(function (a, b) {
-        return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0;
+        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
     tasksRejected.sort(function (a, b) {
-        return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0;
+        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
     tasksActive.sort(function (b, a) {
-        return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0;
+        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
     tasksPickedUp.sort(function (b, a) {
-        return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0;
+        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
     tasksDelivered.sort(function (b, a) {
-        return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0;
+        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
     result = result.concat(tasksNew);
     result = result.concat(tasksActive);
@@ -94,5 +94,4 @@ export function orderTaskList(tasks) {
     result = result.concat(tasksDelivered);
     const tasksRejectedCancelled = tasksCancelled.concat(tasksRejected)
     return {tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksRejectedCancelled}
-    return result;
 }

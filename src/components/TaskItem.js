@@ -12,9 +12,9 @@ export default function TaskItem(props) {
             pickupAddress={props.task.pickup_address}
             dropoffAddress={props.task.dropoff_address}
             assignedRider={props.task.rider}
-            pickupTime={props.task.pickup_time}
-            dropoffTime={props.task.dropoff_time}
-            timestamp={props.task.timestamp}
+            pickupTime={props.task.time_picked_up}
+            dropoffTime={props.task.time_dropped_off}
+            time_of_call={props.task.time_of_call}
             priority={props.task.priority}
             patch={props.task.patch}
         />;
@@ -39,11 +39,11 @@ export default function TaskItem(props) {
                     <TaskContextMenu
                         taskUUID={props.task.uuid}
                         deleteDisabled={props.deleteDisabled}
-                        pickupTime={props.task.pickup_time}
-                        dropoffTime={props.task.dropoff_time}
+                        pickupTime={props.task.time_picked_up}
+                        dropoffTime={props.task.time_dropped_off}
                         assignedRider={props.task.assigned_rider}
-                        cancelledTime={props.task.cancelled_time}
-                        rejectedTime={props.task.rejected_time}
+                        cancelledTime={props.task.time_cancelled}
+                        rejectedTime={props.task.time_rejected}
                     >
                     </TaskContextMenu>
                 </div>

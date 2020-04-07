@@ -18,14 +18,8 @@ export default function DeliverableGridSelect(props) {
         dispatch(updateDeliverable({"deliverableUUID": uuid, "payload": {"type_id": type_id}}));
     };
 
-    const onDeliverableNote = (uuid, value) => {
-        props.apiControl.notes.updateNote(uuid, {"body": value});
-    };
-
     let emptyDeliverable = {
         task_uuid: props.taskUUID,
-        timestamp: new Date().toISOString(),
-        desc_note_id: null
     };
 
     React.useEffect(() => {

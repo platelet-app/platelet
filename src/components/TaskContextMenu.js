@@ -45,7 +45,7 @@ function TaskContextMenu(props) {
 
     function onSelectPickedUp() {
         handleClose();
-        const payload = {pickup_time: moment.utc().toISOString()};
+        const payload = {time_picked_up: moment.utc().toISOString()};
         dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
@@ -59,7 +59,7 @@ function TaskContextMenu(props) {
 
     function onSelectDroppedOff() {
         handleClose();
-        const payload = {dropoff_time: moment.utc().toISOString()};
+        const payload = {time_dropped_off: moment.utc().toISOString()};
         dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
@@ -72,7 +72,7 @@ function TaskContextMenu(props) {
     }
     function onSelectCancelled() {
         handleClose();
-        const payload = {cancelled_time: moment.utc().toISOString()};
+        const payload = {time_cancelled: moment.utc().toISOString()};
         dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
@@ -86,7 +86,7 @@ function TaskContextMenu(props) {
 
     function onSelectRejected() {
         handleClose();
-        const payload = {rejected_time: moment.utc().toISOString()};
+        const payload = {time_rejected: moment.utc().toISOString()};
         dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
@@ -103,22 +103,22 @@ function TaskContextMenu(props) {
         dispatch(restoreTask(props.taskUUID));
     }
     function undoPickup(key) {
-        const payload = {pickup_time: null};
+        const payload = {time_picked_up: null};
         dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key);
     }
     function undoDropoff(key) {
-        const payload = {dropoff_time: null};
+        const payload = {time_dropped_off: null};
         dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key);
     }
     function undoRejected(key) {
-        const payload = {rejected_time: null};
+        const payload = {time_rejected: null};
         dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key);
     }
     function undoCancelled(key) {
-        const payload = {cancelled_time: null};
+        const payload = {time_cancelled: null};
         dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key);
     }

@@ -91,7 +91,7 @@ export function ResponsiveDrawer(props) {
             sessionLink =
                 <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 2)} component={Link} to="/sessions" button>
                     <ListItemIcon><AppsIcon/></ListItemIcon>
-                    <ListItemText primary={"Sessions"}/>
+                    <ListItemText primary={"Shifts"}/>
                 </ListItem>;
         }
         drawer = (
@@ -106,7 +106,7 @@ export function ResponsiveDrawer(props) {
                     {sessionLink}
                     <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 3)} component={Link} to={"/mytasks"} button>
                         <ListItemIcon><InboxIcon/></ListItemIcon>
-                        <ListItemText primary={"My Tasks"}/>
+                        <ListItemText primary={"My Assigned Tasks"}/>
                     </ListItem>
                     <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 4)} component={Link} to="/vehicles" button>
                         <ListItemIcon><MotorcycleIcon/></ListItemIcon>

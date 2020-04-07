@@ -82,15 +82,15 @@ function getStatusColour(task) {
     if (task.assigned_rider) {
         hasRider = true;
     }
-    if (task.cancelled_time || task.rejected_time) {
+    if (task.time_cancelled || task.time_rejected) {
         return {index: 4, colour: "gray"}
     } else if (!task.assigned_rider) {
         return {index: 0, colour: "rgba(252, 231, 121, 1)"}
-    } else if (task.assigned_rider && !task.pickup_time) {
+    } else if (task.assigned_rider && !task.time_picked_up) {
         return {index: 1, colour: "cornflowerblue"}
-    } else if (hasRider && task.pickup_time && !task.dropoff_time) {
+    } else if (hasRider && task.time_picked_up && !task.time_dropped_off) {
         return {index: 2, colour: "orange"}
-    } else if (task.dropoff_time) {
+    } else if (task.time_dropped_off) {
         return {index: 3, colour: "lightgreen"}
     }
 }
@@ -99,7 +99,7 @@ function tasksDataColumns (tasks) {
     return (tasks.map(task => {
         return {
             colourCode: getStatusColour(task),
-            timestamp: task.timestamp ? task.timestamp : "",
+            time_of_call: task.time_of_call ? task.time_of_call : "",
             assignee: task.rider ? task.rider.display_name : "",
             contactName: task.contact_name ? task.contact_name : "",
             contactNumber: task.contact_number ? task.contact_number : "",
@@ -108,14 +108,14 @@ function tasksDataColumns (tasks) {
             dropoffAddress: task.dropoff_address ? task.dropoff_address.line1 : "",
             dropoffWard : task.dropoff_address ? task.dropoff_address.ward : "",
             priority: task.priority,
-            pickupTime: task.pickup_time ? task.pickup_time : "",
-            dropoffTime: task.dropoff_time ? task.dropoff_time : "",
+            pickupTime: task.time_picked_up ? task.time_picked_up : "",
+            dropoffTime: task.time_dropped_off ? task.time_dropped_off : "",
             patch: task.rider ? task.rider.patch : "",
             contextMenu: <TaskContextMenu taskUUID={task.uuid}
-                                          pickupTime={task.pickup_time}
-                                          dropoffTime={task.dropoff_time}
-                                          cancelledTime={task.cancelled_time}
-                                          rejectedTime={task.rejected_time}
+                                          pickupTime={task.time_picked_up}
+                                          dropoffTime={task.time_dropped_off}
+                                          cancelledTime={task.time_cancelled}
+                                          rejectedTime={task.time_rejected}
                                           assignedRider={task.assigned_rider}/>
         }
     }))
@@ -151,9 +151,9 @@ export default function TasksTable(props) {
         {
             title: "Time of Call",
             width: "220px",
-            field: "timestamp",
+            field: "time_of_call",
             render: rowData =>
-                <Moment calendar style={{fontSize: "14px"}}>{rowData.timestamp ? rowData.timestamp : ""}</Moment>,
+                <Moment calendar style={{fontSize: "14px"}}>{rowData.time_of_call ? rowData.time_of_call : ""}</Moment>,
             defaultSort: "desc"
         },
         {title: "Contact Name", field: "contactName"},
@@ -225,7 +225,7 @@ export function TasksTablae(props) {
     const kanbanMode = useSelector(state => state.kanbanMode);
     const emptyTask = {
         session_uuid: props.sessionUUID,
-        timestamp: new Date().toISOString(),
+        time_of_call: new Date().toISOString(),
     };
     return (
         <Grid container
