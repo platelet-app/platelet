@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import {AddCircleButton} from "../components/Buttons";
+import {AddCircleButton, AddCircleButtonSmall} from "../components/Buttons";
 import TaskItem from "./TaskItem";
 import {encodeUUID, orderTaskList} from "../utilities";
 import {createPostingSelector} from "../redux/selectors";
@@ -11,7 +11,7 @@ import moment from "moment";
 import Box from "@material-ui/core/Box";
 import { useHistory, useLocation } from "react-router-dom";
 
-import {updateTaskAssignedRider, updateTask} from "../redux/tasks/Actions";
+import {updateTaskAssignedRider, updateTask, addTask} from "../redux/tasks/Actions";
 
 import {forwardRef} from 'react';
 
@@ -35,6 +35,8 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import TaskContextMenu from "./TaskContextMenu";
 import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
+import {Add} from "@material-ui/icons";
+import {StyledAddCircleOutlineSmall} from "../css/Buttons";
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
@@ -168,6 +170,10 @@ export default function TasksTable(props) {
     ];
     const [data, setData] = useState(tasksDataColumns(props.tasks));
 
+    const emptyTask = {
+        session_uuid: props.sessionUUID,
+        time_of_call: new Date().toISOString(),
+    };
     const actions = [
         {
             icon: Edit,
@@ -177,10 +183,11 @@ export default function TasksTable(props) {
             }
         },
         {
-            icon: DeleteOutline,
-            tooltip: 'Delete Index',
-            onClick: (event, rowData) => {
-                console.log("delete")
+            icon: StyledAddCircleOutlineSmall,
+            tooltip: "New Task",
+            position: "toolbar",
+            onClick: (event) => {
+                dispatch(addTask(emptyTask));
             }
         },
     ];
@@ -194,7 +201,7 @@ export default function TasksTable(props) {
             title=""
             columns={columns}
             data={data}
-            options={{actionsColumnIndex: 1, pageSize: 10}}
+            options={{actionsColumnIndex: 1, pageSize: 10, toolbarButtonAlignment: "left"}}
             actions={actions}
         />
     )
