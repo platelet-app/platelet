@@ -167,19 +167,13 @@ export default function TaskModal(props) {
 
     let handleClose = e => {
         e.stopPropagation();
-        console.log(history)
-        if (history.length > 1) {
-            history.goBack();
-        }
-        else {
-            //TODO: might be a better way of doing this
-            if (currentLocation.pathname.includes("session"))
-                history.push("/session/" + encodeUUID(task.session_uuid));
-            else  if (currentLocation.pathname.includes("mytasks"))
-                history.push("/mytasks");
-            else
-                history.push("/");
-        }
+        //TODO: might be a better way of doing this
+        if (currentLocation.pathname.includes("session"))
+            history.push("/session/" + encodeUUID(task.session_uuid));
+        else  if (currentLocation.pathname.includes("mytasks"))
+            history.push("/mytasks");
+        else
+            history.push("/");
     };
 
     let usersSelect = <></>;

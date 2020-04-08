@@ -173,14 +173,7 @@ export default function TasksTable(props) {
             icon: Edit,
             tooltip: 'Edit Task',
             onClick: (event, rowData) => {
-                history.push({
-                    pathname: currentLocation.pathname + "/task/" + encodeUUID(rowData.uuid),
-                    state: {
-                        background: currentLocation,
-                        view: "edit",
-                        fullscreen: mobileView
-                    }
-                });
+                history.push(`${currentLocation.pathname}/task/${encodeUUID(rowData.uuid)}`);
             }
         },
         {
