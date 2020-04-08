@@ -27,7 +27,7 @@ function VehicleDetail(props) {
     const [assignedUserDisplayName, setAssignedUserDisplayName] = useState(undefined);
     const vehicle = useSelector(state => state.vehicle);
     const assignedUser = useSelector(state => state.vehicle.assigned_user);
-    const vechileName = useSelector(state => state.vehicle.name);
+    const vehicleName = useSelector(state => state.vehicle.name);
     const whoami = useSelector(state => state.whoami);
 
     function componentDidMount() {
@@ -74,7 +74,7 @@ function VehicleDetail(props) {
             setAssignedUserDisplayName(assignedUser.uuid === whoami.uuid ? "you" : assignedUser.display_name)
         else
             setAssignedUserDisplayName("")
-    }, [assignedUser, vechileName]);
+    }, [assignedUser, vehicleName]);
 
     if (isFetching) {
         return (
