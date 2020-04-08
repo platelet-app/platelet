@@ -30,7 +30,7 @@ function SessionCard(props) {
                 <CardContent>
                     <Grid containerspacing={1} direction={"column"}>
                         <CardItem label={"Started"}>
-                            <Moment calendar>{props.session.timestamp}</Moment>
+                            <Moment calendar>{props.session.time_created}</Moment>
                         </CardItem>
                         <CardItem
                             label={"Tasks"}>{props.session.task_count ? props.session.task_count : "0"}
@@ -65,7 +65,7 @@ function SessionList(props) {
 
     let emptySession = {
         user_uuid: whoami.uuid,
-        timestamp: new Date().toISOString(),
+        time_created: new Date().toISOString(),
     };
     const circleAdd =
         <AddCircleButton disabled={isPosting} onClick={
