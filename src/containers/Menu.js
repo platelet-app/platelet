@@ -75,7 +75,6 @@ export function ResponsiveDrawer(props) {
     const {container} = props;
     const classes = useStyles();
     const theme = useTheme();
-    const [selectedIndex, setSelectedIndex] = React.useState(1);
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const handleDrawerToggle = () => {

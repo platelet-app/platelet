@@ -6,7 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from "@material-ui/core/Grid";
-import {useHistory} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import AddressDetailsCollapsible from "../AddressDetail";
 import UsersSelect from "../UsersSelect";
 import ToggleTimeStamp from "../ToggleTimeStamp";
@@ -29,7 +29,7 @@ import {
 import {useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {decodeUUID} from "../../utilities";
+import {decodeUUID, encodeUUID} from "../../utilities";
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import FormSkeleton from "../../loadingComponents/FormSkeleton";
 import TaskModalTimePicker from "./TaskModalTimePicker";
@@ -55,6 +55,10 @@ export default function TaskModal(props) {
     const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
     const availablePatches = useSelector(state => state.availablePatches);
+    const mobileView = useSelector(state => state.mobileView);
+    const session = useSelector(state => state.session);
+    const whoami = useSelector(state => state.whoami);
+    const currentLocation = useLocation();
     let useStyles;
     // TODO: Do this properly (withStyles)
     if (!props.fullscreen) {
@@ -91,8 +95,6 @@ export default function TaskModal(props) {
 
     let history = useHistory();
 
-    let editMode = props.view === "edit";
-
     const taskUUID = decodeUUID(props.match.params.task_uuid_b62);
 
     const taskResult = tasks.filter(task => task.uuid === taskUUID);
@@ -102,7 +104,10 @@ export default function TaskModal(props) {
     }
     const task = props.task || newTask;
 
+    const [editMode, setEditMode] = useState(false);
+
     function componentDidMount() {
+        setEditMode(session ? session.user_uuid === whoami.uuid : false);
         if (!tasks.length) {
             props.apiControl.tasks.getTask(taskUUID).then((data) => {
                 dispatch(getAllTasks(data.session_uuid));
@@ -162,7 +167,19 @@ export default function TaskModal(props) {
 
     let handleClose = e => {
         e.stopPropagation();
-        history.goBack();
+        console.log(history)
+        if (history.length > 1) {
+            history.goBack();
+        }
+        else {
+            //TODO: might be a better way of doing this
+            if (currentLocation.pathname.includes("session"))
+                history.push("/session/" + encodeUUID(task.session_uuid));
+            else  if (currentLocation.pathname.includes("mytasks"))
+                history.push("/mytasks");
+            else
+                history.push("/");
+        }
     };
 
     let usersSelect = <></>;
@@ -339,7 +356,7 @@ export default function TaskModal(props) {
 
         return (
             <>
-                <Dialog fullScreen={props.fullscreen} open={true} onClose={handleClose}
+                <Dialog fullScreen={mobileView} open={true} onClose={handleClose}
                         aria-labelledby="form-dialog-title">
                     <DialogActions>
                         <Button onClick={handleClose}

@@ -1,11 +1,12 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {TaskCard} from "./TaskCardsColoured"
 import {encodeUUID} from "../utilities";
 import TaskContextMenu from "./TaskContextMenu";
 
 export default function TaskItem(props) {
+    const currentLocation = useLocation();
     const task =
         <TaskCard
             title={"Task"}
@@ -24,15 +25,7 @@ export default function TaskItem(props) {
             <div style={{cursor: 'context-menu', position: "relative"}}>
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
-                      to={{
-                          pathname: `/session/${encodeUUID(props.task.session_uuid)}/task/${encodeUUID(props.task.uuid)}`,
-                          state: {
-                              background: props.location,
-                              view: props.view,
-                              fullscreen: props.fullScreenModal
-                          }
-                      }}
-                >
+                      to={`${currentLocation.pathname}/task/${encodeUUID(props.task.uuid)}`}>
                     {task}
                 </Link>
                 <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>

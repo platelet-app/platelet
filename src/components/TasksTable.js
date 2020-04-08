@@ -2,13 +2,15 @@ import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {AddCircleButton} from "../components/Buttons";
 import TaskItem from "./TaskItem";
-import {orderTaskList} from "../utilities";
+import {encodeUUID, orderTaskList} from "../utilities";
 import {createPostingSelector} from "../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksSheetColumn} from "../css/TaskColumns";
 import MaterialTable, {MTableCell} from 'material-table';
 import moment from "moment";
 import Box from "@material-ui/core/Box";
+import { useHistory, useLocation } from "react-router-dom";
+
 import {updateTaskAssignedRider, updateTask} from "../redux/tasks/Actions";
 
 import {forwardRef} from 'react';
@@ -116,23 +118,18 @@ function tasksDataColumns (tasks) {
                                           dropoffTime={task.time_dropped_off}
                                           cancelledTime={task.time_cancelled}
                                           rejectedTime={task.time_rejected}
-                                          assignedRider={task.assigned_rider}/>
+                                          assignedRider={task.assigned_rider}/>,
+            uuid: task.uuid
         }
     }))
 };
 
 export default function TasksTable(props) {
     const dispatch = useDispatch();
-    moment.locale('en', {
-        calendar : {
-            lastDay : '[Yesterday at] LT',
-            sameDay : '[Today at] LT',
-            nextDay : '[Tomorrow at] LT',
-            lastWeek : '[last] dddd [at] LT',
-            nextWeek : 'dddd [at] LT',
-            sameElse : 'L'
-        }
-    });
+    const history = useHistory();
+    const currentLocation = useLocation();
+    const mobileView = useSelector(state => state.mobileView);
+
     const columns = [
         {
             title: "",
@@ -147,6 +144,7 @@ export default function TasksTable(props) {
             customSort: (a, b) => a.colourCode.index < b.colourCode.index ? -1 : 1
 
         },
+        {title: "", field: "contextMenu", width: "0px", sorting: false},
         {title: "Assignee", field: "assignee"},
         {
             title: "Time of Call",
@@ -166,9 +164,33 @@ export default function TasksTable(props) {
         {title: "Pickup Time", field: "pickupTime", width: "240px", render: rowData => rowData.pickupTime ? <Moment calendar style={{fontSize: "14px"}}>{rowData.pickupTime}</Moment> : ""},
         {title: "Dropoff Time", field: "dropoffTime", width: "240px", render: rowData => rowData.dropoffTime ? <Moment calendar style={{fontSize: "14px"}}>{rowData.dropoffTime}</Moment> : ""},
         {title: "Patch", field: "patch"},
-        {title: "", field: "contextMenu", width: "0px", sorting: false}
+        {title: "", field: "uuid", render: () => <></>}
     ];
     const [data, setData] = useState(tasksDataColumns(props.tasks));
+
+    const actions = [
+        {
+            icon: Edit,
+            tooltip: 'Edit Task',
+            onClick: (event, rowData) => {
+                history.push({
+                    pathname: currentLocation.pathname + "/task/" + encodeUUID(rowData.uuid),
+                    state: {
+                        background: currentLocation,
+                        view: "edit",
+                        fullscreen: mobileView
+                    }
+                });
+            }
+        },
+        {
+            icon: DeleteOutline,
+            tooltip: 'Delete Index',
+            onClick: (event, rowData) => {
+                console.log("delete")
+            }
+        },
+    ];
 
     useEffect(() => setData(tasksDataColumns(props.tasks)), [props.tasks]);
 
@@ -180,40 +202,7 @@ export default function TasksTable(props) {
             columns={columns}
             data={data}
             options={{actionsColumnIndex: 1, pageSize: 10}}
-            editable={{
-                onRowAdd: newData =>
-                    new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            {
-                                const dataCopy = data;
-                                dataCopy.push(newData);
-                                setData(() => resolve());
-                            }
-                            resolve()
-                        }, 1000)
-                    }),
-                onRowUpdate: (newData, oldData) =>
-                    new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            {
-                                dispatch(updateTask(newData));
-                            }
-                            resolve()
-                        }, 1000)
-                    }),
-                onRowDelete: oldData =>
-                    new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            {
-                                let dataCopy = data;
-                                const index = dataCopy.indexOf(oldData);
-                                dataCopy.splice(index, 1);
-                                setData(() => resolve());
-                            }
-                            resolve()
-                        }, 1000)
-                    }),
-            }}
+            actions={actions}
         />
     )
 

@@ -37,23 +37,37 @@ export default function Main(_props) {
                     <Route path='/vehicle/:vehicle_uuid_b62'
                            render={(props) => <VehicleDetail {...props} apiControl={_props.apiControl}/>}
                     />
-                    <Route path='/mytasks'
+                    <Route exact path='/mytasks'
                            render={(props) => <UsersTasks {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route exact path='/session/:session_uuid_b62'
                            render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route exact path="/session/:session_uuid_b62/task/:task_uuid_b62"
-                           render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => {
+                               return (
+                                   <>
+                               <SessionDetail {...props} />
+                               <TaskModal {...props} apiControl={_props.apiControl} modal={true}/>
+                               </>
+                           )
+                           }}
                        />
+                    <Route exact path="/mytasks/task/:task_uuid_b62"
+                           render={(props) => {
+                               return (
+                                   <>
+                                       <UsersTasks {...props} />
+                                       <TaskModal {...props} apiControl={_props.apiControl} modal={true}/>
+                                   </>
+                               )
+                           }}
+                    />
                     <Route exact path='/logout'
                            render={(props) => <App {...props} logout={true}/>}
                     />
 
                 </Switch>
-                {background && <Route exact path="/session/:session_uuid_b62/task/:task_uuid_b62"
-                                      render={(props) => <TaskModal {...props} modal={true} fullscreen={location.state.fullscreen} view={location.state.view} apiControl={_props.apiControl}/>}
-                />}
             </main>
         </MainWindowContainer>
     )
