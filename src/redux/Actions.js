@@ -1,4 +1,4 @@
-import {saveKanbanMode} from "../utilities";
+import {saveLocalStorageViewMode} from "../utilities";
 
 
 export const GET_ACTIVE_TASK_UUID = 'GET_ACTIVE_TASK_UUID';
@@ -18,11 +18,11 @@ export function clearLoading() {
     return { type: CLEAR_LOADING }
 }
 
-export const GET_WHOAMI = 'GET_WHOAMI';
+export const GET_WHOAMI_REQUEST = 'GET_WHOAMI_REQUEST';
 export const GET_WHOAMI_SUCCESS = 'GET_WHOAMI_SUCCESS';
 
 export function getWhoami() {
-    return { type: GET_WHOAMI }
+    return { type: GET_WHOAMI_REQUEST }
 }
 
 export function getWhoamiSuccess(data) {
@@ -32,7 +32,7 @@ export function getWhoamiSuccess(data) {
 export const SET_VIEW_MODE = 'SET_VIEW_MODE';
 
 export function setViewMode(data) {
-    saveKanbanMode(data);
+    saveLocalStorageViewMode(data);
     return { type: SET_VIEW_MODE, data }
 }
 

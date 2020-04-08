@@ -10,7 +10,7 @@ import {setMenuIndex, setViewMode} from "../redux/Actions";
 import {getSession} from "../redux/sessions/Actions";
 import {makeStyles} from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
-import {decodeUUID} from "../utilities";
+import {decodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
 import {
     Link,
@@ -26,14 +26,15 @@ import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
 
 function GetViewTitle(props) {
-    console.log(props.type)
     switch (props.type) {
         case "kanban":
-            return <Typography>Kanban</Typography>
+            return <Typography>Kanban</Typography>;
         case "table":
-            return <Typography>Table</Typography>
+            return <Typography>Table</Typography>;
+        case "stats":
+            return <Typography>Statistics</Typography>;
         default:
-            return <Typography></Typography>
+            return <Typography></Typography>;
 
     }
 }
@@ -56,10 +57,19 @@ function SessionDetail(props) {
     function componentDidMount() {
         dispatch(getAllTasks(session_uuid));
         dispatch(getSession(session_uuid));
+        if (!viewMode) {
+            const viewModeLocalStorage = getLocalStorageViewMode();
+            if (viewModeLocalStorage === null)
+                dispatch(setViewMode("kanban"));
+            else
+                dispatch(setViewMode(viewModeLocalStorage));
+        }
     }
 
     useEffect(componentDidMount, []);
-    useEffect(() => {dispatch(setMenuIndex(2))}, []);
+    useEffect(() => {
+        dispatch(setMenuIndex(2))
+    }, []);
 
 
     let location = useLocation();
@@ -76,48 +86,49 @@ function SessionDetail(props) {
                 <GetViewTitle type={viewMode}/>
             </Grid>
             <Grid item>
-            <IconButton
-                color="inherit"
-                aria-controls="simple-menu"
-                aria-haspopup="true"
-                onClick={(event) => {
-                    setAnchorEl(event.currentTarget);
-                }}>
-                <ArrowDropDownIcon/>
-            </IconButton>
-            <Menu
-                id="profile-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={() => {
-                    setAnchorEl(null);
-                }}
-            >
-                    <MenuItem selected={viewMode === "kanban"}  onClick={() => {
+                <IconButton
+                    color="inherit"
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    onClick={(event) => {
+                        setAnchorEl(event.currentTarget);
+                    }}>
+                    <ArrowDropDownIcon/>
+                </IconButton>
+                <Menu
+                    id="profile-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={() => {
+                        setAnchorEl(null);
+                    }}
+                >
+                    <MenuItem selected={viewMode === "kanban"} onClick={() => {
                         setAnchorEl(null);
                         dispatch(setViewMode("kanban"))
                     }}>
                         <Typography>Kanban</Typography>
                     </MenuItem>
-                <MenuItem selected={viewMode === "table"} onClick={() => {
-                    setAnchorEl(null);
-                    dispatch(setViewMode("table"))
-                }}>
-                    <Typography>Table</Typography>
-                </MenuItem>
-                <MenuItem selected={viewMode === "stats"} onClick={() => {
-                    setAnchorEl(null);
-                    dispatch(setViewMode("stats"))
-                }}>
-                    <Typography>Stats</Typography>
-                </MenuItem>
-            </Menu>
+                    <MenuItem selected={viewMode === "table"} onClick={() => {
+                        setAnchorEl(null);
+                        dispatch(setViewMode("table"))
+                    }}>
+                        <Typography>Table</Typography>
+                    </MenuItem>
+                    <MenuItem selected={viewMode === "stats"} onClick={() => {
+                        setAnchorEl(null);
+                        dispatch(setViewMode("stats"))
+                    }}>
+                        <Typography>Stats</Typography>
+                    </MenuItem>
+                </Menu>
             </Grid>
-            </Grid>
+        </Grid>
     ;
+    console.log(viewMode)
 
-    if (isFetching) {
+    if (isFetching || viewMode === null) {
         return <TasksGridSkeleton count={4}/>
     } else if (viewMode === "kanban" || mobileView) {
         return (
@@ -135,7 +146,7 @@ function SessionDetail(props) {
             </>
 
         )
-    } else if (viewMode == "table") {
+    } else if (viewMode === "table") {
         return (
             <>
                 {modeToggle}
@@ -151,8 +162,19 @@ function SessionDetail(props) {
             </>
 
         )
+    } else if (viewMode === "stats") {
+        return (
+            <>
+                {modeToggle}
+                <>nope</>
+            </>)
 
+    } else {
+        return (
+            <></>
+        )
     }
+
 }
 
 export default SessionDetail;

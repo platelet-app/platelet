@@ -1,5 +1,5 @@
 import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
-import {GET_WHOAMI, getWhoamiSuccess} from "./Actions";
+import {GET_WHOAMI_REQUEST, getWhoamiSuccess} from "./Actions";
 import { getApiControl } from "./Api";
 
 function* getWhoami() {
@@ -9,5 +9,5 @@ function* getWhoami() {
 }
 
 export function* watchGetWhoami() {
-    yield takeLatest(GET_WHOAMI, getWhoami)
+    yield takeLatest(GET_WHOAMI_REQUEST, getWhoami)
 }

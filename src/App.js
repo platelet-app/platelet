@@ -7,7 +7,7 @@ import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {
-    getWhoami, setMobileView
+    getWhoami, setMobileView, setViewMode
 } from "./redux/Actions";
 import {logoutUser} from "./redux/login/Actions";
 import {getAvailableDeliverables} from "./redux/deliverables/Actions";
@@ -19,6 +19,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment"
+import {getLocalStorageViewMode} from "./utilities";
 
 
 
@@ -37,6 +38,9 @@ function App(props) {
         //TODO: get this from server settings table once implemented
         Moment.globalLocale = 'en-GB';
 
+
+
+            //dispatch(setViewMode(viewMode !== null ? viewMode : "table"));
     }
     useEffect(componentDidMount, []);
 

@@ -28,15 +28,12 @@ export function deleteLogin() {
     localStorage.clear("apiBearer")
 }
 
-export function saveKanbanMode(status) {
-    console.log("AAAAAAAAAAAAAAA")
-    console.log(status)
-    localStorage.setItem("kanbanMode", status);
+export function saveLocalStorageViewMode(status) {
+    localStorage.setItem("viewMode", status);
 }
 
-export function getKanbanMode() {
-    console.log(localStorage.getItem("kanbanMode"))
-    return localStorage.getItem("kanbanMode");
+export function getLocalStorageViewMode() {
+    return localStorage.getItem("viewMode");
 }
 
 export function orderTaskList(tasks) {

@@ -44,7 +44,9 @@ export default function TaskModal(props) {
         "GET_AVAILABLE_LOCATIONS",
         "GET_AVAILABLE_PRIORITIES",
         "GET_USERS",
-        "GET_AVAILABLE_LOCATIONS"]);
+        "GET_AVAILABLE_LOCATIONS",
+        "GET_SESSION",
+        "GET_WHOAMI"]);
     const isPostingPickupSelector = createPostingSelector([
         "UPDATE_TASK_PICKUP_TIME"
         ]);
@@ -61,7 +63,7 @@ export default function TaskModal(props) {
     const currentLocation = useLocation();
     let useStyles;
     // TODO: Do this properly (withStyles)
-    if (!props.fullscreen) {
+    if (!mobileView) {
         useStyles = makeStyles(({
             box: {
                 border: 0,
