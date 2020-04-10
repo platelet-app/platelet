@@ -37,10 +37,6 @@ function App(props) {
         Moment.globalMoment = moment;
         //TODO: get this from server settings table once implemented
         Moment.globalLocale = 'en-GB';
-
-
-
-            //dispatch(setViewMode(viewMode !== null ? viewMode : "table"));
     }
     useEffect(componentDidMount, []);
 

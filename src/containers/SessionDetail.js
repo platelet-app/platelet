@@ -24,6 +24,8 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
+import TasksStatistics from "../components/TasksStatistics";
+import StatsSkeleton from "../loadingComponents/StatsSkeleton";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -83,9 +85,6 @@ function SessionDetail(props) {
               alignItems={"center"}
         >
             <Grid item>
-                <GetViewTitle type={viewMode}/>
-            </Grid>
-            <Grid item>
                 <IconButton
                     color="inherit"
                     aria-controls="simple-menu"
@@ -93,6 +92,7 @@ function SessionDetail(props) {
                     onClick={(event) => {
                         setAnchorEl(event.currentTarget);
                     }}>
+                    <GetViewTitle type={viewMode}/>
                     <ArrowDropDownIcon/>
                 </IconButton>
                 <Menu
@@ -129,7 +129,7 @@ function SessionDetail(props) {
     console.log(viewMode)
 
     if (isFetching || viewMode === null) {
-        return <TasksGridSkeleton count={4}/>
+        return viewMode === "stats" ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
     } else if (viewMode === "kanban" || mobileView) {
         return (
             <>
@@ -166,7 +166,7 @@ function SessionDetail(props) {
         return (
             <>
                 {modeToggle}
-                <>nope</>
+                <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
             </>)
 
     } else {

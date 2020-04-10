@@ -1,5 +1,13 @@
 import { all, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
-import {ADD_SESSION_REQUEST, addSessionSuccess, GET_SESSIONS_REQUEST, getAllSessionsSuccess, GET_SESSION_REQUEST, getSessionSuccess} from "./Actions"
+import {
+    ADD_SESSION_REQUEST,
+    addSessionSuccess,
+    GET_SESSIONS_REQUEST,
+    getAllSessionsSuccess,
+    GET_SESSION_REQUEST,
+    getSessionSuccess,
+    GET_SESSION_STATISTICS_SUCCESS, GET_SESSION_STATISTICS_REQUEST, getSessionStatisticsSuccess
+} from "./Actions"
 import { getApiControl } from "../Api";
 import {DELETE_SESSION_REQUEST, deleteSessionSuccess, RESTORE_SESSION_REQUEST, restoreSessionSuccess} from "./Actions";
 
@@ -29,6 +37,16 @@ export function* getSession(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.sessions.getSession], action.data);
     yield put(getSessionSuccess(result))
+}
+
+export function* watchGetSessionStatistics() {
+    yield takeLatest(GET_SESSION_STATISTICS_REQUEST, getSessionStatistics)
+}
+
+export function* getSessionStatistics(action) {
+    const api = yield select(getApiControl);
+    const result = yield call([api, api.sessions.getStatistics], action.data);
+    yield put(getSessionStatisticsSuccess(result))
 }
 
 export function* watchGetSession() {

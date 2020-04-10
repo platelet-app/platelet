@@ -1,6 +1,6 @@
 import {
     ADD_SESSION_SUCCESS,
-    DELETE_SESSION_REQUEST, DELETE_SESSION_SUCCESS,
+    DELETE_SESSION_REQUEST, DELETE_SESSION_SUCCESS, GET_SESSION_STATISTICS_SUCCESS,
     GET_SESSION_SUCCESS,
     GET_SESSIONS_SUCCESS,
     RESTORE_SESSION_SUCCESS
@@ -53,3 +53,13 @@ export function session(state = {}, action) {
     }
 }
 
+export function sessionStatistics(state = {}, action) {
+    switch (action.type) {
+        case GET_SESSION_STATISTICS_SUCCESS:
+            return action.data;
+        default:
+            return state
+
+    }
+
+}

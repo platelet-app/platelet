@@ -225,7 +225,10 @@ class Session {
 
     async getSession(session_id) {
         return makeFetch(this.api_url, "session/" + session_id, "GET", this.bearer)
-
+    }
+    
+    async getStatistics(session_id) {
+        return makeFetch(this.api_url, "session/" + session_id + "/statistics", "GET", this.bearer)
     }
 
     async createSession(input_data) {

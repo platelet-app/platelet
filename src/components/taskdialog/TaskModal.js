@@ -337,15 +337,6 @@ export default function TaskModal(props) {
                                 </DialogContentText>
                             </Box>
                         </Grid>
-                        <Grid item>
-                            <TextField
-                                margin="dense"
-                                id="note"
-                                label="Add a note!"
-                                type="text"
-                                fullWidth
-                            />
-                        </Grid>
                     </Grid>
                 </DialogContent>
             </>;

@@ -4,8 +4,8 @@ import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
 export const StyledAddCircleOutline = styled(AddCircleOutline)({
     cursor: "pointer",
     color: "darkblue",
-    width: "100px",
-    height: "100px",
+    width: "80px",
+    height: "80px",
     margin: "15px",
     borderRadius: "50%",
     background: "white"

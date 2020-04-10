@@ -36,7 +36,7 @@ import TaskContextMenu from "./TaskContextMenu";
 import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
 import {Add} from "@material-ui/icons";
-import {StyledAddCircleOutlineSmall} from "../css/Buttons";
+import {StyledAddCircleOutline, StyledAddCircleOutlineSmall} from "../css/Buttons";
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
@@ -131,6 +131,8 @@ export default function TasksTable(props) {
     const history = useHistory();
     const currentLocation = useLocation();
     const mobileView = useSelector(state => state.mobileView);
+    const loadingSelector = createPostingSelector(["ADD_TASK"]);
+    const isPosting = useSelector(state => loadingSelector(state));
 
     const columns = [
         {
@@ -183,9 +185,10 @@ export default function TasksTable(props) {
             }
         },
         {
-            icon: StyledAddCircleOutlineSmall,
+            icon: StyledAddCircleOutline,
             tooltip: "New Task",
             position: "toolbar",
+            disabled: isPosting,
             onClick: (event) => {
                 dispatch(addTask(emptyTask));
             }

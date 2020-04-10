@@ -9,7 +9,7 @@ import {
     SET_MENU_INDEX
 } from './Actions'
 import {task, tasks} from "./tasks/Reducers"
-import {session, sessions} from "./sessions/Reducers"
+import {session, sessions, sessionStatistics} from "./sessions/Reducers"
 import {availableDeliverables, deliverables} from "./deliverables/Reducers"
 import {availableLocations} from "./locations/Reducers"
 import {apiControl} from "./login/Reducers";
@@ -109,6 +109,7 @@ const rootReducer = combineReducers({
     tasks,
     sessions,
     session,
+    sessionStatistics,
     deliverables,
     availableDeliverables,
     availablePriorities,

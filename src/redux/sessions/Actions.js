@@ -4,6 +4,8 @@ export const GET_SESSIONS_REQUEST = 'GET_SESSIONS_REQUEST';
 export const GET_SESSIONS_SUCCESS = 'GET_SESSIONS_SUCCESS';
 export const GET_SESSION_REQUEST = 'GET_SESSION_REQUEST';
 export const GET_SESSION_SUCCESS = 'GET_SESSION_SUCCESS';
+export const GET_SESSION_STATISTICS_REQUEST = 'GET_SESSION_STATISTICS_REQUEST';
+export const GET_SESSION_STATISTICS_SUCCESS = 'GET_SESSION_STATISTICS_SUCCESS';
 export const DELETE_SESSION_REQUEST = 'DELETE_SESSION_REQUEST';
 export const DELETE_SESSION_SUCCESS = 'DELETE_SESSION_SUCCESS';
 export const RESTORE_SESSION_REQUEST = 'RESTORE_SESSION_REQUEST';
@@ -31,6 +33,14 @@ export function getSession(data) {
 
 export function getSessionSuccess(data) {
     return { type: GET_SESSION_SUCCESS, data }
+}
+
+export function getSessionStatistics(data) {
+    return { type: GET_SESSION_STATISTICS_REQUEST, data }
+}
+
+export function getSessionStatisticsSuccess(data) {
+    return { type: GET_SESSION_STATISTICS_SUCCESS, data }
 }
 
 export function deleteSession(data) {
