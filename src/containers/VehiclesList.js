@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledCard} from '../css/common';
+import {PaddedPaper, StyledCard} from '../css/common';
 import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from "@material-ui/core/Grid";
@@ -68,37 +68,44 @@ function VehicleList() {
         )
     } else {
         return (
-            <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
+            <Grid container spacing={2} direction={"column"} justify={"flex-start"} alignItems={"flex-start"}>
                 <Grid item>
                     {circleAdd}
                 </Grid>
                 <Grid item>
-                    <Grid container
-                          spacing={3}
-                          direction={"row"}
-                          justify={"flex-start"}
-                          alignItems={"center"}
-                    >
-                        {vehicles.map((vehicle) => (
-                            <Grid item key={vehicle.uuid}>
-                                <div style={{cursor: 'context-menu', position: "relative"}}>
-                                    <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)} style={{textDecoration: 'none'}}>
-                                        <VehicleCard vehicle={vehicle}/>
-                                    </Link>
-                                    <div style={{
-                                        cursor: 'context-menu',
-                                        position: "absolute",
-                                        bottom: 0,
-                                        right: 0,
-                                        zIndex: 1000
-                                    }}>
-                                        <VehicleContextMenu vehicleUUID={vehicle.uuid}/>
-                                    </div>
-                                </div>
+                    <PaddedPaper>
+                        <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
+                            <Grid item>
+                                <Grid container
+                                      spacing={3}
+                                      direction={"row"}
+                                      justify={"flex-start"}
+                                      alignItems={"center"}
+                                >
+                                    {vehicles.map((vehicle) => (
+                                        <Grid item key={vehicle.uuid}>
+                                            <div style={{cursor: 'context-menu', position: "relative"}}>
+                                                <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)}
+                                                      style={{textDecoration: 'none'}}>
+                                                    <VehicleCard vehicle={vehicle}/>
+                                                </Link>
+                                                <div style={{
+                                                    cursor: 'context-menu',
+                                                    position: "absolute",
+                                                    bottom: 0,
+                                                    right: 0,
+                                                    zIndex: 1000
+                                                }}>
+                                                    <VehicleContextMenu vehicleUUID={vehicle.uuid}/>
+                                                </div>
+                                            </div>
+                                        </Grid>
+                                    ))
+                                    }
+                                </Grid>
                             </Grid>
-                        ))
-                        }
-                    </Grid>
+                        </Grid>
+                    </PaddedPaper>
                 </Grid>
             </Grid>
 

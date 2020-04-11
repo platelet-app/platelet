@@ -10,8 +10,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {createLoadingSelector} from "../redux/selectors";
-import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
 import StatsSkeleton from "../loadingComponents/StatsSkeleton";
+import Moment from "react-moment";
+import moment from "moment";
 
 function getTitle(key) {
     switch (key) {
@@ -31,6 +32,8 @@ function getTitle(key) {
             return "Rejected";
         case "num_cancelled":
             return "Cancelled";
+        case "time_active":
+            return "Time Active";
         case "unassigned":
             return "Unassigned";
         default:
@@ -39,7 +42,155 @@ function getTitle(key) {
     }
 }
 
-function getDataFromKey(data, key) {
+function pad(num) {
+    return ("0"+num).slice(-2);
+}
+function hhmmss(secs) {
+    var minutes = Math.floor(secs / 60);
+    secs = secs%60;
+    var hours = Math.floor(minutes/60)
+    minutes = minutes%60;
+    return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+}
+
+
+function CommonStats(props) {
+    const columns = [
+        "num_completed",
+        "num_picked_up",
+        "num_active",
+        "num_unassigned",
+        "num_rejected",
+        "num_cancelled",
+        "num_tasks",
+        "time_active",
+    ];
+    return (
+        <TableContainer component={PaddedPaper}>
+            <Table size={"small"} style={{minWidth: "600px"}} aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        {columns.map((key) => (
+                            <TableCell key={key}>{getTitle(key)}</TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    <TableRow>
+                        {columns.map((key) => {
+                            if (key === "time_active")
+                                return <TableCell key={key}>{hhmmss(props.stats[key])}</TableCell>;
+                            else
+                                return <TableCell key={key}
+                                                  style={{fontWeight: key === "num_tasks" ? "bold" : "none"}}>{props.stats[key]}</TableCell>
+                        })}
+                    </TableRow>
+
+                </TableBody>
+            </Table>
+        </TableContainer>
+
+
+    )
+
+
+}
+
+function PatchStats(props) {
+    const priorities = useSelector(state => state.availablePriorities);
+    let columns = ["Patch"];
+    columns.push(...priorities.map((p) => p.label));
+    columns.push("None");
+    columns.push("Total");
+
+    return (
+        <TableContainer component={PaddedPaper}>
+            <Table size={"small"} style={{minWidth: "600px"}} aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        {columns.map((title) => (
+                            <TableCell key={title}>{title}</TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {Object.keys(props.stats.patches ? props.stats.patches : {}).map((patch) => {
+                        return (
+                            <TableRow key={patch} align="right">
+                                {columns.map((column) => (
+                                    column === "Patch" ? <TableCell key={column}>{patch}</TableCell> :
+                                        <TableCell key={column}>{props.stats.patches[patch][column]}</TableCell>
+                                ))}
+
+                            </TableRow>
+                        )
+
+                    })}
+                    <TableRow align="right">
+                        {columns.map((column) => {
+                            if (column === "Total")
+                                return <TableCell key={column}
+                                    style={{fontWeight: "bold"}}>{props.stats.num_tasks ? props.stats.num_tasks : ""}</TableCell>;
+                            else if (column === "Patch")
+                                return <TableCell key={column} style={{fontWeight: "bold"}}>Totals:</TableCell>;
+                            else
+                                return <TableCell key={column}
+                                    style={{fontWeight: "bold"}}>{props.stats.priorities ? props.stats.priorities[column] : ""}</TableCell>
+                        })}
+                    </TableRow>
+                </TableBody>
+            </Table>
+        </TableContainer>
+    )
+
+}
+
+function RiderStats(props) {
+    const priorities = useSelector(state => state.availablePriorities);
+    let columns = ["Assignee"];
+    columns.push(...priorities.map((p) => p.label));
+    columns.push("None");
+    columns.push("Total");
+
+    return (
+        <TableContainer component={PaddedPaper}>
+            <Table size={"small"} style={{minWidth: "600px"}} aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        {columns.map((title) => (
+                            <TableCell key={title}>{title}</TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {Object.keys(props.stats.riders ? props.stats.riders : {}).map((rider) => {
+                        return (
+                            <TableRow key={rider} align="right">
+                                {columns.map((column) => (
+                                    column === "Assignee" ? <TableCell key={column}>{rider}</TableCell> :
+                                        <TableCell key={column}>{props.stats.riders[rider][column]}</TableCell>
+                                ))}
+
+                            </TableRow>
+                        )
+
+                    })}
+                    <TableRow align="right">
+                        {columns.map((column) => {
+                            if (column === "Total")
+                                return <TableCell key={column}
+                                    style={{fontWeight: "bold"}}>{props.stats.num_tasks ? props.stats.num_tasks : ""}</TableCell>;
+                            else if (column === "Assignee")
+                                return <TableCell key={column} style={{fontWeight: "bold"}}>Totals:</TableCell>;
+                            else
+                                return <TableCell key={column}
+                                    style={{fontWeight: "bold"}}>{props.stats.priorities ? props.stats.priorities[column] : ""}</TableCell>
+                        })}
+                    </TableRow>
+                </TableBody>
+            </Table>
+        </TableContainer>
+    )
 
 }
 
@@ -47,7 +198,6 @@ export default function TasksStatistics(props) {
     const loadingSelector = createLoadingSelector(["GET_SESSION_STATISTICS", "GET_PRIORITIES"]);
     const isFetching = useSelector(state => loadingSelector(state));
     const stats = useSelector(state => state.sessionStatistics);
-    const priorities = useSelector(state => state.availablePriorities);
     const dispatch = useDispatch();
 
     function componentDidMount() {
@@ -56,55 +206,22 @@ export default function TasksStatistics(props) {
 
     useEffect(componentDidMount, []);
 
-    let columns = ["Assignee"];
-    columns.push(...priorities.map((p) => p.label));
-    columns.push("None");
-    columns.push("Total");
-
     if (isFetching) {
         return <StatsSkeleton/>
-    }
-    else {
+    } else {
 
         return (
-            <TableContainer component={PaddedPaper}>
-                <Table size={"small"} style={{minWidth: "600px"}} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            {columns.map((title) => (
-                                <TableCell>{title}</TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(stats.riders ? stats.riders : {}).map((rider) => {
-                            return (
-                                <TableRow align="right">
-                                    {columns.map((column) => (
-                                        column === "Assignee" ? <TableCell>{rider}</TableCell> :
-                                            <TableCell>{stats.riders[rider][column]}</TableCell>
-                                    ))}
-
-                                </TableRow>
-                            )
-
-                        })}
-                        <TableRow align="right">
-                            {columns.map((column) => {
-                                if (column === "Total")
-                                    return <TableCell
-                                        style={{fontWeight: "bold"}}>{stats.num_tasks ? stats.num_tasks : ""}</TableCell>;
-                                else if (column == "Assignee")
-                                    return <TableCell style={{fontWeight: "bold"}}>Totals:</TableCell>;
-                                else
-                                    return <TableCell
-                                        style={{fontWeight: "bold"}}>{stats.priorities ? stats.priorities[column] : ""}</TableCell>
-                            })}
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <Grid container direction={"column"} spacing={3}>
+                <Grid item>
+                    <CommonStats stats={stats}/>
+                </Grid>
+                <Grid item>
+                    <RiderStats stats={stats}/>
+                </Grid>
+                <Grid item>
+                    <PatchStats stats={stats}/>
+                </Grid>
+            </Grid>
         )
     }
 }
-

@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {StyledCard} from '../css/common';
+import {PaddedPaper, StyledCard} from '../css/common';
 import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from "@material-ui/core/Grid";
@@ -83,31 +83,44 @@ function SessionList(props) {
         )
     } else {
         return (
-            <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
+            <Grid container spacing={2} direction={"column"} justify={"flex-start"} alignItems={"flex-start"}>
                 <Grid item>
                     {circleAdd}
                 </Grid>
                 <Grid item>
-                    <Grid container
-                          spacing={3}
-                          direction={"row"}
-                          justify={"flex-start"}
-                          alignItems={"center"}
-                    >
-                        {sessions.sort((a, b) => new Date(b.time_created) - new Date(a.time_created)).map((session) => (
-                            <Grid item key={session.uuid}>
-                                <div style={{ cursor: 'context-menu', position: "relative" }}>
-                                    <Link to={"/session/" + encodeUUID(session.uuid)} style={{textDecoration: 'none'}}>
-                                        <SessionCard session={session}/>
-                                    </Link>
-                                    <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>
-                                        <SessionContextMenu sessionUUID={session.uuid}/>
-                                    </div>
-                                </div>
+                    <PaddedPaper>
+                        <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
+                            <Grid item>
+                                <Grid container
+                                      spacing={3}
+                                      direction={"row"}
+                                      justify={"flex-start"}
+                                      alignItems={"center"}
+                                >
+                                    {sessions.sort((a, b) => new Date(b.time_created) - new Date(a.time_created)).map((session) => (
+                                        <Grid item key={session.uuid}>
+                                            <div style={{cursor: 'context-menu', position: "relative"}}>
+                                                <Link to={"/session/" + encodeUUID(session.uuid)}
+                                                      style={{textDecoration: 'none'}}>
+                                                    <SessionCard session={session}/>
+                                                </Link>
+                                                <div style={{
+                                                    cursor: 'context-menu',
+                                                    position: "absolute",
+                                                    bottom: 0,
+                                                    right: 0,
+                                                    zIndex: 1000
+                                                }}>
+                                                    <SessionContextMenu sessionUUID={session.uuid}/>
+                                                </div>
+                                            </div>
+                                        </Grid>
+                                    ))
+                                    }
+                                </Grid>
                             </Grid>
-                        ))
-                        }
-                    </Grid>
+                        </Grid>
+                    </PaddedPaper>
                 </Grid>
             </Grid>
         )

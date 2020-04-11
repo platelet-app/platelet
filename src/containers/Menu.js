@@ -131,7 +131,7 @@ export function ResponsiveDrawer(props) {
                     >
                         <MenuIcon/>
                     </IconButton>
-                    <Grid container direction={"row-reverse"} justify={"right"} alignItems={"center"}>
+                    <Grid container direction={"row-reverse"} justify={"flex-start"} alignItems={"center"}>
                         <Grid item>
                             <div>
                                 <IconButton
