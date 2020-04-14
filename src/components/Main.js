@@ -14,6 +14,7 @@ import {MainWindowContainer} from "../css/common";
 import {clearLoading} from "../redux/Actions";
 import {useDispatch} from "react-redux";
 import App from "../App";
+import UsersList from "../containers/UsersList";
 
 export default function Main(_props) {
     let location = useLocation();
@@ -40,8 +41,14 @@ export default function Main(_props) {
                     <Route exact path='/mytasks'
                            render={(props) => <UsersTasks {...props} apiControl={_props.apiControl}/>}
                     />
+                    <Route exact path='/users'
+                           render={(props) => <UsersList {...props} apiControl={_props.apiControl}/>}
+                    />
                     <Route exact path='/session/:session_uuid_b62'
                            render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
+                    />
+                    <Route exact path='/session/:session_uuid_b62/statistics'
+                           render={(props) => <SessionDetail {...props} statsView={true} apiControl={_props.apiControl}/>}
                     />
                     <Route exact path="/session/:session_uuid_b62/task/:task_uuid_b62"
                            render={(props) => {

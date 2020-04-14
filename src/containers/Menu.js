@@ -111,6 +111,10 @@ export function ResponsiveDrawer(props) {
                         <ListItemIcon><MotorcycleIcon/></ListItemIcon>
                         <ListItemText primary={"Vehicles"}/>
                     </ListItem>
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 5)} component={Link} to="/users" button>
+                        <ListItemIcon><MotorcycleIcon/></ListItemIcon>
+                        <ListItemText primary={"Users"}/>
+                    </ListItem>
                 </List>
             </div>
         );

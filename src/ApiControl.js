@@ -319,8 +319,6 @@ class User {
 
 class Control {
     constructor(api_url, bearer = undefined) {
-        console.log("ASDFJKLFSJKLA")
-        console.log(bearer)
         this.login = this.login.bind(this);
         this.initialiseClasses = this.initialiseClasses.bind(this);
         this.logout = this.logout.bind(this);

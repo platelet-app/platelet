@@ -35,7 +35,6 @@ export function* watchPostNewVehicle() {
 
 function* updateVehicle(action) {
     const api = yield select(getApiControl);
-    console.log(action)
     if (action.data.payload.assigned_user) {
         action.data.payload.assigned_user_uuid = action.data.payload.assigned_user.uuid;
     }

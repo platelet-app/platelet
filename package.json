@@ -28,7 +28,6 @@
     "react-scripts": "3.0.1",
     "redux": "^4.0.5",
     "redux-saga": "^1.1.3",
-    "redux-thunk": "^2.3.0",
     "typeface-roboto": "0.0.75",
     "uuid-base62": "^0.1.0"
   },

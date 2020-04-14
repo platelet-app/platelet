@@ -77,7 +77,7 @@ function SessionDetail(props) {
     let location = useLocation();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const modeToggle = mobileView ? <></> :
+    const modeToggle = mobileView || props.statsView ? <></> :
         <Grid container
               spacing={1}
               direction={"row"}
@@ -120,16 +120,24 @@ function SessionDetail(props) {
                         setAnchorEl(null);
                         dispatch(setViewMode("stats"))
                     }}>
-                        <Typography>Stats</Typography>
+                        <Typography>Statistics</Typography>
                     </MenuItem>
                 </Menu>
             </Grid>
         </Grid>
     ;
-    console.log(viewMode)
 
     if (isFetching || viewMode === null) {
-        return viewMode === "stats" ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
+        return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
+
+    } else if (viewMode === "stats" || props.statsView) {
+        return (
+            <>
+                {modeToggle}
+                <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
+            </>)
+
+
     } else if (viewMode === "kanban" || mobileView) {
         return (
             <>
@@ -162,13 +170,6 @@ function SessionDetail(props) {
             </>
 
         )
-    } else if (viewMode === "stats") {
-        return (
-            <>
-                {modeToggle}
-                <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
-            </>)
-
     } else {
         return (
             <></>
