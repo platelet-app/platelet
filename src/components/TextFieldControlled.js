@@ -9,7 +9,6 @@ export function TextFieldControlled(props) {
             id={props.id}
             label={props.label}
             type="text"
-            fullWidth
             value={currentValue || ''}
             inputProps={{
                 maxLength: props.maxLength
@@ -30,7 +29,6 @@ export function TextFieldUncontrolled(props) {
             id={props.id}
             label={props.label}
             type="text"
-            fullWidth
             value={props.value || ''}
             onSelect={props.onSelect}
             onChange={props.onChange}
