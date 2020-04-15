@@ -2,11 +2,11 @@ import React from 'react';
 import uuidBase62 from 'uuid-base62';
 
 export function encodeUUID(uuid) {
-    return uuidBase62.encode(uuid);
+    return uuid ? uuidBase62.encode(uuid) : "";
 }
 
 export function decodeUUID(uuid) {
-    return uuidBase62.decode(uuid)
+    return uuid ? uuidBase62.decode(uuid) : "";
 }
 
 export function convertDate(timestamp) {

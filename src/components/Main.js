@@ -15,6 +15,8 @@ import {clearLoading} from "../redux/Actions";
 import {useDispatch} from "react-redux";
 import App from "../App";
 import UsersList from "../containers/UsersList";
+import UserProfile from "./UserProfile";
+import UserDetail from "../containers/UserDetail";
 
 export default function Main(_props) {
     let location = useLocation();
@@ -43,6 +45,9 @@ export default function Main(_props) {
                     />
                     <Route exact path='/users'
                            render={(props) => <UsersList {...props} apiControl={_props.apiControl}/>}
+                    />
+                    <Route exact path='/user/:user_uuid_b62'
+                           render={(props) => <UserDetail {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route exact path='/session/:session_uuid_b62'
                            render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}

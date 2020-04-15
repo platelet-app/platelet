@@ -17,6 +17,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import {setMenuIndex} from "../redux/Actions";
+import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
 
 
 function VehicleDetail(props) {
@@ -34,15 +36,18 @@ function VehicleDetail(props) {
         dispatch(getVehicle(decodeUUID(props.match.params.vehicle_uuid_b62)));
     }
 
-    useEffect(componentDidMount, []);
-    useEffect(() => {dispatch(setMenuIndex(4))}, []);
+    useEffect(componentDidMount, [props.location.key]);
+    useEffect(() => {
+        dispatch(setMenuIndex(4))
+    }, []);
 
     function onAssignUser(selectedUser) {
         if (selectedUser)
             dispatch(updateVehicle({vehicleUUID: vehicle.uuid, payload: {assigned_user: selectedUser}}));
     }
 
-    const userAssign = editMode ? <UsersSelect label={"Assign this vehicle to a user."} onSelect={onAssignUser}/> : <></>;
+    const userAssign = editMode ?
+        <UsersSelect label={"Assign this vehicle to a user."} onSelect={onAssignUser}/> : <></>;
     let editToggle = <></>;
     if (whoami.roles.includes("admin")) {
         editToggle = editMode ?
@@ -56,7 +61,6 @@ function VehicleDetail(props) {
                 <EditIcon/>
             </IconButton> :
             <IconButton
-                color="gray"
                 aria-controls="simple-menu"
                 aria-haspopup="true"
                 onClick={() => {
@@ -64,9 +68,10 @@ function VehicleDetail(props) {
                 }}>
                 <EditIcon/>
             </IconButton>;
-        }
+    }
 
-    let header = assignedUserDisplayName ? <h2>{vehicle.name ? vehicle.name : "No name"} assigned to {assignedUserDisplayName}.</h2> :
+    let header = assignedUserDisplayName ?
+        <h2>{vehicle.name ? vehicle.name : "No name"} assigned to {assignedUserDisplayName}.</h2> :
         <h2>{vehicle.name ? vehicle.name : "No name"} assigned to nobody.</h2>;
 
     useEffect(() => {
@@ -76,6 +81,10 @@ function VehicleDetail(props) {
             setAssignedUserDisplayName("")
     }, [assignedUser, vehicleName]);
 
+
+    const divider =  editMode ? <></> : <div style={{width: "600px"}}><Grid item><Divider/></Grid></div>;
+    const assignToMeButton = editMode ? <Button disabled={assignedUser.uuid === whoami.uuid} onClick={() => onAssignUser(whoami)}>Assign to Me</Button> : <></>;
+
     if (isFetching) {
         return (
             <FormSkeleton/>
@@ -83,57 +92,85 @@ function VehicleDetail(props) {
     } else {
         return (
             <PaddedPaper>
-                <Grid container direction={"row"} justify={"space-between"} alignItems={"top"} spacing={3}>
+                <Grid container direction={"column"} justify={"flex-start"} spacing={3}>
                     <Grid item>
-                        {header}
+                        <Grid container direction={"row"} justify={"space-between"} alignItems={"flex-end"} spacing={3}>
+                            <Grid item>
+                                {header}
+                            </Grid>
+                            <Grid item>
+                                {editToggle}
+                            </Grid>
+                        </Grid>
                     </Grid>
                     <Grid item>
-                        {editToggle}
-                    </Grid>
-                    <Grid item>
-                        <TextFieldControlled
-                            value={vehicle.name}
-                            label={"Name"}
-                            id={"vehicle-name"}
-                            disabled={!editMode}
-                            onSelect={(e) => {
-                                const payload = {name: e.target.value};
-                                const vehicleUUID = vehicle.uuid;
-                                dispatch(updateVehicleName({vehicleUUID, payload}))
-                            }}/>
-                        <TextFieldControlled
-                            value={vehicle.manufacturer}
-                            label={"Manufacturer"}
-                            id={"vehicle-manufacturer"}
-                            disabled={!editMode}
-                            onSelect={(e) => {
-                                const payload = {manufacturer: e.target.value};
-                                const vehicleUUID = vehicle.uuid;
-                                dispatch(updateVehicleManufacturer({vehicleUUID, payload}))
-                            }}/>
-                        <TextFieldControlled
-                            value={vehicle.model}
-                            label={"Model"}
-                            id={"vehicle-model"}
-                            disabled={!editMode}
-                            onSelect={(e) => {
-                                const payload = {model: e.target.value};
-                                const vehicleUUID = vehicle.uuid;
-                                dispatch(updateVehicleModel({vehicleUUID, payload}))
-                            }}/>
-                        <TextFieldControlled
-                            value={vehicle.registration_number}
-                            label={"Registration"}
-                            id={"vehicle-registration"}
-                            disabled={!editMode}
-                            maxLength={10}
-                            forceUppercase={true}
-                            onSelect={(e) => {
-                                const payload = {registration_number: e.target.value};
-                                const vehicleUUID = vehicle.uuid;
-                                dispatch(updateVehicleRegistration({vehicleUUID, payload}))
-                            }}/>
-                        {userAssign}
+                        <Grid item>
+                            <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"}
+                                  spacing={1}>
+                                <Grid item>
+                                    <TextFieldControlled
+                                        value={vehicle.name}
+                                        label={"Name"}
+                                        id={"vehicle-name"}
+                                        readOnly={!editMode}
+                                        onSelect={(e) => {
+                                            const payload = {name: e.target.value};
+                                            const vehicleUUID = vehicle.uuid;
+                                            dispatch(updateVehicleName({vehicleUUID, payload}))
+                                        }}/>
+                                </Grid>
+                                {divider}
+                                <Grid item>
+                                    <TextFieldControlled
+                                        value={vehicle.manufacturer}
+                                        label={"Manufacturer"}
+                                        id={"vehicle-manufacturer"}
+                                        readOnly={!editMode}
+                                        onSelect={(e) => {
+                                            const payload = {manufacturer: e.target.value};
+                                            const vehicleUUID = vehicle.uuid;
+                                            dispatch(updateVehicleManufacturer({vehicleUUID, payload}))
+                                        }}/>
+                                </Grid>
+                                {divider}
+                                <Grid item>
+                                    <TextFieldControlled
+                                        value={vehicle.model}
+                                        label={"Model"}
+                                        id={"vehicle-model"}
+                                        readOnly={!editMode}
+                                        onSelect={(e) => {
+                                            const payload = {model: e.target.value};
+                                            const vehicleUUID = vehicle.uuid;
+                                            dispatch(updateVehicleModel({vehicleUUID, payload}))
+                                        }}/>
+                                </Grid>
+                                {divider}
+                                <Grid item>
+                                    <TextFieldControlled
+                                        value={vehicle.registration_number}
+                                        label={"Registration"}
+                                        id={"vehicle-registration"}
+                                        readOnly={!editMode}
+                                        maxLength={10}
+                                        forceUppercase={true}
+                                        onSelect={(e) => {
+                                            const payload = {registration_number: e.target.value};
+                                            const vehicleUUID = vehicle.uuid;
+                                            dispatch(updateVehicleRegistration({vehicleUUID, payload}))
+                                        }}/>
+                                </Grid>
+                                {divider}
+                            </Grid>
+                        </Grid>
+                        <Grid container direction={"row"} justify={"space-between"} alignItems={"flex-end"} spacing={3}>
+                            <Grid item>
+                                {userAssign}
+                            </Grid>
+                            <Grid item>
+                                {assignToMeButton}
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
             </PaddedPaper>

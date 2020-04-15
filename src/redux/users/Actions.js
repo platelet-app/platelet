@@ -1,5 +1,7 @@
 export const GET_USERS_REQUEST = 'GET_USERS_REQUEST';
 export const GET_USERS_SUCCESS = 'GET_USERS_SUCCESS';
+export const GET_USER_REQUEST = 'GET_USER_REQUEST';
+export const GET_USER_SUCCESS = 'GET_USER_SUCCESS';
 export const UPDATE_USER_USERNAME_REQUEST = 'UPDATE_USER_USERNAME_REQUEST';
 export const UPDATE_USER_NAME_REQUEST = 'UPDATE_USER_NAME_REQUEST';
 export const UPDATE_USER_DISPLAY_NAME_REQUEST = 'UPDATE_USER_DISPLAY_NAME_REQUEST';
@@ -18,6 +20,15 @@ export function getUsers() {
 export function getUsersSuccess(data) {
     return { type: GET_USERS_SUCCESS, data }
 }
+
+export function getUser(data) {
+    return { type: GET_USER_REQUEST, data }
+}
+
+export function getUserSuccess(data) {
+    return { type: GET_USER_SUCCESS, data }
+}
+
 export function updateUserSuccess(data) {
     return { type: UPDATE_USER_SUCCESS, data }
 }

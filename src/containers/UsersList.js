@@ -14,8 +14,10 @@ function filterUsers(users, search) {
                 return user
             } else if (user.patch ? user.patch.toLowerCase().includes(search.toLowerCase()) : false) {
                 return user;
-            }
-        })}
+            } else if (user.roles ? user.roles.toLowerCase().includes(search.toLowerCase()) : false) {
+                return user;
+        }
+    })}
 }
 
 export default function UsersList(props) {

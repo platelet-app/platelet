@@ -15,7 +15,7 @@ import {availableLocations} from "./locations/Reducers"
 import {apiControl} from "./login/Reducers";
 import {availablePatches} from "./patches/Reducers";
 import {availablePriorities} from "./priorities/Reducers";
-import {users} from "./users/Reducers";
+import {users, user} from "./users/Reducers";
 import {vehicle, vehicles} from "./vehicles/Reducers";
 
 
@@ -118,6 +118,7 @@ const rootReducer = combineReducers({
     vehicles,
     vehicle,
     users,
+    user,
     whoami,
     sessionActiveTaskUUID,
     loadingReducer,

@@ -286,17 +286,10 @@ class User {
         this.bearer = bearer;
         this.users = [];
         this.api_url = api_url;
-        /*makeFetch(this.api_url, "users", "GET", this.bearer)
-            .then((data) => {
-                this.users = data;
-            });*/
     }
 
     async getUsers() {
         return makeFetch(this.api_url, "users", "GET", this.bearer);
-        return new Promise((resolve, reject) => {
-            resolve(this.users);
-        });
     }
 
     async getUser(user_id) {

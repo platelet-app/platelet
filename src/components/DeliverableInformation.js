@@ -20,7 +20,7 @@ export default function DeliverableInformation(props) {
               spacing={0}
               direction={"column"}
               justify={"flex-start"}
-              alignItems={"flex-start"}
+              alignItems={"center"}
         >
             {deliverables.map(deliverable => {
                 return <><Grid item>

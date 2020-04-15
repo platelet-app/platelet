@@ -1,6 +1,8 @@
-import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
+import { throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {
     GET_USERS_REQUEST,
+    GET_USER_REQUEST,
+    getUserSuccess,
     getUsersSuccess,
     updateUserSuccess,
     UPDATE_USER_NAME_REQUEST,
@@ -21,8 +23,19 @@ function* getUsers() {
     yield put(getUsersSuccess(result))
 }
 
+function* getUser(action) {
+    const api = yield select(getApiControl);
+    console.log(action.data)
+    const result = yield call([api, api.users.getUser], action.data);
+    yield put(getUserSuccess(result))
+}
+
 export function* watchGetUsers() {
     yield takeLatest(GET_USERS_REQUEST, getUsers)
+}
+
+export function* watchGetUser() {
+    yield takeLatest(GET_USER_REQUEST, getUser)
 }
 
 function* updateUser(action) {

@@ -43,7 +43,7 @@ import {
 import { all, call } from 'redux-saga/effects'
 import {watchGetAvailablePriorities} from "./priorities/Sagas";
 import {watchGetAvailableLocations} from "./locations/Sagas";
-import {watchGetUsers} from "./users/Sagas";
+import {watchGetUsers, watchGetUser} from "./users/Sagas";
 import {watchGetWhoami} from "./WhoamiSaga";
 import {watchLogin} from "./login/Sagas"
 import {watchGetAvailablePatches} from "./patches/Sagas";
@@ -89,6 +89,7 @@ export default function* rootSaga() {
         call(watchDeleteVehicle),
         call(watchRestoreVehicle),
         call(watchGetUsers),
+        call(watchGetUser),
         call(watchGetWhoami),
         call(watchLogin),
         call(watchRestoreTask),

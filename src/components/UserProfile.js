@@ -34,46 +34,60 @@ export default function UserProfile(props) {
                 <EditIcon/>
             </IconButton>;
     }
-return (
-    <PaddedPaper>
-        <Grid container direction={"row"} justify={"space-between"} alignItems={"top"} spacing={3}>
-            <Grid item>
-                {header}
+    return (
+        <PaddedPaper>
+            <Grid container direction={"column"} justify={"flex-start"} alignItems={"top"} spacing={3}>
+                <Grid item>
+                    <Grid container direction={"row"} justify={"space-between"} alignItems={"top"} spacing={3}>
+                        <Grid item>
+                            {header}
+                        </Grid>
+                        <Grid item>
+                            {editToggle}
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item>
+                    <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={1}>
+                        <Grid item>
+                            <TextFieldControlled
+                                value={props.user.name}
+                                label={"Name"}
+                                id={"users-name"}
+                                disabled={!editMode}
+                                onSelect={() => {
+                                }}/>
+                        </Grid>
+                        <Grid item>
+                            <TextFieldControlled
+                                value={props.user.display_name}
+                                label={"Display Name"}
+                                id={"dispay-name"}
+                                disabled={!editMode}
+                                onSelect={() => {
+                                }}/>
+                        </Grid>
+                        <Grid item>
+                            <TextFieldControlled
+                                value={props.user.email_address}
+                                label={"Email Address"}
+                                id={"email-address"}
+                                disabled={!editMode}
+                                onSelect={() => {
+                                }}/>
+                        </Grid>
+                        <Grid item>
+                            <TextFieldControlled
+                                value={props.user.contact_number}
+                                label={"Contact Number"}
+                                id={"contact-number"}
+                                disabled={!editMode}
+                                onSelect={() => {
+                                }}/>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
-            <Grid item>
-                {editToggle}
-            </Grid>
-            <Grid item>
-                <TextFieldControlled
-                    value={props.user.name}
-                    label={"Name"}
-                    id={"users-name"}
-                    disabled={!editMode}
-                    onSelect={() => {
-                    }}/>
-                <TextFieldControlled
-                    value={props.user.display_name}
-                    label={"Display Name"}
-                    id={"dispay-name"}
-                    disabled={!editMode}
-                    onSelect={() => {
-                    }}/>
-                <TextFieldControlled
-                    value={props.user.email_address}
-                    label={"Email Address"}
-                    id={"email-address"}
-                    disabled={!editMode}
-                    onSelect={() => {
-                    }}/>
-                <TextFieldControlled
-                    value={props.user.contact_number}
-                    label={"Contact Number"}
-                    id={"contact-number"}
-                    disabled={!editMode}
-                    onSelect={() => {
-                    }}/>
-            </Grid>
-        </Grid>
-    </PaddedPaper>
-)
+        </PaddedPaper>
+    )
 }

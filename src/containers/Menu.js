@@ -31,6 +31,8 @@ import MenuSkeleton from "../loadingComponents/MenuSkeleton";
 import MotorcycleIcon from '@material-ui/icons/Motorcycle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import {encodeUUID} from "../utilities";
 
 const drawerWidth = 240;
 
@@ -112,7 +114,7 @@ export function ResponsiveDrawer(props) {
                         <ListItemText primary={"Vehicles"}/>
                     </ListItem>
                     <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 5)} component={Link} to="/users" button>
-                        <ListItemIcon><MotorcycleIcon/></ListItemIcon>
+                        <ListItemIcon><PeopleAltIcon/></ListItemIcon>
                         <ListItemText primary={"Users"}/>
                     </ListItem>
                 </List>
@@ -158,7 +160,7 @@ export function ResponsiveDrawer(props) {
                                 >
                                     <MenuItem onClick={() => {
                                         setAnchorEl(null);
-                                    }} component={Link} to="/profile">
+                                    }} component={Link} to={`/user/${encodeUUID(whoami.uuid)}`}>
                                         Profile
                                     </MenuItem>
                                     <MenuItem onClick={() => {

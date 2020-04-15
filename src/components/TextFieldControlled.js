@@ -10,8 +10,10 @@ export function TextFieldControlled(props) {
             label={props.label}
             type="text"
             value={currentValue || ''}
-            inputProps={{
-                maxLength: props.maxLength
+            InputProps={{
+                maxLength: props.maxLength,
+                readOnly: props.readOnly,
+                disableUnderline: props.readOnly
             }}
             onChange={e => {
                 setCurrentValue(props.forceUppercase ? e.target.value.toUpperCase() : e.target.value);
@@ -25,12 +27,18 @@ export function TextFieldControlled(props) {
 export function TextFieldUncontrolled(props) {
     return (
         <TextField
+            {...props}
             margin="dense"
             id={props.id}
             label={props.label}
             type="text"
             value={props.value || ''}
             onSelect={props.onSelect}
+            InputProps={{
+                maxLength: props.maxLength,
+                readOnly: props.readOnly,
+                disableUnderline: props.readOnly
+            }}
             onChange={props.onChange}
             disabled={props.disabled ? props.disabled : false}
         />
