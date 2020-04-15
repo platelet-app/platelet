@@ -26,6 +26,7 @@ import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
 import TasksStatistics from "../components/TasksStatistics";
 import StatsSkeleton from "../loadingComponents/StatsSkeleton";
+import CommentsSection from "./CommentsSection";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -127,6 +128,8 @@ function SessionDetail(props) {
         </Grid>
     ;
 
+    const commentsSection = <CommentsSection parentUUID={session_uuid}/>
+
     if (isFetching || viewMode === null) {
         return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
 
@@ -135,6 +138,7 @@ function SessionDetail(props) {
             <>
                 {modeToggle}
                 <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
+                {commentsSection}
             </>)
 
 
@@ -151,6 +155,7 @@ function SessionDetail(props) {
                            sessionUUID={session_uuid}
                            modalView={"edit"}
                 />
+                {commentsSection}
             </>
 
         )
@@ -167,6 +172,7 @@ function SessionDetail(props) {
                             sessionUUID={session_uuid}
                             modalView={"edit"}
                 />
+                {commentsSection}
             </>
 
         )

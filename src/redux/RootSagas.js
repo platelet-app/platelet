@@ -29,6 +29,9 @@ import {
     watchUpdateDeliverable
 } from "./deliverables/Sagas"
 import {
+    watchGetComments
+} from "./comments/Sagas";
+import {
     watchPostNewVehicle,
     watchGetVehicles,
     watchUpdateVehicle,
@@ -94,5 +97,6 @@ export default function* rootSaga() {
         call(watchLogin),
         call(watchRestoreTask),
         call(watchGetAvailablePatches),
+        call(watchGetComments)
     ])
 }

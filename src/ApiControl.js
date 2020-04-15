@@ -5,23 +5,8 @@ function status(response) {
         return Promise.resolve(response)
     } else {
         if(response.status > 400 || response.status < 500) {
-            store.addNotification({
-                title: "Unauthorised error.",
-                //TODO: proper error messages from the api
-                message: "Try logging in again.",
-                type: "danger",
-                insert: "top",
-                container: "top-right",
-                animationIn: ["animated", "fadeIn"],
-                animationOut: ["animated", "fadeOut"],
-                dismiss: {
-                    duration: 10000,
-                    onScreen: true
-                }
-            });
-
+            return Promise.reject({ "status_code": response.status, "error": new Error(response.statusText), "response": response.json() })
         }
-        return Promise.reject({ "status_code": response.status, "error": new Error(response.statusText), "response": response.json() })
     }
 }
 
@@ -64,7 +49,7 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
                     onScreen: true
                 }
             });
-            return data;
+            throw error;
         });
 
 }
@@ -127,25 +112,25 @@ class Location {
     }
 }
 
-class Note {
+class Comment {
     constructor(bearer, api_url){
         this.bearer = bearer;
         this.api_url = api_url;
     }
 
-    async getNotes(item_id) {
-        return makeFetch(this.api_url, "notes/" + item_id, "GET", this.bearer)
+    async getComments(item_id) {
+        return makeFetch(this.api_url, "comments/" + item_id, "GET", this.bearer)
     }
 
-    async getNote(note_id) {
-        return makeFetch(this.api_url, "note/" + note_id, "GET", this.bearer)
+    async getComment(comment_id) {
+        return makeFetch(this.api_url, "comment/" + comment_id, "GET", this.bearer)
     }
 
-    async createNote(input_data) {
-        return makeFetch(this.api_url, "notes", "POST", this.bearer, "application/json", input_data)
+    async createComment(input_data) {
+        return makeFetch(this.api_url, "comments", "POST", this.bearer, "application/json", input_data)
     }
-    async updateNote(note_id, input_data) {
-        return makeFetch(this.api_url, "note/" + note_id, "PUT", this.bearer, "application/json", input_data)
+    async updateComment(comment_id, input_data) {
+        return makeFetch(this.api_url, "comment/" + comment_id, "PUT", this.bearer, "application/json", input_data)
     }
 }
 
@@ -453,7 +438,7 @@ class Control {
         this.token = "";
         this.users = undefined;
         this.sessions = undefined;
-        this.notes = undefined;
+        this.comments = undefined;
         this.tasks = undefined;
         this.deliverables = undefined;
         this.vehicles = undefined;
@@ -467,7 +452,7 @@ class Control {
         this.bearer = "Bearer " + token;
         this.users = new User(this.bearer, this.api_url);
         this.sessions = new Session(this.bearer, this.api_url);
-        this.notes = new Note(this.bearer, this.api_url);
+        this.comments = new Comment(this.bearer, this.api_url);
         this.tasks = new Task(this.bearer, this.api_url);
         this.deliverables = new Deliverable(this.bearer, this.api_url);
         this.vehicles = new Vehicle(this.bearer, this.api_url);
