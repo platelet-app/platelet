@@ -36,7 +36,7 @@ export function TaskCard(props) {
     const patch = props.patch ? props.patch : "";
     const cardInnerContent =
         <CardContent>
-            <Grid container spacing={0} direction={"column"}>
+            <Grid containerspacing={1} direction={"column"}>
                 <CardItem width={"170px"} label={"Assignee"}>{rider}</CardItem>
                 <CardItem label={"Patch"}>{patch}</CardItem>
                 <CardItem label={"From"}>{pickupTitle}</CardItem>

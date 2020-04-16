@@ -36,19 +36,19 @@ function filterTasks(tasks, search) {
 const getColumnTitle = key => {
     switch (key) {
         case "tasksNew":
-            return <h3>New</h3>;
+            return <Typography><h3>New</h3></Typography>;
         case "tasksActive":
-            return <h3>Active</h3>;
+            return <Typography><h3>Active</h3></Typography>;
         case "tasksPickedUp":
-            return <h3>Picked up</h3>;
+            return <Typography><h3>Picked up</h3></Typography>;
         case "tasksDelivered":
-            return <h3>Delivered</h3>;
+            return <Typography><h3>Delivered</h3></Typography>;
         case "tasksRejected":
-            return <h3>Rejected</h3>;
+            return <Typography><h3>Rejected</h3></Typography>;
         case "tasksCancelled":
-            return <h3>Cancelled</h3>;
+            return <Typography><h3>Cancelled</h3></Typography>;
         case "tasksRejectedCancelled":
-            return <h3>Rejected/Cancelled</h3>;
+            return <Typography><h3>Rejected/Cancelled</h3></Typography>;
         default:
             return ""
     }
@@ -58,16 +58,19 @@ export default function TasksGrid(props) {
     const loadingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => loadingSelector(state));
     const [filteredTasks, setFilteredTasks] = useState(props.tasks);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [isFiltered, setIsFiltered] = useState(false);
     const emptyTask = {
         session_uuid: props.sessionUUID,
         time_of_call: new Date().toISOString(),
     };
-    useEffect(() => setFilteredTasks(filterTasks(props.tasks, searchQuery)), [searchQuery, props.tasks]);
     return (<Grid container spacing={3} direction={"column"} alignItems={"flex-start"}>
             <Grid item>
                 {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onSelect={(e) => {
-                    setSearchQuery(e.target.value)
+                    if (e.target.value)
+                        setIsFiltered(true);
+                    else
+                        setIsFiltered(false);
+                    setFilteredTasks(filterTasks(props.tasks, e.target.value));
                 }}/>}
             </Grid>
             <Grid item>
@@ -81,7 +84,7 @@ export default function TasksGrid(props) {
                         if (props.excludeColumnList && props.excludeColumnList.includes(taskList[0]))
                             return <></>
                         let newTaskButton = "";
-                        if (props.sessionUUID && taskList[0] === "tasksNew" && !searchQuery) {
+                        if (props.sessionUUID && taskList[0] === "tasksNew" && !isFiltered) {
                             newTaskButton = <AddCircleButton disabled={isPosting} onClick={() => {
                                 props.onAddTaskClick(emptyTask)
                             }}/>
@@ -101,7 +104,7 @@ export default function TasksGrid(props) {
                                         {newTaskButton}
                                         {taskList[1].map(task => {
                                             return (
-                                                <TaskItem key={task.uuid} task={task} view={props.modalView}
+                                                <TaskItem task={task} view={props.modalView}
                                                           fullScreenModal={props.fullScreenModal}
                                                           location={props.location}
                                                           deleteDisabled={props.deleteDisabled}/>
