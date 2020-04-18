@@ -9,7 +9,7 @@ import {
 import {decodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldControlled} from "../components/TextFieldControlled";
-import {createErrorMessageSelector, createLoadingSelector} from "../redux/selectors";
+import {createLoadingSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
 import UsersSelect from "../components/UsersSelect";
 import {PaddedPaper} from "../css/common";
@@ -26,8 +26,8 @@ export default function VehicleDetail(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_VEHICLE"]);
     const isFetching = useSelector(state => loadingSelector(state));
-    const errorSelector = createErrorMessageSelector(["GET_VEHICLE"]);
-    const erroring = useSelector(state => errorSelector(state));
+    //const errorSelector = createErrorMessageSelector(["GET_VEHICLE"]);
+    //const erroring = useSelector(state => errorSelector(state));
     const [editMode, setEditMode] = useState(false);
     const [assignedUserDisplayName, setAssignedUserDisplayName] = useState(undefined);
     const vehicle = useSelector(state => state.vehicle);
@@ -35,7 +35,7 @@ export default function VehicleDetail(props) {
     const vehicleName = useSelector(state => state.vehicle.name);
     const whoami = useSelector(state => state.whoami);
 
-    console.log(erroring)
+    //console.log(erroring)
 
     function componentDidMount() {
         dispatch(getVehicle(decodeUUID(props.match.params.vehicle_uuid_b62)));
