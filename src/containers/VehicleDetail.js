@@ -19,9 +19,10 @@ import IconButton from "@material-ui/core/IconButton";
 import {setMenuIndex} from "../redux/Actions";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import CommentsSection from "./CommentsSection";
 
 
-function VehicleDetail(props) {
+export default function VehicleDetail(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_VEHICLE"]);
     const isFetching = useSelector(state => loadingSelector(state));
@@ -35,6 +36,7 @@ function VehicleDetail(props) {
     const whoami = useSelector(state => state.whoami);
 
     console.log(erroring)
+
     function componentDidMount() {
         dispatch(getVehicle(decodeUUID(props.match.params.vehicle_uuid_b62)));
     }
@@ -85,8 +87,10 @@ function VehicleDetail(props) {
     }, [assignedUser, vehicleName]);
 
 
-    const divider =  editMode ? <></> : <div style={{width: "600px"}}><Grid item><Divider/></Grid></div>;
-    const assignToMeButton = editMode ? <Button disabled={assignedUser.uuid === whoami.uuid} onClick={() => onAssignUser(whoami)}>Assign to Me</Button> : <></>;
+    const divider = editMode ? <></> : <div style={{width: "600px"}}><Grid item><Divider/></Grid></div>;
+    const assignToMeButton = editMode ?
+        <Button disabled={assignedUser.uuid === whoami.uuid} onClick={() => onAssignUser(whoami)}>Assign to
+            Me</Button> : <></>;
 
     if (isFetching) {
         return (
@@ -94,94 +98,101 @@ function VehicleDetail(props) {
         )
     } else {
         return (
-            <PaddedPaper>
-                <Grid container direction={"column"} justify={"flex-start"} spacing={3}>
-                    <Grid item>
-                        <Grid container direction={"row"} justify={"space-between"} alignItems={"flex-end"} spacing={3}>
+            <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>
+                <Grid item>
+                    <PaddedPaper>
+                        <Grid container direction={"column"} justify={"flex-start"} spacing={3}>
                             <Grid item>
-                                {header}
+                                <Grid container direction={"row"} justify={"space-between"} alignItems={"flex-end"}
+                                      spacing={3}>
+                                    <Grid item>
+                                        {header}
+                                    </Grid>
+                                    <Grid item>
+                                        {editToggle}
+                                    </Grid>
+                                </Grid>
                             </Grid>
                             <Grid item>
-                                {editToggle}
+                                <Grid item>
+                                    <Grid container direction={"column"} justify={"flex-start"}
+                                          alignItems={"flex-start"}
+                                          spacing={1}>
+                                        <Grid item>
+                                            <TextFieldControlled
+                                                value={vehicle.name}
+                                                label={"Name"}
+                                                id={"vehicle-name"}
+                                                readOnly={!editMode}
+                                                onChange={(e) => {
+                                                    const payload = {name: e.target.value};
+                                                    const vehicleUUID = vehicle.uuid;
+                                                    dispatch(updateVehicleName({vehicleUUID, payload}))
+                                                }}/>
+                                        </Grid>
+                                        {divider}
+                                        <Grid item>
+                                            <TextFieldControlled
+                                                value={vehicle.manufacturer}
+                                                label={"Manufacturer"}
+                                                id={"vehicle-manufacturer"}
+                                                readOnly={!editMode}
+                                                onChange={(e) => {
+                                                    const payload = {manufacturer: e.target.value};
+                                                    const vehicleUUID = vehicle.uuid;
+                                                    dispatch(updateVehicleManufacturer({vehicleUUID, payload}))
+                                                }}/>
+                                        </Grid>
+                                        {divider}
+                                        <Grid item>
+                                            <TextFieldControlled
+                                                value={vehicle.model}
+                                                label={"Model"}
+                                                id={"vehicle-model"}
+                                                readOnly={!editMode}
+                                                onChange={(e) => {
+                                                    const payload = {model: e.target.value};
+                                                    const vehicleUUID = vehicle.uuid;
+                                                    dispatch(updateVehicleModel({vehicleUUID, payload}))
+                                                }}/>
+                                        </Grid>
+                                        {divider}
+                                        <Grid item>
+                                            <TextFieldControlled
+                                                value={vehicle.registration_number}
+                                                label={"Registration"}
+                                                id={"vehicle-registration"}
+                                                readOnly={!editMode}
+                                                maxLength={10}
+                                                forceUppercase={true}
+                                                onChange={(e) => {
+                                                    const payload = {registration_number: e.target.value};
+                                                    const vehicleUUID = vehicle.uuid;
+                                                    dispatch(updateVehicleRegistration({vehicleUUID, payload}))
+                                                }}/>
+                                        </Grid>
+                                        {divider}
+                                    </Grid>
+                                </Grid>
+                                <Grid container direction={"row"} justify={"space-between"} alignItems={"flex-end"}
+                                      spacing={3}>
+                                    <Grid item>
+                                        {userAssign}
+                                    </Grid>
+                                    <Grid item>
+                                        {assignToMeButton}
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid item>
-                        <Grid item>
-                            <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"}
-                                  spacing={1}>
-                                <Grid item>
-                                    <TextFieldControlled
-                                        value={vehicle.name}
-                                        label={"Name"}
-                                        id={"vehicle-name"}
-                                        readOnly={!editMode}
-                                        onChange={(e) => {
-                                            const payload = {name: e.target.value};
-                                            const vehicleUUID = vehicle.uuid;
-                                            dispatch(updateVehicleName({vehicleUUID, payload}))
-                                        }}/>
-                                </Grid>
-                                {divider}
-                                <Grid item>
-                                    <TextFieldControlled
-                                        value={vehicle.manufacturer}
-                                        label={"Manufacturer"}
-                                        id={"vehicle-manufacturer"}
-                                        readOnly={!editMode}
-                                        onChange={(e) => {
-                                            const payload = {manufacturer: e.target.value};
-                                            const vehicleUUID = vehicle.uuid;
-                                            dispatch(updateVehicleManufacturer({vehicleUUID, payload}))
-                                        }}/>
-                                </Grid>
-                                {divider}
-                                <Grid item>
-                                    <TextFieldControlled
-                                        value={vehicle.model}
-                                        label={"Model"}
-                                        id={"vehicle-model"}
-                                        readOnly={!editMode}
-                                        onChange={(e) => {
-                                            const payload = {model: e.target.value};
-                                            const vehicleUUID = vehicle.uuid;
-                                            dispatch(updateVehicleModel({vehicleUUID, payload}))
-                                        }}/>
-                                </Grid>
-                                {divider}
-                                <Grid item>
-                                    <TextFieldControlled
-                                        value={vehicle.registration_number}
-                                        label={"Registration"}
-                                        id={"vehicle-registration"}
-                                        readOnly={!editMode}
-                                        maxLength={10}
-                                        forceUppercase={true}
-                                        onChange={(e) => {
-                                            const payload = {registration_number: e.target.value};
-                                            const vehicleUUID = vehicle.uuid;
-                                            dispatch(updateVehicleRegistration({vehicleUUID, payload}))
-                                        }}/>
-                                </Grid>
-                                {divider}
-                            </Grid>
-                        </Grid>
-                        <Grid container direction={"row"} justify={"space-between"} alignItems={"flex-end"} spacing={3}>
-                            <Grid item>
-                                {userAssign}
-                            </Grid>
-                            <Grid item>
-                                {assignToMeButton}
-                            </Grid>
-                        </Grid>
-                    </Grid>
+                    </PaddedPaper>
                 </Grid>
-            </PaddedPaper>
+                <Grid item>
+                    <PaddedPaper width={"400px"}>
+                        <CommentsSection parentUUID={vehicle.uuid}/>
+                    </PaddedPaper>
+                </Grid>
+            </Grid>
         )
     }
-
-
 }
-
-
-export default VehicleDetail

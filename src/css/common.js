@@ -80,7 +80,7 @@ export function PaddedPaper(props) {
     const padding = props.padding ? props.padding : "30px";
     const maxWidth = props.maxWidth ? props.maxWidth : "1000px";
     return (
-        <Paper style={{maxWidth: maxWidth, padding: padding}}>
+        <Paper style={{width: props.width ? props.width : "100%", maxWidth: maxWidth, padding: padding}}>
             {props.children}
         </Paper>
     )

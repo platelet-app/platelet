@@ -17,7 +17,7 @@ import {availablePatches} from "./patches/Reducers";
 import {availablePriorities} from "./priorities/Reducers";
 import {users, user} from "./users/Reducers";
 import {vehicle, vehicles} from "./vehicles/Reducers";
-import {comments} from "./comments/Reducers";
+import {comments, sessionComments} from "./comments/Reducers";
 
 
 function viewMode(state = null, action) {
@@ -146,6 +146,7 @@ const rootReducer = combineReducers({
     user,
     whoami,
     comments,
+    sessionComments,
     sessionActiveTaskUUID,
     loadingReducer,
     postingReducer,

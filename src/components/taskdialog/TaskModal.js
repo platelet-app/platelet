@@ -34,6 +34,7 @@ import {createLoadingSelector, createPostingSelector} from "../../redux/selector
 import FormSkeleton from "../../loadingComponents/FormSkeleton";
 import TaskModalTimePicker from "./TaskModalTimePicker";
 import TaskModalNameAndContactNumber from "./TaskModalNameAndContactNumber";
+import CommentsSection from "../../containers/CommentsSection";
 
 export default function TaskModal(props) {
     const dispatch = useDispatch();
@@ -337,6 +338,9 @@ export default function TaskModal(props) {
                                 </DialogContentText>
                             </Box>
                         </Grid>
+                        <Grid item>
+                            <CommentsSection parentUUID={taskUUID}/>
+                        </Grid>
                     </Grid>
                 </DialogContent>
             </>;
@@ -423,13 +427,7 @@ export default function TaskModal(props) {
                             {dropoffTimeNotice}
                         </Grid>
                         <Grid item>
-                            <TextField
-                                margin="dense"
-                                id="note"
-                                label="Add a note!"
-                                type="text"
-                                fullWidth
-                            />
+                            <CommentsSection parentUUID={taskUUID}/>
                         </Grid>
                     </Grid>
                 </div>

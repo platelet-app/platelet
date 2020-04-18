@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     },
     content: {
         flexGrow: 1,
-        //padding: theme.spacing(3),
+        padding: theme.spacing(3),
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
@@ -62,8 +62,6 @@ export default function PersistentDrawerRight(props) {
     const classes = useStyles();
     const theme = useTheme();
     const commentsParentUUID = useSelector(state => state.commentsObjectUUID);
-
-
 
     return (
         <div className={classes.root}>
@@ -91,7 +89,7 @@ export default function PersistentDrawerRight(props) {
                     </IconButton>
                 </div>
                 <Divider/>
-                <CommentsSection parentUUID={commentsParentUUID}/>
+                <CommentsSection session={true} parentUUID={commentsParentUUID}/>
             </SwipeableDrawer>
         </div>
     );

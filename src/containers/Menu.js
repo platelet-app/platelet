@@ -99,7 +99,6 @@ export function ResponsiveDrawer(props) {
     const rightBarClasses = rightSideBarUseStyles()
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
 
     const handleDrawerToggle = () => {
         if (mobileView)
@@ -191,13 +190,6 @@ export function ResponsiveDrawer(props) {
                                         Logout
                                     </MenuItem>
                                 </Menu>
-                                <IconButton
-                                    color="inherit"
-                                    aria-label="open drawer"
-                                    onClick={() => setRightSideBarOpen(true)}
-                                >
-                                    <ChatIcon/>
-                                </IconButton>
                             </div>
                         </Grid>
                         <Grid item>
@@ -239,9 +231,7 @@ export function ResponsiveDrawer(props) {
                     </Drawer>
                 </Hidden>
             </nav>
-            <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
-                <Main apiControl={props.apiControl}/>
-            </PersistentDrawerRight>
+            <Main apiControl={props.apiControl}/>
         </div>
     );
 }

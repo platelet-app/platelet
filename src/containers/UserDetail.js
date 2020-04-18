@@ -6,8 +6,11 @@ import UserProfile from "../components/UserProfile";
 import {createLoadingSelector} from "../redux/selectors";
 import DetailSkeleton from "../loadingComponents/DetailSkeleton";
 import {withRouter} from "react-router"
+import Grid from "@material-ui/core/Grid";
+import {PaddedPaper} from "../css/common";
+import CommentsSection from "./CommentsSection";
 
-function UserDetail (props) {
+export default function UserDetail (props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
     const user = useSelector(state => state.user);
     const dispatch = useDispatch();
@@ -18,6 +21,7 @@ function UserDetail (props) {
     function newUserProfile() {
         dispatch(getUser(userUUID));
     }
+
     useEffect(newUserProfile, [props.location.key]);
 
     if (isFetching) {
@@ -26,9 +30,16 @@ function UserDetail (props) {
         )
     } else {
         return (
-            <UserProfile user={user}/>
+            <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>
+                <Grid item>
+                    <UserProfile user={user}/>
+                </Grid>
+                <Grid item>
+                    <PaddedPaper width={"400px"}>
+                        <CommentsSection parentUUID={user.uuid}/>
+                    </PaddedPaper>
+                </Grid>
+            </Grid>
         )
     }
 }
-
-export default withRouter(UserDetail)

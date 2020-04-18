@@ -3,6 +3,7 @@ import CommentCard from "./CommentCard";
 import React from "react";
 import NewCommentCard from "./NewCommentCard";
 import {useSelector} from "react-redux";
+import Typography from "@material-ui/core/Typography";
 
 export default function CommentsMain(props) {
     const whoami = useSelector(state => state.whoami);
@@ -11,7 +12,7 @@ export default function CommentsMain(props) {
             {props.comments.map((comment) => (
                 <Grid item>
                     <CommentCard author={comment.author} public={comment.publicly_visible}>
-                        {comment.body}
+                        <Typography>{comment.body}</Typography>
                     </CommentCard>
                 </Grid>
             ))}

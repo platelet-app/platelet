@@ -26,7 +26,8 @@ import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
 import TasksStatistics from "../components/TasksStatistics";
 import StatsSkeleton from "../loadingComponents/StatsSkeleton";
-import CommentsSection from "./SideInfoSection";
+import PersistentDrawerRight from "./SideInfoSection";
+import ChatIcon from "@material-ui/icons/Chat";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -55,6 +56,8 @@ function SessionDetail(props) {
     //TODO: Maybe use this to show a particular task when navigating to the task URL directly
     //const activeTask = useSelector(state => state.sessionActiveTaskUUID);
     //dispatch(setActiveTaskUUID(props.match.params.task_uuid_b62));
+
+    const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
 
 
     function componentDidMount() {
@@ -126,6 +129,16 @@ function SessionDetail(props) {
                         <Typography>Statistics</Typography>
                     </MenuItem>
                 </Menu>
+
+            </Grid>
+            <Grid item>
+            <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={() => setRightSideBarOpen(!rightSideBarOpen)}
+            >
+                <ChatIcon/>
+            </IconButton>
             </Grid>
         </Grid>
     ;
@@ -136,15 +149,16 @@ function SessionDetail(props) {
 
     } else if (viewMode === "stats" || props.statsView) {
         return (
-            <>
+                <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
-            </>)
+                </PersistentDrawerRight>
+        )
 
 
     } else if (viewMode === "kanban" || mobileView) {
         return (
-            <>
+                <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksGrid tasks={tasks}
                            fullScreenModal={mobileView}
@@ -154,12 +168,12 @@ function SessionDetail(props) {
                            sessionUUID={session_uuid}
                            modalView={"edit"}
                 />
-            </>
+                </PersistentDrawerRight>
 
         )
     } else if (viewMode === "table") {
         return (
-            <>
+                <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksTable tasks={tasks}
                             fullScreenModal={mobileView}
@@ -169,7 +183,8 @@ function SessionDetail(props) {
                             sessionUUID={session_uuid}
                             modalView={"edit"}
                 />
-            </>
+                </PersistentDrawerRight>
+
 
         )
     } else {
