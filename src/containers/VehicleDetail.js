@@ -9,7 +9,7 @@ import {
 import {decodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldControlled} from "../components/TextFieldControlled";
-import {createLoadingSelector} from "../redux/selectors";
+import {createErrorMessageSelector, createLoadingSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
 import UsersSelect from "../components/UsersSelect";
 import {PaddedPaper} from "../css/common";
@@ -25,6 +25,8 @@ function VehicleDetail(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_VEHICLE"]);
     const isFetching = useSelector(state => loadingSelector(state));
+    const errorSelector = createErrorMessageSelector(["GET_VEHICLE"]);
+    const erroring = useSelector(state => errorSelector(state));
     const [editMode, setEditMode] = useState(false);
     const [assignedUserDisplayName, setAssignedUserDisplayName] = useState(undefined);
     const vehicle = useSelector(state => state.vehicle);
@@ -32,6 +34,7 @@ function VehicleDetail(props) {
     const vehicleName = useSelector(state => state.vehicle.name);
     const whoami = useSelector(state => state.whoami);
 
+    console.log(erroring)
     function componentDidMount() {
         dispatch(getVehicle(decodeUUID(props.match.params.vehicle_uuid_b62)));
     }
@@ -113,7 +116,7 @@ function VehicleDetail(props) {
                                         label={"Name"}
                                         id={"vehicle-name"}
                                         readOnly={!editMode}
-                                        onSelect={(e) => {
+                                        onChange={(e) => {
                                             const payload = {name: e.target.value};
                                             const vehicleUUID = vehicle.uuid;
                                             dispatch(updateVehicleName({vehicleUUID, payload}))
@@ -126,7 +129,7 @@ function VehicleDetail(props) {
                                         label={"Manufacturer"}
                                         id={"vehicle-manufacturer"}
                                         readOnly={!editMode}
-                                        onSelect={(e) => {
+                                        onChange={(e) => {
                                             const payload = {manufacturer: e.target.value};
                                             const vehicleUUID = vehicle.uuid;
                                             dispatch(updateVehicleManufacturer({vehicleUUID, payload}))
@@ -139,7 +142,7 @@ function VehicleDetail(props) {
                                         label={"Model"}
                                         id={"vehicle-model"}
                                         readOnly={!editMode}
-                                        onSelect={(e) => {
+                                        onChange={(e) => {
                                             const payload = {model: e.target.value};
                                             const vehicleUUID = vehicle.uuid;
                                             dispatch(updateVehicleModel({vehicleUUID, payload}))
@@ -154,7 +157,7 @@ function VehicleDetail(props) {
                                         readOnly={!editMode}
                                         maxLength={10}
                                         forceUppercase={true}
-                                        onSelect={(e) => {
+                                        onChange={(e) => {
                                             const payload = {registration_number: e.target.value};
                                             const vehicleUUID = vehicle.uuid;
                                             dispatch(updateVehicleRegistration({vehicleUUID, payload}))

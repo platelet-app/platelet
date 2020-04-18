@@ -19,7 +19,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment"
-import {getLocalStorageViewMode} from "./utilities";
+import SideInfoSection from "./containers/SideInfoSection";
 
 
 

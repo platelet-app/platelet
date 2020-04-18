@@ -40,4 +40,3 @@ export function* getComments(action) {
 export function* watchGetComments() {
     yield takeLatest(GET_COMMENTS_REQUEST, getComments)
 }
-

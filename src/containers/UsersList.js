@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import UserCard from "../components/UserCard";
 import Grid from "@material-ui/core/Grid";
 import {TextFieldControlled} from "../components/TextFieldControlled";
+import {setMenuIndex} from "../redux/Actions";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -21,13 +22,17 @@ function filterUsers(users, search) {
 }
 
 export default function UsersList(props) {
+    const dispatch = useDispatch();
     const users = useSelector(state => state.users);
     const [filteredUsers, setFilteredUsers] = useState(users);
     useEffect(() => setFilteredUsers(users), [users]);
+    useEffect(() => {
+        dispatch(setMenuIndex(5))
+    }, []);
 
     return (<Grid container>
             <Grid item>
-                <TextFieldControlled onSelect={(e) => setFilteredUsers(filterUsers(users, e.target.value))}/>
+                <TextFieldControlled onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}/>
             </Grid>
             <Grid item>
                 <Grid container spacing={1}>

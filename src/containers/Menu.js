@@ -33,8 +33,28 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import {encodeUUID} from "../utilities";
+import {SwipeableDrawer} from "@material-ui/core";
+import PersistentDrawerRight from "./SideInfoSection";
+import ChatIcon from '@material-ui/icons/Chat';
 
 const drawerWidth = 240;
+
+const rightSideBarUseStyles = makeStyles(theme => ({
+    appBar: {
+        transition: theme.transitions.create(['margin', 'width'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    },
+    appBarShift: {
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['margin', 'width'], {
+            easing: theme.transitions.easing.easeOut,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        marginRight: drawerWidth,
+    },
+}));
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -76,8 +96,10 @@ export function ResponsiveDrawer(props) {
     const menuIndex = useSelector(state => state.menuIndex);
     const {container} = props;
     const classes = useStyles();
+    const rightBarClasses = rightSideBarUseStyles()
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
 
     const handleDrawerToggle = () => {
         if (mobileView)
@@ -169,6 +191,13 @@ export function ResponsiveDrawer(props) {
                                         Logout
                                     </MenuItem>
                                 </Menu>
+                                <IconButton
+                                    color="inherit"
+                                    aria-label="open drawer"
+                                    onClick={() => setRightSideBarOpen(true)}
+                                >
+                                    <ChatIcon/>
+                                </IconButton>
                             </div>
                         </Grid>
                         <Grid item>
@@ -182,7 +211,7 @@ export function ResponsiveDrawer(props) {
             <nav className={classes.drawer} aria-label="mailbox folders">
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Hidden smUp implementation="css">
-                    <Drawer
+                    <SwipeableDrawer
                         container={container}
                         variant="temporary"
                         anchor={theme.direction === 'rtl' ? 'right' : 'left'}
@@ -196,7 +225,7 @@ export function ResponsiveDrawer(props) {
                         }}
                     >
                         {drawer}
-                    </Drawer>
+                    </SwipeableDrawer>
                 </Hidden>
                 <Hidden xsDown implementation="css">
                     <Drawer
@@ -210,7 +239,9 @@ export function ResponsiveDrawer(props) {
                     </Drawer>
                 </Hidden>
             </nav>
-            <Main apiControl={props.apiControl}/>
+            <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
+                <Main apiControl={props.apiControl}/>
+            </PersistentDrawerRight>
         </div>
     );
 }

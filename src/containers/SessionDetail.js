@@ -6,7 +6,7 @@ import {
     addTask,
     getAllTasks,
 } from '../redux/tasks/Actions'
-import {setMenuIndex, setViewMode} from "../redux/Actions";
+import {setCommentsObjectUUID, setMenuIndex, setViewMode} from "../redux/Actions";
 import {getSession} from "../redux/sessions/Actions";
 import {makeStyles} from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
@@ -26,7 +26,7 @@ import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
 import TasksStatistics from "../components/TasksStatistics";
 import StatsSkeleton from "../loadingComponents/StatsSkeleton";
-import CommentsSection from "./CommentsSection";
+import CommentsSection from "./SideInfoSection";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -60,6 +60,8 @@ function SessionDetail(props) {
     function componentDidMount() {
         dispatch(getAllTasks(session_uuid));
         dispatch(getSession(session_uuid));
+
+        dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
             if (viewModeLocalStorage === null)
@@ -128,7 +130,6 @@ function SessionDetail(props) {
         </Grid>
     ;
 
-    const commentsSection = <CommentsSection parentUUID={session_uuid}/>
 
     if (isFetching || viewMode === null) {
         return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
@@ -138,7 +139,6 @@ function SessionDetail(props) {
             <>
                 {modeToggle}
                 <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
-                {commentsSection}
             </>)
 
 
@@ -147,7 +147,6 @@ function SessionDetail(props) {
             <>
                 {modeToggle}
                 <TasksGrid tasks={tasks}
-                           location={location}
                            fullScreenModal={mobileView}
                            onAddTaskClick={(task) => {
                                dispatch(addTask(task));
@@ -155,7 +154,6 @@ function SessionDetail(props) {
                            sessionUUID={session_uuid}
                            modalView={"edit"}
                 />
-                {commentsSection}
             </>
 
         )
@@ -164,7 +162,6 @@ function SessionDetail(props) {
             <>
                 {modeToggle}
                 <TasksTable tasks={tasks}
-                            location={location}
                             fullScreenModal={mobileView}
                             onAddTaskClick={(task) => {
                                 dispatch(addTask(task));
@@ -172,7 +169,6 @@ function SessionDetail(props) {
                             sessionUUID={session_uuid}
                             modalView={"edit"}
                 />
-                {commentsSection}
             </>
 
         )

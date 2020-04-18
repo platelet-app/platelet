@@ -2,7 +2,7 @@ import update from "immutability-helper";
 import {
     GET_COMMENTS_SUCCESS,
     ADD_COMMENT_SUCCESS,
-    UPDATE_COMMENT_SUCCESS,
+    UPDATE_COMMENT_SUCCESS, CLEAR_COMMENTS,
 } from "./Actions";
 
 export function comments(state = [], action) {
@@ -25,6 +25,8 @@ export function comments(state = [], action) {
             }
         case GET_COMMENTS_SUCCESS:
             return action.data;
+        case CLEAR_COMMENTS:
+            return [];
 
         default:
             return state

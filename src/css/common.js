@@ -8,6 +8,7 @@ import {styled} from '@material-ui/styles';
 import {makeStyles} from '@material-ui/core/styles';
 import {Paper} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
+import {Link} from "react-router-dom"
 
 export function MainWindowContainer(props) {
     const styles = makeStyles({
@@ -36,6 +37,14 @@ export function MainWindowContainer(props) {
     )
 }
 
+export const StyledTextLink = styled(Link) ({
+    a: {
+        "&:hover": {
+            background: "red"
+        }
+    },
+    textDecoration: "none"
+});
 
 export const StyledColumn = styled(Box)({
     border: 0,
@@ -55,7 +64,6 @@ export const StyledCard = styled(Card)({
     padding: '20px',
     height: '250px',
     width: '300px',
-    cursor: "pointer"
 });
 
 export const StyledStrip = styled(Card)({

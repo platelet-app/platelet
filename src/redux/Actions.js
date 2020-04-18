@@ -2,7 +2,7 @@ import {saveLocalStorageViewMode} from "../utilities";
 
 
 export const GET_ACTIVE_TASK_UUID = 'GET_ACTIVE_TASK_UUID';
-export const SET_ACTIVE_TASK_UUID = 'GET_ACTIVE_TASK_UUID';
+export const SET_ACTIVE_TASK_UUID = 'SET_ACTIVE_TASK_UUID';
 
 export function getActiveTaskUUID() {
     return { type: GET_ACTIVE_TASK_UUID }
@@ -10,6 +10,17 @@ export function getActiveTaskUUID() {
 
 export function setActiveTaskUUID() {
     return { type: SET_ACTIVE_TASK_UUID }
+}
+
+export const GET_COMMENTS_OBJECT_UUID = 'GET_COMMENTS_OBJECT_UUID';
+export const SET_COMMENTS_OBJECT_UUID = 'SET_COMMENTS_OBJECT_UUID';
+
+export function getCommentsObjectUUID() {
+    return { type: GET_COMMENTS_OBJECT_UUID }
+}
+
+export function setCommentsObjectUUID(data) {
+    return { type: SET_COMMENTS_OBJECT_UUID, data }
 }
 
 export const CLEAR_LOADING = 'CLEAR_LOADING';

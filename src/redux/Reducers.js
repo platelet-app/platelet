@@ -6,7 +6,7 @@ import {
     GET_WHOAMI_SUCCESS,
     SET_VIEW_MODE,
     SET_MOBILE_VIEW,
-    SET_MENU_INDEX
+    SET_MENU_INDEX, GET_COMMENTS_OBJECT_UUID, SET_COMMENTS_OBJECT_UUID
 } from './Actions'
 import {task, tasks} from "./tasks/Reducers"
 import {session, sessions, sessionStatistics} from "./sessions/Reducers"
@@ -67,6 +67,15 @@ function sessionActiveTaskUUID(state = "", action) {
     }
 }
 
+function commentsObjectUUID(state = null, action) {
+    switch (action.type) {
+        case SET_COMMENTS_OBJECT_UUID:
+            return action.data;
+        default:
+            return state
+    }
+}
+
 function loadingReducer(state = {}, action) {
     if (action.type === CLEAR_LOADING) {
         return {};
@@ -109,7 +118,6 @@ export const errorReducer = (state = {}, action) => {
 
     // not a *_REQUEST / *_FAILURE actions, so we ignore them
     if (!matches) return state;
-    console.log(action)
 
     const [, requestName, requestState] = matches;
     return {
@@ -145,7 +153,8 @@ const rootReducer = combineReducers({
     apiControl,
     viewMode,
     mobileView,
-    menuIndex
+    menuIndex,
+    commentsObjectUUID
 });
 
 export default rootReducer

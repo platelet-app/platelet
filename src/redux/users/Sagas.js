@@ -25,7 +25,6 @@ function* getUsers() {
 
 function* getUser(action) {
     const api = yield select(getApiControl);
-    console.log(action.data)
     const result = yield call([api, api.users.getUser], action.data);
     yield put(getUserSuccess(result))
 }

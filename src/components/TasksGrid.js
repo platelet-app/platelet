@@ -66,7 +66,7 @@ export default function TasksGrid(props) {
     useEffect(() => setFilteredTasks(filterTasks(props.tasks, searchQuery)), [searchQuery, props.tasks]);
     return (<Grid container spacing={3} direction={"column"} alignItems={"flex-start"}>
             <Grid item>
-                {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onSelect={(e) => {
+                {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onChange={(e) => {
                     setSearchQuery(e.target.value)
                 }}/>}
             </Grid>

@@ -109,7 +109,6 @@ export default function AddressDetailsCollapsible(props){
                                 onChange={e => {
                                     setWard(e.target.value)
                                 }}
-                                //onSelect={onEditAddress}
                             />
                             <TextFieldUncontrolled
                                 id={"line1"}

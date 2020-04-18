@@ -4,13 +4,19 @@ export const UPDATE_COMMENT_REQUEST = 'UPDATE_COMMENT_REQUEST';
 export const UPDATE_COMMENT_SUCCESS = 'UPDATE_COMMENT_SUCCESS';
 export const GET_COMMENTS_REQUEST = 'GET_COMMENTS_REQUEST';
 export const GET_COMMENTS_SUCCESS = 'GET_COMMENTS_SUCCESS';
+export const CLEAR_COMMENTS = 'CLEAR_COMMENTS';
 
 export function addComment(data) {
+    console.log(data)
     return { type: ADD_COMMENT_REQUEST, data }
 }
 
 export function addCommentSuccess(data) {
     return { type: ADD_COMMENT_SUCCESS, data }
+}
+
+export function clearComments() {
+    return { type: CLEAR_COMMENTS }
 }
 
 export function getComments(data) {

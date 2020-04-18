@@ -5,7 +5,10 @@ export function TextFieldControlled(props) {
     const [currentValue, setCurrentValue] = useState(props.forceUppercase && props.value ? props.value.toUpperCase() : props.value);
     return (
         <TextField
+            style={props.style}
+            key={props.key}
             margin="dense"
+            multiline={props.multiline}
             id={props.id}
             label={props.label}
             type="text"
@@ -17,7 +20,8 @@ export function TextFieldControlled(props) {
             }}
             onChange={e => {
                 setCurrentValue(props.forceUppercase ? e.target.value.toUpperCase() : e.target.value);
-                props.onSelect(e)
+                if (props.onChange)
+                    props.onChange(e);
             }}
             disabled={props.disabled ? props.disabled : false}
         />
@@ -29,18 +33,13 @@ export function TextFieldUncontrolled(props) {
         <TextField
             {...props}
             margin="dense"
-            id={props.id}
-            label={props.label}
             type="text"
             value={props.value || ''}
-            onSelect={props.onSelect}
             InputProps={{
                 maxLength: props.maxLength,
                 readOnly: props.readOnly,
                 disableUnderline: props.readOnly
             }}
-            onChange={props.onChange}
-            disabled={props.disabled ? props.disabled : false}
         />
     )
 }

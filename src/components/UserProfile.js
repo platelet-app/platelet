@@ -55,7 +55,7 @@ export default function UserProfile(props) {
                                 label={"Name"}
                                 id={"users-name"}
                                 disabled={!editMode}
-                                onSelect={() => {
+                                onChange={() => {
                                 }}/>
                         </Grid>
                         <Grid item>
@@ -64,7 +64,7 @@ export default function UserProfile(props) {
                                 label={"Display Name"}
                                 id={"dispay-name"}
                                 disabled={!editMode}
-                                onSelect={() => {
+                                onChange={() => {
                                 }}/>
                         </Grid>
                         <Grid item>
@@ -73,7 +73,7 @@ export default function UserProfile(props) {
                                 label={"Email Address"}
                                 id={"email-address"}
                                 disabled={!editMode}
-                                onSelect={() => {
+                                onChange={() => {
                                 }}/>
                         </Grid>
                         <Grid item>
@@ -82,7 +82,7 @@ export default function UserProfile(props) {
                                 label={"Contact Number"}
                                 id={"contact-number"}
                                 disabled={!editMode}
-                                onSelect={() => {
+                                onChange={() => {
                                 }}/>
                         </Grid>
                     </Grid>
