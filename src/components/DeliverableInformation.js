@@ -25,7 +25,7 @@ export default function DeliverableInformation(props) {
             {deliverables.map(deliverable => {
                 return <><Grid item>
                     <DialogContentText>
-                        {deliverable.type ? deliverable.type : "Unknown deliverable type."} {deliverable.notes.length && deliverable.notes[0].body ? "|" : ""} {deliverable.notes.length ? deliverable.notes[0].body : ""}
+                        {deliverable.type ? deliverable.type : "Unknown deliverable type."}
                     </DialogContentText>
                 </Grid></>
 

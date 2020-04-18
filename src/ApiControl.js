@@ -314,7 +314,7 @@ class Control {
             this.initialiseClasses(bearer)
         } else {
             this.sessions = undefined;
-            this.notes = undefined;
+            this.comments = undefined;
             this.tasks = undefined;
             this.vehicles = undefined;
             this.initialised = false;
