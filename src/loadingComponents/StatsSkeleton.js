@@ -8,6 +8,7 @@ export default function StatsSkeleton(props) {
                   spacing={1}
                   direction={"column"}
                   justify={"flex-start"}
+                  alignItems={"center"}
             >
                 {[...Array(props.count ? props.count : 4)].map((x, i) =>
                     <Grid item key={i}>

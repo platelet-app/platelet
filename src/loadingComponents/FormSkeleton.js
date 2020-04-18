@@ -8,7 +8,7 @@ export default function FormSkeleton(props) {
                   spacing={3}
                   direction={"row"}
                   justify={"flex-start"}
-                  alignItems={"stretch"}
+                  alignItems={"center"}
             >
                 {[...Array(props.count ? props.count : 10)].map((x, i) =>
                     <Grid item xs sm md lg key={i}>

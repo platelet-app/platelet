@@ -8,6 +8,7 @@ export default function DetailSkeleton(props) {
                   spacing={1}
                   direction={"column"}
                   justify={"flex-start"}
+                  alignItems={"center"}
             >
                 {[...Array(props.count ? props.count : 1)].map((x, i) =>
                     <Grid item key={i}>
