@@ -17,7 +17,7 @@ export default function CommentsMain(props) {
                 </Grid>
             ))}
             <Grid item>
-                <NewCommentCard parentUUID={props.parentUUID} author={whoami}/>
+                <NewCommentCard session={props.session} parentUUID={props.parentUUID} author={whoami}/>
             </Grid>
         </Grid>
     )

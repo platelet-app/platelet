@@ -14,7 +14,7 @@ import IconButton from "@material-ui/core/IconButton";
 import {TextFieldUncontrolled} from "./TextFieldControlled";
 import Button from "@material-ui/core/Button";
 import {useDispatch} from "react-redux";
-import {addComment} from "../redux/comments/Actions";
+import {addComment, addSessionComment} from "../redux/comments/Actions";
 
 export default function CommentCard(props) {
     const dispatch = useDispatch();
@@ -59,11 +59,21 @@ export default function CommentCard(props) {
                     <Grid container direction={"row"} justify={"space-between"}>
                         <Grid item>
                             <Button disabled={commentContents.length === 0} onClick={() => {
-                                dispatch(addComment({
-                                    author: props.author,
-                                    parent_uuid: props.parentUUID,
-                                    publicly_visible: publicComment,
-                                    body: commentContents}));
+                                if (props.session) {
+                                    dispatch(addSessionComment({
+                                        author: props.author,
+                                        parent_uuid: props.parentUUID,
+                                        publicly_visible: publicComment,
+                                        body: commentContents
+                                    }));
+                                } else {
+                                    dispatch(addComment({
+                                        author: props.author,
+                                        parent_uuid: props.parentUUID,
+                                        publicly_visible: publicComment,
+                                        body: commentContents
+                                    }));
+                                }
                                 setCommentContents("");
                             }
                             }>
