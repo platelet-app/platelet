@@ -9,19 +9,32 @@ import {useDispatch, useSelector} from "react-redux";
 import {
     getWhoami, setMobileView
 } from "./redux/Actions";
-import {logoutUser, setApiURL} from "./redux/login/Actions";
+import {loginUser, logoutUser, removeApiURL, setApiURL} from "./redux/login/Actions";
 import {getAvailableDeliverables} from "./redux/deliverables/Actions";
 import {getAvailableLocations} from "./redux/locations/Actions";
 import {getAvailablePatches} from "./redux/patches/Actions";
 import {getAvailablePriorities} from "./redux/priorities/Actions";
 import {getUsers} from "./redux/users/Actions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import {useTheme} from "@material-ui/core/styles";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment"
 import ApiConfig from "./containers/ApiConfig";
-import {useHistory} from "react-router";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 
+const useStyles = makeStyles(theme => ({
+    centeredDiv: {
+        height: "100vh",
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        textAlign: 'center',
+        background: "rgb(230, 230, 230)",
+
+    }
+}));
 
 
 function App(props) {
@@ -29,6 +42,7 @@ function App(props) {
     const isInitialised = useSelector(state => state.apiControl.initialised);
     const apiURL = useSelector(state => state.apiControl.api_url);
     const dispatch = useDispatch();
+    const classes = useStyles();
 
     function componentDidMount() {
         Moment.globalMoment = moment;
@@ -67,13 +81,28 @@ function App(props) {
         );
     } else if (apiURL) {
         return (
-            <Login apiUrl={apiURL}/>
+            <div className={classes.centeredDiv}>
+                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
+                    <Grid item>
+                <Login apiUrl={apiURL}/>
+                    </Grid>
+                    <Grid item>
+                <Button variant="contained" color="primary" onClick={() => {
+                    dispatch(removeApiURL());
+                }}>
+                    Change Organisation
+                </Button>
+                    </Grid>
+                </Grid>
+            </div>
         )
     } else {
         return (
+            <div className={classes.centeredDiv}>
             <ApiConfig onSelect={(result) => {
                 dispatch(setApiURL(result))
             }}/>
+            </div>
         )
     }
 }

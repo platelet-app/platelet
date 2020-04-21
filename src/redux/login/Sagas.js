@@ -1,15 +1,28 @@
 import { throttle, call, put, takeEvery , select, takeLatest} from 'redux-saga/effects'
 import {
     LOGIN_REQUEST,
-    loginUserSuccess
+    loginUserSuccess,
+    loginIncorrectPassword,
+    loginAuthorised
 } from "./Actions"
 
 import { getApiControl } from "../Api";
 
 function* login(action) {
     const api = yield select(getApiControl);
-    const result = yield call([api, api.login], action.data.username, action.data.password);
-    yield put(loginUserSuccess(result))
+    try {
+        const result = yield call([api, api.login], action.data.username, action.data.password);
+        yield put(loginUserSuccess(result))
+        yield put(loginAuthorised())
+    }
+        catch(error) {
+            if (error.status_code === 401) {
+                yield put(loginIncorrectPassword());
+            }
+            else {
+                throw error;
+            }
+        }
 }
 
 export function* watchLogin() {

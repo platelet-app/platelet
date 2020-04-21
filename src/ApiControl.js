@@ -325,7 +325,7 @@ class Control {
     async login(username, password) {
         if (!this.api_url)
             //TODO: throw proper error
-            throw("No api url is defined")
+            throw new Error("No api url is defined")
         return fetch(this.api_url + 'login', {
             method: 'post',
             headers: {
@@ -339,21 +339,7 @@ class Control {
                 console.log('Request succeeded with JSON response', data);
                 return data;
             }).catch(function (error) {
-                console.log('Request failed', error);
-                store.addNotification({
-                    title: "An error has occurred.",
-                    //TODO: proper error messages from the api
-                    message: "For some reason.",
-                    type: "danger",
-                    insert: "top",
-                    container: "top-right",
-                    animationIn: ["animated", "fadeIn"],
-                    animationOut: ["animated", "fadeOut"],
-                    dismiss: {
-                        duration: 10000,
-                        onScreen: true
-                    }
-                });
+                throw error;
             });
     }
 

@@ -1,7 +1,8 @@
 import Control from "../../ApiControl"
 import {
+    LOGIN_INCORRECT_PASSWORD,
     LOGIN_SUCCESS,
-    LOGOUT, REMOVE_API_URL, SET_API_URL,
+    LOGOUT, REMOVE_API_URL, SET_API_URL, LOGIN_AUTHORISED
 } from './Actions'
 import {deleteLogin, getApiURL, saveApiURL, getLogin, saveLogin, deleteApiURL} from "../../utilities";
 
@@ -24,7 +25,17 @@ export function apiControl(state = new Control(getApiURL(), getLogin()), action)
             deleteLogin();
             deleteApiURL();
             return state;
+
         default:
             return state;
+    }
+}
+
+export function authStatus(state = 0, action) {
+    switch (action.type) {
+        case LOGIN_INCORRECT_PASSWORD:
+            return 401;
+        default:
+            return 0
     }
 }

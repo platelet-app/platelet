@@ -11,7 +11,6 @@ export function TextFieldControlled(props) {
             multiline={props.multiline}
             id={props.id}
             label={props.label}
-            type="text"
             value={currentValue || ''}
             InputProps={{
                 maxLength: props.maxLength,
@@ -33,7 +32,6 @@ export function TextFieldUncontrolled(props) {
         <TextField
             {...props}
             margin="dense"
-            type="text"
             value={props.value || ''}
             InputProps={{
                 maxLength: props.maxLength,
