@@ -11,6 +11,13 @@ export function TextFieldControlled(props) {
             multiline={props.multiline}
             id={props.id}
             label={props.label}
+            onKeyPress={(ev) => {
+                if (ev.key === 'Enter') {
+                    if (props.onPressEnter)
+                        props.onPressEnter(ev);
+                    ev.preventDefault();
+                }
+            }}
             value={currentValue || ''}
             InputProps={{
                 maxLength: props.maxLength,
@@ -31,6 +38,13 @@ export function TextFieldUncontrolled(props) {
     return (
         <TextField
             {...props}
+            onKeyPress={(ev) => {
+                if (ev.key === 'Enter') {
+                    if (props.onPressEnter)
+                        props.onPressEnter();
+                    ev.preventDefault();
+                }
+            }}
             margin="dense"
             value={props.value || ''}
             InputProps={{

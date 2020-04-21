@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function App(props) {
+function App() {
     const apiControl = useSelector(state => state.apiControl);
     const isInitialised = useSelector(state => state.apiControl.initialised);
     const apiURL = useSelector(state => state.apiControl.api_url);
@@ -49,10 +49,10 @@ function App(props) {
         //TODO: get this from server settings table once implemented
         Moment.globalLocale = 'en-GB';
     }
+
     useEffect(componentDidMount, []);
 
     function getStaticData() {
-        // Not sure why props.logout check is needed here
         if (isInitialised) {
             dispatch(getAvailablePriorities());
             dispatch(getAvailableDeliverables());
@@ -84,14 +84,14 @@ function App(props) {
             <div className={classes.centeredDiv}>
                 <Grid container direction={"column"} alignItems={"center"} spacing={3}>
                     <Grid item>
-                <Login apiUrl={apiURL}/>
+                        <Login apiUrl={apiURL}/>
                     </Grid>
                     <Grid item>
-                <Button variant="contained" color="primary" onClick={() => {
-                    dispatch(removeApiURL());
-                }}>
-                    Change Organisation
-                </Button>
+                        <Button variant="contained" color="primary" onClick={() => {
+                            dispatch(removeApiURL());
+                        }}>
+                            Change Organisation
+                        </Button>
                     </Grid>
                 </Grid>
             </div>
@@ -99,9 +99,13 @@ function App(props) {
     } else {
         return (
             <div className={classes.centeredDiv}>
-            <ApiConfig onSelect={(result) => {
-                dispatch(setApiURL(result))
-            }}/>
+                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
+                    <Grid item>
+                <ApiConfig onSelect={(result) => {
+                    dispatch(setApiURL(result))
+                }}/>
+                    </Grid>
+                </Grid>
             </div>
         )
     }

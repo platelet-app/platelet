@@ -15,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import TextField from "@material-ui/core/TextField";
 
 function getMessage(status) {
     switch (status) {
@@ -35,6 +36,11 @@ function Login(props) {
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
 
+    function handleLogin() {
+        if (username && password)
+            dispatch(loginUser({username, password}));
+    }
+
     useEffect(() => {
         const message = getMessage(authStatus);
         if (message)
@@ -47,6 +53,7 @@ function Login(props) {
                         <Grid item>
                 <TextFieldUncontrolled label={"username"} value={username}
                                        variant={"outlined"}
+                                       onPressEnter={handleLogin}
                                        onChange={(e) => {setUsername(e.target.value)}}/>
                         </Grid>
                         <Grid item>
@@ -54,6 +61,12 @@ function Login(props) {
                                 <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                                 <OutlinedInput
                                     id="outlined-adornment-password"
+                                    onKeyPress={(ev) => {
+                                        if (ev.key === 'Enter') {
+                                            handleLogin()
+                                            ev.preventDefault();
+                                        }
+                                    }}
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => {setPassword(e.target.value)}}
@@ -74,9 +87,7 @@ function Login(props) {
                             </FormControl>
                         </Grid>
                         <Grid item>
-                <Button variant="contained" color="primary" onClick={() => {
-                    dispatch(loginUser({username, password}));
-                }}>
+                <Button disabled={!username || !password} variant="contained" color="primary" onClick={handleLogin}>
                     Login
                 </Button>
                         </Grid>
