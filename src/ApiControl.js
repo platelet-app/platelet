@@ -296,7 +296,7 @@ class User {
 }
 
 class Control {
-    constructor(api_url, bearer = undefined) {
+    constructor(api_url = "", bearer = "") {
         this.login = this.login.bind(this);
         this.initialiseClasses = this.initialiseClasses.bind(this);
         this.logout = this.logout.bind(this);
@@ -304,13 +304,13 @@ class Control {
         this.notifyDown = this.notifyDown.bind(this);
         this.notifyUp = this.notifyUp.bind(this);
         this.ping = this.ping.bind(this);
-        this.api_url = api_url;
-        this.token = "";
+        //TODO: get this from server settings once implemented (api version)
+        this.setApiURL(api_url);
         this.bearer = "";
         this.connected = true;
         this.connectionReattempts = 0;
 
-        if (bearer) {
+        if (bearer && api_url) {
             this.initialiseClasses(bearer)
         } else {
             this.sessions = undefined;
@@ -323,6 +323,9 @@ class Control {
     }
 
     async login(username, password) {
+        if (!this.api_url)
+            //TODO: throw proper error
+            throw("No api url is defined")
         return fetch(this.api_url + 'login', {
             method: 'post',
             headers: {
@@ -352,6 +355,27 @@ class Control {
                     }
                 });
             });
+    }
+
+    deleteApiURL() {
+        this.api_url = "";
+        this.logout();
+    }
+
+    setApiURL(url) {
+        if (!url)
+            return url;
+        url = url.endsWith("/") ? url + "api/v0.1/" : url + "/api/v0.1/";
+        if (!url.startsWith("https://")) {
+            if (url.startsWith("http://")) {
+                //TODO: Change to HTTPS (HTTP for local testing)
+                url = "http://" + url.substring("http://".length)
+            } else {
+                //TODO: Change to HTTPS (HTTP for local testing)
+                url = "http://" + url;
+            }
+        }
+        this.api_url = url;
     }
 
     ping() {

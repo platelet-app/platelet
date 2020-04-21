@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import 'typeface-roboto'
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import '../index.css'
 import {makeStyles} from '@material-ui/core/styles';
 
@@ -34,8 +34,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import {encodeUUID} from "../utilities";
 import {SwipeableDrawer} from "@material-ui/core";
-import PersistentDrawerRight from "./SideInfoSection";
-import ChatIcon from '@material-ui/icons/Chat';
+import {logoutUser, removeApiURL} from "../redux/login/Actions";
 
 const drawerWidth = 240;
 
@@ -143,6 +142,8 @@ export function ResponsiveDrawer(props) {
         );
     }
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const dispatch = useDispatch();
+    const history = useHistory();
 
     return (
         <div className={classes.root}>
@@ -186,8 +187,17 @@ export function ResponsiveDrawer(props) {
                                     </MenuItem>
                                     <MenuItem onClick={() => {
                                         setAnchorEl(null);
-                                    }} component={Link} to="/logout">
+                                        dispatch(logoutUser());
+                                        history.push("/");
+                                    }}>
                                         Logout
+                                    </MenuItem>
+                                    <MenuItem onClick={() => {
+                                        setAnchorEl(null);
+                                        dispatch(removeApiURL());
+                                        history.push("/");
+                                    }}>
+                                        Change Organisation
                                     </MenuItem>
                                 </Menu>
                             </div>

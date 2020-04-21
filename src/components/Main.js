@@ -75,10 +75,6 @@ export default function Main(_props) {
                                )
                            }}
                     />
-                    <Route exact path='/logout'
-                           render={(props) => <App {...props} logout={true}/>}
-                    />
-
                 </Switch>
             </main>
         </MainWindowContainer>

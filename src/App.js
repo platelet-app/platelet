@@ -7,9 +7,9 @@ import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {
-    getWhoami, setMobileView, setViewMode
+    getWhoami, setMobileView
 } from "./redux/Actions";
-import {logoutUser} from "./redux/login/Actions";
+import {logoutUser, setApiURL} from "./redux/login/Actions";
 import {getAvailableDeliverables} from "./redux/deliverables/Actions";
 import {getAvailableLocations} from "./redux/locations/Actions";
 import {getAvailablePatches} from "./redux/patches/Actions";
@@ -19,19 +19,16 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment"
-import SideInfoSection from "./containers/SideInfoSection";
+import ApiConfig from "./containers/ApiConfig";
+import {useHistory} from "react-router";
 
 
 
 function App(props) {
     const apiControl = useSelector(state => state.apiControl);
     const isInitialised = useSelector(state => state.apiControl.initialised);
+    const apiURL = useSelector(state => state.apiControl.api_url);
     const dispatch = useDispatch();
-
-    if (props.logout) {
-        dispatch(logoutUser());
-        document.location.href = "/";
-    }
 
     function componentDidMount() {
         Moment.globalMoment = moment;
@@ -41,6 +38,7 @@ function App(props) {
     useEffect(componentDidMount, []);
 
     function getStaticData() {
+        // Not sure why props.logout check is needed here
         if (isInitialised) {
             dispatch(getAvailablePriorities());
             dispatch(getAvailableDeliverables());
@@ -67,9 +65,15 @@ function App(props) {
                 </React.Fragment>
             </div>
         );
+    } else if (apiURL) {
+        return (
+            <Login apiUrl={apiURL}/>
+        )
     } else {
         return (
-            <Login apiUrl={props.apiUrl}/>
+            <ApiConfig onSelect={(result) => {
+                dispatch(setApiURL(result))
+            }}/>
         )
     }
 }

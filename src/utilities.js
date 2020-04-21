@@ -17,15 +17,32 @@ export function convertDate(timestamp) {
 }
 
 export function saveLogin(apiBearer) {
+    console.log(apiBearer)
     localStorage.setItem("apiBearer", apiBearer);
 }
 
 export function getLogin() {
-    return localStorage.getItem("apiBearer");
+    const result = localStorage.getItem("apiBearer");
+    return result ? result : "";
+}
+
+export function saveApiURL(apiURL) {
+    console.log(apiURL)
+    localStorage.setItem("apiURL", apiURL);
+
+}
+
+export function getApiURL() {
+    const result = localStorage.getItem("apiURL");
+    return result ? result : "";
 }
 
 export function deleteLogin() {
-    localStorage.clear("apiBearer")
+    localStorage.removeItem("apiBearer")
+}
+
+export function deleteApiURL() {
+    localStorage.removeItem("apiURL")
 }
 
 export function saveLocalStorageViewMode(status) {

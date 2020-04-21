@@ -1,13 +1,11 @@
 import Control from "../../ApiControl"
 import {
     LOGIN_SUCCESS,
-    LOGOUT,
+    LOGOUT, REMOVE_API_URL, SET_API_URL,
 } from './Actions'
-import {deleteLogin, getLogin, saveLogin} from "../../utilities";
+import {deleteLogin, getApiURL, saveApiURL, getLogin, saveLogin, deleteApiURL} from "../../utilities";
 
-const apiUrl = 'http://localhost:5000/api/v0.1/';
-
-export function apiControl(state = new Control(apiUrl, getLogin()), action) {
+export function apiControl(state = new Control(getApiURL(), getLogin()), action) {
     switch (action.type) {
         case LOGIN_SUCCESS:
             state.initialiseClasses(action.data.access_token);
@@ -16,6 +14,15 @@ export function apiControl(state = new Control(apiUrl, getLogin()), action) {
         case LOGOUT:
             state.logout();
             deleteLogin();
+            return state;
+        case SET_API_URL:
+            state.setApiURL(action.data);
+            saveApiURL(action.data);
+            return state;
+        case REMOVE_API_URL:
+            state.deleteApiURL();
+            deleteLogin();
+            deleteApiURL();
             return state;
         default:
             return state;
