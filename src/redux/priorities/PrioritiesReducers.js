@@ -1,4 +1,4 @@
-import {GET_AVAILABLE_PRIORITIES_SUCCESS} from "./Actions";
+import {GET_AVAILABLE_PRIORITIES_SUCCESS} from "./PrioritiesActions";
 
 export function availablePriorities(state = [], action) {
     switch (action.type) {

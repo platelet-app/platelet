@@ -2,7 +2,7 @@ import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/e
 import {
     GET_AVAILABLE_PATCHES_REQUEST,
     getAvailablePatchesSuccess,
-} from "./Actions"
+} from "./PatchesActions"
 
 import { getApiControl } from "../Api";
 

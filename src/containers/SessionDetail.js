@@ -5,9 +5,9 @@ import Grid from "@material-ui/core/Grid";
 import {
     addTask,
     getAllTasks,
-} from '../redux/tasks/Actions'
+} from '../redux/tasks/TasksActions'
 import {setCommentsObjectUUID, setMenuIndex, setViewMode} from "../redux/Actions";
-import {getSession} from "../redux/sessions/Actions";
+import {getSession} from "../redux/sessions/SessionsActions";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"

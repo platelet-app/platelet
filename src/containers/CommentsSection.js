@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {clearComments, getComments, getSessionComments} from "../redux/comments/Actions";
+import {clearComments, getComments, getSessionComments} from "../redux/comments/CommentsActions";
 import CommentsMain from "../components/CommentsMain";
 import {createLoadingSelector} from "../redux/selectors";
 import CommentsSkeleton from "../loadingComponents/CommentsSkeleton";

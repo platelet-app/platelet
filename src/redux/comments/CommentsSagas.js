@@ -12,7 +12,7 @@ import {
     addSessionCommentSuccess,
     GET_SESSION_COMMENTS_REQUEST,
     getSessionCommentsSuccess
-} from "./Actions"
+} from "./CommentsActions"
 
 import { getApiControl } from "../Api";
 

@@ -8,16 +8,16 @@ import {
     SET_MOBILE_VIEW,
     SET_MENU_INDEX, SET_COMMENTS_OBJECT_UUID
 } from './Actions'
-import {task, tasks} from "./tasks/Reducers"
-import {session, sessions, sessionStatistics} from "./sessions/Reducers"
-import {availableDeliverables, deliverables} from "./deliverables/Reducers"
-import {availableLocations} from "./locations/Reducers"
-import {apiControl, authStatus} from "./login/Reducers";
-import {availablePatches} from "./patches/Reducers";
-import {availablePriorities} from "./priorities/Reducers";
-import {users, user} from "./users/Reducers";
-import {vehicle, vehicles} from "./vehicles/Reducers";
-import {comments, sessionComments} from "./comments/Reducers";
+import {task, tasks} from "./tasks/TasksReducers"
+import {session, sessions, sessionStatistics} from "./sessions/SessionsReducers"
+import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
+import {availableLocations} from "./locations/LocationsReducers"
+import {apiControl, authStatus} from "./login/LoginReducers";
+import {availablePatches} from "./patches/PatchesReducers";
+import {availablePriorities} from "./priorities/PrioritiesReducers";
+import {users, user} from "./users/UsersReducers";
+import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
+import {comments, sessionComments} from "./comments/CommentsReducers";
 
 
 function viewMode(state = null, action) {

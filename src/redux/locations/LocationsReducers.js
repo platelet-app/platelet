@@ -1,4 +1,4 @@
-import {GET_AVAILABLE_LOCATIONS_SUCCESS} from "./Actions";
+import {GET_AVAILABLE_LOCATIONS_SUCCESS} from "./LocationsActions";
 
 export function availableLocations(state = [], action) {
     switch (action.type) {

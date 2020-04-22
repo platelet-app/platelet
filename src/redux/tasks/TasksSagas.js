@@ -34,7 +34,7 @@ import {
     updateTaskPrioritySuccess,
     updateTaskCancelledTimeSuccess,
     updateTaskRejectedTimeSuccess
-} from "./Actions"
+} from "./TasksActions"
 
 import { getApiControl } from "../Api"
 

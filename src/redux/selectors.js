@@ -1,10 +1,12 @@
 import _ from 'lodash';
-export const createErrorMessageSelector = actions => (state) => {
-    const errors = actions.map(action => state.error[action]);
-    if (errors && errors[0]) {
-        return errors[0];
-    }
-    return '';
+export const createErrorMessageSelector = (actions) => (state) => {
+    // returns the first error messages for actions
+    // * We assume when any request fails on a page that
+    //   requires multiple API calls, we shows the first error
+    return _(actions)
+        .map((action) => _.get(state, `api.error.${action}`))
+        .compact()
+        .first() || '';
 };
 export const createLoadingSelector = actions => state => {
     if (Object.entries(_.get(state, 'loadingReducer')).length === 0) {

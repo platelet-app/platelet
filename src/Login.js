@@ -3,7 +3,7 @@ import './App.css';
 import 'typeface-roboto'
 import Button from '@material-ui/core/Button'
 import {useDispatch, useSelector} from "react-redux";
-import {loginUser} from "./redux/login/Actions";
+import {loginUser} from "./redux/login/LoginActions";
 import { withSnackbar } from 'notistack';
 import {PaddedPaper} from "./css/common";
 import Grid from "@material-ui/core/Grid";

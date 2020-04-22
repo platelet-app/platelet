@@ -5,7 +5,7 @@ import {
     updateVehicleManufacturer,
     updateVehicleModel,
     updateVehicleName, updateVehicleRegistration
-} from "../redux/vehicles/Actions";
+} from "../redux/vehicles/VehiclesActions";
 import {decodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldControlled} from "../components/TextFieldControlled";

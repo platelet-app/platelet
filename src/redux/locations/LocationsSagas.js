@@ -2,7 +2,7 @@ import { throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/ef
 import {
     GET_AVAILABLE_LOCATIONS_REQUEST,
     getAvailableLocationsSuccess,
-} from "./Actions"
+} from "./LocationsActions"
 
 import { getApiControl } from "../Api";
 

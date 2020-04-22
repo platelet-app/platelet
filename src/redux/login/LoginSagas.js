@@ -4,7 +4,7 @@ import {
     loginUserSuccess,
     loginIncorrectPassword,
     loginAuthorised
-} from "./Actions"
+} from "./LoginActions"
 
 import { getApiControl } from "../Api";
 

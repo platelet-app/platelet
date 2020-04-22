@@ -4,7 +4,7 @@ import {
     watchGetSession,
     watchDeleteSession,
     watchRestoreSession, watchGetSessionStatistics
-} from "./sessions/Sagas"
+} from "./sessions/SessionsSagas"
 import {
     watchPostNewTask,
     watchGetTasks,
@@ -21,16 +21,16 @@ import {
     watchUpdateTaskPickupTime,
     watchUpdateTaskPickupAddress,
     watchUpdateTaskPriority, watchUpdateTaskCancelledTime, watchUpdateTaskRejectedTime
-} from "./tasks/Sagas"
+} from "./tasks/TasksSagas"
 import {
     watchGetAvailableDeliverables,
     watchGetDeliverables,
     watchPostNewDeliverable,
     watchUpdateDeliverable
-} from "./deliverables/Sagas"
+} from "./deliverables/DeliverablesSagas"
 import {
     watchGetComments, watchGetSessionComments, watchPostNewComment, watchPostNewSessionComment
-} from "./comments/Sagas";
+} from "./comments/CommentsSagas";
 import {
     watchPostNewVehicle,
     watchGetVehicles,
@@ -41,15 +41,15 @@ import {
     watchUpdateVehicleName,
     watchUpdateVehicleManufacturer,
     watchUpdateVehicleModel, watchUpdateVehicleRegistration
-} from "./vehicles/Sagas"
+} from "./vehicles/VehiclesSagas"
 
 import { all, call } from 'redux-saga/effects'
-import {watchGetAvailablePriorities} from "./priorities/Sagas";
-import {watchGetAvailableLocations} from "./locations/Sagas";
-import {watchGetUsers, watchGetUser} from "./users/Sagas";
+import {watchGetAvailablePriorities} from "./priorities/PrioritiesSagas";
+import {watchGetAvailableLocations} from "./locations/LocationsSagas";
+import {watchGetUsers, watchGetUser} from "./users/UsersSagas";
 import {watchGetWhoami} from "./WhoamiSaga";
-import {watchLogin} from "./login/Sagas"
-import {watchGetAvailablePatches} from "./patches/Sagas";
+import {watchLogin} from "./login/LoginSagas"
+import {watchGetAvailablePatches} from "./patches/PatchesSagas";
 
 export default function* rootSaga() {
     yield all([

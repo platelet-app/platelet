@@ -6,7 +6,7 @@ import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
-import {addVehicle, getAllVehicles} from "../redux/vehicles/Actions";
+import {addVehicle, getAllVehicles} from "../redux/vehicles/VehiclesActions";
 import {encodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";

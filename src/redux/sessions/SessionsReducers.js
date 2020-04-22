@@ -4,8 +4,8 @@ import {
     GET_SESSION_SUCCESS,
     GET_SESSIONS_SUCCESS,
     RESTORE_SESSION_SUCCESS
-} from "./Actions";
-import {DELETE_TASK_SUCCESS, RESTORE_TASK_SUCCESS, UPDATE_TASK_SUCCESS} from "../tasks/Actions";
+} from "./SessionsActions";
+import {DELETE_TASK_SUCCESS, RESTORE_TASK_SUCCESS, UPDATE_TASK_SUCCESS} from "../tasks/TasksActions";
 import update from "immutability-helper";
 
 export function sessions(state = [], action) {

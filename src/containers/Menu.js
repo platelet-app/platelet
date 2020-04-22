@@ -34,7 +34,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import {encodeUUID} from "../utilities";
 import {SwipeableDrawer} from "@material-ui/core";
-import {logoutUser, removeApiURL} from "../redux/login/Actions";
+import {logoutUser, removeApiURL} from "../redux/login/LoginActions";
 
 const drawerWidth = 240;
 

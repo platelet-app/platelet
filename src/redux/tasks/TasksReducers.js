@@ -13,7 +13,7 @@ import {
     UPDATE_TASK_PICKUP_ADDRESS_SUCCESS,
     UPDATE_TASK_PICKUP_TIME_SUCCESS, UPDATE_TASK_PRIORITY_SUCCESS, UPDATE_TASK_REJECTED_TIME_SUCCESS,
     UPDATE_TASK_SUCCESS
-} from "./Actions";
+} from "./TasksActions";
 import update from "immutability-helper";
 
 export function task(state = {}, action) {

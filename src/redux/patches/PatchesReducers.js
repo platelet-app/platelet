@@ -1,4 +1,4 @@
-import {GET_AVAILABLE_PATCHES_SUCCESS} from "./Actions";
+import {GET_AVAILABLE_PATCHES_SUCCESS} from "./PatchesActions";
 
 export function availablePatches(state = [], action) {
     switch (action.type) {

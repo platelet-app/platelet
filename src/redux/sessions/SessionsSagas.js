@@ -7,9 +7,9 @@ import {
     GET_SESSION_REQUEST,
     getSessionSuccess,
     GET_SESSION_STATISTICS_SUCCESS, GET_SESSION_STATISTICS_REQUEST, getSessionStatisticsSuccess
-} from "./Actions"
+} from "./SessionsActions"
 import { getApiControl } from "../Api";
-import {DELETE_SESSION_REQUEST, deleteSessionSuccess, RESTORE_SESSION_REQUEST, restoreSessionSuccess} from "./Actions";
+import {DELETE_SESSION_REQUEST, deleteSessionSuccess, RESTORE_SESSION_REQUEST, restoreSessionSuccess} from "./SessionsActions";
 
 
 export function* postNewSession(action) {

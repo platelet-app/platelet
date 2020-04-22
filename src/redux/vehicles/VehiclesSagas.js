@@ -15,11 +15,11 @@ import {
     UPDATE_VEHICLE_NAME_REQUEST,
     UPDATE_VEHICLE_MODEL_REQUEST,
     UPDATE_VEHICLE_REGISTRATION_REQUEST,
-    UPDATE_VEHICLE_MANUFACTURER_REQUEST
-} from "./Actions"
+    UPDATE_VEHICLE_MANUFACTURER_REQUEST, GET_VEHICLE_FAILURE
+} from "./VehiclesActions"
 
 import {getWhoamiSuccess} from "../Actions"
-import {getUsersSuccess} from "../users/Actions"
+import {getUsersSuccess} from "../users/UsersActions"
 import { getApiControl, getWhoami } from "../Api";
 
 function* postNewVehicle(action) {
@@ -84,8 +84,13 @@ export function* watchGetVehicles() {
 
 function* getVehicle(action) {
     const api = yield select(getApiControl);
-    const result = yield call([api, api.vehicles.getVehicle], action.data);
-    yield put(getVehicleSuccess(result))
+    try {
+        const result = yield call([api, api.vehicles.getVehicle], action.data);
+        yield put(getVehicleSuccess(result))
+    }
+    catch (error) {
+        yield put({type: GET_VEHICLE_FAILURE, error})
+    }
 }
 
 export function* watchVehicle() {

@@ -8,7 +8,7 @@ import {
     getDeliverablesSuccess,
     GET_AVAILABLE_DELIVERABLES_REQUEST,
     getAvailableDeliverablesSuccess
-} from "./Actions"
+} from "./DeliverablesActions"
 
 import { getApiControl } from "../Api";
 

@@ -8,7 +8,7 @@ import {
     GET_SESSION_COMMENTS_SUCCESS,
     CLEAR_SESSION_COMMENTS,
     UPDATE_SESSION_COMMENT_SUCCESS
-} from "./Actions";
+} from "./CommentsActions";
 
 export function comments(state = [], action) {
     switch (action.type) {

@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {decodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
-import {getUser} from "../redux/users/Actions";
+import {getUser} from "../redux/users/UsersActions";
 import UserProfile from "../components/UserProfile";
 import {createLoadingSelector} from "../redux/selectors";
 import DetailSkeleton from "../loadingComponents/DetailSkeleton";

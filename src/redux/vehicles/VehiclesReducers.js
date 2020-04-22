@@ -4,8 +4,8 @@ import {
     GET_VEHICLES_SUCCESS,
     UPDATE_VEHICLE_SUCCESS,
     RESTORE_VEHICLE_SUCCESS,
-    DELETE_VEHICLE_SUCCESS
-} from "./Actions";
+    DELETE_VEHICLE_SUCCESS, GET_VEHICLE_FAILURE
+} from "./VehiclesActions";
 import update from "immutability-helper";
 
 export function vehicles(state = [], action) {
@@ -47,6 +47,8 @@ export function vehicle(state = {}, action) {
 
         case GET_VEHICLE_SUCCESS:
             return action.data;
+        case GET_VEHICLE_FAILURE:
+            return {};
 
         default:
             return state

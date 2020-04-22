@@ -4,7 +4,7 @@ import {
     ADD_DELIVERABLE_SUCCESS,
     UPDATE_DELIVERABLE_SUCCESS,
     GET_AVAILABLE_DELIVERABLES_SUCCESS
-} from "./Actions";
+} from "./DeliverablesActions";
 
 export function deliverables(state = [], action) {
     switch (action.type) {

@@ -6,7 +6,7 @@ import {
     updatePrioritySuccess,
     GET_AVAILABLE_PRIORITIES_REQUEST,
     getAvailablePrioritiesSuccess,
-} from "./Actions"
+} from "./PrioritiesActions"
 
 import { getApiControl } from "../Api";
 

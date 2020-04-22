@@ -14,7 +14,7 @@ import IconButton from "@material-ui/core/IconButton";
 import {TextFieldUncontrolled} from "./TextFieldControlled";
 import Button from "@material-ui/core/Button";
 import {useDispatch} from "react-redux";
-import {addComment, addSessionComment} from "../redux/comments/Actions";
+import {addComment, addSessionComment} from "../redux/comments/CommentsActions";
 
 export default function CommentCard(props) {
     const dispatch = useDispatch();

@@ -3,7 +3,7 @@ import {
     LOGIN_INCORRECT_PASSWORD,
     LOGIN_SUCCESS,
     LOGOUT, REMOVE_API_URL, SET_API_URL, LOGIN_AUTHORISED
-} from './Actions'
+} from './LoginActions'
 import {deleteLogin, getApiURL, saveApiURL, getLogin, saveLogin, deleteApiURL} from "../../utilities";
 
 export function apiControl(state = new Control(getApiURL(), getLogin()), action) {

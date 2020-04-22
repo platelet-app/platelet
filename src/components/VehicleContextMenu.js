@@ -4,7 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {
     deleteVehicle,
     restoreVehicle
-} from "../redux/vehicles/Actions";
+} from "../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';

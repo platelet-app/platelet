@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {PaddedPaper} from "../css/common";
 import Grid from "@material-ui/core/Grid";
 import {useDispatch, useSelector} from "react-redux";
-import {getSessionStatistics} from "../redux/sessions/Actions";
+import {getSessionStatistics} from "../redux/sessions/SessionsActions";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';

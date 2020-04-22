@@ -1,4 +1,4 @@
-import {GET_USERS_SUCCESS, GET_USER_SUCCESS} from "./Actions";
+import {GET_USERS_SUCCESS, GET_USER_SUCCESS} from "./UsersActions";
 
 export function users(state = [], action) {
     switch (action.type) {

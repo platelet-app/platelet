@@ -14,7 +14,7 @@ import {
     UPDATE_USER_ROLES_REQUEST,
     UPDATE_USER_PATCH_REQUEST,
     UPDATE_USER_ADDRESS_REQUEST,
-} from "./Actions";
+} from "./UsersActions";
 import { getApiControl } from "../Api"
 
 function* getUsers() {

@@ -7,7 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
 import Moment from "react-moment";
-import {addSession, getAllSessions} from "../redux/sessions/Actions";
+import {addSession, getAllSessions} from "../redux/sessions/SessionsActions";
 import {useDispatch, useSelector} from "react-redux"
 import {encodeUUID} from "../utilities";
 import {createLoadingSelector, createPostingSelector} from "../redux/selectors";

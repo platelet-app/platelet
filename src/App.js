@@ -9,12 +9,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {
     getWhoami, setMobileView
 } from "./redux/Actions";
-import {loginUser, logoutUser, removeApiURL, setApiURL} from "./redux/login/Actions";
-import {getAvailableDeliverables} from "./redux/deliverables/Actions";
-import {getAvailableLocations} from "./redux/locations/Actions";
-import {getAvailablePatches} from "./redux/patches/Actions";
-import {getAvailablePriorities} from "./redux/priorities/Actions";
-import {getUsers} from "./redux/users/Actions";
+import {loginUser, logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
+import {getAvailableDeliverables} from "./redux/deliverables/DeliverablesActions";
+import {getAvailableLocations} from "./redux/locations/LocationsActions";
+import {getAvailablePatches} from "./redux/patches/PatchesActions";
+import {getAvailablePriorities} from "./redux/priorities/PrioritiesActions";
+import {getUsers} from "./redux/users/UsersActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import moment from 'moment/min/moment-with-locales';

@@ -11,7 +11,7 @@ import moment from "moment";
 import Box from "@material-ui/core/Box";
 import { useHistory, useLocation } from "react-router-dom";
 
-import {updateTaskAssignedRider, updateTask, addTask} from "../redux/tasks/Actions";
+import {updateTaskAssignedRider, updateTask, addTask} from "../redux/tasks/TasksActions";
 
 import {forwardRef} from 'react';
 
