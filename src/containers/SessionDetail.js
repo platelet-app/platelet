@@ -8,14 +8,10 @@ import {
 } from '../redux/tasks/Actions'
 import {setCommentsObjectUUID, setMenuIndex, setViewMode} from "../redux/Actions";
 import {getSession} from "../redux/sessions/Actions";
-import {makeStyles} from "@material-ui/core/styles";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
-import {
-    Link,
-    useLocation,
-} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {createLoadingSelector} from '../redux/selectors';
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
 import TasksTable from "../components/TasksTable";
@@ -78,9 +74,6 @@ function SessionDetail(props) {
     useEffect(() => {
         dispatch(setMenuIndex(2))
     }, []);
-
-
-    let location = useLocation();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const modeToggle = mobileView || props.statsView ? <></> :

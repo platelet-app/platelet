@@ -7,23 +7,11 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
-import { TextFieldControlled, TextFieldUncontrolled }from "./TextFieldControlled";
-import update from "immutability-helper";
+import { TextFieldUncontrolled }from "./TextFieldControlled";
+import Grid from "@material-ui/core/Grid";
 import { useState } from 'react';
 
-const useStyles = makeStyles(({
-    root: {
-        width: '100%',
-    },
-    heading: {
-        fontSize: "15px",
-    },
-}));
-
-
 export default function AddressDetailsCollapsible(props){
-    const classes = useStyles();
-
     const [what3words, setWhat3words] = useState(props.address ? props.address.what3words || "" : "");
     const [ward, setWard] = useState(props.address ? props.address.ward || "" : "");
     const [line1, setLine1] = useState(props.address ? props.address.line1 || "" :  "");
@@ -48,13 +36,6 @@ export default function AddressDetailsCollapsible(props){
         }
 
     };
-    // useEffect(() => {props.onSelect({what3words: what3words})}, [what3words]);
-    // useEffect(() => {props.onSelect({ward: ward})}, [ward]);
-    // useEffect(() => {props.onSelect({line1: line1})}, [line1]);
-    // useEffect(() => {props.onSelect({line2: line2})}, [line2]);
-    // useEffect(() => {props.onSelect({town: town})}, [town]);
-    // useEffect(() => {props.onSelect({postcode: postcode})}, [postcode]);
-    // useEffect(() => {props.onSelect({country: country})}, [country]);
 
     useEffect(() => {
         if (firstUpdate.current) {
@@ -82,18 +63,22 @@ export default function AddressDetailsCollapsible(props){
                                           disabled={props.disabled}/>;
         }
         return (
-            <div className={classes.root}>
+                <Grid container spacing={1} direction={"column"} alignItems={"flex-start"} justify={"center"}>
+                    <Grid item>
                 {presetSelect}
+                    </Grid>
+                    <Grid item>
                 <ExpansionPanel>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="address-content"
                         id="address-header"
                     >
-                        <Typography className={classes.heading}>{props.label} - {line1}</Typography>
+                        <Typography>{props.label} - {line1}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
-                        <div>
+                        <Grid container spacing={0} direction={"column"} alignItems={"flex-start"} justify={"center"}>
+                            <Grid item>
                             <TextFieldUncontrolled
                                 id={"what3words"}
                                 label={"what3words"}
@@ -102,6 +87,8 @@ export default function AddressDetailsCollapsible(props){
                                     setWhat3words(e.target.value)
                                 }}
                             />
+                            </Grid>
+                            <Grid item>
                             <TextFieldUncontrolled
                                 id={"ward"}
                                 label={"Ward"}
@@ -110,6 +97,8 @@ export default function AddressDetailsCollapsible(props){
                                     setWard(e.target.value)
                                 }}
                             />
+                            </Grid>
+                            <Grid item>
                             <TextFieldUncontrolled
                                 id={"line1"}
                                 label={"Line one"}
@@ -118,6 +107,8 @@ export default function AddressDetailsCollapsible(props){
                                     setLine1(e.target.value)
                                 }}
                             />
+                            </Grid>
+                            <Grid item>
                             <TextFieldUncontrolled
                                 id={"line2"}
                                 label={"Line two"}
@@ -126,6 +117,8 @@ export default function AddressDetailsCollapsible(props){
                                     setLine2(e.target.value)
                                 }}
                             />
+                            </Grid>
+                            <Grid item>
                             <TextFieldUncontrolled
                                 id={"town"}
                                 label={"Town"}
@@ -134,6 +127,8 @@ export default function AddressDetailsCollapsible(props){
                                     setTown(e.target.value)
                                 }}
                             />
+                            </Grid>
+                            <Grid item>
                             <TextFieldUncontrolled
                                 id={"county"}
                                 label={"County"}
@@ -142,6 +137,8 @@ export default function AddressDetailsCollapsible(props){
                                     setCounty(e.target.value)
                                 }}
                             />
+                            </Grid>
+                            <Grid item>
                             <TextFieldUncontrolled
                                 id={"postcode"}
                                 label={"Postcode"}
@@ -150,6 +147,8 @@ export default function AddressDetailsCollapsible(props){
                                     setPostcode(e.target.value)
                                 }}
                             />
+                            </Grid>
+                            <Grid item>
                             <TextFieldUncontrolled
                                 id={"county"}
                                 label={"Country"}
@@ -158,9 +157,11 @@ export default function AddressDetailsCollapsible(props){
                                     setCountry(e.target.value)
                                 }}
                             />
-                        </div>
+                            </Grid>
+                        </Grid>
                     </ExpansionPanelDetails>
                 </ExpansionPanel>
-            </div>
+                    </Grid>
+                </Grid>
         )
 }

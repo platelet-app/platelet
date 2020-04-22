@@ -4,18 +4,14 @@ import Home from '../containers/Home'
 import '../index.css';
 import SessionsList from '../containers/SessionList';
 import MyUserProfile from '../containers/MyUserProfile'
-import {BrowserRouter as Router, Route, Switch, useLocation, useHistory, useParams} from "react-router-dom";
+import {Route, Switch, useLocation} from "react-router-dom";
 import SessionDetail from "../containers/SessionDetail";
 import UsersTasks from "../containers/UsersTasks";
 import TaskModal from "./taskdialog/TaskModal";
 import VehicleList from "../containers/VehiclesList";
 import VehicleDetail from "../containers/VehicleDetail";
 import {MainWindowContainer} from "../css/common";
-import {clearLoading} from "../redux/Actions";
-import {useDispatch} from "react-redux";
-import App from "../App";
 import UsersList from "../containers/UsersList";
-import UserProfile from "./UserProfile";
 import UserDetail from "../containers/UserDetail";
 
 export default function Main(_props) {

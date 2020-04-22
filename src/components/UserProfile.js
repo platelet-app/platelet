@@ -1,13 +1,12 @@
 import React, {useState} from "react";
-import {PaddedPaper} from "../css/common";
 import Grid from "@material-ui/core/Grid";
 import {TextFieldControlled} from "./TextFieldControlled";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import {useDispatch, useSelector} from "react-redux";
 import {setCommentsObjectUUID} from "../redux/Actions";
-import CommentsSkeleton from "../loadingComponents/CommentsSkeleton";
-import CommentsSection from "../containers/CommentsSection";
+import Divider from "@material-ui/core/Divider";
+import Tooltip from "@material-ui/core/Tooltip";
 
 export default function UserProfile(props) {
     const dispatch = useDispatch()
@@ -39,8 +38,8 @@ export default function UserProfile(props) {
                 <EditIcon/>
             </IconButton>;
     }
+    const divider = editMode ? <></> : <div style={{width: "460px"}}><Grid item><Divider/></Grid></div>;
     return (
-        <PaddedPaper width={"600px"}>
             <Grid container direction={"column"} justify={"flex-start"} alignItems={"top"} spacing={3}>
                 <Grid item>
                     <Grid container direction={"row"} justify={"space-between"} alignItems={"top"} spacing={3}>
@@ -48,7 +47,9 @@ export default function UserProfile(props) {
                             {header}
                         </Grid>
                         <Grid item>
-                            {editToggle}
+                            <Tooltip title={props.user.uuid === whoami.uuid ? "Edit your profile" : "Edit this user"}>
+                                {editToggle}
+                            </Tooltip>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -58,42 +59,45 @@ export default function UserProfile(props) {
                         <Grid item>
                             <TextFieldControlled
                                 value={props.user.name}
+                                readOnly={!editMode}
                                 label={"Name"}
                                 id={"users-name"}
-                                disabled={!editMode}
                                 onChange={() => {
                                 }}/>
                         </Grid>
+                        {divider}
                         <Grid item>
                             <TextFieldControlled
                                 value={props.user.display_name}
+                                readOnly={!editMode}
                                 label={"Display Name"}
                                 id={"dispay-name"}
-                                disabled={!editMode}
                                 onChange={() => {
                                 }}/>
                         </Grid>
+                        {divider}
                         <Grid item>
                             <TextFieldControlled
                                 value={props.user.email_address}
+                                readOnly={!editMode}
                                 label={"Email Address"}
                                 id={"email-address"}
-                                disabled={!editMode}
                                 onChange={() => {
                                 }}/>
                         </Grid>
+                        {divider}
                         <Grid item>
                             <TextFieldControlled
                                 value={props.user.contact_number}
+                                readOnly={!editMode}
                                 label={"Contact Number"}
                                 id={"contact-number"}
-                                disabled={!editMode}
                                 onChange={() => {
                                 }}/>
                         </Grid>
+                        {divider}
                     </Grid>
                 </Grid>
             </Grid>
-        </PaddedPaper>
     )
 }

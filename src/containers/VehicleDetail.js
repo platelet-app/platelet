@@ -87,7 +87,7 @@ export default function VehicleDetail(props) {
     }, [assignedUser, vehicleName]);
 
 
-    const divider = editMode ? <></> : <div style={{width: "600px"}}><Grid item><Divider/></Grid></div>;
+    const divider = editMode ? <></> : <div style={{width: "460px"}}><Grid item><Divider/></Grid></div>;
     const assignToMeButton = editMode ?
         <Button disabled={assignedUser.uuid === whoami.uuid} onClick={() => onAssignUser(whoami)}>Assign to
             Me</Button> : <></>;
@@ -100,7 +100,7 @@ export default function VehicleDetail(props) {
         return (
             <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>
                 <Grid item>
-                    <PaddedPaper>
+                    <PaddedPaper width={"600px"}>
                         <Grid container direction={"column"} justify={"flex-start"} spacing={3}>
                             <Grid item>
                                 <Grid container direction={"row"} justify={"space-between"} alignItems={"flex-end"}
