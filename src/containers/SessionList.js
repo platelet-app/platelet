@@ -16,19 +16,13 @@ import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
 import CardItem from "../components/CardItem";
 import SessionContextMenu from "../components/SessionContextMenu";
-import moment from "moment";
 
 function SessionCard(props) {
-    const momentDisplay =
-        moment(props.session.time_created).isAfter(moment().subtract(3, "days")) ?
-            <Moment fromNow>{props.session.time_created}</Moment> :
-            <Moment format={"llll"}>{props.session.time_created}</Moment>;
-
     return (
         <div key={props.session.uuid}>
             <StyledCard style={{height: "120px"}}>
                 <CardContent>
-                    <Grid containerspacing={1} direction={"column"}>
+                    <Grid container spacing={1} direction={"column"}>
                         <CardItem label={"Started"}>
                             <Moment calendar>{props.session.time_created}</Moment>
                         </CardItem>

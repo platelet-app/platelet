@@ -24,6 +24,7 @@ import TasksStatistics from "../components/TasksStatistics";
 import StatsSkeleton from "../loadingComponents/StatsSkeleton";
 import PersistentDrawerRight from "./SideInfoSection";
 import ChatIcon from "@material-ui/icons/Chat";
+import Tooltip from "@material-ui/core/Tooltip";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -84,6 +85,7 @@ function SessionDetail(props) {
               alignItems={"center"}
         >
             <Grid item>
+                <Tooltip title="Change mode">
                 <IconButton
                     color="inherit"
                     aria-controls="simple-menu"
@@ -94,6 +96,7 @@ function SessionDetail(props) {
                     <GetViewTitle type={viewMode}/>
                     <ArrowDropDownIcon/>
                 </IconButton>
+                </Tooltip>
                 <Menu
                     id="profile-menu"
                     anchorEl={anchorEl}
@@ -125,13 +128,15 @@ function SessionDetail(props) {
 
             </Grid>
             <Grid item>
-            <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={() => setRightSideBarOpen(!rightSideBarOpen)}
-            >
-                <ChatIcon/>
-            </IconButton>
+                <Tooltip title="View comments">
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={() => setRightSideBarOpen(!rightSideBarOpen)}
+                    >
+                        <ChatIcon/>
+                    </IconButton>
+                </Tooltip>
             </Grid>
         </Grid>
     ;
@@ -142,16 +147,16 @@ function SessionDetail(props) {
 
     } else if (viewMode === "stats" || props.statsView) {
         return (
-                <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
+            <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
-                </PersistentDrawerRight>
+            </PersistentDrawerRight>
         )
 
 
     } else if (viewMode === "kanban" || mobileView) {
         return (
-                <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
+            <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksGrid tasks={tasks}
                            fullScreenModal={mobileView}
@@ -161,12 +166,12 @@ function SessionDetail(props) {
                            sessionUUID={session_uuid}
                            modalView={"edit"}
                 />
-                </PersistentDrawerRight>
+            </PersistentDrawerRight>
 
         )
     } else if (viewMode === "table") {
         return (
-                <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
+            <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksTable tasks={tasks}
                             fullScreenModal={mobileView}
@@ -176,9 +181,7 @@ function SessionDetail(props) {
                             sessionUUID={session_uuid}
                             modalView={"edit"}
                 />
-                </PersistentDrawerRight>
-
-
+            </PersistentDrawerRight>
         )
     } else {
         return (

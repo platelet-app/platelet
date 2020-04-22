@@ -5,9 +5,14 @@ export const SET_API_URL = 'SET_API_URL';
 export const REMOVE_API_URL = 'REMOVE_API_URL';
 export const LOGIN_INCORRECT_PASSWORD = 'LOGIN_INCORRECT_PASSWORD';
 export const LOGIN_AUTHORISED = 'LOGIN_AUTHORISED';
+export const REFRESH_TOKEN = 'REFRESH_TOKEN';
 
 export function loginUser(data) {
     return { type: LOGIN_REQUEST, data }
+}
+
+export function refreshToken() {
+    return { type: REFRESH_TOKEN }
 }
 
 export function loginUserSuccess(data) {

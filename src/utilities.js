@@ -17,7 +17,6 @@ export function convertDate(timestamp) {
 }
 
 export function saveLogin(apiBearer) {
-    console.log(apiBearer)
     localStorage.setItem("apiBearer", apiBearer);
 }
 
@@ -27,7 +26,6 @@ export function getLogin() {
 }
 
 export function saveApiURL(apiURL) {
-    console.log(apiURL)
     localStorage.setItem("apiURL", apiURL);
 
 }

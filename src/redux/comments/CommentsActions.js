@@ -7,7 +7,6 @@ export const GET_COMMENTS_SUCCESS = 'GET_COMMENTS_SUCCESS';
 export const CLEAR_COMMENTS = 'CLEAR_COMMENTS';
 
 export function addComment(data) {
-    console.log(data)
     return { type: ADD_COMMENT_REQUEST, data }
 }
 

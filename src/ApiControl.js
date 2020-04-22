@@ -1,4 +1,6 @@
 import { store } from 'react-notifications-component';
+import axios from 'axios'
+import {saveLogin} from "./utilities";
 
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
@@ -54,6 +56,43 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
 
 }
 
+function makeAxios(api_url, url, type, auth, content_type = undefined, data = {}) {
+    const config = {
+        method: type,
+        url: api_url + url,
+        headers: {
+            'Content-type': content_type ? content_type : "text/html",
+            "Access-Control-Allow-Credentials": true
+        },
+        data: data,
+    }
+    return axios(config)
+        .then((data) => {
+            console.log('Request succeeded with JSON response', data);
+            if (data)
+                return data.data;
+        }).catch(function (error) {
+            console.log('Request failed', error.response);
+            store.addNotification({
+                title: "An error has occurred.",
+                //TODO: proper error messages from the api
+                message: "For some reason.",
+                type: "danger",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animated", "fadeIn"],
+                animationOut: ["animated", "fadeOut"],
+                dismiss: {
+                    duration: 10000,
+                    onScreen: true
+                }
+            });
+            throw error;
+        });
+
+
+}
+
 class Vehicle {
     constructor(bearer, api_url){
         this.bearer = bearer;
@@ -61,27 +100,27 @@ class Vehicle {
     }
 
     async getVehicles(user_id) {
-        return makeFetch(this.api_url, "vehicles", "GET", this.bearer)
+        return makeAxios(this.api_url, "vehicles", "GET", this.bearer)
     }
 
     async getVehicle(vehicle_id) {
-        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "vehicle/" + vehicle_id, "GET", this.bearer)
     }
 
     async createVehicle(input_data) {
-        return makeFetch(this.api_url,  "vehicles", "POST", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url,  "vehicles", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateVehicle(vehicle_id, input_data) {
-        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "PUT", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "vehicle/" + vehicle_id, "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteVehicle(vehicle_id) {
-        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "DELETE", this.bearer, "application/json")
+        return makeAxios(this.api_url, "vehicle/" + vehicle_id, "DELETE", this.bearer, "application/json")
     }
 
     async restoreVehicle(vehicle_id) {
-        return makeFetch(this.api_url, "vehicle/" + vehicle_id + "/restore", "PUT", this.bearer, "application/json")
+        return makeAxios(this.api_url, "vehicle/" + vehicle_id + "/restore", "PUT", this.bearer, "application/json")
     }
 }
 
@@ -90,25 +129,22 @@ class Location {
         this.bearer = bearer;
         this.api_url = api_url;
         this.availableLocations = [];
-        /*makeFetch(this.api_url, "locations", "GET", this.bearer)
+        /*makeAxios(this.api_url, "locations", "GET", this.bearer)
             .then((data) => {
                 this.availableLocations = data;
             });*/
     }
 
     async getAvailableLocations() {
-        return makeFetch(this.api_url, "locations", "GET", this.bearer);
-        return new Promise((resolve, reject) => {
-            resolve(this.availableLocations);
-        });
+        return makeAxios(this.api_url, "locations", "GET", this.bearer);
     }
 
     async getLocation(location_id) {
-        return makeFetch(this.api_url, "location/" + location_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "location/" + location_id, "GET", this.bearer)
     }
 
     async createLocation(input_data) {
-        return makeFetch(this.api_url, "locations", "POST", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "locations", "POST", this.bearer, "application/json", input_data)
     }
 }
 
@@ -119,18 +155,18 @@ class Comment {
     }
 
     async getComments(item_id) {
-        return makeFetch(this.api_url, "comments/" + item_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "comments/" + item_id, "GET", this.bearer)
     }
 
     async getComment(comment_id) {
-        return makeFetch(this.api_url, "comment/" + comment_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "comment/" + comment_id, "GET", this.bearer)
     }
 
     async createComment(input_data) {
-        return makeFetch(this.api_url, "comments", "POST", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "comments", "POST", this.bearer, "application/json", input_data)
     }
     async updateComment(comment_id, input_data) {
-        return makeFetch(this.api_url, "comment/" + comment_id, "PUT", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "comment/" + comment_id, "PUT", this.bearer, "application/json", input_data)
     }
 }
 
@@ -141,59 +177,53 @@ class Task {
     }
 
     async getTasks(session_id) {
-        return makeFetch(this.api_url, "tasks/" + session_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "tasks/" + session_id, "GET", this.bearer)
     }
 
     async getTask(task_id) {
-        return makeFetch(this.api_url, "task/" + task_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "task/" + task_id, "GET", this.bearer)
     }
 
     async createTask(input_data) {
-        return makeFetch(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateTask(task_id, input_data) {
-        return makeFetch(this.api_url, "task/" + task_id, "PUT", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "task/" + task_id, "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteTask(task_id) {
-        return makeFetch(this.api_url, "task/" + task_id, "DELETE", this.bearer, "application/json")
+        return makeAxios(this.api_url, "task/" + task_id, "DELETE", this.bearer, "application/json")
     }
 
     async restoreTask(task_id) {
-        return makeFetch(this.api_url, "task/" + task_id + "/restore", "PUT", this.bearer, "application/json")
+        return makeAxios(this.api_url, "task/" + task_id + "/restore", "PUT", this.bearer, "application/json")
     }
 }
 
 class Deliverable {
-    constructor(bearer, api_url){
+    constructor(bearer, api_url) {
         this.bearer = bearer;
         this.api_url = api_url;
-        this.availableDeliverables = [];
-
-        makeFetch(this.api_url, "deliverables/available", "GET", this.bearer, "application/json")
-            .then((data) => {
-                this.availableDeliverables = data;
-            });
     }
 
     async getDeliverables(task_id) {
-        return makeFetch(this.api_url, "deliverables/" + task_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "deliverables/" + task_id, "GET", this.bearer)
     }
 
     async getDeliverable(deliverable_id) {
-        return makeFetch(this.api_url, "deliverable/" + deliverable_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "deliverable/" + deliverable_id, "GET", this.bearer)
     }
 
     async createDeliverable(input_data) {
-        return makeFetch(this.api_url, "deliverables", "POST", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "deliverables", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateDeliverable(deliverable_id, input_data) {
-        return makeFetch(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
     }
     async getAvailableDeliverables() {
-        return makeFetch(this.api_url, "deliverables/available", "GET", this.bearer, "application/json");
+        return makeAxios(this.api_url, "deliverables/available", "GET", this.bearer, "application/json");
     }
 }
 
@@ -205,31 +235,31 @@ class Session {
     }
 
     async getSessions(user_id) {
-        return makeFetch(this.api_url, "sessions/" + user_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "sessions/" + user_id, "GET", this.bearer)
     }
 
     async getSession(session_id) {
-        return makeFetch(this.api_url, "session/" + session_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "session/" + session_id, "GET", this.bearer)
     }
     
     async getStatistics(session_id) {
-        return makeFetch(this.api_url, "session/" + session_id + "/statistics", "GET", this.bearer)
+        return makeAxios(this.api_url, "session/" + session_id + "/statistics", "GET", this.bearer)
     }
 
     async createSession(input_data) {
         if (input_data) {
-            return makeFetch(this.api_url, "sessions", "POST", this.bearer, "application/json", input_data)
+            return makeAxios(this.api_url, "sessions", "POST", this.bearer, "application/json", input_data)
         }
         else  {
-            return makeFetch(this.api_url, "sessions", "POST", this.bearer)
+            return makeAxios(this.api_url, "sessions", "POST", this.bearer)
         }
     }
     async deleteSession(session_id) {
-        return makeFetch(this.api_url, "session/" + session_id, "DELETE", this.bearer, "application/json")
+        return makeAxios(this.api_url, "session/" + session_id, "DELETE", this.bearer, "application/json")
     }
 
     async restoreSession(session_id) {
-        return makeFetch(this.api_url, "session/" + session_id + "/restore", "PUT", this.bearer, "application/json")
+        return makeAxios(this.api_url, "session/" + session_id + "/restore", "PUT", this.bearer, "application/json")
     }
 
 }
@@ -238,19 +268,10 @@ class Priority {
     constructor(bearer, api_url){
         this.bearer = bearer;
         this.api_url = api_url;
-        this.availablePriorities = [];
-
-        /*makeFetch(this.api_url, "priorities", "GET", this.bearer)
-            .then((data) => {
-                this.availablePriorities = data;
-            });*/
     }
 
     async getAvailablePriorities() {
-        return makeFetch(this.api_url, "priorities", "GET", this.bearer);
-        return new Promise((resolve, reject) => {
-            resolve(this.availablePriorities);
-        });
+        return makeAxios(this.api_url, "priorities", "GET", this.bearer);
     }
 }
 
@@ -261,7 +282,7 @@ class Patch {
     }
 
     async getAvailablePatches() {
-        return makeFetch(this.api_url, "patches", "GET", this.bearer);
+        return makeAxios(this.api_url, "patches", "GET", this.bearer);
     }
 }
 
@@ -274,24 +295,24 @@ class User {
     }
 
     async getUsers() {
-        return makeFetch(this.api_url, "users", "GET", this.bearer);
+        return makeAxios(this.api_url, "users", "GET", this.bearer);
     }
 
     async getUser(user_id) {
-        return makeFetch(this.api_url, "user/" + user_id, "GET", this.bearer)
+        return makeAxios(this.api_url, "user/" + user_id, "GET", this.bearer)
 
     }
 
     async createUser(input_data) {
-        return makeFetch(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
     }
 
     async getAssignedTasks(user_id) {
-        return makeFetch(this.api_url, "user/" + user_id + '/tasks', "GET", this.bearer)
+        return makeAxios(this.api_url, "user/" + user_id + '/tasks', "GET", this.bearer)
     }
 
     async whoami() {
-        return makeFetch(this.api_url, 'whoami', "GET", this.bearer)
+        return makeAxios(this.api_url, 'whoami', "GET", this.bearer)
     }
 }
 
@@ -346,6 +367,10 @@ class Control {
     deleteApiURL() {
         this.api_url = "";
         this.logout();
+    }
+
+    refreshToken() {
+        return makeAxios(this.api_url, "login/refresh_token", "GET", this.bearer, "application/json")
     }
 
     setApiURL(url) {
@@ -460,6 +485,7 @@ class Control {
 
     initialiseClasses(token) {
         this.bearer = "Bearer " + token;
+        axios.defaults.headers.common['Authorization'] = this.bearer
         this.users = new User(this.bearer, this.api_url);
         this.sessions = new Session(this.bearer, this.api_url);
         this.comments = new Comment(this.bearer, this.api_url);
@@ -470,6 +496,50 @@ class Control {
         this.priorities = new Priority(this.bearer, this.api_url);
         this.patches = new Patch(this.bearer, this.api_url);
         this.initialised = true;
+        const self = this;
+        axios.interceptors.request.use(
+            config => {
+                const token = self.bearer
+                if (token) {
+                    config.headers['Authorization'] = self.bearer;
+                }
+                // config.headers['Content-Type'] = 'application/json';
+                return config;
+            },
+            error => {
+                Promise.reject(error)
+            });
+        axios.interceptors.response.use((response) => {
+                return response
+            },
+            function (error) {
+                const originalRequest = error.config;
+                if (error.response.status === 401 && !originalRequest._retry) {
+                    if (error.response.status === 401 &&
+                        originalRequest.url === self.api_url + "login/refresh_token") {
+                        return Promise.reject(error);
+                    }
+
+                    originalRequest._retry = true;
+                    return axios.get(self.api_url + "login/refresh_token")
+                        .then(res => {
+                            if (res.status === 200) {
+                                // 1) put token to LocalStorage
+                                saveLogin(res.data.access_token)
+
+                                // 2) Change Authorization header
+                                self.bearer = "Bearer " + res.data.access_token;
+
+                                // 3) return originalRequest object with Axios.
+                                return axios(originalRequest);
+                            }
+                        })
+                }
+
+                // return Error object with Promise
+                return Promise.reject(error);
+            });
+
         //setInterval(this.ping, 4000);
     }
 }

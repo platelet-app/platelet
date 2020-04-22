@@ -39,31 +39,48 @@ const useStyles = makeStyles(theme => ({
 
 function App() {
     const apiControl = useSelector(state => state.apiControl);
+    const whoami = useSelector(state => state.whoami);
     const isInitialised = useSelector(state => state.apiControl.initialised);
     const apiURL = useSelector(state => state.apiControl.api_url);
     const dispatch = useDispatch();
     const classes = useStyles();
+    const [confirmLogin, setConfirmLogin] = useState(false);
 
     function componentDidMount() {
         Moment.globalMoment = moment;
         //TODO: get this from server settings table once implemented
         Moment.globalLocale = 'en-GB';
     }
-
     useEffect(componentDidMount, []);
 
+    function loginCheck() {
+        if (whoami && whoami.login_expiry) {
+            const loginExpiryDate = whoami.login_expiry
+            // TODO: get expiry time from server setting to set a good value
+            if (whoami.login_expiry < moment().add("days", 5).unix()) {
+                dispatch(logoutUser());
+            } else {
+                setConfirmLogin(true);
+            }
+        }
+    }
+    useEffect(loginCheck, [whoami])
+
+    function firstWhoami() {
+        if (isInitialised)
+            dispatch(getWhoami());
+    }
+    useEffect(firstWhoami, [isInitialised])
     function getStaticData() {
         if (isInitialised) {
             dispatch(getAvailablePriorities());
             dispatch(getAvailableDeliverables());
             dispatch(getAvailableLocations());
             dispatch(getUsers());
-            dispatch(getWhoami());
             dispatch(getAvailablePatches())
         }
     }
-
-    useEffect(getStaticData, [isInitialised]);
+    useEffect(getStaticData, [confirmLogin]);
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up('sm'))));
