@@ -18,6 +18,7 @@ import {availablePriorities} from "./priorities/PrioritiesReducers";
 import {users, user} from "./users/UsersReducers";
 import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
 import {comments, sessionComments} from "./comments/CommentsReducers";
+import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 
 
 function viewMode(state = null, action) {
@@ -156,7 +157,8 @@ const rootReducer = combineReducers({
     viewMode,
     mobileView,
     menuIndex,
-    commentsObjectUUID
+    commentsObjectUUID,
+    serverSettings
 });
 
 export default rootReducer

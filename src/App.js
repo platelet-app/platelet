@@ -22,6 +22,7 @@ import Moment from "react-moment"
 import ApiConfig from "./containers/ApiConfig";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
+import {getServerSettings} from "./redux/ServerSettings/ServerSettingsActions";
 
 const useStyles = makeStyles(theme => ({
     centeredDiv: {
@@ -42,22 +43,31 @@ function App() {
     const whoami = useSelector(state => state.whoami);
     const isInitialised = useSelector(state => state.apiControl.initialised);
     const apiURL = useSelector(state => state.apiControl.api_url);
+    const serverSettings = useSelector(state => state.serverSettings);
     const dispatch = useDispatch();
     const classes = useStyles();
     const [confirmLogin, setConfirmLogin] = useState(false);
 
-    function componentDidMount() {
+    function requestServerSettings() {
+        if (apiURL) {
+            dispatch(getServerSettings())
+        }
+    }
+    useEffect(requestServerSettings, [apiURL])
+
+    function checkServerSettings() {
         Moment.globalMoment = moment;
         //TODO: get this from server settings table once implemented
-        Moment.globalLocale = 'en-GB';
+        if (serverSettings) {
+            console.log(serverSettings)
+            Moment.globalLocale = serverSettings.locale.code;
+        }
     }
-    useEffect(componentDidMount, []);
+    useEffect(checkServerSettings, [serverSettings]);
 
     function loginCheck() {
         if (whoami && whoami.login_expiry) {
-            const loginExpiryDate = whoami.login_expiry
-            // TODO: get expiry time from server setting to set a good value
-            if (whoami.login_expiry < moment().add("days", 5).unix()) {
+            if (whoami.login_expiry < moment().add("days", 3).unix()) {
                 dispatch(logoutUser());
             } else {
                 setConfirmLogin(true);

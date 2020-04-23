@@ -389,6 +389,38 @@ class Control {
         this.api_url = url;
     }
 
+    getServerSettings() {
+        if (!this.api_url) {
+            //TODO error message
+            return new Promise((resolve, reject) => {})
+        } else {
+            return axios.get(this.api_url + "server_settings")
+                .then((data) => {
+                    console.log('Request succeeded with JSON response', data);
+                    if (data)
+                        return data.data;
+                }).catch(function (error) {
+                    console.log('Request failed', error.response);
+                    store.addNotification({
+                        title: "An error has occurred.",
+                        //TODO: proper error messages from the api
+                        message: "For some reason.",
+                        type: "danger",
+                        insert: "top",
+                        container: "top-right",
+                        animationIn: ["animated", "fadeIn"],
+                        animationOut: ["animated", "fadeOut"],
+                        dismiss: {
+                            duration: 10000,
+                            onScreen: true
+                        }
+                    });
+                    throw error;
+                });
+
+        }
+    }
+
     ping() {
         let self = this;
         return fetch(this.api_url + 'ping', {

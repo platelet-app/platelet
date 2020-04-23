@@ -50,6 +50,7 @@ import {watchGetUsers, watchGetUser} from "./users/UsersSagas";
 import {watchGetWhoami} from "./WhoamiSaga";
 import {watchLogin} from "./login/LoginSagas"
 import {watchGetAvailablePatches} from "./patches/PatchesSagas";
+import {watchGetServerSettings} from "./ServerSettings/ServerSettingsSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -100,6 +101,7 @@ export default function* rootSaga() {
         call(watchGetComments),
         call(watchPostNewComment),
         call(watchGetSessionComments),
-        call(watchPostNewSessionComment)
+        call(watchPostNewSessionComment),
+        call(watchGetServerSettings)
     ])
 }
