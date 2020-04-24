@@ -92,11 +92,12 @@ export function ResponsiveDrawer(props) {
     const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
     const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami);
+    const serverSettings = useSelector(state => state.serverSettings);
     const mobileView = useSelector(state => state.mobileView);
     const menuIndex = useSelector(state => state.menuIndex);
     const {container} = props;
     const classes = useStyles();
-    const rightBarClasses = rightSideBarUseStyles()
+    //const rightBarClasses = rightSideBarUseStyles()
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -111,7 +112,8 @@ export function ResponsiveDrawer(props) {
     if (!isFetching) {
         if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
             sessionLink =
-                <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 2)} component={Link} to="/sessions" button>
+                <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 2)} component={Link} to="/sessions"
+                          button>
                     <ListItemIcon><AppsIcon/></ListItemIcon>
                     <ListItemText primary={"Shifts"}/>
                 </ListItem>;
@@ -126,15 +128,18 @@ export function ResponsiveDrawer(props) {
                         <ListItemText primary={"Home"}/>
                     </ListItem>
                     {sessionLink}
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 3)} component={Link} to={"/mytasks"} button>
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 3)} component={Link} to={"/mytasks"}
+                              button>
                         <ListItemIcon><InboxIcon/></ListItemIcon>
                         <ListItemText primary={"My Assigned Tasks"}/>
                     </ListItem>
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 4)} component={Link} to="/vehicles" button>
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 4)} component={Link} to="/vehicles"
+                              button>
                         <ListItemIcon><MotorcycleIcon/></ListItemIcon>
                         <ListItemText primary={"Vehicles"}/>
                     </ListItem>
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 5)} component={Link} to="/users" button>
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 5)} component={Link} to="/users"
+                              button>
                         <ListItemIcon><PeopleAltIcon/></ListItemIcon>
                         <ListItemText primary={"Users"}/>
                     </ListItem>
@@ -151,15 +156,25 @@ export function ResponsiveDrawer(props) {
             <CssBaseline/>
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        edge="start"
-                        onClick={handleDrawerToggle}
-                        className={classes.menuButton}
-                    >
-                        <MenuIcon/>
-                    </IconButton>
+                    <Grid container direction={"row"} spacing={1} justify={"flex-start"} alignItems={"center"}>
+                        <Grid item>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                edge="start"
+                                onClick={handleDrawerToggle}
+                                className={classes.menuButton}
+                            >
+                                <MenuIcon/>
+                            </IconButton>
+
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h6">
+                                {serverSettings ? serverSettings.organisation_name : ""}
+                            </Typography>
+                        </Grid>
+                    </Grid>
                     <Grid container direction={"row-reverse"} justify={"flex-start"} alignItems={"center"}>
                         <Grid item>
                             <div>

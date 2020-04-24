@@ -8,7 +8,7 @@ export default function NotFound(props) {
         <PaddedPaper>
             <Grid container spacing={1} direction={"column"} alignItems={"center"} justify={"center"}>
                 <Grid item>
-                    <Typography style={{fontSize: "20px"}}>
+                    <Typography variant={"h4"}>
                         This page not found.
                     </Typography>
                 </Grid>
