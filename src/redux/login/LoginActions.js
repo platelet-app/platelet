@@ -1,5 +1,6 @@
-export const LOGIN_REQUEST = 'LOGIN';
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGOUT = 'LOGOUT';
 export const SET_API_URL = 'SET_API_URL';
 export const REMOVE_API_URL = 'REMOVE_API_URL';
@@ -37,4 +38,8 @@ export function setApiURL(data) {
 
 export function removeApiURL() {
     return { type: REMOVE_API_URL }
+}
+
+export function loginFailure() {
+    return {type: LOGIN_FAILURE}
 }

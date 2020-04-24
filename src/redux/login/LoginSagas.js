@@ -3,7 +3,7 @@ import {
     LOGIN_REQUEST,
     loginUserSuccess,
     loginIncorrectPassword,
-    loginAuthorised, logoutUser
+    loginAuthorised, logoutUser, loginFailure
 } from "./LoginActions"
 
 import {getApiControl} from "../Api";
@@ -17,6 +17,7 @@ function* login(action) {
     } catch (error) {
         if (error.status_code === 401) {
             yield put(loginIncorrectPassword());
+            yield put(loginFailure());
         } else {
             throw error;
         }

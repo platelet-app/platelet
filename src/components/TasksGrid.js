@@ -55,8 +55,8 @@ const getColumnTitle = key => {
 };
 
 export default function TasksGrid(props) {
-    const loadingSelector = createPostingSelector(["ADD_TASK"]);
-    const isPosting = useSelector(state => loadingSelector(state));
+    const postingSelector = createPostingSelector(["ADD_TASK"]);
+    const isPosting = useSelector(state => postingSelector(state));
     const [filteredTasks, setFilteredTasks] = useState(props.tasks);
     const [searchQuery, setSearchQuery] = useState("");
     const emptyTask = {

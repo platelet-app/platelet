@@ -44,12 +44,10 @@ export function vehicle(state = {}, action) {
     switch (action.type) {
         case UPDATE_VEHICLE_SUCCESS:
             return Object.assign(state, action.data.payload);
-
         case GET_VEHICLE_SUCCESS:
             return action.data;
         case GET_VEHICLE_FAILURE:
             return {};
-
         default:
             return state
     }

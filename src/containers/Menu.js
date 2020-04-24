@@ -35,6 +35,7 @@ import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import {encodeUUID} from "../utilities";
 import {SwipeableDrawer} from "@material-ui/core";
 import {logoutUser, removeApiURL} from "../redux/login/LoginActions";
+import {clearServerSettings} from "../redux/ServerSettings/ServerSettingsActions";
 
 const drawerWidth = 240;
 
@@ -195,6 +196,7 @@ export function ResponsiveDrawer(props) {
                                     <MenuItem onClick={() => {
                                         setAnchorEl(null);
                                         dispatch(removeApiURL());
+                                        dispatch(clearServerSettings());
                                         history.push("/");
                                     }}>
                                         Change Organisation

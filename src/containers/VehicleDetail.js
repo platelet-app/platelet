@@ -9,7 +9,7 @@ import {
 import {decodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldControlled} from "../components/TextFieldControlled";
-import {createLoadingSelector} from "../redux/selectors";
+import {createLoadingSelector, createNotFoundSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
 import UsersSelect from "../components/UsersSelect";
 import {PaddedPaper} from "../css/common";
@@ -26,6 +26,9 @@ export default function VehicleDetail(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_VEHICLE"]);
     const isFetching = useSelector(state => loadingSelector(state));
+    const notFoundSelector = createNotFoundSelector(["GET_VEHICLE"]);
+    const notFound = useSelector(state => notFoundSelector(state));
+    console.log(notFound)
     //const errorSelector = createErrorMessageSelector(["GET_VEHICLE"]);
     //const erroring = useSelector(state => errorSelector(state));
     const [editMode, setEditMode] = useState(false);
@@ -54,7 +57,7 @@ export default function VehicleDetail(props) {
     const userAssign = editMode ?
         <UsersSelect label={"Assign this vehicle to a user."} onSelect={onAssignUser}/> : <></>;
     let editToggle = <></>;
-    if (whoami.roles.includes("admin")) {
+    if (whoami && whoami.roles.includes("admin")) {
         editToggle = editMode ?
             <IconButton
                 color="inherit"
@@ -89,13 +92,16 @@ export default function VehicleDetail(props) {
 
     const divider = editMode ? <></> : <div style={{width: "460px"}}><Grid item><Divider/></Grid></div>;
     const assignToMeButton = editMode ?
-        <Button disabled={assignedUser.uuid === whoami.uuid} onClick={() => onAssignUser(whoami)}>Assign to
-            Me</Button> : <></>;
+        <Button disabled={assignedUser && assignedUser.uuid === whoami.uuid} onClick={() => onAssignUser(whoami)}>
+            Assign to Me
+        </Button> : <></>;
 
     if (isFetching) {
         return (
             <FormSkeleton/>
         )
+    } else if (notFound) {
+        return <>Not found</>
     } else {
         return (
             <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>

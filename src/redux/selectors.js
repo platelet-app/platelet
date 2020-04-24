@@ -28,3 +28,7 @@ export const createLoadingSelector = actions => state => {
 export const createPostingSelector = actions => state => {
     return actions.some(action => state.postingReducer[action]);
 };
+
+export const createNotFoundSelector = actions => state => {
+    return actions.some(action => state.notFoundReducer[action]);
+};

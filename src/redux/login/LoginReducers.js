@@ -2,7 +2,7 @@ import Control from "../../ApiControl"
 import {
     LOGIN_INCORRECT_PASSWORD,
     LOGIN_SUCCESS,
-    LOGOUT, REMOVE_API_URL, SET_API_URL, LOGIN_AUTHORISED
+    LOGOUT, REMOVE_API_URL, SET_API_URL
 } from './LoginActions'
 import {deleteLogin, getApiURL, saveApiURL, getLogin, saveLogin, deleteApiURL} from "../../utilities";
 

@@ -48,7 +48,7 @@ function mobileView(state = false, action) {
     }
 }
 
-function whoami(state = {roles: [], name: ""}, action) {
+function whoami(state = {roles: "", name: ""}, action) {
     switch (action.type) {
         case GET_WHOAMI_SUCCESS:
             return action.data;
@@ -82,7 +82,7 @@ function loadingReducer(state = {}, action) {
         return {};
     }
     const {type} = action;
-    const matches = /(.*)_(REQUEST|SUCCESS|FAILURE)/.exec(type);
+    const matches = /(.*)_(REQUEST|SUCCESS|FAILURE|NOTFOUND)/.exec(type);
 
     // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
     if (!matches) return state;
@@ -113,7 +113,26 @@ function postingReducer(state = {}, action) {
         [requestName]: requestState === 'REQUEST',
     };
 }
-export const errorReducer = (state = {}, action) => {
+
+function notFoundReducer(state = {}, action) {
+    const {type} = action;
+    const matches = /(.*)_(REQUEST|SUCCESS|NOTFOUND)/.exec(type);
+    console.log(type)
+
+    // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
+    if (!matches) return state;
+
+    const [, requestName, requestState] = matches;
+    return {
+        ...state,
+        // Store whether a request is happening at the moment or not
+        // e.g. will be true when receiving GET_TODOS_REQUEST
+        //      and false when receiving GET_TODOS_SUCCESS / GET_TODOS_FAILURE
+        [requestName]: requestState === 'NOTFOUND',
+    };
+}
+
+const errorReducer = (state = {}, action) => {
     const { type, error } = action;
     const matches = /(.*)_(REQUEST|FAILURE)/.exec(type);
 
@@ -126,9 +145,15 @@ export const errorReducer = (state = {}, action) => {
         // Store errorMessage
         // e.g. stores errorMessage when receiving GET_TODOS_FAILURE
         //      else clear errorMessage when receiving GET_TODOS_REQUEST
-        [requestName]: requestState === 'FAILURE' ? error : '',
+        [requestName]: requestState === 'FAILURE' || requestState === 'NOTFOUND' ? error : '',
     };
 };
+
+export function error(state =  null, action){
+    const { error } = action;
+    console.log(error)
+    return error ? error : state;
+}
 
 const rootReducer = combineReducers({
     task,
@@ -151,14 +176,16 @@ const rootReducer = combineReducers({
     sessionActiveTaskUUID,
     loadingReducer,
     postingReducer,
+    notFoundReducer,
     errorReducer,
+    error,
     apiControl,
     authStatus,
     viewMode,
     mobileView,
     menuIndex,
     commentsObjectUUID,
-    serverSettings
+    serverSettings,
 });
 
 export default rootReducer

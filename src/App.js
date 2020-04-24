@@ -22,7 +22,9 @@ import Moment from "react-moment"
 import ApiConfig from "./containers/ApiConfig";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import {getServerSettings} from "./redux/ServerSettings/ServerSettingsActions";
+import {clearServerSettings, getServerSettings} from "./redux/ServerSettings/ServerSettingsActions";
+import {withSnackbar} from "notistack";
+import LoginSkeleton from "./loadingComponents/LoginSkeleton";
 
 const useStyles = makeStyles(theme => ({
     centeredDiv: {
@@ -38,15 +40,22 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function App() {
+function App(props) {
     const apiControl = useSelector(state => state.apiControl);
     const whoami = useSelector(state => state.whoami);
     const isInitialised = useSelector(state => state.apiControl.initialised);
     const apiURL = useSelector(state => state.apiControl.api_url);
     const serverSettings = useSelector(state => state.serverSettings);
+    const error = useSelector(state => state.error);
     const dispatch = useDispatch();
     const classes = useStyles();
     const [confirmLogin, setConfirmLogin] = useState(false);
+
+    function displayError() {
+        if (error)
+            props.enqueueSnackbar(`${error}`,  { variant: "error", autoHideDuration: 8000 });
+    }
+    useEffect(displayError, [error])
 
     function requestServerSettings() {
         if (apiURL) {
@@ -57,9 +66,7 @@ function App() {
 
     function checkServerSettings() {
         Moment.globalMoment = moment;
-        //TODO: get this from server settings table once implemented
         if (serverSettings) {
-            console.log(serverSettings)
             Moment.globalLocale = serverSettings.locale.code;
         }
     }
@@ -106,7 +113,7 @@ function App() {
                 </React.Fragment>
             </div>
         );
-    } else if (apiURL) {
+    } else if (serverSettings) {
         return (
             <div className={classes.centeredDiv}>
                 <Grid container direction={"column"} alignItems={"center"} spacing={3}>
@@ -116,6 +123,7 @@ function App() {
                     <Grid item>
                         <Button variant="contained" color="primary" onClick={() => {
                             dispatch(removeApiURL());
+                            dispatch(clearServerSettings());
                         }}>
                             Change Organisation
                         </Button>
@@ -123,7 +131,7 @@ function App() {
                 </Grid>
             </div>
         )
-    } else {
+    } else if (!apiURL) {
         return (
             <div className={classes.centeredDiv}>
                 <Grid container direction={"column"} alignItems={"center"} spacing={3}>
@@ -135,7 +143,14 @@ function App() {
                 </Grid>
             </div>
         )
+    } else {
+        return (
+        <div className={classes.centeredDiv}>
+            <LoginSkeleton/>
+        </div>
+        )
     }
+
 }
 
-export default App;
+export default withSnackbar(App);

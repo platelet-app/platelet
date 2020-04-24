@@ -56,6 +56,16 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
 
 }
 
+class HttpError extends Error {
+    constructor(message, response) {
+        super(message);
+        this.name = "HttpError";
+        this.status = response.status;
+        this.statusText = response.statusText;
+        this.response = response;
+    }
+}
+
 function makeAxios(api_url, url, type, auth, content_type = undefined, data = {}) {
     const config = {
         method: type,
@@ -67,26 +77,15 @@ function makeAxios(api_url, url, type, auth, content_type = undefined, data = {}
         data: data,
     }
     return axios(config)
-        .then((data) => {
-            console.log('Request succeeded with JSON response', data);
-            if (data)
-                return data.data;
+        .then((response) => {
+            console.log('Request succeeded with JSON response', response);
+            if (response)
+                return response.data;
         }).catch(function (error) {
             console.log('Request failed', error.response);
-            store.addNotification({
-                title: "An error has occurred.",
-                //TODO: proper error messages from the api
-                message: "For some reason.",
-                type: "danger",
-                insert: "top",
-                container: "top-right",
-                animationIn: ["animated", "fadeIn"],
-                animationOut: ["animated", "fadeOut"],
-                dismiss: {
-                    duration: 10000,
-                    onScreen: true
-                }
-            });
+            if (error.response) {
+                throw new HttpError("An HTTP exception has occurred.", error.response)
+            }
             throw error;
         });
 
@@ -379,11 +378,10 @@ class Control {
         url = url.endsWith("/") ? url + "api/v0.1/" : url + "/api/v0.1/";
         if (!url.startsWith("https://")) {
             if (url.startsWith("http://")) {
-                //TODO: Change to HTTPS (HTTP for local testing)
-                url = "http://" + url.substring("http://".length)
+                const cut = url.substring("http://".length)
+                url = url.includes("localhost") ? "http://" + cut : "https://" + cut
             } else {
-                //TODO: Change to HTTPS (HTTP for local testing)
-                url = "http://" + url;
+                url = url.includes("localhost") ? "http://" + url : "https://" + url;
             }
         }
         this.api_url = url;
@@ -391,30 +389,17 @@ class Control {
 
     getServerSettings() {
         if (!this.api_url) {
-            //TODO error message
-            return new Promise((resolve, reject) => {})
+            return new Promise((resolve, reject) => {
+                throw new Error("Can't get server settings without an API URL.")
+            })
         } else {
             return axios.get(this.api_url + "server_settings")
                 .then((data) => {
                     console.log('Request succeeded with JSON response', data);
                     if (data)
-                        return data.data;
+                        return data;
                 }).catch(function (error) {
                     console.log('Request failed', error.response);
-                    store.addNotification({
-                        title: "An error has occurred.",
-                        //TODO: proper error messages from the api
-                        message: "For some reason.",
-                        type: "danger",
-                        insert: "top",
-                        container: "top-right",
-                        animationIn: ["animated", "fadeIn"],
-                        animationOut: ["animated", "fadeOut"],
-                        dismiss: {
-                            duration: 10000,
-                            onScreen: true
-                        }
-                    });
                     throw error;
                 });
 

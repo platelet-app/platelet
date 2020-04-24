@@ -15,7 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import TextField from "@material-ui/core/TextField";
+import {createErrorMessageSelector, createPostingSelector} from "./redux/selectors";
 
 function getMessage(status) {
     switch (status) {
@@ -29,12 +29,14 @@ function getMessage(status) {
 }
 
 function Login(props) {
-
     const dispatch = useDispatch();
     const authStatus = useSelector(state => state.authStatus);
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
+
+    const postingSelector = createPostingSelector(["LOGIN"]);
+    const isLoggingIn = useSelector(state => postingSelector(state));
 
     function handleLogin() {
         if (username && password)
@@ -53,6 +55,7 @@ function Login(props) {
                         <Grid item>
                 <TextFieldUncontrolled label={"username"} value={username}
                                        variant={"outlined"}
+                                       disabled={isLoggingIn}
                                        onPressEnter={handleLogin}
                                        onChange={(e) => {setUsername(e.target.value)}}/>
                         </Grid>
@@ -69,6 +72,7 @@ function Login(props) {
                                     }}
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
+                                    disabled={isLoggingIn}
                                     onChange={(e) => {setPassword(e.target.value)}}
                                     endAdornment={
                                         <InputAdornment position="end">
@@ -87,7 +91,7 @@ function Login(props) {
                             </FormControl>
                         </Grid>
                         <Grid item>
-                <Button disabled={!username || !password} variant="contained" color="primary" onClick={handleLogin}>
+                <Button disabled={!username || !password || isLoggingIn} variant="contained" color="primary" onClick={handleLogin}>
                     Login
                 </Button>
                         </Grid>
