@@ -1,6 +1,10 @@
 import {
     ADD_SESSION_SUCCESS,
-    DELETE_SESSION_REQUEST, DELETE_SESSION_SUCCESS, GET_SESSION_STATISTICS_SUCCESS,
+    DELETE_SESSION_REQUEST,
+    DELETE_SESSION_SUCCESS,
+    GET_SESSION_FAILURE,
+    GET_SESSION_NOTFOUND, GET_SESSION_STATISTICS_FAILURE, GET_SESSION_STATISTICS_NOTFOUND,
+    GET_SESSION_STATISTICS_SUCCESS,
     GET_SESSION_SUCCESS,
     GET_SESSIONS_SUCCESS,
     RESTORE_SESSION_SUCCESS
@@ -47,9 +51,11 @@ export function session(state = {}, action) {
     switch (action.type) {
         case GET_SESSION_SUCCESS:
             return action.data;
+        case GET_SESSION_FAILURE:
+        case GET_SESSION_NOTFOUND:
+            return {};
         default:
-            return state
-
+            return state;
     }
 }
 
@@ -57,6 +63,9 @@ export function sessionStatistics(state = {}, action) {
     switch (action.type) {
         case GET_SESSION_STATISTICS_SUCCESS:
             return action.data;
+        case GET_SESSION_STATISTICS_FAILURE:
+        case GET_SESSION_STATISTICS_NOTFOUND:
+            return {};
         default:
             return state
 

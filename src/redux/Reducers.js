@@ -99,7 +99,7 @@ function loadingReducer(state = {}, action) {
 
 function postingReducer(state = {}, action) {
     const {type} = action;
-    const matches = /(.*)_(REQUEST|SUCCESS|FAILURE)/.exec(type);
+    const matches = /(.*)_(REQUEST|SUCCESS|FAILURE|NOTFOUND)/.exec(type);
 
     // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
     if (!matches) return state;
@@ -117,7 +117,6 @@ function postingReducer(state = {}, action) {
 function notFoundReducer(state = {}, action) {
     const {type} = action;
     const matches = /(.*)_(REQUEST|SUCCESS|NOTFOUND)/.exec(type);
-    console.log(type)
 
     // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
     if (!matches) return state;
@@ -151,7 +150,6 @@ const errorReducer = (state = {}, action) => {
 
 export function error(state =  null, action){
     const { error } = action;
-    console.log(error)
     return error ? error : state;
 }
 

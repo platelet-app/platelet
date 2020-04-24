@@ -12,7 +12,7 @@ import TasksGrid from "../components/TasksGrid";
 import {decodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
 import {useLocation} from "react-router-dom";
-import {createLoadingSelector} from '../redux/selectors';
+import {createLoadingSelector, createNotFoundSelector} from '../redux/selectors';
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
 import TasksTable from "../components/TasksTable";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -25,6 +25,7 @@ import StatsSkeleton from "../loadingComponents/StatsSkeleton";
 import PersistentDrawerRight from "./SideInfoSection";
 import ChatIcon from "@material-ui/icons/Chat";
 import Tooltip from "@material-ui/core/Tooltip";
+import NotFound from "../ErrorComponenents/NotFound";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -47,15 +48,14 @@ function SessionDetail(props) {
     const tasks = useSelector(state => state.tasks);
     const viewMode = useSelector(state => state.viewMode);
     const mobileView = useSelector(state => state.mobileView);
+    const notFoundSelector = createNotFoundSelector(["GET_SESSION"]);
+    const notFound = useSelector(state => notFoundSelector(state));
     //TODO: This could put data into title
     const session = useSelector(state => state.session);
     let session_uuid = decodeUUID(props.match.params.session_uuid_b62);
     //TODO: Maybe use this to show a particular task when navigating to the task URL directly
-    //const activeTask = useSelector(state => state.sessionActiveTaskUUID);
-    //dispatch(setActiveTaskUUID(props.match.params.task_uuid_b62));
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
-
 
     function componentDidMount() {
         dispatch(getAllTasks(session_uuid));
@@ -141,10 +141,10 @@ function SessionDetail(props) {
         </Grid>
     ;
 
-
     if (isFetching || viewMode === null) {
         return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
-
+    } else if (notFound) {
+        return <NotFound>{`Session with UUID ${session_uuid} not found.`}</NotFound>
     } else if (viewMode === "stats" || props.statsView) {
         return (
             <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
@@ -152,8 +152,6 @@ function SessionDetail(props) {
                 <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
             </PersistentDrawerRight>
         )
-
-
     } else if (viewMode === "kanban" || mobileView) {
         return (
             <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>

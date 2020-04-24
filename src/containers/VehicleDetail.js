@@ -20,6 +20,8 @@ import {setMenuIndex} from "../redux/Actions";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import CommentsSection from "./CommentsSection";
+import NotFound from "../ErrorComponenents/NotFound";
+import Typography from "@material-ui/core/Typography";
 
 
 export default function VehicleDetail(props) {
@@ -28,7 +30,6 @@ export default function VehicleDetail(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const notFoundSelector = createNotFoundSelector(["GET_VEHICLE"]);
     const notFound = useSelector(state => notFoundSelector(state));
-    console.log(notFound)
     //const errorSelector = createErrorMessageSelector(["GET_VEHICLE"]);
     //const erroring = useSelector(state => errorSelector(state));
     const [editMode, setEditMode] = useState(false);
@@ -37,11 +38,12 @@ export default function VehicleDetail(props) {
     const assignedUser = useSelector(state => state.vehicle.assigned_user);
     const vehicleName = useSelector(state => state.vehicle.name);
     const whoami = useSelector(state => state.whoami);
+    const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
 
     //console.log(erroring)
 
     function componentDidMount() {
-        dispatch(getVehicle(decodeUUID(props.match.params.vehicle_uuid_b62)));
+        dispatch(getVehicle(vehicleUUID));
     }
 
     useEffect(componentDidMount, [props.location.key]);
@@ -101,7 +103,7 @@ export default function VehicleDetail(props) {
             <FormSkeleton/>
         )
     } else if (notFound) {
-        return <>Not found</>
+        return <NotFound><Typography>Vehicle {vehicleUUID} could not be found.</Typography></NotFound>
     } else {
         return (
             <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>
