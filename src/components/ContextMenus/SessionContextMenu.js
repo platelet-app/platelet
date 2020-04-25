@@ -4,13 +4,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {
     deleteSession,
     restoreSession
-} from "../redux/sessions/SessionsActions";
+} from "../../redux/sessions/SessionsActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import { withSnackbar } from 'notistack';
-import {createPostingSelector} from "../redux/selectors";
+import {createPostingSelector} from "../../redux/selectors";
 
 
 const initialState = {

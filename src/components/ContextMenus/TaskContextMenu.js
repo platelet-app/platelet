@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import moment from 'moment/min/moment-with-locales';
@@ -22,8 +22,11 @@ const initialState = {
     mouseY: null,
 };
 
+const initialSnack = {snack: () => {}}
+
 function TaskContextMenu(props) {
     const [state, setState] = React.useState(initialState);
+    const [snack, setSnack] = React.useState(initialSnack)
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -33,6 +36,15 @@ function TaskContextMenu(props) {
         "UPDATE_TASK_CANCELLED_TIME",
         "UPDATE_TASK_REJECTED_TIME"]);
     const isPosting = useSelector(state => postingSelector(state));
+
+    function dispatchSnack() {
+        console.log(snack)
+        if (!isPosting) {
+            snack.snack();
+            setSnack(initialSnack)
+        }
+    }
+    useEffect(dispatchSnack, [isPosting])
 
     const dispatch = useDispatch();
 
@@ -54,7 +66,10 @@ function TaskContextMenu(props) {
                 </Button>
             </React.Fragment>
         );
-        props.enqueueSnackbar('Task marked picked up.',  { variant: "info", action, autoHideDuration: 8000 });
+        const snack = () => {
+            props.enqueueSnackbar('Task marked picked up.',  { variant: "info", action, autoHideDuration: 8000 })
+        }
+        setSnack({ snack })
     }
 
     function onSelectDroppedOff() {
@@ -68,7 +83,10 @@ function TaskContextMenu(props) {
                 </Button>
             </React.Fragment>
         );
-        props.enqueueSnackbar('Task marked delivered.',  { variant: "info", action, autoHideDuration: 8000 });
+        const snack = () => {
+            props.enqueueSnackbar('Task marked delivered.',  { variant: "info", action, autoHideDuration: 8000 });
+        }
+        setSnack({ snack })
     }
     function onSelectCancelled() {
         handleClose();
@@ -81,7 +99,10 @@ function TaskContextMenu(props) {
                 </Button>
             </React.Fragment>
         );
-        props.enqueueSnackbar('Task marked cancelled.',  { variant: "info", action, autoHideDuration: 8000 });
+        const snack = () => {
+            props.enqueueSnackbar('Task marked cancelled.', {variant: "info", action, autoHideDuration: 8000});
+        }
+        setSnack({ snack })
     }
 
     function onSelectRejected() {
@@ -95,8 +116,29 @@ function TaskContextMenu(props) {
                 </Button>
             </React.Fragment>
         );
-        props.enqueueSnackbar('Task marked rejected.',  { variant: "info", action, autoHideDuration: 8000 });
+        const snack = () => {
+            props.enqueueSnackbar('Task marked rejected.', {variant: "info", action, autoHideDuration: 8000});
+        }
+        setSnack({ snack })
     }
+
+    function onDelete(result) {
+        handleClose();
+        if (result)
+            dispatch(deleteTask(props.taskUUID));
+        const action = key => (
+            <React.Fragment>
+                <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
+                    UNDO
+                </Button>
+            </React.Fragment>
+        );
+        const snack = () => {
+            props.enqueueSnackbar('Task deleted.', {variant: "info", action, autoHideDuration: 8000});
+        }
+        setSnack({ snack })
+    }
+
 
     function undoDelete(key) {
         props.closeSnackbar(key);
@@ -121,20 +163,6 @@ function TaskContextMenu(props) {
         const payload = {time_cancelled: null};
         dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key);
-    }
-
-    function onDelete(result) {
-        handleClose();
-        if (result)
-            dispatch(deleteTask(props.taskUUID));
-        const action = key => (
-            <React.Fragment>
-                <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
-                    UNDO
-                </Button>
-            </React.Fragment>
-        );
-        props.enqueueSnackbar('Task deleted.',  { variant: "info", action, autoHideDuration: 8000 });
     }
 
     const handleClose = () => {
