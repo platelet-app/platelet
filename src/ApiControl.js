@@ -1,6 +1,6 @@
 import { store } from 'react-notifications-component';
 import axios from 'axios'
-import {saveLogin} from "./utilities";
+import {saveLogin, deleteApiURL} from "./utilities";
 
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
@@ -400,6 +400,7 @@ class Control {
     }
 
     getServerSettings() {
+        const self = this;
         if (!this.api_url) {
             return new Promise((resolve, reject) => {
                 throw new Error("Can't get server settings without an API URL.")
@@ -412,6 +413,8 @@ class Control {
                         return data;
                 }).catch(function (error) {
                     console.log('Request failed', error.response);
+                    self.api_url = "";
+                    deleteApiURL();
                     throw error;
                 });
 
