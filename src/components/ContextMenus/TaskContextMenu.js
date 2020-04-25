@@ -8,13 +8,13 @@ import {
     updateTaskCancelledTime,
     updateTaskDropoffTime,
     updateTaskPickupTime, updateTaskRejectedTime
-} from "../redux/tasks/TasksActions";
+} from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import { withSnackbar } from 'notistack';
-import {createPostingSelector} from "../redux/selectors";
+import {createPostingSelector} from "../../redux/selectors";
 
 
 const initialState = {
@@ -38,7 +38,6 @@ function TaskContextMenu(props) {
     const isPosting = useSelector(state => postingSelector(state));
 
     function dispatchSnack() {
-        console.log(snack)
         if (!isPosting) {
             snack.snack();
             setSnack(initialSnack)

@@ -15,7 +15,7 @@ import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
 import CardItem from "../components/CardItem";
-import SessionContextMenu from "../components/SessionContextMenu";
+import SessionContextMenu from "../components/ContextMenus/SessionContextMenu";
 
 function SessionCard(props) {
     return (

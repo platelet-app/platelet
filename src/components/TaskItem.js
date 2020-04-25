@@ -3,7 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import {Link, useLocation} from "react-router-dom";
 import {TaskCard} from "./TaskCardsColoured"
 import {encodeUUID} from "../utilities";
-import TaskContextMenu from "./TaskContextMenu";
+import TaskContextMenu from "./ContextMenus/TaskContextMenu";
 
 export default function TaskItem(props) {
     const currentLocation = useLocation();
@@ -37,8 +37,7 @@ export default function TaskItem(props) {
                         assignedRider={props.task.assigned_rider}
                         cancelledTime={props.task.time_cancelled}
                         rejectedTime={props.task.time_rejected}
-                    >
-                    </TaskContextMenu>
+                    />
                 </div>
             </div>
 

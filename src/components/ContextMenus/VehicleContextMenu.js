@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
@@ -18,12 +18,23 @@ const initialState = {
     mouseY: null,
 };
 
+const initialSnack = {snack: () => {}}
+
 function VehicleContextMenu(props) {
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(["DELETE_VEHICLE"]);
+    const [snack, setSnack] = React.useState(initialSnack)
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
+
+    function dispatchSnack() {
+        if (!isPosting) {
+            snack.snack();
+            setSnack(initialSnack)
+        }
+    }
+    useEffect(dispatchSnack, [isPosting])
 
     const handleClick = event => {
         setState({
@@ -48,7 +59,10 @@ function VehicleContextMenu(props) {
                 </Button>
             </React.Fragment>
         );
-        props.enqueueSnackbar('Vehicle deleted.',  { variant: "info", action, autoHideDuration: 8000 });
+        const snack = () => {
+            props.enqueueSnackbar('Vehicle deleted.', {variant: "info", action, autoHideDuration: 8000});
+        }
+        setSnack({ snack })
     }
 
     const handleClose = () => {

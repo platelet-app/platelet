@@ -32,7 +32,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 
-import TaskContextMenu from "./TaskContextMenu";
+import TaskContextMenu from "./ContextMenus/TaskContextMenu";
 import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
 import {Add} from "@material-ui/icons";

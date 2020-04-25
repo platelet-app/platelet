@@ -13,7 +13,7 @@ import {createLoadingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
 import CardItem from "../components/CardItem";
-import VehicleContextMenu from "../components/VehicleContextMenu";
+import VehicleContextMenu from "../components/ContextMenus/VehicleContextMenu";
 
 
 function VehicleCard(props) {

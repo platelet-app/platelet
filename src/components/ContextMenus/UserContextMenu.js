@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import { withSnackbar } from 'notistack';
 import {createPostingSelector} from "../../redux/selectors";
+import {deleteUser, restoreUser} from "../../redux/users/UsersActions";
 
 
 const initialState = {
@@ -20,10 +21,11 @@ const initialState = {
 
 const initialSnack = {snack: () => {}}
 
-function SessionContextMenu(props) {
+function UserContextMenu(props) {
+    const whoami = useSelector(state => state.whoami);
     const [state, setState] = React.useState(initialState);
     const [snack, setSnack] = React.useState(initialSnack)
-    const postingSelector = createPostingSelector(["DELETE_SESSION"]);
+    const postingSelector = createPostingSelector(["DELETE_USER"]);
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
@@ -46,12 +48,13 @@ function SessionContextMenu(props) {
 
     function undoDelete(key) {
         props.closeSnackbar(key);
-        dispatch(restoreSession(props.sessionUUID));
+        dispatch(restoreUser(props.user.uuid));
     }
 
     function onDelete() {
         handleClose();
-        dispatch(deleteSession(props.sessionUUID));
+        console.log(props.user.uuid)
+        dispatch(deleteUser(props.user.uuid));
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
@@ -60,7 +63,7 @@ function SessionContextMenu(props) {
             </React.Fragment>
         );
         const snack = () => {
-            props.enqueueSnackbar('Session deleted.', {variant: "info", action, autoHideDuration: 8000});
+            props.enqueueSnackbar('User deleted.', {variant: "info", action, autoHideDuration: 8000});
         }
         setSnack({ snack })
     }
@@ -69,7 +72,9 @@ function SessionContextMenu(props) {
         setState(initialState);
     };
 
-    const deleteOption = props.deleteDisabled ? <></> : <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>;
+    const deleteOption = whoami.roles.includes("admin") ?
+        <MenuItem disabled={props.user.username === "admin"} style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem> :
+        <></>;
 
     return (
         <>
@@ -99,4 +104,4 @@ function SessionContextMenu(props) {
     );
 }
 
-export default withSnackbar(SessionContextMenu)
+export default withSnackbar(UserContextMenu)

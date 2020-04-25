@@ -306,6 +306,18 @@ class User {
         return makeAxios(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
     }
 
+    async updateUser(user_id, input_data) {
+        return makeAxios(this.api_url, "user/" + user_id, "PUT", this.bearer, "application/json", input_data)
+    }
+
+    async deleteUser(user_id) {
+        return makeAxios(this.api_url, "user/" + user_id, "DELETE", this.bearer, "application/json")
+    }
+
+    async restoreUser(user_id) {
+        return makeAxios(this.api_url, "user/" + user_id + "/restore", "PUT", this.bearer, "application/json")
+    }
+
     async getAssignedTasks(user_id) {
         return makeAxios(this.api_url, "user/" + user_id + '/tasks', "GET", this.bearer)
     }

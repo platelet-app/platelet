@@ -4,6 +4,10 @@ import UserCard from "../components/UserCard";
 import Grid from "@material-ui/core/Grid";
 import {TextFieldControlled} from "../components/TextFieldControlled";
 import {setMenuIndex} from "../redux/Actions";
+import {AddCircleButton} from "../components/Buttons";
+import {addUser} from "../redux/users/UsersActions";
+import TaskContextMenu from "../components/ContextMenus/TaskContextMenu";
+import UserContextMenu from "../components/ContextMenus/UserContextMenu";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -30,15 +34,33 @@ export default function UsersList(props) {
         dispatch(setMenuIndex(5))
     }, []);
 
-    return (<Grid container>
+    const circleAdd =
+        <AddCircleButton
+            onClick={() => {
+                dispatch(addUser({}))
+            }
+            }
+        />;
+    return (
+        <Grid container direction={"column"} spacing={3} alignItems={"flex-start"} justify={"center"}>
             <Grid item>
-                <TextFieldControlled onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}/>
+                {circleAdd}
             </Grid>
             <Grid item>
-                <Grid container spacing={1}>
+                <TextFieldControlled
+                    label={"Search users"}
+                    onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}/>
+            </Grid>
+            <Grid item>
+                <Grid container spacing={2}>
                     {filteredUsers.map((user) => (
                         <Grid key={user.uuid} item>
-                            <UserCard key={user.uuid} user={user}/>
+                            <div style={{cursor: 'context-menu', position: "relative"}}>
+                                <UserCard key={user.uuid} user={user}/>
+                                <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>
+                                <UserContextMenu user={user}/>
+                            </div>
+                            </div>
                         </Grid>
                     ))}
                 </Grid>
