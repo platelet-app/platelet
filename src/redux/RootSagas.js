@@ -29,7 +29,7 @@ import {
     watchUpdateDeliverable
 } from "./deliverables/DeliverablesSagas"
 import {
-    watchGetComments, watchGetSessionComments, watchPostNewComment, watchPostNewSessionComment
+    watchGetComments, watchGetSidebarComments, watchPostNewComment, watchPostNewSidebarComment
 } from "./comments/CommentsSagas";
 import {
     watchPostNewVehicle,
@@ -46,7 +46,14 @@ import {
 import { all, call } from 'redux-saga/effects'
 import {watchGetAvailablePriorities} from "./priorities/PrioritiesSagas";
 import {watchGetAvailableLocations} from "./locations/LocationsSagas";
-import {watchGetUsers, watchGetUser, watchAddUser, watchDeleteUser, watchRestoreUser} from "./users/UsersSagas";
+import {
+    watchGetUsers,
+    watchGetUser,
+    watchAddUser,
+    watchDeleteUser,
+    watchRestoreUser,
+    watchUpdateUser
+} from "./users/UsersSagas";
 import {watchGetWhoami} from "./WhoamiSaga";
 import {watchLogin} from "./login/LoginSagas"
 import {watchGetAvailablePatches} from "./patches/PatchesSagas";
@@ -100,11 +107,12 @@ export default function* rootSaga() {
         call(watchGetAvailablePatches),
         call(watchGetComments),
         call(watchPostNewComment),
-        call(watchGetSessionComments),
-        call(watchPostNewSessionComment),
+        call(watchGetSidebarComments),
+        call(watchPostNewSidebarComment),
         call(watchGetServerSettings),
         call(watchAddUser),
         call(watchDeleteUser),
-        call(watchRestoreUser)
+        call(watchRestoreUser),
+        call(watchUpdateUser)
     ])
 }

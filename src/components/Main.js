@@ -9,10 +9,10 @@ import SessionDetail from "../containers/SessionDetail";
 import UsersTasks from "../containers/UsersTasks";
 import TaskModal from "./taskdialog/TaskModal";
 import VehicleList from "../containers/VehiclesList";
-import VehicleDetail from "../containers/VehicleDetail";
 import {MainWindowContainer} from "../css/common";
 import UsersList from "../containers/UsersList";
 import UserDetail from "../containers/UserDetail";
+import VehicleDetail from "../containers/VehicleDetail";
 
 export default function Main(_props) {
     let location = useLocation();

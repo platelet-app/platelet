@@ -60,7 +60,7 @@ function VehicleContextMenu(props) {
             </React.Fragment>
         );
         const snack = () => {
-            props.enqueueSnackbar('Vehicle deleted.', {variant: "info", action, autoHideDuration: 8000});
+            props.enqueueSnackbar('VehicleDetail deleted.', {variant: "info", action, autoHideDuration: 8000});
         }
         setSnack({ snack })
     }

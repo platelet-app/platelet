@@ -1,4 +1,4 @@
-import { throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
+import {throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {
     ADD_COMMENT_REQUEST,
     addCommentSuccess,
@@ -6,15 +6,16 @@ import {
     updateCommentSuccess,
     GET_COMMENTS_REQUEST,
     getCommentsSuccess,
-    UPDATE_SESSION_COMMENT_REQUEST,
-    updateSessionCommentSuccess,
-    ADD_SESSION_COMMENT_REQUEST,
-    addSessionCommentSuccess,
-    GET_SESSION_COMMENTS_REQUEST,
-    getSessionCommentsSuccess
+    UPDATE_SIDEBAR_COMMENT_REQUEST,
+    updateSidebarCommentSuccess,
+    ADD_SIDEBAR_COMMENT_REQUEST,
+    addSidebarCommentSuccess,
+    GET_SIDEBAR_COMMENTS_REQUEST,
+    getSidebarCommentsSuccess, commentsNotFound, getCommentsFailure, getCommentsForbidden
 } from "./CommentsActions"
 
-import { getApiControl } from "../Api";
+import {getApiControl} from "../Api";
+import {getVehicleFailure, vehicleNotFound} from "../vehicles/VehiclesActions";
 
 export function* postNewComment(action) {
     const api = yield select(getApiControl);
@@ -38,42 +39,55 @@ export function* watchUpdateComment() {
 }
 
 export function* getComments(action) {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.comments.getComments], action.data);
-    yield put(getCommentsSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.comments.getComments], action.data);
+        yield put(getCommentsSuccess(result))
+    } catch (error) {
+        if (error.name === "HttpError") {
+            if (error.response.status === 404) {
+                yield put(commentsNotFound())
+            }
+        } else if (error.response.status === 403) {
+            yield put(getCommentsForbidden(error))
+        } else {
+            yield put(getCommentsFailure(error))
+
+        }
+    }
 }
 
 export function* watchGetComments() {
     yield takeLatest(GET_COMMENTS_REQUEST, getComments)
 }
 
-export function* postNewSessionComment(action) {
+export function* postNewSidebarComment(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.comments.createComment], action.data);
     const comment = {...action.data, "uuid": result.uuid};
-    yield put(addSessionCommentSuccess(comment))
+    yield put(addSidebarCommentSuccess(comment))
 }
 
-export function* watchPostNewSessionComment() {
-    yield takeEvery(ADD_SESSION_COMMENT_REQUEST, postNewSessionComment)
+export function* watchPostNewSidebarComment() {
+    yield takeEvery(ADD_SIDEBAR_COMMENT_REQUEST, postNewSidebarComment)
 }
 
-export function* updateSessionComment(action) {
+export function* updateSidebarComment(action) {
     const api = yield select(getApiControl);
     yield call([api, api.comments.updateComment], action.data.commentUUID, action.data.payload);
-    yield put(updateSessionCommentSuccess(action.data))
+    yield put(updateSidebarCommentSuccess(action.data))
 }
 
-export function* watchUpdateSessionComment() {
-    yield throttle(200, UPDATE_SESSION_COMMENT_REQUEST, updateSessionComment)
+export function* watchUpdateSidebarComment() {
+    yield throttle(200, UPDATE_SIDEBAR_COMMENT_REQUEST, updateSidebarComment)
 }
 
-export function* getSessionComments(action) {
+export function* getSidebarComments(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.comments.getComments], action.data);
-    yield put(getSessionCommentsSuccess(result))
+    yield put(getSidebarCommentsSuccess(result))
 }
 
-export function* watchGetSessionComments() {
-    yield takeLatest(GET_SESSION_COMMENTS_REQUEST, getSessionComments)
+export function* watchGetSidebarComments() {
+    yield takeLatest(GET_SIDEBAR_COMMENTS_REQUEST, getSidebarComments)
 }

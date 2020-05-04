@@ -56,10 +56,21 @@ export const StyledColumn = styled(Box)({
 
 
 export const StyledCard = styled(Card)({
-    background: "rgb(250, 248, 248)",
+    background: "rgb(252, 252, 252)",
     border: 0,
     borderRadius: 10,
-    boxShadow: '0 3px 5px 2px #303030',
+    boxShadow: '0 3px 5px 2px #7a7a7a',
+    color: 'black',
+    padding: '20px',
+    height: '250px',
+    width: '300px',
+});
+
+export const StyledSharpCard = styled(Card)({
+    background: "rgb(252, 252, 252)",
+    border: 0,
+    borderRadius: 2,
+    boxShadow: '0 3px 5px 2px #7a7a7a',
     color: 'black',
     padding: '20px',
     height: '250px',

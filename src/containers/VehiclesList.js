@@ -1,9 +1,8 @@
 import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {PaddedPaper, StyledCard} from '../css/common';
+import {PaddedPaper} from '../css/common';
 import {AddCircleButton} from '../components/Buttons';
-import CardContent from '@material-ui/core/CardContent';
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
 import {addVehicle, getAllVehicles} from "../redux/vehicles/VehiclesActions";
@@ -12,31 +11,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
-import CardItem from "../components/CardItem";
 import VehicleContextMenu from "../components/ContextMenus/VehicleContextMenu";
-
-
-function VehicleCard(props) {
-    return (
-        <div>
-            <div key={props.vehicle.uuid}>
-                <StyledCard style={{height: "170px"}}>
-                    <CardContent>
-                        <Grid containerspacing={1} direction={"column"}>
-                            <CardItem label={"Name"}>{props.vehicle.name ? props.vehicle.name : ""}</CardItem>
-                            <CardItem
-                                label={"Manufacturer"}>{props.vehicle.manufacturer ? props.vehicle.manufacturer : ""}</CardItem>
-                            <CardItem
-                                label={"Registration"}>{props.vehicle.registration_number ? props.vehicle.registration_number : ""}</CardItem>
-                            <CardItem
-                                label={"Assignee"}>{props.vehicle.assigned_user ? props.vehicle.assigned_user.display_name : ""}</CardItem>
-                        </Grid>
-                    </CardContent>
-                </StyledCard>
-            </div>
-        </div>
-    )
-}
+import VehicleCard from "../components/VehicleCard";
 
 
 function VehicleList() {
@@ -73,7 +49,7 @@ function VehicleList() {
                     {circleAdd}
                 </Grid>
                 <Grid item>
-                    <PaddedPaper>
+                    <PaddedPaper width={"800px"}>
                         <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
                             <Grid item>
                                 <Grid container

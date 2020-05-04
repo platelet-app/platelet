@@ -7,6 +7,7 @@ import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {
+    clearWhoami,
     getWhoami, setMobileView
 } from "./redux/Actions";
 import {loginUser, logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
@@ -84,8 +85,13 @@ function App(props) {
     useEffect(loginCheck, [whoami])
 
     function firstWhoami() {
+        console.log("WOOOOOOOOO")
+        console.log(isInitialised)
+        console.log(whoami)
         if (isInitialised)
             dispatch(getWhoami());
+        else
+            dispatch(clearWhoami())
     }
     useEffect(firstWhoami, [isInitialised])
     function getStaticData() {

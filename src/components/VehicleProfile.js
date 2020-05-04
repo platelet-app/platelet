@@ -15,7 +15,7 @@ import Divider from "@material-ui/core/Divider";
 import SaveCancelButtons from "./SaveCancelButtons";
 
 
-export default function VehicleDetail(props) {
+export default function VehicleProfile(props) {
     const dispatch = useDispatch();
     const postingSelector = createPostingSelector(["UPDATE_VEHICLE"]);
     const isPosting = useSelector(state => postingSelector(state));

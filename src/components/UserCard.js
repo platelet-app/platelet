@@ -1,5 +1,5 @@
 import React from "react";
-import {StyledCard, StyledStrip} from "../css/common";
+import {StyledCard, StyledSharpCard, StyledStrip} from "../css/common";
 import {Link} from "react-router-dom";
 import {encodeUUID} from "../utilities";
 import CardItem from "./CardItem";
@@ -9,7 +9,7 @@ export default function UserCard(props) {
     return (
         <Link to={"/user/" + encodeUUID(props.user.uuid)}
             style={{textDecoration: 'none'}}>
-            <StyledCard style={{width: "300px", height: "120px"}}>
+            <StyledSharpCard style={{width: "300px", height: "120px"}}>
                 <Grid container spacing={1} direction={"column"}>
                     <CardItem label={"Name"}>
                         {props.user.display_name}
@@ -18,7 +18,7 @@ export default function UserCard(props) {
                         {props.user.patch}
                     </CardItem>
                 </Grid>
-            </StyledCard>
+            </StyledSharpCard>
         </Link>
     )
 }

@@ -70,6 +70,11 @@ export function addUserSuccess(data) {
 export function updateUserSuccess(data) {
     return { type: UPDATE_USER_SUCCESS, data }
 }
+
+export function updateUser(data) {
+    return { type: UPDATE_USER_REQUEST, data }
+}
+
 export function updateUserName(data) {
     return { type: UPDATE_USER_NAME_REQUEST, data }
 }

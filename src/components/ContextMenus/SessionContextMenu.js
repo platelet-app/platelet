@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import { withSnackbar } from 'notistack';
 import {createPostingSelector} from "../../redux/selectors";
+import {deleteUser, restoreUser} from "../../redux/users/UsersActions";
 
 
 const initialState = {
@@ -18,17 +19,21 @@ const initialState = {
     mouseY: null,
 };
 
-const initialSnack = {snack: () => {}}
+const initialSnack = {snack: () => {console.log("old")}}
 
 function SessionContextMenu(props) {
+    const whoami = useSelector(state => state.whoami);
     const [state, setState] = React.useState(initialState);
     const [snack, setSnack] = React.useState(initialSnack)
     const postingSelector = createPostingSelector(["DELETE_SESSION"]);
     const isPosting = useSelector(state => postingSelector(state));
+    console.log(props.session)
 
     const dispatch = useDispatch();
 
     function dispatchSnack() {
+        console.log(snack)
+        console.log(isPosting)
         if (!isPosting) {
             snack.snack();
             setSnack(initialSnack)
@@ -46,12 +51,12 @@ function SessionContextMenu(props) {
 
     function undoDelete(key) {
         props.closeSnackbar(key);
-        dispatch(restoreSession(props.sessionUUID));
+        dispatch(restoreSession(props.session.uuid));
     }
 
     function onDelete() {
         handleClose();
-        dispatch(deleteSession(props.sessionUUID));
+        dispatch(deleteSession(props.session.uuid));
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
@@ -59,6 +64,7 @@ function SessionContextMenu(props) {
                 </Button>
             </React.Fragment>
         );
+        //TODO: Figure out why the fuck this won't work
         const snack = () => {
             props.enqueueSnackbar('Session deleted.', {variant: "info", action, autoHideDuration: 8000});
         }
@@ -68,8 +74,6 @@ function SessionContextMenu(props) {
     const handleClose = () => {
         setState(initialState);
     };
-
-    const deleteOption = props.deleteDisabled ? <></> : <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>;
 
     return (
         <>
@@ -93,7 +97,10 @@ function SessionContextMenu(props) {
                         : undefined
                 }
             >
-                {deleteOption}
+                <MenuItem
+                    disabled={!whoami.uuid === props.session.user_uuid}
+                    style={{color: "rgb(235, 86, 75)"}}
+                    onClick={onDelete}>Delete</MenuItem>
             </Menu>
             </>
     );

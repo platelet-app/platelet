@@ -6,7 +6,7 @@ import {
     GET_WHOAMI_SUCCESS,
     SET_VIEW_MODE,
     SET_MOBILE_VIEW,
-    SET_MENU_INDEX, SET_COMMENTS_OBJECT_UUID
+    SET_MENU_INDEX, SET_COMMENTS_OBJECT_UUID, CLEAR_WHOAMI
 } from './Actions'
 import {task, tasks} from "./tasks/TasksReducers"
 import {session, sessions, sessionStatistics} from "./sessions/SessionsReducers"
@@ -48,10 +48,14 @@ function mobileView(state = false, action) {
     }
 }
 
-function whoami(state = {roles: "", name: ""}, action) {
+const whoamiInitialState = {roles: "", name: ""}
+
+function whoami(state = whoamiInitialState, action) {
     switch (action.type) {
         case GET_WHOAMI_SUCCESS:
             return action.data;
+        case CLEAR_WHOAMI:
+            return whoamiInitialState;
         default:
             return state
     }

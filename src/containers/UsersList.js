@@ -8,12 +8,12 @@ import {AddCircleButton} from "../components/Buttons";
 import {addUser} from "../redux/users/UsersActions";
 import TaskContextMenu from "../components/ContextMenus/TaskContextMenu";
 import UserContextMenu from "../components/ContextMenus/UserContextMenu";
+import {PaddedPaper} from "../css/common";
 
 function filterUsers(users, search) {
     if (!search) {
         return users;
-    }
-    else {
+    } else {
         return users.filter(user => {
             if (user.display_name ? user.display_name.toLowerCase().includes(search.toLowerCase()) : false) {
                 return user
@@ -21,8 +21,9 @@ function filterUsers(users, search) {
                 return user;
             } else if (user.roles ? user.roles.toLowerCase().includes(search.toLowerCase()) : false) {
                 return user;
-        }
-    })}
+            }
+        })
+    }
 }
 
 export default function UsersList(props) {
@@ -47,23 +48,35 @@ export default function UsersList(props) {
                 {circleAdd}
             </Grid>
             <Grid item>
-                <TextFieldControlled
-                    label={"Search users"}
-                    onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}/>
-            </Grid>
-            <Grid item>
-                <Grid container spacing={2}>
-                    {filteredUsers.map((user) => (
-                        <Grid key={user.uuid} item>
-                            <div style={{cursor: 'context-menu', position: "relative"}}>
-                                <UserCard key={user.uuid} user={user}/>
-                                <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>
-                                <UserContextMenu user={user}/>
-                            </div>
-                            </div>
+                <PaddedPaper width={"800px"}>
+                    <Grid container spacing={1} direction={"column"} justify={"center"} alignItems={"flex-start"}>
+                        <Grid item>
+                            <TextFieldControlled
+                                label={"Search users"}
+                                onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}/>
                         </Grid>
-                    ))}
-                </Grid>
+                        <Grid item>
+                            <Grid container spacing={2}>
+                                {filteredUsers.map((user) => (
+                                    <Grid key={user.uuid} item>
+                                        <div style={{cursor: 'context-menu', position: "relative"}}>
+                                            <UserCard key={user.uuid} user={user}/>
+                                            <div style={{
+                                                cursor: 'context-menu',
+                                                position: "absolute",
+                                                bottom: 0,
+                                                right: 0,
+                                                zIndex: 1000
+                                            }}>
+                                                <UserContextMenu user={user}/>
+                                            </div>
+                                        </div>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </PaddedPaper>
             </Grid>
         </Grid>
     )

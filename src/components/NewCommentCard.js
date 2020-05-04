@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import {TextFieldUncontrolled} from "./TextFieldControlled";
 import Button from "@material-ui/core/Button";
 import {useDispatch, useSelector} from "react-redux";
-import {addComment, addSessionComment} from "../redux/comments/CommentsActions";
+import {addComment, addSidebarComment} from "../redux/comments/CommentsActions";
 import {createPostingSelector} from "../redux/selectors";
 
 export default function CommentCard(props) {
@@ -70,7 +70,7 @@ export default function CommentCard(props) {
                         <Grid item>
                             <Button disabled={commentContents.length === 0 || isPosting} onClick={() => {
                                 if (props.session) {
-                                    dispatch(addSessionComment({
+                                    dispatch(addSidebarComment({
                                         author: props.author,
                                         parent_uuid: props.parentUUID,
                                         publicly_visible: publicComment,

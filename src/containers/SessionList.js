@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {PaddedPaper, StyledCard} from '../css/common';
+import {PaddedPaper, StyledCard, StyledSharpCard} from '../css/common';
 import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from "@material-ui/core/Grid";
@@ -14,28 +14,8 @@ import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
-import CardItem from "../components/CardItem";
 import SessionContextMenu from "../components/ContextMenus/SessionContextMenu";
-
-function SessionCard(props) {
-    return (
-        <div key={props.session.uuid}>
-            <StyledCard style={{height: "120px"}}>
-                <CardContent>
-                    <Grid container spacing={1} direction={"column"}>
-                        <CardItem label={"Started"}>
-                            <Moment calendar>{props.session.time_created}</Moment>
-                        </CardItem>
-                        <CardItem
-                            label={"Tasks"}>{props.session.task_count ? props.session.task_count : "0"}
-                        </CardItem>
-                    </Grid>
-                </CardContent>
-            </StyledCard>
-        </div>
-    )
-}
-
+import SessionCard from "../components/SessionCard";
 
 function SessionList(props) {
     const dispatch = useDispatch();
@@ -94,10 +74,7 @@ function SessionList(props) {
                                     {sessions.sort((a, b) => new Date(b.time_created) - new Date(a.time_created)).map((session) => (
                                         <Grid item key={session.uuid}>
                                             <div style={{cursor: 'context-menu', position: "relative"}}>
-                                                <Link to={"/session/" + encodeUUID(session.uuid)}
-                                                      style={{textDecoration: 'none'}}>
                                                     <SessionCard session={session}/>
-                                                </Link>
                                                 <div style={{
                                                     cursor: 'context-menu',
                                                     position: "absolute",
@@ -105,7 +82,7 @@ function SessionList(props) {
                                                     right: 0,
                                                     zIndex: 1000
                                                 }}>
-                                                    <SessionContextMenu sessionUUID={session.uuid}/>
+                                                    <SessionContextMenu session={session}/>
                                                 </div>
                                             </div>
                                         </Grid>
