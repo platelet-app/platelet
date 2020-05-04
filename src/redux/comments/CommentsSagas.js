@@ -11,17 +11,30 @@ import {
     ADD_SIDEBAR_COMMENT_REQUEST,
     addSidebarCommentSuccess,
     GET_SIDEBAR_COMMENTS_REQUEST,
-    getSidebarCommentsSuccess, commentsNotFound, getCommentsFailure, getCommentsForbidden
+    getSidebarCommentsSuccess,
+    commentsNotFound,
+    getCommentsFailure,
+    getCommentsForbidden,
+    addSidebarCommentFailure,
+    updateSidebarCommentFailure,
+    sidebarCommentsNotFound,
+    getSidebarCommentsForbidden,
+    getSidebarCommentsFailure,
+    addCommentFailure, updateCommentFailure
 } from "./CommentsActions"
 
 import {getApiControl} from "../Api";
 import {getVehicleFailure, vehicleNotFound} from "../vehicles/VehiclesActions";
 
 export function* postNewComment(action) {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.comments.createComment], action.data);
-    const comment = {...action.data, "uuid": result.uuid};
-    yield put(addCommentSuccess(comment))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.comments.createComment], action.data);
+        const comment = {...action.data, "uuid": result.uuid};
+        yield put(addCommentSuccess(comment))
+    } catch (error) {
+        yield put(addCommentFailure(error))
+    }
 }
 
 export function* watchPostNewComment() {
@@ -29,13 +42,17 @@ export function* watchPostNewComment() {
 }
 
 export function* updateComment(action) {
-    const api = yield select(getApiControl);
-    yield call([api, api.comments.updateComment], action.data.commentUUID, action.data.payload);
-    yield put(updateCommentSuccess(action.data))
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.comments.updateComment], action.data.commentUUID, action.data.payload);
+        yield put(updateCommentSuccess(action.data))
+    } catch (error) {
+        yield put(updateCommentFailure(error))
+    }
 }
 
 export function* watchUpdateComment() {
-    yield throttle(200, UPDATE_COMMENT_REQUEST, updateComment)
+    yield takeEvery(UPDATE_COMMENT_REQUEST, updateComment)
 }
 
 export function* getComments(action) {
@@ -62,10 +79,14 @@ export function* watchGetComments() {
 }
 
 export function* postNewSidebarComment(action) {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.comments.createComment], action.data);
-    const comment = {...action.data, "uuid": result.uuid};
-    yield put(addSidebarCommentSuccess(comment))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.comments.createComment], action.data);
+        const comment = {...action.data, "uuid": result.uuid};
+        yield put(addSidebarCommentSuccess(comment))
+    } catch (error) {
+        yield put(addSidebarCommentFailure(error))
+    }
 }
 
 export function* watchPostNewSidebarComment() {
@@ -73,19 +94,36 @@ export function* watchPostNewSidebarComment() {
 }
 
 export function* updateSidebarComment(action) {
-    const api = yield select(getApiControl);
-    yield call([api, api.comments.updateComment], action.data.commentUUID, action.data.payload);
-    yield put(updateSidebarCommentSuccess(action.data))
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.comments.updateComment], action.data.commentUUID, action.data.payload);
+        yield put(updateSidebarCommentSuccess(action.data))
+    } catch (error) {
+        yield put(updateSidebarCommentFailure(error))
+    }
 }
 
 export function* watchUpdateSidebarComment() {
-    yield throttle(200, UPDATE_SIDEBAR_COMMENT_REQUEST, updateSidebarComment)
+    yield takeEvery(UPDATE_SIDEBAR_COMMENT_REQUEST, updateSidebarComment)
 }
 
 export function* getSidebarComments(action) {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.comments.getComments], action.data);
-    yield put(getSidebarCommentsSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.comments.getComments], action.data);
+        yield put(getSidebarCommentsSuccess(result))
+    } catch (error) {
+        if (error.name === "HttpError") {
+            if (error.response.status === 404) {
+                yield put(sidebarCommentsNotFound())
+            }
+        } else if (error.response.status === 403) {
+            yield put(getSidebarCommentsForbidden(error))
+        } else {
+            yield put(getSidebarCommentsFailure(error))
+
+        }
+    }
 }
 
 export function* watchGetSidebarComments() {

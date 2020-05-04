@@ -29,7 +29,11 @@ import {
     watchUpdateDeliverable
 } from "./deliverables/DeliverablesSagas"
 import {
-    watchGetComments, watchGetSidebarComments, watchPostNewComment, watchPostNewSidebarComment
+    watchGetComments,
+    watchGetSidebarComments,
+    watchPostNewComment,
+    watchPostNewSidebarComment, watchUpdateComment,
+    watchUpdateSidebarComment
 } from "./comments/CommentsSagas";
 import {
     watchPostNewVehicle,
@@ -106,8 +110,10 @@ export default function* rootSaga() {
         call(watchRestoreTask),
         call(watchGetAvailablePatches),
         call(watchGetComments),
+        call(watchUpdateComment),
         call(watchPostNewComment),
         call(watchGetSidebarComments),
+        call(watchUpdateSidebarComment),
         call(watchPostNewSidebarComment),
         call(watchGetServerSettings),
         call(watchAddUser),
