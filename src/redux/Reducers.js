@@ -48,12 +48,32 @@ function mobileView(state = false, action) {
     }
 }
 
-const whoamiInitialState = {roles: "", name: ""}
+const whoamiInitialState = {
+        user: {
+            uuid: null,
+            username: null,
+            address: null,
+            password: null,
+            name: null,
+            email: null,
+            dob: null,
+            patch: null,
+            roles: null,
+            comments: null,
+            links: null,
+            display_name: null,
+            assigned_vehicles: null,
+            patch_id: null,
+            contact_number: null,
+            time_created: null,
+            time_modified: null
+        }, error: null
+}
 
 function whoami(state = whoamiInitialState, action) {
     switch (action.type) {
         case GET_WHOAMI_SUCCESS:
-            return action.data;
+            return {user: action.data, error: null};
         case CLEAR_WHOAMI:
             return whoamiInitialState;
         default:

@@ -44,7 +44,7 @@ function SessionDetail(props) {
     const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
     const dispatch = useDispatch();
     const isFetching = useSelector(state => loadingSelector(state));
-    const tasks = useSelector(state => state.tasks);
+    const tasks = useSelector(state => state.tasks.tasks);
     const viewMode = useSelector(state => state.viewMode);
     const mobileView = useSelector(state => state.mobileView);
     const notFoundSelector = createNotFoundSelector(["GET_SESSION"]);

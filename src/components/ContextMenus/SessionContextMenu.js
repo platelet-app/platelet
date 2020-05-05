@@ -20,7 +20,7 @@ const initialState = {
 
 
 function SessionContextMenu(props) {
-    const whoami = useSelector(state => state.whoami);
+    const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(["DELETE_SESSION"]);
     const isPosting = useSelector(state => postingSelector(state));

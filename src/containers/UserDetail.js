@@ -12,7 +12,7 @@ import CommentsSection from "./CommentsSection";
 
 export default function UserDetail (props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
-    const user = useSelector(state => state.user);
+    const user = useSelector(state => state.user.user);
     const dispatch = useDispatch();
 
     const loadingSelector = createLoadingSelector(["GET_USER"]);

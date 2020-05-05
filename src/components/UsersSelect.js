@@ -118,7 +118,7 @@ function UsersSelect(props) {
             height: theme.spacing(2),
         },
     }));
-    const userSuggestions = useSelector(state => state.users);
+    const userSuggestions = useSelector(state => state.users.users);
     const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
     useEffect(() => {
         let reorderedUsers = [];

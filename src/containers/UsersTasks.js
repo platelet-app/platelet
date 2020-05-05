@@ -26,7 +26,7 @@ function UsersTasks() {
     }
     useEffect(() => {dispatch(setMenuIndex(3))}, []);
 
-    const tasks = useSelector(state => state.tasks);
+    const tasks = useSelector(state => state.tasks.tasks);
 
     useEffect(componentDidMount, []);
 

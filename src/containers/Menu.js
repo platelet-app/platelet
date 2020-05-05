@@ -91,7 +91,7 @@ const useStyles = makeStyles(theme => ({
 export function ResponsiveDrawer(props) {
     const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
     const isFetching = useSelector(state => loadingSelector(state));
-    const whoami = useSelector(state => state.whoami);
+    const whoami = useSelector(state => state.whoami.user);
     const serverSettings = useSelector(state => state.serverSettings);
     const mobileView = useSelector(state => state.mobileView);
     const menuIndex = useSelector(state => state.menuIndex);

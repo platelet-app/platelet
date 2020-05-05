@@ -19,7 +19,7 @@ export default function UserProfile(props) {
     const isPosting = useSelector(state => postingSelector(state));
     const [state, setState] = useState({...props.user})
     const [oldState, setOldState] = useState({...props.user})
-    const whoami = useSelector(state => state.whoami);
+    const whoami = useSelector(state => state.whoami.user);
 
     function resetAfterPost() {
         if (!isPosting && editMode) {

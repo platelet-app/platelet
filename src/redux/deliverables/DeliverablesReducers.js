@@ -24,13 +24,12 @@ export function deliverables(state = initialState, action) {
                     ],
                 error: null
             };
-
         case UPDATE_DELIVERABLE_SUCCESS:
             let result = state.deliverables.filter(deliverable => deliverable.uuid === action.data.deliverableUUID);
             if (result.length === 1) {
                 const updated_item = {...result[0], ...action.data.payload};
                 const index = state.deliverables.indexOf(result[0]);
-                return update(state.deliverables, {[index]: {$set: updated_item}});
+                return {deliverables: update(state.deliverables, {[index]: {$set: updated_item}}), error: null};
             } else {
                 return state
             }

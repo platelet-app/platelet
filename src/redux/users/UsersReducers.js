@@ -5,61 +5,86 @@ import {
     RESTORE_USER_SUCCESS,
     DELETE_USER_SUCCESS, UPDATE_USER_SUCCESS
 } from "./UsersActions";
-import {
-    RESTORE_TASK_SUCCESS,
-    UPDATE_TASK_DROPOFF_TIME_SUCCESS,
-    UPDATE_TASK_PICKUP_TIME_SUCCESS
-} from "../tasks/TasksActions";
-import {DELETE_SESSION_SUCCESS} from "../sessions/SessionsActions";
 import update from "immutability-helper";
 
-export function users(state = [], action) {
+const initialState = {
+    users: [],
+    error: null
+}
+
+export function users(state = initialState, action) {
     switch (action.type) {
         case GET_USERS_SUCCESS:
-            return action.data;
+            return {users: action.data, error: null};
         case ADD_USER_SUCCESS:
-            return [
-                {
-                    ...action.data
-                },
-                ...state
-            ];
+            return {
+                users: [
+                    {
+                        ...action.data
+                    },
+                    ...state.users
+                ], error: null
+            };
         case UPDATE_USER_SUCCESS:
-            let result = state.filter(user => user.uuid === action.data.userUUID);
+            let result = state.users.filter(user => user.uuid === action.data.userUUID);
             if (result.length === 1) {
                 const updated_item = {...result[0], ...action.data.payload};
-                const index = state.indexOf(result[0]);
-                return update(state, {[index]: {$set: updated_item}});
+                const index = state.users.indexOf(result[0]);
+                return {users: update(state.users, {[index]: {$set: updated_item}}), error: null};
             } else {
                 return state;
             }
         case RESTORE_USER_SUCCESS:
-            return [
-                ...state,
-                {
-                    ...action.data
-                }
-            ];
+            return {
+                users: [
+                    ...state.users,
+                    {
+                        ...action.data
+                    }
+                ], error: null
+            };
         case DELETE_USER_SUCCESS:
-            let result_delete = state.filter(user => user.uuid === action.data);
+            let result_delete = state.users.filter(user => user.uuid === action.data);
             if (result_delete.length === 1) {
-                const index = state.indexOf(result_delete[0]);
-                return update(state, { $splice: [[index, 1]] });
+                const index = state.users.indexOf(result_delete[0]);
+                return {users: update(state.users, {$splice: [[index, 1]]}), error: null};
             } else {
                 return state;
             }
-
         default:
             return state
     }
 }
 
-export function user(state = {}, action) {
+const initialUserState = {
+    user: {
+        uuid: null,
+        username: null,
+        address: null,
+        password: null,
+        name: null,
+        email: null,
+        dob: null,
+        patch: null,
+        roles: null,
+        comments: null,
+        links: null,
+        display_name: null,
+        assigned_vehicles: null,
+        patch_id: null,
+        contact_number: null,
+        time_created: null,
+        time_modified: null
+    }, error: null
+
+}
+
+export function user(state = initialUserState, action) {
     switch (action.type) {
         case GET_USER_SUCCESS:
-            return action.data;
+            return {user: action.data, error: null};
         case UPDATE_USER_SUCCESS:
-            return Object.assign(state, action.data.payload);
+            return {user: Object.assign(state.user, action.data.payload), error: null};
         default:
             return state
     }

@@ -25,7 +25,7 @@ function SessionList(props) {
     const isPosting = useSelector(state => postingSelector(state));
     const isDeleting = useSelector(state => deletingSelector(state));
     const sessions = useSelector(state => state.sessions.sessions);
-    const whoami = useSelector(state => state.whoami);
+    const whoami = useSelector(state => state.whoami.user);
     const [snack, setSnack] = React.useState(initialSnack)
 
     function updateSessionsList() {

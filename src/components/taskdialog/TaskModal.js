@@ -60,7 +60,7 @@ export default function TaskModal(props) {
     const availablePatches = useSelector(state => state.availablePatches.patches);
     const mobileView = useSelector(state => state.mobileView);
     const session = useSelector(state => state.session.session);
-    const whoami = useSelector(state => state.whoami);
+    const whoami = useSelector(state => state.whoami.user);
     const currentLocation = useLocation();
     let useStyles;
     // TODO: Do this properly (withStyles)
@@ -94,7 +94,7 @@ export default function TaskModal(props) {
     }
     const classes = useStyles();
 
-    const tasks = useSelector(state => state.tasks);
+    const tasks = useSelector(state => state.tasks.tasks);
 
     let history = useHistory();
 

@@ -8,29 +8,38 @@ import {
 } from "./VehiclesActions";
 import update from "immutability-helper";
 
-export function vehicles(state = [], action) {
+const initialState = {
+    vehicles: [],
+    error: null
+}
+
+export function vehicles(state = initialState, action) {
     switch (action.type) {
         case GET_VEHICLES_SUCCESS:
-            return action.data;
+            return {vehicles: action.data, error: null};
         case ADD_VEHICLE_SUCCESS:
-            return [
-                {
-                    ...action.data
-                },
-                ...state
-            ];
+            return {
+                vehicles: [
+                    {
+                        ...action.data
+                    },
+                    ...state.vehicles
+                ], error: null
+            };
         case RESTORE_VEHICLE_SUCCESS:
-            return [
-                {
-                    ...action.data
-                },
-                ...state
-            ];
+            return {
+                vehicles: [
+                    {
+                        ...action.data
+                    },
+                    ...state.vehicles
+                ], error: null
+            };
         case DELETE_VEHICLE_SUCCESS:
-            let result_delete = state.filter(vehicle => vehicle.uuid === action.data);
+            let result_delete = state.vehicles.filter(vehicle => vehicle.uuid === action.data);
             if (result_delete.length === 1) {
-                const index = state.indexOf(result_delete[0]);
-                return update(state, {$splice: [[index, 1]]});
+                const index = state.vehicles.indexOf(result_delete[0]);
+                return {vehicles: update(state.vehicles, {$splice: [[index, 1]]}), error: null};
             } else {
                 return state;
             }
@@ -39,15 +48,36 @@ export function vehicles(state = [], action) {
     }
 }
 
+const initialVehicleState = {
+    vehicle: {
+        uuid: null,
+        username: null,
+        address: null,
+        password: null,
+        name: null,
+        email: null,
+        dob: null,
+        patch: null,
+        roles: null,
+        comments: null,
+        links: null,
+        display_name: null,
+        assigned_vehicles: null,
+        patch_id: null,
+        contact_number: null,
+        time_created: null,
+        time_modified: null
+    }, error: null
+}
 
-export function vehicle(state = {}, action) {
+export function vehicle(state = initialVehicleState, action) {
     switch (action.type) {
         case UPDATE_VEHICLE_SUCCESS:
-            return Object.assign(state, action.data.payload);
+            return {vehicle: Object.assign(state, action.data.payload), error: null};
         case GET_VEHICLE_SUCCESS:
-            return action.data;
+            return {vehicle: action.data, error: null};
         case GET_VEHICLE_FAILURE:
-            return {};
+            return {...initialState, error: null};
         default:
             return state
     }

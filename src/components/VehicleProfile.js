@@ -25,7 +25,7 @@ export default function VehicleProfile(props) {
     const [oldState, setOldState] = useState({...props.vehicle})
     const assignedUser = useSelector(state => state.vehicle.assigned_user);
     const vehicleName = useSelector(state => state.vehicle.name);
-    const whoami = useSelector(state => state.whoami);
+    const whoami = useSelector(state => state.whoami.user);
 
     function resetAfterPost() {
         if (!isPosting && editMode) {

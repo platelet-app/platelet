@@ -108,7 +108,5 @@ export function sessionStatistics(state = initialStatisticsState, action) {
             return {statistics: initialStatisticsState, error: action.error};
         default:
             return state
-
     }
-
 }

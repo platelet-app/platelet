@@ -30,7 +30,7 @@ const initialSnack = {snack: () => {}}
 
 export default function UsersList(props) {
     const dispatch = useDispatch();
-    const users = useSelector(state => state.users);
+    const users = useSelector(state => state.users.users);
     const [filteredUsers, setFilteredUsers] = useState(users);
     const postingSelector = createPostingSelector(["ADD_USER"]);
     const deletingSelector = createPostingSelector(["DELETE_USER"]);

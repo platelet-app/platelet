@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
 
 function App(props) {
     const apiControl = useSelector(state => state.apiControl);
-    const whoami = useSelector(state => state.whoami);
+    const whoami = useSelector(state => state.whoami.user);
     const isInitialised = useSelector(state => state.apiControl.initialised);
     const apiURL = useSelector(state => state.apiControl.api_url);
     const serverSettings = useSelector(state => state.serverSettings);

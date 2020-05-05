@@ -6,7 +6,7 @@ import {useSelector} from "react-redux";
 import Typography from "@material-ui/core/Typography";
 
 export default function CommentsMain(props) {
-    const whoami = useSelector(state => state.whoami);
+    const whoami = useSelector(state => state.whoami.user);
     return (
         <Grid container spacing={3} direction={"column"} alignItems={"center"} >
             {props.comments.map((comment) => (
