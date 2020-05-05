@@ -6,9 +6,9 @@ import {TextFieldControlled} from "../components/TextFieldControlled";
 import {setMenuIndex} from "../redux/Actions";
 import {AddCircleButton} from "../components/Buttons";
 import {addUser} from "../redux/users/UsersActions";
-import TaskContextMenu from "../components/ContextMenus/TaskContextMenu";
 import UserContextMenu from "../components/ContextMenus/UserContextMenu";
 import {PaddedPaper} from "../css/common";
+import {createPostingSelector} from "../redux/selectors";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -26,14 +26,30 @@ function filterUsers(users, search) {
     }
 }
 
+const initialSnack = {snack: () => {}}
+
 export default function UsersList(props) {
     const dispatch = useDispatch();
     const users = useSelector(state => state.users);
     const [filteredUsers, setFilteredUsers] = useState(users);
+    const postingSelector = createPostingSelector(["ADD_USER"]);
+    const deletingSelector = createPostingSelector(["DELETE_USER"]);
+    const isPosting = useSelector(state => postingSelector(state));
+    const isDeleting = useSelector(state => deletingSelector(state));
     useEffect(() => setFilteredUsers(users), [users]);
     useEffect(() => {
         dispatch(setMenuIndex(5))
     }, []);
+    const [snack, setSnack] = React.useState(initialSnack)
+
+    function dispatchSnack() {
+        if (!isDeleting) {
+            snack.snack();
+            setSnack(initialSnack)
+        }
+    }
+    useEffect(dispatchSnack, [isDeleting])
+
 
     const circleAdd =
         <AddCircleButton
@@ -68,7 +84,7 @@ export default function UsersList(props) {
                                                 right: 0,
                                                 zIndex: 1000
                                             }}>
-                                                <UserContextMenu user={user}/>
+                                                <UserContextMenu setSnack={(snack) => {setSnack(snack)}} user={user}/>
                                             </div>
                                         </div>
                                     </Grid>

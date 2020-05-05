@@ -1,10 +1,6 @@
 import React, {useEffect} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import {
-    deleteSession,
-    restoreSession
-} from "../../redux/sessions/SessionsActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
@@ -19,24 +15,14 @@ const initialState = {
     mouseY: null,
 };
 
-const initialSnack = {snack: () => {}}
 
 function UserContextMenu(props) {
     const whoami = useSelector(state => state.whoami);
     const [state, setState] = React.useState(initialState);
-    const [snack, setSnack] = React.useState(initialSnack)
     const postingSelector = createPostingSelector(["DELETE_USER"]);
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
-
-    function dispatchSnack() {
-        if (!isPosting) {
-            snack.snack();
-            setSnack(initialSnack)
-        }
-    }
-    useEffect(dispatchSnack, [isPosting])
 
     const handleClick = event => {
         setState({
@@ -65,7 +51,7 @@ function UserContextMenu(props) {
         const snack = () => {
             props.enqueueSnackbar('User deleted.', {variant: "info", action, autoHideDuration: 8000});
         }
-        setSnack({ snack })
+        props.setSnack({ snack })
     }
 
     const handleClose = () => {

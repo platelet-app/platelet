@@ -5,11 +5,8 @@ import {PaddedPaper, StyledCard, StyledSharpCard} from '../css/common';
 import {AddCircleButton} from '../components/Buttons';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from "@material-ui/core/Grid";
-import {Link} from "react-router-dom";
-import Moment from "react-moment";
 import {addSession, getAllSessions} from "../redux/sessions/SessionsActions";
 import {useDispatch, useSelector} from "react-redux"
-import {encodeUUID} from "../utilities";
 import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 
 import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
@@ -17,14 +14,19 @@ import {setMenuIndex} from "../redux/Actions";
 import SessionContextMenu from "../components/ContextMenus/SessionContextMenu";
 import SessionCard from "../components/SessionCard";
 
+const initialSnack = {snack: () => {console.log("old")}}
+
 function SessionList(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_SESSIONS"]);
     const isFetching = useSelector(state => loadingSelector(state));
     const postingSelector = createPostingSelector(["ADD_SESSION"]);
+    const deletingSelector = createPostingSelector(["DELETE_SESSION"]);
     const isPosting = useSelector(state => postingSelector(state));
-    const sessions = useSelector(state => state.sessions);
+    const isDeleting = useSelector(state => deletingSelector(state));
+    const sessions = useSelector(state => state.sessions.sessions);
     const whoami = useSelector(state => state.whoami);
+    const [snack, setSnack] = React.useState(initialSnack)
 
     function updateSessionsList() {
         if (props.user_uuid || whoami.uuid)
@@ -35,6 +37,15 @@ function SessionList(props) {
     useEffect(() => {
         dispatch(setMenuIndex(2))
     }, []);
+
+    function dispatchSnack() {
+        if (!isDeleting) {
+            snack.snack();
+            setSnack(initialSnack)
+        }
+    }
+    useEffect(dispatchSnack, [isDeleting])
+
 
 
     let emptySession = {
@@ -82,7 +93,7 @@ function SessionList(props) {
                                                     right: 0,
                                                     zIndex: 1000
                                                 }}>
-                                                    <SessionContextMenu session={session}/>
+                                                    <SessionContextMenu setSnack={(snack) => {setSnack(snack)}} session={session}/>
                                                 </div>
                                             </div>
                                         </Grid>
