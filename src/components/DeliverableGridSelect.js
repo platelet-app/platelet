@@ -9,8 +9,8 @@ import {createPostingSelector} from "../redux/selectors";
 
 export default function DeliverableGridSelect(props) {
     const dispatch = useDispatch();
-    const availableDeliverables = useSelector(state => state.availableDeliverables);
-    const deliverables = useSelector(state => state.deliverables);
+    const availableDeliverables = useSelector(state => state.availableDeliverables.deliverables);
+    const deliverables = useSelector(state => state.deliverables.deliverables);
     const postingSelector = createPostingSelector(["ADD_DELIVERABLE"]);
     const isPosting = useSelector(state => postingSelector(state));
 

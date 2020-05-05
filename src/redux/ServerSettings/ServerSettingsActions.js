@@ -12,9 +12,9 @@ export function clearServerSettings() {
 }
 
 export function getServerSettingsSuccess(data) {
-    return { type: GET_SERVER_SETTINGS_SUCCESS, data, error: null}
+    return { type: GET_SERVER_SETTINGS_SUCCESS, data}
 }
 
 export function getServerSettingsFailure(error) {
-    return { type: GET_SERVER_SETTINGS_FAILURE, data: null, error }
+    return { type: GET_SERVER_SETTINGS_FAILURE, error }
 }

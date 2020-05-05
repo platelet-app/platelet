@@ -1,9 +1,11 @@
 import {GET_AVAILABLE_PATCHES_SUCCESS} from "./PatchesActions";
 
-export function availablePatches(state = [], action) {
+const initialState = {patches: [], error: null}
+
+export function availablePatches(state = initialState, action) {
     switch (action.type) {
         case GET_AVAILABLE_PATCHES_SUCCESS:
-            return action.data;
+            return {patches: action.data, error: null};
         default:
             return state
     }

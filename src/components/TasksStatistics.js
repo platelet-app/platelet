@@ -97,7 +97,7 @@ function CommonStats(props) {
 }
 
 function PatchStats(props) {
-    const priorities = useSelector(state => state.availablePriorities);
+    const priorities = useSelector(state => state.availablePriorities.priorities);
     let columns = ["Patch"];
     columns.push(...priorities.map((p) => p.label));
     columns.push("None");
@@ -146,7 +146,7 @@ function PatchStats(props) {
 }
 
 function RiderStats(props) {
-    const priorities = useSelector(state => state.availablePriorities);
+    const priorities = useSelector(state => state.availablePriorities.priorities);
     let columns = ["Assignee"];
     columns.push(...priorities.map((p) => p.label));
     columns.push("None");
@@ -197,7 +197,7 @@ function RiderStats(props) {
 export default function TasksStatistics(props) {
     const loadingSelector = createLoadingSelector(["GET_SESSION_STATISTICS", "GET_PRIORITIES"]);
     const isFetching = useSelector(state => loadingSelector(state));
-    const stats = useSelector(state => state.sessionStatistics);
+    const stats = useSelector(state => state.sessionStatistics.statistics);
     const dispatch = useDispatch();
 
     function componentDidMount() {

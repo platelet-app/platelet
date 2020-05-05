@@ -57,9 +57,9 @@ export default function TaskModal(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
-    const availablePatches = useSelector(state => state.availablePatches);
+    const availablePatches = useSelector(state => state.availablePatches.patches);
     const mobileView = useSelector(state => state.mobileView);
-    const session = useSelector(state => state.session);
+    const session = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami);
     const currentLocation = useLocation();
     let useStyles;
@@ -110,15 +110,20 @@ export default function TaskModal(props) {
     const [editMode, setEditMode] = useState(false);
 
     function componentDidMount() {
-        setEditMode(session ? session.user_uuid === whoami.uuid : false);
+        setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
+        console.log("FUCK")
+        console.log(editMode)
         if (!tasks.length) {
             props.apiControl.tasks.getTask(taskUUID).then((data) => {
                 dispatch(getAllTasks(data.session_uuid));
             });
         }
     }
-
     useEffect(componentDidMount, []);
+    function updateEditMode() {
+        setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
+    }
+    useEffect(updateEditMode, [whoami, session])
 
     function onSelectContactNumber(event) {
         const payload = { contact_number: event.target.value };

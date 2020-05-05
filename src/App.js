@@ -67,9 +67,7 @@ function App(props) {
 
     function checkServerSettings() {
         Moment.globalMoment = moment;
-        if (serverSettings) {
-            Moment.globalLocale = serverSettings.locale.code;
-        }
+        Moment.globalLocale = serverSettings.locale.code;
     }
     useEffect(checkServerSettings, [serverSettings]);
 
@@ -85,9 +83,6 @@ function App(props) {
     useEffect(loginCheck, [whoami])
 
     function firstWhoami() {
-        console.log("WOOOOOOOOO")
-        console.log(isInitialised)
-        console.log(whoami)
         if (isInitialised)
             dispatch(getWhoami());
         else
@@ -119,6 +114,18 @@ function App(props) {
                 </React.Fragment>
             </div>
         );
+    } else if (!apiURL) {
+        return (
+            <div className={classes.centeredDiv}>
+                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
+                    <Grid item>
+                        <ApiConfig onSelect={(result) => {
+                            dispatch(setApiURL(result))
+                        }}/>
+                    </Grid>
+                </Grid>
+            </div>
+        )
     } else if (serverSettings) {
         return (
             <div className={classes.centeredDiv}>
@@ -133,18 +140,6 @@ function App(props) {
                         }}>
                             Change Organisation
                         </Button>
-                    </Grid>
-                </Grid>
-            </div>
-        )
-    } else if (!apiURL) {
-        return (
-            <div className={classes.centeredDiv}>
-                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
-                    <Grid item>
-                <ApiConfig onSelect={(result) => {
-                    dispatch(setApiURL(result))
-                }}/>
                     </Grid>
                 </Grid>
             </div>

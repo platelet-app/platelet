@@ -81,7 +81,6 @@ export default function VehicleProfile(props) {
         <SaveCancelButtons
             disabled={isPosting}
             onSave={() => {
-                console.log(state)
                 dispatch(updateVehicle({vehicleUUID: state.uuid, payload: state}));
                 setOldState(state);
             }}

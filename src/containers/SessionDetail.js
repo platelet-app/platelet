@@ -11,7 +11,6 @@ import {getSession} from "../redux/sessions/SessionsActions";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
-import {useLocation} from "react-router-dom";
 import {createLoadingSelector, createNotFoundSelector} from '../redux/selectors';
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
 import TasksTable from "../components/TasksTable";

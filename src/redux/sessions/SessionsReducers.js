@@ -9,34 +9,39 @@ import {
     GET_SESSIONS_SUCCESS,
     RESTORE_SESSION_SUCCESS
 } from "./SessionsActions";
-import {DELETE_TASK_SUCCESS, RESTORE_TASK_SUCCESS, UPDATE_TASK_SUCCESS} from "../tasks/TasksActions";
 import update from "immutability-helper";
 
-export function sessions(state = [], action) {
+const initialState = {
+    sessions: [], error: null
+}
+
+export function sessions(state = initialState, action) {
     switch (action.type) {
         case ADD_SESSION_SUCCESS:
-            return [
-                {
-                    ...action.data
-                },
-                ...state
-            ];
+            return {
+                sessions: [
+                    {
+                        ...action.data
+                    },
+                    ...state.sessions
+                ], error: null
+            };
         case GET_SESSIONS_SUCCESS:
-            return action.data;
+            return {sessions: action.data, error: null};
 
         case RESTORE_SESSION_SUCCESS:
-            return [
+            return {sessions: [
                 {
                     ...action.data
                 },
                 ...state
-            ];
+            ], error: null};
 
         case DELETE_SESSION_SUCCESS:
-            let result_delete = state.filter(session => session.uuid === action.data);
+            let result_delete = state.sessions.filter(session => session.uuid === action.data);
             if (result_delete.length === 1) {
-                const index = state.indexOf(result_delete[0]);
-                return update(state, { $splice: [[index, 1]] });
+                const index = state.sessions.indexOf(result_delete[0]);
+                return {sessions: update(state.sessions, {$splice: [[index, 1]]}), error: null};
             } else {
                 return state;
             }
@@ -47,25 +52,60 @@ export function sessions(state = [], action) {
     }
 }
 
-export function session(state = {}, action) {
+const initialSessionState = {
+    session: {
+        uuid: null,
+        user_uuid: null,
+        time_created: null,
+        tasks: [],
+        comments: [],
+        links: {
+            self: null,
+            collection: null
+        },
+        task_count: null,
+        time_modified: null
+    }, error: null
+}
+
+export function session(state = initialSessionState, action) {
     switch (action.type) {
         case GET_SESSION_SUCCESS:
-            return action.data;
+            return {session: action.data, error: null};
         case GET_SESSION_FAILURE:
         case GET_SESSION_NOTFOUND:
-            return {};
+            return {session: initialSessionState, error: action.error};
         default:
             return state;
     }
 }
 
-export function sessionStatistics(state = {}, action) {
+const initialStatisticsState = {
+    statistics: {
+        null_tasks: null,
+        null_deleted: null,
+        null_completed: null,
+        null_picked_up: null,
+        null_active: null,
+        null_unassigned: null,
+        null_rejected: null,
+        null_cancelled: null,
+        patches: null,
+        riders: null,
+        priorities: null,
+        time_active: null
+    },
+    error: null
+
+}
+
+export function sessionStatistics(state = initialStatisticsState, action) {
     switch (action.type) {
         case GET_SESSION_STATISTICS_SUCCESS:
-            return action.data;
+            return {statistics: action.data, error: null};
         case GET_SESSION_STATISTICS_FAILURE:
         case GET_SESSION_STATISTICS_NOTFOUND:
-            return {};
+            return {statistics: initialStatisticsState, error: action.error};
         default:
             return state
 

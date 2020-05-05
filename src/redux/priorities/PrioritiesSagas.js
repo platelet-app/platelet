@@ -1,19 +1,20 @@
-import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
+import { call, put, takeLatest, select} from 'redux-saga/effects'
 import {
-    ADD_PRIORITIY,
-    addPrioritySuccess,
-    UPDATE_PRIORITY,
-    updatePrioritySuccess,
     GET_AVAILABLE_PRIORITIES_REQUEST,
     getAvailablePrioritiesSuccess,
 } from "./PrioritiesActions"
 
 import { getApiControl } from "../Api";
+import {getAvailableLocationsFailure} from "../locations/LocationsActions";
 
 export function* getAvailablePriorities() {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.priorities.getAvailablePriorities]);
-    yield put(getAvailablePrioritiesSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.priorities.getAvailablePriorities]);
+        yield put(getAvailablePrioritiesSuccess(result))
+    } catch (error) {
+        yield put(getAvailableLocationsFailure(error))
+    }
 }
 
 export function* watchGetAvailablePriorities() {

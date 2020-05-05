@@ -73,10 +73,14 @@ function* throttlePerKey(pattern, selector, timeout, saga) {
 }
 
 function* postNewTask(action) {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.tasks.createTask], action.data);
-    const task = {...action.data, "uuid": result.uuid};
-    yield put(addTaskSuccess(task))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.tasks.createTask], action.data);
+        const task = {...action.data, "uuid": result.uuid};
+        yield put(addTaskSuccess(task))
+    } catch(error) {
+
+    }
 }
 
 export function* watchPostNewTask() {

@@ -1,9 +1,14 @@
 import {GET_AVAILABLE_PRIORITIES_SUCCESS} from "./PrioritiesActions";
 
-export function availablePriorities(state = [], action) {
+const initialState = {
+    priorities: [],
+    error: null
+}
+
+export function availablePriorities(state = initialState, action) {
     switch (action.type) {
         case GET_AVAILABLE_PRIORITIES_SUCCESS:
-            return action.data;
+            return {priorities: action.data, error: null};
         default:
             return state
     }

@@ -86,7 +86,8 @@ function getSuggestions(suggestions, value, {showEmpty = false} = {}) {
 
 
 export default function FavouriteLocationsSelect(props) {
-    const availableLocations = useSelector(state => state.availableLocations);
+    const availableLocations = useSelector(state => state.availableLocations.locations);
+    console.log(availableLocations)
     const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
     const onSelect = selectedItem => {
         let result = availableLocations.filter(location => location.name === selectedItem);
@@ -95,13 +96,11 @@ export default function FavouriteLocationsSelect(props) {
     };
 
     useEffect(() => {
-        let filteredSuggestions = [];
-        availableLocations.map((location) => {
+        const filteredSuggestions = availableLocations.map((location) => {
             if (location.name != null)
-                filteredSuggestions.push({"label": location.name})
+                return {"label": location.name}
         });
         setFilteredLocationSuggestions(filteredSuggestions);
-
     }, [availableLocations]);
 
     let classes = makeStyles(theme => ({

@@ -7,7 +7,7 @@ import {getDeliverables} from "../redux/deliverables/DeliverablesActions";
 
 export default function DeliverableInformation(props) {
     const dispatch = useDispatch();
-    const deliverables = useSelector(state => state.deliverables);
+    const deliverables = useSelector(state => state.deliverables.deliverables);
     function componentDidMount() {
         dispatch(getDeliverables(props.taskUUID));
 

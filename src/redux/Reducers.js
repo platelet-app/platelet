@@ -17,7 +17,7 @@ import {availablePatches} from "./patches/PatchesReducers";
 import {availablePriorities} from "./priorities/PrioritiesReducers";
 import {users, user} from "./users/UsersReducers";
 import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
-import {comments, sessionComments} from "./comments/CommentsReducers";
+import {comments, sidebarComments} from "./comments/CommentsReducers";
 import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 
 
@@ -174,7 +174,7 @@ const rootReducer = combineReducers({
     user,
     whoami,
     comments,
-    sessionComments,
+    sidebarComments,
     sessionActiveTaskUUID,
     loadingReducer,
     postingReducer,

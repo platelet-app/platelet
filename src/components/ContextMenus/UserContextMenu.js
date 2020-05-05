@@ -39,7 +39,6 @@ function UserContextMenu(props) {
 
     function onDelete() {
         handleClose();
-        console.log(props.user.uuid)
         dispatch(deleteUser(props.user.uuid));
         const action = key => (
             <React.Fragment>

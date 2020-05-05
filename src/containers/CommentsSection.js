@@ -12,7 +12,7 @@ export default function CommentsSection(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const notFoundSelector = props.session ? createNotFoundSelector(["GET_SIDEBAR_COMMENTS"]) : createNotFoundSelector(["GET_COMMENTS"]);
     const notFound = useSelector(state => notFoundSelector(state));
-    const comments = useSelector(state => props.session ? state.sessionComments : state.comments);
+    const comments = useSelector(state => props.session ? state.sidebarComments.comments : state.comments.comments);
     function updateComments() {
         if (props.parentUUID) {
             if (props.session)
@@ -35,6 +35,5 @@ export default function CommentsSection(props) {
                 <CommentsMain session={props.session} parentUUID={props.parentUUID} comments={comments}/>
             </div>
         )
-
     }
 }

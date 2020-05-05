@@ -1,11 +1,17 @@
-import {GET_AVAILABLE_LOCATIONS_SUCCESS} from "./LocationsActions";
+import {GET_AVAILABLE_LOCATIONS_FAILURE, GET_AVAILABLE_LOCATIONS_SUCCESS} from "./LocationsActions";
 
-export function availableLocations(state = [], action) {
+const initialState = {
+    locations: [],
+    error: null
+}
+
+export function availableLocations(state = initialState, action) {
     switch (action.type) {
         case GET_AVAILABLE_LOCATIONS_SUCCESS:
-            return action.data;
+            return {locations: action.data, error: null};
+        case GET_AVAILABLE_LOCATIONS_FAILURE:
+            return {...initialState, error: action.error};
         default:
             return state
     }
 }
-

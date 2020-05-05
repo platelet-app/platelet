@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
 export default function PrioritySelect(props) {
     const classes = useStyles();
     const [value, setValue] = React.useState(props.priority || null);
-    const availablePriorities = useSelector(state => state.availablePriorities);
+    const availablePriorities = useSelector(state => state.availablePriorities.priorities);
 
 
     const inputLabel = React.useRef(null);

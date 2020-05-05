@@ -14,7 +14,7 @@ import {setMenuIndex} from "../redux/Actions";
 import SessionContextMenu from "../components/ContextMenus/SessionContextMenu";
 import SessionCard from "../components/SessionCard";
 
-const initialSnack = {snack: () => {console.log("old")}}
+const initialSnack = {snack: () => {}}
 
 function SessionList(props) {
     const dispatch = useDispatch();

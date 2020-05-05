@@ -10,56 +10,61 @@ import {
     UPDATE_SIDEBAR_COMMENT_SUCCESS
 } from "./CommentsActions";
 
-export function comments(state = [], action) {
+const initialState = {
+    comments: [],
+    error: null
+}
+
+export function comments(state = initialState, action) {
     switch (action.type) {
         case ADD_COMMENT_SUCCESS:
-            return [
-                ...state,
+            return {comments: [
+                ...state.comments,
                 {
                     ...action.data
                 }
-            ];
+            ], error: null};
         case UPDATE_COMMENT_SUCCESS:
-            let result = state.filter(comment => comment.uuid === action.data.commentUUID);
+            let result = state.comments.filter(comment => comment.uuid === action.data.commentUUID);
             if (result.length === 1) {
                 const updated_item = {...result[0], ...action.data.payload};
-                const index = state.indexOf(result[0]);
-                return update(state, {[index]: {$set: updated_item}});
+                const index = state.comments.indexOf(result[0]);
+                return update(state.comments, {[index]: {$set: updated_item}});
             } else {
                 return state
             }
         case GET_COMMENTS_SUCCESS:
-            return action.data;
+            return {comments: action.data, error: null};
         case CLEAR_COMMENTS:
-            return [];
+            return initialState;
 
         default:
             return state
     }
 }
 
-export function sessionComments(state = [], action) {
+export function sidebarComments(state = initialState, action) {
     switch (action.type) {
         case ADD_SIDEBAR_COMMENT_SUCCESS:
-            return [
-                ...state,
-                {
-                    ...action.data
-                }
-            ];
+            return {comments: [
+                    ...state.comments,
+                    {
+                        ...action.data
+                    }
+                ], error: null};
         case UPDATE_SIDEBAR_COMMENT_SUCCESS:
-            let result = state.filter(comment => comment.uuid === action.data.commentUUID);
+            let result = state.comments.filter(comment => comment.uuid === action.data.commentUUID);
             if (result.length === 1) {
                 const updated_item = {...result[0], ...action.data.payload};
-                const index = state.indexOf(result[0]);
-                return update(state, {[index]: {$set: updated_item}});
+                const index = state.comments.indexOf(result[0]);
+                return update(state.comments, {[index]: {$set: updated_item}});
             } else {
                 return state
             }
         case GET_SIDEBAR_COMMENTS_SUCCESS:
-            return action.data;
+            return {comments: action.data, error: null};
         case CLEAR_SIDEBAR_COMMENTS:
-            return [];
+            return initialState;
 
         default:
             return state

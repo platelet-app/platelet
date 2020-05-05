@@ -24,7 +24,6 @@ function SessionContextMenu(props) {
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(["DELETE_SESSION"]);
     const isPosting = useSelector(state => postingSelector(state));
-    console.log(props.session)
 
     const dispatch = useDispatch();
 
