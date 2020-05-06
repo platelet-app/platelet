@@ -12,7 +12,8 @@ import {
 import update from "immutability-helper";
 
 const initialState = {
-    sessions: [], error: null
+    sessions: [],
+    error: null
 }
 
 export function sessions(state = initialState, action) {
@@ -34,9 +35,8 @@ export function sessions(state = initialState, action) {
                 {
                     ...action.data
                 },
-                ...state
+                ...state.sessions
             ], error: null};
-
         case DELETE_SESSION_SUCCESS:
             let result_delete = state.sessions.filter(session => session.uuid === action.data);
             if (result_delete.length === 1) {
@@ -45,10 +45,8 @@ export function sessions(state = initialState, action) {
             } else {
                 return state;
             }
-
         default:
             return state
-
     }
 }
 
