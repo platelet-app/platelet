@@ -1,4 +1,4 @@
-import { throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
+import {throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {
     GET_USERS_REQUEST,
     GET_USER_REQUEST,
@@ -18,20 +18,34 @@ import {
     deleteUserSuccess,
     DELETE_USER_REQUEST,
     UPDATE_USER_REQUEST,
-    restoreUserSuccess, RESTORE_USER_REQUEST,
+    restoreUserSuccess,
+    RESTORE_USER_REQUEST,
+    getUsersFailure,
+    getUserFailure,
+    updateUserFailure,
+    deleteUserFailure,
+    restoreUserFailure, addUserFailure,
 } from "./UsersActions";
-import { getApiControl } from "../Api"
+import {getApiControl} from "../Api"
 
 function* getUsers() {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.users.getUsers]);
-    yield put(getUsersSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.users.getUsers]);
+        yield put(getUsersSuccess(result))
+    } catch (error) {
+        yield put(getUsersFailure(error))
+    }
 }
 
 function* getUser(action) {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.users.getUser], action.data);
-    yield put(getUserSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.users.getUser], action.data);
+        yield put(getUserSuccess(result))
+    } catch (error) {
+        yield put(getUserFailure(error))
+    }
 }
 
 export function* watchGetUsers() {
@@ -43,9 +57,13 @@ export function* watchGetUser() {
 }
 
 function* updateUser(action) {
-    const api = yield select(getApiControl);
-    yield call([api, api.users.updateUser], action.data.userUUID, action.data.payload);
-    yield put(updateUserSuccess(action.data))
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.users.updateUser], action.data.userUUID, action.data.payload);
+        yield put(updateUserSuccess(action.data))
+    } catch (error) {
+        yield put(updateUserFailure(error))
+    }
 }
 
 export function* watchUpdateUser() {
@@ -53,9 +71,13 @@ export function* watchUpdateUser() {
 }
 
 function* deleteUser(action) {
-    const api = yield select(getApiControl);
-    yield call([api, api.users.deleteUser], action.data);
-    yield put(deleteUserSuccess(action.data))
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.users.deleteUser], action.data);
+        yield put(deleteUserSuccess(action.data))
+    } catch (error) {
+        yield put(deleteUserFailure(error))
+    }
 }
 
 export function* watchDeleteUser() {
@@ -63,10 +85,14 @@ export function* watchDeleteUser() {
 }
 
 function* restoreUser(action) {
-    const api = yield select(getApiControl);
-    yield call([api, api.users.restoreUser], action.data);
-    const result = yield call([api, api.users.getUser], action.data);
-    yield put(restoreUserSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.users.restoreUser], action.data);
+        const result = yield call([api, api.users.getUser], action.data);
+        yield put(restoreUserSuccess(result))
+    } catch (error) {
+        yield put(restoreUserFailure(error))
+    }
 }
 
 export function* watchRestoreUser() {
@@ -74,39 +100,15 @@ export function* watchRestoreUser() {
 }
 
 function* addUser(action) {
-    const api = yield select(getApiControl);
-    yield call([api, api.users.createUser], action.data.userUUID, action.data.payload);
-    yield put(updateUserSuccess(action.data))
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.users.createUser], action.data.userUUID, action.data.payload);
+        yield put(updateUserSuccess(action.data))
+    } catch (error) {
+        yield put(updateUserFailure(error))
+    }
 }
 
 export function* watchAddUser() {
     yield takeLatest(ADD_USER_REQUEST, addUser)
-}
-
-export function* watchUpdateUserName() {
-    yield throttle(500, UPDATE_USER_NAME_REQUEST, updateUser)
-}
-export function* watchUpdateUserUsername() {
-    yield throttle(500, UPDATE_USER_USERNAME_REQUEST, updateUser)
-}
-export function* watchUpdateUserContactNumber() {
-    yield throttle(500, UPDATE_USER_CONTACT_NUMBER_REQUEST, updateUser)
-}
-export function* watchUpdateUserDisplayName() {
-    yield throttle(500, UPDATE_USER_DISPLAY_NAME_REQUEST, updateUser)
-}
-export function* watchUpdateUserEmail() {
-    yield throttle(500, UPDATE_USER_EMAIL_ADDRESS_REQUEST, updateUser)
-}
-export function* watchUpdateUserPassword() {
-    yield throttle(500, UPDATE_USER_PASSWORD_REQUEST, updateUser)
-}
-export function* watchUpdateUserRoles() {
-    yield throttle(500, UPDATE_USER_ROLES_REQUEST, updateUser)
-}
-export function* watchUpdateUserPatch() {
-    yield throttle(500, UPDATE_USER_PATCH_REQUEST, updateUser)
-}
-export function* watchUpdateUserAddress() {
-    yield throttle(500, UPDATE_USER_ADDRESS_REQUEST, updateUser)
 }

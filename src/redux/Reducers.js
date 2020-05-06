@@ -6,7 +6,7 @@ import {
     GET_WHOAMI_SUCCESS,
     SET_VIEW_MODE,
     SET_MOBILE_VIEW,
-    SET_MENU_INDEX, SET_COMMENTS_OBJECT_UUID, CLEAR_WHOAMI
+    SET_MENU_INDEX, SET_COMMENTS_OBJECT_UUID, CLEAR_WHOAMI, GET_WHOAMI_FAILURE
 } from './Actions'
 import {task, tasks} from "./tasks/TasksReducers"
 import {session, sessions, sessionStatistics} from "./sessions/SessionsReducers"
@@ -74,6 +74,9 @@ function whoami(state = whoamiInitialState, action) {
     switch (action.type) {
         case GET_WHOAMI_SUCCESS:
             return {user: action.data, error: null};
+        case GET_WHOAMI_FAILURE:
+            console.log("FAIL FAIL")
+            return {...whoamiInitialState, error: action.error};
         case CLEAR_WHOAMI:
             return whoamiInitialState;
         default:
@@ -174,6 +177,9 @@ const errorReducer = (state = {}, action) => {
 
 export function error(state =  null, action){
     const { error } = action;
+    if (error) {
+        console.log(error.message)
+    }
     return error ? error : state;
 }
 

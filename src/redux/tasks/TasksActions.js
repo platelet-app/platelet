@@ -55,6 +55,7 @@ export const GET_TASKS_FAILURE = 'GET_TASKS_FAILURE';
 export const GET_MY_TASKS_REQUEST = 'GET_MY_TASKS_REQUEST';
 export const GET_MY_TASKS_SUCCESS = 'GET_MY_TASKS_SUCCESS';
 export const GET_MY_TASKS_FAILURE = 'GET_MY_TASKS_FAILURE';
+export const GET_MY_TASKS_NOTFOUND = 'GET_MY_TASKS_NOTFOUND';
 
 export function restoreTask(data) {
     return { type: RESTORE_TASK_REQUEST, data }
@@ -181,5 +182,13 @@ export function getAllMyTasks(data) {
 
 export function getAllMyTasksSuccess(data) {
     return { type: GET_MY_TASKS_SUCCESS, data }
+}
+
+export function getAllMyTasksFailure(error) {
+    return { type: GET_MY_TASKS_FAILURE, error }
+}
+
+export function getAllMyTasksNotFound(error) {
+    return { type: GET_MY_TASKS_NOTFOUND, error }
 }
 

@@ -16,6 +16,7 @@ export const GET_USER_NOTFOUND = 'GET_USER_NOTFOUND';
 export const GET_USER_FAILURE = 'GET_USER_FAILURE';
 export const UPDATE_USER_REQUEST = 'UPDATE_USER_REQUEST';
 export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
+export const UPDATE_USER_FAILURE = 'UPDATE_USER_FAILURE';
 export const UPDATE_USER_NOTFOUND = 'UPDATE_USER_NOTFOUND';
 export const UPDATE_USER_USERNAME_REQUEST = 'UPDATE_USER_USERNAME_REQUEST';
 export const UPDATE_USER_NAME_REQUEST = 'UPDATE_USER_NAME_REQUEST';
@@ -35,12 +36,20 @@ export function getUsersSuccess(data) {
     return { type: GET_USERS_SUCCESS, data }
 }
 
+export function getUsersFailure(error) {
+    return { type: GET_USERS_FAILURE, error }
+}
+
 export function getUser(data) {
     return { type: GET_USER_REQUEST, data }
 }
 
 export function getUserSuccess(data) {
     return { type: GET_USER_SUCCESS, data }
+}
+
+export function getUserFailure(error) {
+    return { type: GET_USER_FAILURE, error }
 }
 
 export function deleteUser(data) {
@@ -51,8 +60,20 @@ export function deleteUserSuccess(data) {
     return { type: DELETE_USER_SUCCESS, data }
 }
 
+export function deleteUserFailure(error) {
+    return { type: DELETE_USER_FAILURE, error }
+}
+
 export function addUser(data) {
     return { type: ADD_USER_REQUEST, data }
+}
+
+export function addUserSuccess(data) {
+    return { type: ADD_USER_SUCCESS, data }
+}
+
+export function addUserFailure(error) {
+    return { type: ADD_USER_FAILURE, error }
 }
 
 export function restoreUser(data) {
@@ -63,42 +84,18 @@ export function restoreUserSuccess(data) {
     return { type: RESTORE_USER_SUCCESS, data }
 }
 
-export function addUserSuccess(data) {
-    return { type: ADD_USER_SUCCESS, data }
-}
-
-export function updateUserSuccess(data) {
-    return { type: UPDATE_USER_SUCCESS, data }
+export function restoreUserFailure(error) {
+    return { type: RESTORE_USER_FAILURE, error }
 }
 
 export function updateUser(data) {
     return { type: UPDATE_USER_REQUEST, data }
 }
 
-export function updateUserName(data) {
-    return { type: UPDATE_USER_NAME_REQUEST, data }
+export function updateUserSuccess(data) {
+    return { type: UPDATE_USER_SUCCESS, data }
 }
-export function updateUserUsername(data) {
-    return { type: UPDATE_USER_USERNAME_REQUEST, data }
-}
-export function updateUserDisplayName(data) {
-    return { type: UPDATE_USER_DISPLAY_NAME_REQUEST, data }
-}
-export function updateUserEmailAddress(data) {
-    return { type: UPDATE_USER_EMAIL_ADDRESS_REQUEST, data }
-}
-export function updateUserContactNumber(data) {
-    return { type: UPDATE_USER_CONTACT_NUMBER_REQUEST, data }
-}
-export function updateUserAddress(data) {
-    return { type: UPDATE_USER_ADDRESS_REQUEST, data }
-}
-export function updateUserRoles(data) {
-    return { type: UPDATE_USER_ROLES_REQUEST, data }
-}
-export function updateUserPatch(data) {
-    return { type: UPDATE_USER_PATCH_REQUEST, data }
-}
-export function updateUserPassword(data) {
-    return { type: UPDATE_USER_PASSWORD_REQUEST, data }
+
+export function updateUserFailure(error) {
+    return { type: UPDATE_USER_FAILURE, error }
 }

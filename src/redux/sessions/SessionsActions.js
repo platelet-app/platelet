@@ -39,8 +39,8 @@ export function getAllSessionsSuccess(data) {
     return { type: GET_SESSIONS_SUCCESS, data }
 }
 
-export function getAllSessionsFailure(data) {
-    return { type: GET_SESSIONS_FAILURE, data }
+export function getAllSessionsFailure(error) {
+    return { type: GET_SESSIONS_FAILURE, error }
 }
 
 export function getSession(data) {

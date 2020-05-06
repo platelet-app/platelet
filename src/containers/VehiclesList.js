@@ -28,7 +28,7 @@ function VehicleList() {
     useEffect(() => {
         dispatch(setMenuIndex(4))
     }, []);
-    const vehicles = useSelector(state => state.vehicles);
+    const vehicles = useSelector(state => state.vehicles.vehicles);
 
 
     const circleAdd =

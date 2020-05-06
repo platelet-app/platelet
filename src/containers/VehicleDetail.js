@@ -20,7 +20,7 @@ export default function VehicleDetail(props) {
     const notFoundSelector = createNotFoundSelector(["GET_VEHICLE"]);
     const notFound = useSelector(state => notFoundSelector(state));
     const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
-    const vehicle = useSelector(state => state.vehicle);
+    const vehicle = useSelector(state => state.vehicle.vehicle);
 
     function componentDidMount() {
         dispatch(getVehicle(vehicleUUID));

@@ -111,8 +111,6 @@ export default function TaskModal(props) {
 
     function componentDidMount() {
         setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
-        console.log("FUCK")
-        console.log(editMode)
         if (!tasks.length) {
             props.apiControl.tasks.getTask(taskUUID).then((data) => {
                 dispatch(getAllTasks(data.session_uuid));

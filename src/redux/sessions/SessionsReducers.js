@@ -5,7 +5,7 @@ import {
     GET_SESSION_FAILURE,
     GET_SESSION_NOTFOUND, GET_SESSION_STATISTICS_FAILURE, GET_SESSION_STATISTICS_NOTFOUND,
     GET_SESSION_STATISTICS_SUCCESS,
-    GET_SESSION_SUCCESS,
+    GET_SESSION_SUCCESS, GET_SESSIONS_FAILURE,
     GET_SESSIONS_SUCCESS,
     RESTORE_SESSION_SUCCESS
 } from "./SessionsActions";
@@ -29,7 +29,8 @@ export function sessions(state = initialState, action) {
             };
         case GET_SESSIONS_SUCCESS:
             return {sessions: action.data, error: null};
-
+        case GET_SESSIONS_FAILURE:
+            return {...initialState, error: action.error};
         case RESTORE_SESSION_SUCCESS:
             return {sessions: [
                 {

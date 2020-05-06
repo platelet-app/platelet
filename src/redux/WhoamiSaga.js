@@ -1,11 +1,15 @@
 import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
-import {GET_WHOAMI_REQUEST, getWhoamiSuccess} from "./Actions";
+import {GET_WHOAMI_REQUEST, getWhoamiFailure, getWhoamiSuccess} from "./Actions";
 import { getApiControl } from "./Api";
 
 function* getWhoami() {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.users.whoami]);
-    yield put(getWhoamiSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.users.whoami]);
+        yield put(getWhoamiSuccess(result))
+    } catch(error) {
+        yield put(getWhoamiFailure(error))
+    }
 }
 
 export function* watchGetWhoami() {

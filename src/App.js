@@ -52,11 +52,20 @@ function App(props) {
     const classes = useStyles();
     const [confirmLogin, setConfirmLogin] = useState(false);
 
-    function displayError() {
-        if (error)
-            props.enqueueSnackbar(`${error}`,  { variant: "error", autoHideDuration: 8000 });
+    function handleError() {
+        // any saga that returns with an error object that is not null will be handled here
+        if (error) {
+            if (error.message)
+                props.enqueueSnackbar(`${error}: ${error.response.message}`, {variant: "error", autoHideDuration: 8000});
+            else
+                props.enqueueSnackbar(`${error}: No message returned from the server.`, {variant: "error", autoHideDuration: 8000});
+            // if all else fails with authentication, log out the user
+            if (error.status === 401)
+                props.enqueueSnackbar("Access has expired. Please log in again.", {variant: "warning", autoHideDuration: 8000});
+                dispatch(logoutUser())
+        }
     }
-    useEffect(displayError, [error])
+    useEffect(handleError, [error])
 
     function requestServerSettings() {
         if (apiURL) {
@@ -73,7 +82,7 @@ function App(props) {
 
     function loginCheck() {
         if (whoami && whoami.login_expiry) {
-            if (whoami.login_expiry < moment().add("days", 3).unix()) {
+            if (whoami.login_expiry < moment().add("days", 0).unix()) {
                 dispatch(logoutUser());
             } else {
                 setConfirmLogin(true);

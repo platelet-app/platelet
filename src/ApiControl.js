@@ -62,6 +62,7 @@ class HttpError extends Error {
         this.name = "HttpError";
         this.status = response.status;
         this.statusText = response.statusText;
+        this.message = response.data.message;
         this.response = response;
     }
 }
@@ -529,6 +530,7 @@ class Control {
         this.patches = new Patch(this.bearer, this.api_url);
         this.initialised = true;
         const self = this;
+        //TODO: This doesn't work if the token has expired fully fixxxxx
         axios.interceptors.request.use(
             config => {
                 const token = self.bearer

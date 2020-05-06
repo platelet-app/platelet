@@ -110,13 +110,15 @@ export function ResponsiveDrawer(props) {
     let drawer = <MenuSkeleton/>;
 
     if (!isFetching) {
-        if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
-            sessionLink =
-                <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 2)} component={Link} to="/sessions"
-                          button>
-                    <ListItemIcon><AppsIcon/></ListItemIcon>
-                    <ListItemText primary={"Shifts"}/>
-                </ListItem>;
+        if (whoami.roles) {
+            if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
+                sessionLink =
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 2)} component={Link} to="/sessions"
+                              button>
+                        <ListItemIcon><AppsIcon/></ListItemIcon>
+                        <ListItemText primary={"Shifts"}/>
+                    </ListItem>;
+            }
         }
         drawer = (
             <div>

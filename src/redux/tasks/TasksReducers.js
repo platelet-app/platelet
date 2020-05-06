@@ -1,8 +1,8 @@
 import {
     ADD_TASK_SUCCESS,
-    DELETE_TASK_SUCCESS,
+    DELETE_TASK_SUCCESS, GET_MY_TASKS_FAILURE,
     GET_MY_TASKS_SUCCESS,
-    GET_TASK_SUCCESS,
+    GET_TASK_SUCCESS, GET_TASKS_FAILURE,
     GET_TASKS_SUCCESS,
     RESTORE_TASK_SUCCESS,
     UPDATE_TASK_ASSIGNED_RIDER_SUCCESS,
@@ -111,8 +111,12 @@ export function tasks(state = initialTasksState, action) {
             }
         case GET_TASKS_SUCCESS:
             return {tasks: action.data, error: null};
+        case GET_TASKS_FAILURE:
+            return {...initialTasksState, error: action.error};
         case GET_MY_TASKS_SUCCESS:
             return {tasks: action.data, error: null};
+        case GET_MY_TASKS_FAILURE:
+            return {...initialTasksState, error: action.error};
         default:
             return state
     }

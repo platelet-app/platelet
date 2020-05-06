@@ -31,6 +31,7 @@ export function clearLoading() {
 
 export const GET_WHOAMI_REQUEST = 'GET_WHOAMI_REQUEST';
 export const GET_WHOAMI_SUCCESS = 'GET_WHOAMI_SUCCESS';
+export const GET_WHOAMI_FAILURE = 'GET_WHOAMI_FAILURE';
 export const CLEAR_WHOAMI = 'CLEAR_WHOAMI';
 
 export function getWhoami() {
@@ -43,6 +44,10 @@ export function clearWhoami() {
 
 export function getWhoamiSuccess(data) {
     return { type: GET_WHOAMI_SUCCESS, data }
+}
+
+export function getWhoamiFailure(error) {
+    return { type: GET_WHOAMI_FAILURE, error }
 }
 
 export const SET_VIEW_MODE = 'SET_VIEW_MODE';

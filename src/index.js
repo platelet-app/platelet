@@ -16,15 +16,13 @@ import 'typeface-roboto'
 window.store = store;
 
 
-const apiUrl = 'http://localhost:5000/api/v0.1/';
-
 ReactDOM.render((
         <Provider store={store}>
             <BrowserRouter>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <ReactNotification/>
                     <SnackbarProvider maxSnack={1}>
-                        <App apiUrl={apiUrl}/>
+                        <App/>
                     </SnackbarProvider>
                 </MuiPickersUtilsProvider>
             </BrowserRouter>

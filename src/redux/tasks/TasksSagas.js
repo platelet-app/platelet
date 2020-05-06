@@ -46,7 +46,7 @@ import {
     updateTaskAssignedRiderSuccess,
     updateTaskPrioritySuccess,
     updateTaskCancelledTimeSuccess,
-    updateTaskRejectedTimeSuccess, getAllTasksNotFound, getAllTasksFailure
+    updateTaskRejectedTimeSuccess, getAllTasksNotFound, getAllTasksFailure, getAllMyTasksNotFound, getAllMyTasksFailure
 } from "./TasksActions"
 
 import {getApiControl} from "../Api"
@@ -249,10 +249,19 @@ export function* watchGetTasks() {
 }
 
 function* getMyTasks() {
+    try {
     const api = yield select(getApiControl);
     const whoami = yield call([api, api.users.whoami]);
     const result = yield call([api, api.users.getAssignedTasks], whoami.uuid);
     yield put(getAllMyTasksSuccess(result))
+    } catch (error) {
+        if (error.name === "HttpError") {
+            if (error.response.status === 404) {
+                yield put(getAllMyTasksNotFound(error))
+            }
+        }
+        yield put(getAllMyTasksFailure(error))
+    }
 }
 
 export function* watchGetMyTasks() {

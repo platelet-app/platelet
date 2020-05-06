@@ -40,24 +40,24 @@ export function* watchPostNewVehicle() {
 function* updateVehicle(action) {
     const api = yield select(getApiControl);
     try {
-    if (action.data.payload.assigned_user) {
-        action.data.payload.assigned_user_uuid = action.data.payload.assigned_user.uuid;
-    }
-
-    yield call([api, api.vehicles.updateVehicle], action.data.vehicleUUID, action.data.payload);
-    if (action.data.payload.assigned_user) {
-        const whoami = yield select(getWhoami);
-        const result = yield call([api, api.users.getUsers]);
-        yield put(getUsersSuccess(result))
-        if (action.data.payload.assigned_user_uuid === whoami.uuid) {
-            const whoamiResult = yield call([api, api.users.whoami]);
-            yield put(getWhoamiSuccess(whoamiResult))
+        if (action.data.payload.assigned_user) {
+            action.data.payload.assigned_user_uuid = action.data.payload.assigned_user.uuid;
         }
+
+        yield call([api, api.vehicles.updateVehicle], action.data.vehicleUUID, action.data.payload);
+        if (action.data.payload.assigned_user) {
+            const whoami = yield select(getWhoami);
+            const result = yield call([api, api.users.getUsers]);
+            yield put(getUsersSuccess(result))
+            if (action.data.payload.assigned_user_uuid === whoami.uuid) {
+                const whoamiResult = yield call([api, api.users.whoami]);
+                yield put(getWhoamiSuccess(whoamiResult))
+            }
+        }
+        yield put(updateVehicleSuccess(action.data))
+    } catch (error) {
+        yield put(updateVehicleFailure(error))
     }
-    yield put(updateVehicleSuccess(action.data))
-} catch (error) {
-    yield put(updateVehicleFailure(error))
-}
 }
 
 export function* watchUpdateVehicle() {
@@ -86,6 +86,7 @@ function* getVehicles() {
         const result = yield call([api, api.vehicles.getVehicles]);
         yield put(getAllVehiclesSuccess(result))
     } catch (error) {
+        console.log("ERRORORORORORO")
         yield put(getAllVehiclesFailure(error))
     }
 }
@@ -95,17 +96,18 @@ export function* watchGetVehicles() {
 }
 
 function* getVehicle(action) {
-    const api = yield select(getApiControl);
     try {
+        const api = yield select(getApiControl);
         const result = yield call([api, api.vehicles.getVehicle], action.data);
         yield put(getVehicleSuccess(result))
     } catch (error) {
+        console.log("AAAAAAAAA")
         if (error.name === "HttpError") {
             if (error.response.status === 404) {
-                yield put(vehicleNotFound())
+                yield put(vehicleNotFound(error))
+            } else {
+                yield put(getVehicleFailure(error))
             }
-        } else {
-            yield put(getVehicleFailure(error))
         }
     }
 }
@@ -115,8 +117,8 @@ export function* watchVehicle() {
 }
 
 function* deleteVehicle(action) {
-    const api = yield select(getApiControl);
     try {
+        const api = yield select(getApiControl);
         yield call([api, api.vehicles.deleteVehicle], action.data);
         yield put(deleteVehicleSuccess(action.data))
     } catch (error) {
@@ -130,13 +132,13 @@ export function* watchDeleteVehicle() {
 
 function* restoreVehicle(action) {
     try {
-    const api = yield select(getApiControl);
-    yield call([api, api.vehicles.restoreVehicle], action.data);
-    const result = yield call([api, api.vehicles.getVehicle], action.data);
-    yield put(restoreVehicleSuccess(result))
-} catch (error) {
-    yield put(restoreVehicleFailure(error))
-}
+        const api = yield select(getApiControl);
+        yield call([api, api.vehicles.restoreVehicle], action.data);
+        const result = yield call([api, api.vehicles.getVehicle], action.data);
+        yield put(restoreVehicleSuccess(result))
+    } catch (error) {
+        yield put(restoreVehicleFailure(error))
+    }
 }
 
 export function* watchRestoreVehicle() {

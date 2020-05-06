@@ -44,7 +44,7 @@ export default function VehicleProfile(props) {
     const userAssign = editMode ?
         <UsersSelect label={"Assign this vehicle to a user."} onSelect={onAssignUser}/> : <></>;
     let editToggle = <></>;
-    if (whoami && whoami.roles.includes("admin")) {
+    if (whoami.roles && whoami.roles.includes("admin")) {
         editToggle = editMode ?
             <IconButton
                 color="inherit"
