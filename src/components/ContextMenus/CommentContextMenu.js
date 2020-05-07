@@ -2,9 +2,9 @@ import React, {useEffect} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
-    deleteSession,
-    restoreSession
-} from "../../redux/sessions/SessionsActions";
+    deleteComment, deleteSidebarComment,
+    restoreComment, restoreSidebarComment
+} from "../../redux/comments/CommentsActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
@@ -19,10 +19,10 @@ const initialState = {
 };
 
 
-function SessionContextMenu(props) {
+function CommentContextMenu(props) {
     const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
-    const postingSelector = createPostingSelector(["DELETE_SESSION", "RESTORE_SESSION"]);
+    const postingSelector = createPostingSelector(props.sidebar ?  ["DELETE_SIDEBAR_COMMENT", "RESTORE_SIDEBAR_COMMENT"] : ["DELETE_COMMENT", "RESTORE_COMMENT"]);
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
@@ -34,15 +34,21 @@ function SessionContextMenu(props) {
         });
     };
 
-
     function undoDelete(key) {
         props.closeSnackbar(key);
-        dispatch(restoreSession(props.session.uuid));
+        if (props.sidebar)
+            dispatch(restoreSidebarComment(props.comment.uuid));
+        else
+            dispatch(restoreComment(props.comment.uuid));
     }
 
     function onDelete() {
+        console.log("aaaaa")
         handleClose();
-        dispatch(deleteSession(props.session.uuid));
+        if (props.sidebar)
+            dispatch(deleteSidebarComment(props.comment.uuid));
+        else
+            dispatch(deleteComment(props.comment.uuid));
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
@@ -51,7 +57,7 @@ function SessionContextMenu(props) {
             </React.Fragment>
         );
         const snack = () => {
-            props.enqueueSnackbar('Session deleted.', {variant: "info", action, autoHideDuration: 8000});
+            props.enqueueSnackbar('Comment deleted.', {variant: "info", action, autoHideDuration: 8000});
         }
         props.setSnack({ snack })
     }
@@ -83,12 +89,12 @@ function SessionContextMenu(props) {
                 }
             >
                 <MenuItem
-                    disabled={!whoami.uuid === props.session.user_uuid}
+                    disabled={!whoami.uuid === props.comment.user_uuid}
                     style={{color: "rgb(235, 86, 75)"}}
                     onClick={onDelete}>Delete</MenuItem>
             </Menu>
-            </>
+        </>
     );
 }
 
-export default withSnackbar(SessionContextMenu)
+export default withSnackbar(CommentContextMenu)

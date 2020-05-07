@@ -32,7 +32,7 @@ export default function CommentsSection(props) {
     } else {
         return (
             <div style={{paddingTop: "30px"}}>
-                <CommentsMain session={props.session} parentUUID={props.parentUUID} comments={comments}/>
+                <CommentsMain sidebar={props.session} parentUUID={props.parentUUID} comments={comments}/>
             </div>
         )
     }

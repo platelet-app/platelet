@@ -82,7 +82,8 @@ function App(props) {
 
     function loginCheck() {
         if (whoami && whoami.login_expiry) {
-            if (whoami.login_expiry < moment().add("days", 0).unix()) {
+            // if the login is going to expire in 3 days, log out the user
+            if (whoami.login_expiry < moment().add("days", 3).unix()) {
                 dispatch(logoutUser());
             } else {
                 setConfirmLogin(true);

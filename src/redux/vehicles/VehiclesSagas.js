@@ -101,10 +101,9 @@ function* getVehicle(action) {
         const result = yield call([api, api.vehicles.getVehicle], action.data);
         yield put(getVehicleSuccess(result))
     } catch (error) {
-        console.log("AAAAAAAAA")
         if (error.name === "HttpError") {
             if (error.response.status === 404) {
-                yield put(vehicleNotFound(error))
+                yield put(vehicleNotFound())
             } else {
                 yield put(getVehicleFailure(error))
             }

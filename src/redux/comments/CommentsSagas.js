@@ -20,11 +20,28 @@ import {
     sidebarCommentsNotFound,
     getSidebarCommentsForbidden,
     getSidebarCommentsFailure,
-    addCommentFailure, updateCommentFailure
+    addCommentFailure,
+    updateCommentFailure,
+    deleteCommentSuccess,
+    DELETE_COMMENT_REQUEST,
+    deleteCommentFailure,
+    restoreCommentSuccess,
+    restoreCommentFailure,
+    RESTORE_COMMENT_REQUEST,
+    deleteSidebarCommentSuccess,
+    deleteSidebarCommentFailure,
+    restoreSidebarCommentSuccess,
+    restoreSidebarCommentFailure,
+    RESTORE_SIDEBAR_COMMENT_REQUEST, DELETE_SIDEBAR_COMMENT_REQUEST
 } from "./CommentsActions"
 
 import {getApiControl} from "../Api";
-import {getVehicleFailure, vehicleNotFound} from "../vehicles/VehiclesActions";
+import {
+    DELETE_SESSION_REQUEST,
+    deleteSessionFailure,
+    deleteSessionSuccess, RESTORE_SESSION_REQUEST,
+    restoreSessionSuccess
+} from "../sessions/SessionsActions";
 
 export function* postNewComment(action) {
     try {
@@ -89,6 +106,35 @@ export function* postNewSidebarComment(action) {
     }
 }
 
+function* deleteComment(action) {
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.comments.deleteComment], action.data);
+        yield put(deleteCommentSuccess(action.data))
+    } catch (error) {
+        yield put(deleteCommentFailure(error));
+    }
+}
+
+export function* watchDeleteComment() {
+    yield takeEvery(DELETE_COMMENT_REQUEST, deleteComment)
+}
+
+function* restoreComment(action) {
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.comments.restoreComment], action.data);
+        const result = yield call([api, api.comments.getComment], action.data);
+        yield put(restoreCommentSuccess(result))
+    } catch (error) {
+        yield put(restoreCommentFailure(error));
+    }
+}
+
+export function* watchRestoreComment() {
+    yield takeEvery(RESTORE_COMMENT_REQUEST, restoreComment)
+}
+
 export function* watchPostNewSidebarComment() {
     yield takeEvery(ADD_SIDEBAR_COMMENT_REQUEST, postNewSidebarComment)
 }
@@ -128,4 +174,32 @@ export function* getSidebarComments(action) {
 
 export function* watchGetSidebarComments() {
     yield takeLatest(GET_SIDEBAR_COMMENTS_REQUEST, getSidebarComments)
+}
+function* deleteSidebarComment(action) {
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.comments.deleteComment], action.data);
+        yield put(deleteSidebarCommentSuccess(action.data))
+    } catch (error) {
+        yield put(deleteSidebarCommentFailure(error));
+    }
+}
+
+export function* watchDeleteSidebarComment() {
+    yield takeEvery(DELETE_SIDEBAR_COMMENT_REQUEST, deleteSidebarComment)
+}
+
+function* restoreSidebarComment(action) {
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.comments.restoreComment], action.data);
+        const result = yield call([api, api.comments.getComment], action.data);
+        yield put(restoreSidebarCommentSuccess(result))
+    } catch (error) {
+        yield put(restoreSidebarCommentFailure(error));
+    }
+}
+
+export function* watchRestoreSidebarComment() {
+    yield takeEvery(RESTORE_SIDEBAR_COMMENT_REQUEST, restoreSidebarComment)
 }

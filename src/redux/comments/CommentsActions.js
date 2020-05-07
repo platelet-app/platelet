@@ -1,6 +1,12 @@
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const DELETE_COMMENT_REQUEST = 'DELETE_COMMENT_REQUEST';
+export const DELETE_COMMENT_FAILURE = 'DELETE_COMMENT_FAILURE';
+export const DELETE_COMMENT_SUCCESS = 'DELETE_COMMENT_SUCCESS';
+export const RESTORE_COMMENT_REQUEST = 'RESTORE_COMMENT_REQUEST';
+export const RESTORE_COMMENT_FAILURE = 'RESTORE_COMMENT_FAILURE';
+export const RESTORE_COMMENT_SUCCESS = 'RESTORE_COMMENT_SUCCESS';
 export const UPDATE_COMMENT_REQUEST = 'UPDATE_COMMENT_REQUEST';
 export const UPDATE_COMMENT_FAILURE = 'UPDATE_COMMENT_FAILURE';
 export const UPDATE_COMMENT_SUCCESS = 'UPDATE_COMMENT_SUCCESS';
@@ -21,6 +27,30 @@ export function addCommentSuccess(data) {
 
 export function addCommentFailure(error) {
     return { type: ADD_COMMENT_FAILURE, error }
+}
+
+export function restoreComment(data) {
+    return { type: RESTORE_COMMENT_REQUEST, data }
+}
+
+export function restoreCommentSuccess(data) {
+    return { type: RESTORE_COMMENT_SUCCESS, data }
+}
+
+export function restoreCommentFailure(error) {
+    return { type: RESTORE_COMMENT_FAILURE, error }
+}
+
+export function deleteComment(data) {
+    return { type: DELETE_COMMENT_REQUEST, data }
+}
+
+export function deleteCommentSuccess(data) {
+    return { type: DELETE_COMMENT_SUCCESS, data }
+}
+
+export function deleteCommentFailure(error) {
+    return { type: DELETE_COMMENT_FAILURE, error }
 }
 
 export function clearComments() {
@@ -62,6 +92,12 @@ export function updateCommentFailure(error) {
 export const ADD_SIDEBAR_COMMENT_REQUEST = 'ADD_SIDEBAR_COMMENT_REQUEST';
 export const ADD_SIDEBAR_COMMENT_SUCCESS = 'ADD_SIDEBAR_COMMENT_SUCCESS';
 export const ADD_SIDEBAR_COMMENT_FAILURE = 'ADD_SIDEBAR_COMMENT_FAILURE';
+export const DELETE_SIDEBAR_COMMENT_REQUEST = 'DELETE_SIDEBAR_COMMENT_REQUEST';
+export const DELETE_SIDEBAR_COMMENT_FAILURE = 'DELETE_SIDEBAR_COMMENT_FAILURE';
+export const DELETE_SIDEBAR_COMMENT_SUCCESS = 'DELETE_SIDEBAR_COMMENT_SUCCESS';
+export const RESTORE_SIDEBAR_COMMENT_REQUEST = 'RESTORE_SIDEBAR_COMMENT_REQUEST';
+export const RESTORE_SIDEBAR_COMMENT_FAILURE = 'RESTORE_SIDEBAR_COMMENT_FAILURE';
+export const RESTORE_SIDEBAR_COMMENT_SUCCESS = 'RESTORE_SIDEBAR_COMMENT_SUCCESS';
 export const UPDATE_SIDEBAR_COMMENT_REQUEST = 'UPDATE_SIDEBAR_COMMENT_REQUEST';
 export const UPDATE_SIDEBAR_COMMENT_SUCCESS = 'UPDATE_SIDEBAR_COMMENT_SUCCESS';
 export const UPDATE_SIDEBAR_COMMENT_FAILURE = 'UPDATE_SIDEBAR_COMMENT_FAILURE';
@@ -82,6 +118,30 @@ export function addSidebarCommentSuccess(data) {
 
 export function addSidebarCommentFailure(error) {
     return { type: ADD_SIDEBAR_COMMENT_FAILURE, error }
+}
+
+export function restoreSidebarComment(data) {
+    return { type: RESTORE_SIDEBAR_COMMENT_REQUEST, data }
+}
+
+export function restoreSidebarCommentSuccess(data) {
+    return { type: RESTORE_SIDEBAR_COMMENT_SUCCESS, data }
+}
+
+export function restoreSidebarCommentFailure(error) {
+    return { type: RESTORE_SIDEBAR_COMMENT_FAILURE, error }
+}
+
+export function deleteSidebarComment(data) {
+    return { type: DELETE_SIDEBAR_COMMENT_REQUEST, data }
+}
+
+export function deleteSidebarCommentSuccess(data) {
+    return { type: DELETE_SIDEBAR_COMMENT_SUCCESS, data }
+}
+
+export function deleteSidebarCommentFailure(error) {
+    return { type: DELETE_SIDEBAR_COMMENT_FAILURE, error }
 }
 
 export function clearSidebarComments() {

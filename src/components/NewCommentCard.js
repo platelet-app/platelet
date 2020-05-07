@@ -17,7 +17,7 @@ export default function CommentCard(props) {
     const dispatch = useDispatch();
     const [publicComment, setPublicComment] = useState(true);
     const [commentContents, setCommentContents] = useState("");
-    const postingSelector = createPostingSelector(["ADD_COMMENT", "ADD_SESSION_COMMENT"]);
+    const postingSelector = createPostingSelector(props.sidebar ? ["ADD_SIDEBAR_COMMENT"] : ["ADD_COMMENT"]);
     const isPosting = useSelector(state => postingSelector(state));
 
     function clearCommentOnPost() {
@@ -69,7 +69,7 @@ export default function CommentCard(props) {
                     <Grid container direction={"row"} justify={"space-between"}>
                         <Grid item>
                             <Button disabled={commentContents.length === 0 || isPosting} onClick={() => {
-                                if (props.session) {
+                                if (props.sidebar) {
                                     dispatch(addSidebarComment({
                                         author: props.author,
                                         parent_uuid: props.parentUUID,

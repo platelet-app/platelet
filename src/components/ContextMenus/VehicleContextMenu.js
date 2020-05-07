@@ -22,7 +22,7 @@ const initialSnack = {snack: () => {}}
 
 function VehicleContextMenu(props) {
     const [state, setState] = React.useState(initialState);
-    const postingSelector = createPostingSelector(["DELETE_VEHICLE"]);
+    const postingSelector = createPostingSelector(["DELETE_VEHICLE", "RESTORE_VEHICLE"]);
     const [snack, setSnack] = React.useState(initialSnack)
     const isPosting = useSelector(state => postingSelector(state));
 

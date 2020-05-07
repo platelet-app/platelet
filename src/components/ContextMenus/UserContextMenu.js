@@ -19,7 +19,7 @@ const initialState = {
 function UserContextMenu(props) {
     const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
-    const postingSelector = createPostingSelector(["DELETE_USER"]);
+    const postingSelector = createPostingSelector(["DELETE_USER", "RESTORE_USER"]);
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();

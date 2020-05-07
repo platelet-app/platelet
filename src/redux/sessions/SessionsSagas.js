@@ -13,7 +13,7 @@ import {
     getSessionNotFound,
     getSessionStatisticsFailure,
     getSessionFailure,
-    getSessionStatisticsNotFound, deleteSessionFailure
+    getSessionStatisticsNotFound, deleteSessionFailure, restoreSessionFailure
 } from "./SessionsActions"
 import {getApiControl} from "../Api";
 import {
@@ -109,7 +109,7 @@ function* restoreSession(action) {
         const result = yield call([api, api.sessions.getSession], action.data);
         yield put(restoreSessionSuccess(result))
     } catch (error) {
-        yield put(deleteSessionFailure(error));
+        yield put(restoreSessionFailure(error));
     }
 }
 

@@ -76,7 +76,7 @@ export function tasks(state = initialTasksState, action) {
             //TODO: should this check that the task matches the session? it's unlikely a task will be deleted from anything other than it's own session view
             return {
                 tasks: [
-                    ...state,
+                    ...state.tasks,
                     {
                         ...action.data
                     }
@@ -105,7 +105,7 @@ export function tasks(state = initialTasksState, action) {
             let result_delete = state.tasks.filter(task => task.uuid === action.data);
             if (result_delete.length === 1) {
                 const index = state.tasks.indexOf(result_delete[0]);
-                return {tasks: update(state, {$splice: [[index, 1]]}), error: null};
+                return {tasks: update(state.tasks, {$splice: [[index, 1]]}), error: null};
             } else {
                 return state;
             }

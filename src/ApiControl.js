@@ -165,8 +165,17 @@ class Comment {
     async createComment(input_data) {
         return makeAxios(this.api_url, "comments", "POST", this.bearer, "application/json", input_data)
     }
+
     async updateComment(comment_id, input_data) {
         return makeAxios(this.api_url, "comment/" + comment_id, "PUT", this.bearer, "application/json", input_data)
+    }
+
+    async deleteComment(comment_id) {
+        return makeAxios(this.api_url, "comment/" + comment_id, "DELETE", this.bearer, "application/json")
+    }
+
+    async restoreComment(comment_id) {
+        return makeAxios(this.api_url, "comment/" + comment_id + "/restore", "PUT", this.bearer, "application/json")
     }
 }
 

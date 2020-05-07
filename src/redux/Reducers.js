@@ -177,7 +177,7 @@ const errorReducer = (state = {}, action) => {
 
 export function error(state =  null, action){
     const { error } = action;
-    if (error) {
+    if (error && error.message) {
         console.log(error.message)
     }
     return error ? error : state;
