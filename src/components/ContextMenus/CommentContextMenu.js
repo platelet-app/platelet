@@ -43,7 +43,6 @@ function CommentContextMenu(props) {
     }
 
     function onDelete() {
-        console.log("aaaaa")
         handleClose();
         if (props.sidebar)
             dispatch(deleteSidebarComment(props.comment.uuid));
@@ -89,7 +88,7 @@ function CommentContextMenu(props) {
                 }
             >
                 <MenuItem
-                    disabled={!whoami.uuid === props.comment.user_uuid}
+                    disabled={!whoami.uuid === props.comment.author_uuid}
                     style={{color: "rgb(235, 86, 75)"}}
                     onClick={onDelete}>Delete</MenuItem>
             </Menu>
