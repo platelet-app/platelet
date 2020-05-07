@@ -58,7 +58,7 @@ const whoamiInitialState = {
             email: null,
             dob: null,
             patch: null,
-            roles: null,
+            roles: "",
             comments: null,
             links: null,
             display_name: null,
@@ -177,10 +177,7 @@ const errorReducer = (state = {}, action) => {
 
 export function error(state =  null, action){
     const { error } = action;
-    if (error && error.message) {
-        console.log(error.message)
-    }
-    return error ? error : state;
+    return error || state;
 }
 
 const rootReducer = combineReducers({

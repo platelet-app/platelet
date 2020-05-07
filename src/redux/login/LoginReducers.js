@@ -6,7 +6,9 @@ import {
 } from './LoginActions'
 import {deleteLogin, getApiURL, saveApiURL, getLogin, saveLogin, deleteApiURL} from "../../utilities";
 
-export function apiControl(state = new Control(getApiURL(), getLogin()), action) {
+const initialState = new Control(getApiURL(), getLogin())
+
+export function apiControl(state = initialState, action) {
     switch (action.type) {
         case LOGIN_SUCCESS:
             state.initialiseClasses(action.data.access_token);

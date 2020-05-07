@@ -34,26 +34,28 @@ export default function UserProfile(props) {
         <h2>Profile for {props.user.display_name}</h2>;
 
     let editToggle = <></>;
-    if (whoami.roles.includes("admin") || whoami.uuid === props.user.uuid) {
-        editToggle = editMode ?
-            <IconButton
-                color="inherit"
-                aria-controls="simple-menu"
-                aria-haspopup="true"
-                onClick={() => {
-                    setEditMode(!editMode);
-                }}>
-                <EditIcon/>
-            </IconButton> :
-            <IconButton
-                color="gray"
-                aria-controls="simple-menu"
-                aria-haspopup="true"
-                onClick={() => {
-                    setEditMode(!editMode);
-                }}>
-                <EditIcon/>
-            </IconButton>;
+    if (whoami.roles) {
+        if (whoami.roles.includes("admin") || whoami.uuid === props.user.uuid) {
+            editToggle = editMode ?
+                <IconButton
+                    color="inherit"
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    onClick={() => {
+                        setEditMode(!editMode);
+                    }}>
+                    <EditIcon/>
+                </IconButton> :
+                <IconButton
+                    color="gray"
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    onClick={() => {
+                        setEditMode(!editMode);
+                    }}>
+                    <EditIcon/>
+                </IconButton>;
+        }
     }
 
     const saveButtons = !editMode ? <></> :

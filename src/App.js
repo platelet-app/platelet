@@ -40,6 +40,10 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const snackOptions = {
+    preventDuplicate: true,
+    autoHideDuration: 6000
+}
 
 function App(props) {
     const apiControl = useSelector(state => state.apiControl);
@@ -56,12 +60,12 @@ function App(props) {
         // any saga that returns with an error object that is not null will be handled here
         if (error) {
             if (error.message)
-                props.enqueueSnackbar(`${error}: ${error.response.message}`, {variant: "error", autoHideDuration: 8000});
+                props.enqueueSnackbar(`${error}: ${error.message}`, {...snackOptions, variant: "error"});
             else
-                props.enqueueSnackbar(`${error}: No message returned from the server.`, {variant: "error", autoHideDuration: 8000});
+                props.enqueueSnackbar(`${error}: No message returned from the server.`, {...snackOptions, variant: "error"});
             // if all else fails with authentication, log out the user
             if (error.status === 401)
-                props.enqueueSnackbar("Access has expired. Please log in again.", {variant: "warning", autoHideDuration: 8000});
+                props.enqueueSnackbar("Access has expired. Please log in again.", {...snackOptions, variant: "warning"});
                 dispatch(logoutUser())
         }
     }

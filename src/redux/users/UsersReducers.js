@@ -68,7 +68,7 @@ const initialUserState = {
         email: null,
         dob: null,
         patch: null,
-        roles: null,
+        roles: "",
         comments: null,
         links: null,
         display_name: null,
