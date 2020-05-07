@@ -64,6 +64,7 @@ function CommentContextMenu(props) {
     const handleClose = () => {
         setState(initialState);
     };
+    console.log(!whoami.uuid === props.comment.author_uuid)
 
     return (
         <>
@@ -88,7 +89,7 @@ function CommentContextMenu(props) {
                 }
             >
                 <MenuItem
-                    disabled={!whoami.uuid === props.comment.author_uuid}
+                    disabled={whoami.roles.includes("admin") || whoami.uuid !== props.comment.author_uuid}
                     style={{color: "rgb(235, 86, 75)"}}
                     onClick={onDelete}>Delete</MenuItem>
             </Menu>
