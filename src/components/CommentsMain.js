@@ -25,11 +25,13 @@ export default function CommentsMain(props) {
 
     return (
         <Grid container spacing={3} direction={"column"} alignItems={"center"} >
-            {props.comments.map((comment) => (
-                <Grid item>
+            {props.comments.sort(
+                (a, b) => new Date(a.time_created) - new Date(b.time_created)
+            ).map((comment) => (
+                <Grid item key={comment.uuid}>
                     <div style={{position: "relative"}}>
                         <CommentCard author={comment.author} public={comment.publicly_visible}>
-                        <Typography>{comment.body}</Typography>
+                        {comment.body}
                     </CommentCard>
                         <div style={{
                             cursor: 'context-menu',

@@ -146,14 +146,18 @@ function SessionDetail(props) {
         return <NotFound>{`Session with UUID ${session_uuid} not found.`}</NotFound>
     } else if (viewMode === "stats" || props.statsView) {
         return (
-            <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
+            <PersistentDrawerRight open={rightSideBarOpen}
+                                   handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
+                                   handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
             </PersistentDrawerRight>
         )
     } else if (viewMode === "kanban" || mobileView) {
         return (
-            <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
+            <PersistentDrawerRight open={rightSideBarOpen}
+                                   handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
+                                   handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksGrid tasks={tasks}
                            fullScreenModal={mobileView}
@@ -168,7 +172,9 @@ function SessionDetail(props) {
         )
     } else if (viewMode === "table") {
         return (
-            <PersistentDrawerRight open={rightSideBarOpen} handleDrawerClose={() => setRightSideBarOpen(false)}>
+            <PersistentDrawerRight open={rightSideBarOpen}
+                                   handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
+                                   handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {modeToggle}
                 <TasksTable tasks={tasks}
                             fullScreenModal={mobileView}

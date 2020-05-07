@@ -10,7 +10,6 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CommentsSection from "./CommentsSection";
 import {useSelector} from "react-redux";
 import {SwipeableDrawer} from "@material-ui/core";
-import {createLoadingSelector} from "../redux/selectors";
 
 
 const drawerWidth = 350;
@@ -77,6 +76,8 @@ export default function PersistentDrawerRight(props) {
             <SwipeableDrawer
                 className={classes.drawer}
                 variant="persistent"
+                onOpen={props.handleDrawerToggle}
+                onClose={props.handleDrawerToggle}
                 anchor="right"
                 open={props.open}
                 classes={{

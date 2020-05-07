@@ -82,7 +82,9 @@ function SessionList(props) {
                                       justify={"flex-start"}
                                       alignItems={"center"}
                                 >
-                                    {sessions.sort((a, b) => new Date(b.time_created) - new Date(a.time_created)).map((session) => (
+                                    {sessions.sort(
+                                        (a, b) => new Date(b.time_created) - new Date(a.time_created)
+                                    ).map((session) => (
                                         <Grid item key={session.uuid}>
                                             <div style={{cursor: 'context-menu', position: "relative"}}>
                                                     <SessionCard session={session}/>

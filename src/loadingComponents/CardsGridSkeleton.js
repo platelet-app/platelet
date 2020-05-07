@@ -13,8 +13,8 @@ export default function CardsGridSkeleton (props) {
             >
             {
                 [...Array(props.count ? props.count : 100)].map((x, i) =>
-                    <Grid item xs={10} sm={5} md={4} lg={3}>
-                        <Skeleton key={i} variant="rect" width={200} height={200} />
+                    <Grid key={i} item xs={10} sm={5} md={4} lg={3}>
+                        <Skeleton variant="rect" width={200} height={200} />
                     </Grid>)
             }
             </Grid>
