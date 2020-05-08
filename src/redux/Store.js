@@ -4,13 +4,14 @@ import rootSaga from "./RootSagas";
 import createSagaMiddleware from "redux-saga"
 
 const sagaOptions = {
-    onError: (action, error) => {
+    onErraor: (action, error) => {
         console.log("An uncaught exception has occurred in redux-saga:");
         console.log(action)
         console.log(error)
         if (error) {
             console.log(error.message)
         }
+        throw error;
     }
 }
 const sagaMiddleWare = createSagaMiddleware(sagaOptions);

@@ -34,6 +34,7 @@ const initialState = {
         time_picked_up: null,
         time_dropped_off: null,
         rider: null,
+        assigned_users: [],
         priority_id: null,
         time_cancelled: null,
         time_rejected: null,
@@ -85,7 +86,6 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_CONTACT_NAME_SUCCESS:
         case UPDATE_TASK_CONTACT_NUMBER_SUCCESS:
-        case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
         case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
         case UPDATE_TASK_REJECTED_TIME_SUCCESS:
         case UPDATE_TASK_PRIORITY_SUCCESS:
@@ -98,6 +98,17 @@ export function tasks(state = initialTasksState, action) {
                 const updated_item = {...result[0], ...action.data.payload};
                 const index = state.tasks.indexOf(result[0]);
                 return {tasks: update(state.tasks, {[index]: {$set: updated_item}}), error: null};
+            } else {
+                return state;
+            }
+        case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
+            const result_assignees = state.tasks.filter(task => task.uuid === action.data.taskUUID);
+            if (result_assignees.length === 1) {
+                let assigneesList = result_assignees[0].assigned_users
+                const index = state.tasks.indexOf(result_assignees[0]);
+                //TODO: make this so the payload is actually a rider
+                assigneesList.push(action.data.payload.rider)
+                return {tasks: update(state.tasks.assigned_users, {[index]: {$set: assigneesList}}), error: null};
             } else {
                 return state;
             }

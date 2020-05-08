@@ -35,6 +35,10 @@ import FormSkeleton from "../../loadingComponents/FormSkeleton";
 import TaskModalTimePicker from "./TaskModalTimePicker";
 import TaskModalNameAndContactNumber from "./TaskModalNameAndContactNumber";
 import CommentsSection from "../../containers/CommentsSection";
+import Typography from "@material-ui/core/Typography";
+import UserCard from "../UserCard";
+import {PaddedPaper} from "../../css/common";
+import TaskAssignees from "./TaskAssignees";
 
 export default function TaskModal(props) {
     const dispatch = useDispatch();
@@ -57,7 +61,6 @@ export default function TaskModal(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
-    const availablePatches = useSelector(state => state.availablePatches.patches);
     const mobileView = useSelector(state => state.mobileView);
     const session = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
@@ -106,6 +109,7 @@ export default function TaskModal(props) {
         newTask = taskResult[0];
     }
     const task = props.task || newTask;
+    const taskAssignees = props.task ? props.task.assigned_users : newTask.assigned_users;
 
     const [editMode, setEditMode] = useState(false);
 
@@ -147,14 +151,6 @@ export default function TaskModal(props) {
         }
     }
 
-    function onSelectRider(rider) {
-        if (rider) {
-            const patchFilter = availablePatches.filter(patch => patch.id === rider.patch_id);
-            const patchLabel = patchFilter.length === 1 ? patchFilter[0].label : "";
-            const payload = {patch_id: rider.patch_id, patch: patchLabel, assigned_rider: rider.uuid, rider};
-            dispatch(updateTaskAssignedRider({taskUUID, payload}))
-        }
-    }
 
     function onSelectPriority(priority_id, priority) {
         const payload = {priority_id, priority};
@@ -182,18 +178,7 @@ export default function TaskModal(props) {
             history.push("/");
     };
 
-    let usersSelect = <></>;
-    if (editMode) {
-        usersSelect =
-            <>
-                <UsersSelect id="userSelect"
-                             vehicleAssignedUsersFirst={true}
-                             onSelect={onSelectRider}/>
-                <DialogContentText>
-                    {task.rider ? "Currently assigned to " + task.rider.display_name + "." : ""}
-                </DialogContentText>
-            </>;
-    }
+    const usersSelect = editMode ? <TaskAssignees taskUUID={task.uuid} assignedUsers={taskAssignees}/> : <></>
     let prioritySelect;
     if (!editMode) {
         prioritySelect = task.priority ? <>
