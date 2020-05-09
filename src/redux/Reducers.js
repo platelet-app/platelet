@@ -8,7 +8,7 @@ import {
     SET_MOBILE_VIEW,
     SET_MENU_INDEX, SET_COMMENTS_OBJECT_UUID, CLEAR_WHOAMI, GET_WHOAMI_FAILURE
 } from './Actions'
-import {task, tasks} from "./tasks/TasksReducers"
+import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {session, sessions, sessionStatistics} from "./sessions/SessionsReducers"
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
 import {availableLocations} from "./locations/LocationsReducers"
@@ -183,6 +183,7 @@ export function error(state =  null, action){
 const rootReducer = combineReducers({
     task,
     tasks,
+    currentTask,
     sessions,
     session,
     sessionStatistics,

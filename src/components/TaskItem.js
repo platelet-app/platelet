@@ -12,7 +12,7 @@ export default function TaskItem(props) {
             title={"Task"}
             pickupAddress={props.task.pickup_address}
             dropoffAddress={props.task.dropoff_address}
-            assignedRider={props.task.rider}
+            assignedUsers={props.task.assigned_users}
             pickupTime={props.task.time_picked_up}
             dropoffTime={props.task.time_dropped_off}
             time_of_call={props.task.time_of_call}

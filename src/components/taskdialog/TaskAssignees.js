@@ -2,36 +2,34 @@ import Grid from "@material-ui/core/Grid";
 import UsersSelect from "../UsersSelect";
 import Typography from "@material-ui/core/Typography";
 import UserCard from "../UserCard";
-import React, {useEffect, useState} from "react";
-import {updateTaskAssignedRider} from "../../redux/tasks/TasksActions";
+import React, {useState} from "react";
+import {updateTaskAssignedRider, updateTaskPatch} from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux";
 import {AddCircleButtonSmall} from "../Buttons";
 
 export default function TaskAssignees(props) {
     const [addMode, setAddMode] = useState(false);
     const availablePatches = useSelector(state => state.availablePatches.patches);
-    const [assignees, setAssignees] = useState(props.assignedUsers)
     const dispatch = useDispatch();
     const taskUUID = props.taskUUID;
+    const assignees = useSelector(state => state.currentTask.task.assigned_users);
 
     const addButton = <AddCircleButtonSmall onClick={() => setAddMode(!addMode)}/>
 
-    function reRender () {
-        setAssignees(props.assignedUsers)
-    }
-    useEffect(reRender, [props.assignedUsers])
 
     function onSelectRider(rider) {
         if (rider) {
             const patchFilter = availablePatches.filter(patch => patch.id === rider.patch_id);
             const patchLabel = patchFilter.length === 1 ? patchFilter[0].label : "";
-            const payload = {patch_id: rider.patch_id, patch: patchLabel, user_uuid: rider.uuid, rider};
-            dispatch(updateTaskAssignedRider({taskUUID, payload}))
+            const patchPayload = {patch_id: rider.patch_id, patch: patchLabel, user_uuid: rider.uuid, rider};
+            const riderPayload = {user_uuid: rider.uuid, rider};
+            dispatch(updateTaskPatch({taskUUID, payload: patchPayload}))
+            dispatch(updateTaskAssignedRider({taskUUID, payload: riderPayload}))
         }
         setAddMode(false);
     }
 
-    const noAssigneeMessage = props.assignedUsers.length === 0 ? <Typography>No assignee.</Typography> : <></>
+    const noAssigneeMessage = assignees ? assignees.length === 0 ? <Typography>No assignee.</Typography> : <></> : <></>
     const userSelect = addMode ?
         <UsersSelect id="userSelect"
                      vehicleAssignedUsersFirst={true}

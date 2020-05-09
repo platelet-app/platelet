@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -8,7 +7,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from "@material-ui/core/Grid";
 import {useHistory, useLocation} from "react-router-dom";
 import AddressDetailsCollapsible from "../AddressDetail";
-import UsersSelect from "../UsersSelect";
 import ToggleTimeStamp from "../ToggleTimeStamp";
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
@@ -19,12 +17,11 @@ import {
     getAllTasks,
     updateTaskPickupTime,
     updateTaskPriority,
-    updateTaskAssignedRider,
     updateTaskContactName,
     updateTaskContactNumber,
     updateTaskDropoffAddress,
     updateTaskDropoffTime,
-    updateTaskPickupAddress, updateTaskCancelledTime
+    updateTaskPickupAddress, updateTaskCancelledTime, setCurrentTask
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
@@ -35,9 +32,6 @@ import FormSkeleton from "../../loadingComponents/FormSkeleton";
 import TaskModalTimePicker from "./TaskModalTimePicker";
 import TaskModalNameAndContactNumber from "./TaskModalNameAndContactNumber";
 import CommentsSection from "../../containers/CommentsSection";
-import Typography from "@material-ui/core/Typography";
-import UserCard from "../UserCard";
-import {PaddedPaper} from "../../css/common";
 import TaskAssignees from "./TaskAssignees";
 
 export default function TaskModal(props) {
@@ -62,6 +56,7 @@ export default function TaskModal(props) {
     const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
     const mobileView = useSelector(state => state.mobileView);
+    const task = useSelector(state => state.currentTask.task);
     const session = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
     const currentLocation = useLocation();
@@ -103,14 +98,6 @@ export default function TaskModal(props) {
 
     const taskUUID = decodeUUID(props.match.params.task_uuid_b62);
 
-    const taskResult = tasks.filter(task => task.uuid === taskUUID);
-    let newTask = {};
-    if (taskResult.length === 1) {
-        newTask = taskResult[0];
-    }
-    const task = props.task || newTask;
-    const taskAssignees = props.task ? props.task.assigned_users : newTask.assigned_users;
-
     const [editMode, setEditMode] = useState(false);
 
     function componentDidMount() {
@@ -122,6 +109,15 @@ export default function TaskModal(props) {
         }
     }
     useEffect(componentDidMount, []);
+
+    function currentTask() {
+        const taskResult = tasks.filter(task => task.uuid === taskUUID);
+        if (taskResult.length === 1) {
+            dispatch(setCurrentTask(taskResult[0]))
+        }
+    }
+    useEffect(currentTask, [tasks])
+
     function updateEditMode() {
         setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
     }
@@ -178,7 +174,7 @@ export default function TaskModal(props) {
             history.push("/");
     };
 
-    const usersSelect = editMode ? <TaskAssignees taskUUID={task.uuid} assignedUsers={taskAssignees}/> : <></>
+    const usersSelect = editMode ? <TaskAssignees taskUUID={taskUUID}/> : <></>
     let prioritySelect;
     if (!editMode) {
         prioritySelect = task.priority ? <>
@@ -290,7 +286,6 @@ export default function TaskModal(props) {
                         </Grid>
                         <Grid item>
                             <Box className={classes.box}>
-                                <DialogContentText>Assigned rider:</DialogContentText>
                                 {usersSelect}
                             </Box>
                         </Grid>

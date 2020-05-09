@@ -46,7 +46,12 @@ import {
     updateTaskAssignedRiderSuccess,
     updateTaskPrioritySuccess,
     updateTaskCancelledTimeSuccess,
-    updateTaskRejectedTimeSuccess, getAllTasksNotFound, getAllTasksFailure, getAllMyTasksNotFound, getAllMyTasksFailure
+    updateTaskRejectedTimeSuccess,
+    getAllTasksNotFound,
+    getAllTasksFailure,
+    getAllMyTasksNotFound,
+    getAllMyTasksFailure,
+    updateTaskPatchSuccess, UPDATE_TASK_PATCH_REQUEST
 } from "./TasksActions"
 
 import {getApiControl} from "../Api"
@@ -167,6 +172,12 @@ function* updateTaskPriority(action) {
     yield put(updateTaskPrioritySuccess(action.data))
 }
 
+function* updateTaskPatch(action) {
+    const api = yield select(getApiControl);
+    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+    yield put(updateTaskPatchSuccess(action.data))
+}
+
 function* updateTaskCancelledTime(action) {
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
@@ -213,6 +224,10 @@ export function* watchUpdateTaskAssignedRider() {
 
 export function* watchUpdateTaskPriority() {
     yield takeEvery(UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
+}
+
+export function* watchUpdateTaskPatch() {
+    yield takeEvery(UPDATE_TASK_PATCH_REQUEST, updateTaskPatch)
 }
 
 export function* watchUpdateTaskCancelledTime() {

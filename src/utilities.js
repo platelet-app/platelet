@@ -68,11 +68,11 @@ export function orderTaskList(tasks) {
             tasksCancelled.unshift(task);
         } else if (task.time_rejected) {
             tasksRejected.unshift(task);
-        } else if (task.assigned_rider === null) {
+        } else if (!task.assigned_users || !task.assigned_users.length) {
             tasksNew.unshift(task);
-        } else if (task.assigned_rider && !task.time_picked_up) {
+        } else if (task.assigned_users.length && !task.time_picked_up) {
             tasksActive.unshift(task);
-        } else if (task.assigned_rider && task.time_picked_up && !task.time_dropped_off) {
+        } else if (task.assigned_users.length && task.time_picked_up && !task.time_dropped_off) {
             tasksPickedUp.unshift(task);
         } else if (task.time_dropped_off) {
             tasksDelivered.unshift(task);

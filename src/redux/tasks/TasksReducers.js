@@ -4,12 +4,12 @@ import {
     GET_MY_TASKS_SUCCESS,
     GET_TASK_SUCCESS, GET_TASKS_FAILURE,
     GET_TASKS_SUCCESS,
-    RESTORE_TASK_SUCCESS,
+    RESTORE_TASK_SUCCESS, SET_CURRENT_TASK,
     UPDATE_TASK_ASSIGNED_RIDER_SUCCESS,
     UPDATE_TASK_CANCELLED_TIME_SUCCESS,
     UPDATE_TASK_CONTACT_NAME_SUCCESS,
     UPDATE_TASK_CONTACT_NUMBER_SUCCESS,
-    UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS, UPDATE_TASK_DROPOFF_TIME_SUCCESS,
+    UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS, UPDATE_TASK_DROPOFF_TIME_SUCCESS, UPDATE_TASK_PATCH_SUCCESS,
     UPDATE_TASK_PICKUP_ADDRESS_SUCCESS,
     UPDATE_TASK_PICKUP_TIME_SUCCESS, UPDATE_TASK_PRIORITY_SUCCESS, UPDATE_TASK_REJECTED_TIME_SUCCESS,
     UPDATE_TASK_SUCCESS
@@ -53,7 +53,36 @@ export function task(state = initialState, action) {
         case GET_TASK_SUCCESS:
             return {task: action.data, error: null};
         default:
-            return state
+            return state;
+    }
+}
+
+export function currentTask(state = initialState, action) {
+    switch (action.type) {
+        case SET_CURRENT_TASK:
+            return {task: action.data, error: null};
+        case UPDATE_TASK_SUCCESS:
+        case UPDATE_TASK_CONTACT_NAME_SUCCESS:
+        case UPDATE_TASK_CONTACT_NUMBER_SUCCESS:
+        case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
+        case UPDATE_TASK_REJECTED_TIME_SUCCESS:
+        case UPDATE_TASK_PRIORITY_SUCCESS:
+        case UPDATE_TASK_PATCH_SUCCESS:
+        case UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS:
+        case UPDATE_TASK_PICKUP_ADDRESS_SUCCESS:
+        case UPDATE_TASK_PICKUP_TIME_SUCCESS:
+        case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
+            return state;
+            return {task: Object.assign(state.task, action.data.payload), error: null};
+        case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
+            return state;
+            console.log(state)
+            //TODO: make this the payload instead of rider
+            state.task.assigned_users.push(action.data.payload.rider);
+            console.log(state)
+            return {task: state.task, error: null};
+        default:
+            return state;
     }
 }
 
@@ -89,6 +118,7 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
         case UPDATE_TASK_REJECTED_TIME_SUCCESS:
         case UPDATE_TASK_PRIORITY_SUCCESS:
+        case UPDATE_TASK_PATCH_SUCCESS:
         case UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS:
         case UPDATE_TASK_PICKUP_ADDRESS_SUCCESS:
         case UPDATE_TASK_PICKUP_TIME_SUCCESS:
@@ -106,9 +136,9 @@ export function tasks(state = initialTasksState, action) {
             if (result_assignees.length === 1) {
                 let assigneesList = result_assignees[0].assigned_users
                 const index = state.tasks.indexOf(result_assignees[0]);
-                //TODO: make this so the payload is actually a rider
                 assigneesList.push(action.data.payload.rider)
-                return {tasks: update(state.tasks.assigned_users, {[index]: {$set: assigneesList}}), error: null};
+                const final_task = {...result_assignees[0], assigned_users: assigneesList}
+                return {tasks: update(state.tasks, {[index]: {$set: final_task}}), error: null};
             } else {
                 return state;
             }

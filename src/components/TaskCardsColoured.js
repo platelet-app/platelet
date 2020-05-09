@@ -3,12 +3,9 @@ import '../App.css';
 import 'typeface-roboto'
 import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../css/TaskCards';
 import CardContent from '@material-ui/core/CardContent';
-import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
 import Grid from "@material-ui/core/Grid";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import CardItem from "./CardItem"
-import Divider from "@material-ui/core/Divider";
 
 export function TaskCard(props) {
     let pickupTitle = "";
@@ -27,17 +24,15 @@ export function TaskCard(props) {
     if (props.dropoffAddress) {
         dropoffWard = props.dropoffAddress.ward ? props.dropoffAddress.ward : ""
     }
-    let rider = "";
-    let hasRider = false;
-    if (props.assignedRider) {
-        rider = (props.assignedRider.display_name) ? props.assignedRider.display_name : "";
-        hasRider = true;
-    }
+    const hasRider = props.assignedUsers ? !!props.assignedUsers.length : false;
+    const ridersNames = props.assignedUsers ? props.assignedUsers.map((user => {
+        return user.display_name
+    })).join(", ") : "";
     const patch = props.patch ? props.patch : "";
     const cardInnerContent =
         <CardContent>
             <Grid container spacing={0} direction={"column"}>
-                <CardItem width={"170px"} label={"Assignee"}>{rider}</CardItem>
+                <CardItem width={"170px"} label={"Assignee"}>{ridersNames}</CardItem>
                 <CardItem label={"Patch"}>{patch}</CardItem>
                 <CardItem label={"From"}>{pickupTitle}</CardItem>
                 <CardItem label={"Ward"}>{pickupWard}</CardItem>
