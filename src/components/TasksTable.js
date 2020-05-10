@@ -83,14 +83,14 @@ const getColumnTitle = key => {
 function getStatusColour(task) {
 
     let hasRider = false;
-    if (task.assigned_rider) {
+    if (task.assigned_users.length > 0) {
         hasRider = true;
     }
     if (task.time_cancelled || task.time_rejected) {
         return {index: 4, colour: "gray"}
-    } else if (!task.assigned_rider) {
+    } else if (!hasRider) {
         return {index: 0, colour: "rgba(252, 231, 121, 1)"}
-    } else if (task.assigned_rider && !task.time_picked_up) {
+    } else if (hasRider && !task.time_picked_up) {
         return {index: 1, colour: "cornflowerblue"}
     } else if (hasRider && task.time_picked_up && !task.time_dropped_off) {
         return {index: 2, colour: "orange"}
@@ -101,10 +101,11 @@ function getStatusColour(task) {
 
 function tasksDataColumns (tasks) {
     return (tasks.map(task => {
+
         return {
             colourCode: getStatusColour(task),
             time_of_call: task.time_of_call ? task.time_of_call : "",
-            assignee: task.rider ? task.rider.display_name : "",
+            assignees: task.assigned_users.length > 0 ? task.assigned_users.map((u) => u.display_name).join(", ") : "",
             contactName: task.contact_name ? task.contact_name : "",
             contactNumber: task.contact_number ? task.contact_number : "",
             pickupAddress: task.pickup_address ? task.pickup_address.line1 : "",
@@ -149,7 +150,7 @@ export default function TasksTable(props) {
 
         },
         {title: "", field: "contextMenu", width: "0px", sorting: false},
-        {title: "Assignee", field: "assignee"},
+        {title: "Assignees", field: "assignees"},
         {
             title: "Time of Call",
             width: "220px",
