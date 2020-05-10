@@ -6,15 +6,18 @@ import React, {useState} from "react";
 import {updateTaskAssignedRider, updateTaskPatch} from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux";
 import {AddCircleButtonSmall} from "../Buttons";
+import {createPostingSelector} from "../../redux/selectors";
 
 export default function TaskAssignees(props) {
     const [addMode, setAddMode] = useState(false);
     const availablePatches = useSelector(state => state.availablePatches.patches);
+    const postingSelector = createPostingSelector(["UPDATE_TASK_ASSIGNED_RIDER", "UPDATE_TASK_PATCH"]);
+    const isPosting = useSelector(state => postingSelector(state));
     const dispatch = useDispatch();
     const taskUUID = props.taskUUID;
     const assignees = useSelector(state => state.currentTask.task.assigned_users);
 
-    const addButton = <AddCircleButtonSmall onClick={() => setAddMode(!addMode)}/>
+    const addButton = <AddCircleButtonSmall disabled={isPosting} onClick={() => setAddMode(!addMode)}/>
 
 
     function onSelectRider(rider) {

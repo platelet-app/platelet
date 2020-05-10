@@ -48,10 +48,10 @@ export default function TaskModal(props) {
         "GET_WHOAMI"]);
     const isPostingPickupSelector = createPostingSelector([
         "UPDATE_TASK_PICKUP_TIME"
-        ]);
+    ]);
     const isPostingDropoffSelector = createPostingSelector([
         "UPDATE_TASK_DROPOFF_TIME"
-        ]);
+    ]);
     const isFetching = useSelector(state => loadingSelector(state));
     const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
@@ -108,6 +108,7 @@ export default function TaskModal(props) {
             });
         }
     }
+
     useEffect(componentDidMount, []);
 
     function currentTask() {
@@ -116,20 +117,22 @@ export default function TaskModal(props) {
             dispatch(setCurrentTask(taskResult[0]))
         }
     }
+
     useEffect(currentTask, [tasks])
 
     function updateEditMode() {
         setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
     }
+
     useEffect(updateEditMode, [whoami, session])
 
     function onSelectContactNumber(event) {
-        const payload = { contact_number: event.target.value };
+        const payload = {contact_number: event.target.value};
         dispatch(updateTaskContactNumber({taskUUID, payload}));
     }
 
     function onSelectName(event) {
-        const payload = { contact_name: event.target.value };
+        const payload = {contact_name: event.target.value};
         dispatch(updateTaskContactName({taskUUID, payload}));
     }
 
@@ -150,17 +153,17 @@ export default function TaskModal(props) {
 
     function onSelectPriority(priority_id, priority) {
         const payload = {priority_id, priority};
-        dispatch(updateTaskPriority({ taskUUID, payload }));
+        dispatch(updateTaskPriority({taskUUID, payload}));
     }
 
     function onSelectPickedUp(status) {
         const payload = {time_picked_up: status ? moment.utc().toISOString() : null};
-        dispatch(updateTaskPickupTime({ taskUUID, payload }));
+        dispatch(updateTaskPickupTime({taskUUID, payload}));
     }
 
     function onSelectDroppedOff(status) {
         const payload = {time_dropped_off: status ? moment.utc().toISOString() : null};
-        dispatch(updateTaskDropoffTime({ taskUUID, payload }));
+        dispatch(updateTaskDropoffTime({taskUUID, payload}));
     }
 
     let handleClose = e => {
@@ -168,7 +171,7 @@ export default function TaskModal(props) {
         //TODO: might be a better way of doing this
         if (currentLocation.pathname.includes("session"))
             history.push("/session/" + encodeUUID(task.session_uuid));
-        else  if (currentLocation.pathname.includes("mytasks"))
+        else if (currentLocation.pathname.includes("mytasks"))
             history.push("/mytasks");
         else
             history.push("/");
@@ -202,9 +205,9 @@ export default function TaskModal(props) {
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_cancelled}
                                  onSelect={() => {
                                      const payload = {time_cancelled: null};
-                                     dispatch(updateTaskCancelledTime({ taskUUID, payload }));
+                                     dispatch(updateTaskCancelledTime({taskUUID, payload}));
                                  }
-                }/>
+                                 }/>
             </Box>
     }
     let rejectedStatus = <></>
@@ -217,7 +220,7 @@ export default function TaskModal(props) {
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_rejected}
                                  onSelect={() => {
                                      const payload = {time_rejected: null};
-                                     dispatch(updateTaskCancelledTime({ taskUUID, payload }));
+                                     dispatch(updateTaskCancelledTime({taskUUID, payload}));
                                  }
                                  }/>
             </Box>
@@ -232,6 +235,98 @@ export default function TaskModal(props) {
                                    deliverables={task.deliverables ? task.deliverables : []}/>
         </>;
     }
+
+    const layerSpacing = 4;
+
+    const layerOne =
+        <Grid container direction={"row"} spacing={layerSpacing}>
+            <Grid item>
+                {rejectedStatus}
+            </Grid>
+            <Grid item>
+                {cancelledStatus}
+            </Grid>
+        </Grid>
+
+    const layerTwo =
+        <Grid container direction={"row"} spacing={layerSpacing}>
+            <Grid item>
+                <Box className={classes.box}>
+                    <TaskModalNameAndContactNumber
+                        contactName={task.contact_name}
+                        contactNumber={task.contact_number}
+                        onSelectName={onSelectName}
+                        onSelectContactNumber={onSelectContactNumber}
+                    />
+                </Box>
+            </Grid>
+            <Grid item>
+                <Box className={classes.box}>
+                    {prioritySelect}
+                </Box>
+            </Grid>
+        </Grid>
+
+    const layerThree =
+        <Grid container direction={"row"} spacing={layerSpacing}>
+            <Grid item>
+                <Box className={classes.box}>
+                    <DialogContentText>From:</DialogContentText>
+                    <AddressDetailsCollapsible label={"Pickup Address"}
+                                               onSelect={onSelectPickup}
+                                               address={task.pickup_address}
+                                               disabled={!editMode}
+                    />
+                </Box>
+            </Grid>
+            <Grid item>
+                <Box className={classes.box}>
+                    <DialogContentText>To:</DialogContentText>
+                    <AddressDetailsCollapsible label={"Dropoff Address"}
+                                               onSelect={onSelectDropoff}
+                                               address={task.dropoff_address}
+                                               disabled={!editMode}/>
+                </Box>
+            </Grid>
+
+        </Grid>
+
+    const layerFour =
+        <Grid container direction={"row"} spacing={layerSpacing}>
+            <Grid item>
+                <Box className={classes.box}>
+                    {usersSelect}
+                </Box>
+            </Grid>
+            <Grid item>
+                <Box className={classes.box}>
+                    {deliverableSelect}
+                </Box>
+            </Grid>
+        </Grid>
+
+    const layerFive =
+        <Grid container direction={"row"} spacing={layerSpacing}>
+            <Grid item>
+                <Box className={classes.box}>
+                    <TaskModalTimePicker disabled={isPostingPickupTime} label={"Picked Up"} time={task.time_picked_up}
+                                         onToggle={onSelectPickedUp} onChange={(time_picked_up) => {
+                        const payload = {time_picked_up};
+                        dispatch(updateTaskPickupTime({taskUUID, payload}))
+                    }}/>
+                </Box>
+            </Grid>
+            <Grid item>
+                <Box className={classes.box}>
+                    <TaskModalTimePicker disabled={isPostingDropoffTime} label={"Dropped Off"}
+                                         time={task.time_dropped_off} onToggle={onSelectDroppedOff}
+                                         onChange={(time_dropped_off) => {
+                                             const payload = {time_dropped_off};
+                                             dispatch(updateTaskDropoffTime({taskUUID, payload}))
+                                         }}/>
+                </Box>
+            </Grid>
+        </Grid>
 
     if (props.modal) {
         const modalContents = isFetching ?
@@ -249,77 +344,20 @@ export default function TaskModal(props) {
                           justify={"flex-start"}
                           alignItems={"flex-start"}>
                         <Grid item>
-                            {rejectedStatus}
+                            {layerOne}
                         </Grid>
                         <Grid item>
-                            {cancelledStatus}
-                        </Grid>
-                        <Grid item>
-                            <Box className={classes.box}>
-                                <TaskModalNameAndContactNumber
-                                    contactName={task.contact_name}
-                                    contactNumber={task.contact_number}
-                                    onSelectName={onSelectName}
-                                    onSelectContactNumber={onSelectContactNumber}
-                                />
-                            </Box>
+                            {layerTwo}
                         </Grid>
 
                         <Grid item>
-                            <Box className={classes.box}>
-                                <DialogContentText>From:</DialogContentText>
-                                <AddressDetailsCollapsible label={"Pickup Address"}
-                                                           onSelect={onSelectPickup}
-                                                           address={task.pickup_address}
-                                                           disabled={!editMode}
-                                />
-                            </Box>
+                            {layerThree}
                         </Grid>
                         <Grid item>
-                            <Box className={classes.box}>
-                                <DialogContentText>To:</DialogContentText>
-                                <AddressDetailsCollapsible label={"Dropoff Address"}
-                                                           onSelect={onSelectDropoff}
-                                                           address={task.dropoff_address}
-                                                           disabled={!editMode}/>
-                            </Box>
+                            {layerFour}
                         </Grid>
                         <Grid item>
-                            <Box className={classes.box}>
-                                {usersSelect}
-                            </Box>
-                        </Grid>
-                        <Grid item>
-                            <Box className={classes.box}>
-                                {prioritySelect}
-                            </Box>
-                        </Grid>
-                        <Grid item>
-                            <Box className={classes.box}>
-                                {deliverableSelect}
-                            </Box>
-                        </Grid>
-                        <Grid item>
-                            <Box className={classes.box}>
-                            <TaskModalTimePicker disabled={isPostingPickupTime} label={"Picked Up"} time={task.time_picked_up} onToggle={onSelectPickedUp} onChange={(time_picked_up) => {
-                                const payload = {time_picked_up};
-                                dispatch(updateTaskPickupTime({taskUUID, payload}))
-                            }}/>
-                                <DialogContentText>
-                                    {pickupTimeNotice}
-                                </DialogContentText>
-                            </Box>
-                        </Grid>
-                        <Grid item>
-                            <Box className={classes.box}>
-                                <TaskModalTimePicker disabled={isPostingDropoffTime} label={"Dropped Off"} time={task.time_dropped_off} onToggle={onSelectDroppedOff} onChange={(time_dropped_off) => {
-                                    const payload = {time_dropped_off};
-                                    dispatch(updateTaskDropoffTime({taskUUID, payload}))
-                                }}/>
-                                <DialogContentText>
-                                    {dropoffTimeNotice}
-                                </DialogContentText>
-                            </Box>
+                            {layerFive}
                         </Grid>
                         <Grid item>
                             <CommentsSection parentUUID={taskUUID}/>
@@ -330,7 +368,7 @@ export default function TaskModal(props) {
 
         return (
             <>
-                <Dialog fullScreen={mobileView} open={true} onClose={handleClose}
+                <Dialog fullScreen={mobileView} maxWidth={"md"} fullWidth={true} open={true} onClose={handleClose}
                         aria-labelledby="form-dialog-title">
                     <DialogActions>
                         <Button onClick={handleClose}
@@ -347,8 +385,7 @@ export default function TaskModal(props) {
             return (
                 <FormSkeleton/>
             )
-        }
-        else {
+        } else {
             return (
                 <div style={{
                     background: "white",

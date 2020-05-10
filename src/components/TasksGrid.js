@@ -14,19 +14,23 @@ function filterTasks(tasks, search) {
         return tasks;
     } else {
         return tasks.filter(task => {
-            if (task.rider ? task.rider.display_name.toLowerCase().includes(search.toLowerCase()) : false) {
+            // TODO: do this on the task object before it gets sent to the search function
+            const riderCheck = task.assigned_users.map((user) => user.display_name).join(",").toLowerCase();
+            const searchTerm = search.toLowerCase();
+            //if (task.assigned_users ? task.assigned_users.map((user) => user.display_name.toLowerCase().includes(search.toLowerCase())).some(x => x) : false) {
+            if (riderCheck.includes(searchTerm)) {
                 return task
-            } else if (task.patch ? task.patch.toLowerCase().includes(search.toLowerCase()) : false) {
+            } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
                 return task;
-            } else if (task.priority ? task.priority.toLowerCase().includes(search.toLowerCase()) : false) {
+            } else if (task.priority ? task.priority.toLowerCase().includes(searchTerm) : false) {
                 return task;
-            } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(search.toLowerCase()) : false) {
+            } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {
                 return task;
-            } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(search.toLowerCase()) : false) {
+            } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
                 return task;
-            } else if (task.pickup_address ? task.pickup_address.ward.toLowerCase().includes(search.toLowerCase()) : false) {
+            } else if (task.pickup_address ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
                 return task;
-            } else if (task.dropoff_address ? task.dropoff_address.ward.toLowerCase().includes(search.toLowerCase()) : false) {
+            } else if (task.dropoff_address ? task.dropoff_address.ward.toLowerCase().includes(searchTerm) : false) {
                 return task;
             }
         })
