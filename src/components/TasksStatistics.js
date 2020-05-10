@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {PaddedPaper} from "../css/common";
 import Grid from "@material-ui/core/Grid";
 import {useDispatch, useSelector} from "react-redux";
@@ -11,8 +11,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {createLoadingSelector} from "../redux/selectors";
 import StatsSkeleton from "../loadingComponents/StatsSkeleton";
-import Moment from "react-moment";
-import moment from "moment";
 
 function getTitle(key) {
     switch (key) {
@@ -147,10 +145,29 @@ function PatchStats(props) {
 
 function RiderStats(props) {
     const priorities = useSelector(state => state.availablePriorities.priorities);
+    const [priorityTotals, setPriorityTotals] = useState({})
     let columns = ["Assignee"];
     columns.push(...priorities.map((p) => p.label));
     columns.push("None");
     columns.push("Total");
+    let totals = {};
+    function calculatePriorityTotals() {
+        // for each priority create an entry for that label
+        for (const priority of priorities) {
+            totals[priority.label] = 0;
+            // for each rider sum the total amounts for each priority
+            for (const displayName in props.stats.riders) {
+                totals[priority.label] += props.stats.riders[displayName][priority.label]
+            }
+        }
+        totals["None"] = 0;
+        // sum the total for unassigned tasks
+        for (const displayName in props.stats.riders) {
+            totals["None"] += props.stats.riders[displayName]["None"]
+        }
+        setPriorityTotals(totals);
+    }
+    useEffect(calculatePriorityTotals, [props.stats.riders])
 
     return (
         <TableContainer component={PaddedPaper}>
@@ -179,12 +196,12 @@ function RiderStats(props) {
                         {columns.map((column) => {
                             if (column === "Total")
                                 return <TableCell key={column}
-                                    style={{fontWeight: "bold"}}>{props.stats.num_tasks ? props.stats.num_tasks : ""}</TableCell>;
+                                    style={{fontWeight: "bold"}}>{props.stats.num_all_riders ? props.stats.num_all_riders : ""}</TableCell>;
                             else if (column === "Assignee")
                                 return <TableCell key={column} style={{fontWeight: "bold"}}>Totals:</TableCell>;
                             else
                                 return <TableCell key={column}
-                                    style={{fontWeight: "bold"}}>{props.stats.priorities ? props.stats.priorities[column] : ""}</TableCell>
+                                    style={{fontWeight: "bold"}}>{priorityTotals[column]}</TableCell>
                         })}
                     </TableRow>
                 </TableBody>
