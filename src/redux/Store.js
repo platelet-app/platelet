@@ -7,7 +7,6 @@ const sagaOptions = {
     onErraor: (action, error) => {
         console.log("An uncaught exception has occurred in redux-saga:");
         console.log(action)
-        console.log(error)
         if (error) {
             console.log(error.message)
         }

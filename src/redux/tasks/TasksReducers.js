@@ -76,10 +76,7 @@ export function currentTask(state = initialState, action) {
             return {task: Object.assign(state.task, action.data.payload), error: null};
         case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
             return state;
-            console.log(state)
-            //TODO: make this the payload instead of rider
             state.task.assigned_users.push(action.data.payload.rider);
-            console.log(state)
             return {task: state.task, error: null};
         default:
             return state;

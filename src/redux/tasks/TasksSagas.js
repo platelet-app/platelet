@@ -158,7 +158,6 @@ function* updateTaskDropoffTime(action) {
 
 function* updateTaskAssignedRider(action) {
     const api = yield select(getApiControl);
-    console.log(action.data)
     if (action.data.payload.patch_id)
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload.patch_id);
     if (action.data.payload.user_uuid)

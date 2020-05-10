@@ -86,7 +86,6 @@ function* getVehicles() {
         const result = yield call([api, api.vehicles.getVehicles]);
         yield put(getAllVehiclesSuccess(result))
     } catch (error) {
-        console.log("ERRORORORORORO")
         yield put(getAllVehiclesFailure(error))
     }
 }

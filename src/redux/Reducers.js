@@ -75,7 +75,6 @@ function whoami(state = whoamiInitialState, action) {
         case GET_WHOAMI_SUCCESS:
             return {user: action.data, error: null};
         case GET_WHOAMI_FAILURE:
-            console.log("FAIL FAIL")
             return {...whoamiInitialState, error: action.error};
         case CLEAR_WHOAMI:
             return whoamiInitialState;

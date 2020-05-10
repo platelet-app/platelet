@@ -132,7 +132,7 @@ function UsersSelect(props) {
         }
         let filteredUsers = [];
         reorderedUsers.map((user) => {
-            if (user.display_name !== null && user.roles.includes("rider")) {
+            if (user.display_name !== null && user.roles.includes("rider") && !(props.excludeList ? props.excludeList.includes(user.uuid) : true)) {
                 filteredUsers.push({
                     "label": user.display_name,
                     "uuid": user.uuid

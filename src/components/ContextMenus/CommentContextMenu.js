@@ -64,7 +64,6 @@ function CommentContextMenu(props) {
     const handleClose = () => {
         setState(initialState);
     };
-    console.log(!whoami.uuid === props.comment.author_uuid)
 
     return (
         <>

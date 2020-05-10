@@ -62,6 +62,9 @@ export default function TasksGrid(props) {
     const emptyTask = {
         session_uuid: props.sessionUUID,
         time_of_call: new Date().toISOString(),
+        time_modified: new Date().toISOString(),
+        time_created: new Date().toISOString(),
+        assigned_users: []
     };
     useEffect(() => setFilteredTasks(filterTasks(props.tasks, searchQuery)), [searchQuery, props.tasks]);
     return (<Grid container spacing={3} direction={"column"} alignItems={"flex-start"}>

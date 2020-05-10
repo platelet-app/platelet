@@ -33,7 +33,9 @@ export default function TaskAssignees(props) {
     const userSelect = addMode ?
         <UsersSelect id="userSelect"
                      vehicleAssignedUsersFirst={true}
-                     onSelect={onSelectRider}/> :
+                     onSelect={onSelectRider}
+                     excludeList={assignees.map((u) => u.uuid)}/>
+                     :
         <></>
 
     return (
@@ -44,13 +46,13 @@ export default function TaskAssignees(props) {
             <Grid item>
                 {noAssigneeMessage}
             </Grid>
-            {assignees.map((user) => {
+            {assignees ? assignees.map((user) => {
                 return (
                     <Grid item key={user.uuid}>
                         <UserCard user={user}/>
                     </Grid>
                 )
-            })}
+            }) : <></>}
             <Grid item>
                 {userSelect}
             </Grid>
