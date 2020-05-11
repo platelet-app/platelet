@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import {AddCircleButton, AddCircleButtonSmall} from "../components/Buttons";
+import {AddCircleButton} from "../components/Buttons";
 import TaskItem from "./TaskItem";
 import {encodeUUID, orderTaskList} from "../utilities";
 import {createPostingSelector} from "../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksSheetColumn} from "../css/TaskColumns";
-import MaterialTable, {MTableCell} from 'material-table';
-import moment from "moment";
+import MaterialTable from 'material-table';
 import Box from "@material-ui/core/Box";
 import { useHistory, useLocation } from "react-router-dom";
 
-import {updateTaskAssignedRider, updateTask, addTask} from "../redux/tasks/TasksActions";
+import {addTask} from "../redux/tasks/TasksActions";
 
 import {forwardRef} from 'react';
 
@@ -33,10 +32,8 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 
 
 import TaskContextMenu from "./ContextMenus/TaskContextMenu";
-import {Typography} from "@material-ui/core";
 import Moment from "react-moment";
-import {Add} from "@material-ui/icons";
-import {StyledAddCircleOutline, StyledAddCircleOutlineSmall} from "../css/Buttons";
+import {StyledAddCircleOutline} from "../css/Buttons";
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
@@ -101,7 +98,6 @@ function getStatusColour(task) {
 
 function tasksDataColumns (tasks) {
     return (tasks.map(task => {
-
         return {
             colourCode: getStatusColour(task),
             time_of_call: task.time_of_call ? task.time_of_call : "",

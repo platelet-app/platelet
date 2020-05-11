@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import {AddCircleButton} from "../components/Buttons";
 import TaskItem from "./TaskItem";
 import {orderTaskList} from "../utilities";
@@ -14,11 +13,8 @@ function filterTasks(tasks, search) {
         return tasks;
     } else {
         return tasks.filter(task => {
-            // TODO: do this on the task object before it gets sent to the search function
-            const riderCheck = task.assigned_users.map((user) => user.display_name).join(",").toLowerCase();
             const searchTerm = search.toLowerCase();
-            //if (task.assigned_users ? task.assigned_users.map((user) => user.display_name.toLowerCase().includes(search.toLowerCase())).some(x => x) : false) {
-            if (riderCheck.includes(searchTerm)) {
+            if (task.assigneeList ? task.assigneeList.toLowerCase().includes(searchTerm): false) {
                 return task
             } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
                 return task;
@@ -28,9 +24,9 @@ function filterTasks(tasks, search) {
                 return task;
             } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
                 return task;
-            } else if (task.pickup_address ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
+            } else if (task.pickup_address && task.pickup_address.ward ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
                 return task;
-            } else if (task.dropoff_address ? task.dropoff_address.ward.toLowerCase().includes(searchTerm) : false) {
+            } else if (task.dropoff_address && task.dropoff_address.ward ? task.dropoff_address.ward.toLowerCase().includes(searchTerm) : false) {
                 return task;
             }
         })
@@ -61,6 +57,7 @@ const getColumnTitle = key => {
 export default function TasksGrid(props) {
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
+    const [tasks, setTasks] = useState([]);
     const [filteredTasks, setFilteredTasks] = useState(props.tasks);
     const [searchQuery, setSearchQuery] = useState("");
     const emptyTask = {
@@ -70,7 +67,22 @@ export default function TasksGrid(props) {
         time_created: new Date().toISOString(),
         assigned_users: []
     };
-    useEffect(() => setFilteredTasks(filterTasks(props.tasks, searchQuery)), [searchQuery, props.tasks]);
+    function addAssigneeLists() {
+        const result = props.tasks.map((task) => {
+            return {
+                ...task,
+                assigneeList: task.assigned_users.map((user) => user.display_name).join(", ")
+            }
+        })
+        setTasks(result)
+    }
+    useEffect(addAssigneeLists, [props.tasks])
+    function doSearch() {
+        const result = filterTasks(tasks, searchQuery)
+        //const result = filterTasks(tasks, searchQuery)
+        setFilteredTasks(result);
+    }
+    useEffect(doSearch, [searchQuery, tasks])
     return (<Grid container spacing={3} direction={"column"} alignItems={"flex-start"}>
             <Grid item>
                 {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onChange={(e) => {
@@ -108,7 +120,9 @@ export default function TasksGrid(props) {
                                         {newTaskButton}
                                         {taskList[1].map(task => {
                                             return (
-                                                <TaskItem key={task.uuid} task={task} view={props.modalView}
+                                                <TaskItem key={task.uuid}
+                                                          task={task}
+                                                          view={props.modalView}
                                                           fullScreenModal={props.fullScreenModal}
                                                           location={props.location}
                                                           deleteDisabled={props.deleteDisabled}/>

@@ -10,7 +10,7 @@ import {
     clearWhoami,
     getWhoami, setMobileView
 } from "./redux/Actions";
-import {loginUser, logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
+import {logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
 import {getAvailableDeliverables} from "./redux/deliverables/DeliverablesActions";
 import {getAvailableLocations} from "./redux/locations/LocationsActions";
 import {getAvailablePatches} from "./redux/patches/PatchesActions";
@@ -60,15 +60,26 @@ function App(props) {
         // any saga that returns with an error object that is not null will be handled here
         if (error) {
             if (error.message)
-                props.enqueueSnackbar(`${error}: ${error.message}`, {...snackOptions, variant: "error"});
+                props.enqueueSnackbar(`${error}: ${error.message}`,
+                    {...snackOptions,
+                        variant: "error"});
             else
-                props.enqueueSnackbar(`${error}: No message returned from the server.`, {...snackOptions, variant: "error"});
+                props.enqueueSnackbar(`${error}: No message returned from the server.`, {
+                    ...snackOptions,
+                    variant: "error"
+                });
             // if all else fails with authentication, log out the user
-            if (error.status === 401)
-                props.enqueueSnackbar("Access has expired. Please log in again.", {...snackOptions, variant: "warning"});
+            if (error.status === 401) {
+                props.enqueueSnackbar("Access has expired. Please log in again.", {
+                    ...snackOptions,
+                    variant: "warning"
+                });
+                console.log("IS THIS RUNNING")
                 dispatch(logoutUser())
+            }
         }
     }
+
     useEffect(handleError, [error])
 
     function requestServerSettings() {
@@ -76,12 +87,14 @@ function App(props) {
             dispatch(getServerSettings())
         }
     }
+
     useEffect(requestServerSettings, [apiURL])
 
     function checkServerSettings() {
         Moment.globalMoment = moment;
         Moment.globalLocale = serverSettings.locale.code;
     }
+
     useEffect(checkServerSettings, [serverSettings]);
 
     function loginCheck() {
@@ -94,6 +107,7 @@ function App(props) {
             }
         }
     }
+
     useEffect(loginCheck, [whoami])
 
     function firstWhoami() {
@@ -102,7 +116,9 @@ function App(props) {
         else
             dispatch(clearWhoami())
     }
+
     useEffect(firstWhoami, [isInitialised])
+
     function getStaticData() {
         if (isInitialised) {
             dispatch(getAvailablePriorities());
@@ -112,6 +128,7 @@ function App(props) {
             dispatch(getAvailablePatches())
         }
     }
+
     useEffect(getStaticData, [confirmLogin]);
 
     const theme = useTheme();
@@ -160,9 +177,9 @@ function App(props) {
         )
     } else {
         return (
-        <div className={classes.centeredDiv}>
-            <LoginSkeleton/>
-        </div>
+            <div className={classes.centeredDiv}>
+                <LoginSkeleton/>
+            </div>
         )
     }
 

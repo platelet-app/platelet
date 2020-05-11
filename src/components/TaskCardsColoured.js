@@ -25,9 +25,7 @@ export function TaskCard(props) {
         dropoffWard = props.dropoffAddress.ward ? props.dropoffAddress.ward : ""
     }
     const hasRider = props.assignedUsers ? !!props.assignedUsers.length : false;
-    const ridersNames = props.assignedUsers ? props.assignedUsers.map((user => {
-        return user.display_name
-    })).join(", ") : "";
+    const ridersNames = props.assignedUsers ? props.assignedUsers : "";
     const patch = props.patch ? props.patch : "";
     const cardInnerContent =
         <CardContent>

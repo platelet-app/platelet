@@ -12,7 +12,8 @@ export default function TaskItem(props) {
             title={"Task"}
             pickupAddress={props.task.pickup_address}
             dropoffAddress={props.task.dropoff_address}
-            assignedUsers={props.task.assigned_users}
+            // Only calculate the assignee list if we have to
+            assignedUsers={props.task.assigneeList || props.task.assigned_users.map((user) => user.display_name).join(", ")}
             pickupTime={props.task.time_picked_up}
             dropoffTime={props.task.time_dropped_off}
             time_of_call={props.task.time_of_call}
