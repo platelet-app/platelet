@@ -9,7 +9,7 @@ import {
 import {setCommentsObjectUUID, setMenuIndex, setViewMode} from "../redux/Actions";
 import {getSession} from "../redux/sessions/SessionsActions";
 import TasksGrid from "../components/TasksGrid";
-import {decodeUUID, getLocalStorageViewMode} from "../utilities";
+import {decodeUUID, encodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createNotFoundSelector} from '../redux/selectors';
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
@@ -25,6 +25,8 @@ import PersistentDrawerRight from "./SideInfoSection";
 import ChatIcon from "@material-ui/icons/Chat";
 import Tooltip from "@material-ui/core/Tooltip";
 import NotFound from "../ErrorComponenents/NotFound";
+import {useHistory} from "react-router";
+import {useLocation} from "react-router-dom";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -50,16 +52,15 @@ function SessionDetail(props) {
     const notFoundSelector = createNotFoundSelector(["GET_SESSION"]);
     const notFound = useSelector(state => notFoundSelector(state));
     //TODO: This could put data into title
-    const session = useSelector(state => state.session);
-    let session_uuid = decodeUUID(props.match.params.session_uuid_b62);
-    //TODO: Maybe use this to show a particular task when navigating to the task URL directly
+    const currentSession = useSelector(state => state.currentSession.session);
+    const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
+    const history = useHistory();
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
 
     function componentDidMount() {
         dispatch(getAllTasks(session_uuid));
         dispatch(getSession(session_uuid));
-
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
@@ -68,6 +69,10 @@ function SessionDetail(props) {
             else
                 dispatch(setViewMode(viewModeLocalStorage));
         }
+        if (!props.match) {
+            history.push(`/session/${encodeUUID(currentSession.uuid)}`);
+        }
+
     }
 
     useEffect(componentDidMount, []);

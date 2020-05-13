@@ -1,11 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {PaddedPaper, StyledCard, StyledSharpCard} from '../css/common';
-import {AddCircleButton} from '../components/Buttons';
-import CardContent from '@material-ui/core/CardContent';
+import {PaddedPaper} from '../css/common';
 import Grid from "@material-ui/core/Grid";
-import {addSession, getAllSessions} from "../redux/sessions/SessionsActions";
+import {addSession, clearCurrentSession, getAllSessions} from "../redux/sessions/SessionsActions";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 
@@ -13,6 +11,9 @@ import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 import {setMenuIndex} from "../redux/Actions";
 import SessionContextMenu from "../components/ContextMenus/SessionContextMenu";
 import SessionCard from "../components/SessionCard";
+import Button from "@material-ui/core/Button";
+import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
+import SessionDetail from "./SessionDetail";
 
 const initialSnack = {snack: () => {}}
 
@@ -22,11 +23,20 @@ function SessionList(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const postingSelector = createPostingSelector(["ADD_SESSION"]);
     const deletingSelector = createPostingSelector(["DELETE_SESSION"]);
-    const isPosting = useSelector(state => postingSelector(state));
+    const isPostingNewSession = useSelector(state => postingSelector(state));
     const isDeleting = useSelector(state => deletingSelector(state));
     const sessions = useSelector(state => state.sessions.sessions);
+    const currentSessionUUID = useSelector(state => state.currentSession.session.uuid);
     const whoami = useSelector(state => state.whoami.user);
     const [snack, setSnack] = React.useState(initialSnack)
+    const [isNewSession, setIsNewSession] = useState(false);
+
+    function componentDidMount() {
+        dispatch(clearCurrentSession());
+    }
+    useEffect(componentDidMount, [])
+
+    useEffect(() => {setIsNewSession(!!currentSessionUUID)}, [currentSessionUUID])
 
     function updateSessionsList() {
         if (props.user_uuid || whoami.uuid)
@@ -46,31 +56,37 @@ function SessionList(props) {
     }
     useEffect(dispatchSnack, [isDeleting])
 
-
-
     let emptySession = {
         user_uuid: whoami.uuid,
         time_created: new Date().toISOString(),
     };
-    const circleAdd =
-        <AddCircleButton disabled={isPosting} onClick={
-            () => {
-                let newSession = {...emptySession};
-                newSession.user_uuid = whoami.uuid;
-                dispatch(addSession(newSession));
 
-            }
-        }/>;
+    function onStartNewSession() {
+        let newSession = {...emptySession};
+        newSession.user_uuid = whoami.uuid;
+        dispatch(addSession(newSession));
+    }
+
+    const startNewsession =
+        <Button onClick={onStartNewSession}>
+            Start a new shift
+        </Button>
 
     if (isFetching) {
         return (
             <CardsGridSkeleton/>
         )
+    } else if (isPostingNewSession) {
+        return (
+            <TasksGridSkeleton/>
+        )
+    } else if (isNewSession) {
+        return <SessionDetail session={currentSessionUUID}/>
     } else {
         return (
             <Grid container spacing={2} direction={"column"} justify={"flex-start"} alignItems={"flex-start"}>
                 <Grid item>
-                    {circleAdd}
+                    {startNewsession}
                 </Grid>
                 <Grid item>
                     <PaddedPaper>

@@ -1,5 +1,5 @@
 import {
-    ADD_SESSION_SUCCESS,
+    ADD_SESSION_SUCCESS, CLEAR_CURRENT_SESSION,
     DELETE_SESSION_REQUEST,
     DELETE_SESSION_SUCCESS,
     GET_SESSION_FAILURE,
@@ -74,6 +74,17 @@ export function session(state = initialSessionState, action) {
         case GET_SESSION_FAILURE:
         case GET_SESSION_NOTFOUND:
             return {session: initialSessionState, error: action.error};
+        default:
+            return state;
+    }
+}
+
+export function currentSession(state = initialSessionState, action) {
+    switch (action.type) {
+        case ADD_SESSION_SUCCESS:
+            return {session: action.data, error: null};
+        case CLEAR_CURRENT_SESSION:
+            return initialSessionState;
         default:
             return state;
     }

@@ -9,7 +9,7 @@ import {
     SET_MENU_INDEX, SET_COMMENTS_OBJECT_UUID, CLEAR_WHOAMI, GET_WHOAMI_FAILURE
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
-import {session, sessions, sessionStatistics} from "./sessions/SessionsReducers"
+import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
 import {availableLocations} from "./locations/LocationsReducers"
 import {apiControl, authStatus} from "./login/LoginReducers";
@@ -186,6 +186,7 @@ const rootReducer = combineReducers({
     sessions,
     session,
     sessionStatistics,
+    currentSession,
     deliverables,
     availableDeliverables,
     availablePriorities,

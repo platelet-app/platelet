@@ -13,7 +13,11 @@ import {
     getSessionNotFound,
     getSessionStatisticsFailure,
     getSessionFailure,
-    getSessionStatisticsNotFound, deleteSessionFailure, restoreSessionFailure
+    getSessionStatisticsNotFound,
+    deleteSessionFailure,
+    restoreSessionFailure,
+    setCurrentSession,
+    ADD_SESSION_AND_SET_CURRENT_REQUEST
 } from "./SessionsActions"
 import {getApiControl} from "../Api";
 import {
@@ -30,6 +34,7 @@ export function* postNewSession(action) {
         const result = yield call([api, api.sessions.createSession], action.data);
         const session = {...action.data, "uuid": result.uuid};
         yield put(addSessionSuccess(session));
+        yield put(setCurrentSession(session));
     } catch (error) {
         yield put(addSessionFailure(error));
 

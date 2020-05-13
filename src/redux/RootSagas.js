@@ -1,9 +1,11 @@
 import {
     watchGetSessions,
     watchPostNewSession,
+    watchPostNewSessionAndSetcurrent,
     watchGetSession,
     watchDeleteSession,
-    watchRestoreSession, watchGetSessionStatistics
+    watchRestoreSession,
+    watchGetSessionStatistics
 } from "./sessions/SessionsSagas"
 import {
     watchPostNewTask,

@@ -19,6 +19,9 @@ export const RESTORE_SESSION_REQUEST = 'RESTORE_SESSION_REQUEST';
 export const RESTORE_SESSION_SUCCESS = 'RESTORE_SESSION_SUCCESS';
 export const RESTORE_SESSION_FAILURE = 'RESTORE_SESSION_FAILURE';
 
+export const SET_CURRENT_SESSION = 'SET_CURRENT_SESSION';
+export const CLEAR_CURRENT_SESSION = 'CLEAR_CURRENT_SESSION';
+
 export function addSession(data) {
     return { type: ADD_SESSION_REQUEST, data }
 }
@@ -97,4 +100,12 @@ export function restoreSessionSuccess(data) {
 
 export function restoreSessionFailure(data) {
     return { type: RESTORE_SESSION_FAILURE, data }
+}
+
+export function setCurrentSession(data) {
+    return { type: SET_CURRENT_SESSION, data }
+}
+
+export function clearCurrentSession() {
+    return { type: CLEAR_CURRENT_SESSION }
 }

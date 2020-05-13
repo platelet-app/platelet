@@ -26,6 +26,7 @@ import Grid from "@material-ui/core/Grid";
 import {clearServerSettings, getServerSettings} from "./redux/ServerSettings/ServerSettingsActions";
 import {withSnackbar} from "notistack";
 import LoginSkeleton from "./loadingComponents/LoginSkeleton";
+import {Helmet} from "react-helmet"
 
 const useStyles = makeStyles(theme => ({
     centeredDiv: {
@@ -55,6 +56,10 @@ function App(props) {
     const dispatch = useDispatch();
     const classes = useStyles();
     const [confirmLogin, setConfirmLogin] = useState(false);
+    const [headerSettings, setHeaderSettings] = useState({
+        title: "Bloodbike Dispatch",
+        favicon: ""
+    })
 
     function handleError() {
         // any saga that returns with an error object that is not null will be handled here
@@ -90,11 +95,15 @@ function App(props) {
 
     useEffect(requestServerSettings, [apiURL])
 
+    let helmet =
+        <Helmet>
+            <title>Bloodbike Dispatch</title>
+        </Helmet>
+
     function checkServerSettings() {
         Moment.globalMoment = moment;
         Moment.globalLocale = serverSettings.locale.code;
     }
-
     useEffect(checkServerSettings, [serverSettings]);
 
     function loginCheck() {
@@ -140,6 +149,12 @@ function App(props) {
                 <React.Fragment>
                     <CssBaseline/>
                     <div className="App">
+                        <Helmet>
+                            <title>{serverSettings.organisation_name}</title>
+                            <link rel="icon" type="image/png" sizes="16x16" href={
+                                serverSettings.favicon ? "data:image/png;base64," + serverSettings.favicon : "favicon.ico"
+                            }/>
+                        </Helmet>
                         <ResponsiveDrawer apiControl={apiControl}/>
                     </div>
                 </React.Fragment>
