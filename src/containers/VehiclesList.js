@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
 import {PaddedPaper} from '../css/common';
-import {AddCircleButton} from '../components/Buttons';
+import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
 import {addVehicle, getAllVehicles} from "../redux/vehicles/VehiclesActions";
@@ -25,19 +25,21 @@ function VehicleList() {
     }
 
     useEffect(componentDidMount, []);
+
     useEffect(() => {
         dispatch(setMenuIndex(4))
     }, []);
     const vehicles = useSelector(state => state.vehicles.vehicles);
 
 
-    const circleAdd =
-        <AddCircleButton
+    const addButton =
+        <Button
             onClick={() => {
                 dispatch(addVehicle({}))
-            }
-            }
-        />;
+            }}>
+            Add a new vehicle
+        </Button>
+
     if (isFetching) {
         return (
             <CardsGridSkeleton/>
@@ -46,7 +48,7 @@ function VehicleList() {
         return (
             <Grid container spacing={2} direction={"column"} justify={"flex-start"} alignItems={"flex-start"}>
                 <Grid item>
-                    {circleAdd}
+                    {addButton}
                 </Grid>
                 <Grid item>
                     <PaddedPaper width={"800px"}>

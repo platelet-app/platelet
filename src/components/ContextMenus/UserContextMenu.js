@@ -57,10 +57,6 @@ function UserContextMenu(props) {
         setState(initialState);
     };
 
-    const deleteOption = whoami.roles.includes("admin") ?
-        <MenuItem disabled={props.user.username === "admin"} style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem> :
-        <></>;
-
     return (
         <>
             <IconButton
@@ -83,7 +79,7 @@ function UserContextMenu(props) {
                         : undefined
                 }
             >
-                {deleteOption}
+                <MenuItem disabled={!whoami.roles.includes("admin")} style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>
             </Menu>
             </>
     );

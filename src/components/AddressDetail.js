@@ -74,7 +74,7 @@ export default function AddressDetailsCollapsible(props){
                         aria-controls="address-content"
                         id="address-header"
                     >
-                        <Typography>{props.label} - {line1}</Typography>
+                        <Typography>{props.label ? props.label + " - " + line1 : line1}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <Grid container spacing={0} direction={"column"} alignItems={"flex-start"} justify={"center"}>

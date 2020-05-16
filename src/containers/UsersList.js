@@ -61,9 +61,6 @@ export default function UsersList(props) {
     return (
         <Grid container direction={"column"} spacing={3} alignItems={"flex-start"} justify={"center"}>
             <Grid item>
-                {circleAdd}
-            </Grid>
-            <Grid item>
                 <PaddedPaper width={"800px"}>
                     <Grid container spacing={1} direction={"column"} justify={"center"} alignItems={"flex-start"}>
                         <Grid item>

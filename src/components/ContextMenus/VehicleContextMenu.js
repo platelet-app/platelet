@@ -25,6 +25,7 @@ function VehicleContextMenu(props) {
     const postingSelector = createPostingSelector(["DELETE_VEHICLE", "RESTORE_VEHICLE"]);
     const [snack, setSnack] = React.useState(initialSnack)
     const isPosting = useSelector(state => postingSelector(state));
+    const whoami = useSelector(state => state.whoami.user);
 
     const dispatch = useDispatch();
 
@@ -69,8 +70,6 @@ function VehicleContextMenu(props) {
         setState(initialState);
     };
 
-    const deleteOption = props.deleteDisabled ? <></> : <MenuItem style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>;
-
     return (
         <>
             <IconButton
@@ -93,7 +92,7 @@ function VehicleContextMenu(props) {
                         : undefined
                 }
             >
-                {deleteOption}
+                <MenuItem disabled={!whoami.roles.includes("admin")} style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>
             </Menu>
             </>
     );

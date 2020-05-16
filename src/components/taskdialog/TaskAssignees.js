@@ -5,8 +5,8 @@ import UserCard from "../UserCard";
 import React, {useState} from "react";
 import {updateTaskAssignedRider, updateTaskPatch} from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux";
-import {AddCircleButtonSmall} from "../Buttons";
 import {createPostingSelector} from "../../redux/selectors";
+import Button from "@material-ui/core/Button";
 
 export default function TaskAssignees(props) {
     const [addMode, setAddMode] = useState(false);
@@ -17,8 +17,19 @@ export default function TaskAssignees(props) {
     const taskUUID = props.taskUUID;
     const assignees = useSelector(state => state.currentTask.task.assigned_users);
 
-    const addButton = <AddCircleButtonSmall disabled={isPosting} onClick={() => setAddMode(!addMode)}/>
+    //const addButton = <AddCircleButtonSmall disabled={isPosting} onClick={() => setAddMode(!addMode)}/>
 
+    const addButton =
+        <Button
+            variant={"contained"}
+            color={"primary"}
+            disabled={isPosting}
+            onClick={() => {
+                setAddMode(!addMode)
+            }}
+        >
+            Assign a user
+        </Button>
 
     function onSelectRider(rider) {
         if (rider) {
@@ -43,9 +54,6 @@ export default function TaskAssignees(props) {
 
     return (
         <Grid container direction={"column"} spacing={3} justify={"center"} alignItems={"flex-start"}>
-            <Grid item>
-                <Typography variant={"h5"}>Assignees</Typography>
-            </Grid>
             <Grid item>
                 {noAssigneeMessage}
             </Grid>

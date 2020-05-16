@@ -5,6 +5,7 @@ import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/deliv
 import {connect, useDispatch, useSelector} from "react-redux"
 import {AddCircleButtonSmall} from "./Buttons";
 import {createPostingSelector} from "../redux/selectors";
+import Button from "@material-ui/core/Button";
 
 
 export default function DeliverableGridSelect(props) {
@@ -38,29 +39,44 @@ export default function DeliverableGridSelect(props) {
             }
         />;
 
+    const addButton =
+        <Button
+            variant={"contained"}
+            color={"primary"}
+            disabled={isPosting}
+            onClick={() => {
+                let newDeliverable = {...emptyDeliverable};
+                dispatch(addDeliverable(newDeliverable))
+            }}
+        >
+            Add a deliverable
+        </Button>
+
 
     return (
         <Grid container
-              spacing={0}
+              spacing={2}
               direction={"column"}
               justify={"flex-start"}
               alignItems={"flex-start"}
         >
-            <Grid item>
-                {circleAdd}
-            </Grid>
             {deliverables.map(deliverable => {
-                return <><Grid item>
-                    <DeliverableDropSelect key={deliverable.uuid}
-                                           availableDeliverables={availableDeliverables}
-                                           deliverable={deliverable}
-                                           onSelect={onSelectDeliverable}
-                                           onNoteChange={props.onNoteChange}
-                                           uuid={deliverable.uuid}/>
-                </Grid></>
+                return (
+                    <Grid item key={deliverable.uuid}>
+                        <DeliverableDropSelect key={deliverable.uuid}
+                                               availableDeliverables={availableDeliverables}
+                                               deliverable={deliverable}
+                                               onSelect={onSelectDeliverable}
+                                               onNoteChange={props.onNoteChange}
+                                               uuid={deliverable.uuid}/>
+                    </Grid>
+                )
 
             })
             }
+            <Grid item>
+                {addButton}
+            </Grid>
         </Grid>
     )
 

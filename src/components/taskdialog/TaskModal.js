@@ -25,6 +25,7 @@ import {
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
+import {PaddedPaper} from "../../css/common";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {decodeUUID, encodeUUID} from "../../utilities";
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
@@ -33,6 +34,7 @@ import TaskModalTimePicker from "./TaskModalTimePicker";
 import TaskModalNameAndContactNumber from "./TaskModalNameAndContactNumber";
 import CommentsSection from "../../containers/CommentsSection";
 import TaskAssignees from "./TaskAssignees";
+import Typography from "@material-ui/core/Typography";
 
 export default function TaskModal(props) {
     const dispatch = useDispatch();
@@ -177,7 +179,18 @@ export default function TaskModal(props) {
             history.push("/");
     };
 
-    const usersSelect = editMode ? <TaskAssignees taskUUID={taskUUID}/> : <></>
+    const usersSelect = editMode ?
+        <Grid container direction={"column"}>
+            <Grid item>
+                <DialogContentText>
+        <Typography variant={"h5"}>Assignees:</Typography>
+                </DialogContentText>
+            </Grid>
+            <Grid item>
+        <TaskAssignees taskUUID={taskUUID}/>
+            </Grid>
+        </Grid> : <></>
+
     let prioritySelect;
     if (!editMode) {
         prioritySelect = task.priority ? <>
@@ -198,7 +211,7 @@ export default function TaskModal(props) {
     let cancelledStatus = <></>
     if (task.time_cancelled) {
         cancelledStatus =
-            <Box className={classes.box}>
+            <PaddedPaper width={"400px"}>
                 <DialogContentText>
                     Cancelled at <Moment format={"llll"}>{task.time_cancelled}</Moment>
                 </DialogContentText>
@@ -208,12 +221,12 @@ export default function TaskModal(props) {
                                      dispatch(updateTaskCancelledTime({taskUUID, payload}));
                                  }
                                  }/>
-            </Box>
+            </PaddedPaper>
     }
     let rejectedStatus = <></>
     if (task.time_rejected) {
         rejectedStatus =
-            <Box className={classes.box}>
+            <PaddedPaper width={"400px"}>
                 <DialogContentText>
                     Rejected at <Moment format={"llll"}>{task.time_rejected}</Moment>
                 </DialogContentText>
@@ -223,12 +236,12 @@ export default function TaskModal(props) {
                                      dispatch(updateTaskCancelledTime({taskUUID, payload}));
                                  }
                                  }/>
-            </Box>
+            </PaddedPaper>
     }
     let deliverableSelect = <DeliverableInformation apiControl={props.apiControl} taskUUID={taskUUID}/>;
     if (editMode) {
         deliverableSelect = <><DialogContentText>
-            Deliverables:
+            <Typography variant={"h5"}>Deliverables:</Typography>
         </DialogContentText>
             <DeliverableGridSelect apiControl={props.apiControl}
                                    taskUUID={taskUUID}
@@ -251,42 +264,46 @@ export default function TaskModal(props) {
     const layerTwo =
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
-                <Box className={classes.box}>
+                <PaddedPaper width={"400px"}>
                     <TaskModalNameAndContactNumber
                         contactName={task.contact_name}
                         contactNumber={task.contact_number}
                         onSelectName={onSelectName}
                         onSelectContactNumber={onSelectContactNumber}
                     />
-                </Box>
+                </PaddedPaper>
             </Grid>
             <Grid item>
-                <Box className={classes.box}>
+                <PaddedPaper width={"400px"}>
                     {prioritySelect}
-                </Box>
+                </PaddedPaper>
             </Grid>
         </Grid>
 
     const layerThree =
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
-                <Box className={classes.box}>
-                    <DialogContentText>From:</DialogContentText>
-                    <AddressDetailsCollapsible label={"Pickup Address"}
+                <PaddedPaper width={"400px"}>
+                    <DialogContentText>
+                    <Typography variant={"h5"}>From:</Typography>
+                    </DialogContentText>
+                        <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectPickup}
                                                address={task.pickup_address}
                                                disabled={!editMode}
                     />
-                </Box>
+                </PaddedPaper>
             </Grid>
             <Grid item>
-                <Box className={classes.box}>
-                    <DialogContentText>To:</DialogContentText>
-                    <AddressDetailsCollapsible label={"Dropoff Address"}
+                <PaddedPaper width={"400px"}>
+                    <DialogContentText>
+                    <Typography variant={"h5"}>To:</Typography>
+                    </DialogContentText>
+                    <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectDropoff}
                                                address={task.dropoff_address}
                                                disabled={!editMode}/>
-                </Box>
+                </PaddedPaper>
             </Grid>
 
         </Grid>
@@ -294,37 +311,37 @@ export default function TaskModal(props) {
     const layerFour =
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
-                <Box className={classes.box}>
+                <PaddedPaper width={"400px"}>
                     {usersSelect}
-                </Box>
+                </PaddedPaper>
             </Grid>
             <Grid item>
-                <Box className={classes.box}>
+                <PaddedPaper width={"400px"}>
                     {deliverableSelect}
-                </Box>
+                </PaddedPaper>
             </Grid>
         </Grid>
 
     const layerFive =
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
-                <Box className={classes.box}>
+                <PaddedPaper width={"400px"}>
                     <TaskModalTimePicker disabled={isPostingPickupTime} label={"Picked Up"} time={task.time_picked_up}
                                          onToggle={onSelectPickedUp} onChange={(time_picked_up) => {
                         const payload = {time_picked_up};
                         dispatch(updateTaskPickupTime({taskUUID, payload}))
                     }}/>
-                </Box>
+                </PaddedPaper>
             </Grid>
             <Grid item>
-                <Box className={classes.box}>
+                <PaddedPaper width={"400px"}>
                     <TaskModalTimePicker disabled={isPostingDropoffTime} label={"Dropped Off"}
                                          time={task.time_dropped_off} onToggle={onSelectDroppedOff}
                                          onChange={(time_dropped_off) => {
                                              const payload = {time_dropped_off};
                                              dispatch(updateTaskDropoffTime({taskUUID, payload}))
                                          }}/>
-                </Box>
+                </PaddedPaper>
             </Grid>
         </Grid>
 
@@ -368,8 +385,19 @@ export default function TaskModal(props) {
 
         return (
             <>
-                <Dialog fullScreen={mobileView} maxWidth={"md"} fullWidth={true} open={true} onClose={handleClose}
-                        aria-labelledby="form-dialog-title">
+                <Dialog
+                    fullScreen={mobileView}
+                    maxWidth={"md"}
+                    fullWidth={true}
+                    open={true}
+                    onClose={handleClose}
+                    PaperProps={{
+                        style: {
+                            backgroundColor: "rgb(240, 240, 240)",
+                            boxShadow: 'none',
+                        },
+                    }}
+                    aria-labelledby="form-dialog-title">
                     <DialogActions>
                         <Button onClick={handleClose}
                                 color="primary">
