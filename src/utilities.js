@@ -51,6 +51,44 @@ export function getLocalStorageViewMode() {
     return localStorage.getItem("viewMode");
 }
 
+export function debounce (func, delay) {
+    let inDebounce
+    let result;
+    return function() {
+        const context = this
+        const args = arguments
+        clearTimeout(inDebounce)
+        inDebounce = setTimeout(() =>
+                result = func.apply(context, args)
+            , delay)
+        return result;
+    }
+}
+
+export function throttle(func, limit) {
+    let lastFunc
+    let lastRan
+    let result;
+    return function() {
+        console.log("AAA IT RUNS")
+        const context = this
+        const args = arguments
+        if (!lastRan) {
+            result = func.apply(context, args)
+            lastRan = Date.now()
+        } else {
+            clearTimeout(lastFunc)
+            lastFunc = setTimeout(function() {
+                if ((Date.now() - lastRan) >= limit) {
+                    result = func.apply(context, args)
+                    lastRan = Date.now()
+                }
+            }, limit - (Date.now() - lastRan))
+        }
+        return result;
+    }
+}
+
 export function orderTaskList(tasks) {
     let tasksNew = [];
     let tasksActive = [];

@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import DeliverableDropSelect from "./DeliverableDropSelect";
 import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/deliverables/DeliverablesActions";
-import {connect, useDispatch, useSelector} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import {AddCircleButtonSmall} from "./Buttons";
 import {createPostingSelector} from "../redux/selectors";
 import Button from "@material-ui/core/Button";
+import DeliverableCard from "./DeliverableCard";
+import DeliverablesSelect from "./DeliverableSelect";
 
 
 export default function DeliverableGridSelect(props) {
@@ -14,14 +15,26 @@ export default function DeliverableGridSelect(props) {
     const deliverables = useSelector(state => state.deliverables.deliverables);
     const postingSelector = createPostingSelector(["ADD_DELIVERABLE"]);
     const isPosting = useSelector(state => postingSelector(state));
-
-    const onSelectDeliverable = (uuid, type_id) => {
-        dispatch(updateDeliverable({"deliverableUUID": uuid, "payload": {"type_id": type_id}}));
-    };
+    const [addMode, setAddMode] = useState(false);
 
     let emptyDeliverable = {
         task_uuid: props.taskUUID,
     };
+
+    const onSelectDeliverable = (deliverable) => {
+        console.log(deliverable)
+        let newDeliverable = {...emptyDeliverable, ...deliverable};
+        console.log(newDeliverable)
+        dispatch(addDeliverable(newDeliverable))
+        setAddMode(false);
+    };
+
+    const deliverablesSelect = addMode ?
+        <DeliverablesSelect id="deliverableSelect"
+                     onSelect={onSelectDeliverable}
+                     />
+        :
+        <></>
 
     React.useEffect(() => {
         if (availableDeliverables.length > 0)
@@ -45,6 +58,8 @@ export default function DeliverableGridSelect(props) {
             color={"primary"}
             disabled={isPosting}
             onClick={() => {
+                setAddMode(!addMode)
+                return
                 let newDeliverable = {...emptyDeliverable};
                 dispatch(addDeliverable(newDeliverable))
             }}
@@ -52,6 +67,12 @@ export default function DeliverableGridSelect(props) {
             Add a deliverable
         </Button>
 
+    //<DeliverableDropSelect key={deliverable.uuid}
+    //                       availableDeliverables={availableDeliverables}
+    //                       deliverable={deliverable}
+    //                       onSelect={onSelectDeliverable}
+    //                       onNoteChange={props.onNoteChange}
+    //                       uuid={deliverable.uuid}/>
 
     return (
         <Grid container
@@ -63,17 +84,15 @@ export default function DeliverableGridSelect(props) {
             {deliverables.map(deliverable => {
                 return (
                     <Grid item key={deliverable.uuid}>
-                        <DeliverableDropSelect key={deliverable.uuid}
-                                               availableDeliverables={availableDeliverables}
-                                               deliverable={deliverable}
-                                               onSelect={onSelectDeliverable}
-                                               onNoteChange={props.onNoteChange}
-                                               uuid={deliverable.uuid}/>
+                        <DeliverableCard deliverable={deliverable}/>
                     </Grid>
                 )
 
             })
             }
+            <Grid item>
+                {deliverablesSelect}
+            </Grid>
             <Grid item>
                 {addButton}
             </Grid>
