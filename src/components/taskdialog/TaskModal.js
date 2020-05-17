@@ -377,7 +377,9 @@ export default function TaskModal(props) {
                             {layerFive}
                         </Grid>
                         <Grid item>
-                            <CommentsSection parentUUID={taskUUID}/>
+                            <PaddedPaper width={"400px"}>
+                                <CommentsSection parentUUID={taskUUID}/>
+                            </PaddedPaper>
                         </Grid>
                     </Grid>
                 </DialogContent>
