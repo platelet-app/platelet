@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
-import {AddCircleButtonSmall} from "./Buttons";
 import {createPostingSelector} from "../redux/selectors";
 import Button from "@material-ui/core/Button";
 import DeliverableCard from "./DeliverableCard";
@@ -30,27 +29,17 @@ export default function DeliverableGridSelect(props) {
     };
 
     const deliverablesSelect = addMode ?
-        <DeliverablesSelect id="deliverableSelect"
-                     onSelect={onSelectDeliverable}
-                     />
-        :
-        <></>
+        <DeliverablesSelect
+            id="deliverableSelect"
+            onSelect={onSelectDeliverable}
+            label={"deliverables"}
+        /> : <></>
 
     React.useEffect(() => {
         if (availableDeliverables.length > 0)
             dispatch(getDeliverables(props.taskUUID))
 
     }, [availableDeliverables]);
-
-    const circleAdd =
-        <AddCircleButtonSmall
-            disabled={isPosting}
-            onClick={() => {
-                let newDeliverable = {...emptyDeliverable};
-                dispatch(addDeliverable(newDeliverable))
-            }
-            }
-        />;
 
     const addButton =
         <Button

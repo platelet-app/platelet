@@ -137,9 +137,6 @@ export default function DeliverablesSelect(props) {
 
     function onSelect(selectedItem) {
         let result = availableDeliverables.filter(deliverable => deliverable.label === selectedItem);
-        console.log("ASDFASDF")
-        console.log(selectedItem)
-        console.log(availableDeliverables)
         if (result.length === 1) {
             let deliverable = {
                 type: result[0].label,
@@ -173,7 +170,7 @@ export default function DeliverablesSelect(props) {
                             }
                         },
                         onFocus: openMenu,
-                        placeholder: 'Type to search users',
+                        placeholder: 'Type to search deliverables',
                     });
 
                     return (

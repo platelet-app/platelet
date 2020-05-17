@@ -14,11 +14,15 @@ import AcUnitIcon from "@material-ui/icons/AcUnit"
 const useStyles = makeStyles((theme) => ({
     sample: {
         color: theme.palette.getContrastText(red[500]),
-        backgroundColor: red[500]
+        backgroundColor: red[500],
+        width: theme.spacing(6),
+        height: theme.spacing(6)
     },
     milk: {
         color: theme.palette.getContrastText(yellow[500]),
-        backgroundColor: yellow[500]
+        backgroundColor: yellow[500],
+        width: theme.spacing(6),
+        height: theme.spacing(6)
     }
 }))
 
@@ -39,20 +43,18 @@ export default function DeliverableCard(props) {
     const classes = useStyles();
     return (
         <StyledSharpCard style={{height: "100px"}}>
-            <CardContent>
-                <Grid container spacing={2} justify={"flex-start"} alignItems={"center"} direction={"row"}>
-                    <Grid item>
-                        <Avatar className={classes.milk}>
-                            {getIcon(props.deliverable.type_id)}
-                        </Avatar>
-                    </Grid>
-                    <Grid item>
-                        <Typography>
-                            {props.deliverable.type}
-                        </Typography>
-                    </Grid>
+            <Grid container spacing={2} justify={"flex-start"} alignItems={"center"} direction={"row"}>
+                <Grid item>
+                    <Avatar className={classes.milk}>
+                        {getIcon(props.deliverable.type_id)}
+                    </Avatar>
                 </Grid>
-            </CardContent>
+                <Grid item>
+                    <Typography>
+                        {props.deliverable.type}
+                    </Typography>
+                </Grid>
+            </Grid>
         </StyledSharpCard>
     )
 }
