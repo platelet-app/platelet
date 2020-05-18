@@ -183,7 +183,7 @@ export default function TaskModal(props) {
         <Grid container direction={"column"}>
             <Grid item>
                 <DialogContentText>
-        <Typography variant={"h5"}>Assignees:</Typography>
+                    <Typography variant={"h5"}>Assignees:</Typography>
                 </DialogContentText>
             </Grid>
             <Grid item>
@@ -194,7 +194,7 @@ export default function TaskModal(props) {
     let prioritySelect;
     if (!editMode) {
         prioritySelect = task.priority ? <>
-            <DialogContentText>Priority {task.priority}</DialogContentText></> : ""
+            <DialogContentText>{task.priority}</DialogContentText></> : ""
 
     } else {
         prioritySelect = <PrioritySelect priority={task.priority_id}
@@ -265,6 +265,9 @@ export default function TaskModal(props) {
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
                 <PaddedPaper width={"400px"}>
+                    <DialogContentText>
+                        <Typography variant={"h5"}>Contact:</Typography>
+                    </DialogContentText>
                     <TaskModalNameAndContactNumber
                         contactName={task.contact_name}
                         contactNumber={task.contact_number}
@@ -275,6 +278,9 @@ export default function TaskModal(props) {
             </Grid>
             <Grid item>
                 <PaddedPaper width={"400px"}>
+                    <DialogContentText>
+                        <Typography variant={"h5"}>Priority:</Typography>
+                    </DialogContentText>
                     {prioritySelect}
                 </PaddedPaper>
             </Grid>
@@ -285,7 +291,7 @@ export default function TaskModal(props) {
             <Grid item>
                 <PaddedPaper width={"400px"}>
                     <DialogContentText>
-                    <Typography variant={"h5"}>From:</Typography>
+                        <Typography variant={"h5"}>From:</Typography>
                     </DialogContentText>
                         <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectPickup}
@@ -326,7 +332,7 @@ export default function TaskModal(props) {
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <TaskModalTimePicker disabled={isPostingPickupTime} label={"Picked Up"} time={task.time_picked_up}
+                    <TaskModalTimePicker disabled={isPostingPickupTime} label={"Mark Picked Up"} time={task.time_picked_up}
                                          onToggle={onSelectPickedUp} onChange={(time_picked_up) => {
                         const payload = {time_picked_up};
                         dispatch(updateTaskPickupTime({taskUUID, payload}))
@@ -335,7 +341,7 @@ export default function TaskModal(props) {
             </Grid>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <TaskModalTimePicker disabled={isPostingDropoffTime} label={"Dropped Off"}
+                    <TaskModalTimePicker disabled={isPostingDropoffTime || !!!task.time_picked_up} label={"Mark Dropped Off"}
                                          time={task.time_dropped_off} onToggle={onSelectDroppedOff}
                                          onChange={(time_dropped_off) => {
                                              const payload = {time_dropped_off};

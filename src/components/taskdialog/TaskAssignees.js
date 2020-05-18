@@ -28,7 +28,7 @@ export default function TaskAssignees(props) {
                 setAddMode(!addMode)
             }}
         >
-            Assign a user
+            {addMode ? "Cancel" : "Assign a user"}
         </Button>
 
     function onSelectRider(rider) {

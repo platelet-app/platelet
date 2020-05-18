@@ -60,13 +60,6 @@ export default function TasksGrid(props) {
     const [tasks, setTasks] = useState([]);
     const [filteredTasks, setFilteredTasks] = useState(props.tasks);
     const [searchQuery, setSearchQuery] = useState("");
-    const emptyTask = {
-        session_uuid: props.sessionUUID,
-        time_of_call: new Date().toISOString(),
-        time_modified: new Date().toISOString(),
-        time_created: new Date().toISOString(),
-        assigned_users: []
-    };
     function addAssigneeLists() {
         const result = props.tasks.map((task) => {
             return {
@@ -101,9 +94,10 @@ export default function TasksGrid(props) {
                             return <></>
                         let newTaskButton = "";
                         if (props.sessionUUID && taskList[0] === "tasksNew" && !searchQuery) {
-                            newTaskButton = <AddCircleButton disabled={isPosting} onClick={() => {
-                                props.onAddTaskClick(emptyTask)
-                            }}/>
+                            newTaskButton = <AddCircleButton
+                                disabled={isPosting}
+                                onClick={props.onAddTaskClick}
+                            />
 
                         }
                         const title = getColumnTitle(taskList[0]);

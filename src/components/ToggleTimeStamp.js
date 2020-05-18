@@ -3,7 +3,6 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 
 export default function ToggleTimeStamp(props) {
     const [selected, setSelected] = useState(props.status);
-
         return (
             <div>
             <ToggleButton
@@ -16,7 +15,7 @@ export default function ToggleTimeStamp(props) {
                 }
                 }
             >
-                {props.label}
+                {selected ? "Undo" : props.label}
             </ToggleButton>
                 </div>
         );

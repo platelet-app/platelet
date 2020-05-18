@@ -71,7 +71,6 @@ function getSuggestions(suggestions, value, {showEmpty = false} = {}) {
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
-    console.log(suggestions)
 
     return inputLength === 0 && !showEmpty
         ? []

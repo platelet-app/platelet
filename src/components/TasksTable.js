@@ -80,7 +80,7 @@ const getColumnTitle = key => {
 function getStatusColour(task) {
 
     let hasRider = false;
-    if (task.assigned_users.length > 0) {
+    if (task.assigned_users && task.assigned_users.length > 0) {
         hasRider = true;
     }
     if (task.time_cancelled || task.time_rejected) {
@@ -101,7 +101,7 @@ function tasksDataColumns (tasks) {
         return {
             colourCode: getStatusColour(task),
             time_of_call: task.time_of_call ? task.time_of_call : "",
-            assignees: task.assigned_users.length > 0 ? task.assigned_users.map((u) => u.display_name).join(", ") : "",
+            assignees: task.assigned_users && task.assigned_users.length > 0 ? task.assigned_users.map((u) => u.display_name).join(", ") : "",
             contactName: task.contact_name ? task.contact_name : "",
             contactNumber: task.contact_number ? task.contact_number : "",
             pickupAddress: task.pickup_address ? task.pickup_address.line1 : "",
@@ -124,7 +124,6 @@ function tasksDataColumns (tasks) {
 };
 
 export default function TasksTable(props) {
-    const dispatch = useDispatch();
     const history = useHistory();
     const currentLocation = useLocation();
     const mobileView = useSelector(state => state.mobileView);
@@ -169,10 +168,6 @@ export default function TasksTable(props) {
     ];
     const [data, setData] = useState(tasksDataColumns(props.tasks));
 
-    const emptyTask = {
-        session_uuid: props.sessionUUID,
-        time_of_call: new Date().toISOString(),
-    };
     const actions = [
         {
             icon: Edit,
@@ -186,9 +181,7 @@ export default function TasksTable(props) {
             tooltip: "New Task",
             position: "toolbar",
             disabled: isPosting,
-            onClick: (event) => {
-                dispatch(addTask(emptyTask));
-            }
+            onClick: props.onAddTaskClick
         },
     ];
 

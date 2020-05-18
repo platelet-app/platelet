@@ -8,13 +8,13 @@ export default function TaskModalNameAndContactNumber(props) {
             <Grid item>
             <TextFieldControlled
                 value={props.contactName}
-                label={"Contact Name"}
+                label={"Name"}
                 id={"contact-name"}
                 onChange={props.onSelectName}/>
             </Grid>
             <Grid item>
             <TextFieldControlled
-                label={"Contact Number"}
+                label={"Telephone"}
                 id={"contact-number"}
                 value={props.contactNumber}
                 onChange={props.onSelectContactNumber}/>
@@ -23,4 +23,3 @@ export default function TaskModalNameAndContactNumber(props) {
 
     )
 }
-

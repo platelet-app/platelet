@@ -75,6 +75,18 @@ function SessionDetail(props) {
 
     }
 
+    const emptyTask = {
+        session_uuid: session_uuid,
+        time_of_call: new Date().toISOString(),
+        time_modified: new Date().toISOString(),
+        time_created: new Date().toISOString(),
+        assigned_users: []
+    };
+
+    function addEmptyTask() {
+        dispatch(addTask(emptyTask))
+    }
+
     useEffect(componentDidMount, []);
     useEffect(() => {
         dispatch(setMenuIndex(2))
@@ -166,9 +178,7 @@ function SessionDetail(props) {
                 {modeToggle}
                 <TasksGrid tasks={tasks}
                            fullScreenModal={mobileView}
-                           onAddTaskClick={(task) => {
-                               dispatch(addTask(task));
-                           }}
+                           onAddTaskClick={addEmptyTask}
                            sessionUUID={session_uuid}
                            modalView={"edit"}
                 />
@@ -183,9 +193,7 @@ function SessionDetail(props) {
                 {modeToggle}
                 <TasksTable tasks={tasks}
                             fullScreenModal={mobileView}
-                            onAddTaskClick={(task) => {
-                                dispatch(addTask(task));
-                            }}
+                            onAddTaskClick={addEmptyTask}
                             sessionUUID={session_uuid}
                             modalView={"edit"}
                 />

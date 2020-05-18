@@ -21,9 +21,7 @@ export default function DeliverableGridSelect(props) {
     };
 
     const onSelectDeliverable = (deliverable) => {
-        console.log(deliverable)
         let newDeliverable = {...emptyDeliverable, ...deliverable};
-        console.log(newDeliverable)
         dispatch(addDeliverable(newDeliverable))
         setAddMode(false);
     };
@@ -53,15 +51,8 @@ export default function DeliverableGridSelect(props) {
                 dispatch(addDeliverable(newDeliverable))
             }}
         >
-            Add a deliverable
+            {addMode ? "Cancel" : "Add a deliverable"}
         </Button>
-
-    //<DeliverableDropSelect key={deliverable.uuid}
-    //                       availableDeliverables={availableDeliverables}
-    //                       deliverable={deliverable}
-    //                       onSelect={onSelectDeliverable}
-    //                       onNoteChange={props.onNoteChange}
-    //                       uuid={deliverable.uuid}/>
 
     return (
         <Grid container

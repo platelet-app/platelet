@@ -10,6 +10,7 @@ import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
 import { TextFieldUncontrolled }from "./TextFieldControlled";
 import Grid from "@material-ui/core/Grid";
 import { useState } from 'react';
+import Button from "@material-ui/core/Button"
 
 export default function AddressDetailsCollapsible(props){
     const [what3words, setWhat3words] = useState(props.address ? props.address.what3words || "" : "");
@@ -21,6 +22,7 @@ export default function AddressDetailsCollapsible(props){
     const [country, setCountry] = useState(props.address ? props.address.country || "" : "");
     const [postcode, setPostcode] = useState(props.address ? props.address.country || "" : "");
     const firstUpdate = useRef(true);
+    const [presetMode, setPresetMode] = useState(false);
 
 
     const onSelectPreset = selectedItem => {
@@ -34,6 +36,7 @@ export default function AddressDetailsCollapsible(props){
             setPostcode(selectedItem['address']['postcode']);
             setWhat3words(selectedItem['address']['what3words']);
         }
+        setPresetMode(false);
 
     };
 
@@ -57,15 +60,28 @@ export default function AddressDetailsCollapsible(props){
 
         let presetSelect = <></>;
         if (!props.disabled) {
-            presetSelect =
+            presetSelect = presetMode ?
                 <FavouriteLocationsSelect id="addressSelect" suggestions={props.suggestions}
                                           onSelect={onSelectPreset}
-                                          disabled={props.disabled}/>;
+                                          disabled={props.disabled}/> : <></>;
         }
+
+        const presetModeButton =
+            <Button
+                onClick={() => {setPresetMode(!presetMode)}}
+                variant={"contained"}
+                color={"primary"}
+            >
+                {presetMode ? "Cancel" : "Saved locations"}
+            </Button>
+
         return (
                 <Grid container spacing={1} direction={"column"} alignItems={"flex-start"} justify={"center"}>
                     <Grid item>
-                {presetSelect}
+                        {presetModeButton}
+                    </Grid>
+                    <Grid item>
+                        {presetSelect}
                     </Grid>
                     <Grid item>
                 <ExpansionPanel>

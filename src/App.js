@@ -79,7 +79,6 @@ function App(props) {
                     ...snackOptions,
                     variant: "warning"
                 });
-                console.log("IS THIS RUNNING")
                 dispatch(logoutUser())
             }
         }

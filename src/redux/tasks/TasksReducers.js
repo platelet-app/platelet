@@ -93,10 +93,10 @@ export function tasks(state = initialTasksState, action) {
         case ADD_TASK_SUCCESS:
             return {
                 tasks: [
-                    ...state.tasks,
                     {
                         ...action.data
-                    }
+                    },
+                    ...state.tasks
                 ], error: null
             };
         case RESTORE_TASK_SUCCESS:
