@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import VehicleProfile from "../components/VehicleProfile";
 import {decodeUUID} from "../utilities";
-import {getVehicle} from "../redux/vehicles/VehiclesActions";
+import {getVehicle, updateVehicle} from "../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector, createNotFoundSelector} from "../redux/selectors";
 import FormSkeleton from "../loadingComponents/FormSkeleton";
@@ -12,6 +12,7 @@ import {PaddedPaper} from "../css/common";
 import CommentsSection from "./CommentsSection";
 import {setMenuIndex} from "../redux/Actions";
 import UserCard from "../components/UserCard";
+import Button from "@material-ui/core/Button";
 
 export default function VehicleDetail(props) {
     const dispatch = useDispatch();
@@ -21,6 +22,9 @@ export default function VehicleDetail(props) {
     const notFound = useSelector(state => notFoundSelector(state));
     const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
     const vehicle = useSelector(state => state.vehicle.vehicle);
+    const assignedUser = useSelector(state => state.vehicle.vehicle.assigned_user);
+    const whoami = useSelector(state => state.whoami.user);
+
 
     function componentDidMount() {
         dispatch(getVehicle(vehicleUUID));
@@ -30,6 +34,23 @@ export default function VehicleDetail(props) {
     useEffect(() => {
         dispatch(setMenuIndex(4))
     }, []);
+    function onAssignUser(user) {
+        console.log (user)
+        if (user)
+            dispatch(
+                updateVehicle(
+                    {vehicleUUID: vehicle.uuid, payload: {...vehicle, assigned_user: user, assigned_user_uuid: user.uuid}}
+                    )
+            );
+
+    }
+    const assignToMeButton =
+        <Button disabled={vehicle.assigned_user_uuid === whoami.uuid} onClick={() => {
+            onAssignUser(whoami)
+        }}>
+            Assign to me
+        </Button>;
+
 
     if (isFetching) {
         return (
@@ -50,10 +71,13 @@ export default function VehicleDetail(props) {
                                 <Typography variant={"h5"}>Assignee</Typography>
                             </Grid>
                             <Grid item>
-                                {vehicle.assigned_user ?
-                                    <UserCard user={vehicle.assigned_user}/> :
+                                {assignedUser ?
+                                    <UserCard user={assignedUser}/> :
                                     <Typography>No assignee.</Typography>
                                 }
+                            </Grid>
+                            <Grid item>
+                                {assignToMeButton}
                             </Grid>
                         </Grid>
                     </PaddedPaper>

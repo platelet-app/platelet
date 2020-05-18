@@ -10,7 +10,6 @@ import {PaddedPaper} from "../css/common";
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import SaveCancelButtons from "./SaveCancelButtons";
 
@@ -20,11 +19,8 @@ export default function VehicleProfile(props) {
     const postingSelector = createPostingSelector(["UPDATE_VEHICLE"]);
     const isPosting = useSelector(state => postingSelector(state));
     const [editMode, setEditMode] = useState(false);
-    const [assignedUserDisplayName, setAssignedUserDisplayName] = useState(undefined);
     const [state, setState] = useState({...props.vehicle})
     const [oldState, setOldState] = useState({...props.vehicle})
-    const assignedUser = useSelector(state => state.vehicle.assigned_user);
-    const vehicleName = useSelector(state => state.vehicle.name);
     const whoami = useSelector(state => state.whoami.user);
 
     function resetAfterPost() {
@@ -66,16 +62,8 @@ export default function VehicleProfile(props) {
             </IconButton>;
     }
 
-    let header = assignedUserDisplayName ?
-        <h2>{props.vehicle.name ? props.vehicle.name : "No name"} assigned to {assignedUserDisplayName}.</h2> :
-        <h2>{props.vehicle.name ? props.vehicle.name : "No name"} assigned to nobody.</h2>;
-
-    useEffect(() => {
-        if (assignedUser)
-            setAssignedUserDisplayName(assignedUser.uuid === whoami.uuid ? "you" : assignedUser.display_name)
-        else
-            setAssignedUserDisplayName("")
-    }, [assignedUser, vehicleName]);
+    let header =
+        <h2>{props.vehicle.name ? props.vehicle.name : "No name"}.</h2>
 
     const saveButtons = !editMode ? <></> :
         <SaveCancelButtons
@@ -92,14 +80,6 @@ export default function VehicleProfile(props) {
 
 
     const divider = editMode ? <></> : <div style={{width: "460px"}}><Grid item><Divider/></Grid></div>;
-    const assignToMeButton = editMode ?
-        <Button disabled={state.assigned_user_uuid === whoami.uuid} onClick={() => {
-
-            onAssignUser(whoami)
-        }}>
-            Assign to Me
-        </Button> : <></>;
-
     return (
         <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>
             <Grid item>
@@ -173,9 +153,6 @@ export default function VehicleProfile(props) {
                                   spacing={3}>
                                 <Grid item>
                                     {userAssign}
-                                </Grid>
-                                <Grid item>
-                                    {assignToMeButton}
                                 </Grid>
                             </Grid>
                         </Grid>
