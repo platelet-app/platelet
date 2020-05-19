@@ -39,20 +39,21 @@ export default function AddressDetailsCollapsible(props){
     };
 
     useEffect(() => {
+        // We don't need it to run the first time
         if (firstUpdate.current) {
             firstUpdate.current = false;
-            return;
+        } else {
+            props.onSelect({
+                ward: ward,
+                line1: line1,
+                line2: line2,
+                town: town,
+                county: county,
+                country: country,
+                postcode: postcode,
+                what3words: what3words
+            })
         }
-        props.onSelect({
-            ward: ward,
-            line1: line1,
-            line2: line2,
-            town: town,
-            county: county,
-            country: country,
-            postcode: postcode,
-            what3words: what3words
-        })
     }, [what3words, ward, line1, line2, town, county, country, postcode]);
 
 

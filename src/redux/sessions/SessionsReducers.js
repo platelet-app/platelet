@@ -6,8 +6,8 @@ import {
     GET_SESSION_NOTFOUND, GET_SESSION_STATISTICS_FAILURE, GET_SESSION_STATISTICS_NOTFOUND,
     GET_SESSION_STATISTICS_SUCCESS,
     GET_SESSION_SUCCESS, GET_SESSIONS_FAILURE,
-    GET_SESSIONS_SUCCESS,
-    RESTORE_SESSION_SUCCESS
+    GET_SESSIONS_SUCCESS, REFRESH_CURRENT_SESSION_REQUEST, REFRESH_CURRENT_SESSION_SUCCESS,
+    RESTORE_SESSION_SUCCESS, SET_CURRENT_SESSION_TIME_ACTIVE_TO_NOW
 } from "./SessionsActions";
 import update from "immutability-helper";
 
@@ -54,6 +54,7 @@ export function sessions(state = initialState, action) {
 const initialSessionState = {
     session: {
         uuid: null,
+        last_active: new Date().toISOString(),
         user_uuid: null,
         time_created: null,
         tasks: [],
@@ -85,6 +86,11 @@ export function currentSession(state = initialSessionState, action) {
             return {session: action.data, error: null};
         case CLEAR_CURRENT_SESSION:
             return initialSessionState;
+        case REFRESH_CURRENT_SESSION_SUCCESS:
+            return {session: action.data, error: null};
+        case SET_CURRENT_SESSION_TIME_ACTIVE_TO_NOW:
+            const time_active = new Date().toISOString();
+            return {session: Object.assign(state.session, {time_active}), error: null};
         default:
             return state;
     }

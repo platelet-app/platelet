@@ -9,6 +9,9 @@ import BugReportIcon from "@material-ui/icons/BugReport"
 import ChildCareIcon from "@material-ui/icons/ChildCare"
 import DescriptionIcon from "@material-ui/icons/Description"
 import AcUnitIcon from "@material-ui/icons/AcUnit"
+import ClearIcon from "@material-ui/icons/Clear"
+import {useDispatch} from "react-redux";
+import IconButton from "@material-ui/core/IconButton"
 
 const useStyles = makeStyles((theme) => ({
     sample: {
@@ -52,6 +55,7 @@ function getIcon(typeID) {
 
 export default function DeliverableCard(props) {
     const classes = useStyles();
+    const dispatch = useDispatch();
 
     function getClass(typeID) {
         switch(typeID) {
@@ -78,6 +82,16 @@ export default function DeliverableCard(props) {
                     <Typography>
                         {props.deliverable.type}
                     </Typography>
+                </Grid>
+                <Grid item>
+                    <IconButton
+                        color={"inherit"}
+                        onClick={() => {
+                            //dispatch(deleteDeliverable)
+                        }}
+                    >
+                        <ClearIcon/>
+                    </IconButton>
                 </Grid>
             </Grid>
         </StyledSharpCard>

@@ -32,3 +32,5 @@ export const createPostingSelector = actions => state => {
 export const createNotFoundSelector = actions => state => {
     return actions.some(action => state.notFoundReducer[action]);
 };
+
+export const getCurrentSessionSelector = (state) => state.currentSession.session;

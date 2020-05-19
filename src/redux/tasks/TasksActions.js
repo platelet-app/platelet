@@ -57,6 +57,9 @@ export const GET_TASKS_REQUEST = 'GET_TASKS_REQUEST';
 export const GET_TASKS_SUCCESS = 'GET_TASKS_SUCCESS';
 export const GET_TASKS_NOTFOUND = 'GET_TASKS_NOTFOUND';
 export const GET_TASKS_FAILURE = 'GET_TASKS_FAILURE';
+export const REFRESH_TASKS_REQUEST = 'REFRESH_TASKS_REQUEST';
+export const REFRESH_TASKS_SUCCESS = 'REFRESH_TASKS_SUCCESS';
+export const REFRESH_TASKS_FAILURE = 'REFRESH_TASKS_FAILURE';
 export const GET_MY_TASKS_REQUEST = 'GET_MY_TASKS_REQUEST';
 export const GET_MY_TASKS_SUCCESS = 'GET_MY_TASKS_SUCCESS';
 export const GET_MY_TASKS_FAILURE = 'GET_MY_TASKS_FAILURE';
@@ -102,39 +105,49 @@ export function updateTask(data) {
     return { type: UPDATE_TASK_REQUEST, data }
 }
 
-
 export function updateTaskContactName(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_CONTACT_NAME_REQUEST, data }
 }
 export function updateTaskContactNumber(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_CONTACT_NUMBER_REQUEST, data }
 }
 export function updateTaskPickupAddress(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_PICKUP_ADDRESS_REQUEST, data }
 }
 export function updateTaskDropoffAddress(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, data }
 }
 export function updateTaskPickupTime(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_PICKUP_TIME_REQUEST, data }
 }
 export function updateTaskDropoffTime(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_DROPOFF_TIME_REQUEST, data }
 }
 export function updateTaskCancelledTime(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_CANCELLED_TIME_REQUEST, data }
 }
 export function updateTaskRejectedTime(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_REJECTED_TIME_REQUEST, data }
 }
 export function updateTaskAssignedRider(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_ASSIGNED_RIDER_REQUEST, data }
 }
 export function updateTaskPriority(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_PRIORITY_REQUEST, data }
 }
 
 export function updateTaskPatch(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_PATCH_REQUEST, data }
 }
 
@@ -170,6 +183,7 @@ export function updateTaskPrioritySuccess(data) {
 }
 
 export function updateTaskPatchSuccess(data) {
+    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_PATCH_SUCCESS, data }
 }
 
@@ -183,6 +197,14 @@ export function getAllTasks(data) {
 
 export function getAllTasksSuccess(data) {
     return { type: GET_TASKS_SUCCESS, data }
+}
+
+export function refreshAllTasks(data) {
+    return { type: REFRESH_TASKS_REQUEST, data }
+}
+
+export function refreshAllTasksSuccess(data) {
+    return { type: REFRESH_TASKS_SUCCESS, data }
 }
 
 export function getAllTasksFailure(data) {

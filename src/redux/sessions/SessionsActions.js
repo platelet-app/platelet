@@ -18,9 +18,13 @@ export const DELETE_SESSION_FAILURE = 'DELETE_SESSION_FAILURE';
 export const RESTORE_SESSION_REQUEST = 'RESTORE_SESSION_REQUEST';
 export const RESTORE_SESSION_SUCCESS = 'RESTORE_SESSION_SUCCESS';
 export const RESTORE_SESSION_FAILURE = 'RESTORE_SESSION_FAILURE';
+export const REFRESH_CURRENT_SESSION_REQUEST = 'REFRESH_CURRENT_SESSION_REQUEST';
+export const REFRESH_CURRENT_SESSION_SUCCESS = 'REFRESH_CURRENT_SESSION_SUCCESS';
+export const REFRESH_CURRENT_SESSION_FAILURE = 'REFRESH_CURRENT_SESSION_FAILURE';
 
 export const SET_CURRENT_SESSION = 'SET_CURRENT_SESSION';
 export const CLEAR_CURRENT_SESSION = 'CLEAR_CURRENT_SESSION';
+export const SET_CURRENT_SESSION_TIME_ACTIVE_TO_NOW = 'SET_CURRENT_SESSION_TIME_ACTIVE_TO_NOW';
 
 export function addSession(data) {
     return { type: ADD_SESSION_REQUEST, data }
@@ -109,3 +113,19 @@ export function setCurrentSession(data) {
 export function clearCurrentSession() {
     return { type: CLEAR_CURRENT_SESSION }
 }
+
+export function refreshCurrentSession(data) {
+    return { type: REFRESH_CURRENT_SESSION_REQUEST, data }
+}
+export function refreshCurrentSessionSuccess(data) {
+    return { type: REFRESH_CURRENT_SESSION_SUCCESS, data }
+}
+
+export function refreshCurrentSessionFailure(data) {
+    return { type: REFRESH_CURRENT_SESSION_FAILURE, data }
+}
+
+export function setCurrentSessionTimeActiveToNow() {
+    return { type: SET_CURRENT_SESSION_TIME_ACTIVE_TO_NOW }
+}
+

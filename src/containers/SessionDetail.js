@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import '../App.css';
 import 'typeface-roboto'
 import Grid from "@material-ui/core/Grid";
 import {
     addTask,
     getAllTasks,
+    refreshAllTasks,
 } from '../redux/tasks/TasksActions'
 import {setCommentsObjectUUID, setMenuIndex, setViewMode} from "../redux/Actions";
-import {getSession} from "../redux/sessions/SessionsActions";
+import {refreshCurrentSession, setCurrentSessionTimeActiveToNow} from "../redux/sessions/SessionsActions";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID, encodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
@@ -26,7 +27,6 @@ import ChatIcon from "@material-ui/icons/Chat";
 import Tooltip from "@material-ui/core/Tooltip";
 import NotFound from "../ErrorComponenents/NotFound";
 import {useHistory} from "react-router";
-import {useLocation} from "react-router-dom";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -53,14 +53,15 @@ function SessionDetail(props) {
     const notFound = useSelector(state => notFoundSelector(state));
     //TODO: This could put data into title
     const currentSession = useSelector(state => state.currentSession.session);
+    const sessionLastActive = useSelector(state => state.currentSession.session.last_active);
     const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
     const history = useHistory();
+    const firstUpdate = useRef(true);
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
 
     function componentDidMount() {
         dispatch(getAllTasks(session_uuid));
-        dispatch(getSession(session_uuid));
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
@@ -72,8 +73,28 @@ function SessionDetail(props) {
         if (!props.match) {
             history.push(`/session/${encodeUUID(currentSession.uuid)}`);
         }
-
     }
+    useEffect(componentDidMount, []);
+
+    function setupRefreshTimer() {
+        const timer = setInterval(() => {
+            dispatch(refreshCurrentSession(session_uuid));
+        }, 10000)
+        return function cleanup() {
+            clearInterval(timer);
+        };
+    }
+    useEffect(setupRefreshTimer, []);
+
+    function refreshData() {
+        // We don't need it to run the first time
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+        } else {
+            dispatch(refreshAllTasks(session_uuid));
+        }
+    }
+    useEffect(refreshData, [sessionLastActive])
 
     const emptyTask = {
         session_uuid: session_uuid,
@@ -87,7 +108,6 @@ function SessionDetail(props) {
         dispatch(addTask(emptyTask))
     }
 
-    useEffect(componentDidMount, []);
     useEffect(() => {
         dispatch(setMenuIndex(2))
     }, []);

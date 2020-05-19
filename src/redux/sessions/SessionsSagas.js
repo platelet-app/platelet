@@ -17,7 +17,10 @@ import {
     deleteSessionFailure,
     restoreSessionFailure,
     setCurrentSession,
-    ADD_SESSION_AND_SET_CURRENT_REQUEST
+    ADD_SESSION_AND_SET_CURRENT_REQUEST,
+    REFRESH_CURRENT_SESSION_REQUEST,
+    refreshCurrentSessionSuccess,
+    refreshCurrentSessionFailure
 } from "./SessionsActions"
 import {getApiControl} from "../Api";
 import {
@@ -26,6 +29,7 @@ import {
     RESTORE_SESSION_REQUEST,
     restoreSessionSuccess
 } from "./SessionsActions";
+import {getCurrentSessionSelector} from "../selectors";
 
 
 export function* postNewSession(action) {
@@ -72,8 +76,24 @@ export function* getSession(action) {
     }
 }
 
-export function* watchGetSessionStatistics() {
-    yield takeLatest(GET_SESSION_STATISTICS_REQUEST, getSessionStatistics)
+export function* watchGetSession() {
+    yield takeLatest(GET_SESSION_REQUEST, getSession)
+}
+
+export function* refreshCurrentSession(action) {
+    try {
+        const api = yield select(getApiControl);
+        const currentSession = yield select(getCurrentSessionSelector);
+        const result = yield call([api, api.sessions.getSession], action.data);
+        if (new Date(result.last_active) !== new Date(currentSession.time_active))
+            yield put(refreshCurrentSessionSuccess(result))
+    } catch (error) {
+        yield put(refreshCurrentSessionFailure(error));
+    }
+}
+
+export function* watchRefreshCurrentSession() {
+    yield takeLatest(REFRESH_CURRENT_SESSION_REQUEST, refreshCurrentSession)
 }
 
 export function* getSessionStatistics(action) {
@@ -89,9 +109,10 @@ export function* getSessionStatistics(action) {
     }
 }
 
-export function* watchGetSession() {
-    yield takeLatest(GET_SESSION_REQUEST, getSession)
+export function* watchGetSessionStatistics() {
+    yield takeLatest(GET_SESSION_STATISTICS_REQUEST, getSessionStatistics)
 }
+
 
 function* deleteSession(action) {
     try {

@@ -67,7 +67,7 @@ function SessionList(props) {
         dispatch(addSession(newSession));
     }
 
-    const startNewsession =
+    const startNewSession =
         <Button onClick={onStartNewSession}>
             Start a new shift
         </Button>
@@ -86,7 +86,7 @@ function SessionList(props) {
         return (
             <Grid container spacing={2} direction={"column"} justify={"flex-start"} alignItems={"flex-start"}>
                 <Grid item>
-                    {startNewsession}
+                    {startNewSession}
                 </Grid>
                 <Grid item>
                     <PaddedPaper>

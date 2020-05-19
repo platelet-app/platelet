@@ -5,7 +5,7 @@ import {
     watchGetSession,
     watchDeleteSession,
     watchRestoreSession,
-    watchGetSessionStatistics
+    watchGetSessionStatistics, watchRefreshCurrentSession
 } from "./sessions/SessionsSagas"
 import {
     watchPostNewTask,
@@ -22,7 +22,11 @@ import {
     watchUpdateTaskDropoffTime,
     watchUpdateTaskPickupTime,
     watchUpdateTaskPickupAddress,
-    watchUpdateTaskPriority, watchUpdateTaskCancelledTime, watchUpdateTaskRejectedTime, watchUpdateTaskPatch
+    watchUpdateTaskPriority,
+    watchUpdateTaskCancelledTime,
+    watchUpdateTaskRejectedTime,
+    watchUpdateTaskPatch,
+    watchRefreshTasks
 } from "./tasks/TasksSagas"
 import {
     watchGetAvailableDeliverables,
@@ -73,11 +77,13 @@ export default function* rootSaga() {
         call(watchDeleteTask),
         call(watchGetSessions),
         call(watchGetSession),
+        call(watchRefreshCurrentSession),
         call(watchGetSessionStatistics),
         call(watchDeleteSession),
         call(watchRestoreSession),
         call(watchGetTask),
         call(watchGetTasks),
+        call(watchRefreshTasks),
         call(watchUpdateTask),
         call(watchUpdateTaskAssignedRider),
         call(watchUpdateTaskContactName),

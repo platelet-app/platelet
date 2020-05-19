@@ -51,10 +51,11 @@ import {
     getAllTasksFailure,
     getAllMyTasksNotFound,
     getAllMyTasksFailure,
-    updateTaskPatchSuccess, UPDATE_TASK_PATCH_REQUEST
+    updateTaskPatchSuccess, UPDATE_TASK_PATCH_REQUEST, REFRESH_TASKS_REQUEST
 } from "./TasksActions"
 
 import {getApiControl} from "../Api"
+import {setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()
@@ -79,6 +80,7 @@ function* throttlePerKey(pattern, selector, timeout, saga) {
 
 function* postNewTask(action) {
     try {
+        put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data);
         const task = {...action.data, "uuid": result.uuid};
@@ -115,48 +117,56 @@ export function* watchRestoreTask() {
 
 
 function* updateTask(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskSuccess(action.data))
 }
 
 function* updateTaskContactName(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskContactNameSuccess(action.data))
 }
 
 function* updateTaskContactNumber(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskContactNumberSuccess(action.data))
 }
 
 function* updateTaskPickupAddress(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskPickupAddressSuccess(action.data))
 }
 
 function* updateTaskDropoffAddress(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskDropoffAddressSuccess(action.data))
 }
 
 function* updateTaskPickupTime(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskPickupTimeSuccess(action.data))
 }
 
 function* updateTaskDropoffTime(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskDropoffTimeSuccess(action.data))
 }
 
 function* updateTaskAssignedRider(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     if (action.data.payload.patch_id)
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload.patch_id);
@@ -166,24 +176,28 @@ function* updateTaskAssignedRider(action) {
 }
 
 function* updateTaskPriority(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskPrioritySuccess(action.data))
 }
 
 function* updateTaskPatch(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskPatchSuccess(action.data))
 }
 
 function* updateTaskCancelledTime(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskCancelledTimeSuccess(action.data))
 }
 
 function* updateTaskRejectedTime(action) {
+    yield put(setCurrentSessionTimeActiveToNow())
     const api = yield select(getApiControl);
     yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
     yield put(updateTaskRejectedTimeSuccess(action.data))
@@ -264,6 +278,10 @@ function* getTasks(action) {
 
 export function* watchGetTasks() {
     yield takeLatest(GET_TASKS_REQUEST, getTasks)
+}
+
+export function* watchRefreshTasks() {
+    yield takeLatest(REFRESH_TASKS_REQUEST, getTasks)
 }
 
 function* getMyTasks() {

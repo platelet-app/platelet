@@ -2,10 +2,11 @@ import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {addDeliverable, getDeliverables, updateDeliverable} from "../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
-import {createPostingSelector} from "../redux/selectors";
+import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 import Button from "@material-ui/core/Button";
 import DeliverableCard from "./DeliverableCard";
 import DeliverablesSelect from "./DeliverableSelect";
+import DeliverablesSkeleton from "../loadingComponents/DeliverablesSkeleton";
 
 
 export default function DeliverableGridSelect(props) {
@@ -14,6 +15,8 @@ export default function DeliverableGridSelect(props) {
     const deliverables = useSelector(state => state.deliverables.deliverables);
     const postingSelector = createPostingSelector(["ADD_DELIVERABLE"]);
     const isPosting = useSelector(state => postingSelector(state));
+    const loadingSelector = createLoadingSelector(["GET_DELIVERABLES"]);
+    const isFetching = useSelector(state => loadingSelector(state));
     const [addMode, setAddMode] = useState(false);
 
     let emptyDeliverable = {
@@ -54,30 +57,33 @@ export default function DeliverableGridSelect(props) {
             {addMode ? "Cancel" : "Add a deliverable"}
         </Button>
 
-    return (
-        <Grid container
-              spacing={2}
-              direction={"column"}
-              justify={"flex-start"}
-              alignItems={"flex-start"}
-        >
-            {deliverables.map(deliverable => {
-                return (
-                    <Grid item key={deliverable.uuid}>
-                        <DeliverableCard deliverable={deliverable}/>
-                    </Grid>
-                )
+    if (isFetching) {
+        return <DeliverablesSkeleton/>
+    } else {
+        return (
+            <Grid container
+                  spacing={2}
+                  direction={"column"}
+                  justify={"flex-start"}
+                  alignItems={"flex-start"}
+            >
+                {deliverables.map(deliverable => {
+                    return (
+                        <Grid item key={deliverable.uuid}>
+                            <DeliverableCard deliverable={deliverable}/>
+                        </Grid>
+                    )
 
-            })
-            }
-            <Grid item>
-                {deliverablesSelect}
+                })
+                }
+                <Grid item>
+                    {deliverablesSelect}
+                </Grid>
+                <Grid item>
+                    {addButton}
+                </Grid>
             </Grid>
-            <Grid item>
-                {addButton}
-            </Grid>
-        </Grid>
-    )
+        )
+    }
 
 }
-
