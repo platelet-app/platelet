@@ -12,7 +12,7 @@ import {refreshCurrentSession, setCurrentSessionTimeActiveToNow} from "../redux/
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID, encodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
-import {createLoadingSelector, createNotFoundSelector} from '../redux/selectors';
+import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from '../redux/selectors';
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
 import TasksTable from "../components/TasksTable";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -46,6 +46,24 @@ function SessionDetail(props) {
     const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
     const dispatch = useDispatch();
     const isFetching = useSelector(state => loadingSelector(state));
+    const isTaskPostingSelector = createPostingSelector([
+        "ADD_TASK",
+        "DELETE_TASK",
+        "RESTORE_TASK",
+        "UPDATE_TASK",
+        "UPDATE_TASK_CONTACT_NAME",
+        "UPDATE_TASK_CONTACT_NUMBER",
+        "UPDATE_TASK_PICKUP_ADDRESS",
+        "UPDATE_TASK_DROPOFF_ADDRESS",
+        "UPDATE_TASK_PICKUP_TIME",
+        "UPDATE_TASK_DROPOFF_TIME",
+        "UPDATE_TASK_CANCELLED_TIME",
+        "UPDATE_TASK_REJECTED_TIME",
+        "UPDATE_TASK_ASSIGNED_RIDER",
+        "UPDATE_TASK_PRIORITY",
+        "UPDATE_TASK_PATCH"
+    ]);
+    const isTaskPosting = useSelector(state => isTaskPostingSelector(state));
     const tasks = useSelector(state => state.tasks.tasks);
     const viewMode = useSelector(state => state.viewMode);
     const mobileView = useSelector(state => state.mobileView);
@@ -74,6 +92,7 @@ function SessionDetail(props) {
             history.push(`/session/${encodeUUID(currentSession.uuid)}`);
         }
     }
+
     useEffect(componentDidMount, []);
 
     function setupRefreshTimer() {
@@ -86,14 +105,25 @@ function SessionDetail(props) {
     }
     useEffect(setupRefreshTimer, []);
 
+    let deferredRefresh = undefined;
+
     function refreshData() {
         // We don't need it to run the first time
         if (firstUpdate.current) {
             firstUpdate.current = false;
         } else {
-            dispatch(refreshAllTasks(session_uuid));
+            // Let's not update if there are changes being pushed
+            if (isTaskPosting) {
+                clearTimeout(deferredRefresh)
+                // Defer it 5 seconds ahead
+                deferredRefresh = setTimeout(() => dispatch(refreshAllTasks(session_uuid)), 5000)
+            } else {
+                clearTimeout(deferredRefresh)
+                dispatch(refreshAllTasks(session_uuid));
+            }
         }
     }
+
     useEffect(refreshData, [sessionLastActive])
 
     const emptyTask = {
@@ -122,16 +152,16 @@ function SessionDetail(props) {
         >
             <Grid item>
                 <Tooltip title="Change mode">
-                <IconButton
-                    color="inherit"
-                    aria-controls="simple-menu"
-                    aria-haspopup="true"
-                    onClick={(event) => {
-                        setAnchorEl(event.currentTarget);
-                    }}>
-                    <GetViewTitle type={viewMode}/>
-                    <ArrowDropDownIcon/>
-                </IconButton>
+                    <IconButton
+                        color="inherit"
+                        aria-controls="simple-menu"
+                        aria-haspopup="true"
+                        onClick={(event) => {
+                            setAnchorEl(event.currentTarget);
+                        }}>
+                        <GetViewTitle type={viewMode}/>
+                        <ArrowDropDownIcon/>
+                    </IconButton>
                 </Tooltip>
                 <Menu
                     id="profile-menu"
