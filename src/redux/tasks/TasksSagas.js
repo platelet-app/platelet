@@ -56,6 +56,8 @@ import {
 
 import {getApiControl} from "../Api"
 import {setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
+import {createPostingSelector} from "../selectors";
+import {useSelector} from "react-redux";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()
@@ -224,31 +226,31 @@ export function* watchUpdateTaskDropoffAddress() {
 }
 
 export function* watchUpdateTaskPickupTime() {
-    yield takeEvery(UPDATE_TASK_PICKUP_TIME_REQUEST, updateTaskPickupTime)
+    yield debounce(300, UPDATE_TASK_PICKUP_TIME_REQUEST, updateTaskPickupTime)
 }
 
 export function* watchUpdateTaskDropoffTime() {
-    yield takeEvery(UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
+    yield debounce(300, UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
 }
 
 export function* watchUpdateTaskAssignedRider() {
-    yield takeEvery(UPDATE_TASK_ASSIGNED_RIDER_REQUEST, updateTaskAssignedRider)
+    yield debounce(300, UPDATE_TASK_ASSIGNED_RIDER_REQUEST, updateTaskAssignedRider)
 }
 
 export function* watchUpdateTaskPriority() {
-    yield takeEvery(UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
+    yield debounce(500, UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
 }
 
 export function* watchUpdateTaskPatch() {
-    yield takeEvery(UPDATE_TASK_PATCH_REQUEST, updateTaskPatch)
+    yield debounce(300, UPDATE_TASK_PATCH_REQUEST, updateTaskPatch)
 }
 
 export function* watchUpdateTaskCancelledTime() {
-    yield takeEvery(UPDATE_TASK_CANCELLED_TIME_REQUEST, updateTaskCancelledTime)
+    yield debounce(300, UPDATE_TASK_CANCELLED_TIME_REQUEST, updateTaskCancelledTime)
 }
 
 export function* watchUpdateTaskRejectedTime() {
-    yield takeEvery(UPDATE_TASK_REJECTED_TIME_REQUEST, updateTaskRejectedTime)
+    yield debounce(300, UPDATE_TASK_REJECTED_TIME_REQUEST, updateTaskRejectedTime)
 }
 
 function* getTask(action) {
@@ -280,8 +282,47 @@ export function* watchGetTasks() {
     yield takeLatest(GET_TASKS_REQUEST, getTasks)
 }
 
+function* refreshTasks(action) {
+    const isTaskPostingSelector = createPostingSelector([
+        "ADD_TASK",
+        "GET_TASK",
+        "DELETE_TASK",
+        "RESTORE_TASK",
+        "UPDATE_TASK",
+        "UPDATE_TASK_CONTACT_NAME",
+        "UPDATE_TASK_CONTACT_NUMBER",
+        "UPDATE_TASK_PICKUP_ADDRESS",
+        "UPDATE_TASK_DROPOFF_ADDRESS",
+        "UPDATE_TASK_PICKUP_TIME",
+        "UPDATE_TASK_DROPOFF_TIME",
+        "UPDATE_TASK_CANCELLED_TIME",
+        "UPDATE_TASK_REJECTED_TIME",
+        "UPDATE_TASK_ASSIGNED_RIDER",
+        "UPDATE_TASK_PRIORITY",
+        "UPDATE_TASK_PATCH"
+    ]);
+    let isTaskPosting = select(isTaskPostingSelector);
+    try {
+        const api = yield select(getApiControl);
+        let result = yield call([api, api.tasks.getTasks], action.data);
+       // while(isTaskPosting) {
+       //     yield delay(1000)
+       //     isTaskPosting = select(state => isTaskPostingSelector(state));
+       //     result = yield call([api, api.tasks.getTasks], action.data);
+       // }
+        yield put(getAllTasksSuccess(result))
+    } catch (error) {
+        if (error.name === "HttpError") {
+            if (error.response.status === 404) {
+                yield put(getAllTasksNotFound(error))
+            }
+        }
+        yield put(getAllTasksFailure(error))
+    }
+}
+
 export function* watchRefreshTasks() {
-    yield takeLatest(REFRESH_TASKS_REQUEST, getTasks)
+    yield takeLatest(REFRESH_TASKS_REQUEST, refreshTasks)
 }
 
 function* getMyTasks() {

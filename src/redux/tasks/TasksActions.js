@@ -183,7 +183,6 @@ export function updateTaskPrioritySuccess(data) {
 }
 
 export function updateTaskPatchSuccess(data) {
-    data.time_modified = new Date().toISOString();
     return { type: UPDATE_TASK_PATCH_SUCCESS, data }
 }
 

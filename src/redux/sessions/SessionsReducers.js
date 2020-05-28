@@ -64,7 +64,8 @@ const initialSessionState = {
             collection: null
         },
         task_count: null,
-        time_modified: null
+        time_modified: null,
+        tasks_etag: ""
     }, error: null
 }
 

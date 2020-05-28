@@ -1,6 +1,9 @@
 export const ADD_DELIVERABLE_REQUEST = 'ADD_DELIVERABLE_REQUEST';
 export const ADD_DELIVERABLE_SUCCESS = 'ADD_DELIVERABLE_SUCCESS';
 export const ADD_DELIVERABLE_FAILURE = 'ADD_DELIVERABLE_FAILURE';
+export const DELETE_DELIVERABLE_REQUEST = 'DELETE_DELIVERABLE_REQUEST';
+export const DELETE_DELIVERABLE_SUCCESS = 'DELETE_DELIVERABLE_SUCCESS';
+export const DELETE_DELIVERABLE_FAILURE = 'DELETE_DELIVERABLE_FAILURE';
 export const UPDATE_DELIVERABLE_REQUEST = 'UPDATE_DELIVERABLE_REQUEST';
 export const UPDATE_DELIVERABLE_SUCCESS = 'UPDATE_DELIVERABLE_SUCCESS';
 export const UPDATE_DELIVERABLE_FAILURE = 'UPDATE_DELIVERABLE_FAILURE';
@@ -21,6 +24,18 @@ export function addDeliverableSuccess(data) {
 
 export function addDeliverableFailure(error) {
     return { type: ADD_DELIVERABLE_FAILURE, error }
+}
+
+export function deleteDeliverable(data) {
+    return { type: DELETE_DELIVERABLE_REQUEST, data }
+}
+
+export function deleteDeliverableSuccess(data) {
+    return { type: DELETE_DELIVERABLE_SUCCESS, data }
+}
+
+export function deleteDeliverableFailure(error) {
+    return { type: DELETE_DELIVERABLE_FAILURE, error }
 }
 
 export function getDeliverables(data) {
@@ -58,4 +73,3 @@ export function getAvailableDeliverablesSuccess(data) {
 export function getAvailableDeliverablesFailure(error) {
     return { type: GET_AVAILABLE_DELIVERABLES_FAILURE, error }
 }
-

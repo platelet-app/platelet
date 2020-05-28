@@ -1,5 +1,5 @@
 import React from "react";
-import {TextFieldControlled} from "../TextFieldControlled";
+import {TelephoneTextFieldControlled, TextFieldControlled} from "../TextFieldControlled";
 import Grid from "@material-ui/core/Grid";
 
 export default function TaskModalNameAndContactNumber(props) {
@@ -13,7 +13,7 @@ export default function TaskModalNameAndContactNumber(props) {
                 onChange={props.onSelectName}/>
             </Grid>
             <Grid item>
-            <TextFieldControlled
+            <TelephoneTextFieldControlled
                 label={"Telephone"}
                 id={"contact-number"}
                 value={props.contactNumber}

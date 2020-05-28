@@ -35,7 +35,7 @@ export default function TaskItem(props) {
                         deleteDisabled={props.deleteDisabled}
                         pickupTime={props.task.time_picked_up}
                         dropoffTime={props.task.time_dropped_off}
-                        assignedRider={props.task.assigned_rider}
+                        assignedUsers={props.task.assigned_users}
                         cancelledTime={props.task.time_cancelled}
                         rejectedTime={props.task.time_rejected}
                     />

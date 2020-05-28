@@ -70,7 +70,6 @@ export function throttle(func, limit) {
     let lastRan
     let result;
     return function() {
-        console.log("AAA IT RUNS")
         const context = this
         const args = arguments
         if (!lastRan) {

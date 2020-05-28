@@ -10,7 +10,7 @@ import AddressDetailsCollapsible from "../AddressDetail";
 import ToggleTimeStamp from "../ToggleTimeStamp";
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
-import PrioritySelect from "../PrioritySelect";
+import PrioritySelect from "./PrioritySelect";
 import DeliverableGridSelect from "../DeliverableGridSelect";
 import DeliverableInformation from "../DeliverableInformation";
 import {

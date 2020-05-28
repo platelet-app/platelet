@@ -235,6 +235,17 @@ class Deliverable {
     async updateDeliverable(deliverable_id, input_data) {
         return makeAxios(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
     }
+
+    async deleteDeliverable(deliverable_id) {
+        return makeAxios(this.api_url, "deliverable/" + deliverable_id, "DELETE", this.bearer, "application/json")
+    }
+
+    async restoreDeliverable(deliverable_id) {
+        //not implemented yet
+        return;
+        return makeAxios(this.api_url, "deliverable/" + deliverable_id + "/restore", "PUT", this.bearer, "application/json")
+    }
+
     async getAvailableDeliverables() {
         return makeAxios(this.api_url, "deliverables/available", "GET", this.bearer, "application/json");
     }

@@ -48,6 +48,7 @@ function SessionDetail(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const isTaskPostingSelector = createPostingSelector([
         "ADD_TASK",
+        "GET_TASK",
         "DELETE_TASK",
         "RESTORE_TASK",
         "UPDATE_TASK",
@@ -71,7 +72,7 @@ function SessionDetail(props) {
     const notFound = useSelector(state => notFoundSelector(state));
     //TODO: This could put data into title
     const currentSession = useSelector(state => state.currentSession.session);
-    const sessionLastActive = useSelector(state => state.currentSession.session.last_active);
+    const tasksEtag = useSelector(state => state.currentSession.session.tasks_etag);
     const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
     const history = useHistory();
     const firstUpdate = useRef(true);
@@ -124,12 +125,11 @@ function SessionDetail(props) {
         }
     }
 
-    useEffect(refreshData, [sessionLastActive])
+    useEffect(refreshData, [tasksEtag])
 
     const emptyTask = {
         session_uuid: session_uuid,
         time_of_call: new Date().toISOString(),
-        time_modified: new Date().toISOString(),
         time_created: new Date().toISOString(),
         assigned_users: []
     };

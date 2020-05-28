@@ -83,10 +83,8 @@ export function* watchGetSession() {
 export function* refreshCurrentSession(action) {
     try {
         const api = yield select(getApiControl);
-        const currentSession = yield select(getCurrentSessionSelector);
         const result = yield call([api, api.sessions.getSession], action.data);
-        if (new Date(result.last_active) !== new Date(currentSession.time_active))
-            yield put(refreshCurrentSessionSuccess(result))
+        yield put(refreshCurrentSessionSuccess(result))
     } catch (error) {
         yield put(refreshCurrentSessionFailure(error));
     }

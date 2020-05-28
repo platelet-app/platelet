@@ -3,8 +3,9 @@ import {
     GET_DELIVERABLES_SUCCESS,
     ADD_DELIVERABLE_SUCCESS,
     UPDATE_DELIVERABLE_SUCCESS,
-    GET_AVAILABLE_DELIVERABLES_SUCCESS, GET_DELIVERABLES_FAILURE
+    GET_AVAILABLE_DELIVERABLES_SUCCESS, GET_DELIVERABLES_FAILURE, DELETE_DELIVERABLE_SUCCESS, DELETE_DELIVERABLE_FAILURE
 } from "./DeliverablesActions";
+import {DELETE_SESSION_SUCCESS} from "../sessions/SessionsActions";
 
 const initialState = {
     deliverables: [],
@@ -37,6 +38,16 @@ export function deliverables(state = initialState, action) {
             return {deliverables: action.data, error: null};
         case GET_DELIVERABLES_FAILURE:
             return {deliverables: [], error: action.error}
+        case DELETE_DELIVERABLE_SUCCESS:
+            let result_delete = state.deliverables.filter(deliverable => deliverable.uuid === action.data);
+            if (result_delete.length === 1) {
+                const index = state.deliverables.indexOf(result_delete[0]);
+                return {deliverables: update(state.deliverables, {$splice: [[index, 1]]}), error: null};
+            } else {
+                return state;
+            }
+        case DELETE_DELIVERABLE_FAILURE:
+            return {deliverables: state.deliverables, error: action.error}
         default:
             return state
     }

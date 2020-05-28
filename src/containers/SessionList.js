@@ -69,7 +69,8 @@ function SessionList(props) {
 
     const startNewSession =
         <Button onClick={onStartNewSession}>
-            Start a new shift
+            Start a new shif
+            t
         </Button>
 
     if (isFetching) {
