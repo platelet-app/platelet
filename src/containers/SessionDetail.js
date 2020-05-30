@@ -8,7 +8,7 @@ import {
     refreshAllTasks,
 } from '../redux/tasks/TasksActions'
 import {setCommentsObjectUUID, setMenuIndex, setViewMode} from "../redux/Actions";
-import {refreshCurrentSession, setCurrentSessionTimeActiveToNow} from "../redux/sessions/SessionsActions";
+import {getSession, refreshCurrentSession, setCurrentSessionTimeActiveToNow} from "../redux/sessions/SessionsActions";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID, encodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
@@ -81,6 +81,7 @@ function SessionDetail(props) {
 
     function componentDidMount() {
         dispatch(getAllTasks(session_uuid));
+        dispatch(getSession(session_uuid))
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();

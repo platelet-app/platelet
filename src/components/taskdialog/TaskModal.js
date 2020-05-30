@@ -61,6 +61,8 @@ export default function TaskModal(props) {
     const task = useSelector(state => state.currentTask.task);
     const session = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
+    const whoamiUUID = useSelector(state => state.whoami.user.uuid);
+    const whoamiRoles = useSelector(state => state.whoami.user.roles);
     const currentLocation = useLocation();
     let useStyles;
     // TODO: Do this properly (withStyles)
@@ -103,15 +105,19 @@ export default function TaskModal(props) {
     const [editMode, setEditMode] = useState(false);
 
     function componentDidMount() {
-        setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
         if (!tasks.length) {
             props.apiControl.tasks.getTask(taskUUID).then((data) => {
                 dispatch(getAllTasks(data.session_uuid));
             });
         }
     }
-
     useEffect(componentDidMount, []);
+
+    function editModeSetter() {
+        setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
+
+    }
+    useEffect(editModeSetter, whoamiUUID, whoamiRoles)
 
     function currentTask() {
         const taskResult = tasks.filter(task => task.uuid === taskUUID);
@@ -123,9 +129,9 @@ export default function TaskModal(props) {
     useEffect(currentTask, [tasks])
 
     function updateEditMode() {
-        setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
+        console.log(session)
+        setEditMode(session.user_uuid === whoamiUUID || whoamiRoles.includes("admin"));
     }
-
     useEffect(updateEditMode, [whoami, session])
 
     function onSelectContactNumber(event) {
