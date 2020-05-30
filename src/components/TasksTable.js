@@ -117,7 +117,7 @@ function tasksDataColumns (tasks) {
                                           dropoffTime={task.time_dropped_off}
                                           cancelledTime={task.time_cancelled}
                                           rejectedTime={task.time_rejected}
-                                          assignedRider={task.assigned_rider}/>,
+                                          assignedUsers={task.assigned_users}/>,
             uuid: task.uuid
         }
     }))
