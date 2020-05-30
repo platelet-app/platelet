@@ -26,7 +26,7 @@ import {
     watchUpdateTaskCancelledTime,
     watchUpdateTaskRejectedTime,
     watchUpdateTaskPatch,
-    watchRefreshTasks
+    watchRefreshTasks, watchRefreshMyTasks
 } from "./tasks/TasksSagas"
 import {
     watchGetAvailableDeliverables,
@@ -65,7 +65,7 @@ import {
     watchRestoreUser,
     watchUpdateUser
 } from "./users/UsersSagas";
-import {watchGetWhoami} from "./WhoamiSaga";
+import {watchGetWhoami, watchRefreshWhoami} from "./WhoamiSaga";
 import {watchLogin} from "./login/LoginSagas"
 import {watchGetAvailablePatches} from "./patches/PatchesSagas";
 import {watchGetServerSettings} from "./ServerSettings/ServerSettingsSagas";
@@ -84,6 +84,7 @@ export default function* rootSaga() {
         call(watchGetTask),
         call(watchGetTasks),
         call(watchRefreshTasks),
+        call(watchRefreshMyTasks),
         call(watchUpdateTask),
         call(watchUpdateTaskAssignedRider),
         call(watchUpdateTaskContactName),
@@ -116,6 +117,7 @@ export default function* rootSaga() {
         call(watchGetUsers),
         call(watchGetUser),
         call(watchGetWhoami),
+        call(watchRefreshWhoami),
         call(watchLogin),
         call(watchRestoreTask),
         call(watchGetAvailablePatches),

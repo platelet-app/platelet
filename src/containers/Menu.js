@@ -13,7 +13,7 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import AppsIcon from '@material-ui/icons/Apps';
-import HomeIcon from '@material-ui/icons/Home';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -107,11 +107,13 @@ export function ResponsiveDrawer(props) {
     };
 
     let sessionLink = <></>;
+    let ridersTasksLink = <></>
+    let adminLink = <></>
     let drawer = <MenuSkeleton/>;
 
     if (!isFetching) {
         if (whoami.roles) {
-            if (whoami.roles.includes("coordinator") || whoami.roles.includes("admin")) {
+            if (whoami.roles.includes("coordinator")) {
                 sessionLink =
                     <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 2)} component={Link} to="/sessions"
                               button>
@@ -119,22 +121,30 @@ export function ResponsiveDrawer(props) {
                         <ListItemText primary={"Shifts"}/>
                     </ListItem>;
             }
+            if (whoami.roles.includes("rider")) {
+                ridersTasksLink =
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 3)} component={Link} to={"/mytasks"}
+                              button>
+                        <ListItemIcon><InboxIcon/></ListItemIcon>
+                        <ListItemText primary={"My Assigned Tasks"}/>
+                    </ListItem>
+            }
+            if (whoami.roles.includes("admin")) {
+                adminLink =
+                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 6)} component={Link} to={"/admin"}
+                              button>
+                        <ListItemIcon><SupervisorAccountIcon/></ListItemIcon>
+                        <ListItemText primary={"Admin"}/>
+                    </ListItem>
+            }
         }
         drawer = (
             <div>
                 <div className={classes.toolbar}/>
                 <Divider/>
                 <List component="nav">
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 1)} component={Link} to="/" button>
-                        <ListItemIcon><HomeIcon/></ListItemIcon>
-                        <ListItemText primary={"Home"}/>
-                    </ListItem>
                     {sessionLink}
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 3)} component={Link} to={"/mytasks"}
-                              button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
-                        <ListItemText primary={"My Assigned Tasks"}/>
-                    </ListItem>
+                    {ridersTasksLink}
                     <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 4)} component={Link} to="/vehicles"
                               button>
                         <ListItemIcon><MotorcycleIcon/></ListItemIcon>
@@ -145,6 +155,7 @@ export function ResponsiveDrawer(props) {
                         <ListItemIcon><PeopleAltIcon/></ListItemIcon>
                         <ListItemText primary={"Users"}/>
                     </ListItem>
+                    {adminLink}
                 </List>
             </div>
         );

@@ -30,12 +30,17 @@ export function clearLoading() {
 }
 
 export const GET_WHOAMI_REQUEST = 'GET_WHOAMI_REQUEST';
+export const REFRESH_WHOAMI_REQUEST = 'REFRESH_WHOAMI_REQUEST';
 export const GET_WHOAMI_SUCCESS = 'GET_WHOAMI_SUCCESS';
 export const GET_WHOAMI_FAILURE = 'GET_WHOAMI_FAILURE';
 export const CLEAR_WHOAMI = 'CLEAR_WHOAMI';
 
 export function getWhoami() {
     return { type: GET_WHOAMI_REQUEST }
+}
+
+export function refreshWhoami() {
+    return { type: REFRESH_WHOAMI_REQUEST }
 }
 
 export function clearWhoami() {

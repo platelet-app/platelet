@@ -1,12 +1,33 @@
 import React, {useEffect} from 'react'
 import {setMenuIndex} from "../redux/Actions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import SessionList from "./SessionList";
+import UsersTasks from "./UsersTasks";
+import CardsGridSkeleton from "../loadingComponents/CardsGridSkeleton";
 
 export default function Home(props) {
     const dispatch = useDispatch();
     useEffect(() => {dispatch(setMenuIndex(1))}, []);
-    return (
-        <div style={{textAlign: "left"}}>
-        </div>
-    )
+    const whoami = useSelector(state => state.whoami.user);
+    if (whoami.roles.includes("coordinator")) {
+        return (
+            <SessionList/>
+        )
+    } else if (whoami.roles.includes("rider")) {
+        return (
+            <UsersTasks/>
+        )
+    } else if (whoami.roles.includes("admin")) {
+        // TODO: Admin page
+        return (
+            <></>
+        )
+    } else {
+        return (
+            <CardsGridSkeleton/>
+        )
+    }
+
+
+
 }

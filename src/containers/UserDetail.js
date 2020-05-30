@@ -5,7 +5,6 @@ import {getUser} from "../redux/users/UsersActions";
 import UserProfile from "../components/UserProfile";
 import {createLoadingSelector} from "../redux/selectors";
 import DetailSkeleton from "../loadingComponents/DetailSkeleton";
-import {withRouter} from "react-router"
 import Grid from "@material-ui/core/Grid";
 import {PaddedPaper} from "../css/common";
 import CommentsSection from "./CommentsSection";
@@ -21,8 +20,8 @@ export default function UserDetail (props) {
     function newUserProfile() {
         dispatch(getUser(userUUID));
     }
-
     useEffect(newUserProfile, [props.location.key]);
+
 
     if (isFetching) {
         return (

@@ -17,11 +17,10 @@ import VehicleDetail from "../containers/VehicleDetail";
 export default function Main(_props) {
     let location = useLocation();
 
-    let background = location.state && location.state.background;
     return (
         <MainWindowContainer>
             <main>
-                <Switch location={background || location}>
+                <Switch location={location}>
                     >
                     <Route exact path='/' component={Home}/>
                     <Route path='/sessions'

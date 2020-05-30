@@ -51,7 +51,7 @@ import {
     getAllTasksFailure,
     getAllMyTasksNotFound,
     getAllMyTasksFailure,
-    updateTaskPatchSuccess, UPDATE_TASK_PATCH_REQUEST, REFRESH_TASKS_REQUEST
+    updateTaskPatchSuccess, UPDATE_TASK_PATCH_REQUEST, REFRESH_TASKS_REQUEST, REFRESH_MY_TASKS_REQUEST
 } from "./TasksActions"
 
 import {getApiControl} from "../Api"
@@ -283,33 +283,9 @@ export function* watchGetTasks() {
 }
 
 function* refreshTasks(action) {
-    const isTaskPostingSelector = createPostingSelector([
-        "ADD_TASK",
-        "GET_TASK",
-        "DELETE_TASK",
-        "RESTORE_TASK",
-        "UPDATE_TASK",
-        "UPDATE_TASK_CONTACT_NAME",
-        "UPDATE_TASK_CONTACT_NUMBER",
-        "UPDATE_TASK_PICKUP_ADDRESS",
-        "UPDATE_TASK_DROPOFF_ADDRESS",
-        "UPDATE_TASK_PICKUP_TIME",
-        "UPDATE_TASK_DROPOFF_TIME",
-        "UPDATE_TASK_CANCELLED_TIME",
-        "UPDATE_TASK_REJECTED_TIME",
-        "UPDATE_TASK_ASSIGNED_RIDER",
-        "UPDATE_TASK_PRIORITY",
-        "UPDATE_TASK_PATCH"
-    ]);
-    let isTaskPosting = select(isTaskPostingSelector);
     try {
         const api = yield select(getApiControl);
         let result = yield call([api, api.tasks.getTasks], action.data);
-       // while(isTaskPosting) {
-       //     yield delay(1000)
-       //     isTaskPosting = select(state => isTaskPostingSelector(state));
-       //     result = yield call([api, api.tasks.getTasks], action.data);
-       // }
         yield put(getAllTasksSuccess(result))
     } catch (error) {
         if (error.name === "HttpError") {
@@ -345,3 +321,6 @@ export function* watchGetMyTasks() {
     yield takeLatest(GET_MY_TASKS_REQUEST, getMyTasks)
 }
 
+export function* watchRefreshMyTasks() {
+    yield takeLatest(REFRESH_MY_TASKS_REQUEST, getMyTasks)
+}
