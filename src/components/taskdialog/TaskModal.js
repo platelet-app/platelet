@@ -208,18 +208,18 @@ export default function TaskModal(props) {
     }
     let pickupTimeNotice = <></>;
     if (task.time_picked_up) {
-        pickupTimeNotice = <>Picked up at <Moment format={"llll"}>{task.time_picked_up}</Moment></>
+        pickupTimeNotice = <>Picked up at <Moment local format={"llll"}>{task.time_picked_up}</Moment></>
     }
     let dropoffTimeNotice = <></>;
     if (task.time_dropped_off) {
-        dropoffTimeNotice = <>Dropped off at <Moment format={"llll"}>{task.time_dropped_off}</Moment></>
+        dropoffTimeNotice = <>Dropped off at <Moment local format={"llll"}>{task.time_dropped_off}</Moment></>
     }
     let cancelledStatus = <></>
     if (task.time_cancelled) {
         cancelledStatus =
             <PaddedPaper width={"400px"}>
                 <DialogContentText>
-                    Cancelled at <Moment format={"llll"}>{task.time_cancelled}</Moment>
+                    Cancelled at <Moment local format={"llll"}>{task.time_cancelled}</Moment>
                 </DialogContentText>
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_cancelled}
                                  onSelect={() => {
@@ -234,7 +234,7 @@ export default function TaskModal(props) {
         rejectedStatus =
             <PaddedPaper width={"400px"}>
                 <DialogContentText>
-                    Rejected at <Moment format={"llll"}>{task.time_rejected}</Moment>
+                    Rejected at <Moment local format={"llll"}>{task.time_rejected}</Moment>
                 </DialogContentText>
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_rejected}
                                  onSelect={() => {

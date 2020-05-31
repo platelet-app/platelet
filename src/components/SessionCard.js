@@ -15,7 +15,7 @@ export default function SessionCard(props) {
                 <CardContent>
                     <Grid container spacing={1} direction={"column"}>
                         <CardItem label={"Started"}>
-                            <Moment calendar>{props.session.time_created}</Moment>
+                            <Moment local calendar>{props.session.time_created}</Moment>
                         </CardItem>
                         <CardItem
                             label={"Tasks"}>{props.session.task_count ? props.session.task_count : "0"}

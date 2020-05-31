@@ -27,6 +27,7 @@ import ChatIcon from "@material-ui/icons/Chat";
 import Tooltip from "@material-ui/core/Tooltip";
 import NotFound from "../ErrorComponenents/NotFound";
 import {useHistory} from "react-router";
+import moment from "moment";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -136,6 +137,8 @@ function SessionDetail(props) {
     };
 
     function addEmptyTask() {
+        console.log(emptyTask.time_of_call)
+        console.log(moment(emptyTask.time_of_call).local())
         dispatch(addTask(emptyTask))
     }
 

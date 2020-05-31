@@ -151,7 +151,7 @@ export default function TasksTable(props) {
             width: "220px",
             field: "time_of_call",
             render: rowData =>
-                <Moment calendar style={{fontSize: "14px"}}>{rowData.time_of_call ? rowData.time_of_call : ""}</Moment>,
+                <Moment local calendar style={{fontSize: "14px"}}>{rowData.time_of_call ? rowData.time_of_call : ""}</Moment>,
             defaultSort: "desc"
         },
         {title: "Contact Name", field: "contactName"},
@@ -161,8 +161,8 @@ export default function TasksTable(props) {
         {title: "Dropoff Address", field: "dropoffAddress"},
         {title: "Dropoff Ward", field: "dropoffWard"},
         {title: "Priority", field: "priority"},
-        {title: "Pickup Time", field: "pickupTime", width: "240px", render: rowData => rowData.pickupTime ? <Moment calendar style={{fontSize: "14px"}}>{rowData.pickupTime}</Moment> : ""},
-        {title: "Dropoff Time", field: "dropoffTime", width: "240px", render: rowData => rowData.dropoffTime ? <Moment calendar style={{fontSize: "14px"}}>{rowData.dropoffTime}</Moment> : ""},
+        {title: "Pickup Time", field: "pickupTime", width: "240px", render: rowData => rowData.pickupTime ? <Moment local calendar style={{fontSize: "14px"}}>{rowData.pickupTime}</Moment> : ""},
+        {title: "Dropoff Time", field: "dropoffTime", width: "240px", render: rowData => rowData.dropoffTime ? <Moment local calendar style={{fontSize: "14px"}}>{rowData.dropoffTime}</Moment> : ""},
         {title: "Patch", field: "patch"},
         {title: "", field: "uuid", render: () => <></>}
     ];

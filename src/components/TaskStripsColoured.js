@@ -22,7 +22,7 @@ export function TaskStrip(props) {
         itemsList.push(props.assignedRider.display_name ? props.assignedRider.display_name + " | " + props.assignedRider.patch : "");
         hasRider = true;
     }
-    itemsList.push(<Moment format={"llll"}>{props.timestamp}</Moment>);
+    itemsList.push(<Moment local format={"llll"}>{props.timestamp}</Moment>);
     if (props.priority)
         itemsList.push(props.priority);
     const divider = <Grid item><Divider orientation="vertical" flexItem/></Grid>;

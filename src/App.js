@@ -18,7 +18,6 @@ import {getAvailablePriorities} from "./redux/priorities/PrioritiesActions";
 import {getUsers} from "./redux/users/UsersActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
-import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment"
 import ApiConfig from "./containers/ApiConfig";
 import Button from "@material-ui/core/Button";
@@ -27,6 +26,8 @@ import {clearServerSettings, getServerSettings} from "./redux/ServerSettings/Ser
 import {withSnackbar} from "notistack";
 import LoginSkeleton from "./loadingComponents/LoginSkeleton";
 import {Helmet} from "react-helmet"
+import moment from 'moment-timezone';
+
 
 const useStyles = makeStyles(theme => ({
     centeredDiv: {
@@ -100,8 +101,8 @@ function App(props) {
         </Helmet>
 
     function checkServerSettings() {
-        Moment.globalMoment = moment;
-        Moment.globalLocale = serverSettings.locale.code;
+        //Moment.globalMoment = moment;
+        //Moment.globalLocale = serverSettings.locale.code;
     }
     useEffect(checkServerSettings, [serverSettings]);
 
