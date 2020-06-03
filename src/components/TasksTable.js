@@ -100,18 +100,18 @@ function tasksDataColumns (tasks) {
     return (tasks.map(task => {
         return {
             colourCode: getStatusColour(task),
-            time_of_call: task.time_of_call ? task.time_of_call : "",
+            time_of_call:  task.time_of_call || "",
             assignees: task.assigned_users && task.assigned_users.length > 0 ? task.assigned_users.map((u) => u.display_name).join(", ") : "",
-            contactName: task.contact_name ? task.contact_name : "",
+            contactName: task.contact_name || "",
             contactNumber: task.contact_number ? task.contact_number : "",
             pickupAddress: task.pickup_address ? task.pickup_address.line1 : "",
             pickupWard : task.pickup_address ? task.pickup_address.ward : "",
             dropoffAddress: task.dropoff_address ? task.dropoff_address.line1 : "",
             dropoffWard : task.dropoff_address ? task.dropoff_address.ward : "",
             priority: task.priority,
-            pickupTime: task.time_picked_up ? task.time_picked_up : "",
-            dropoffTime: task.time_dropped_off ? task.time_dropped_off : "",
-            patch: task.rider ? task.rider.patch : "",
+            pickupTime: task.time_picked_up || "",
+            dropoffTime: task.time_dropped_off || "",
+            patch: task.patch || "",
             contextMenu: <TaskContextMenu taskUUID={task.uuid}
                                           pickupTime={task.time_picked_up}
                                           dropoffTime={task.time_dropped_off}

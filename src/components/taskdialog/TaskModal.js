@@ -165,12 +165,12 @@ export default function TaskModal(props) {
     }
 
     function onSelectPickedUp(status) {
-        const payload = {time_picked_up: status ? moment.utc().toISOString() : null};
+        const payload = {time_picked_up: status ? new Date().toISOString() : null};
         dispatch(updateTaskPickupTime({taskUUID, payload}));
     }
 
     function onSelectDroppedOff(status) {
-        const payload = {time_dropped_off: status ? moment.utc().toISOString() : null};
+        const payload = {time_dropped_off: status ? new Date().toISOString() : null};
         dispatch(updateTaskDropoffTime({taskUUID, payload}));
     }
 

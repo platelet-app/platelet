@@ -13,6 +13,7 @@ import {MainWindowContainer} from "../css/common";
 import UsersList from "../containers/UsersList";
 import UserDetail from "../containers/UserDetail";
 import VehicleDetail from "../containers/VehicleDetail";
+import {AdminControl} from "../containers/AdminControl";
 
 export default function Main(_props) {
     let location = useLocation();
@@ -40,6 +41,9 @@ export default function Main(_props) {
                     />
                     <Route exact path='/users'
                            render={(props) => <UsersList {...props} apiControl={_props.apiControl}/>}
+                    />
+                    <Route exact path='/admin'
+                           render={(props) => <AdminControl {...props}/>}
                     />
                     <Route exact path='/user/:user_uuid_b62'
                            render={(props) => <UserDetail {...props} apiControl={_props.apiControl}/>}

@@ -110,23 +110,37 @@ function SessionDetail(props) {
 
     let deferredRefresh = undefined;
 
-    function refreshData() {
-        // We don't need it to run the first time
-        if (firstUpdate.current) {
-            firstUpdate.current = false;
+    function checkRefresh() {
+        console.log("checkRefresh running")
+        if (!isTaskPosting) {
+            console.log("not posting so going to refresh")
+            dispatch(refreshAllTasks(session_uuid));
+            clearTimeout(deferredRefresh)
+            deferredRefresh = undefined;
         } else {
-            // Let's not update if there are changes being pushed
-            if (isTaskPosting) {
-                clearTimeout(deferredRefresh)
-                // Defer it 5 seconds ahead
-                deferredRefresh = setTimeout(() => dispatch(refreshAllTasks(session_uuid)), 5000)
-            } else {
-                clearTimeout(deferredRefresh)
-                dispatch(refreshAllTasks(session_uuid));
-            }
+            console.log("is posting so gonna wait")
+            clearTimeout(deferredRefresh)
+            deferredRefresh = undefined;
+            deferredRefresh = setTimeout(checkRefresh, 1000)
         }
     }
 
+    function refreshData() {
+        // We don't need it to run the first time
+        if (firstUpdate.current) {
+            console.log("First time so ignore")
+            firstUpdate.current = false;
+        } else {
+            // If a loop is already waiting to refresh, ignore
+            if (!deferredRefresh) {
+                console.log("The refresh loop is not waiting")
+                checkRefresh();
+            }
+            else {
+                console.log("The refresh loop is already going")
+            }
+        }
+    }
     useEffect(refreshData, [tasksEtag])
 
     const emptyTask = {

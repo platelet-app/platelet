@@ -56,7 +56,7 @@ function TaskContextMenu(props) {
 
     function onSelectPickedUp() {
         handleClose();
-        const payload = {time_picked_up: moment.utc().toISOString()};
+        const payload = {time_picked_up: new Date().toISOString()};
         dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
@@ -73,7 +73,7 @@ function TaskContextMenu(props) {
 
     function onSelectDroppedOff() {
         handleClose();
-        const payload = {time_dropped_off: moment.utc().toISOString()};
+        const payload = {time_dropped_off: new Date().toISOString()};
         dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
@@ -89,7 +89,7 @@ function TaskContextMenu(props) {
     }
     function onSelectCancelled() {
         handleClose();
-        const payload = {time_cancelled: moment.utc().toISOString()};
+        const payload = {time_cancelled: new Date().toISOString()};
         dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
@@ -106,7 +106,7 @@ function TaskContextMenu(props) {
 
     function onSelectRejected() {
         handleClose();
-        const payload = {time_rejected: moment.utc().toISOString()};
+        const payload = {time_rejected: new Date().toISOString()};
         dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
         const action = key => (
             <React.Fragment>
