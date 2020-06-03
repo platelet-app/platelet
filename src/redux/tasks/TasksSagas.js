@@ -1,5 +1,4 @@
 import {
-    throttle,
     debounce,
     call,
     put,
@@ -9,8 +8,6 @@ import {
     takeEvery,
     takeLatest,
     select,
-    race,
-    spawn
 } from 'redux-saga/effects'
 import {
     ADD_TASK_REQUEST,
@@ -51,13 +48,27 @@ import {
     getAllTasksFailure,
     getAllMyTasksNotFound,
     getAllMyTasksFailure,
-    updateTaskPatchSuccess, UPDATE_TASK_PATCH_REQUEST, REFRESH_TASKS_REQUEST, REFRESH_MY_TASKS_REQUEST
+    updateTaskPatchSuccess,
+    UPDATE_TASK_PATCH_REQUEST,
+    REFRESH_TASKS_REQUEST,
+    REFRESH_MY_TASKS_REQUEST,
+    addTaskFailure,
+    deleteTaskFailure,
+    restoreTaskFailure,
+    updateTaskFailure,
+    updateTaskContactNameFailure,
+    updateTaskContactNumberFailure,
+    updateTaskPickupAddressFailure,
+    updateTaskDropoffAddressFailure,
+    updateTaskPickupTimeFailure,
+    updateTaskDropoffTimeFailure,
+    updateTaskAssignedRiderFailure,
+    updateTaskPriorityFailure,
+    updateTaskPatchFailure, updateTaskCancelledTimeFailure, updateTaskRejectedTimeFailure, getTaskFailure
 } from "./TasksActions"
 
 import {getApiControl} from "../Api"
 import {setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
-import {createPostingSelector} from "../selectors";
-import {useSelector} from "react-redux";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()
@@ -87,8 +98,8 @@ function* postNewTask(action) {
         const result = yield call([api, api.tasks.createTask], action.data);
         const task = {...action.data, "uuid": result.uuid};
         yield put(addTaskSuccess(task))
-    } catch(error) {
-
+    } catch (error) {
+        yield put(addTaskFailure(error))
     }
 }
 
@@ -97,9 +108,13 @@ export function* watchPostNewTask() {
 }
 
 function* deleteTask(action) {
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.deleteTask], action.data);
-    yield put(deleteTaskSuccess(action.data))
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.deleteTask], action.data);
+        yield put(deleteTaskSuccess(action.data))
+    } catch (error) {
+        yield put(deleteTaskFailure(error))
+    }
 }
 
 export function* watchDeleteTask() {
@@ -107,10 +122,14 @@ export function* watchDeleteTask() {
 }
 
 function* restoreTask(action) {
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.restoreTask], action.data);
-    const result = yield call([api, api.tasks.getTask], action.data);
-    yield put(restoreTaskSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.restoreTask], action.data);
+        const result = yield call([api, api.tasks.getTask], action.data);
+        yield put(restoreTaskSuccess(result))
+    } catch (error) {
+        yield put(restoreTaskFailure(error))
+    }
 }
 
 export function* watchRestoreTask() {
@@ -119,90 +138,139 @@ export function* watchRestoreTask() {
 
 
 function* updateTask(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskFailure(error))
+    }
 }
 
 function* updateTaskContactName(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskContactNameSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskContactNameSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskContactNameFailure(error))
+    }
 }
 
 function* updateTaskContactNumber(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskContactNumberSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskContactNumberSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskContactNumberFailure(error))
+    }
 }
 
 function* updateTaskPickupAddress(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskPickupAddressSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskPickupAddressSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskPickupAddressFailure(error))
+
+    }
 }
 
 function* updateTaskDropoffAddress(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskDropoffAddressSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskDropoffAddressSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskDropoffAddressFailure(error))
+    }
 }
 
 function* updateTaskPickupTime(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskPickupTimeSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskPickupTimeSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskPickupTimeFailure(error))
+    }
 }
 
 function* updateTaskDropoffTime(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskDropoffTimeSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskDropoffTimeSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskDropoffTimeFailure(error))
+    }
 }
 
 function* updateTaskAssignedRider(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    if (action.data.payload.patch_id)
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload.patch_id);
-    if (action.data.payload.user_uuid)
-        yield call([api, api.tasks.addTaskAssignee], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
-    yield put(updateTaskAssignedRiderSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        if (action.data.payload.patch_id)
+            yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload.patch_id);
+        if (action.data.payload.user_uuid)
+            yield call([api, api.tasks.addTaskAssignee], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
+        yield put(updateTaskAssignedRiderSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskAssignedRiderFailure(error))
+    }
 }
 
 function* updateTaskPriority(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskPrioritySuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskPrioritySuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskPriorityFailure(error))
+    }
 }
 
 function* updateTaskPatch(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskPatchSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskPatchSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskPatchFailure(error))
+    }
 }
 
 function* updateTaskCancelledTime(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskCancelledTimeSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskCancelledTimeSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskCancelledTimeFailure(error))
+    }
 }
 
 function* updateTaskRejectedTime(action) {
-    yield put(setCurrentSessionTimeActiveToNow())
-    const api = yield select(getApiControl);
-    yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-    yield put(updateTaskRejectedTimeSuccess(action.data))
+    try {
+        yield put(setCurrentSessionTimeActiveToNow())
+        const api = yield select(getApiControl);
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskRejectedTimeSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskRejectedTimeFailure(error))
+    }
 }
 
 export function* watchUpdateTask() {
@@ -254,9 +322,13 @@ export function* watchUpdateTaskRejectedTime() {
 }
 
 function* getTask(action) {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.tasks.getTask], action.data.task_uuid);
-    yield put(getTaskSuccess(result))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.tasks.getTask], action.data.task_uuid);
+        yield put(getTaskSuccess(result))
+    } catch(error) {
+        yield put(getTaskFailure(error))
+    }
 }
 
 export function* watchGetTask() {
@@ -303,10 +375,10 @@ export function* watchRefreshTasks() {
 
 function* getMyTasks() {
     try {
-    const api = yield select(getApiControl);
-    const whoami = yield call([api, api.users.whoami]);
-    const result = yield call([api, api.users.getAssignedTasks], whoami.uuid);
-    yield put(getAllMyTasksSuccess(result))
+        const api = yield select(getApiControl);
+        const whoami = yield call([api, api.users.whoami]);
+        const result = yield call([api, api.users.getAssignedTasks], whoami.uuid);
+        yield put(getAllMyTasksSuccess(result))
     } catch (error) {
         if (error.name === "HttpError") {
             if (error.response.status === 404) {

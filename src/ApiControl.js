@@ -572,26 +572,28 @@ class Control {
             },
             function (error) {
                 const originalRequest = error.config;
-                if (error.response.status === 401 && !originalRequest._retry) {
-                    if (error.response.status === 401 &&
-                        originalRequest.url === self.api_url + "login/refresh_token") {
-                        return Promise.reject(error);
+                if (error.response) {
+                    if (error.response.status === 401 && !originalRequest._retry) {
+                        if (error.response.status === 401 &&
+                            originalRequest.url === self.api_url + "login/refresh_token") {
+                            return Promise.reject(error);
+                        }
+
+                        originalRequest._retry = true;
+                        return axios.get(self.api_url + "login/refresh_token")
+                            .then(res => {
+                                if (res.status === 200) {
+                                    // 1) put token to LocalStorage
+                                    saveLogin(res.data.access_token)
+
+                                    // 2) Change Authorization header
+                                    self.bearer = "Bearer " + res.data.access_token;
+
+                                    // 3) return originalRequest object with Axios.
+                                    return axios(originalRequest);
+                                }
+                            })
                     }
-
-                    originalRequest._retry = true;
-                    return axios.get(self.api_url + "login/refresh_token")
-                        .then(res => {
-                            if (res.status === 200) {
-                                // 1) put token to LocalStorage
-                                saveLogin(res.data.access_token)
-
-                                // 2) Change Authorization header
-                                self.bearer = "Bearer " + res.data.access_token;
-
-                                // 3) return originalRequest object with Axios.
-                                return axios(originalRequest);
-                            }
-                        })
                 }
 
                 // return Error object with Promise

@@ -151,8 +151,6 @@ function SessionDetail(props) {
     };
 
     function addEmptyTask() {
-        console.log(emptyTask.time_of_call)
-        console.log(moment(emptyTask.time_of_call).local())
         dispatch(addTask(emptyTask))
     }
 

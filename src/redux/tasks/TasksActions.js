@@ -77,6 +77,10 @@ export function restoreTaskSuccess(data) {
     return { type: RESTORE_TASK_SUCCESS, data }
 }
 
+export function restoreTaskFailure(error) {
+    return { type: RESTORE_TASK_FAILURE, error }
+}
+
 export function getTask(data) {
     return { type: GET_TASK_REQUEST, data }
 }
@@ -89,6 +93,10 @@ export function getTaskSuccess(data) {
     return { type: GET_TASK_SUCCESS, data }
 }
 
+export function getTaskFailure(error) {
+    return { type: GET_TASK_FAILURE, error }
+}
+
 export function addTask(data) {
     return { type: ADD_TASK_REQUEST, data }
 }
@@ -97,12 +105,20 @@ export function addTaskSuccess(data) {
     return { type: ADD_TASK_SUCCESS, data }
 }
 
+export function addTaskFailure(error) {
+    return { type: ADD_TASK_FAILURE, error }
+}
+
 export function deleteTask(data) {
     return { type: DELETE_TASK_REQUEST, data }
 }
 
 export function deleteTaskSuccess(data) {
     return { type: DELETE_TASK_SUCCESS, data }
+}
+
+export function deleteTaskFailure(error) {
+    return { type: DELETE_TASK_FAILURE, error }
 }
 
 export function updateTask(data) {
@@ -192,6 +208,45 @@ export function updateTaskPatchSuccess(data) {
 
 export function updateTaskSuccess(data) {
     return { type: UPDATE_TASK_SUCCESS, data }
+}
+
+export function updateTaskFailure(error) {
+    return { type: UPDATE_TASK_FAILURE, error }
+}
+
+export function updateTaskContactNameFailure(error) {
+    return { type: UPDATE_TASK_CONTACT_NAME_FAILURE, error }
+}
+export function updateTaskContactNumberFailure(error) {
+    return { type: UPDATE_TASK_CONTACT_NUMBER_FAILURE, error }
+}
+export function updateTaskPickupAddressFailure(error) {
+    return { type: UPDATE_TASK_PICKUP_ADDRESS_FAILURE, error }
+}
+export function updateTaskDropoffAddressFailure(error) {
+    return { type: UPDATE_TASK_DROPOFF_ADDRESS_FAILURE, error }
+}
+export function updateTaskPickupTimeFailure(error) {
+    return { type: UPDATE_TASK_PICKUP_TIME_FAILURE, error }
+}
+export function updateTaskDropoffTimeFailure(error) {
+    return { type: UPDATE_TASK_DROPOFF_TIME_FAILURE, error }
+}
+export function updateTaskCancelledTimeFailure(error) {
+    return { type: UPDATE_TASK_CANCELLED_TIME_FAILURE, error }
+}
+export function updateTaskRejectedTimeFailure(error) {
+    return { type: UPDATE_TASK_REJECTED_TIME_FAILURE, error }
+}
+export function updateTaskAssignedRiderFailure(error) {
+    return { type: UPDATE_TASK_ASSIGNED_RIDER_FAILURE, error }
+}
+export function updateTaskPriorityFailure(error) {
+    return { type: UPDATE_TASK_PRIORITY_FAILURE, error }
+}
+
+export function updateTaskPatchFailure(error) {
+    return { type: UPDATE_TASK_PATCH_FAILURE, error }
 }
 
 export function getAllTasks(data) {
