@@ -100,7 +100,8 @@ function SessionDetail(props) {
 
     function setupRefreshTimer() {
         const timer = setInterval(() => {
-            dispatch(refreshCurrentSession(session_uuid));
+            if (!process.env.REACT_APP_NO_SESSION_REFRESH)
+                dispatch(refreshCurrentSession(session_uuid));
         }, 10000)
         return function cleanup() {
             clearInterval(timer);

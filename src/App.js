@@ -27,6 +27,7 @@ import {withSnackbar} from "notistack";
 import LoginSkeleton from "./loadingComponents/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
+import {getApiURL} from "./utilities";
 
 
 const useStyles = makeStyles(theme => ({
@@ -62,6 +63,14 @@ function App(props) {
         favicon: ""
     })
 
+    function checkEnvApirURL() {
+        if (process.env.REACT_APP_API_URL) {
+            if (getApiURL() !== process.env.REACT_APP_API_URL)
+                dispatch(setApiURL(process.env.REACT_APP_API_URL))
+        }
+    }
+    useEffect(checkEnvApirURL, [])
+
     function handleError() {
         // any saga that returns with an error object that is not null will be handled here
         if (error) {
@@ -92,7 +101,6 @@ function App(props) {
             dispatch(getServerSettings())
         }
     }
-
     useEffect(requestServerSettings, [apiURL])
 
     let helmet =
@@ -101,8 +109,8 @@ function App(props) {
         </Helmet>
 
     function checkServerSettings() {
-        //Moment.globalMoment = moment;
-        //Moment.globalLocale = serverSettings.locale.code;
+        Moment.globalMoment = moment;
+        Moment.globalLocale = serverSettings.locale.code;
     }
     useEffect(checkServerSettings, [serverSettings]);
 
@@ -116,7 +124,6 @@ function App(props) {
             }
         }
     }
-
     useEffect(loginCheck, [whoami])
 
     function firstWhoami() {
@@ -137,7 +144,6 @@ function App(props) {
             dispatch(getAvailablePatches())
         }
     }
-
     useEffect(getStaticData, [confirmLogin]);
 
     const theme = useTheme();

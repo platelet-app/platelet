@@ -53,7 +53,8 @@ function UsersTasks() {
 
     function setupRefreshTimer() {
         const timer = setInterval(() => {
-            dispatch(refreshWhoami());
+            if (!process.env.REACT_APP_NO_SESSION_REFRESH)
+                dispatch(refreshWhoami());
         }, 10000)
         return function cleanup() {
             clearInterval(timer);
