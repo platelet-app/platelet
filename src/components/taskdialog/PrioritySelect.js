@@ -26,7 +26,7 @@ export default function PrioritySelect(props) {
         <FormControl component="fieldset">
             <RadioGroup aria-label="priority" name="priority" value={value} onChange={handleChange}>
                 {availablePriorities.map((priority) =>
-                    (<FormControlLabel value={priority.id} control={<Radio/>} label={priority.label}/>)
+                    (<FormControlLabel key={priority.id} value={priority.id} control={<Radio/>} label={priority.label}/>)
                 )}
             </RadioGroup>
         </FormControl>

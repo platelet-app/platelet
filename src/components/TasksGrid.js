@@ -76,7 +76,8 @@ export default function TasksGrid(props) {
         setFilteredTasks(result);
     }
     useEffect(doSearch, [searchQuery, tasks])
-    return (<Grid container spacing={3} direction={"column"} alignItems={"flex-start"}>
+    return (
+        <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
             <Grid item>
                 {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onChange={(e) => {
                     setSearchQuery(e.target.value)
@@ -117,7 +118,6 @@ export default function TasksGrid(props) {
                                                 <TaskItem key={task.uuid}
                                                           task={task}
                                                           view={props.modalView}
-                                                          fullScreenModal={props.fullScreenModal}
                                                           location={props.location}
                                                           deleteDisabled={props.deleteDisabled}/>
                                             )

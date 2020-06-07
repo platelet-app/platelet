@@ -3,12 +3,15 @@ import '../App.css';
 import 'typeface-roboto'
 import Grid from "@material-ui/core/Grid";
 import {
-    addTask,
+    addTask, clearCurrentTask,
     getAllTasks,
     refreshAllTasks,
 } from '../redux/tasks/TasksActions'
-import {setCommentsObjectUUID, setMenuIndex, setViewMode} from "../redux/Actions";
-import {getSession, refreshCurrentSession, setCurrentSessionTimeActiveToNow} from "../redux/sessions/SessionsActions";
+import {setCommentsObjectUUID, setMenuIndex, setViewMode, setNewTaskAddedView} from "../redux/Actions";
+import {
+    getSession,
+    refreshCurrentSession,
+} from "../redux/sessions/SessionsActions";
 import TasksGrid from "../components/TasksGrid";
 import {decodeUUID, encodeUUID, getLocalStorageViewMode} from "../utilities";
 import {useDispatch, useSelector} from "react-redux"
@@ -26,8 +29,9 @@ import PersistentDrawerRight from "./SideInfoSection";
 import ChatIcon from "@material-ui/icons/Chat";
 import Tooltip from "@material-ui/core/Tooltip";
 import NotFound from "../ErrorComponenents/NotFound";
-import {useHistory} from "react-router";
-import moment from "moment";
+import {Redirect, useHistory} from "react-router";
+import {SessionDetailTabs, TabPanel} from "../components/SessionDetailTabs";
+import TaskModal from "../components/taskdialog/TaskModal";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -40,6 +44,19 @@ function GetViewTitle(props) {
         default:
             return <Typography></Typography>;
 
+    }
+}
+
+function getViewModeIndex(string) {
+    switch (string) {
+        case "kanban":
+            return 0;
+        case "table":
+            return 1;
+        case "statistics":
+            return 2;
+        default:
+            return 0
     }
 }
 
@@ -66,6 +83,8 @@ function SessionDetail(props) {
         "UPDATE_TASK_PATCH"
     ]);
     const isTaskPosting = useSelector(state => isTaskPostingSelector(state));
+    const isPostingNewTaskSelector = createPostingSelector(["ADD_TASK"]);
+    const isPostingNewTask = useSelector(state => isPostingNewTaskSelector(state));
     const tasks = useSelector(state => state.tasks.tasks);
     const viewMode = useSelector(state => state.viewMode);
     const mobileView = useSelector(state => state.mobileView);
@@ -73,14 +92,19 @@ function SessionDetail(props) {
     const notFound = useSelector(state => notFoundSelector(state));
     //TODO: This could put data into title
     const currentSession = useSelector(state => state.currentSession.session);
+    const currentTaskUUID = useSelector(state => state.currentTask.task.uuid);
     const tasksEtag = useSelector(state => state.currentSession.session.tasks_etag);
     const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
     const history = useHistory();
     const firstUpdate = useRef(true);
+    const firstUpdateNewTask = useRef(true);
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
+    const [tabValue, setTabValue] = useState(0);
+    const newTaskAddedView = useSelector(state => state.newTaskAddedView);
 
     function componentDidMount() {
+        dispatch(clearCurrentTask());
         dispatch(getAllTasks(session_uuid));
         dispatch(getSession(session_uuid))
         dispatch(setCommentsObjectUUID(session_uuid));
@@ -129,19 +153,18 @@ function SessionDetail(props) {
     function refreshData() {
         // We don't need it to run the first time
         if (firstUpdate.current) {
-            console.log("First time so ignore")
             firstUpdate.current = false;
         } else {
             // If a loop is already waiting to refresh, ignore
             if (!deferredRefresh) {
                 console.log("The refresh loop is not waiting")
                 checkRefresh();
-            }
-            else {
+            } else {
                 console.log("The refresh loop is already going")
             }
         }
     }
+
     useEffect(refreshData, [tasksEtag])
 
     const emptyTask = {
@@ -154,6 +177,16 @@ function SessionDetail(props) {
     function addEmptyTask() {
         dispatch(addTask(emptyTask))
     }
+
+    function setNewTaskAdded() {
+        // We don't want it to run the first time
+        if (firstUpdateNewTask.current)
+            firstUpdateNewTask.current = false;
+        else if (!isPostingNewTask)
+            dispatch(setNewTaskAddedView(true))
+    }
+
+    useEffect(setNewTaskAdded, [isPostingNewTask])
 
     useEffect(() => {
         dispatch(setMenuIndex(2))
@@ -224,11 +257,42 @@ function SessionDetail(props) {
         </Grid>
     ;
 
+    if (newTaskAddedView) {
+        if (currentTaskUUID) {
+            //TODO: for some reason this makes the session in the background disappear
+            return <Redirect to={`/session/${encodeUUID(session_uuid)}/task/${encodeUUID(currentTaskUUID)}`}/>
+        }
+    }
     if (isFetching || viewMode === null) {
         return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
     } else if (notFound) {
         return <NotFound>{`Session with UUID ${session_uuid} not found.`}</NotFound>
-    } else if (viewMode === "stats" || props.statsView) {
+    } else {
+            return (
+                <SessionDetailTabs value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
+                    <TabPanel value={viewMode} index={0}>
+                        <TasksGrid tasks={tasks}
+                                   fullScreenModal={mobileView}
+                                   onAddTaskClick={addEmptyTask}
+                                   sessionUUID={session_uuid}
+                                   modalView={"edit"}
+                        />
+                    </TabPanel>
+                    <TabPanel value={viewMode} index={1}>
+                        <TasksTable tasks={tasks}
+                                    fullScreenModal={mobileView}
+                                    onAddTaskClick={addEmptyTask}
+                                    sessionUUID={session_uuid}
+                                    modalView={"edit"}
+                        />
+                    </TabPanel>
+                    <TabPanel value={viewMode} index={2}>
+                        <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
+                    </TabPanel>
+                </SessionDetailTabs>
+            )
+        }
+    if (viewMode === "stats" || props.statsView) {
         return (
             <PersistentDrawerRight open={rightSideBarOpen}
                                    handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}

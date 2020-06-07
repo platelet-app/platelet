@@ -221,7 +221,7 @@ export function ResponsiveDrawer(props) {
                                     }}>
                                         Logout
                                     </MenuItem>
-                                    {process.env.REACT_APP_API_URL ? <></> :
+                                    {process.env.REACT_APP_API_URL ? "" :
                                         // No need for change organisation entry if the api url is hard coded
                                         <MenuItem onClick={() => {
                                             setAnchorEl(null);

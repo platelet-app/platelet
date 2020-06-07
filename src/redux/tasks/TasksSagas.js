@@ -64,11 +64,15 @@ import {
     updateTaskDropoffTimeFailure,
     updateTaskAssignedRiderFailure,
     updateTaskPriorityFailure,
-    updateTaskPatchFailure, updateTaskCancelledTimeFailure, updateTaskRejectedTimeFailure, getTaskFailure
+    updateTaskPatchFailure,
+    updateTaskCancelledTimeFailure,
+    updateTaskRejectedTimeFailure,
+    getTaskFailure,
+    setCurrentTask
 } from "./TasksActions"
 
 import {getApiControl} from "../Api"
-import {setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
+import {setCurrentSession, setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()
@@ -97,7 +101,8 @@ function* postNewTask(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data);
         const task = {...action.data, "uuid": result.uuid};
-        yield put(addTaskSuccess(task))
+        yield put(setCurrentTask(task));
+        yield put(addTaskSuccess(task));
     } catch (error) {
         yield put(addTaskFailure(error))
     }
@@ -324,7 +329,7 @@ export function* watchUpdateTaskRejectedTime() {
 function* getTask(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.getTask], action.data.task_uuid);
+        const result = yield call([api, api.tasks.getTask], action.data);
         yield put(getTaskSuccess(result))
     } catch(error) {
         yield put(getTaskFailure(error))

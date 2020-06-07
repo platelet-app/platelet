@@ -37,7 +37,7 @@ export function TextFieldControlled(props) {
 }
 
 export function TelephoneTextFieldControlled(props) {
-    const [currentValue, setCurrentValue] = useState(props.value);
+    const [currentValue, setCurrentValue] = useState(props.value ? props.value : "");
     const [errorState, setErrorState] = useState(false);
 
     function validateNumber() {

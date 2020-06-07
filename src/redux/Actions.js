@@ -1,5 +1,10 @@
 import {saveLocalStorageViewMode} from "../utilities";
 
+export const SET_NEW_TASK_ADDED_VIEW = 'SET_NEW_TASK_ADDED_VIEW'
+
+export function setNewTaskAddedView(data) {
+    return { type: SET_NEW_TASK_ADDED_VIEW, data }
+}
 
 export const GET_ACTIVE_TASK_UUID = 'GET_ACTIVE_TASK_UUID';
 export const SET_ACTIVE_TASK_UUID = 'SET_ACTIVE_TASK_UUID';

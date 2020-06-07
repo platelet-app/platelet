@@ -1,5 +1,5 @@
 import {
-    ADD_TASK_SUCCESS,
+    ADD_TASK_SUCCESS, CLEAR_CURRENT_TASK,
     DELETE_TASK_SUCCESS, GET_MY_TASKS_FAILURE,
     GET_MY_TASKS_SUCCESS,
     GET_TASK_SUCCESS, GET_TASKS_FAILURE,
@@ -78,6 +78,8 @@ export function currentTask(state = initialState, action) {
             return state;
             state.task.assigned_users.push(action.data.payload.rider);
             return {task: state.task, error: null};
+        case CLEAR_CURRENT_TASK:
+            return initialState;
         default:
             return state;
     }

@@ -21,7 +21,7 @@ import {
     updateTaskContactNumber,
     updateTaskDropoffAddress,
     updateTaskDropoffTime,
-    updateTaskPickupAddress, updateTaskCancelledTime, setCurrentTask
+    updateTaskPickupAddress, updateTaskCancelledTime, setCurrentTask, clearCurrentTask, getTask
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
@@ -35,6 +35,7 @@ import TaskModalNameAndContactNumber from "./TaskModalNameAndContactNumber";
 import CommentsSection from "../../containers/CommentsSection";
 import TaskAssignees from "./TaskAssignees";
 import Typography from "@material-ui/core/Typography";
+import {setNewTaskAddedView} from "../../redux/Actions";
 
 export default function TaskModal(props) {
     const dispatch = useDispatch();
@@ -59,70 +60,54 @@ export default function TaskModal(props) {
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
     const mobileView = useSelector(state => state.mobileView);
     const task = useSelector(state => state.currentTask.task);
+    const taskGetter = useSelector(state => state.task.task.session_uuid);
     const session = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
     const whoamiUUID = useSelector(state => state.whoami.user.uuid);
     const whoamiRoles = useSelector(state => state.whoami.user.roles);
     const currentLocation = useLocation();
-    let useStyles;
-    // TODO: Do this properly (withStyles)
-    if (!mobileView) {
-        useStyles = makeStyles(({
-            box: {
-                border: 0,
-                boxShadow: '0 3px 5px 2px rgba(100, 100, 100, .3)',
-                borderColor: "cornflowerblue",
-                borderRadius: 0,
-                height: "100%",
-                minWidth: "400px",
-                background: "rgba(235, 235, 235, 0.7)",
-                padding: "20px"
-            },
-        }));
-    } else {
-        useStyles = makeStyles(({
-            box: {
-                border: 0,
-                boxShadow: '0 3px 5px 2px rgba(100, 100, 100, .3)',
-                borderColor: "cornflowerblue",
-                borderRadius: 0,
-                height: "100%",
-                minWidth: "400px",
-                maxWidth: "400px",
-                background: "rgba(235, 235, 235, 0.7)",
-                padding: "20px"
-            },
-        }));
-    }
-    const classes = useStyles();
 
     const tasks = useSelector(state => state.tasks.tasks);
 
     let history = useHistory();
 
-    const taskUUID = decodeUUID(props.match.params.task_uuid_b62);
+
+    let taskUUID = null;
+    if (props.match) {
+        taskUUID = decodeUUID(props.match.params.task_uuid_b62)
+    } else {
+        taskUUID = task.uuid;
+    }
 
     const [editMode, setEditMode] = useState(false);
 
     function componentDidMount() {
         if (!tasks.length) {
-            props.apiControl.tasks.getTask(taskUUID).then((data) => {
-                dispatch(getAllTasks(data.session_uuid));
-            });
+            dispatch(getTask(taskUUID));
         }
     }
+
     useEffect(componentDidMount, []);
+
+    function getSessionData() {
+        if (taskGetter && !tasks.length)
+            dispatch(getAllTasks(taskGetter));
+    }
+
+    useEffect(getSessionData, [taskGetter])
 
     function editModeSetter() {
         setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
-
     }
-    useEffect(editModeSetter, whoamiUUID, whoamiRoles)
+
+    useEffect(editModeSetter, [whoamiUUID, whoamiRoles])
 
     function currentTask() {
-        const taskResult = tasks.filter(task => task.uuid === taskUUID);
-        if (taskResult.length === 1) {
-            dispatch(setCurrentTask(taskResult[0]))
+        if (task.uuid !== taskUUID) {
+            const taskResult = tasks.filter(task => task.uuid === taskUUID);
+            if (taskResult.length === 1) {
+                dispatch(setCurrentTask(taskResult[0]))
+            }
         }
     }
 
@@ -132,6 +117,7 @@ export default function TaskModal(props) {
         console.log(session)
         setEditMode(session.user_uuid === whoamiUUID || whoamiRoles.includes("admin"));
     }
+
     useEffect(updateEditMode, [whoami, session])
 
     function onSelectContactNumber(event) {
@@ -183,17 +169,19 @@ export default function TaskModal(props) {
             history.push("/mytasks");
         else
             history.push("/");
+
+        dispatch(clearCurrentTask());
+        dispatch(setNewTaskAddedView(false));
     };
 
     const usersSelect = editMode ?
         <Grid container direction={"column"}>
             <Grid item>
-                <DialogContentText>
-                    <Typography variant={"h5"}>Assignees:</Typography>
-                </DialogContentText>
+
+                <Typography variant={"h5"}>Assignees:</Typography>
             </Grid>
             <Grid item>
-        <TaskAssignees taskUUID={taskUUID}/>
+                <TaskAssignees taskUUID={taskUUID}/>
             </Grid>
         </Grid> : <></>
 
@@ -246,9 +234,8 @@ export default function TaskModal(props) {
     }
     let deliverableSelect = <DeliverableInformation apiControl={props.apiControl} taskUUID={taskUUID}/>;
     if (editMode) {
-        deliverableSelect = <><DialogContentText>
+        deliverableSelect = <>
             <Typography variant={"h5"}>Deliverables:</Typography>
-        </DialogContentText>
             <DeliverableGridSelect apiControl={props.apiControl}
                                    taskUUID={taskUUID}
                                    deliverables={task.deliverables ? task.deliverables : []}/>
@@ -271,9 +258,7 @@ export default function TaskModal(props) {
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <DialogContentText>
-                        <Typography variant={"h5"}>Contact:</Typography>
-                    </DialogContentText>
+                    <Typography variant={"h5"}>Contact:</Typography>
                     <TaskModalNameAndContactNumber
                         contactName={task.contact_name}
                         contactNumber={task.contact_number}
@@ -284,9 +269,8 @@ export default function TaskModal(props) {
             </Grid>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <DialogContentText>
-                        <Typography variant={"h5"}>Priority:</Typography>
-                    </DialogContentText>
+
+                    <Typography variant={"h5"}>Priority:</Typography>
                     {prioritySelect}
                 </PaddedPaper>
             </Grid>
@@ -296,10 +280,9 @@ export default function TaskModal(props) {
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <DialogContentText>
-                        <Typography variant={"h5"}>From:</Typography>
-                    </DialogContentText>
-                        <AddressDetailsCollapsible label={""}
+
+                    <Typography variant={"h5"}>From:</Typography>
+                    <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectPickup}
                                                address={task.pickup_address}
                                                disabled={!editMode}
@@ -308,9 +291,8 @@ export default function TaskModal(props) {
             </Grid>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <DialogContentText>
+
                     <Typography variant={"h5"}>To:</Typography>
-                    </DialogContentText>
                     <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectDropoff}
                                                address={task.dropoff_address}
@@ -338,7 +320,8 @@ export default function TaskModal(props) {
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <TaskModalTimePicker disabled={isPostingPickupTime} label={"Mark Picked Up"} time={task.time_picked_up}
+                    <TaskModalTimePicker disabled={isPostingPickupTime} label={"Mark Picked Up"}
+                                         time={task.time_picked_up}
                                          onToggle={onSelectPickedUp} onChange={(time_picked_up) => {
                         const payload = {time_picked_up};
                         dispatch(updateTaskPickupTime({taskUUID, payload}))
@@ -347,7 +330,8 @@ export default function TaskModal(props) {
             </Grid>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <TaskModalTimePicker disabled={isPostingDropoffTime || !!!task.time_picked_up} label={"Mark Dropped Off"}
+                    <TaskModalTimePicker disabled={isPostingDropoffTime || !!!task.time_picked_up}
+                                         label={"Mark Dropped Off"}
                                          time={task.time_dropped_off} onToggle={onSelectDroppedOff}
                                          onChange={(time_dropped_off) => {
                                              const payload = {time_dropped_off};

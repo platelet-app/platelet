@@ -13,6 +13,7 @@ export const RESTORE_TASK_SUCCESS = 'RESTORE_TASK_SUCCESS';
 export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE';
 
 export const SET_CURRENT_TASK = 'SET_CURRENT_TASK';
+export const CLEAR_CURRENT_TASK = 'CLEAR_CURRENT_TASK';
 
 export const UPDATE_TASK_CONTACT_NAME_REQUEST = "UPDATE_TASK_CONTACT_NAME_REQUEST";
 export const UPDATE_TASK_CONTACT_NUMBER_REQUEST = "UPDATE_TASK_CONTACT_NUMBER_REQUEST";
@@ -87,6 +88,10 @@ export function getTask(data) {
 
 export function setCurrentTask(data) {
     return { type: SET_CURRENT_TASK, data }
+}
+
+export function clearCurrentTask() {
+    return { type: CLEAR_CURRENT_TASK }
 }
 
 export function getTaskSuccess(data) {

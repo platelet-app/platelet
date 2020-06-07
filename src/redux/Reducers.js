@@ -5,8 +5,12 @@ import {
     CLEAR_LOADING,
     GET_WHOAMI_SUCCESS,
     SET_VIEW_MODE,
+    SET_NEW_TASK_ADDED_VIEW,
     SET_MOBILE_VIEW,
-    SET_MENU_INDEX, SET_COMMENTS_OBJECT_UUID, CLEAR_WHOAMI, GET_WHOAMI_FAILURE
+    SET_MENU_INDEX,
+    SET_COMMENTS_OBJECT_UUID,
+    CLEAR_WHOAMI,
+    GET_WHOAMI_FAILURE
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
@@ -24,6 +28,15 @@ import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 function viewMode(state = null, action) {
     switch (action.type) {
         case SET_VIEW_MODE:
+            return action.data;
+        default:
+            return state
+    }
+}
+
+function newTaskAddedView(state = false, action) {
+    switch (action.type) {
+        case SET_NEW_TASK_ADDED_VIEW:
             return action.data;
         default:
             return state
@@ -208,6 +221,7 @@ const rootReducer = combineReducers({
     apiControl,
     authStatus,
     viewMode,
+    newTaskAddedView,
     mobileView,
     menuIndex,
     commentsObjectUUID,

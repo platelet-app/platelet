@@ -17,7 +17,6 @@ import {
     deleteSessionFailure,
     restoreSessionFailure,
     setCurrentSession,
-    ADD_SESSION_AND_SET_CURRENT_REQUEST,
     REFRESH_CURRENT_SESSION_REQUEST,
     refreshCurrentSessionSuccess,
     refreshCurrentSessionFailure
@@ -29,7 +28,6 @@ import {
     RESTORE_SESSION_REQUEST,
     restoreSessionSuccess
 } from "./SessionsActions";
-import {getCurrentSessionSelector} from "../selectors";
 
 
 export function* postNewSession(action) {

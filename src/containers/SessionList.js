@@ -14,6 +14,8 @@ import SessionCard from "../components/SessionCard";
 import Button from "@material-ui/core/Button";
 import TasksGridSkeleton from "../loadingComponents/TasksGridSkeleton";
 import SessionDetail from "./SessionDetail";
+import {Redirect} from "react-router";
+import {encodeUUID} from "../utilities";
 
 const initialSnack = {snack: () => {}}
 
@@ -69,8 +71,7 @@ function SessionList(props) {
 
     const startNewSession =
         <Button onClick={onStartNewSession}>
-            Start a new shif
-            t
+            Start a new shift
         </Button>
 
     if (isFetching) {
@@ -82,7 +83,7 @@ function SessionList(props) {
             <TasksGridSkeleton/>
         )
     } else if (isNewSession) {
-        return <SessionDetail session={currentSessionUUID}/>
+        return <Redirect to={`/session/${encodeUUID(currentSessionUUID)}`}/>
     } else {
         return (
             <Grid container spacing={2} direction={"column"} justify={"flex-start"} alignItems={"flex-start"}>
