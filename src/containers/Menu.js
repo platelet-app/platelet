@@ -221,14 +221,17 @@ export function ResponsiveDrawer(props) {
                                     }}>
                                         Logout
                                     </MenuItem>
-                                    <MenuItem onClick={() => {
-                                        setAnchorEl(null);
-                                        dispatch(removeApiURL());
-                                        dispatch(clearServerSettings());
-                                        history.push("/");
-                                    }}>
-                                        Change Organisation
-                                    </MenuItem>
+                                    {process.env.REACT_APP_API_URL ? <></> :
+                                        // No need for change organisation entry if the api url is hard coded
+                                        <MenuItem onClick={() => {
+                                            setAnchorEl(null);
+                                            dispatch(removeApiURL());
+                                            dispatch(clearServerSettings());
+                                            history.push("/");
+                                        }}>
+                                            Change Organisation
+                                        </MenuItem>
+                                    }
                                 </Menu>
                             </div>
                         </Grid>

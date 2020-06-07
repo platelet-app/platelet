@@ -28,6 +28,7 @@ import LoginSkeleton from "./loadingComponents/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
 import {getApiURL} from "./utilities";
+import Menu from "@material-ui/core/Menu";
 
 
 const useStyles = makeStyles(theme => ({
@@ -185,14 +186,17 @@ function App(props) {
                     <Grid item>
                         <Login apiUrl={apiURL}/>
                     </Grid>
-                    <Grid item>
-                        <Button variant="contained" color="primary" onClick={() => {
-                            dispatch(removeApiURL());
-                            dispatch(clearServerSettings());
-                        }}>
-                            Change Organisation
-                        </Button>
-                    </Grid>
+                        {process.env.REACT_APP_API_URL ? <></> :
+                            // No need for change organisation button if the api url is hard coded
+                            <Grid item>
+                            <Button variant="contained" color="primary" onClick={() => {
+                                dispatch(removeApiURL());
+                                dispatch(clearServerSettings());
+                            }}>
+                                Change Organisation
+                            </Button>
+                            </Grid>
+                        }
                 </Grid>
             </div>
         )
