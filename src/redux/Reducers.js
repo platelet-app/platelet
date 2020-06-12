@@ -10,7 +10,7 @@ import {
     SET_MENU_INDEX,
     SET_COMMENTS_OBJECT_UUID,
     CLEAR_WHOAMI,
-    GET_WHOAMI_FAILURE
+    GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
@@ -24,13 +24,25 @@ import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
 import {comments, sidebarComments} from "./comments/CommentsReducers";
 import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 
+const taskContextMenuSnackInitialState = {snack: () => {}, uuid: ""}
+
+function taskContextMenuSnack(state = taskContextMenuSnackInitialState, action) {
+    switch (action.type) {
+        case SET_TASK_CONTEXT_MENU_SNACK:
+            return {snack: action.func, uuid: action.uuid};
+        case CLEAR_TASK_CONTEXT_MENU_SNACK:
+            return taskContextMenuSnackInitialState
+        default:
+            return state;
+    }
+}
 
 function viewMode(state = null, action) {
     switch (action.type) {
         case SET_VIEW_MODE:
             return action.data;
         default:
-            return state
+            return state;
     }
 }
 
@@ -157,15 +169,12 @@ function notFoundReducer(state = {}, action) {
     const {type} = action;
     const matches = /(.*)_(REQUEST|SUCCESS|NOTFOUND)/.exec(type);
 
-    // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
+    // not a *_REQUEST / *_SUCCESS /  *_NOTFOUND actions, so we ignore them
     if (!matches) return state;
 
     const [, requestName, requestState] = matches;
     return {
         ...state,
-        // Store whether a request is happening at the moment or not
-        // e.g. will be true when receiving GET_TODOS_REQUEST
-        //      and false when receiving GET_TODOS_SUCCESS / GET_TODOS_FAILURE
         [requestName]: requestState === 'NOTFOUND',
     };
 }
@@ -226,6 +235,7 @@ const rootReducer = combineReducers({
     menuIndex,
     commentsObjectUUID,
     serverSettings,
+    taskContextMenuSnack
 });
 
 export default rootReducer

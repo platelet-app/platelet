@@ -97,8 +97,13 @@ function getStatusColour(task) {
 }
 
 function tasksDataColumns (tasks) {
-    return (tasks.map(task => {
+    // tasks are received in an object of arrays for different status, add them all together
+    const concatTasks = Object.values(tasks).reduce(
+        (accumulator, value) => [...accumulator, ...value])
+
+    return (concatTasks.map(task => {
         return {
+            //TODO: maybe get status colour somehow above
             colourCode: getStatusColour(task),
             time_of_call:  task.time_of_call || "",
             assignees: task.assigned_users && task.assigned_users.length > 0 ? task.assigned_users.map((u) => u.display_name).join(", ") : "",
@@ -166,7 +171,6 @@ export default function TasksTable(props) {
         {title: "Patch", field: "patch"},
         {title: "", field: "uuid", render: () => <></>}
     ];
-    const [data, setData] = useState(tasksDataColumns(props.tasks));
 
     const actions = [
         {
@@ -185,15 +189,13 @@ export default function TasksTable(props) {
         },
     ];
 
-    useEffect(() => setData(tasksDataColumns(props.tasks)), [props.tasks]);
-
 
     return (
         <MaterialTable
             icons={tableIcons}
             title=""
             columns={columns}
-            data={data}
+            data={tasksDataColumns(props.tasks)}
             options={{actionsColumnIndex: 1, pageSize: 10, toolbarButtonAlignment: "left"}}
             actions={actions}
         />

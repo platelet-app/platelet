@@ -33,4 +33,18 @@ export const createNotFoundSelector = actions => state => {
     return actions.some(action => state.notFoundReducer[action]);
 };
 
+export const createContextMenuSnackSelector = uuid => state => {
+    // This is redundant but kept in case I decide I need it after all
+    return state.taskContextMenuSnack.uuid === uuid ? state.taskContextMenuSnack : undefined;
+    const filt = state.taskContextMenuSnack.filter(snack => snack.uuid === uuid)
+    if (filt.length === 1){
+        const index = state.taskContextMenuSnack.indexOf(filt[0]);
+        const result = state.taskContextMenuSnack.slice(index, 1)[0]
+        console.log(result)
+        return result;
+    } else {
+        return undefined;
+    }
+};
+
 export const getCurrentSessionSelector = (state) => state.currentSession.session;

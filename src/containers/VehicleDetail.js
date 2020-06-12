@@ -35,7 +35,6 @@ export default function VehicleDetail(props) {
         dispatch(setMenuIndex(4))
     }, []);
     function onAssignUser(user) {
-        console.log (user)
         if (user)
             dispatch(
                 updateVehicle(

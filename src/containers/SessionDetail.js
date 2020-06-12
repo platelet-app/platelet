@@ -47,19 +47,6 @@ function GetViewTitle(props) {
     }
 }
 
-function getViewModeIndex(string) {
-    switch (string) {
-        case "kanban":
-            return 0;
-        case "table":
-            return 1;
-        case "statistics":
-            return 2;
-        default:
-            return 0
-    }
-}
-
 function SessionDetail(props) {
     const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
     const dispatch = useDispatch();
@@ -111,7 +98,7 @@ function SessionDetail(props) {
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
             if (viewModeLocalStorage === null)
-                dispatch(setViewMode("kanban"));
+                dispatch(setViewMode(0));
             else
                 dispatch(setViewMode(viewModeLocalStorage));
         }
@@ -123,6 +110,7 @@ function SessionDetail(props) {
     useEffect(componentDidMount, []);
 
     function setupRefreshTimer() {
+        return
         const timer = setInterval(() => {
             if (!process.env.REACT_APP_NO_SESSION_REFRESH)
                 dispatch(refreshCurrentSession(session_uuid));
@@ -179,6 +167,7 @@ function SessionDetail(props) {
     }
 
     function setNewTaskAdded() {
+        return
         // We don't want it to run the first time
         if (firstUpdateNewTask.current)
             firstUpdateNewTask.current = false;
@@ -257,7 +246,8 @@ function SessionDetail(props) {
         </Grid>
     ;
 
-    if (newTaskAddedView) {
+    if (false) {
+    //if (newTaskAddedView) {
         if (currentTaskUUID) {
             //TODO: for some reason this makes the session in the background disappear
             return <Redirect to={`/session/${encodeUUID(session_uuid)}/task/${encodeUUID(currentTaskUUID)}`}/>

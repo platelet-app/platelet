@@ -230,6 +230,7 @@ function* updateTaskAssignedRider(action) {
             yield call([api, api.tasks.addTaskAssignee], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
         yield put(updateTaskAssignedRiderSuccess(action.data))
     } catch (error) {
+        throw error;
         yield put(updateTaskAssignedRiderFailure(error))
     }
 }

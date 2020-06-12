@@ -14,7 +14,7 @@ function filterTasks(tasks, search) {
     } else {
         return tasks.filter(task => {
             const searchTerm = search.toLowerCase();
-            if (task.assigneeList ? task.assigneeList.toLowerCase().includes(searchTerm): false) {
+            if (task.assigneeList ? task.assigneeList.toLowerCase().includes(searchTerm) : false) {
                 return task
             } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
                 return task;
@@ -57,25 +57,38 @@ const getColumnTitle = key => {
 export default function TasksGrid(props) {
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
-    const [tasks, setTasks] = useState([]);
+    //const [tasks, setTasks] = useState([]);
     const [filteredTasks, setFilteredTasks] = useState(props.tasks);
+    const tasks = useSelector(state => state.tasks.tasks);
     const [searchQuery, setSearchQuery] = useState("");
+
+
     function addAssigneeLists() {
-        const result = props.tasks.map((task) => {
-            return {
-                ...task,
-                assigneeList: task.assigned_users.map((user) => user.display_name).join(", ")
-            }
+        return
+        //setTasks(props.tasks)
+        //TODO: put this on the api side instead?
+        return
+        const result = Object.entries(props.tasks).map(taskList => {
+            return taskList[1].map((task) => {
+                return {
+                    ...task,
+                    assigneeList: task.assigned_users.map((user) => user.display_name).join(", ")
+                }
+            })
         })
-        setTasks(result)
+        //setTasks(result)
     }
+
     useEffect(addAssigneeLists, [props.tasks])
+
+
     function doSearch() {
         const result = filterTasks(tasks, searchQuery)
-        //const result = filterTasks(tasks, searchQuery)
         setFilteredTasks(result);
     }
+
     useEffect(doSearch, [searchQuery, tasks])
+    //TODO: separate task columns into individual components so that there is less rerendering
     return (
         <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
             <Grid item>
@@ -90,7 +103,7 @@ export default function TasksGrid(props) {
                       justify={"flex-start"}
                       alignItems={"stretch"}
                 >
-                    {Object.entries(orderTaskList(filteredTasks)).map(taskList => {
+                    {Object.entries(tasks).map(taskList => {
                         if (props.excludeColumnList && props.excludeColumnList.includes(taskList[0]))
                             return <></>
                         let newTaskButton = "";

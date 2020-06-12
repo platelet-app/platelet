@@ -6,6 +6,17 @@ export function setNewTaskAddedView(data) {
     return { type: SET_NEW_TASK_ADDED_VIEW, data }
 }
 
+export const SET_TASK_CONTEXT_MENU_SNACK = 'SET_TASK_CONTEXT_MENU_SNACK';
+export const CLEAR_TASK_CONTEXT_MENU_SNACK = 'CLEAR_TASK_CONTEXT_MENU_SNACK'
+
+export function setTaskContextMenuSnack(func, uuid) {
+    return { type: SET_TASK_CONTEXT_MENU_SNACK, func, uuid }
+}
+
+export function clearTaskContextMenuSnack() {
+    return { type: CLEAR_TASK_CONTEXT_MENU_SNACK }
+}
+
 export const GET_ACTIVE_TASK_UUID = 'GET_ACTIVE_TASK_UUID';
 export const SET_ACTIVE_TASK_UUID = 'SET_ACTIVE_TASK_UUID';
 

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import moment from 'moment/min/moment-with-locales';
@@ -14,7 +14,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import { withSnackbar } from 'notistack';
-import {createPostingSelector} from "../../redux/selectors";
+import {createContextMenuSnackSelector, createPostingSelector} from "../../redux/selectors";
+import {setTaskContextMenuSnack} from "../../redux/Actions";
 
 
 const initialState = {
@@ -22,11 +23,21 @@ const initialState = {
     mouseY: null,
 };
 
-const initialSnack = {snack: () => {}}
+const initialSnack = {snack: () => {console.log("initial snack")}}
+
+
+// TODO: Consider making a list of snacks that filter to find the right one for the object
+// instead of one singular snack object that is shared between all context menus
 
 function TaskContextMenu(props) {
+    const firstUpdate = useRef(true);
+    const dispatch = useDispatch();
     const [state, setState] = React.useState(initialState);
-    const [snack, setSnack] = React.useState(initialSnack)
+    const [snackStatus, setSnackStatus] = React.useState(false);
+    const contextSnack = useSelector(state => state.taskContextMenuSnack);
+    const snackSelector = createContextMenuSnackSelector(props.taskUUID)
+    const snack = useSelector(state => snackSelector(state));
+    console.log(snack)
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -38,14 +49,22 @@ function TaskContextMenu(props) {
     const isPosting = useSelector(state => postingSelector(state));
 
     function dispatchSnack() {
-        if (!isPosting) {
-            snack.snack();
-            setSnack(initialSnack)
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+        } else {
+            if (!isPosting && snack !== undefined) {
+                //snack.snack();
+                //dispatch(setTaskContextMenuSnack(undefined))
+            }
+        }
+        return function cleanup() {
+            if (snack !== undefined) {
+                //snack.snack();
+                //dispatch(setTaskContextMenuSnack(undefined))
+            }
         }
     }
-    useEffect(dispatchSnack, [isPosting])
-
-    const dispatch = useDispatch();
+    useEffect(dispatchSnack, [snack])
 
     const handleClick = event => {
         setState({
@@ -68,7 +87,7 @@ function TaskContextMenu(props) {
         const snack = () => {
             props.enqueueSnackbar('Task marked picked up.',  { variant: "info", action, autoHideDuration: 8000 })
         }
-        setSnack({ snack })
+        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
     }
 
     function onSelectDroppedOff() {
@@ -85,7 +104,7 @@ function TaskContextMenu(props) {
         const snack = () => {
             props.enqueueSnackbar('Task marked delivered.',  { variant: "info", action, autoHideDuration: 8000 });
         }
-        setSnack({ snack })
+        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
     }
     function onSelectCancelled() {
         handleClose();
@@ -101,7 +120,7 @@ function TaskContextMenu(props) {
         const snack = () => {
             props.enqueueSnackbar('Task marked cancelled.', {variant: "info", action, autoHideDuration: 8000});
         }
-        setSnack({ snack })
+        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
     }
 
     function onSelectRejected() {
@@ -118,7 +137,7 @@ function TaskContextMenu(props) {
         const snack = () => {
             props.enqueueSnackbar('Task marked rejected.', {variant: "info", action, autoHideDuration: 8000});
         }
-        setSnack({ snack })
+        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
     }
 
     function onDelete(result) {
@@ -135,7 +154,7 @@ function TaskContextMenu(props) {
         const snack = () => {
             props.enqueueSnackbar('Task deleted.', {variant: "info", action, autoHideDuration: 8000});
         }
-        setSnack({ snack })
+        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
     }
 
 

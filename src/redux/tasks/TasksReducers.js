@@ -4,7 +4,8 @@ import {
     GET_MY_TASKS_SUCCESS,
     GET_TASK_SUCCESS, GET_TASKS_FAILURE,
     GET_TASKS_SUCCESS,
-    RESTORE_TASK_SUCCESS, SET_CURRENT_TASK,
+    RESTORE_TASK_SUCCESS,
+    SET_CURRENT_TASK,
     UPDATE_TASK_ASSIGNED_RIDER_SUCCESS,
     UPDATE_TASK_CANCELLED_TIME_SUCCESS,
     UPDATE_TASK_CONTACT_NAME_SUCCESS,
@@ -15,6 +16,7 @@ import {
     UPDATE_TASK_SUCCESS
 } from "./TasksActions";
 import update from "immutability-helper";
+import {determineTaskType, findExistingTask, orderTaskList, spliceExistingTask} from "../../utilities";
 
 const initialState = {
     task: {
@@ -61,23 +63,6 @@ export function currentTask(state = initialState, action) {
     switch (action.type) {
         case SET_CURRENT_TASK:
             return {task: action.data, error: null};
-        case UPDATE_TASK_SUCCESS:
-        case UPDATE_TASK_CONTACT_NAME_SUCCESS:
-        case UPDATE_TASK_CONTACT_NUMBER_SUCCESS:
-        case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
-        case UPDATE_TASK_REJECTED_TIME_SUCCESS:
-        case UPDATE_TASK_PRIORITY_SUCCESS:
-        case UPDATE_TASK_PATCH_SUCCESS:
-        case UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS:
-        case UPDATE_TASK_PICKUP_ADDRESS_SUCCESS:
-        case UPDATE_TASK_PICKUP_TIME_SUCCESS:
-        case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
-            return state;
-            return {task: Object.assign(state.task, action.data.payload), error: null};
-        case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
-            return state;
-            state.task.assigned_users.push(action.data.payload.rider);
-            return {task: state.task, error: null};
         case CLEAR_CURRENT_TASK:
             return initialState;
         default:
@@ -86,31 +71,38 @@ export function currentTask(state = initialState, action) {
 }
 
 const initialTasksState = {
-    tasks: [],
+    tasks: {
+        tasksNew: [],
+        tasksActive: [],
+        tasksPickedUp: [],
+        tasksDelivered: []
+    },
     error: null
+}
+
+function sortAndConcat(tasks, data) {
+    const taskInList = determineTaskType(data);
+    let result = {};
+    for (const [key, value] of Object.entries(taskInList)) {
+        const newArray = [...tasks[key], ...value];
+        newArray.sort(function (a, b) {
+            var dateA = new Date(a.time_of_call), dateB = new Date(b.time_of_call);
+            return dateB > dateA ? -1 : dateB < dateA ? 1 : 0;
+        });
+        result[key] = key === "tasksNew" ? newArray.reverse() : newArray;
+    }
+    return result;
 }
 
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
-            return {
-                tasks: [
-                    {
-                        ...action.data
-                    },
-                    ...state.tasks
-                ], error: null
-            };
+            const resultAdd = sortAndConcat(state.tasks, action.data)
+            return {tasks: Object.assign(state.tasks, resultAdd), error: null}
         case RESTORE_TASK_SUCCESS:
             //TODO: should this check that the task matches the session? it's unlikely a task will be deleted from anything other than it's own session view
-            return {
-                tasks: [
-                    ...state.tasks,
-                    {
-                        ...action.data
-                    }
-                ], error: null
-            };
+            const resultRestore = sortAndConcat(state.tasks, action.data)
+            return {tasks: Object.assign(state.tasks, resultRestore), error: null}
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_CONTACT_NAME_SUCCESS:
         case UPDATE_TASK_CONTACT_NUMBER_SUCCESS:
@@ -122,39 +114,40 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_PICKUP_ADDRESS_SUCCESS:
         case UPDATE_TASK_PICKUP_TIME_SUCCESS:
         case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
-            let result = state.tasks.filter(task => task.uuid === action.data.taskUUID);
-            if (result.length === 1) {
-                const updated_item = {...result[0], ...action.data.payload};
-                const index = state.tasks.indexOf(result[0]);
-                return {tasks: update(state.tasks, {[index]: {$set: updated_item}}), error: null};
+            let taskToUpdate = spliceExistingTask(state.tasks, action.data.taskUUID);
+            if (taskToUpdate) {
+                const updatedItem = {...taskToUpdate.task, ...action.data.payload};
+                const resultAdd = sortAndConcat(state.tasks, updatedItem)
+                return {tasks: Object.assign(state.tasks, resultAdd), error: null}
             } else {
                 return state;
             }
         case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
-            const result_assignees = state.tasks.filter(task => task.uuid === action.data.taskUUID);
-            if (result_assignees.length === 1) {
-                let assigneesList = result_assignees[0].assigned_users
-                const index = state.tasks.indexOf(result_assignees[0]);
+            const {task} = spliceExistingTask(state.tasks, action.data.taskUUID);
+            if (task) {
+                let assigneesList = task.assigned_users
                 assigneesList.push(action.data.payload.rider)
-                const final_task = {...result_assignees[0], assigned_users: assigneesList}
-                return {tasks: update(state.tasks, {[index]: {$set: final_task}}), error: null};
+                const finalTask = {...task, assigned_users: assigneesList}
+                const resultAdd = sortAndConcat(state.tasks, finalTask)
+                return {tasks: Object.assign(state.tasks, resultAdd), error: null}
             } else {
                 return state;
             }
         case DELETE_TASK_SUCCESS:
-            let result_delete = state.tasks.filter(task => task.uuid === action.data);
-            if (result_delete.length === 1) {
-                const index = state.tasks.indexOf(result_delete[0]);
-                return {tasks: update(state.tasks, {$splice: [[index, 1]]}), error: null};
+            const findDelete = findExistingTask(state.tasks, action.data)
+            let resultDelete = {};
+            if (findDelete) {
+                resultDelete[findDelete.listType] = update(state.tasks[findDelete.listType], {$splice: [[findDelete.index, 1]]})
+                return {tasks: Object.assign(state.tasks, resultDelete), error: null};
             } else {
                 return state;
             }
         case GET_TASKS_SUCCESS:
-            return {tasks: action.data, error: null};
+            return {tasks: orderTaskList(action.data), error: null};
         case GET_TASKS_FAILURE:
             return {...initialTasksState, error: action.error};
         case GET_MY_TASKS_SUCCESS:
-            return {tasks: action.data, error: null};
+            return {tasks: orderTaskList(action.data), error: null};
         case GET_MY_TASKS_FAILURE:
             return {...initialTasksState, error: action.error};
         default:

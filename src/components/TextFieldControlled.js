@@ -41,7 +41,6 @@ export function TelephoneTextFieldControlled(props) {
     const [errorState, setErrorState] = useState(false);
 
     function validateNumber() {
-        console.log(currentValue)
         if (typeof(currentValue) === "string") {
             const parsedNumber = parsePhoneNumberFromString(currentValue, "GB")
             if (parsedNumber)

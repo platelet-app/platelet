@@ -118,7 +118,6 @@ export function orderTaskList(tasks) {
         }
     });
 
-    let result = [];
     tasksNew.sort(function (a, b) {
         return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
@@ -137,10 +136,57 @@ export function orderTaskList(tasks) {
     tasksDelivered.sort(function (b, a) {
         return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
-    result = result.concat(tasksNew);
-    result = result.concat(tasksActive);
-    result = result.concat(tasksPickedUp);
-    result = result.concat(tasksDelivered);
     const tasksRejectedCancelled = tasksCancelled.concat(tasksRejected)
     return {tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksRejectedCancelled}
+}
+
+export function determineTaskType(task) {
+    if (task.time_cancelled) {
+        return { tasksRejectedCancelled: [task] };
+    } else if (task.time_rejected) {
+        return { tasksRejectedCancelled: [task] };
+    } else if (!task.assigned_users || !task.assigned_users.length) {
+        return { tasksNew: [task] };
+    } else if (task.assigned_users.length && !task.time_picked_up) {
+        return { tasksActive: [task] };
+    } else if (task.assigned_users.length && task.time_picked_up && !task.time_dropped_off) {
+        return { tasksPickedUp: [task] };
+    } else if (task.time_dropped_off) {
+        return { tasksDelivered: [task] };
+    } else {
+        return null;
+    }
+}
+
+export function findExistingTask(tasks, uuid) {
+    let result = {};
+    let listType = undefined;
+    let index = undefined;
+    let task = undefined;
+
+    for (const [type, value] of Object.entries(tasks)) {
+        result = value.filter(task => task.uuid === uuid);
+        if (result.length === 1) {
+            index = value.indexOf(result[0]);
+            task = result[0]
+            listType = type;
+        }
+    }
+    return { listType, index, task };
+}
+
+export function spliceExistingTask(tasks, uuid) {
+    let result = {};
+    let listType = undefined;
+    let index = undefined;
+    let task = undefined;
+    for (const [type, value] of Object.entries(tasks)) {
+        result = value.filter(task => task.uuid === uuid);
+        if (result.length === 1) {
+            index = value.indexOf(result[0]);
+            task = value.splice(index, 1)[0]
+            listType = type;
+        }
+    }
+    return { listType, index, task };
 }

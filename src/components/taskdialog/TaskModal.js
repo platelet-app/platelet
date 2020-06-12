@@ -27,7 +27,7 @@ import {useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
 import {PaddedPaper} from "../../css/common";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {decodeUUID, encodeUUID} from "../../utilities";
+import {decodeUUID, encodeUUID, findExistingTask} from "../../utilities";
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import FormSkeleton from "../../loadingComponents/FormSkeleton";
 import TaskModalTimePicker from "./TaskModalTimePicker";
@@ -60,7 +60,7 @@ export default function TaskModal(props) {
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
     const mobileView = useSelector(state => state.mobileView);
     const task = useSelector(state => state.currentTask.task);
-    const taskGetter = useSelector(state => state.task.task.session_uuid);
+    const sessionUUID = useSelector(state => state.currentTask.task.session_uuid);
     const session = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
     const whoamiUUID = useSelector(state => state.whoami.user.uuid);
@@ -78,11 +78,10 @@ export default function TaskModal(props) {
     } else {
         taskUUID = task.uuid;
     }
-
     const [editMode, setEditMode] = useState(false);
 
     function componentDidMount() {
-        if (!tasks.length) {
+        if (!tasks) {
             dispatch(getTask(taskUUID));
         }
     }
@@ -90,11 +89,12 @@ export default function TaskModal(props) {
     useEffect(componentDidMount, []);
 
     function getSessionData() {
-        if (taskGetter && !tasks.length)
-            dispatch(getAllTasks(taskGetter));
+        return
+        if (sessionUUID && !tasks.length)
+            dispatch(getAllTasks(sessionUUID));
     }
 
-    useEffect(getSessionData, [taskGetter])
+    useEffect(getSessionData, [sessionUUID])
 
     function editModeSetter() {
         setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
@@ -103,18 +103,14 @@ export default function TaskModal(props) {
     useEffect(editModeSetter, [whoamiUUID, whoamiRoles])
 
     function currentTask() {
-        if (task.uuid !== taskUUID) {
-            const taskResult = tasks.filter(task => task.uuid === taskUUID);
-            if (taskResult.length === 1) {
-                dispatch(setCurrentTask(taskResult[0]))
-            }
+        const {task} = findExistingTask(tasks, taskUUID)
+        if (task) {
+            dispatch(setCurrentTask(task))
         }
     }
-
     useEffect(currentTask, [tasks])
 
     function updateEditMode() {
-        console.log(session)
         setEditMode(session.user_uuid === whoamiUUID || whoamiRoles.includes("admin"));
     }
 
@@ -164,14 +160,13 @@ export default function TaskModal(props) {
         e.stopPropagation();
         //TODO: might be a better way of doing this
         if (currentLocation.pathname.includes("session"))
-            history.push("/session/" + encodeUUID(task.session_uuid));
+            history.push("/session/" + encodeUUID(sessionUUID));
         else if (currentLocation.pathname.includes("mytasks"))
             history.push("/mytasks");
         else
             history.push("/");
 
         dispatch(clearCurrentTask());
-        dispatch(setNewTaskAddedView(false));
     };
 
     const usersSelect = editMode ?
