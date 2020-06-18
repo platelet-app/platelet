@@ -23,7 +23,7 @@ const initialState = {
     mouseY: null,
 };
 
-const initialSnack = {snack: () => {console.log("initial snack")}}
+const initialSnack = {snack: () => {}}
 
 
 // TODO: Consider making a list of snacks that filter to find the right one for the object
@@ -37,7 +37,6 @@ function TaskContextMenu(props) {
     const contextSnack = useSelector(state => state.taskContextMenuSnack);
     const snackSelector = createContextMenuSnackSelector(props.taskUUID)
     const snack = useSelector(state => snackSelector(state));
-    console.log(snack)
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",

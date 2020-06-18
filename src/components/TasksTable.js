@@ -106,7 +106,7 @@ function tasksDataColumns (tasks) {
             //TODO: maybe get status colour somehow above
             colourCode: getStatusColour(task),
             time_of_call:  task.time_of_call || "",
-            assignees: task.assigned_users && task.assigned_users.length > 0 ? task.assigned_users.map((u) => u.display_name).join(", ") : "",
+            assignees: task.assigned_users_display_string,
             contactName: task.contact_name || "",
             contactNumber: task.contact_number ? task.contact_number : "",
             pickupAddress: task.pickup_address ? task.pickup_address.line1 : "",

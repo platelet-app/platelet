@@ -1,19 +1,18 @@
-import React from "react";
+import React, {memo} from "react";
 import Grid from "@material-ui/core/Grid";
 import {Link, useLocation} from "react-router-dom";
 import {TaskCard} from "./TaskCardsColoured"
 import {encodeUUID} from "../utilities";
 import TaskContextMenu from "./ContextMenus/TaskContextMenu";
 
-export default function TaskItem(props) {
+const TaskItem = React.memo((props) => {
     const currentLocation = useLocation();
     const task =
         <TaskCard
             title={"Task"}
             pickupAddress={props.task.pickup_address}
             dropoffAddress={props.task.dropoff_address}
-            // Only calculate the assignee list if we have to
-            assignedUsers={props.task.assigneeList || props.task.assigned_users.map((user) => user.display_name).join(", ")}
+            assignedUsers={props.task.assigned_users_display_string}
             pickupTime={props.task.time_picked_up}
             dropoffTime={props.task.time_dropped_off}
             time_of_call={props.task.time_of_call}
@@ -44,4 +43,6 @@ export default function TaskItem(props) {
 
         </Grid>
     )
-};
+});
+
+export default TaskItem;

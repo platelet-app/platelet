@@ -35,7 +35,6 @@ import TaskModalNameAndContactNumber from "./TaskModalNameAndContactNumber";
 import CommentsSection from "../../containers/CommentsSection";
 import TaskAssignees from "./TaskAssignees";
 import Typography from "@material-ui/core/Typography";
-import {setNewTaskAddedView} from "../../redux/Actions";
 
 export default function TaskModal(props) {
     const dispatch = useDispatch();
@@ -66,6 +65,7 @@ export default function TaskModal(props) {
     const whoamiUUID = useSelector(state => state.whoami.user.uuid);
     const whoamiRoles = useSelector(state => state.whoami.user.roles);
     const currentLocation = useLocation();
+    const [pickedUpStatus, setPickedUpStatus] = useState(false);
 
     const tasks = useSelector(state => state.tasks.tasks);
 
@@ -105,7 +105,8 @@ export default function TaskModal(props) {
     function currentTask() {
         const {task} = findExistingTask(tasks, taskUUID)
         if (task) {
-            dispatch(setCurrentTask(task))
+            setPickedUpStatus(task.time_picked_up !== null);
+            dispatch(setCurrentTask(task));
         }
     }
     useEffect(currentTask, [tasks])
@@ -146,13 +147,14 @@ export default function TaskModal(props) {
         dispatch(updateTaskPriority({taskUUID, payload}));
     }
 
-    function onSelectPickedUp(status) {
-        const payload = {time_picked_up: status ? new Date().toISOString() : null};
+    function onSelectPickedUp(dateTime) {
+        setPickedUpStatus(dateTime !== null);
+        const payload = {time_picked_up: dateTime};
         dispatch(updateTaskPickupTime({taskUUID, payload}));
     }
 
-    function onSelectDroppedOff(status) {
-        const payload = {time_dropped_off: status ? new Date().toISOString() : null};
+    function onSelectDroppedOff(dateTime) {
+        const payload = {time_dropped_off: dateTime};
         dispatch(updateTaskDropoffTime({taskUUID, payload}));
     }
 
@@ -317,21 +319,16 @@ export default function TaskModal(props) {
                 <PaddedPaper width={"400px"}>
                     <TaskModalTimePicker disabled={isPostingPickupTime} label={"Mark Picked Up"}
                                          time={task.time_picked_up}
-                                         onToggle={onSelectPickedUp} onChange={(time_picked_up) => {
-                        const payload = {time_picked_up};
-                        dispatch(updateTaskPickupTime({taskUUID, payload}))
-                    }}/>
+                                         onChange={onSelectPickedUp}/>
                 </PaddedPaper>
             </Grid>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <TaskModalTimePicker disabled={isPostingDropoffTime || !!!task.time_picked_up}
+                    <TaskModalTimePicker disabled={isPostingDropoffTime || !pickedUpStatus}
                                          label={"Mark Dropped Off"}
-                                         time={task.time_dropped_off} onToggle={onSelectDroppedOff}
-                                         onChange={(time_dropped_off) => {
-                                             const payload = {time_dropped_off};
-                                             dispatch(updateTaskDropoffTime({taskUUID, payload}))
-                                         }}/>
+                                         time={task.time_dropped_off}
+                                         onChange={onSelectDroppedOff}
+                                         />
                 </PaddedPaper>
             </Grid>
         </Grid>

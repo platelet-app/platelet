@@ -87,8 +87,6 @@ function SessionDetail(props) {
     const firstUpdateNewTask = useRef(true);
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
-    const [tabValue, setTabValue] = useState(0);
-    const newTaskAddedView = useSelector(state => state.newTaskAddedView);
 
     function componentDidMount() {
         dispatch(clearCurrentTask());

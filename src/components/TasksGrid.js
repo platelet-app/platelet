@@ -2,34 +2,39 @@ import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {AddCircleButton} from "../components/Buttons";
 import TaskItem from "./TaskItem";
-import {orderTaskList} from "../utilities";
 import {createPostingSelector} from "../redux/selectors";
 import {useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../css/TaskColumns";
 import {TextFieldControlled} from "./TextFieldControlled";
 
+const initialTasksState = {tasksNew: [], tasksActive: [], tasksPickedUp: [], tasksDelivered: []}
+
 function filterTasks(tasks, search) {
+    let result = initialTasksState;
     if (!search) {
         return tasks;
     } else {
-        return tasks.filter(task => {
-            const searchTerm = search.toLowerCase();
-            if (task.assigneeList ? task.assigneeList.toLowerCase().includes(searchTerm) : false) {
-                return task
-            } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
-                return task;
-            } else if (task.priority ? task.priority.toLowerCase().includes(searchTerm) : false) {
-                return task;
-            } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {
-                return task;
-            } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
-                return task;
-            } else if (task.pickup_address && task.pickup_address.ward ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
-                return task;
-            } else if (task.dropoff_address && task.dropoff_address.ward ? task.dropoff_address.ward.toLowerCase().includes(searchTerm) : false) {
-                return task;
-            }
-        })
+        for (const [key, value] of Object.entries(tasks)) {
+            result[key] = value.filter(task => {
+                const searchTerm = search.toLowerCase();
+                if (task.assigned_users_display_string ? task.assigned_users_display_string.toLowerCase().includes(searchTerm) : false) {
+                    return task
+                } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
+                    return task;
+                } else if (task.priority ? task.priority.toLowerCase().includes(searchTerm) : false) {
+                    return task;
+                } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {
+                    return task;
+                } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
+                    return task;
+                } else if (task.pickup_address && task.pickup_address.ward ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
+                    return task;
+                } else if (task.dropoff_address && task.dropoff_address.ward ? task.dropoff_address.ward.toLowerCase().includes(searchTerm) : false) {
+                    return task;
+                }
+            })
+        }
+        return result;
     }
 }
 
@@ -58,41 +63,27 @@ export default function TasksGrid(props) {
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
     //const [tasks, setTasks] = useState([]);
-    const [filteredTasks, setFilteredTasks] = useState(props.tasks);
+    const [filteredTasks, setFilteredTasks] = useState(initialTasksState);
     const tasks = useSelector(state => state.tasks.tasks);
     const [searchQuery, setSearchQuery] = useState("");
 
-
-    function addAssigneeLists() {
-        return
-        //setTasks(props.tasks)
-        //TODO: put this on the api side instead?
-        return
-        const result = Object.entries(props.tasks).map(taskList => {
-            return taskList[1].map((task) => {
-                return {
-                    ...task,
-                    assigneeList: task.assigned_users.map((user) => user.display_name).join(", ")
-                }
-            })
-        })
-        //setTasks(result)
+    function componentDidMount() {
+        setFilteredTasks(filterTasks(tasks))
     }
-
-    useEffect(addAssigneeLists, [props.tasks])
-
+    useEffect(componentDidMount, [])
 
     function doSearch() {
         const result = filterTasks(tasks, searchQuery)
         setFilteredTasks(result);
     }
-
-    useEffect(doSearch, [searchQuery, tasks])
+    useEffect(doSearch, [searchQuery])
     //TODO: separate task columns into individual components so that there is less rerendering
     return (
         <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
             <Grid item>
                 {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onChange={(e) => {
+                    //const result = filterTasks(tasks, e.target.value)
+                    //setFilteredTasks(result);
                     setSearchQuery(e.target.value)
                 }}/>}
             </Grid>
@@ -103,7 +94,7 @@ export default function TasksGrid(props) {
                       justify={"flex-start"}
                       alignItems={"stretch"}
                 >
-                    {Object.entries(tasks).map(taskList => {
+                    {Object.entries(filteredTasks).map(taskList => {
                         if (props.excludeColumnList && props.excludeColumnList.includes(taskList[0]))
                             return <></>
                         let newTaskButton = "";
