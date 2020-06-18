@@ -157,7 +157,13 @@ function SessionDetail(props) {
         session_uuid: session_uuid,
         time_of_call: new Date().toISOString(),
         time_created: new Date().toISOString(),
-        assigned_users: []
+        assigned_users: [],
+        assigned_users_display_string: "",
+        time_picked_up: null,
+        time_dropped_off: null,
+        time_rejected: null,
+        time_cancelled: null
+
     };
 
     function addEmptyTask() {

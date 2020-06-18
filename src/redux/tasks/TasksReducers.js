@@ -127,7 +127,7 @@ export function tasks(state = initialTasksState, action) {
             if (task) {
                 let assigneesList = task.assigned_users
                 assigneesList.push(action.data.payload.rider)
-                const finalTask = {...task, assigned_users: assigneesList}
+                const finalTask = {...task, assigned_users: assigneesList, assigned_users_display_string: task.assigned_users.map((user) => user.display_name).join(", ")}
                 const resultAdd = sortAndConcat(state.tasks, finalTask)
                 return {tasks: Object.assign(state.tasks, resultAdd), error: null}
             } else {

@@ -1,7 +1,7 @@
 import React, {memo} from "react";
 import Grid from "@material-ui/core/Grid";
 import {Link, useLocation} from "react-router-dom";
-import {TaskCard} from "./TaskCardsColoured"
+import TaskCard from "./TaskCardsColoured"
 import {encodeUUID} from "../utilities";
 import TaskContextMenu from "./ContextMenus/TaskContextMenu";
 

@@ -7,7 +7,7 @@ import Moment from "react-moment";
 import Grid from "@material-ui/core/Grid";
 import CardItem from "./CardItem"
 
-export function TaskCard(props) {
+const TaskCard = React.memo((props) => {
     let pickupTitle = "";
     if (props.pickupAddress) {
         pickupTitle = props.pickupAddress.line1 ? props.pickupAddress.line1 : "";
@@ -72,4 +72,6 @@ export function TaskCard(props) {
             </TaskAdded>
         )
     }
-}
+})
+
+export default TaskCard;
