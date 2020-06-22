@@ -9,8 +9,11 @@ import Divider from "@material-ui/core/Divider";
 import {PublicCommentCard, PrivateCommentCard} from "../styles/CommentCards";
 import LockIcon from '@material-ui/icons/Lock';
 import Tooltip from "@material-ui/core/Tooltip";
+import ScheduleIcon from '@material-ui/icons/Schedule';
+import moment from "moment";
 
 
+// TODO: figure out time posted and a tooltip for more detail maybe like reddit?
 const CommentCard = React.memo((props) => {
     const Card = props.public ? (props) => {
             return <PublicCommentCard>{props.children}</PublicCommentCard>
@@ -29,6 +32,9 @@ const CommentCard = React.memo((props) => {
                             </Link>
                         </Grid>
                         <Grid item>
+
+                        </Grid>
+                        <Grid item>
                             {props.public ? (
                                 <></>
                             ) : (
@@ -36,6 +42,9 @@ const CommentCard = React.memo((props) => {
                                     <LockIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
                                 </Tooltip>
                             )}
+                            <Tooltip title={moment().calendar(props.timeCreated)}>
+                                <ScheduleIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
+                            </Tooltip>
                         </Grid>
                     </Grid>
                 </Grid>

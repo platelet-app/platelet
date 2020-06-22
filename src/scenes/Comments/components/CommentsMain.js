@@ -30,7 +30,7 @@ export default function CommentsMain(props) {
             ).map((comment) => (
                 <Grid item key={comment.uuid}>
                     <div style={{position: "relative"}}>
-                        <CommentCard author={comment.author} public={comment.publicly_visible}>
+                        <CommentCard author={comment.author} timeCreated={comment.time_created} public={comment.publicly_visible}>
                         {comment.body}
                     </CommentCard>
                         <div style={{

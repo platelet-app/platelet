@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {AddCircleButton} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
@@ -59,10 +59,35 @@ const getColumnTitle = key => {
     }
 };
 
+const GridColumn = React.memo((props) => {
+        return (
+            <TasksKanbanColumn>
+                {props.title}
+                <Grid container
+                      spacing={3}
+                      direction={"column"}
+                      justify={"flex-start"}
+                      alignItems={"center"}
+                >
+                    {props.newTaskButton}
+                    {props.tasks.map(task => {
+                        return (
+                            <TaskItem key={task.uuid}
+                                      task={task}
+                                      view={props.modalView}
+                                      location={props.location}
+                                      deleteDisabled={props.deleteDisabled}/>
+                        )
+                    })}
+                </Grid>
+            </TasksKanbanColumn>
+        )
+    }
+)
+
 export default function TasksGrid(props) {
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
-    //const [tasks, setTasks] = useState([]);
     const [filteredTasks, setFilteredTasks] = useState(initialTasksState);
     const tasks = useSelector(state => state.tasks.tasks);
     const [searchQuery, setSearchQuery] = useState("");
@@ -70,12 +95,14 @@ export default function TasksGrid(props) {
     function componentDidMount() {
         setFilteredTasks(filterTasks(tasks))
     }
+
     useEffect(componentDidMount, [])
 
     function doSearch() {
         const result = filterTasks(tasks, searchQuery)
         setFilteredTasks(result);
     }
+
     useEffect(doSearch, [searchQuery])
     //TODO: separate task columns into individual components so that there is less rerendering
     return (
@@ -108,26 +135,7 @@ export default function TasksGrid(props) {
                         const title = getColumnTitle(taskList[0]);
                         return (
                             <Grid item xs sm md lg key={taskList[0]}>
-                                <TasksKanbanColumn>
-                                    {title}
-                                    <Grid container
-                                          spacing={3}
-                                          direction={"column"}
-                                          justify={"flex-start"}
-                                          alignItems={"center"}
-                                    >
-                                        {newTaskButton}
-                                        {taskList[1].map(task => {
-                                            return (
-                                                <TaskItem key={task.uuid}
-                                                          task={task}
-                                                          view={props.modalView}
-                                                          location={props.location}
-                                                          deleteDisabled={props.deleteDisabled}/>
-                                            )
-                                        })}
-                                    </Grid>
-                                </TasksKanbanColumn>
+                                <GridColumn title={title} newTaskButton={newTaskButton} tasks={taskList[1]}/>
                             </Grid>
                         )
                     })}
