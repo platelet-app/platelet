@@ -4,7 +4,7 @@ import {AddCircleButton} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
 import {createPostingSelector} from "../../../redux/selectors";
 import {useSelector} from "react-redux";
-import {TasksKanbanColumn} from "../../../styles/TaskColumns";
+import {TasksKanbanColumn} from "../styles/TaskColumns";
 import {TextFieldControlled} from "../../../components/TextFields";
 
 const initialTasksState = {tasksNew: [], tasksActive: [], tasksPickedUp: [], tasksDelivered: []}

@@ -12,7 +12,7 @@ import {setMenuIndex} from "../redux/Actions";
 import SessionContextMenu from "../components/ContextMenus/SessionContextMenu";
 import SessionCard from "../components/SessionCard";
 import Button from "@material-ui/core/Button";
-import TasksGridSkeleton from "./components/SessionDetail/TasksGridSkeleton";
+import TasksGridSkeleton from "./SessionDetail/components/TasksGridSkeleton";
 import SessionDetail from ".//SessionDetail/SessionDetail";
 import {Redirect} from "react-router";
 import {encodeUUID} from "../utilities";

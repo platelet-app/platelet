@@ -6,7 +6,7 @@ import Link from "@material-ui/core/Link"
 import {encodeUUID} from "../../../utilities";
 import {Link as RouterLink} from 'react-router-dom';
 import Divider from "@material-ui/core/Divider";
-import {PublicCommentCard, PrivateCommentCard} from "../../../styles/CommentCards";
+import {PublicCommentCard, PrivateCommentCard} from "../styles/CommentCards";
 import LockIcon from '@material-ui/icons/Lock';
 import Tooltip from "@material-ui/core/Tooltip";
 

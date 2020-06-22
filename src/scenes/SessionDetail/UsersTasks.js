@@ -5,12 +5,12 @@ import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {getAllMyTasks, refreshAllMyTasks, refreshAllTasks} from '../../redux/tasks/TasksActions'
 import {useDispatch, useSelector} from "react-redux"
-import TasksGrid from "./Components/TasksGrid";
+import TasksGrid from "./components/TasksGrid";
 import {
     useLocation,
 } from "react-router-dom";
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
-import TasksGridSkeleton from "../components/SessionDetail/TasksGridSkeleton"
+import TasksGridSkeleton from "./components/TasksGridSkeleton"
 import {getWhoami, refreshWhoami, setMenuIndex} from "../../redux/Actions";
 
 function UsersTasks() {

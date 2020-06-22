@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../styles/TaskStrips';
+import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../scenes/Task/styles/TaskStrips';
 import CardContent from '@material-ui/core/CardContent';
 import Moment from "react-moment";
 import Grid from "@material-ui/core/Grid";

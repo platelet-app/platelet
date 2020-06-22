@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
-import {PublicCommentCard} from "../../../styles/CommentCards";
+import {PublicCommentCard} from "../styles/CommentCards";
 import LockIcon from '@material-ui/icons/Lock';
 import Tooltip from "@material-ui/core/Tooltip";
 import LockOpenIcon from '@material-ui/icons/LockOpen';

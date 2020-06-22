@@ -10,7 +10,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {createLoadingSelector} from "../../../redux/selectors";
-import StatsSkeleton from "../../components/SessionDetail/StatsSkeleton";
+import StatsSkeleton from "./StatsSkeleton";
 
 function getTitle(key) {
     switch (key) {

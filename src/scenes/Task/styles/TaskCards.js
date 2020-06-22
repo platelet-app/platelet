@@ -1,5 +1,5 @@
 import {styled} from "@material-ui/styles";
-import {StyledCard} from "./common"
+import {StyledCard} from "../../../styles/common"
 
 export const TaskAdded = styled(StyledCard)({
     background: 'linear-gradient(0deg, rgba(250, 248, 248,1) 90%, rgba(255,255,255,1) 90%, rgba(252, 231, 121, 1) 90%, rgba(252, 231, 121, 1) 100%)',

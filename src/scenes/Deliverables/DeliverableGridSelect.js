@@ -4,9 +4,9 @@ import {addDeliverable, getDeliverables, updateDeliverable} from "../../redux/de
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import Button from "@material-ui/core/Button";
-import DeliverableCard from "./Components/DeliverableCard";
-import DeliverablesSelect from "./Components/DeliverableSelect";
-import DeliverablesSkeleton from "./Components/DeliverablesSkeleton";
+import DeliverableCard from "./components/DeliverableCard";
+import DeliverablesSelect from "./components/DeliverableSelect";
+import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 
 
 export default function DeliverableGridSelect(props) {

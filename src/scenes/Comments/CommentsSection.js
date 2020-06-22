@@ -1,9 +1,9 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {clearComments, getComments, getSidebarComments} from "../../redux/comments/CommentsActions";
-import CommentsMain from "./Components/CommentsMain";
+import CommentsMain from "./components/CommentsMain";
 import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
-import CommentsSkeleton from "./Components/CommentsSkeleton";
+import CommentsSkeleton from "./components/CommentsSkeleton";
 import NotFound from "../../ErrorComponenents/NotFound";
 
 export default function CommentsSection(props) {

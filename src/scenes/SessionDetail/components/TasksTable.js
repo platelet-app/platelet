@@ -5,7 +5,7 @@ import TaskItem from "./TaskItem";
 import {encodeUUID, orderTaskList} from "../../../utilities";
 import {createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
-import {TasksSheetColumn} from "../../../styles/TaskColumns";
+import {TasksSheetColumn} from "../styles/TaskColumns";
 import MaterialTable from 'material-table';
 import Box from "@material-ui/core/Box";
 import { useHistory, useLocation } from "react-router-dom";

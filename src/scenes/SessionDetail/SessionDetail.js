@@ -12,25 +12,25 @@ import {
     getSession,
     refreshCurrentSession,
 } from "../../redux/sessions/SessionsActions";
-import TasksGrid from "./Components/TasksGrid";
+import TasksGrid from "./components/TasksGrid";
 import {decodeUUID, encodeUUID, getLocalStorageViewMode} from "../../utilities";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from "../../redux/selectors";
-import TasksGridSkeleton from "../components/SessionDetail/TasksGridSkeleton";
-import TasksTable from "./Components/TasksTable";
+import TasksGridSkeleton from "./components/TasksGridSkeleton";
+import TasksTable from "./components/TasksTable";
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
-import TasksStatistics from "./Components/TasksStatistics";
-import StatsSkeleton from "../components/SessionDetail/StatsSkeleton";
-import PersistentDrawerRight from "./Components/SideInfoSection";
+import TasksStatistics from "./components/TasksStatistics";
+import StatsSkeleton from "./components/StatsSkeleton";
+import PersistentDrawerRight from "./components/SideInfoSection";
 import ChatIcon from "@material-ui/icons/Chat";
 import Tooltip from "@material-ui/core/Tooltip";
 import NotFound from "../../ErrorComponenents/NotFound";
 import {Redirect, useHistory} from "react-router";
-import {SessionDetailTabs, TabPanel} from "./Components/SessionDetailTabs";
+import {SessionDetailTabs, TabPanel} from "./components/SessionDetailTabs";
 
 function GetViewTitle(props) {
     switch (props.type) {
