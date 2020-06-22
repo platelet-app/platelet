@@ -4,7 +4,7 @@ import {clearComments, getComments, getSidebarComments} from "../../redux/commen
 import CommentsMain from "./components/CommentsMain";
 import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
 import CommentsSkeleton from "./components/CommentsSkeleton";
-import NotFound from "../../ErrorComponenents/NotFound";
+import NotFound from "../../ErrorComponents/NotFound";
 
 export default function CommentsSection(props) {
     const dispatch = useDispatch();

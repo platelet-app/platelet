@@ -28,7 +28,7 @@ import StatsSkeleton from "./components/StatsSkeleton";
 import PersistentDrawerRight from "./components/SideInfoSection";
 import ChatIcon from "@material-ui/icons/Chat";
 import Tooltip from "@material-ui/core/Tooltip";
-import NotFound from "../../ErrorComponenents/NotFound";
+import NotFound from "../../ErrorComponents/NotFound";
 import {Redirect, useHistory} from "react-router";
 import {SessionDetailTabs, TabPanel} from "./components/SessionDetailTabs";
 

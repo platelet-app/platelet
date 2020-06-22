@@ -5,7 +5,7 @@ import {getVehicle, updateVehicle} from "../../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
-import NotFound from "../../ErrorComponenents/NotFound";
+import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import {PaddedPaper} from "../../styles/common";
