@@ -1,4 +1,4 @@
-import {StyledSharpCard} from "../css/common";
+import {StyledSharpCard} from "../styles/common";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import CardItem from "./CardItem";

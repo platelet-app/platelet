@@ -1,7 +1,7 @@
 import IconButton from "@material-ui/core/IconButton";
 import React from "react";
-import {StyledAddCircleOutlineDisabled, StyledAddCircleOutline} from "../css/Buttons";
-import {StyledAddCircleOutlineSmallDisabled, StyledAddCircleOutlineSmall} from "../css/Buttons";
+import {StyledAddCircleOutlineDisabled, StyledAddCircleOutline} from "../styles/Buttons";
+import {StyledAddCircleOutlineSmallDisabled, StyledAddCircleOutlineSmall} from "../styles/Buttons";
 
 
 export function AddCircleButton(props) {

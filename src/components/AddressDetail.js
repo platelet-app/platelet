@@ -5,7 +5,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
-import { TextFieldUncontrolled }from "./TextFieldControlled";
+import { TextFieldUncontrolled }from "./TextFields";
 import Grid from "@material-ui/core/Grid";
 import { useState } from 'react';
 import Button from "@material-ui/core/Button"

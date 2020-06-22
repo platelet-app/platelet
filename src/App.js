@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {ResponsiveDrawer} from './containers/Menu'
-import Login from './Login'
+import {MenuMainContainer} from './navigation/MenuMainContainer'
+import Login from './scenes/Login/Login'
 import './index.css'
 import './App.css';
 import 'typeface-roboto'
@@ -19,12 +19,12 @@ import {getUsers} from "./redux/users/UsersActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Moment from "react-moment"
-import ApiConfig from "./containers/ApiConfig";
+import ApiConfig from "./scenes/ApiConfig";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {clearServerSettings, getServerSettings} from "./redux/ServerSettings/ServerSettingsActions";
 import {withSnackbar} from "notistack";
-import LoginSkeleton from "./loadingComponents/LoginSkeleton";
+import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
 import {getApiURL} from "./utilities";
@@ -162,7 +162,7 @@ function App(props) {
                                 serverSettings.favicon ? "data:image/png;base64," + serverSettings.favicon : "favicon.ico"
                             }/>
                         </Helmet>
-                        <ResponsiveDrawer apiControl={apiControl}/>
+                        <MenuMainContainer apiControl={apiControl}/>
                     </div>
                 </React.Fragment>
             </div>

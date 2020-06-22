@@ -1,5 +1,5 @@
 import React from "react";
-import {StyledSharpCard} from "../css/common";
+import {StyledSharpCard} from "../styles/common";
 import {Link} from "react-router-dom";
 import {encodeUUID} from "../utilities";
 import Grid from "@material-ui/core/Grid";

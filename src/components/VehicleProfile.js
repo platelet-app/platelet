@@ -3,10 +3,10 @@ import {
     updateVehicle,
 } from "../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
-import {TextFieldUncontrolled} from "./TextFieldControlled";
+import {TextFieldUncontrolled} from "./TextFields";
 import {createPostingSelector} from "../redux/selectors";
 import UsersSelect from "./UsersSelect";
-import {PaddedPaper} from "../css/common";
+import {PaddedPaper} from "../styles/common";
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";

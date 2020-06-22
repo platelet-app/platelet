@@ -1,5 +1,5 @@
 import React from "react";
-import {PaddedPaper} from "../css/common";
+import {PaddedPaper} from "../styles/common";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
