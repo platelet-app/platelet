@@ -42,7 +42,7 @@ const CommentCard = React.memo((props) => {
                                     <LockIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
                                 </Tooltip>
                             )}
-                            <Tooltip title={moment().calendar(props.timeCreated)}>
+                            <Tooltip title={moment(props.timeCreated).calendar()}>
                                 <ScheduleIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
                             </Tooltip>
                         </Grid>

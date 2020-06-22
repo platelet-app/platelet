@@ -7,12 +7,14 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {useDispatch, useSelector} from "react-redux";
 import {createPostingSelector} from "../../../redux/selectors";
-import {clearTaskContextMenuSnack, setTaskContextMenuSnack} from "../../../redux/Actions";
+import {clearTaskContextMenuSnack, setHideDelivered, setTaskContextMenuSnack} from "../../../redux/Actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import ChatIcon from "@material-ui/icons/Chat";
 import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -61,6 +63,9 @@ export function SessionDetailTabs(props) {
     const dispatch = useDispatch();
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
     const snack = useSelector(state => state.taskContextMenuSnack);
+    const hideDelivered = useSelector(state => state.hideDelivered);
+    console.log(hideDelivered)
+    //const [toggleHideDelivered, setToggleHideDelivered] = useState(props.hideDelivered);
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -100,16 +105,34 @@ export function SessionDetailTabs(props) {
                             </Tabs>
                         </Grid>
                         <Grid item>
+                            <Grid container spacing={1} direction={"row"} justify={"flex-align"} alignItems={"center"}>
+                                <Grid item>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={hideDelivered}
+                                                onChange={() => {
+                                                    dispatch(setHideDelivered(!hideDelivered));
+                                                    //setToggleHideDelivered(!toggleHideDelivered);
+                                                    //
+                                                }}
+                                                name="hide-delivered"/>}
+                                        label="Hide Delivered"
+                                    />
+                                </Grid>
+                                <Grid item>
 
-                            <Tooltip title="View comments">
-                                <IconButton
-                                    color="inherit"
-                                    aria-label="open drawer"
-                                    onClick={() => setRightSideBarOpen(!rightSideBarOpen)}
-                                >
-                                    <ChatIcon/>
-                                </IconButton>
-                            </Tooltip>
+                                    <Tooltip title="View comments">
+                                        <IconButton
+                                            color="inherit"
+                                            aria-label="open drawer"
+                                            onClick={() => setRightSideBarOpen(!rightSideBarOpen)}
+                                        >
+                                            <ChatIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </AppBar>

@@ -10,7 +10,8 @@ import {
     SET_MENU_INDEX,
     SET_COMMENTS_OBJECT_UUID,
     CLEAR_WHOAMI,
-    GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK
+    GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK,
+    SET_HIDE_DELIVERED
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
@@ -40,6 +41,15 @@ function taskContextMenuSnack(state = taskContextMenuSnackInitialState, action) 
 function viewMode(state = null, action) {
     switch (action.type) {
         case SET_VIEW_MODE:
+            return action.data;
+        default:
+            return state;
+    }
+}
+
+function hideDelivered(state = null, action) {
+    switch (action.type) {
+        case SET_HIDE_DELIVERED:
             return action.data;
         default:
             return state;
@@ -230,6 +240,7 @@ const rootReducer = combineReducers({
     apiControl,
     authStatus,
     viewMode,
+    hideDelivered,
     newTaskAddedView,
     mobileView,
     menuIndex,

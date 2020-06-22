@@ -1,4 +1,4 @@
-import {saveLocalStorageViewMode} from "../utilities";
+import {saveLocalStorageViewMode, saveLocalStorageHideDelivered} from "../utilities";
 
 export const SET_NEW_TASK_ADDED_VIEW = 'SET_NEW_TASK_ADDED_VIEW'
 
@@ -76,6 +76,13 @@ export const SET_VIEW_MODE = 'SET_VIEW_MODE';
 export function setViewMode(data) {
     saveLocalStorageViewMode(data);
     return { type: SET_VIEW_MODE, data }
+}
+
+export const SET_HIDE_DELIVERED = 'SET_HIDE_DELIVERED';
+
+export function setHideDelivered(data) {
+    saveLocalStorageHideDelivered(data);
+    return { type: SET_HIDE_DELIVERED, data }
 }
 
 export const SET_MOBILE_VIEW = 'SET_MOBILE_VIEW';

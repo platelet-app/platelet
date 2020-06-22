@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {TasksSheetColumn} from "../styles/TaskColumns";
 import MaterialTable from 'material-table';
 import Box from "@material-ui/core/Box";
-import { useHistory, useLocation } from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 
 import {addTask} from "../../../redux/tasks/TasksActions";
 
@@ -96,23 +96,29 @@ function getStatusColour(task) {
     }
 }
 
-function tasksDataColumns (tasks) {
+function tasksDataColumns(tasks, hideDelivered) {
     // tasks are received in an object of arrays for different status, add them all together
-    const concatTasks = Object.values(tasks).reduce(
-        (accumulator, value) => [...accumulator, ...value])
+    // set accumulator initial value to [] and return itself if tasksDelivered key and hideDelivered is true
+    const concatTasks = Object.entries(tasks).reduce(
+        (accumulator, [key, value]) => {
+            if (hideDelivered && key === "tasksDelivered")
+                return accumulator;
+            else
+                return [...accumulator, ...value]
+        }, []);
 
     return (concatTasks.map(task => {
         return {
             //TODO: maybe get status colour somehow above
             colourCode: getStatusColour(task),
-            time_of_call:  task.time_of_call || "",
+            time_of_call: task.time_of_call || "",
             assignees: task.assigned_users_display_string,
             contactName: task.contact_name || "",
             contactNumber: task.contact_number ? task.contact_number : "",
             pickupAddress: task.pickup_address ? task.pickup_address.line1 : "",
-            pickupWard : task.pickup_address ? task.pickup_address.ward : "",
+            pickupWard: task.pickup_address ? task.pickup_address.ward : "",
             dropoffAddress: task.dropoff_address ? task.dropoff_address.line1 : "",
-            dropoffWard : task.dropoff_address ? task.dropoff_address.ward : "",
+            dropoffWard: task.dropoff_address ? task.dropoff_address.ward : "",
             priority: task.priority,
             pickupTime: task.time_picked_up || "",
             dropoffTime: task.time_dropped_off || "",
@@ -156,7 +162,8 @@ export default function TasksTable(props) {
             width: "220px",
             field: "time_of_call",
             render: rowData =>
-                <Moment local calendar style={{fontSize: "14px"}}>{rowData.time_of_call ? rowData.time_of_call : ""}</Moment>,
+                <Moment local calendar
+                        style={{fontSize: "14px"}}>{rowData.time_of_call ? rowData.time_of_call : ""}</Moment>,
             defaultSort: "desc"
         },
         {title: "Contact Name", field: "contactName"},
@@ -166,8 +173,20 @@ export default function TasksTable(props) {
         {title: "Dropoff Address", field: "dropoffAddress"},
         {title: "Dropoff Ward", field: "dropoffWard"},
         {title: "Priority", field: "priority"},
-        {title: "Pickup Time", field: "pickupTime", width: "240px", render: rowData => rowData.pickupTime ? <Moment local calendar style={{fontSize: "14px"}}>{rowData.pickupTime}</Moment> : ""},
-        {title: "Dropoff Time", field: "dropoffTime", width: "240px", render: rowData => rowData.dropoffTime ? <Moment local calendar style={{fontSize: "14px"}}>{rowData.dropoffTime}</Moment> : ""},
+        {
+            title: "Pickup Time",
+            field: "pickupTime",
+            width: "240px",
+            render: rowData => rowData.pickupTime ?
+                <Moment local calendar style={{fontSize: "14px"}}>{rowData.pickupTime}</Moment> : ""
+        },
+        {
+            title: "Dropoff Time",
+            field: "dropoffTime",
+            width: "240px",
+            render: rowData => rowData.dropoffTime ?
+                <Moment local calendar style={{fontSize: "14px"}}>{rowData.dropoffTime}</Moment> : ""
+        },
         {title: "Patch", field: "patch"},
         {title: "", field: "uuid", render: () => <></>}
     ];
@@ -195,7 +214,7 @@ export default function TasksTable(props) {
             icons={tableIcons}
             title=""
             columns={columns}
-            data={tasksDataColumns(props.tasks)}
+            data={tasksDataColumns(props.tasks, props.hideDelivered)}
             options={{actionsColumnIndex: 1, pageSize: 10, toolbarButtonAlignment: "left"}}
             actions={actions}
         />

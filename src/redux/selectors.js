@@ -40,7 +40,6 @@ export const createContextMenuSnackSelector = uuid => state => {
     if (filt.length === 1){
         const index = state.taskContextMenuSnack.indexOf(filt[0]);
         const result = state.taskContextMenuSnack.slice(index, 1)[0]
-        console.log(result)
         return result;
     } else {
         return undefined;

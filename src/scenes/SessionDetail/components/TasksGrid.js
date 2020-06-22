@@ -6,6 +6,7 @@ import {createPostingSelector} from "../../../redux/selectors";
 import {useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
 import {TextFieldControlled} from "../../../components/TextFields";
+import {task} from "../../../redux/tasks/TasksReducers";
 
 const initialTasksState = {tasksNew: [], tasksActive: [], tasksPickedUp: [], tasksDelivered: []}
 
@@ -133,9 +134,11 @@ export default function TasksGrid(props) {
 
                         }
                         const title = getColumnTitle(taskList[0]);
+                        const gridColumn = (props.hideDelivered && taskList[0] === "tasksDelivered") ? <></> :
+                            <GridColumn title={title} newTaskButton={newTaskButton} tasks={taskList[1]}/>
                         return (
                             <Grid item xs sm md lg key={taskList[0]}>
-                                <GridColumn title={title} newTaskButton={newTaskButton} tasks={taskList[1]}/>
+                                {gridColumn}
                             </Grid>
                         )
                     })}

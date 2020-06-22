@@ -7,13 +7,19 @@ import {
     getAllTasks,
     refreshAllTasks,
 } from '../../redux/tasks/TasksActions'
-import {setCommentsObjectUUID, setMenuIndex, setViewMode, setNewTaskAddedView} from "../../redux/Actions";
+import {
+    setCommentsObjectUUID,
+    setMenuIndex,
+    setViewMode,
+    setNewTaskAddedView,
+    setHideDelivered
+} from "../../redux/Actions";
 import {
     getSession,
     refreshCurrentSession,
 } from "../../redux/sessions/SessionsActions";
 import TasksGrid from "./components/TasksGrid";
-import {decodeUUID, encodeUUID, getLocalStorageViewMode} from "../../utilities";
+import {decodeUUID, encodeUUID, getLocalStorageHideDelivered, getLocalStorageViewMode} from "../../utilities";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from "../../redux/selectors";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
@@ -73,6 +79,7 @@ function SessionDetail(props) {
     const isPostingNewTask = useSelector(state => isPostingNewTaskSelector(state));
     const tasks = useSelector(state => state.tasks.tasks);
     const viewMode = useSelector(state => state.viewMode);
+    const hideDelivered = useSelector(state => state.hideDelivered);
     const mobileView = useSelector(state => state.mobileView);
     const notFoundSelector = createNotFoundSelector(["GET_SESSION"]);
     const notFound = useSelector(state => notFoundSelector(state));
@@ -94,10 +101,11 @@ function SessionDetail(props) {
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
-            if (viewModeLocalStorage === null)
-                dispatch(setViewMode(0));
-            else
-                dispatch(setViewMode(viewModeLocalStorage));
+            dispatch(setViewMode(viewModeLocalStorage === null ? 0 : viewModeLocalStorage));
+        }
+        if (hideDelivered === null) {
+            const hideDeliveredLocalStorage = getLocalStorageHideDelivered();
+            dispatch(setHideDelivered(hideDeliveredLocalStorage === null ? false : hideDeliveredLocalStorage));
         }
         if (!props.match) {
             history.push(`/session/${encodeUUID(currentSession.uuid)}`);
@@ -262,13 +270,14 @@ function SessionDetail(props) {
         return <NotFound>{`Session with UUID ${session_uuid} not found.`}</NotFound>
     } else {
             return (
-                <SessionDetailTabs value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
+                <SessionDetailTabs showDelivered={hideDelivered} value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
                     <TabPanel value={viewMode} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
                                    onAddTaskClick={addEmptyTask}
                                    sessionUUID={session_uuid}
                                    modalView={"edit"}
+                                   hideDelivered={hideDelivered}
                         />
                     </TabPanel>
                     <TabPanel value={viewMode} index={1}>
@@ -277,6 +286,7 @@ function SessionDetail(props) {
                                     onAddTaskClick={addEmptyTask}
                                     sessionUUID={session_uuid}
                                     modalView={"edit"}
+                                    hideDelivered={hideDelivered}
                         />
                     </TabPanel>
                     <TabPanel value={viewMode} index={2}>
@@ -285,6 +295,10 @@ function SessionDetail(props) {
                 </SessionDetailTabs>
             )
         }
+
+
+
+
     if (viewMode === "stats" || props.statsView) {
         return (
             <PersistentDrawerRight open={rightSideBarOpen}
