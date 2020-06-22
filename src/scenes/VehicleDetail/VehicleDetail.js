@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import VehicleProfile from "../../components/VehicleProfile";
+import VehicleProfile from "./components/VehicleProfile";
 import {decodeUUID} from "../../utilities";
 import {getVehicle, updateVehicle} from "../../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";

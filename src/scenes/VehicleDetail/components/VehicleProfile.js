@@ -1,17 +1,17 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
     updateVehicle,
-} from "../redux/vehicles/VehiclesActions";
+} from "../../../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
-import {TextFieldUncontrolled} from "./TextFields";
-import {createPostingSelector} from "../redux/selectors";
-import UsersSelect from "./UsersSelect";
-import {PaddedPaper} from "../styles/common";
+import {TextFieldUncontrolled} from "../../../components/TextFields";
+import {createPostingSelector} from "../../../redux/selectors";
+import UsersSelect from "../../../components/UsersSelect";
+import {PaddedPaper} from "../../../styles/common";
 import EditIcon from '@material-ui/icons/Edit';
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import Divider from "@material-ui/core/Divider";
-import SaveCancelButtons from "./SaveCancelButtons";
+import SaveCancelButtons from "../../../components/SaveCancelButtons";
 
 
 export default function VehicleProfile(props) {

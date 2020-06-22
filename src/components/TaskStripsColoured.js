@@ -9,6 +9,7 @@ import Divider from "@material-ui/core/Divider";
 import {Typography} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 
+// Not currently used in favour of cards/material table.
 export function TaskStrip(props) {
     const itemsList = [];
     if (props.pickupAddress) {

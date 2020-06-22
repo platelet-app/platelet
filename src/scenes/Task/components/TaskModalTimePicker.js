@@ -1,4 +1,4 @@
-import ToggleTimeStamp from "../../../components/ToggleTimeStamp";
+import ToggleTimeStamp from "./ToggleTimeStamp";
 import {DateAndTimePicker} from "../../../components/DateTimePickers";
 import Grid from "@material-ui/core/Grid";
 import React, {useState} from "react";

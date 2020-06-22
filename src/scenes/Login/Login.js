@@ -24,7 +24,7 @@ function getMessage(status) {
             return "Failed login. Please check your details."
         case 403:
             return "Unauthorised. Please check with your organisation."
-        case 0:
+        default:
             return ""
     }
 }

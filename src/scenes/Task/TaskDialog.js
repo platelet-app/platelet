@@ -7,7 +7,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from "@material-ui/core/Grid";
 import {useHistory, useLocation} from "react-router-dom";
 import AddressDetailsCollapsible from "../../components/AddressDetail";
-import ToggleTimeStamp from "../../components/ToggleTimeStamp";
+import ToggleTimeStamp from "./components/ToggleTimeStamp";
 import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
 import PrioritySelect from "./components/PrioritySelect";
