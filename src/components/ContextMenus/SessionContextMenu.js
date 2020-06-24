@@ -83,7 +83,7 @@ function SessionContextMenu(props) {
                 }
             >
                 <MenuItem
-                    disabled={!whoami.uuid === props.session.user_uuid}
+                    disabled={!whoami.uuid === props.session.coordinator_uuid}
                     style={{color: "rgb(235, 86, 75)"}}
                     onClick={onDelete}>Delete</MenuItem>
             </Menu>

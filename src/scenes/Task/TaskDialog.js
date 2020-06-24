@@ -97,7 +97,7 @@ export default function TaskDialog(props) {
     useEffect(getSessionData, [sessionUUID])
 
     function editModeSetter() {
-        setEditMode(session.user_uuid === whoami.uuid || whoami.roles.includes("admin"));
+        setEditMode(session.coordinator_uuid === whoami.uuid || whoami.roles.includes("admin"));
     }
 
     useEffect(editModeSetter, [whoamiUUID, whoamiRoles])
@@ -112,7 +112,7 @@ export default function TaskDialog(props) {
     useEffect(currentTask, [tasks])
 
     function updateEditMode() {
-        setEditMode(session.user_uuid === whoamiUUID || whoamiRoles.includes("admin"));
+        setEditMode(session.coordinator_uuid === whoamiUUID || whoamiRoles.includes("admin"));
     }
 
     useEffect(updateEditMode, [whoami, session])

@@ -59,13 +59,13 @@ function SessionList(props) {
     useEffect(dispatchSnack, [isDeleting])
 
     let emptySession = {
-        user_uuid: whoami.uuid,
+        coordinator_uuid: whoami.uuid,
         time_created: new Date().toISOString(),
     };
 
     function onStartNewSession() {
         let newSession = {...emptySession};
-        newSession.user_uuid = whoami.uuid;
+        newSession.coordinator_uuid = whoami.uuid;
         dispatch(addSession(newSession));
     }
 
