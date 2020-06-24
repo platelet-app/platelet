@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
 import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -15,6 +16,13 @@ import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import AvatarGroup from "@material-ui/lab/AvatarGroup";
+import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
+import UserAvatar from "../../../components/UserAvatar";
+import {AddCircleButtonSmall} from "../../../components/Buttons";
+import {StyledAddCircleOutlineSmall, StyledAddCircleOutlineSmallDisabled} from "../../../styles/Buttons";
+import CollaboratorsSection from "./CollaboratorsSection";
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -63,8 +71,10 @@ export function SessionDetailTabs(props) {
     const dispatch = useDispatch();
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
     const snack = useSelector(state => state.taskContextMenuSnack);
+    const currentSession = useSelector(state => state.session.session);
+    const whoami = useSelector(state => state.whoami.user);
     const hideDelivered = useSelector(state => state.hideDelivered);
-    console.log(hideDelivered)
+    console.log(currentSession.collaborators)
     //const [toggleHideDelivered, setToggleHideDelivered] = useState(props.hideDelivered);
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
@@ -89,6 +99,8 @@ export function SessionDetailTabs(props) {
         props.onChange(event, newValue);
     };
 
+
+
     return (
         <div className={classes.root}>
             <PersistentDrawerRight open={rightSideBarOpen}
@@ -105,7 +117,14 @@ export function SessionDetailTabs(props) {
                             </Tabs>
                         </Grid>
                         <Grid item>
-                            <Grid container spacing={1} direction={"row"} justify={"flex-align"} alignItems={"center"}>
+                            <Grid container spacing={2} direction={"row"} justify={"flex-align"} alignItems={"center"}>
+                                <Grid item>
+                                    <CollaboratorsSection
+                                        allowAdd={(whoami.uuid === currentSession.coordinator_uuid || whoami.roles.includes("admin"))}
+                                        collaborators={currentSession.collaborators}
+                                        sessionUUID={currentSession.uuid}
+                                    />
+                                </Grid>
                                 <Grid item>
                                     <FormControlLabel
                                         control={
@@ -114,7 +133,6 @@ export function SessionDetailTabs(props) {
                                                 onChange={() => {
                                                     dispatch(setHideDelivered(!hideDelivered));
                                                     //setToggleHideDelivered(!toggleHideDelivered);
-                                                    //
                                                 }}
                                                 name="hide-delivered"/>}
                                         label="Hide Delivered"

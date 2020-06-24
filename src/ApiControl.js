@@ -286,6 +286,10 @@ class Session {
         return makeAxios(this.api_url, "session/" + session_id + "/restore", "PUT", this.bearer, "application/json")
     }
 
+    async addSessionCollaborator(session_id, input_data) {
+        return makeAxios(this.api_url, "session/" + session_id + "/assign_collaborator", "PUT", this.bearer, "application/json", input_data)
+    }
+
 }
 
 class Priority {

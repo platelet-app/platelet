@@ -1,4 +1,4 @@
-import {all, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
+import {call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {
     ADD_SESSION_REQUEST,
     addSessionSuccess,
@@ -19,7 +19,10 @@ import {
     setCurrentSession,
     REFRESH_CURRENT_SESSION_REQUEST,
     refreshCurrentSessionSuccess,
-    refreshCurrentSessionFailure
+    refreshCurrentSessionFailure,
+    setCurrentSessionTimeActiveToNow,
+    addSessionCollaboratorSuccess,
+    addSessionCollaboratorFailure, ADD_SESSION_COLLABORATOR_REQUEST
 } from "./SessionsActions"
 import {getApiControl} from "../Api";
 import {
@@ -28,6 +31,7 @@ import {
     RESTORE_SESSION_REQUEST,
     restoreSessionSuccess
 } from "./SessionsActions";
+import {updateTaskAssignedRiderFailure, updateTaskAssignedRiderSuccess} from "../tasks/TasksActions";
 
 
 export function* postNewSession(action) {
@@ -137,4 +141,19 @@ function* restoreSession(action) {
 
 export function* watchRestoreSession() {
     yield takeEvery(RESTORE_SESSION_REQUEST, restoreSession)
+}
+
+function* addSessionCollaborator(action) {
+    try {
+        const api = yield select(getApiControl);
+        if (action.data.payload.user_uuid) {
+            yield call([api, api.sessions.addSessionCollaborator], action.data.sessionUUID, {user_uuid: action.data.payload.user_uuid});
+            yield put(addSessionCollaboratorSuccess(action.data))
+        }
+    } catch (error) {
+        yield put(addSessionCollaboratorFailure(error))
+    }
+}
+export function* watchAddSessionCollaborator() {
+    yield takeEvery(ADD_SESSION_COLLABORATOR_REQUEST, addSessionCollaborator)
 }

@@ -1,6 +1,9 @@
 export const ADD_SESSION_REQUEST = 'ADD_SESSION_REQUEST';
 export const ADD_SESSION_SUCCESS = 'ADD_SESSION_SUCCESS';
 export const ADD_SESSION_FAILURE = 'ADD_SESSION_FAILURE';
+export const ADD_SESSION_COLLABORATOR_REQUEST = 'ADD_SESSION_COLLABORATOR_REQUEST';
+export const ADD_SESSION_COLLABORATOR_SUCCESS = 'ADD_SESSION_COLLABORATOR_SUCCESS';
+export const ADD_SESSION_COLLABORATOR_FAILURE = 'ADD_SESSION_COLLABORATOR_FAILURE';
 export const GET_SESSIONS_REQUEST = 'GET_SESSIONS_REQUEST';
 export const GET_SESSIONS_SUCCESS = 'GET_SESSIONS_SUCCESS';
 export const GET_SESSIONS_FAILURE = 'GET_SESSIONS_FAILURE';
@@ -34,8 +37,20 @@ export function addSessionSuccess(data) {
     return { type: ADD_SESSION_SUCCESS, data }
 }
 
-export function addSessionFailure(data) {
-    return { type: ADD_SESSION_FAILURE, data }
+export function addSessionFailure(error) {
+    return { type: ADD_SESSION_FAILURE, error }
+}
+
+export function addSessionCollaborator(data) {
+    return { type: ADD_SESSION_COLLABORATOR_REQUEST, data }
+}
+
+export function addSessionCollaboratorSuccess(data) {
+    return { type: ADD_SESSION_COLLABORATOR_SUCCESS, data }
+}
+
+export function addSessionCollaboratorFailure(error) {
+    return { type: ADD_SESSION_COLLABORATOR_FAILURE, error }
 }
 
 export function getAllSessions(data) {

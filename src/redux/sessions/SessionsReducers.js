@@ -1,4 +1,5 @@
 import {
+    ADD_SESSION_COLLABORATOR_SUCCESS,
     ADD_SESSION_SUCCESS, CLEAR_CURRENT_SESSION,
     DELETE_SESSION_REQUEST,
     DELETE_SESSION_SUCCESS,
@@ -63,6 +64,7 @@ const initialSessionState = {
             self: null,
             collection: null
         },
+        collaborators: [],
         task_count: null,
         time_modified: null,
         tasks_etag: ""
@@ -76,6 +78,14 @@ export function session(state = initialSessionState, action) {
         case GET_SESSION_FAILURE:
         case GET_SESSION_NOTFOUND:
             return {session: initialSessionState, error: action.error};
+        case ADD_SESSION_COLLABORATOR_SUCCESS:
+            const collaboratorsList = state.session.collaborators
+            collaboratorsList.push(action.data.payload.user)
+            const finalSession = {...state.session, collaborators: collaboratorsList}
+            return {
+                session: finalSession,
+                error: null
+            }
         default:
             return state;
     }

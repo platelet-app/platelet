@@ -5,7 +5,7 @@ import {
     watchGetSession,
     watchDeleteSession,
     watchRestoreSession,
-    watchGetSessionStatistics, watchRefreshCurrentSession
+    watchGetSessionStatistics, watchRefreshCurrentSession, watchAddSessionCollaborator
 } from "./sessions/SessionsSagas"
 import {
     watchPostNewTask,
@@ -81,6 +81,7 @@ export default function* rootSaga() {
         call(watchGetSessionStatistics),
         call(watchDeleteSession),
         call(watchRestoreSession),
+        call(watchAddSessionCollaborator),
         call(watchGetTask),
         call(watchGetTasks),
         call(watchRefreshTasks),
