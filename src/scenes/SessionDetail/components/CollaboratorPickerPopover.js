@@ -40,13 +40,16 @@ export default function CollaboratorPickerPopover(props) {
     };
 
     const handleSelectUser = (user) => {
-        const payload = {user_uuid: user.uuid, user}
-        dispatch(addSessionCollaborator({sessionUUID: props.sessionUUID, payload}))
-        handleClose();
+        if (user) {
+            const payload = {user_uuid: user.uuid, user}
+            dispatch(addSessionCollaborator({sessionUUID: props.sessionUUID, payload}))
+            handleClose();
+        }
     }
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
+    const userSelectExclude = props.coordinatorUUID ? [...props.collaborators.map(u => u.uuid), props.coordinatorUUID] : props.collaborators.map(u => u.uuid)
 
     return (
         <div>
@@ -78,7 +81,7 @@ export default function CollaboratorPickerPopover(props) {
                 <div className={classes.root}>
                 <Grid container spacing={1} direction={"column"} alignItems={"center"} justify={"flex-start"}>
                     <Grid item>
-                        <UsersSelect onSelect={handleSelectUser}/>
+                        <UsersSelect roles={["coordinator"]} onSelect={handleSelectUser} excludeList={userSelectExclude}/>
                     </Grid>
                     {props.collaborators.map((user) => (
                         <Grid key={user.uuid} item>

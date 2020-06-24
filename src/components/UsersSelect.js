@@ -121,7 +121,8 @@ function UsersSelect(props) {
     const userSuggestions = useSelector(state => state.users.users);
     const [filteredUserSuggestions, setFilteredUserSuggestions] = useState([]);
     useEffect(() => {
-        let reorderedUsers = [];
+        let reorderedUsers;
+        // put vehicle assigned users at the top
         if (props.vehicleAssignedUsersFirst) {
             const vehicleUsers = userSuggestions.filter(item => item.assigned_vehicles.length !== 0)
             const noVehicleUsers = userSuggestions.filter(item => item.assigned_vehicles.length === 0);
@@ -130,17 +131,17 @@ function UsersSelect(props) {
         else {
             reorderedUsers = userSuggestions
         }
-        let filteredUsers = [];
-        reorderedUsers.map((user) => {
-            if (user.display_name !== null && user.roles.includes("rider") && !(props.excludeList ? props.excludeList.includes(user.uuid) : false)) {
-                filteredUsers.push({
+        // if specific roles are requested, filter out the other roles
+        const filterRoles = props.roles ? reorderedUsers.filter(user => props.roles.some(r => user.roles.includes(r))) : reorderedUsers
+        const filterExclude = props.excludeList ? filterRoles.filter(user => !props.excludeList.includes(user.uuid)) : filterRoles
+        // check there is a display name and ignore anything in the exclude list
+        const mappedUsers = filterExclude.map((user) => ({
                     "label": user.display_name,
                     "uuid": user.uuid
                 })
-            }
-        });
+        );
 
-        setFilteredUserSuggestions(filteredUsers);
+        setFilteredUserSuggestions(mappedUsers);
     }, [userSuggestions]);
 
     function onSelect(selectedItem) {

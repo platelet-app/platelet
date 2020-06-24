@@ -74,7 +74,6 @@ export function SessionDetailTabs(props) {
     const currentSession = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
     const hideDelivered = useSelector(state => state.hideDelivered);
-    console.log(currentSession.collaborators)
     //const [toggleHideDelivered, setToggleHideDelivered] = useState(props.hideDelivered);
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
@@ -100,7 +99,6 @@ export function SessionDetailTabs(props) {
     };
 
 
-
     return (
         <div className={classes.root}>
             <PersistentDrawerRight open={rightSideBarOpen}
@@ -123,6 +121,7 @@ export function SessionDetailTabs(props) {
                                         allowAdd={(whoami.uuid === currentSession.coordinator_uuid || whoami.roles.includes("admin"))}
                                         collaborators={currentSession.collaborators}
                                         sessionUUID={currentSession.uuid}
+                                        coordinatorUUID={currentSession.coordinator_uuid}
                                     />
                                 </Grid>
                                 <Grid item>

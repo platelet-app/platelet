@@ -7,7 +7,7 @@ import CollaboratorPickerPopover from "./CollaboratorPickerPopover";
 
 export default function CollaboratorsSection(props) {
     const collaboratorAddButton = (props.allowAdd) ?
-        <CollaboratorPickerPopover sessionUUID={props.sessionUUID} collaborators={props.collaborators}/>
+        <CollaboratorPickerPopover coordinatorUUID={props.coordinatorUUID} sessionUUID={props.sessionUUID} collaborators={props.collaborators}/>
          : <></>
 
     return (

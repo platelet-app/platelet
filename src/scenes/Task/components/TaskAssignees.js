@@ -46,6 +46,7 @@ export default function TaskAssignees(props) {
     const noAssigneeMessage = assignees ? assignees.length === 0 ? <Typography>No assignee.</Typography> : <></> : <></>
     const userSelect = addMode ?
         <UsersSelect id="userSelect"
+                     roles={['rider']}
                      vehicleAssignedUsersFirst={true}
                      onSelect={onSelectRider}
                      excludeList={assignees.map((u) => u.uuid)}/>
