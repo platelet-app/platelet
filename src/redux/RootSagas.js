@@ -15,7 +15,6 @@ import {
     watchGetTask,
     watchDeleteTask,
     watchRestoreTask,
-    watchUpdateTaskAssignedRider,
     watchUpdateTaskContactName,
     watchUpdateTaskContactNumber,
     watchUpdateTaskDropoffAddress,
@@ -26,7 +25,7 @@ import {
     watchUpdateTaskCancelledTime,
     watchUpdateTaskRejectedTime,
     watchUpdateTaskPatch,
-    watchRefreshTasks, watchRefreshMyTasks
+    watchRefreshTasks, watchRefreshMyTasks, watchUpdateTaskPatchFromServer
 } from "./tasks/TasksSagas"
 import {
     watchDeleteDeliverable,
@@ -70,6 +69,11 @@ import {watchGetWhoami, watchRefreshWhoami} from "./WhoamiSaga";
 import {watchLogin} from "./login/LoginSagas"
 import {watchGetAvailablePatches} from "./patches/PatchesSagas";
 import {watchGetServerSettings} from "./ServerSettings/ServerSettingsSagas";
+import {
+    watchGetTaskAssignedRiders,
+    watchUpdateTaskAddAssignedRider,
+    watchUpdateTaskRemoveRider
+} from "./taskAssignees/taskAssigneesSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -88,7 +92,9 @@ export default function* rootSaga() {
         call(watchRefreshTasks),
         call(watchRefreshMyTasks),
         call(watchUpdateTask),
-        call(watchUpdateTaskAssignedRider),
+        call(watchGetTaskAssignedRiders),
+        call(watchUpdateTaskAddAssignedRider),
+        call(watchUpdateTaskRemoveRider),
         call(watchUpdateTaskContactName),
         call(watchUpdateTaskContactNumber),
         call(watchUpdateTaskDropoffAddress),
@@ -97,6 +103,7 @@ export default function* rootSaga() {
         call(watchUpdateTaskPickupTime),
         call(watchUpdateTaskPriority),
         call(watchUpdateTaskPatch),
+        call(watchUpdateTaskPatchFromServer),
         call(watchUpdateTaskCancelledTime),
         call(watchUpdateTaskRejectedTime),
         call(watchGetMyTasks),

@@ -201,8 +201,16 @@ class Task {
         return makeAxios(this.api_url, "task/" + task_id, "PUT", this.bearer, "application/json", input_data)
     }
 
+    async getTaskAssignees(task_id) {
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users", "GET", this.bearer, "application/json")
+    }
+
     async addTaskAssignee(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assign_user", "PUT", this.bearer, "application/json", input_data)
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users", "PUT", this.bearer, "application/json", input_data)
+    }
+
+    async removeTaskAssignee(task_id, input_data) {
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users", "DELETE", this.bearer, "application/json", input_data)
     }
 
     async deleteTask(task_id) {

@@ -14,6 +14,7 @@ import {
     SET_HIDE_DELIVERED
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
+import {taskAssignees} from "./taskAssignees/taskAssigneesReducers";
 import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
 import {availableLocations} from "./locations/LocationsReducers"
@@ -215,6 +216,7 @@ const rootReducer = combineReducers({
     task,
     tasks,
     currentTask,
+    taskAssignees,
     sessions,
     session,
     sessionStatistics,

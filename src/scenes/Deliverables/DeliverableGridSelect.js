@@ -1,6 +1,11 @@
 import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import {addDeliverable, getDeliverables, updateDeliverable} from "../../redux/deliverables/DeliverablesActions";
+import {
+    addDeliverable,
+    deleteDeliverable,
+    getDeliverables,
+    updateDeliverable
+} from "../../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import Button from "@material-ui/core/Button";
@@ -70,7 +75,10 @@ export default function DeliverableGridSelect(props) {
                 {deliverables.map(deliverable => {
                     return (
                         <Grid item key={deliverable.uuid}>
-                            <DeliverableCard deliverable={deliverable}/>
+                            <DeliverableCard
+                                onDelete={() => dispatch(deleteDeliverable(deliverable.uuid))}
+                                deliverable={deliverable}
+                            />
                         </Grid>
                     )
 

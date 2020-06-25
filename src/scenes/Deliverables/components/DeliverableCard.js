@@ -71,6 +71,14 @@ export default function DeliverableCard(props) {
         }
     }
 
+    const deleteButton = props.onDelete ?
+        <IconButton
+            color={"inherit"}
+            onClick={props.onDelete}
+        >
+            <ClearIcon/>
+        </IconButton> : <></>
+
     return (
         <StyledSharpCard style={{height: "100px"}}>
             <Grid container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
@@ -89,14 +97,7 @@ export default function DeliverableCard(props) {
                     </Grid>
                 </Grid>
                 <Grid item>
-                    <IconButton
-                        color={"inherit"}
-                        onClick={() => {
-                            dispatch(deleteDeliverable(props.deliverable.uuid))
-                        }}
-                    >
-                        <ClearIcon/>
-                    </IconButton>
+                    {deleteButton}
                 </Grid>
             </Grid>
         </StyledSharpCard>

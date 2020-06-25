@@ -14,7 +14,6 @@ import {
     addTaskSuccess,
     UPDATE_TASK_REQUEST,
     updateTaskSuccess,
-    UPDATE_TASK_ASSIGNED_RIDER_REQUEST,
     UPDATE_TASK_CONTACT_NUMBER_REQUEST,
     UPDATE_TASK_DROPOFF_ADDRESS_REQUEST,
     UPDATE_TASK_PICKUP_ADDRESS_REQUEST,
@@ -68,8 +67,13 @@ import {
     updateTaskCancelledTimeFailure,
     updateTaskRejectedTimeFailure,
     getTaskFailure,
-    setCurrentTask
+    setCurrentTask,
+    updateTaskRemoveRiderSuccess,
+    updateTaskRemoveRiderFailure,
+    UPDATE_TASK_REMOVE_RIDER_REQUEST,
+    UPDATE_TASK_PATCH_FROM_SERVER
 } from "./TasksActions"
+import {updateTaskPatch as updateTaskPatchAction} from "./TasksActions"
 
 import {getApiControl} from "../Api"
 import {setCurrentSession, setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
@@ -220,20 +224,6 @@ function* updateTaskDropoffTime(action) {
     }
 }
 
-function* updateTaskAssignedRider(action) {
-    try {
-        yield put(setCurrentSessionTimeActiveToNow())
-        const api = yield select(getApiControl);
-        if (action.data.payload.patch_id)
-            yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload.patch_id);
-        if (action.data.payload.user_uuid)
-            yield call([api, api.tasks.addTaskAssignee], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
-        yield put(updateTaskAssignedRiderSuccess(action.data))
-    } catch (error) {
-        yield put(updateTaskAssignedRiderFailure(error))
-    }
-}
-
 function* updateTaskPriority(action) {
     try {
         yield put(setCurrentSessionTimeActiveToNow())
@@ -251,6 +241,18 @@ function* updateTaskPatch(action) {
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskPatchSuccess(action.data))
+    } catch (error) {
+        yield put(updateTaskPatchFailure(error))
+    }
+}
+
+function* updateTaskPatchFromServer(action) {
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.tasks.getTaskAssignees], action.data.taskUUID);
+        const lastResult = result.slice(-1)[0]
+        const payload = lastResult ? {patch: lastResult.patch, patch_id: lastResult.patch_id} : {patch: "", patch_id: null};
+        yield put(updateTaskPatchAction({taskUUID: action.data.taskUUID, payload}))
     } catch (error) {
         yield put(updateTaskPatchFailure(error))
     }
@@ -306,16 +308,16 @@ export function* watchUpdateTaskDropoffTime() {
     yield debounce(300, UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
 }
 
-export function* watchUpdateTaskAssignedRider() {
-    yield debounce(300, UPDATE_TASK_ASSIGNED_RIDER_REQUEST, updateTaskAssignedRider)
-}
-
 export function* watchUpdateTaskPriority() {
     yield debounce(500, UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
 }
 
 export function* watchUpdateTaskPatch() {
     yield debounce(300, UPDATE_TASK_PATCH_REQUEST, updateTaskPatch)
+}
+
+export function* watchUpdateTaskPatchFromServer() {
+    yield debounce(300, UPDATE_TASK_PATCH_FROM_SERVER, updateTaskPatchFromServer)
 }
 
 export function* watchUpdateTaskCancelledTime() {

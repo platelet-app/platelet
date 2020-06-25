@@ -1,8 +1,11 @@
 import {
-    ADD_TASK_SUCCESS, CLEAR_CURRENT_TASK,
-    DELETE_TASK_SUCCESS, GET_MY_TASKS_FAILURE,
+    ADD_TASK_SUCCESS,
+    CLEAR_CURRENT_TASK,
+    DELETE_TASK_SUCCESS,
+    GET_MY_TASKS_FAILURE,
     GET_MY_TASKS_SUCCESS,
-    GET_TASK_SUCCESS, GET_TASKS_FAILURE,
+    GET_TASK_SUCCESS,
+    GET_TASKS_FAILURE,
     GET_TASKS_SUCCESS,
     RESTORE_TASK_SUCCESS,
     SET_CURRENT_TASK,
@@ -10,9 +13,14 @@ import {
     UPDATE_TASK_CANCELLED_TIME_SUCCESS,
     UPDATE_TASK_CONTACT_NAME_SUCCESS,
     UPDATE_TASK_CONTACT_NUMBER_SUCCESS,
-    UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS, UPDATE_TASK_DROPOFF_TIME_SUCCESS, UPDATE_TASK_PATCH_SUCCESS,
+    UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS,
+    UPDATE_TASK_DROPOFF_TIME_SUCCESS,
+    UPDATE_TASK_PATCH_SUCCESS,
     UPDATE_TASK_PICKUP_ADDRESS_SUCCESS,
-    UPDATE_TASK_PICKUP_TIME_SUCCESS, UPDATE_TASK_PRIORITY_SUCCESS, UPDATE_TASK_REJECTED_TIME_SUCCESS,
+    UPDATE_TASK_PICKUP_TIME_SUCCESS,
+    UPDATE_TASK_PRIORITY_SUCCESS,
+    UPDATE_TASK_REJECTED_TIME_SUCCESS,
+    UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS,
     UPDATE_TASK_SUCCESS
 } from "./TasksActions";
 import update from "immutability-helper";
@@ -128,6 +136,16 @@ export function tasks(state = initialTasksState, action) {
                 let assigneesList = task.assigned_users
                 assigneesList.push(action.data.payload.rider)
                 const finalTask = {...task, assigned_users: assigneesList, assigned_users_display_string: task.assigned_users.map((user) => user.display_name).join(", ")}
+                const resultAdd = sortAndConcat(state.tasks, finalTask)
+                return {tasks: Object.assign(state.tasks, resultAdd), error: null}
+            } else {
+                return state;
+            }
+        case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS:
+            const taskUnassign = spliceExistingTask(state.tasks, action.data.taskUUID).task;
+            if (taskUnassign) {
+                const filteredAssigneeList = taskUnassign.assigned_users.filter((u) => u.uuid !== action.data.payload.user_uuid);
+                const finalTask = {...taskUnassign, assigned_users: filteredAssigneeList, assigned_users_display_string: filteredAssigneeList.map((user) => user.display_name).join(", ")}
                 const resultAdd = sortAndConcat(state.tasks, finalTask)
                 return {tasks: Object.assign(state.tasks, resultAdd), error: null}
             } else {

@@ -26,6 +26,7 @@ export const UPDATE_TASK_REJECTED_TIME_REQUEST = "UPDATE_TASK_REJECTED_TIME_REQU
 export const UPDATE_TASK_ASSIGNED_RIDER_REQUEST = "UPDATE_TASK_ASSIGNED_RIDER_REQUEST";
 export const UPDATE_TASK_PRIORITY_REQUEST = "UPDATE_TASK_PRIORITY_REQUEST";
 export const UPDATE_TASK_PATCH_REQUEST = "UPDATE_TASK_PATCH_REQUEST";
+export const UPDATE_TASK_PATCH_FROM_SERVER = "UPDATE_TASK_PATCH_FROM_SERVER";
 
 export const UPDATE_TASK_CONTACT_NAME_SUCCESS = "UPDATE_TASK_CONTACT_NAME_SUCCESS";
 export const UPDATE_TASK_CONTACT_NUMBER_SUCCESS = "UPDATE_TASK_CONTACT_NUMBER_SUCCESS";
@@ -36,6 +37,7 @@ export const UPDATE_TASK_DROPOFF_TIME_SUCCESS = "UPDATE_TASK_DROPOFF_TIME_SUCCES
 export const UPDATE_TASK_CANCELLED_TIME_SUCCESS = "UPDATE_TASK_CANCELLED_TIME_SUCCESS";
 export const UPDATE_TASK_REJECTED_TIME_SUCCESS = "UPDATE_TASK_REJECTED_TIME_SUCCESS";
 export const UPDATE_TASK_ASSIGNED_RIDER_SUCCESS = "UPDATE_TASK_ASSIGNED_RIDER_SUCCESS";
+export const UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS = "UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS";
 export const UPDATE_TASK_PRIORITY_SUCCESS = "UPDATE_TASK_PRIORITY_SUCCESS";
 export const UPDATE_TASK_PATCH_SUCCESS = "UPDATE_TASK_PATCH_SUCCESS";
 
@@ -176,6 +178,10 @@ export function updateTaskPatch(data) {
     return { type: UPDATE_TASK_PATCH_REQUEST, data }
 }
 
+export function updateTaskPatchFromServer(data) {
+    return { type: UPDATE_TASK_PATCH_FROM_SERVER, data }
+}
+
 export function updateTaskContactNameSuccess(data) {
     return { type: UPDATE_TASK_CONTACT_NAME_SUCCESS, data }
 }
@@ -202,6 +208,9 @@ export function updateTaskRejectedTimeSuccess(data) {
 }
 export function updateTaskAssignedRiderSuccess(data) {
     return { type: UPDATE_TASK_ASSIGNED_RIDER_SUCCESS, data }
+}
+export function updateTaskRemoveAssignedRiderSuccess(data) {
+    return { type: UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS, data }
 }
 export function updateTaskPrioritySuccess(data) {
     return { type: UPDATE_TASK_PRIORITY_SUCCESS, data }
