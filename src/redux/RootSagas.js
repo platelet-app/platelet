@@ -29,6 +29,7 @@ import {
     watchRefreshTasks, watchRefreshMyTasks
 } from "./tasks/TasksSagas"
 import {
+    watchDeleteDeliverable,
     watchGetAvailableDeliverables,
     watchGetDeliverables,
     watchPostNewDeliverable,
@@ -99,6 +100,7 @@ export default function* rootSaga() {
         call(watchUpdateTaskCancelledTime),
         call(watchUpdateTaskRejectedTime),
         call(watchGetMyTasks),
+        call(watchDeleteDeliverable),
         call(watchGetDeliverables),
         call(watchGetAvailableDeliverables),
         call(watchGetAvailablePriorities),

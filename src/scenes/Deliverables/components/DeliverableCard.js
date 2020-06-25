@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function getIcon(typeID) {
-    switch(typeID) {
+    switch (typeID) {
         case 1:
             return <BugReportIcon/>
         case 2:
@@ -57,8 +57,9 @@ function getIcon(typeID) {
 export default function DeliverableCard(props) {
     const classes = useStyles();
     const dispatch = useDispatch();
+
     function getClass(typeID) {
-        switch(typeID) {
+        switch (typeID) {
             case 1:
                 return classes.sample
             case 2:
@@ -72,16 +73,20 @@ export default function DeliverableCard(props) {
 
     return (
         <StyledSharpCard style={{height: "100px"}}>
-            <Grid container spacing={2} justify={"flex-start"} alignItems={"center"} direction={"row"}>
+            <Grid container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
                 <Grid item>
-                    <Avatar className={getClass(props.deliverable.type_id)}>
-                        {getIcon(props.deliverable.type_id)}
-                    </Avatar>
-                </Grid>
-                <Grid item>
-                    <Typography>
-                        {props.deliverable.type}
-                    </Typography>
+                    <Grid container spacing={2} justify={"flex-start"} alignItems={"center"} direction={"row"}>
+                        <Grid item>
+                            <Avatar className={getClass(props.deliverable.type_id)}>
+                                {getIcon(props.deliverable.type_id)}
+                            </Avatar>
+                        </Grid>
+                        <Grid item>
+                            <Typography>
+                                {props.deliverable.type}
+                            </Typography>
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid item>
                     <IconButton

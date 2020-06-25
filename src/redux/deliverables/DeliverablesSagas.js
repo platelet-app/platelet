@@ -11,7 +11,7 @@ import {
     addDeliverableFailure,
     updateDeliverableFailure,
     getDeliverablesFailure,
-    getAvailableDeliverablesFailure, deleteDeliverableSuccess, deleteDeliverableFailure
+    getAvailableDeliverablesFailure, deleteDeliverableSuccess, deleteDeliverableFailure, DELETE_DELIVERABLE_REQUEST
 } from "./DeliverablesActions"
 
 import {getApiControl} from "../Api";
@@ -35,14 +35,14 @@ export function* deleteDeliverable(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.deliverables.deleteDeliverable], action.data);
-        yield put(deleteDeliverableSuccess(result))
+        yield put(deleteDeliverableSuccess(action.data))
     } catch (error) {
         yield put(deleteDeliverableFailure(error))
     }
 }
 
 export function* watchDeleteDeliverable() {
-    yield takeEvery(ADD_DELIVERABLE_REQUEST, deleteDeliverable)
+    yield takeEvery(DELETE_DELIVERABLE_REQUEST, deleteDeliverable)
 }
 
 export function* updateDeliverable(action) {
