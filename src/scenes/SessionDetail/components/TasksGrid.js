@@ -126,7 +126,7 @@ export default function TasksGrid(props) {
                         if (props.excludeColumnList && props.excludeColumnList.includes(taskList[0]))
                             return <></>
                         let newTaskButton = "";
-                        if (props.sessionUUID && taskList[0] === "tasksNew" && !searchQuery) {
+                        if (props.sessionUUID && taskList[0] === "tasksNew" && !searchQuery && !props.hideAddButton) {
                             newTaskButton = <AddCircleButton
                                 disabled={isPosting}
                                 onClick={props.onAddTaskClick}

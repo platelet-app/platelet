@@ -84,13 +84,15 @@ function SessionDetail(props) {
     const notFoundSelector = createNotFoundSelector(["GET_SESSION"]);
     const notFound = useSelector(state => notFoundSelector(state));
     //TODO: This could put data into title
-    const currentSession = useSelector(state => state.currentSession.session);
+    const currentSession = useSelector(state => state.session.session);
     const currentTaskUUID = useSelector(state => state.currentTask.task.uuid);
     const tasksEtag = useSelector(state => state.currentSession.session.tasks_etag);
     const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
     const history = useHistory();
     const firstUpdate = useRef(true);
     const firstUpdateNewTask = useRef(true);
+    const whoami = useSelector(state => state.whoami.user);
+    const [postPermission, setPostPermission] = useState(false);
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
 
@@ -113,6 +115,11 @@ function SessionDetail(props) {
     }
 
     useEffect(componentDidMount, []);
+
+    useEffect(() => {
+        const permission = whoami.uuid === currentSession.coordinator_uuid || currentSession.collaborators.map((u) => u.uuid).includes(whoami.uuid);
+        setPostPermission(permission);
+        },[currentSession])
 
     function setupRefreshTimer() {
         return
@@ -278,6 +285,7 @@ function SessionDetail(props) {
                                    sessionUUID={session_uuid}
                                    modalView={"edit"}
                                    hideDelivered={hideDelivered}
+                                   hideAddButton={!postPermission}
                         />
                     </TabPanel>
                     <TabPanel value={viewMode} index={1}>
