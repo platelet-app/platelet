@@ -56,6 +56,7 @@ const initialSessionState = {
     session: {
         uuid: null,
         last_active: new Date().toISOString(),
+        is_owner: false,
         user_uuid: null,
         time_created: null,
         tasks: [],
@@ -77,7 +78,7 @@ export function session(state = initialSessionState, action) {
             return {session: action.data, error: null};
         case GET_SESSION_FAILURE:
         case GET_SESSION_NOTFOUND:
-            return {session: initialSessionState, error: action.error};
+            return {...initialSessionState, error: action.error};
         case ADD_SESSION_COLLABORATOR_SUCCESS:
             const collaboratorsList = state.session.collaborators
             collaboratorsList.push(action.data.payload.user)

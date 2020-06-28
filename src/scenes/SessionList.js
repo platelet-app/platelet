@@ -13,11 +13,64 @@ import SessionContextMenu from "../components/ContextMenus/SessionContextMenu";
 import SessionCard from "../components/SessionCard";
 import Button from "@material-ui/core/Button";
 import TasksGridSkeleton from "./SessionDetail/components/TasksGridSkeleton";
-import SessionDetail from ".//SessionDetail/SessionDetail";
 import {Redirect} from "react-router";
 import {encodeUUID} from "../utilities";
+import Typography from "@material-ui/core/Typography";
 
-const initialSnack = {snack: () => {}}
+const initialSnack = {
+    snack: () => {
+    }
+}
+
+const SessionCardDiv = props => {
+    return (
+        <div style={{cursor: 'context-menu', position: "relative"}}>
+            <SessionCard session={props.session}/>
+            <div style={{
+                cursor: 'context-menu',
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                zIndex: 1000
+            }}>
+                <SessionContextMenu setSnack={(snack) => {
+                    props.setSnack(snack)
+                }} session={props.session}/>
+            </div>
+        </div>
+    )
+}
+
+const SessionSection = props => {
+    return (
+    <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
+        <Grid item>
+            <Typography>{props.title}</Typography>
+        </Grid>
+        <Grid item>
+            <Grid container
+                  spacing={3}
+                  direction={"row"}
+                  justify={"flex-start"}
+                  alignItems={"center"}
+            >
+                {props.sessions
+                    .map((session) => {
+                            return (
+                                <Grid item key={session.uuid}>
+                                    <SessionCardDiv session={session} setSnack={props.setSnack}/>
+                                </Grid>
+
+                            )
+                        }
+                    )
+                }
+            </Grid>
+        </Grid>
+    </Grid>
+    )
+
+}
 
 function SessionList(props) {
     const dispatch = useDispatch();
@@ -30,15 +83,35 @@ function SessionList(props) {
     const sessions = useSelector(state => state.sessions.sessions);
     const currentSessionUUID = useSelector(state => state.currentSession.session.uuid);
     const whoami = useSelector(state => state.whoami.user);
-    const [snack, setSnack] = React.useState(initialSnack)
+    const [snack, setSnack] = React.useState(initialSnack);
     const [isNewSession, setIsNewSession] = useState(false);
+
+    const [sessionsSorted, setSessionsSorted] = useState({owned: [], collab: []});
+
+    console.log(sessionsSorted)
 
     function componentDidMount() {
         dispatch(clearCurrentSession());
     }
+
     useEffect(componentDidMount, [])
 
-    useEffect(() => {setIsNewSession(!!currentSessionUUID)}, [currentSessionUUID])
+    function sortSessions() {
+        const timeSorted = sessions.sort(
+            (a, b) => new Date(b.time_created) - new Date(a.time_created)
+        );
+        setSessionsSorted({
+                owned: timeSorted.filter(session => session.is_owner),
+                collab: timeSorted.filter(session => !session.is_owner)
+            }
+        )
+    }
+
+    useEffect(sortSessions, [sessions])
+
+    useEffect(() => {
+        setIsNewSession(!!currentSessionUUID)
+    }, [currentSessionUUID])
 
     function updateSessionsList() {
         if (props.user_uuid || whoami.uuid)
@@ -56,6 +129,7 @@ function SessionList(props) {
             setSnack(initialSnack)
         }
     }
+
     useEffect(dispatchSnack, [isDeleting])
 
     let emptySession = {
@@ -92,37 +166,16 @@ function SessionList(props) {
                 </Grid>
                 <Grid item>
                     <PaddedPaper>
-                        <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
-                            <Grid item>
-                                <Grid container
-                                      spacing={3}
-                                      direction={"row"}
-                                      justify={"flex-start"}
-                                      alignItems={"center"}
-                                >
-                                    {sessions.sort(
-                                        (a, b) => new Date(b.time_created) - new Date(a.time_created)
-                                    ).map((session) => (
-                                        <Grid item key={session.uuid}>
-                                            <div style={{cursor: 'context-menu', position: "relative"}}>
-                                                    <SessionCard session={session}/>
-                                                <div style={{
-                                                    cursor: 'context-menu',
-                                                    position: "absolute",
-                                                    bottom: 0,
-                                                    right: 0,
-                                                    zIndex: 1000
-                                                }}>
-                                                    <SessionContextMenu setSnack={(snack) => {setSnack(snack)}} session={session}/>
-                                                </div>
-                                            </div>
-                                        </Grid>
-                                    ))
-                                    }
-                                </Grid>
-                            </Grid>
-                        </Grid>
+                        <SessionSection title={"My Shifts"} sessions={sessionsSorted.owned} setSnack={setSnack}/>
                     </PaddedPaper>
+                </Grid>
+                <Grid item>
+                    {
+                        sessionsSorted.collab.length !== 0 ?
+                    <PaddedPaper>
+                        <SessionSection title={"Collaborator Shifts"} sessions={sessionsSorted.collab} setSnack={setSnack}/>
+                    </PaddedPaper> : <></>
+                    }
                 </Grid>
             </Grid>
         )

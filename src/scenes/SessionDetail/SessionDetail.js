@@ -117,6 +117,7 @@ function SessionDetail(props) {
     useEffect(componentDidMount, []);
 
     useEffect(() => {
+        console.log(currentSession)
         const permission = whoami.uuid === currentSession.coordinator_uuid || currentSession.collaborators.map((u) => u.uuid).includes(whoami.uuid);
         setPostPermission(permission);
         },[currentSession])

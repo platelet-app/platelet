@@ -26,6 +26,7 @@ function SessionContextMenu(props) {
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
+    const userOwnerOrAdmin = (whoami.uuid === props.session.coordinator_uuid || whoami.roles.includes("admin"))
 
     const handleClick = event => {
         setState({
@@ -83,7 +84,7 @@ function SessionContextMenu(props) {
                 }
             >
                 <MenuItem
-                    disabled={!whoami.uuid === props.session.coordinator_uuid}
+                    disabled={!userOwnerOrAdmin}
                     style={{color: "rgb(235, 86, 75)"}}
                     onClick={onDelete}>Delete</MenuItem>
             </Menu>
