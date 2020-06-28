@@ -25,6 +25,7 @@ import {users, user} from "./users/UsersReducers";
 import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
 import {comments, sidebarComments} from "./comments/CommentsReducers";
 import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
+import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
 
 const taskContextMenuSnackInitialState = {snack: () => {}, uuid: ""}
 
@@ -90,6 +91,7 @@ const whoamiInitialState = {
             username: null,
             address: null,
             password: null,
+            password_reset_on_login: false,
             name: null,
             email: null,
             dob: null,
@@ -114,6 +116,8 @@ function whoami(state = whoamiInitialState, action) {
             return {...whoamiInitialState, error: action.error};
         case CLEAR_WHOAMI:
             return whoamiInitialState;
+        case CLEAR_FORCE_RESET_PASSWORD_STATUS:
+            return {user: {...state.user, password_reset_on_login: false}, error: null}
         default:
             return state
     }

@@ -52,6 +52,8 @@ const snackOptions = {
 function App(props) {
     const apiControl = useSelector(state => state.apiControl);
     const whoami = useSelector(state => state.whoami.user);
+    const forceResetPassword = useSelector(state => state.whoami.user.password_reset_on_login);
+
     const isInitialised = useSelector(state => state.apiControl.initialised);
     const apiURL = useSelector(state => state.apiControl.api_url);
     const serverSettings = useSelector(state => state.serverSettings);
@@ -70,6 +72,7 @@ function App(props) {
                 dispatch(setApiURL(process.env.REACT_APP_API_URL))
         }
     }
+
     useEffect(checkEnvApirURL, [])
 
     function handleError() {
@@ -77,8 +80,10 @@ function App(props) {
         if (error) {
             if (error.message)
                 props.enqueueSnackbar(`${error}: ${error.message}`,
-                    {...snackOptions,
-                        variant: "error"});
+                    {
+                        ...snackOptions,
+                        variant: "error"
+                    });
             else
                 props.enqueueSnackbar(`${error}: No message returned from the server.`, {
                     ...snackOptions,
@@ -102,6 +107,7 @@ function App(props) {
             dispatch(getServerSettings())
         }
     }
+
     useEffect(requestServerSettings, [apiURL])
 
     let helmet =
@@ -113,6 +119,7 @@ function App(props) {
         Moment.globalMoment = moment;
         Moment.globalLocale = serverSettings.locale.code;
     }
+
     useEffect(checkServerSettings, [serverSettings]);
 
     function loginCheck() {
@@ -125,6 +132,7 @@ function App(props) {
             }
         }
     }
+
     useEffect(loginCheck, [whoami])
 
     function firstWhoami() {
@@ -145,12 +153,48 @@ function App(props) {
             dispatch(getAvailablePatches())
         }
     }
+
     useEffect(getStaticData, [confirmLogin]);
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up('sm'))));
 
-    if (isInitialised) {
+    console.log(forceResetPassword)
+
+    if (!apiURL) {
+        return (
+            <div className={classes.centeredDiv}>
+                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
+                    <Grid item>
+                        <ApiConfig onSelect={(result) => {
+                            dispatch(setApiURL(result))
+                        }}/>
+                    </Grid>
+                </Grid>
+            </div>
+        )
+    } else if (forceResetPassword || (serverSettings && !isInitialised)) {
+        return (
+            <div className={classes.centeredDiv}>
+                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
+                    <Grid item>
+                        <Login apiUrl={apiURL}/>
+                    </Grid>
+                    {process.env.REACT_APP_API_URL ? <></> :
+                        // No need for change organisation button if the api url is hard coded
+                        <Grid item>
+                            <Button variant="contained" color="primary" onClick={() => {
+                                dispatch(removeApiURL());
+                                dispatch(clearServerSettings());
+                            }}>
+                                Change Organisation
+                            </Button>
+                        </Grid>
+                    }
+                </Grid>
+            </div>
+        )
+    } else if (isInitialised) {
         return (
             <div className={'body'}>
                 <React.Fragment>
@@ -167,39 +211,6 @@ function App(props) {
                 </React.Fragment>
             </div>
         );
-    } else if (!apiURL) {
-        return (
-            <div className={classes.centeredDiv}>
-                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
-                    <Grid item>
-                        <ApiConfig onSelect={(result) => {
-                            dispatch(setApiURL(result))
-                        }}/>
-                    </Grid>
-                </Grid>
-            </div>
-        )
-    } else if (serverSettings) {
-        return (
-            <div className={classes.centeredDiv}>
-                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
-                    <Grid item>
-                        <Login apiUrl={apiURL}/>
-                    </Grid>
-                        {process.env.REACT_APP_API_URL ? <></> :
-                            // No need for change organisation button if the api url is hard coded
-                            <Grid item>
-                            <Button variant="contained" color="primary" onClick={() => {
-                                dispatch(removeApiURL());
-                                dispatch(clearServerSettings());
-                            }}>
-                                Change Organisation
-                            </Button>
-                            </Grid>
-                        }
-                </Grid>
-            </div>
-        )
     } else {
         return (
             <div className={classes.centeredDiv}>

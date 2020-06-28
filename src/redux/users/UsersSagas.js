@@ -15,7 +15,7 @@ import {
     getUserFailure,
     updateUserFailure,
     deleteUserFailure,
-    restoreUserFailure, addUserFailure,
+    restoreUserFailure, addUserFailure, UPDATE_USER_PASSWORD_REQUEST, clearForceResetPasswordStatus,
 } from "./UsersActions";
 import {getApiControl} from "../Api"
 
@@ -59,6 +59,21 @@ function* updateUser(action) {
 
 export function* watchUpdateUser() {
     yield takeLatest(UPDATE_USER_REQUEST, updateUser)
+}
+
+function* updateUserPassword(action) {
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.users.updateUser], action.data.userUUID, action.data.payload);
+        yield put(updateUserSuccess(action.data))
+        yield put(clearForceResetPasswordStatus())
+    } catch (error) {
+        yield put(updateUserFailure(error))
+    }
+}
+
+export function* watchUpdateUserPassword() {
+    yield takeLatest(UPDATE_USER_PASSWORD_REQUEST, updateUserPassword)
 }
 
 function* deleteUser(action) {

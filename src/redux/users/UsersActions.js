@@ -27,6 +27,10 @@ export const UPDATE_USER_ADDRESS_REQUEST = 'UPDATE_USER_ADDRESS_REQUEST';
 export const UPDATE_USER_ROLES_REQUEST = 'UPDATE_USER_ROLES_REQUEST';
 export const UPDATE_USER_PATCH_REQUEST = 'UPDATE_USER_PATCH_REQUEST';
 export const UPDATE_USER_PASSWORD_REQUEST = 'UPDATE_USER_PASSWORD_REQUEST';
+export const UPDATE_USER_PASSWORD_SUCCESS = 'UPDATE_USER_PASSWORD_SUCCESS';
+export const UPDATE_USER_PASSWORD_FAILURE = 'UPDATE_USER_PASSWORD_FAILURE';
+
+export const CLEAR_FORCE_RESET_PASSWORD_STATUS = 'CLEAR_FORCE_RESET_PASSWORD_STATUS';
 
 export function getUsers() {
     return { type: GET_USERS_REQUEST }
@@ -98,4 +102,20 @@ export function updateUserSuccess(data) {
 
 export function updateUserFailure(error) {
     return { type: UPDATE_USER_FAILURE, error }
+}
+
+export function updateUserPassword(data) {
+    return { type: UPDATE_USER_PASSWORD_REQUEST, data }
+}
+
+export function updateUserPasswordSuccess(data) {
+    return { type: UPDATE_USER_PASSWORD_SUCCESS, data }
+}
+
+export function updateUserPasswordFailure(error) {
+    return { type: UPDATE_USER_PASSWORD_FAILURE, error }
+}
+
+export function clearForceResetPasswordStatus() {
+    return { type: CLEAR_FORCE_RESET_PASSWORD_STATUS }
 }
