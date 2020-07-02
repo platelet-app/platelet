@@ -25,6 +25,7 @@ import {users, user} from "./users/UsersReducers";
 import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
 import {comments, sidebarComments} from "./comments/CommentsReducers";
 import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
+import {subscription} from "./sockets/SocketReducers";
 import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
 
 const taskContextMenuSnackInitialState = {snack: () => {}, uuid: ""}
@@ -252,7 +253,8 @@ const rootReducer = combineReducers({
     menuIndex,
     commentsObjectUUID,
     serverSettings,
-    taskContextMenuSnack
+    taskContextMenuSnack,
+    subscription
 });
 
 export default rootReducer

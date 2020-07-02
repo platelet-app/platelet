@@ -15,7 +15,7 @@ import {getAvailableDeliverables} from "./redux/deliverables/DeliverablesActions
 import {getAvailableLocations} from "./redux/locations/LocationsActions";
 import {getAvailablePatches} from "./redux/patches/PatchesActions";
 import {getAvailablePriorities} from "./redux/priorities/PrioritiesActions";
-import {getUsers} from "./redux/users/UsersActions";
+import {getUsers, UPDATE_USER_REQUEST} from "./redux/users/UsersActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Moment from "react-moment"
@@ -29,6 +29,7 @@ import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
 import {getApiURL} from "./utilities";
 import Menu from "@material-ui/core/Menu";
+import {connectSocket} from "./redux/sockets/SocketActions";
 
 
 const useStyles = makeStyles(theme => ({
@@ -105,6 +106,7 @@ function App(props) {
     function requestServerSettings() {
         if (apiURL) {
             dispatch(getServerSettings())
+            dispatch(connectSocket(apiURL + "subscribe"))
         }
     }
 

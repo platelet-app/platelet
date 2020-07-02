@@ -25,7 +25,7 @@ import {
     watchUpdateTaskCancelledTime,
     watchUpdateTaskRejectedTime,
     watchUpdateTaskPatch,
-    watchRefreshTasks, watchRefreshMyTasks, watchUpdateTaskPatchFromServer
+    watchRefreshTasks, watchRefreshMyTasks, watchUpdateTaskPatchFromServer, watchUpdateTaskFromSocket
 } from "./tasks/TasksSagas"
 import {
     watchDeleteDeliverable,

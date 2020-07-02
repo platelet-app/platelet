@@ -45,7 +45,7 @@ const SessionSection = props => {
     return (
     <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
         <Grid item>
-            <Typography>{props.title}</Typography>
+            {props.title ? <Typography>{props.title}</Typography> : <></>}
         </Grid>
         <Grid item>
             <Grid container
@@ -166,7 +166,7 @@ function SessionList(props) {
                 </Grid>
                 <Grid item>
                     <PaddedPaper>
-                        <SessionSection title={"My Shifts"} sessions={sessionsSorted.owned} setSnack={setSnack}/>
+                        <SessionSection sessions={sessionsSorted.owned} setSnack={setSnack}/>
                     </PaddedPaper>
                 </Grid>
                 <Grid item>

@@ -61,6 +61,8 @@ const getColumnTitle = key => {
 };
 
 const GridColumn = React.memo((props) => {
+    console.log("GRIDCOL")
+    console.log(props.tasks)
         return (
             <TasksKanbanColumn>
                 {props.title}

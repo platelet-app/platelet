@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import {
     addTask, clearCurrentTask,
     getAllTasks,
-    refreshAllTasks,
+    refreshAllTasks, updateTaskFromSocket, updateTaskSuccess,
 } from '../../redux/tasks/TasksActions'
 import {
     setCommentsObjectUUID,
@@ -19,7 +19,13 @@ import {
     refreshCurrentSession,
 } from "../../redux/sessions/SessionsActions";
 import TasksGrid from "./components/TasksGrid";
-import {decodeUUID, encodeUUID, getLocalStorageHideDelivered, getLocalStorageViewMode} from "../../utilities";
+import {
+    decodeUUID,
+    encodeUUID,
+    getLocalStorageHideDelivered,
+    getLocalStorageViewMode,
+    getTabIdentifier
+} from "../../utilities";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from "../../redux/selectors";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
@@ -37,6 +43,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import NotFound from "../../ErrorComponents/NotFound";
 import {Redirect, useHistory} from "react-router";
 import {SessionDetailTabs, TabPanel} from "./components/SessionDetailTabs";
+import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -92,6 +99,7 @@ function SessionDetail(props) {
     const firstUpdate = useRef(true);
     const firstUpdateNewTask = useRef(true);
     const whoami = useSelector(state => state.whoami.user);
+    const socketSubscription = useSelector(state => state.subscription);
     const [postPermission, setPostPermission] = useState(false);
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
@@ -115,6 +123,38 @@ function SessionDetail(props) {
     }
 
     useEffect(componentDidMount, []);
+
+    useEffect(() => {
+        if (Object.keys(socketSubscription).length === 0 && socketSubscription.constructor === Object) {
+            console.log("ignore")
+        } else {
+            if (socketSubscription.tab_id != null && getTabIdentifier() !== socketSubscription.tab_id) {
+                dispatch(updateTaskFromSocket({taskUUID: socketSubscription.object_uuid, payload: socketSubscription.data}))
+                console.log(socketSubscription.data)
+            } else
+                console.log("this came from us")
+        }
+
+    }, [socketSubscription])
+
+    function subscribeTasks() {
+        const concatTasks = Object.entries(tasks).reduce(
+            (accumulator, [key, value]) => {
+                if (hideDelivered && key === "tasksDelivered")
+                    return accumulator;
+                else
+                    return [...accumulator, ...value]
+            }, []);
+        concatTasks.forEach((task) => {
+            dispatch(subscribeToUUID(task.uuid))
+        })
+        return function cleanup() {
+            concatTasks.forEach((task) => {
+                dispatch(unsubscribeFromUUID(task.uuid))
+            })
+        }
+    }
+    useEffect(subscribeTasks, [tasks])
 
     useEffect(() => {
         console.log(currentSession)

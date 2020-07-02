@@ -1,5 +1,6 @@
 import React from 'react';
 import uuidBase62 from 'uuid-base62';
+import { v4 as uuidv4 } from 'uuid';
 
 export function encodeUUID(uuid) {
     return uuid ? uuidBase62.encode(uuid) : "";
@@ -23,6 +24,17 @@ export function saveLogin(apiBearer) {
 export function getLogin() {
     const result = localStorage.getItem("apiBearer");
     return result ? result : "";
+}
+
+export function createTabIdentifier() {
+    const tabUUID = uuidv4();
+    console.log(tabUUID)
+    sessionStorage.setItem("tabUUID", tabUUID)
+    return tabUUID;
+}
+
+export function getTabIdentifier() {
+    return sessionStorage.getItem("tabUUID")
 }
 
 export function saveApiURL(apiURL) {
@@ -166,6 +178,7 @@ export function determineTaskType(task) {
         return null;
     }
 }
+
 
 export function findExistingTask(tasks, uuid) {
     let result = {};

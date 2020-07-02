@@ -1,6 +1,7 @@
 import { store } from 'react-notifications-component';
 import axios from 'axios'
-import {saveLogin, deleteApiURL} from "./utilities";
+import {saveLogin, deleteApiURL, getTabIdentifier, createTabIdentifier} from "./utilities";
+
 
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
@@ -73,7 +74,8 @@ function makeAxios(api_url, url, type, auth, content_type = undefined, data = {}
         url: api_url + url,
         headers: {
             'Content-type': content_type ? content_type : "text/html",
-            "Access-Control-Allow-Credentials": true
+            "Access-Control-Allow-Credentials": true,
+            "Tab-Identification": getTabIdentifier()
         },
         data: data,
     }
@@ -273,7 +275,7 @@ class Session {
     async getSession(session_id) {
         return makeAxios(this.api_url, "session/" + session_id, "GET", this.bearer)
     }
-    
+
     async getStatistics(session_id) {
         return makeAxios(this.api_url, "session/" + session_id + "/statistics", "GET", this.bearer)
     }
@@ -378,6 +380,7 @@ class Control {
         this.bearer = "";
         this.connected = true;
         this.connectionReattempts = 0;
+        createTabIdentifier();
 
         if (bearer && api_url) {
             this.initialiseClasses(bearer)
