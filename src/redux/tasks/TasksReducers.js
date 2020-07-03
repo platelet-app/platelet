@@ -14,7 +14,7 @@ import {
     UPDATE_TASK_CONTACT_NAME_SUCCESS,
     UPDATE_TASK_CONTACT_NUMBER_SUCCESS,
     UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS,
-    UPDATE_TASK_DROPOFF_TIME_SUCCESS,
+    UPDATE_TASK_DROPOFF_TIME_SUCCESS, UPDATE_TASK_FROM_SOCKET,
     UPDATE_TASK_PATCH_SUCCESS,
     UPDATE_TASK_PICKUP_ADDRESS_SUCCESS,
     UPDATE_TASK_PICKUP_TIME_SUCCESS,
@@ -122,11 +122,14 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_PICKUP_ADDRESS_SUCCESS:
         case UPDATE_TASK_PICKUP_TIME_SUCCESS:
         case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
-            let taskToUpdate = spliceExistingTask(state.tasks, action.data.taskUUID);
+        case UPDATE_TASK_FROM_SOCKET:
+            let taskToUpdate = findExistingTask(state.tasks, action.data.taskUUID);
+            const newTasks = update(state.tasks, {[taskToUpdate.listType]: {$set: state.tasks[taskToUpdate.listType].filter(t => t.uuid !== taskToUpdate.task.uuid)}})
             if (taskToUpdate) {
                 const updatedItem = {...taskToUpdate.task, ...action.data.payload};
-                const resultAdd = sortAndConcat(state.tasks, updatedItem)
-                return {tasks: Object.assign(state.tasks, resultAdd), error: null}
+                const resultAdd = sortAndConcat(newTasks, updatedItem)
+                const finalTasks = update(newTasks, {$merge: resultAdd});
+                return {tasks: finalTasks, error: null}
             } else {
                 return state;
             }

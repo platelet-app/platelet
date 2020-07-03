@@ -14,15 +14,6 @@ import {
     addTaskSuccess,
     UPDATE_TASK_REQUEST,
     updateTaskSuccess,
-    UPDATE_TASK_CONTACT_NUMBER_REQUEST,
-    UPDATE_TASK_DROPOFF_ADDRESS_REQUEST,
-    UPDATE_TASK_PICKUP_ADDRESS_REQUEST,
-    UPDATE_TASK_CONTACT_NAME_REQUEST,
-    UPDATE_TASK_PICKUP_TIME_REQUEST,
-    UPDATE_TASK_DROPOFF_TIME_REQUEST,
-    UPDATE_TASK_CANCELLED_TIME_REQUEST,
-    UPDATE_TASK_REJECTED_TIME_REQUEST,
-    UPDATE_TASK_PRIORITY_REQUEST,
     RESTORE_TASK_REQUEST,
     restoreTaskSuccess,
     DELETE_TASK_REQUEST,
@@ -48,6 +39,18 @@ import {
     getAllMyTasksNotFound,
     getAllMyTasksFailure,
     updateTaskPatchSuccess,
+
+    UPDATE_TASK_CONTACT_NUMBER_REQUEST,
+    UPDATE_TASK_DROPOFF_ADDRESS_REQUEST,
+    UPDATE_TASK_PICKUP_ADDRESS_REQUEST,
+    UPDATE_TASK_CONTACT_NAME_REQUEST,
+    UPDATE_TASK_PICKUP_TIME_REQUEST,
+    UPDATE_TASK_DROPOFF_TIME_REQUEST,
+    UPDATE_TASK_CANCELLED_TIME_REQUEST,
+    UPDATE_TASK_REJECTED_TIME_REQUEST,
+    UPDATE_TASK_PRIORITY_REQUEST,
+
+
     UPDATE_TASK_PATCH_REQUEST,
     REFRESH_TASKS_REQUEST,
     REFRESH_MY_TASKS_REQUEST,
@@ -71,12 +74,14 @@ import {
     updateTaskRemoveRiderSuccess,
     updateTaskRemoveRiderFailure,
     UPDATE_TASK_REMOVE_RIDER_REQUEST,
-    UPDATE_TASK_PATCH_FROM_SERVER
+    UPDATE_TASK_PATCH_FROM_SERVER, UPDATE_TASK_FROM_SOCKET
 } from "./TasksActions"
 import {updateTaskPatch as updateTaskPatchAction} from "./TasksActions"
 
+
 import {getApiControl} from "../Api"
 import {setCurrentSession, setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
+import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()
@@ -107,6 +112,7 @@ function* postNewTask(action) {
         const task = {...action.data, "uuid": result.uuid};
         yield put(setCurrentTask(task));
         yield put(addTaskSuccess(task));
+        yield put(subscribeToUUID(task.uuid))
     } catch (error) {
         yield put(addTaskFailure(error))
     }
@@ -121,6 +127,7 @@ function* deleteTask(action) {
         const api = yield select(getApiControl);
         yield call([api, api.tasks.deleteTask], action.data);
         yield put(deleteTaskSuccess(action.data))
+        yield put(unsubscribeFromUUID(action.data))
     } catch (error) {
         yield put(deleteTaskFailure(error))
     }
@@ -136,6 +143,7 @@ function* restoreTask(action) {
         yield call([api, api.tasks.restoreTask], action.data);
         const result = yield call([api, api.tasks.getTask], action.data);
         yield put(restoreTaskSuccess(result))
+        yield put(subscribeToUUID(result.uuid))
     } catch (error) {
         yield put(restoreTaskFailure(error))
     }
@@ -144,7 +152,6 @@ function* restoreTask(action) {
 export function* watchRestoreTask() {
     yield takeEvery(RESTORE_TASK_REQUEST, restoreTask)
 }
-
 
 function* updateTask(action) {
     try {
@@ -251,7 +258,10 @@ function* updateTaskPatchFromServer(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.getTaskAssignees], action.data.taskUUID);
         const lastResult = result.slice(-1)[0]
-        const payload = lastResult ? {patch: lastResult.patch, patch_id: lastResult.patch_id} : {patch: "", patch_id: null};
+        const payload = lastResult ? {patch: lastResult.patch, patch_id: lastResult.patch_id} : {
+            patch: "",
+            patch_id: null
+        };
         yield put(updateTaskPatchAction({taskUUID: action.data.taskUUID, payload}))
     } catch (error) {
         yield put(updateTaskPatchFailure(error))
@@ -333,7 +343,7 @@ function* getTask(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.getTask], action.data);
         yield put(getTaskSuccess(result))
-    } catch(error) {
+    } catch (error) {
         yield put(getTaskFailure(error))
     }
 }

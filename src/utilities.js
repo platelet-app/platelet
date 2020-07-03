@@ -28,7 +28,6 @@ export function getLogin() {
 
 export function createTabIdentifier() {
     const tabUUID = uuidv4();
-    console.log(tabUUID)
     sessionStorage.setItem("tabUUID", tabUUID)
     return tabUUID;
 }

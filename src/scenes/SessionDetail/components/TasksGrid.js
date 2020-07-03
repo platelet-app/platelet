@@ -61,8 +61,6 @@ const getColumnTitle = key => {
 };
 
 const GridColumn = React.memo((props) => {
-    console.log("GRIDCOL")
-    console.log(props.tasks)
         return (
             <TasksKanbanColumn>
                 {props.title}
@@ -95,17 +93,15 @@ export default function TasksGrid(props) {
     const tasks = useSelector(state => state.tasks.tasks);
     const [searchQuery, setSearchQuery] = useState("");
 
-    function componentDidMount() {
+    function updateFilteredTasks() {
         setFilteredTasks(filterTasks(tasks))
     }
-
-    useEffect(componentDidMount, [])
+    useEffect(updateFilteredTasks, [tasks])
 
     function doSearch() {
         const result = filterTasks(tasks, searchQuery)
         setFilteredTasks(result);
     }
-
     useEffect(doSearch, [searchQuery])
     //TODO: separate task columns into individual components so that there is less rerendering
     return (

@@ -88,8 +88,6 @@ function SessionList(props) {
 
     const [sessionsSorted, setSessionsSorted] = useState({owned: [], collab: []});
 
-    console.log(sessionsSorted)
-
     function componentDidMount() {
         dispatch(clearCurrentSession());
     }
