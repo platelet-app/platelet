@@ -44,6 +44,7 @@ import NotFound from "../../ErrorComponents/NotFound";
 import {Redirect, useHistory} from "react-router";
 import {SessionDetailTabs, TabPanel} from "./components/SessionDetailTabs";
 import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
+import {concatTasks} from "./utilities";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -63,25 +64,6 @@ function SessionDetail(props) {
     const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
     const dispatch = useDispatch();
     const isFetching = useSelector(state => loadingSelector(state));
-    const isTaskPostingSelector = createPostingSelector([
-        "ADD_TASK",
-        "GET_TASK",
-        "DELETE_TASK",
-        "RESTORE_TASK",
-        "UPDATE_TASK",
-        "UPDATE_TASK_CONTACT_NAME",
-        "UPDATE_TASK_CONTACT_NUMBER",
-        "UPDATE_TASK_PICKUP_ADDRESS",
-        "UPDATE_TASK_DROPOFF_ADDRESS",
-        "UPDATE_TASK_PICKUP_TIME",
-        "UPDATE_TASK_DROPOFF_TIME",
-        "UPDATE_TASK_CANCELLED_TIME",
-        "UPDATE_TASK_REJECTED_TIME",
-        "UPDATE_TASK_ASSIGNED_RIDER",
-        "UPDATE_TASK_PRIORITY",
-        "UPDATE_TASK_PATCH"
-    ]);
-    const isTaskPosting = useSelector(state => isTaskPostingSelector(state));
     const isPostingNewTaskSelector = createPostingSelector(["ADD_TASK"]);
     const isPostingNewTask = useSelector(state => isPostingNewTaskSelector(state));
     const tasks = useSelector(state => state.tasks.tasks);
@@ -93,10 +75,8 @@ function SessionDetail(props) {
     //TODO: This could put data into title
     const currentSession = useSelector(state => state.session.session);
     const currentTaskUUID = useSelector(state => state.currentTask.task.uuid);
-    const tasksEtag = useSelector(state => state.currentSession.session.tasks_etag);
     const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
     const history = useHistory();
-    const firstUpdate = useRef(true);
     const firstUpdateNewTask = useRef(true);
     const whoami = useSelector(state => state.whoami.user);
     const socketSubscription = useSelector(state => state.subscription);
@@ -115,7 +95,7 @@ function SessionDetail(props) {
         }
         if (hideDelivered === null) {
             const hideDeliveredLocalStorage = getLocalStorageHideDelivered();
-            dispatch(setHideDelivered(hideDeliveredLocalStorage === null ? false : hideDeliveredLocalStorage));
+            dispatch(setHideDelivered(hideDeliveredLocalStorage === null ? false : JSON.parse(hideDeliveredLocalStorage)))
         }
         if (!props.match) {
             history.push(`/session/${encodeUUID(currentSession.uuid)}`);
@@ -138,75 +118,24 @@ function SessionDetail(props) {
     }, [socketSubscription])
 
     function subscribeTasks() {
-        const concatTasks = Object.entries(tasks).reduce(
-            (accumulator, [key, value]) => {
-                if (hideDelivered && key === "tasksDelivered")
-                    return accumulator;
-                else
-                    return [...accumulator, ...value]
-            }, []);
-        concatTasks.forEach((task) => {
+        const joinedTasks = concatTasks(tasks);
+        joinedTasks.forEach((task) => {
             dispatch(subscribeToUUID(task.uuid))
         })
         return function cleanup() {
-            concatTasks.forEach((task) => {
+            joinedTasks.forEach((task) => {
                 dispatch(unsubscribeFromUUID(task.uuid))
             })
         }
     }
     useEffect(subscribeTasks, [tasks])
+    //TODO: if hide delivered is unchecked, this breaks the socket
 
     useEffect(() => {
-        console.log(currentSession)
         const permission = whoami.uuid === currentSession.coordinator_uuid || currentSession.collaborators.map((u) => u.uuid).includes(whoami.uuid);
         setPostPermission(permission);
         },[currentSession])
 
-    function setupRefreshTimer() {
-        return
-        const timer = setInterval(() => {
-            if (!process.env.REACT_APP_NO_SESSION_REFRESH)
-                dispatch(refreshCurrentSession(session_uuid));
-        }, 10000)
-        return function cleanup() {
-            clearInterval(timer);
-        };
-    }
-    useEffect(setupRefreshTimer, []);
-
-    let deferredRefresh = undefined;
-
-    function checkRefresh() {
-        console.log("checkRefresh running")
-        if (!isTaskPosting) {
-            console.log("not posting so going to refresh")
-            dispatch(refreshAllTasks(session_uuid));
-            clearTimeout(deferredRefresh)
-            deferredRefresh = undefined;
-        } else {
-            console.log("is posting so gonna wait")
-            clearTimeout(deferredRefresh)
-            deferredRefresh = undefined;
-            deferredRefresh = setTimeout(checkRefresh, 1000)
-        }
-    }
-
-    function refreshData() {
-        // We don't need it to run the first time
-        if (firstUpdate.current) {
-            firstUpdate.current = false;
-        } else {
-            // If a loop is already waiting to refresh, ignore
-            if (!deferredRefresh) {
-                console.log("The refresh loop is not waiting")
-                checkRefresh();
-            } else {
-                console.log("The refresh loop is already going")
-            }
-        }
-    }
-
-    useEffect(refreshData, [tasksEtag])
 
     const emptyTask = {
         session_uuid: session_uuid,
@@ -318,7 +247,7 @@ function SessionDetail(props) {
         return <NotFound>{`Session with UUID ${session_uuid} not found.`}</NotFound>
     } else {
             return (
-                <SessionDetailTabs showDelivered={hideDelivered} value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
+                <SessionDetailTabs hideDelivered={hideDelivered} value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
                     <TabPanel value={viewMode} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}

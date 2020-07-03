@@ -128,9 +128,9 @@ export function SessionDetailTabs(props) {
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={hideDelivered}
+                                                checked={props.hideDelivered}
                                                 onChange={() => {
-                                                    dispatch(setHideDelivered(!hideDelivered));
+                                                    dispatch(setHideDelivered(!props.hideDelivered));
                                                     //setToggleHideDelivered(!toggleHideDelivered);
                                                 }}
                                                 name="hide-delivered"/>}
