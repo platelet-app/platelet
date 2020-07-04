@@ -27,6 +27,12 @@ function UsersTasks() {
 
     function componentDidMount() {
         dispatch(getAllMyTasks());
+        return function cleanup() {
+            const joinedTasks = concatTasks(tasks);
+            joinedTasks.forEach((task) => {
+                dispatch(unsubscribeFromUUID(task.uuid))
+            })
+        }
     }
     useEffect(componentDidMount, []);
 
@@ -49,11 +55,6 @@ function UsersTasks() {
         joinedTasks.forEach((task) => {
             dispatch(subscribeToUUID(task.uuid))
         })
-        return function cleanup() {
-            joinedTasks.forEach((task) => {
-                dispatch(unsubscribeFromUUID(task.uuid))
-            })
-        }
     }
     useEffect(subscribeTasks, [tasks])
 

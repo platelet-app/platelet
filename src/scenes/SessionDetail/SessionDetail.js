@@ -78,6 +78,7 @@ function SessionDetail(props) {
     const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
     const history = useHistory();
     const firstUpdateNewTask = useRef(true);
+    const firstTaskSubscribeCompleted = useRef(false);
     const whoami = useSelector(state => state.whoami.user);
     const socketSubscription = useSelector(state => state.subscription);
     const [postPermission, setPostPermission] = useState(false);
@@ -100,6 +101,12 @@ function SessionDetail(props) {
         if (!props.match) {
             history.push(`/session/${encodeUUID(currentSession.uuid)}`);
         }
+        return function cleanup() {
+            const joinedTasks = concatTasks(tasks);
+            joinedTasks.forEach((task) => {
+                dispatch(unsubscribeFromUUID(task.uuid))
+            })
+        }
     }
 
     useEffect(componentDidMount, []);
@@ -119,17 +126,14 @@ function SessionDetail(props) {
 
     function subscribeTasks() {
         const joinedTasks = concatTasks(tasks);
-        joinedTasks.forEach((task) => {
-            dispatch(subscribeToUUID(task.uuid))
-        })
-        return function cleanup() {
-            joinedTasks.forEach((task) => {
-                dispatch(unsubscribeFromUUID(task.uuid))
-            })
+        if (joinedTasks.length !== 0 && !firstTaskSubscribeCompleted.current) {
+            firstTaskSubscribeCompleted.current = true;
+            joinedTasks.forEach(task => dispatch(subscribeToUUID(task.uuid)))
         }
+        if (firstTaskSubscribeCompleted)
+            tasks.tasksNew.forEach(task => dispatch(subscribeToUUID(task.uuid)))
     }
     useEffect(subscribeTasks, [tasks])
-    //TODO: if hide delivered is unchecked, this breaks the socket
 
     useEffect(() => {
         const permission = whoami.uuid === currentSession.coordinator_uuid || currentSession.collaborators.map((u) => u.uuid).includes(whoami.uuid);

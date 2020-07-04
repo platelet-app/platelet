@@ -106,11 +106,11 @@ export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
             const resultAdd = sortAndConcat(state.tasks, action.data)
-            return {tasks: Object.assign(state.tasks, resultAdd), error: null}
+            return {tasks: Object.assign({}, state.tasks, resultAdd), error: null}
         case RESTORE_TASK_SUCCESS:
             //TODO: should this check that the task matches the session? it's unlikely a task will be deleted from anything other than it's own session view
             const resultRestore = sortAndConcat(state.tasks, action.data)
-            return {tasks: Object.assign(state.tasks, resultRestore), error: null}
+            return {tasks: Object.assign({}, state.tasks, resultRestore), error: null}
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_CONTACT_NAME_SUCCESS:
         case UPDATE_TASK_CONTACT_NUMBER_SUCCESS:
@@ -124,7 +124,9 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
         case UPDATE_TASK_FROM_SOCKET:
             let taskToUpdate = findExistingTask(state.tasks, action.data.taskUUID);
-            const newTasks = update(state.tasks, {[taskToUpdate.listType]: {$set: state.tasks[taskToUpdate.listType].filter(t => t.uuid !== taskToUpdate.task.uuid)}})
+            const newTasks = update(
+                state.tasks, {[taskToUpdate.listType]: {$set: state.tasks[taskToUpdate.listType].filter(t => t.uuid !== taskToUpdate.task.uuid)}}
+                );
             if (taskToUpdate) {
                 const updatedItem = {...taskToUpdate.task, ...action.data.payload};
                 const resultAdd = sortAndConcat(newTasks, updatedItem)
@@ -134,32 +136,39 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
-            const {task} = spliceExistingTask(state.tasks, action.data.taskUUID);
-            if (task) {
-                let assigneesList = task.assigned_users
+            const taskToUpdateAssignedRider = findExistingTask(state.tasks, action.data.taskUUID);
+            const newTasksAssignedRider = update(state.tasks,
+                {[taskToUpdateAssignedRider.listType]: {$set: state.tasks[taskToUpdateAssignedRider.listType].filter(t => t.uuid !== taskToUpdateAssignedRider.task.uuid)}}
+                );
+            if (taskToUpdateAssignedRider.task) {
+                let assigneesList = taskToUpdateAssignedRider.task.assigned_users
                 assigneesList.push(action.data.payload.rider)
-                const finalTask = {...task, assigned_users: assigneesList, assigned_users_display_string: task.assigned_users.map((user) => user.display_name).join(", ")}
-                const resultAdd = sortAndConcat(state.tasks, finalTask)
-                return {tasks: Object.assign(state.tasks, resultAdd), error: null}
+                const finalTask = {...taskToUpdateAssignedRider.task, assigned_users: assigneesList, assigned_users_display_string: taskToUpdateAssignedRider.task.assigned_users.map((user) => user.display_name).join(", ")}
+                const resultAdd = sortAndConcat(newTasksAssignedRider, finalTask)
+                const finalTasksAssignedRider = update(newTasksAssignedRider, {$merge: resultAdd});
+                return {tasks: finalTasksAssignedRider, error: null}
             } else {
                 return state;
             }
         case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS:
-            const taskUnassign = spliceExistingTask(state.tasks, action.data.taskUUID).task;
+            const taskUnassign = findExistingTask(state.tasks, action.data.taskUUID);
+            const newTasksAssignedRiderRemove = update(state.tasks,
+                {[taskUnassign.listType]: {$set: state.tasks[taskUnassign.listType].filter(t => t.uuid !== taskUnassign.task.uuid)}}
+            );
             if (taskUnassign) {
-                const filteredAssigneeList = taskUnassign.assigned_users.filter((u) => u.uuid !== action.data.payload.user_uuid);
-                const finalTask = {...taskUnassign, assigned_users: filteredAssigneeList, assigned_users_display_string: filteredAssigneeList.map((user) => user.display_name).join(", ")}
-                const resultAdd = sortAndConcat(state.tasks, finalTask)
-                return {tasks: Object.assign(state.tasks, resultAdd), error: null}
+                const filteredAssigneeList = taskUnassign.task.assigned_users.filter((u) => u.uuid !== action.data.payload.user_uuid);
+                const finalTask = {...taskUnassign.task, assigned_users: filteredAssigneeList, assigned_users_display_string: filteredAssigneeList.map((user) => user.display_name).join(", ")}
+                const resultAdd = sortAndConcat(newTasksAssignedRiderRemove, finalTask)
+                const finalTasksAssignedRiderRemove = update(newTasksAssignedRiderRemove, {$merge: resultAdd});
+                return {tasks: finalTasksAssignedRiderRemove, error: null}
             } else {
                 return state;
             }
         case DELETE_TASK_SUCCESS:
             const findDelete = findExistingTask(state.tasks, action.data)
-            let resultDelete = {};
             if (findDelete) {
-                resultDelete[findDelete.listType] = update(state.tasks[findDelete.listType], {$splice: [[findDelete.index, 1]]})
-                return {tasks: Object.assign(state.tasks, resultDelete), error: null};
+                const newTasks = update(state.tasks, {[findDelete.listType]: {$set: state.tasks[findDelete.listType].filter(t => t.uuid !== findDelete.task.uuid)}})
+                return {tasks: Object.assign({}, state.tasks, newTasks), error: null};
             } else {
                 return state;
             }
