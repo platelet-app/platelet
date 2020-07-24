@@ -3,9 +3,14 @@ import '../../App.css';
 import 'typeface-roboto'
 import Grid from "@material-ui/core/Grid";
 import {
-    addTask, clearCurrentTask,
+    addTask,
+    clearCurrentTask,
     getAllTasks,
-    refreshAllTasks, updateTaskAssignedRiderFromSocket, updateTaskFromSocket, updateTaskSuccess,
+    refreshAllTasks,
+    updateTaskAssignedRiderFromSocket,
+    updateTaskFromSocket,
+    updateTaskRemoveAssignedRiderFromSocket,
+    updateTaskSuccess,
 } from '../../redux/tasks/TasksActions'
 import {
     setCommentsObjectUUID,
@@ -125,13 +130,18 @@ function SessionDetail(props) {
                     case "assign_user":
                         const user_uuid = socketSubscription.data.user_uuid
                         const assignedUser = users.filter(u => user_uuid === u.uuid)
-                        let rider = {};
                         if (assignedUser.length === 1) {
-                            rider = assignedUser[0]
+                            const rider = assignedUser[0]
                             dispatch(updateTaskAssignedRiderFromSocket({taskUUID: socketSubscription.object_uuid, payload: {rider, user_uuid }}))
                         }
                         break;
+                    case "remove_assigned_user":
+                        const user_uuid_remove = socketSubscription.data.user_uuid
+                        dispatch(updateTaskRemoveAssignedRiderFromSocket({taskUUID: socketSubscription.object_uuid, payload: {user_uuid: user_uuid_remove }}))
+                        break;
 
+                    default:
+                        break;
                 }
                 console.log(socketSubscription.data)
             } else

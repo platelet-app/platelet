@@ -19,7 +19,7 @@ import {
     UPDATE_TASK_PICKUP_ADDRESS_SUCCESS,
     UPDATE_TASK_PICKUP_TIME_SUCCESS,
     UPDATE_TASK_PRIORITY_SUCCESS,
-    UPDATE_TASK_REJECTED_TIME_SUCCESS,
+    UPDATE_TASK_REJECTED_TIME_SUCCESS, UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET,
     UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS,
     UPDATE_TASK_SUCCESS
 } from "./TasksActions";
@@ -152,6 +152,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS:
+        case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET:
             const taskUnassign = findExistingTask(state.tasks, action.data.taskUUID);
             const newTasksAssignedRiderRemove = update(state.tasks,
                 {[taskUnassign.listType]: {$set: state.tasks[taskUnassign.listType].filter(t => t.uuid !== taskUnassign.task.uuid)}}

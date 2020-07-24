@@ -29,6 +29,7 @@ export const UPDATE_TASK_PATCH_REQUEST = "UPDATE_TASK_PATCH_REQUEST";
 export const UPDATE_TASK_PATCH_FROM_SERVER = "UPDATE_TASK_PATCH_FROM_SERVER";
 export const UPDATE_TASK_FROM_SOCKET = "UPDATE_TASK_FROM_SOCKET";
 export const UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET = "UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET";
+export const UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET = "UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET";
 
 export const UPDATE_TASK_CONTACT_NAME_SUCCESS = "UPDATE_TASK_CONTACT_NAME_SUCCESS";
 export const UPDATE_TASK_CONTACT_NUMBER_SUCCESS = "UPDATE_TASK_CONTACT_NUMBER_SUCCESS";
@@ -140,6 +141,10 @@ export function updateTaskFromSocket(data) {
 
 export function updateTaskAssignedRiderFromSocket(data) {
     return { type: UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET, data }
+}
+
+export function updateTaskRemoveAssignedRiderFromSocket(data) {
+    return { type: UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET, data }
 }
 
 export function updateTaskContactName(data) {
