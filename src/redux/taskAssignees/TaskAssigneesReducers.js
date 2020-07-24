@@ -1,7 +1,7 @@
 import {
     ADD_TASK_ASSIGNED_RIDER_SUCCESS, GET_TASK_ASSIGNED_RIDERS_REQUEST, GET_TASK_ASSIGNED_RIDERS_SUCCESS,
     REMOVE_TASK_ASSIGNED_RIDER_SUCCESS
-} from "./taskAssigneesActions";
+} from "./TaskAssigneesActions";
 
 const initialTaskAssigneesState = {assignees: [], error: null};
 

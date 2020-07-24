@@ -126,6 +126,7 @@ function TaskContextMenu(props) {
         handleClose();
         const payload = {time_rejected: new Date().toISOString()};
         dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
+        return;
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoRejected(key)}}>
@@ -143,6 +144,7 @@ function TaskContextMenu(props) {
         handleClose();
         if (result)
             dispatch(deleteTask(props.taskUUID));
+        return;
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>

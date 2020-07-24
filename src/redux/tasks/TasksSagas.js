@@ -9,6 +9,7 @@ import {
     takeLatest,
     select,
 } from 'redux-saga/effects'
+import {restoreTask as restoreTaskRequest} from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
     addTaskSuccess,
@@ -82,6 +83,10 @@ import {updateTaskPatch as updateTaskPatchAction} from "./TasksActions"
 import {getApiControl} from "../Api"
 import {setCurrentSession, setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
 import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
+import React from "react";
+import Button from "@material-ui/core/Button";
+import {restoreUser} from "../users/UsersActions";
+import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()
@@ -124,10 +129,12 @@ export function* watchPostNewTask() {
 
 function* deleteTask(action) {
     try {
+        const restoreAction = () => restoreTaskRequest(action.data);
         const api = yield select(getApiControl);
         yield call([api, api.tasks.deleteTask], action.data);
         yield put(deleteTaskSuccess(action.data))
         yield put(unsubscribeFromUUID(action.data))
+        yield put(displayInfoNotification("Task deleted", restoreAction))
     } catch (error) {
         yield put(deleteTaskFailure(error))
     }

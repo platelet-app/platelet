@@ -4,6 +4,7 @@ import Login from './scenes/Login/Login'
 import './index.css'
 import './App.css';
 import 'typeface-roboto'
+import ClearIcon from '@material-ui/icons/Clear';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -30,6 +31,9 @@ import moment from 'moment-timezone';
 import {getApiURL} from "./utilities";
 import Menu from "@material-ui/core/Menu";
 import {connectSocket} from "./redux/sockets/SocketActions";
+import {restoreTask} from "./redux/tasks/TasksActions";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
 
 
 const useStyles = makeStyles(theme => ({
@@ -56,6 +60,7 @@ function App(props) {
     const forceResetPassword = useSelector(state => state.whoami.user.password_reset_on_login);
 
     const isInitialised = useSelector(state => state.apiControl.initialised);
+    const incomingNotification = useSelector(state => state.infoNotifications);
     const apiURL = useSelector(state => state.apiControl.api_url);
     const serverSettings = useSelector(state => state.serverSettings);
     const error = useSelector(state => state.error);
@@ -102,6 +107,38 @@ function App(props) {
     }
 
     useEffect(handleError, [error])
+
+    function showNotification() {
+        if (incomingNotification) {
+            const {message, options, restoreAction} = incomingNotification;
+                const snackAction = key => (
+                    <React.Fragment>
+                        {restoreAction ?
+                            <Button color="secondary" size="small" onClick={() => {
+                                props.closeSnackbar(key);
+                                dispatch(restoreAction());
+                            }}>
+                                UNDO
+                            </Button>
+                         : <></>}
+                        <IconButton
+                            color="inherit"
+                            aria-controls="simple-menu"
+                            aria-haspopup="true"
+                            size="small"
+                            onClick={() => {
+                                props.closeSnackbar(key);
+                            }}>
+                            <ClearIcon/>
+                        </IconButton>
+                    </React.Fragment>
+                );
+                options.action = snackAction
+            props.enqueueSnackbar(message, options)
+        }
+    }
+
+    useEffect(showNotification, [incomingNotification])
 
     function requestServerSettings() {
         if (apiURL) {

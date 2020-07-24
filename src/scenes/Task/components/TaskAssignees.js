@@ -14,7 +14,7 @@ import {
     addTaskAssignedRider,
     getTaskAssignedRiders,
     removeTaskAssignedRider
-} from "../../../redux/taskAssignees/taskAssigneesActions";
+} from "../../../redux/taskAssignees/TaskAssigneesActions";
 import TaskAssigneesSkeleton from "./TaskAssigneesSkeleton";
 
 export default function TaskAssignees(props) {

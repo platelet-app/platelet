@@ -11,7 +11,7 @@ import {
     REMOVE_TASK_ASSIGNED_RIDER_REQUEST,
     removeTaskAssignedRiderFailure,
     removeTaskAssignedRiderSuccess
-} from "./taskAssigneesActions";
+} from "./TaskAssigneesActions";
 import {
     updateTaskAssignedRiderSuccess,
     updateTaskPatch, updateTaskPatchFromServer,

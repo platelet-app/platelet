@@ -14,7 +14,7 @@ import {
     SET_HIDE_DELIVERED
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
-import {taskAssignees} from "./taskAssignees/taskAssigneesReducers";
+import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
 import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
 import {availableLocations} from "./locations/LocationsReducers"
@@ -26,6 +26,7 @@ import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
 import {comments, sidebarComments} from "./comments/CommentsReducers";
 import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 import {subscription} from "./sockets/SocketReducers";
+import {infoNotifications} from "./notifications/NotificationsReducers";
 import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
 
 const taskContextMenuSnackInitialState = {snack: () => {}, uuid: ""}
@@ -254,7 +255,8 @@ const rootReducer = combineReducers({
     commentsObjectUUID,
     serverSettings,
     taskContextMenuSnack,
-    subscription
+    subscription,
+    infoNotifications
 });
 
 export default rootReducer
