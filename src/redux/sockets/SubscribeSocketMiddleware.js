@@ -13,6 +13,7 @@ export const createSubscribeSocketMiddleware = () => {
             case SOCKET_CONNECT: {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
+                    console.log(message)
                     storeAPI.dispatch(subscribedResponseReceived(message));
                 });
                 socket.on("response", (message) => {

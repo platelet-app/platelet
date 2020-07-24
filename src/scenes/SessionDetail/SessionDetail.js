@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import {
     addTask, clearCurrentTask,
     getAllTasks,
-    refreshAllTasks, updateTaskFromSocket, updateTaskSuccess,
+    refreshAllTasks, updateTaskAssignedRiderFromSocket, updateTaskFromSocket, updateTaskSuccess,
 } from '../../redux/tasks/TasksActions'
 import {
     setCommentsObjectUUID,
@@ -45,6 +45,7 @@ import {Redirect, useHistory} from "react-router";
 import {SessionDetailTabs, TabPanel} from "./components/SessionDetailTabs";
 import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
 import {concatTasks} from "./utilities";
+import {users} from "../../redux/users/UsersReducers";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -67,6 +68,7 @@ function SessionDetail(props) {
     const isPostingNewTaskSelector = createPostingSelector(["ADD_TASK"]);
     const isPostingNewTask = useSelector(state => isPostingNewTaskSelector(state));
     const tasks = useSelector(state => state.tasks.tasks);
+    const users = useSelector(state => state.users.users);
     const viewMode = useSelector(state => state.viewMode);
     const hideDelivered = useSelector(state => state.hideDelivered);
     const mobileView = useSelector(state => state.mobileView);
@@ -116,7 +118,21 @@ function SessionDetail(props) {
             console.log("ignore")
         } else {
             if (socketSubscription.tab_id != null && getTabIdentifier() !== socketSubscription.tab_id) {
-                dispatch(updateTaskFromSocket({taskUUID: socketSubscription.object_uuid, payload: socketSubscription.data}))
+                switch (socketSubscription.type) {
+                    case "update":
+                        dispatch(updateTaskFromSocket({taskUUID: socketSubscription.object_uuid, payload: socketSubscription.data}))
+                        break;
+                    case "assign_user":
+                        const user_uuid = socketSubscription.data.user_uuid
+                        const assignedUser = users.filter(u => user_uuid === u.uuid)
+                        let rider = {};
+                        if (assignedUser.length === 1) {
+                            rider = assignedUser[0]
+                            dispatch(updateTaskAssignedRiderFromSocket({taskUUID: socketSubscription.object_uuid, payload: {rider, user_uuid }}))
+                        }
+                        break;
+
+                }
                 console.log(socketSubscription.data)
             } else
                 console.log("this came from us")
@@ -151,7 +167,6 @@ function SessionDetail(props) {
         time_dropped_off: null,
         time_rejected: null,
         time_cancelled: null
-
     };
 
     function addEmptyTask() {

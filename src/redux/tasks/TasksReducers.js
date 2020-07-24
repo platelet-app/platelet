@@ -8,7 +8,7 @@ import {
     GET_TASKS_FAILURE,
     GET_TASKS_SUCCESS,
     RESTORE_TASK_SUCCESS,
-    SET_CURRENT_TASK,
+    SET_CURRENT_TASK, UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET,
     UPDATE_TASK_ASSIGNED_RIDER_SUCCESS,
     UPDATE_TASK_CANCELLED_TIME_SUCCESS,
     UPDATE_TASK_CONTACT_NAME_SUCCESS,
@@ -136,6 +136,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
+        case UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET:
             const taskToUpdateAssignedRider = findExistingTask(state.tasks, action.data.taskUUID);
             const newTasksAssignedRider = update(state.tasks,
                 {[taskToUpdateAssignedRider.listType]: {$set: state.tasks[taskToUpdateAssignedRider.listType].filter(t => t.uuid !== taskToUpdateAssignedRider.task.uuid)}}
