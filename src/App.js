@@ -4,7 +4,6 @@ import Login from './scenes/Login/Login'
 import './index.css'
 import './App.css';
 import 'typeface-roboto'
-import ClearIcon from '@material-ui/icons/Clear';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -29,11 +28,7 @@ import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
 import {getApiURL} from "./utilities";
-import Menu from "@material-ui/core/Menu";
 import {connectSocket} from "./redux/sockets/SocketActions";
-import {restoreTask} from "./redux/tasks/TasksActions";
-import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
 import {DismissButton} from "./styles/common";
 
 
@@ -46,7 +41,6 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
         textAlign: 'center',
         background: "rgb(230, 230, 230)",
-
     }
 }));
 
@@ -123,7 +117,7 @@ function App(props) {
     function showNotification() {
         if (incomingNotification) {
             const {message, options, restoreAction} = incomingNotification;
-                const snackAction = key => (
+                options.action = key => (
                     <React.Fragment>
                         {restoreAction ?
                             <Button color="secondary" size="small" onClick={() => {
@@ -136,7 +130,6 @@ function App(props) {
                          <DismissButton onClick={() => props.closeSnackbar(key)}/>
                     </React.Fragment>
                 );
-                options.action = snackAction
             props.enqueueSnackbar(message, options)
         }
     }

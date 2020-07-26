@@ -109,60 +109,21 @@ function TaskContextMenu(props) {
         handleClose();
         const payload = {time_cancelled: new Date().toISOString()};
         dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
-        const action = key => (
-            <React.Fragment>
-                <Button color="secondary" size="small" onClick={() => {undoCancelled(key)}}>
-                    UNDO
-                </Button>
-            </React.Fragment>
-        );
-        const snack = () => {
-            props.enqueueSnackbar('Task marked cancelled.', {variant: "info", action, autoHideDuration: 8000});
-        }
-        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
     }
 
     function onSelectRejected() {
         handleClose();
         const payload = {time_rejected: new Date().toISOString()};
         dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
-        return;
-        const action = key => (
-            <React.Fragment>
-                <Button color="secondary" size="small" onClick={() => {undoRejected(key)}}>
-                    UNDO
-                </Button>
-            </React.Fragment>
-        );
-        const snack = () => {
-            props.enqueueSnackbar('Task marked rejected.', {variant: "info", action, autoHideDuration: 8000});
-        }
-        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
     }
 
     function onDelete(result) {
         handleClose();
         if (result)
             dispatch(deleteTask(props.taskUUID));
-        return;
-        const action = key => (
-            <React.Fragment>
-                <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
-                    UNDO
-                </Button>
-            </React.Fragment>
-        );
-        const snack = () => {
-            props.enqueueSnackbar('Task deleted.', {variant: "info", action, autoHideDuration: 8000});
-        }
-        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
     }
 
 
-    function undoDelete(key) {
-        props.closeSnackbar(key);
-        dispatch(restoreTask(props.taskUUID));
-    }
     function undoPickup(key) {
         const payload = {time_picked_up: null};
         dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
@@ -173,16 +134,7 @@ function TaskContextMenu(props) {
         dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key);
     }
-    function undoRejected(key) {
-        const payload = {time_rejected: null};
-        dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
-        props.closeSnackbar(key);
-    }
-    function undoCancelled(key) {
-        const payload = {time_cancelled: null};
-        dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
-        props.closeSnackbar(key);
-    }
+
 
     const handleClose = () => {
         setState(initialState);

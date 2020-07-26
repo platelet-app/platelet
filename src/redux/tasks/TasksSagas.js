@@ -10,6 +10,8 @@ import {
     select,
 } from 'redux-saga/effects'
 import {restoreTask as restoreTaskRequest} from "./TasksActions"
+import {updateTaskRejectedTime as updateTaskRejectedTimeRequest} from "./TasksActions"
+import {updateTaskCancelledTime as updateTaskCancelledTimeRequest} from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
     addTaskSuccess,
@@ -87,6 +89,7 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import {restoreUser} from "../users/UsersActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
+import {findExistingTask} from "../../utilities";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()
@@ -201,7 +204,6 @@ function* updateTaskPickupAddress(action) {
         yield put(updateTaskPickupAddressSuccess(action.data))
     } catch (error) {
         yield put(updateTaskPickupAddressFailure(error))
-
     }
 }
 
@@ -277,10 +279,18 @@ function* updateTaskPatchFromServer(action) {
 
 function* updateTaskCancelledTime(action) {
     try {
+        // get the current task rejected_time value to make sure it isn't already marked
+        const currentTasks = yield select((state) => state.tasks.tasks);
+        const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
+        const currentValue = task ? task.time_cancelled : null;
+        const restoreAction = () => updateTaskCancelledTimeRequest({ taskUUID: action.data.taskUUID, payload: {time_cancelled: null} });
         yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskCancelledTimeSuccess(action.data))
+        if (currentValue === null)
+            // only notify if marking rejected for the first time
+            yield put(displayInfoNotification("Task marked cancelled", restoreAction))
     } catch (error) {
         yield put(updateTaskCancelledTimeFailure(error))
     }
@@ -288,10 +298,18 @@ function* updateTaskCancelledTime(action) {
 
 function* updateTaskRejectedTime(action) {
     try {
+        // get the current task rejected_time value to make sure it isn't already marked
+        const currentTasks = yield select((state) => state.tasks.tasks);
+        const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
+        const currentValue = task ? task.time_rejected : null;
+        const restoreAction = () => updateTaskRejectedTimeRequest({ taskUUID: action.data.taskUUID, payload: {time_rejected: null} });
         yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskRejectedTimeSuccess(action.data))
+        if (currentValue === null)
+            // only notify if marking rejected for the first time
+            yield put(displayInfoNotification("Task marked rejected", restoreAction))
     } catch (error) {
         yield put(updateTaskRejectedTimeFailure(error))
     }
