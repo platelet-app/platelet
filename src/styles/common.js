@@ -9,6 +9,22 @@ import {makeStyles} from '@material-ui/core/styles';
 import {Paper} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import {Link} from "react-router-dom"
+import IconButton from "@material-ui/core/IconButton";
+import ClearIcon from "@material-ui/icons/Clear";
+
+export function DismissButton (props) {
+    return (
+        <IconButton
+            color="inherit"
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            size="small"
+            onClick={props.onClick}>
+            <ClearIcon/>
+        </IconButton>
+    )
+}
+
 
 export function MainWindowContainer(props) {
     const styles = makeStyles({

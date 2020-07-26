@@ -34,6 +34,7 @@ import {connectSocket} from "./redux/sockets/SocketActions";
 import {restoreTask} from "./redux/tasks/TasksActions";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
+import {DismissButton} from "./styles/common";
 
 
 const useStyles = makeStyles(theme => ({
@@ -49,10 +50,6 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const snackOptions = {
-    preventDuplicate: true,
-    autoHideDuration: 6000
-}
 
 function App(props) {
     const apiControl = useSelector(state => state.apiControl);
@@ -81,27 +78,42 @@ function App(props) {
 
     useEffect(checkEnvApirURL, [])
 
+    const snackDismissAction = (key) => (
+        <React.Fragment>
+            <DismissButton onClick={() => props.closeSnackbar(key)}/>
+        </React.Fragment>
+    )
+    const snackOptions = {
+        action: snackDismissAction,
+        preventDuplicate: true,
+        autoHideDuration: 6000
+    }
+
     function handleError() {
-        // any saga that returns with an error object that is not null will be handled here
+                // any saga that returns with an error object that is not null will be handled here
         if (error) {
-            if (error.message)
-                props.enqueueSnackbar(`${error}: ${error.message}`,
-                    {
+            if (error.name === "HttpError") {
+                if (error.message)
+                    props.enqueueSnackbar(`${error.message}`,
+                        {
+                            ...snackOptions,
+                            variant: "error",
+                        });
+                else
+                    props.enqueueSnackbar(`No message returned from the server.`, {
                         ...snackOptions,
-                        variant: "error"
+                        variant: "error",
                     });
-            else
-                props.enqueueSnackbar(`${error}: No message returned from the server.`, {
-                    ...snackOptions,
-                    variant: "error"
-                });
-            // if all else fails with authentication, log out the user
-            if (error.status === 401) {
-                props.enqueueSnackbar("Access has expired. Please log in again.", {
-                    ...snackOptions,
-                    variant: "warning"
-                });
-                dispatch(logoutUser())
+                // if all else fails with authentication, log out the user
+                if (error.status === 401) {
+                    props.enqueueSnackbar("Access has expired. Please log in again.", {
+                        ...snackOptions,
+                        variant: "warning",
+                    });
+                    dispatch(logoutUser())
+                }
+            } else {
+                throw error;
             }
         }
     }
@@ -121,16 +133,7 @@ function App(props) {
                                 UNDO
                             </Button>
                          : <></>}
-                        <IconButton
-                            color="inherit"
-                            aria-controls="simple-menu"
-                            aria-haspopup="true"
-                            size="small"
-                            onClick={() => {
-                                props.closeSnackbar(key);
-                            }}>
-                            <ClearIcon/>
-                        </IconButton>
+                         <DismissButton onClick={() => props.closeSnackbar(key)}/>
                     </React.Fragment>
                 );
                 options.action = snackAction
