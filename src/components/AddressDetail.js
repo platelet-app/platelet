@@ -18,7 +18,7 @@ export default function AddressDetailsCollapsible(props){
     const [town, setTown] = useState(props.address ? props.address.town || "" : "");
     const [county, setCounty] = useState(props.address ? props.address.county || "" : "");
     const [country, setCountry] = useState(props.address ? props.address.country || "" : "");
-    const [postcode, setPostcode] = useState(props.address ? props.address.country || "" : "");
+    const [postcode, setPostcode] = useState(props.address ? props.address.postcode || "" : "");
     const firstUpdate = useRef(true);
     const [presetMode, setPresetMode] = useState(false);
 
