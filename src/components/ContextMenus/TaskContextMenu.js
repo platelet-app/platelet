@@ -3,11 +3,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import moment from 'moment/min/moment-with-locales';
 import {
-    deleteTask,
-    restoreTask,
-    updateTaskCancelledTime,
-    updateTaskDropoffTime,
-    updateTaskPickupTime, updateTaskRejectedTime
+    deleteTaskRequest,
+    restoreTaskRequest,
+    updateTaskCancelledTimeRequest,
+    updateTaskDropoffTimeRequest,
+    updateTaskPickupTimeRequest, updateTaskRejectedTimeRequest
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -30,13 +30,8 @@ const initialSnack = {snack: () => {}}
 // instead of one singular snack object that is shared between all context menus
 
 function TaskContextMenu(props) {
-    const firstUpdate = useRef(true);
     const dispatch = useDispatch();
     const [state, setState] = React.useState(initialState);
-    const [snackStatus, setSnackStatus] = React.useState(false);
-    const contextSnack = useSelector(state => state.taskContextMenuSnack);
-    const snackSelector = createContextMenuSnackSelector(props.taskUUID)
-    const snack = useSelector(state => snackSelector(state));
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -46,24 +41,6 @@ function TaskContextMenu(props) {
         "UPDATE_TASK_CANCELLED_TIME",
         "UPDATE_TASK_REJECTED_TIME"]);
     const isPosting = useSelector(state => postingSelector(state));
-
-    function dispatchSnack() {
-        if (firstUpdate.current) {
-            firstUpdate.current = false;
-        } else {
-            if (!isPosting && snack !== undefined) {
-                //snack.snack();
-                //dispatch(setTaskContextMenuSnack(undefined))
-            }
-        }
-        return function cleanup() {
-            if (snack !== undefined) {
-                //snack.snack();
-                //dispatch(setTaskContextMenuSnack(undefined))
-            }
-        }
-    }
-    useEffect(dispatchSnack, [snack])
 
     const handleClick = event => {
         setState({
@@ -75,63 +52,41 @@ function TaskContextMenu(props) {
     function onSelectPickedUp() {
         handleClose();
         const payload = {time_picked_up: new Date().toISOString()};
-        dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
-        const action = key => (
-            <React.Fragment>
-                <Button color="secondary" size="small" onClick={() => {undoPickup(key)}}>
-                    UNDO
-                </Button>
-            </React.Fragment>
-        );
-        const snack = () => {
-            props.enqueueSnackbar('Task marked picked up.',  { variant: "info", action, autoHideDuration: 8000 })
-        }
-        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
+        dispatch(updateTaskPickupTimeRequest({ taskUUID: props.taskUUID, payload }));
     }
 
     function onSelectDroppedOff() {
         handleClose();
         const payload = {time_dropped_off: new Date().toISOString()};
-        dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
-        const action = key => (
-            <React.Fragment>
-                <Button color="secondary" size="small" onClick={() => {undoDropoff(key)}}>
-                    UNDO
-                </Button>
-            </React.Fragment>
-        );
-        const snack = () => {
-            props.enqueueSnackbar('Task marked delivered.',  { variant: "info", action, autoHideDuration: 8000 });
-        }
-        dispatch(setTaskContextMenuSnack(snack, props.taskUUID))
+        dispatch(updateTaskDropoffTimeRequest({ taskUUID: props.taskUUID, payload }));
     }
     function onSelectCancelled() {
         handleClose();
         const payload = {time_cancelled: new Date().toISOString()};
-        dispatch(updateTaskCancelledTime({ taskUUID: props.taskUUID, payload }));
+        dispatch(updateTaskCancelledTimeRequest({ taskUUID: props.taskUUID, payload }));
     }
 
     function onSelectRejected() {
         handleClose();
         const payload = {time_rejected: new Date().toISOString()};
-        dispatch(updateTaskRejectedTime({ taskUUID: props.taskUUID, payload }));
+        dispatch(updateTaskRejectedTimeRequest({ taskUUID: props.taskUUID, payload }));
     }
 
     function onDelete(result) {
         handleClose();
         if (result)
-            dispatch(deleteTask(props.taskUUID));
+            dispatch(deleteTaskRequest(props.taskUUID));
     }
 
 
     function undoPickup(key) {
         const payload = {time_picked_up: null};
-        dispatch(updateTaskPickupTime({ taskUUID: props.taskUUID, payload }));
+        dispatch(updateTaskPickupTimeRequest({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key);
     }
     function undoDropoff(key) {
         const payload = {time_dropped_off: null};
-        dispatch(updateTaskDropoffTime({ taskUUID: props.taskUUID, payload }));
+        dispatch(updateTaskDropoffTimeRequest({ taskUUID: props.taskUUID, payload }));
         props.closeSnackbar(key);
     }
 

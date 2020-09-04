@@ -3,7 +3,7 @@ import '../../App.css';
 import 'typeface-roboto'
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {getAllMyTasks, refreshAllMyTasks, refreshAllTasks, updateTaskFromSocket} from '../../redux/tasks/TasksActions'
+import {getAllMyTasksRequest, refreshAllMyTasksRequest, refreshAllTasksRequest, updateTaskFromSocket} from '../../redux/tasks/TasksActions'
 import {useDispatch, useSelector} from "react-redux"
 import TasksGrid from "./components/TasksGrid";
 import {
@@ -26,7 +26,7 @@ function UsersTasks() {
     const socketSubscription = useSelector(state => state.subscription);
 
     function componentDidMount() {
-        dispatch(getAllMyTasks());
+        dispatch(getAllMyTasksRequest());
         return function cleanup() {
             const joinedTasks = concatTasks(tasks);
             joinedTasks.forEach((task) => {

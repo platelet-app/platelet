@@ -10,7 +10,7 @@ import MaterialTable from 'material-table';
 import Box from "@material-ui/core/Box";
 import {useHistory, useLocation} from "react-router-dom";
 
-import {addTask} from "../../../redux/tasks/TasksActions";
+import {addTaskRequest} from "../../../redux/tasks/TasksActions";
 
 import {forwardRef} from 'react';
 

@@ -75,7 +75,7 @@ export const REFRESH_MY_TASKS_SUCCESS = 'REFRESH_MY_TASKS_SUCCESS';
 export const REFRESH_MY_TASKS_FAILURE = 'REFRESH_MY_TASKS_FAILURE';
 export const REFRESH_MY_TASKS_NOTFOUND = 'REFRESH_MY_TASKS_NOTFOUND';
 
-export function restoreTask(data) {
+export function restoreTaskRequest(data) {
     return { type: RESTORE_TASK_REQUEST, data }
 }
 
@@ -87,7 +87,7 @@ export function restoreTaskFailure(error) {
     return { type: RESTORE_TASK_FAILURE, error }
 }
 
-export function getTask(data) {
+export function getTaskRequest(data) {
     return { type: GET_TASK_REQUEST, data }
 }
 
@@ -107,7 +107,7 @@ export function getTaskFailure(error) {
     return { type: GET_TASK_FAILURE, error }
 }
 
-export function addTask(data) {
+export function addTaskRequest(data) {
     return { type: ADD_TASK_REQUEST, data }
 }
 
@@ -119,7 +119,7 @@ export function addTaskFailure(error) {
     return { type: ADD_TASK_FAILURE, error }
 }
 
-export function deleteTask(data) {
+export function deleteTaskRequest(data) {
     return { type: DELETE_TASK_REQUEST, data }
 }
 
@@ -131,7 +131,7 @@ export function deleteTaskFailure(error) {
     return { type: DELETE_TASK_FAILURE, error }
 }
 
-export function updateTask(data) {
+export function updateTaskRequest(data) {
     return { type: UPDATE_TASK_REQUEST, data }
 }
 
@@ -147,49 +147,38 @@ export function updateTaskRemoveAssignedRiderFromSocket(data) {
     return { type: UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET, data }
 }
 
-export function updateTaskContactName(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskContactNameRequest(data) {
     return { type: UPDATE_TASK_CONTACT_NAME_REQUEST, data }
 }
-export function updateTaskContactNumber(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskContactNumberRequest(data) {
     return { type: UPDATE_TASK_CONTACT_NUMBER_REQUEST, data }
 }
-export function updateTaskPickupAddress(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskPickupAddressRequest(data) {
     return { type: UPDATE_TASK_PICKUP_ADDRESS_REQUEST, data }
 }
-export function updateTaskDropoffAddress(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskDropoffAddressRequest(data) {
     return { type: UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, data }
 }
-export function updateTaskPickupTime(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskPickupTimeRequest(data) {
     return { type: UPDATE_TASK_PICKUP_TIME_REQUEST, data }
 }
-export function updateTaskDropoffTime(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskDropoffTimeRequest(data) {
     return { type: UPDATE_TASK_DROPOFF_TIME_REQUEST, data }
 }
-export function updateTaskCancelledTime(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskCancelledTimeRequest(data) {
     return { type: UPDATE_TASK_CANCELLED_TIME_REQUEST, data }
 }
-export function updateTaskRejectedTime(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskRejectedTimeRequest(data) {
     return { type: UPDATE_TASK_REJECTED_TIME_REQUEST, data }
 }
-export function updateTaskAssignedRider(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskAssignedRiderRequest(data) {
     return { type: UPDATE_TASK_ASSIGNED_RIDER_REQUEST, data }
 }
-export function updateTaskPriority(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskPriorityRequest(data) {
     return { type: UPDATE_TASK_PRIORITY_REQUEST, data }
 }
 
-export function updateTaskPatch(data) {
-    data.time_modified = new Date().toISOString();
+export function updateTaskPatchRequest(data) {
     return { type: UPDATE_TASK_PATCH_REQUEST, data }
 }
 
@@ -278,7 +267,7 @@ export function updateTaskPatchFailure(error) {
     return { type: UPDATE_TASK_PATCH_FAILURE, error }
 }
 
-export function getAllTasks(data) {
+export function getAllTasksRequest(data) {
     return { type: GET_TASKS_REQUEST, data }
 }
 
@@ -286,7 +275,7 @@ export function getAllTasksSuccess(data) {
     return { type: GET_TASKS_SUCCESS, data }
 }
 
-export function refreshAllTasks(data) {
+export function refreshAllTasksRequest(data) {
     return { type: REFRESH_TASKS_REQUEST, data }
 }
 
@@ -302,7 +291,7 @@ export function getAllTasksNotFound(data) {
     return { type: GET_TASKS_NOTFOUND, data }
 }
 
-export function getAllMyTasks() {
+export function getAllMyTasksRequest() {
     return { type: GET_MY_TASKS_REQUEST }
 }
 
@@ -318,7 +307,7 @@ export function getAllMyTasksNotFound(error) {
     return { type: GET_MY_TASKS_NOTFOUND, error }
 }
 
-export function refreshAllMyTasks() {
+export function refreshAllMyTasksRequest() {
     return { type: REFRESH_MY_TASKS_REQUEST }
 }
 

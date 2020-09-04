@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import UserCard from "../../../components/UserCard";
 import React, {useEffect, useState} from "react";
 import {
-    updateTaskPatch,
+    updateTaskPatchRequest,
 } from "../../../redux/tasks/TasksActions";
 
 import {useDispatch, useSelector} from "react-redux";

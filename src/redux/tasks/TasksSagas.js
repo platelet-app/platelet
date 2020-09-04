@@ -9,9 +9,13 @@ import {
     takeLatest,
     select,
 } from 'redux-saga/effects'
-import {restoreTask as restoreTaskRequest} from "./TasksActions"
-import {updateTaskRejectedTime as updateTaskRejectedTimeRequest} from "./TasksActions"
-import {updateTaskCancelledTime as updateTaskCancelledTimeRequest} from "./TasksActions"
+import {
+    restoreTaskRequest,
+    updateTaskRejectedTimeRequest,
+    updateTaskCancelledTimeRequest,
+    updateTaskDropoffTimeRequest,
+    updateTaskPickupTimeRequest
+} from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
     addTaskSuccess,
@@ -79,7 +83,7 @@ import {
     UPDATE_TASK_REMOVE_RIDER_REQUEST,
     UPDATE_TASK_PATCH_FROM_SERVER, UPDATE_TASK_FROM_SOCKET
 } from "./TasksActions"
-import {updateTaskPatch as updateTaskPatchAction} from "./TasksActions"
+import {updateTaskPatchRequest as updateTaskPatchAction} from "./TasksActions"
 
 
 import {getApiControl} from "../Api"
@@ -221,9 +225,19 @@ function* updateTaskDropoffAddress(action) {
 function* updateTaskPickupTime(action) {
     try {
         yield put(setCurrentSessionTimeActiveToNow())
+        const currentTasks = yield select((state) => state.tasks.tasks);
+        const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
+        const currentValue = task ? task.time_picked_up : null;
+        const restoreAction = () => updateTaskPickupTimeRequest({
+            taskUUID: action.data.taskUUID,
+            payload: {time_picked_up: null}
+        });
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskPickupTimeSuccess(action.data))
+        if (currentValue === null)
+            // only notify if marking rejected for the first time
+            yield put(displayInfoNotification("Task marked picked up", restoreAction))
     } catch (error) {
         yield put(updateTaskPickupTimeFailure(error))
     }
@@ -232,9 +246,19 @@ function* updateTaskPickupTime(action) {
 function* updateTaskDropoffTime(action) {
     try {
         yield put(setCurrentSessionTimeActiveToNow())
+        const currentTasks = yield select((state) => state.tasks.tasks);
+        const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
+        const currentValue = task ? task.time_dropped_off : null;
+        const restoreAction = () => updateTaskDropoffTimeRequest({
+            taskUUID: action.data.taskUUID,
+            payload: {time_dropped_off: null}
+        });
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskDropoffTimeSuccess(action.data))
+        if (currentValue === null)
+            // only notify if marking rejected for the first time
+            yield put(displayInfoNotification("Task marked dropped off", restoreAction))
     } catch (error) {
         yield put(updateTaskDropoffTimeFailure(error))
     }
@@ -283,7 +307,10 @@ function* updateTaskCancelledTime(action) {
         const currentTasks = yield select((state) => state.tasks.tasks);
         const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
         const currentValue = task ? task.time_cancelled : null;
-        const restoreAction = () => updateTaskCancelledTimeRequest({ taskUUID: action.data.taskUUID, payload: {time_cancelled: null} });
+        const restoreAction = () => updateTaskCancelledTimeRequest({
+            taskUUID: action.data.taskUUID,
+            payload: {time_cancelled: null}
+        });
         yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
@@ -302,7 +329,10 @@ function* updateTaskRejectedTime(action) {
         const currentTasks = yield select((state) => state.tasks.tasks);
         const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
         const currentValue = task ? task.time_rejected : null;
-        const restoreAction = () => updateTaskRejectedTimeRequest({ taskUUID: action.data.taskUUID, payload: {time_rejected: null} });
+        const restoreAction = () => updateTaskRejectedTimeRequest({
+            taskUUID: action.data.taskUUID,
+            payload: {time_rejected: null}
+        });
         yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);

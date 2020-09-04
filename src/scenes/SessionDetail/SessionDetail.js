@@ -3,10 +3,10 @@ import '../../App.css';
 import 'typeface-roboto'
 import Grid from "@material-ui/core/Grid";
 import {
-    addTask,
+    addTaskRequest,
     clearCurrentTask,
-    getAllTasks,
-    refreshAllTasks,
+    getAllTasksRequest,
+    refreshAllTasksRequest,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket,
@@ -94,7 +94,7 @@ function SessionDetail(props) {
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
-        dispatch(getAllTasks(session_uuid));
+        dispatch(getAllTasksRequest(session_uuid));
         dispatch(getSession(session_uuid))
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
@@ -180,7 +180,7 @@ function SessionDetail(props) {
     };
 
     function addEmptyTask() {
-        dispatch(addTask(emptyTask))
+        dispatch(addTaskRequest(emptyTask))
     }
 
     function setNewTaskAdded() {
