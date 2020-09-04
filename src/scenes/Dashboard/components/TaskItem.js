@@ -34,7 +34,7 @@ const TaskItem = React.memo((props) => {
                         deleteDisabled={props.deleteDisabled}
                         pickupTime={props.task.time_picked_up}
                         dropoffTime={props.task.time_dropped_off}
-                        assignedUsers={props.task.assigned_users}
+                        assignedUsers={props.task.assigned_riders}
                         cancelledTime={props.task.time_cancelled}
                         rejectedTime={props.task.time_rejected}
                     />

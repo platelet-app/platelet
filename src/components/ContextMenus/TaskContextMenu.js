@@ -1,10 +1,8 @@
 import React, {useEffect, useRef} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import moment from 'moment/min/moment-with-locales';
 import {
     deleteTask,
-    restoreTask,
     updateTaskCancelledTime,
     updateTaskDropoffTime,
     updateTaskPickupTime, updateTaskRejectedTime

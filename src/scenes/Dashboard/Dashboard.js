@@ -66,7 +66,7 @@ function GetViewTitle(props) {
     }
 }
 
-function SessionDetail(props) {
+function Dashboard(props) {
     const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
     const dispatch = useDispatch();
     const isFetching = useSelector(state => loadingSelector(state));
@@ -94,8 +94,8 @@ function SessionDetail(props) {
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
-        dispatch(getAllTasks(session_uuid));
-        dispatch(getSession(session_uuid))
+        dispatch(getAllTasks(whoami.uuid));
+        //dispatch(getSession(session_uuid))
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
@@ -104,9 +104,6 @@ function SessionDetail(props) {
         if (hideDelivered === null) {
             const hideDeliveredLocalStorage = getLocalStorageHideDelivered();
             dispatch(setHideDelivered(hideDeliveredLocalStorage === null ? false : JSON.parse(hideDeliveredLocalStorage)))
-        }
-        if (!props.match) {
-            history.push(`/session/${encodeUUID(currentSession.uuid)}`);
         }
         return function cleanup() {
             const joinedTasks = concatTasks(tasks);
@@ -352,4 +349,4 @@ function SessionDetail(props) {
 
 }
 
-export default SessionDetail;
+export default Dashboard;

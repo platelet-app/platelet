@@ -5,8 +5,8 @@ import '../index.css';
 import SessionsList from '../scenes/SessionList';
 import MyUserProfile from '../scenes/UserProfile/MyUserProfile'
 import {Route, Switch, useLocation} from "react-router-dom";
-import SessionDetail from "../scenes/SessionDetail/SessionDetail";
-import UsersTasks from "../scenes/SessionDetail/UsersTasks";
+import Dashboard from "../scenes/Dashboard/Dashboard";
+import UsersTasks from "../scenes/Dashboard/UsersTasks";
 import TaskDialog from "../scenes/Task/TaskDialog";
 import VehicleList from "../scenes/VehiclesList";
 import {MainWindowContainer} from "../styles/common";
@@ -22,7 +22,6 @@ export default function MainWindow(_props) {
         <MainWindowContainer>
             <main>
                 <Switch location={location}>
-                    >
                     <Route exact path='/' component={Home}/>
                     <Route path='/sessions'
                            render={(props) => <SessionsList {...props} apiControl={_props.apiControl}/>}
@@ -49,16 +48,16 @@ export default function MainWindow(_props) {
                            render={(props) => <UserDetail {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route exact path='/session/:session_uuid_b62'
-                           render={(props) => <SessionDetail {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => <Dashboard {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route exact path='/session/:session_uuid_b62/statistics'
-                           render={(props) => <SessionDetail {...props} statsView={true} apiControl={_props.apiControl}/>}
+                           render={(props) => <Dashboard {...props} statsView={true} apiControl={_props.apiControl}/>}
                     />
                     <Route exact path="/session/:session_uuid_b62/task/:task_uuid_b62"
                            render={(props) => {
                                return (
                                    <>
-                               <SessionDetail {...props} />
+                               <Dashboard {...props} />
                                <TaskDialog {...props} apiControl={_props.apiControl} modal={true}/>
                                </>
                            )
