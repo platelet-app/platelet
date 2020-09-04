@@ -12,7 +12,7 @@ import AcUnitIcon from "@material-ui/icons/AcUnit"
 import ClearIcon from "@material-ui/icons/Clear"
 import {useDispatch} from "react-redux";
 import IconButton from "@material-ui/core/IconButton"
-import {deleteDeliverable} from "../../../redux/deliverables/DeliverablesActions"
+import {deleteDeliverableRequest} from "../../../redux/deliverables/DeliverablesActions"
 
 const useStyles = makeStyles((theme) => ({
     sample: {

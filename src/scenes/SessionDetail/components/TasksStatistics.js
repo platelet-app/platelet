@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {PaddedPaper} from "../../../styles/common";
 import Grid from "@material-ui/core/Grid";
 import {useDispatch, useSelector} from "react-redux";
-import {getSessionStatistics} from "../../../redux/sessions/SessionsActions";
+import {getSessionStatisticsRequest} from "../../../redux/sessions/SessionsActions";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -218,7 +218,7 @@ export default function TasksStatistics(props) {
     const dispatch = useDispatch();
 
     function componentDidMount() {
-        dispatch(getSessionStatistics(props.sessionUUID))
+        dispatch(getSessionStatisticsRequest(props.sessionUUID))
     }
 
     useEffect(componentDidMount, []);

@@ -20,8 +20,8 @@ import {
     setHideDelivered
 } from "../../redux/Actions";
 import {
-    getSession,
-    refreshCurrentSession,
+    getSessionRequest,
+    refreshCurrentSessionRequest,
 } from "../../redux/sessions/SessionsActions";
 import TasksGrid from "./components/TasksGrid";
 import {
@@ -95,7 +95,7 @@ function SessionDetail(props) {
     function componentDidMount() {
         dispatch(clearCurrentTask());
         dispatch(getAllTasksRequest(session_uuid));
-        dispatch(getSession(session_uuid))
+        dispatch(getSessionRequest(session_uuid))
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();

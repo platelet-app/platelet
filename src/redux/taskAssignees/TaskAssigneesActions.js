@@ -9,7 +9,7 @@ export const REMOVE_TASK_ASSIGNED_RIDER_REQUEST = "REMOVE_TASK_ASSIGNED_RIDER_RE
 export const REMOVE_TASK_ASSIGNED_RIDER_SUCCESS = "REMOVE_TASK_ASSIGNED_RIDER_SUCCESS";
 export const REMOVE_TASK_ASSIGNED_RIDER_FAILURE = "REMOVE_TASK_ASSIGNED_RIDER_FAILURE";
 
-export function getTaskAssignedRiders(data) {
+export function getTaskAssignedRidersRequest(data) {
     return { type: GET_TASK_ASSIGNED_RIDERS_REQUEST, data }
 }
 export function getTaskAssignedRidersSuccess(data) {
@@ -20,7 +20,7 @@ export function getTaskAssignedRidersFailure(error) {
     return { type: GET_TASK_ASSIGNED_RIDERS_FAILURE, error }
 }
 
-export function addTaskAssignedRider(data) {
+export function addTaskAssignedRiderRequest(data) {
     return { type: ADD_TASK_ASSIGNED_RIDER_REQUEST, data }
 }
 export function addTaskAssignedRiderSuccess(data) {
@@ -31,7 +31,7 @@ export function addTaskAssignedRiderFailure(error) {
     return { type: ADD_TASK_ASSIGNED_RIDER_FAILURE, error }
 }
 
-export function removeTaskAssignedRider(data) {
+export function removeTaskAssignedRiderRequest(data) {
     return { type: REMOVE_TASK_ASSIGNED_RIDER_REQUEST, data }
 }
 

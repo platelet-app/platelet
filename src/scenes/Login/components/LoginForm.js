@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import React, {useState} from "react";
-import {loginUser} from "../../../redux/login/LoginActions";
+import {loginRequest} from "../../../redux/login/LoginActions";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
 import Button from "@material-ui/core/Button";
@@ -17,7 +17,7 @@ export default function LoginForm(props) {
 
     function handleLogin() {
         if (username && password)
-            dispatch(loginUser({username, password}));
+            dispatch(loginRequest({username, password}));
     }
 
     return (

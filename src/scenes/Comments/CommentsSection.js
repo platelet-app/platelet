@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {clearComments, getComments, getSidebarComments} from "../../redux/comments/CommentsActions";
+import {clearComments, getCommentsRequest, getSidebarCommentsRequest} from "../../redux/comments/CommentsActions";
 import CommentsMain from "./components/CommentsMain";
 import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
 import CommentsSkeleton from "./components/CommentsSkeleton";
@@ -16,9 +16,9 @@ export default function CommentsSection(props) {
     function updateComments() {
         if (props.parentUUID) {
             if (props.session)
-                dispatch(getSidebarComments(props.parentUUID));
+                dispatch(getSidebarCommentsRequest(props.parentUUID));
             else
-                dispatch(getComments(props.parentUUID));
+                dispatch(getCommentsRequest(props.parentUUID));
         } else {
             dispatch(clearComments())
         }

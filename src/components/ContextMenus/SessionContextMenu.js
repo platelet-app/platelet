@@ -2,8 +2,8 @@ import React, {useEffect} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
-    deleteSession,
-    restoreSession
+    deleteSessionRequest,
+    restoreSessionRequest
 } from "../../redux/sessions/SessionsActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -38,12 +38,12 @@ function SessionContextMenu(props) {
 
     function undoDelete(key) {
         props.closeSnackbar(key);
-        dispatch(restoreSession(props.session.uuid));
+        dispatch(restoreSessionRequest(props.session.uuid));
     }
 
     function onDelete() {
         handleClose();
-        dispatch(deleteSession(props.session.uuid));
+        dispatch(deleteSessionRequest(props.session.uuid));
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>

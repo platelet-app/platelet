@@ -11,9 +11,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector, createPostingSelector} from "../../../redux/selectors";
 import Button from "@material-ui/core/Button";
 import {
-    addTaskAssignedRider,
-    getTaskAssignedRiders,
-    removeTaskAssignedRider
+    addTaskAssignedRiderRequest,
+    getTaskAssignedRidersRequest,
+    removeTaskAssignedRiderRequest
 } from "../../../redux/taskAssignees/TaskAssigneesActions";
 import TaskAssigneesSkeleton from "./TaskAssigneesSkeleton";
 
@@ -32,7 +32,7 @@ export default function TaskAssignees(props) {
     //const addButton = <AddCircleButtonSmall disabled={isPosting} onClick={() => setAddMode(!addMode)}/>
 
     function componentDidMount() {
-        dispatch(getTaskAssignedRiders(taskUUID))
+        dispatch(getTaskAssignedRidersRequest(taskUUID))
     }
     useEffect(componentDidMount, [])
 
@@ -55,7 +55,7 @@ export default function TaskAssignees(props) {
             const patchPayload = {patch_id: rider.patch_id, patch: patchLabel, user_uuid: rider.uuid, rider};
             const riderPayload = {user_uuid: rider.uuid, rider};
             //dispatch(updateTaskPatch({taskUUID, payload: patchPayload}))
-            dispatch(addTaskAssignedRider({taskUUID, payload: riderPayload}))
+            dispatch(addTaskAssignedRiderRequest({taskUUID, payload: riderPayload}))
         }
         setAddMode(false);
     }
@@ -82,7 +82,7 @@ export default function TaskAssignees(props) {
                     return (
                         <Grid item key={user.uuid}>
                             <UserCard
-                                onDelete={() => dispatch(removeTaskAssignedRider({
+                                onDelete={() => dispatch(removeTaskAssignedRiderRequest({
                                     taskUUID,
                                     payload: {user_uuid: user.uuid}
                                 }))}

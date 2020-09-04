@@ -2,8 +2,8 @@ import React, {useEffect} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
-    deleteComment, deleteSidebarComment,
-    restoreComment, restoreSidebarComment
+    deleteCommentRequest, deleteSidebarCommentRequest,
+    restoreCommentRequest, restoreSidebarCommentRequest
 } from "../../redux/comments/CommentsActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -37,17 +37,17 @@ function CommentContextMenu(props) {
     function undoDelete(key) {
         props.closeSnackbar(key);
         if (props.sidebar)
-            dispatch(restoreSidebarComment(props.comment.uuid));
+            dispatch(restoreSidebarCommentRequest(props.comment.uuid));
         else
-            dispatch(restoreComment(props.comment.uuid));
+            dispatch(restoreCommentRequest(props.comment.uuid));
     }
 
     function onDelete() {
         handleClose();
         if (props.sidebar)
-            dispatch(deleteSidebarComment(props.comment.uuid));
+            dispatch(deleteSidebarCommentRequest(props.comment.uuid));
         else
-            dispatch(deleteComment(props.comment.uuid));
+            dispatch(deleteCommentRequest(props.comment.uuid));
         const action = key => (
             <React.Fragment>
                 <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>

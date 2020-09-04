@@ -2,7 +2,7 @@ export const GET_AVAILABLE_LOCATIONS_REQUEST = 'GET_AVAILABLE_LOCATIONS_REQUEST'
 export const GET_AVAILABLE_LOCATIONS_SUCCESS = 'GET_AVAILABLE_LOCATIONS_SUCCESS';
 export const GET_AVAILABLE_LOCATIONS_FAILURE = 'GET_AVAILABLE_LOCATIONS_FAILURE';
 
-export function getAvailableLocations() {
+export function getAvailableLocationsRequest() {
     return { type: GET_AVAILABLE_LOCATIONS_REQUEST }
 }
 
