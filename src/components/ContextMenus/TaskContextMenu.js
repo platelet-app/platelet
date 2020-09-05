@@ -1,10 +1,8 @@
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import moment from 'moment/min/moment-with-locales';
 import {
     deleteTaskRequest,
-    restoreTaskRequest,
     updateTaskCancelledTimeRequest,
     updateTaskDropoffTimeRequest,
     updateTaskPickupTimeRequest, updateTaskRejectedTimeRequest
@@ -12,10 +10,7 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
-import Button from "@material-ui/core/Button";
-import { withSnackbar } from 'notistack';
-import {createContextMenuSnackSelector, createPostingSelector} from "../../redux/selectors";
-import {setTaskContextMenuSnack} from "../../redux/Actions";
+import {createPostingSelector} from "../../redux/selectors";
 
 
 const initialState = {
@@ -23,13 +18,8 @@ const initialState = {
     mouseY: null,
 };
 
-const initialSnack = {snack: () => {}}
 
-
-// TODO: Consider making a list of snacks that filter to find the right one for the object
-// instead of one singular snack object that is shared between all context menus
-
-function TaskContextMenu(props) {
+export default function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector([
@@ -79,18 +69,6 @@ function TaskContextMenu(props) {
     }
 
 
-    function undoPickup(key) {
-        const payload = {time_picked_up: null};
-        dispatch(updateTaskPickupTimeRequest({ taskUUID: props.taskUUID, payload }));
-        props.closeSnackbar(key);
-    }
-    function undoDropoff(key) {
-        const payload = {time_dropped_off: null};
-        dispatch(updateTaskDropoffTimeRequest({ taskUUID: props.taskUUID, payload }));
-        props.closeSnackbar(key);
-    }
-
-
     const handleClose = () => {
         setState(initialState);
     };
@@ -129,4 +107,3 @@ function TaskContextMenu(props) {
     );
 }
 
-export default withSnackbar(TaskContextMenu)

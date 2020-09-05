@@ -91,7 +91,7 @@ import {setCurrentSession, setCurrentSessionTimeActiveToNow} from "../sessions/S
 import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
 import React from "react";
 import Button from "@material-ui/core/Button";
-import {restoreUser} from "../users/UsersActions";
+import {restoreUserRequest} from "../users/UsersActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {findExistingTask} from "../../utilities";
 

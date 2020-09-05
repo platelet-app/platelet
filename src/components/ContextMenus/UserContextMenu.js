@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import { withSnackbar } from 'notistack';
 import {createPostingSelector} from "../../redux/selectors";
-import {deleteUser, restoreUser} from "../../redux/users/UsersActions";
+import {deleteUserRequest, restoreUserRequest} from "../../redux/users/UsersActions";
 
 
 const initialState = {
@@ -16,7 +16,7 @@ const initialState = {
 };
 
 
-function UserContextMenu(props) {
+export default function UserContextMenu(props) {
     const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(["DELETE_USER", "RESTORE_USER"]);
@@ -32,25 +32,9 @@ function UserContextMenu(props) {
     };
 
 
-    function undoDelete(key) {
-        props.closeSnackbar(key);
-        dispatch(restoreUser(props.user.uuid));
-    }
-
     function onDelete() {
         handleClose();
-        dispatch(deleteUser(props.user.uuid));
-        const action = key => (
-            <React.Fragment>
-                <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
-                    UNDO
-                </Button>
-            </React.Fragment>
-        );
-        const snack = () => {
-            props.enqueueSnackbar('User deleted.', {variant: "info", action, autoHideDuration: 8000});
-        }
-        props.setSnack({ snack })
+        dispatch(deleteUserRequest(props.user.uuid));
     }
 
     const handleClose = () => {
@@ -85,4 +69,3 @@ function UserContextMenu(props) {
     );
 }
 
-export default withSnackbar(UserContextMenu)

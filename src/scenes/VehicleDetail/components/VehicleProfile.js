@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
-    updateVehicle,
+    updateVehicleRequest,
 } from "../../../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
@@ -69,7 +69,7 @@ export default function VehicleProfile(props) {
         <SaveCancelButtons
             disabled={isPosting}
             onSave={() => {
-                dispatch(updateVehicle({vehicleUUID: state.uuid, payload: state}));
+                dispatch(updateVehicleRequest({vehicleUUID: state.uuid, payload: state}));
                 setOldState(state);
             }}
             onCancel={() => {

@@ -26,7 +26,7 @@ export const DELETE_VEHICLE_FAILURE = 'DELETE_VEHICLE_FAILURE';
 
 export const GET_VEHICLE_NOTFOUND = 'GET_VEHICLE_NOTFOUND'
 
-export function addVehicle(data) {
+export function addVehicleRequest(data) {
     return { type: ADD_VEHICLE_REQUEST, data }
 }
 
@@ -34,7 +34,7 @@ export function addVehicleSuccess(data) {
     return { type: ADD_VEHICLE_SUCCESS, data }
 }
 
-export function updateVehicle(data) {
+export function updateVehicleRequest(data) {
     return { type: UPDATE_VEHICLE_REQUEST, data }
 }
 
@@ -46,7 +46,7 @@ export function updateVehicleFailure(error) {
     return { type: UPDATE_VEHICLE_FAILURE, error }
 }
 
-export function getVehicle(data) {
+export function getVehicleRequest(data) {
     return { type: GET_VEHICLE_REQUEST, data }
 }
 
@@ -62,7 +62,7 @@ export function vehicleNotFound() {
     return { type: GET_VEHICLE_NOTFOUND }
 }
 
-export function restoreVehicle(data) {
+export function restoreVehicleRequest(data) {
     return { type: RESTORE_VEHICLE_REQUEST, data }
 }
 
@@ -74,7 +74,7 @@ export function restoreVehicleFailure(error) {
     return { type: RESTORE_VEHICLE_FAILURE, error }
 }
 
-export function deleteVehicle(data) {
+export function deleteVehicleRequest(data) {
     return { type: DELETE_VEHICLE_REQUEST, data }
 }
 
@@ -86,7 +86,7 @@ export function deleteVehicleSuccess(data) {
     return { type: DELETE_VEHICLE_SUCCESS, data }
 }
 
-export function getAllVehicles(data) {
+export function getAllVehiclesRequest(data) {
     return { type: GET_VEHICLES_REQUEST, data }
 }
 

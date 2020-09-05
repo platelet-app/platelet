@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import TasksGridSkeleton from "./components/TasksGridSkeleton"
-import {getWhoami, refreshWhoami, setMenuIndex} from "../../redux/Actions";
+import {getWhoamiRequest, refreshWhoamiRequest, setMenuIndex} from "../../redux/Actions";
 import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
 import {concatTasks} from "./utilities";
 import {getTabIdentifier} from "../../utilities";

@@ -7,7 +7,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setCommentsObjectUUID} from "../../redux/Actions";
 import Divider from "@material-ui/core/Divider";
 import Tooltip from "@material-ui/core/Tooltip";
-import {updateUser} from "../../redux/users/UsersActions";
+import {updateUserRequest} from "../../redux/users/UsersActions";
 import {createPostingSelector} from "../../redux/selectors";
 import SaveCancelButtons from "../../components/SaveCancelButtons";
 
@@ -61,7 +61,7 @@ export default function UserProfile(props) {
         <SaveCancelButtons
             disabled={isPosting}
             onSave={() => {
-                dispatch(updateUser({userUUID: props.user.uuid, payload: state}));
+                dispatch(updateUserRequest({userUUID: props.user.uuid, payload: state}));
                 setOldState(state);
             }}
             onCancel={() => {

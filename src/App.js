@@ -8,14 +8,14 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {
     clearWhoami,
-    getWhoami, setMobileView
+    getWhoamiRequest, setMobileView
 } from "./redux/Actions";
 import {logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
 import {getAvailableDeliverablesRequest} from "./redux/deliverables/DeliverablesActions";
 import {getAvailableLocationsRequest} from "./redux/locations/LocationsActions";
 import {getAvailablePatchesRequest} from "./redux/patches/PatchesActions";
 import {getAvailablePrioritiesRequest} from "./redux/priorities/PrioritiesActions";
-import {getUsers, UPDATE_USER_REQUEST} from "./redux/users/UsersActions";
+import {getUsersRequest, UPDATE_USER_REQUEST} from "./redux/users/UsersActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Moment from "react-moment"
@@ -172,7 +172,7 @@ function App(props) {
 
     function firstWhoami() {
         if (isInitialised)
-            dispatch(getWhoami());
+            dispatch(getWhoamiRequest());
         else
             dispatch(clearWhoami())
     }
@@ -184,7 +184,7 @@ function App(props) {
             dispatch(getAvailablePrioritiesRequest());
             dispatch(getAvailableDeliverablesRequest());
             dispatch(getAvailableLocationsRequest());
-            dispatch(getUsers());
+            dispatch(getUsersRequest());
             dispatch(getAvailablePatchesRequest())
         }
     }

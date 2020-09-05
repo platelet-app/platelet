@@ -51,11 +51,11 @@ export const GET_WHOAMI_SUCCESS = 'GET_WHOAMI_SUCCESS';
 export const GET_WHOAMI_FAILURE = 'GET_WHOAMI_FAILURE';
 export const CLEAR_WHOAMI = 'CLEAR_WHOAMI';
 
-export function getWhoami() {
+export function getWhoamiRequest() {
     return { type: GET_WHOAMI_REQUEST }
 }
 
-export function refreshWhoami() {
+export function refreshWhoamiRequest() {
     return { type: REFRESH_WHOAMI_REQUEST }
 }
 

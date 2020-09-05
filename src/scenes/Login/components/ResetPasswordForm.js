@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import {createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
-import {updateUser, updateUserPassword} from "../../../redux/users/UsersActions";
+import {updateUserRequest, updateUserPasswordRequest} from "../../../redux/users/UsersActions";
 
 export default function ResetPasswordForm(props) {
     const dispatch = useDispatch();
@@ -16,7 +16,7 @@ export default function ResetPasswordForm(props) {
 
     function handlePasswordReset() {
         const payload = {password: newPass}
-        dispatch(updateUserPassword({userUUID: props.userUUID, payload}))
+        dispatch(updateUserPasswordRequest({userUUID: props.userUUID, payload}))
     }
 
     return (

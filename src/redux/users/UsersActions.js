@@ -32,7 +32,7 @@ export const UPDATE_USER_PASSWORD_FAILURE = 'UPDATE_USER_PASSWORD_FAILURE';
 
 export const CLEAR_FORCE_RESET_PASSWORD_STATUS = 'CLEAR_FORCE_RESET_PASSWORD_STATUS';
 
-export function getUsers() {
+export function getUsersRequest() {
     return { type: GET_USERS_REQUEST }
 }
 
@@ -44,7 +44,7 @@ export function getUsersFailure(error) {
     return { type: GET_USERS_FAILURE, error }
 }
 
-export function getUser(data) {
+export function getUserRequest(data) {
     return { type: GET_USER_REQUEST, data }
 }
 
@@ -56,7 +56,7 @@ export function getUserFailure(error) {
     return { type: GET_USER_FAILURE, error }
 }
 
-export function deleteUser(data) {
+export function deleteUserRequest(data) {
     return { type: DELETE_USER_REQUEST, data }
 }
 
@@ -68,7 +68,7 @@ export function deleteUserFailure(error) {
     return { type: DELETE_USER_FAILURE, error }
 }
 
-export function addUser(data) {
+export function addUserRequest(data) {
     return { type: ADD_USER_REQUEST, data }
 }
 
@@ -80,7 +80,7 @@ export function addUserFailure(error) {
     return { type: ADD_USER_FAILURE, error }
 }
 
-export function restoreUser(data) {
+export function restoreUserRequest(data) {
     return { type: RESTORE_USER_REQUEST, data }
 }
 
@@ -92,7 +92,7 @@ export function restoreUserFailure(error) {
     return { type: RESTORE_USER_FAILURE, error }
 }
 
-export function updateUser(data) {
+export function updateUserRequest(data) {
     return { type: UPDATE_USER_REQUEST, data }
 }
 
@@ -104,7 +104,7 @@ export function updateUserFailure(error) {
     return { type: UPDATE_USER_FAILURE, error }
 }
 
-export function updateUserPassword(data) {
+export function updateUserPasswordRequest(data) {
     return { type: UPDATE_USER_PASSWORD_REQUEST, data }
 }
 

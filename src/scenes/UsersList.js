@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import {TextFieldControlled} from "../components/TextFields";
 import {setMenuIndex} from "../redux/Actions";
 import {AddCircleButton} from "../components/Buttons";
-import {addUser} from "../redux/users/UsersActions";
+import {addUserRequest} from "../redux/users/UsersActions";
 import UserContextMenu from "../components/ContextMenus/UserContextMenu";
 import {PaddedPaper} from "../styles/common";
 import {createPostingSelector} from "../redux/selectors";
@@ -54,7 +54,7 @@ export default function UsersList(props) {
     const circleAdd =
         <AddCircleButton
             onClick={() => {
-                dispatch(addUser({}))
+                dispatch(addUserRequest({}))
             }
             }
         />;
@@ -81,7 +81,7 @@ export default function UsersList(props) {
                                                 right: 0,
                                                 zIndex: 1000
                                             }}>
-                                                <UserContextMenu setSnack={(snack) => {setSnack(snack)}} user={user}/>
+                                                <UserContextMenu user={user}/>
                                             </div>
                                         </div>
                                     </Grid>
