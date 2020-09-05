@@ -29,7 +29,7 @@ export const SET_CURRENT_SESSION = 'SET_CURRENT_SESSION';
 export const CLEAR_CURRENT_SESSION = 'CLEAR_CURRENT_SESSION';
 export const SET_CURRENT_SESSION_TIME_ACTIVE_TO_NOW = 'SET_CURRENT_SESSION_TIME_ACTIVE_TO_NOW';
 
-export function addSession(data) {
+export function addSessionRequest(data) {
     return { type: ADD_SESSION_REQUEST, data }
 }
 
@@ -41,7 +41,7 @@ export function addSessionFailure(error) {
     return { type: ADD_SESSION_FAILURE, error }
 }
 
-export function addSessionCollaborator(data) {
+export function addSessionCollaboratorRequest(data) {
     return { type: ADD_SESSION_COLLABORATOR_REQUEST, data }
 }
 
@@ -53,7 +53,7 @@ export function addSessionCollaboratorFailure(error) {
     return { type: ADD_SESSION_COLLABORATOR_FAILURE, error }
 }
 
-export function getAllSessions(data) {
+export function getAllSessionsRequest(data) {
     return { type: GET_SESSIONS_REQUEST, data }
 }
 
@@ -65,7 +65,7 @@ export function getAllSessionsFailure(error) {
     return { type: GET_SESSIONS_FAILURE, error }
 }
 
-export function getSession(data) {
+export function getSessionRequest(data) {
     return { type: GET_SESSION_REQUEST, data }
 }
 
@@ -81,7 +81,7 @@ export function getSessionNotFound(data) {
     return { type: GET_SESSION_NOTFOUND, data }
 }
 
-export function getSessionStatistics(data) {
+export function getSessionStatisticsRequest(data) {
     return { type: GET_SESSION_STATISTICS_REQUEST, data }
 }
 
@@ -97,7 +97,7 @@ export function getSessionStatisticsFailure(data) {
     return { type: GET_SESSION_STATISTICS_FAILURE, data }
 }
 
-export function deleteSession(data) {
+export function deleteSessionRequest(data) {
     return { type: DELETE_SESSION_REQUEST, data }
 }
 
@@ -109,7 +109,7 @@ export function deleteSessionFailure(data) {
     return { type: DELETE_SESSION_FAILURE, data }
 }
 
-export function restoreSession(data) {
+export function restoreSessionRequest(data) {
     return { type: RESTORE_SESSION_REQUEST, data }
 }
 
@@ -129,7 +129,7 @@ export function clearCurrentSession() {
     return { type: CLEAR_CURRENT_SESSION }
 }
 
-export function refreshCurrentSession(data) {
+export function refreshCurrentSessionRequest(data) {
     return { type: REFRESH_CURRENT_SESSION_REQUEST, data }
 }
 export function refreshCurrentSessionSuccess(data) {

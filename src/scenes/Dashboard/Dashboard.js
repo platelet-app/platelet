@@ -3,10 +3,10 @@ import '../../App.css';
 import 'typeface-roboto'
 import Grid from "@material-ui/core/Grid";
 import {
-    addTask,
+    addTaskRequest,
     clearCurrentTask,
-    getAllTasks,
-    refreshAllTasks,
+    getAllTasksRequest,
+    refreshAllTasksRequest,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket,
@@ -20,8 +20,8 @@ import {
     setHideDelivered
 } from "../../redux/Actions";
 import {
-    getSession,
-    refreshCurrentSession,
+    getSessionRequest,
+    refreshCurrentSessionRequest,
 } from "../../redux/sessions/SessionsActions";
 import TasksGrid from "./components/TasksGrid";
 import {
@@ -94,8 +94,7 @@ function Dashboard(props) {
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
-        dispatch(getAllTasks(whoami.uuid));
-        //dispatch(getSession(session_uuid))
+        dispatch(getAllTasksRequest(whoami.uuid));
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
@@ -177,7 +176,7 @@ function Dashboard(props) {
     };
 
     function addEmptyTask() {
-        dispatch(addTask(emptyTask))
+        dispatch(addTaskRequest(emptyTask))
     }
 
     function setNewTaskAdded() {

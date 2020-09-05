@@ -3,7 +3,7 @@ import '../App.css';
 import 'typeface-roboto'
 import {PaddedPaper} from '../styles/common';
 import Grid from "@material-ui/core/Grid";
-import {addSession, clearCurrentSession, getAllSessions} from "../redux/sessions/SessionsActions";
+import {addSessionRequest, clearCurrentSession, getAllSessionsRequest} from "../redux/sessions/SessionsActions";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 
@@ -113,7 +113,7 @@ function SessionList(props) {
 
     function updateSessionsList() {
         if (props.user_uuid || whoami.uuid)
-            dispatch(getAllSessions(props.user_uuid ? props.user_uuid : whoami.uuid))
+            dispatch(getAllSessionsRequest(props.user_uuid ? props.user_uuid : whoami.uuid))
     }
 
     useEffect(updateSessionsList, [whoami]);
@@ -138,7 +138,7 @@ function SessionList(props) {
     function onStartNewSession() {
         let newSession = {...emptySession};
         newSession.coordinator_uuid = whoami.uuid;
-        dispatch(addSession(newSession));
+        dispatch(addSessionRequest(newSession));
     }
 
     const startNewSession =

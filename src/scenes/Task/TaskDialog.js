@@ -14,14 +14,14 @@ import PrioritySelect from "./components/PrioritySelect";
 import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
 import DeliverableInformation from "../Deliverables/DeliverableInformation";
 import {
-    getAllTasks,
-    updateTaskPickupTime,
-    updateTaskPriority,
-    updateTaskContactName,
-    updateTaskContactNumber,
-    updateTaskDropoffAddress,
-    updateTaskDropoffTime,
-    updateTaskPickupAddress, updateTaskCancelledTime, setCurrentTask, clearCurrentTask, getTask
+    getAllTasksRequest,
+    updateTaskPickupTimeRequest,
+    updateTaskPriorityRequest,
+    updateTaskContactNameRequest,
+    updateTaskContactNumberRequest,
+    updateTaskDropoffAddressRequest,
+    updateTaskDropoffTimeRequest,
+    updateTaskPickupAddressRequest, updateTaskCancelledTimeRequest, setCurrentTask, clearCurrentTask, getTaskRequest
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import Box from "@material-ui/core/Box";
@@ -82,7 +82,7 @@ export default function TaskDialog(props) {
 
     function componentDidMount() {
         if (!tasks) {
-            dispatch(getTask(taskUUID));
+            dispatch(getTaskRequest(taskUUID));
         }
     }
 
@@ -91,7 +91,7 @@ export default function TaskDialog(props) {
     function getSessionData() {
         return
         if (sessionUUID && !tasks.length)
-            dispatch(getAllTasks(sessionUUID));
+            dispatch(getAllTasksRequest(sessionUUID));
     }
 
     useEffect(getSessionData, [sessionUUID])
@@ -119,43 +119,43 @@ export default function TaskDialog(props) {
 
     function onSelectContactNumber(event) {
         const payload = {contact_number: event.target.value};
-        dispatch(updateTaskContactNumber({taskUUID, payload}));
+        dispatch(updateTaskContactNumberRequest({taskUUID, payload}));
     }
 
     function onSelectName(event) {
         const payload = {contact_name: event.target.value};
-        dispatch(updateTaskContactName({taskUUID, payload}));
+        dispatch(updateTaskContactNameRequest({taskUUID, payload}));
     }
 
     function onSelectPickup(pickupAddress) {
         if (pickupAddress) {
             const payload = {pickup_address: pickupAddress};
-            dispatch(updateTaskPickupAddress({taskUUID, payload}));
+            dispatch(updateTaskPickupAddressRequest({taskUUID, payload}));
         }
     }
 
     function onSelectDropoff(dropoffAddress) {
         if (dropoffAddress) {
             const payload = {dropoff_address: dropoffAddress};
-            dispatch(updateTaskDropoffAddress({taskUUID, payload}));
+            dispatch(updateTaskDropoffAddressRequest({taskUUID, payload}));
         }
     }
 
 
     function onSelectPriority(priority_id, priority) {
         const payload = {priority_id, priority};
-        dispatch(updateTaskPriority({taskUUID, payload}));
+        dispatch(updateTaskPriorityRequest({taskUUID, payload}));
     }
 
     function onSelectPickedUp(dateTime) {
         setPickedUpStatus(dateTime !== null);
         const payload = {time_picked_up: dateTime};
-        dispatch(updateTaskPickupTime({taskUUID, payload}));
+        dispatch(updateTaskPickupTimeRequest({taskUUID, payload}));
     }
 
     function onSelectDroppedOff(dateTime) {
         const payload = {time_dropped_off: dateTime};
-        dispatch(updateTaskDropoffTime({taskUUID, payload}));
+        dispatch(updateTaskDropoffTimeRequest({taskUUID, payload}));
     }
 
     let handleClose = e => {
@@ -209,7 +209,7 @@ export default function TaskDialog(props) {
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_cancelled}
                                  onSelect={() => {
                                      const payload = {time_cancelled: null};
-                                     dispatch(updateTaskCancelledTime({taskUUID, payload}));
+                                     dispatch(updateTaskCancelledTimeRequest({taskUUID, payload}));
                                  }
                                  }/>
             </PaddedPaper>
@@ -224,7 +224,7 @@ export default function TaskDialog(props) {
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_rejected}
                                  onSelect={() => {
                                      const payload = {time_rejected: null};
-                                     dispatch(updateTaskCancelledTime({taskUUID, payload}));
+                                     dispatch(updateTaskCancelledTimeRequest({taskUUID, payload}));
                                  }
                                  }/>
             </PaddedPaper>

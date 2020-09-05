@@ -2,7 +2,7 @@ export const GET_AVAILABLE_PRIORITIES_REQUEST = 'GET_AVAILABLE_PRIORITIES_REQUES
 export const GET_AVAILABLE_PRIORITIES_SUCCESS = 'GET_AVAILABLE_PRIORITIES_SUCCESS';
 export const GET_AVAILABLE_PRIORITIES_FAILURE = 'GET_AVAILABLE_PRIORITIES_FAILURE';
 
-export function getAvailablePriorities() {
+export function getAvailablePrioritiesRequest() {
     return { type: GET_AVAILABLE_PRIORITIES_REQUEST }
 }
 

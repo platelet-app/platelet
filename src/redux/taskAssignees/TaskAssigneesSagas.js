@@ -14,7 +14,7 @@ import {
 } from "./TaskAssigneesActions";
 import {
     updateTaskAssignedRiderSuccess,
-    updateTaskPatch, updateTaskPatchFromServer,
+    updateTaskPatchRequest, updateTaskPatchFromServer,
     updateTaskRemoveAssignedRiderSuccess,
     updateTaskSuccess
 } from "../tasks/TasksActions";
@@ -24,7 +24,7 @@ function* addTaskAssignedRider(action) {
         yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         if (action.data.payload.patch_id) {
-            yield put(updateTaskPatch({
+            yield put(updateTaskPatchRequest({
                 taskUUID: action.data.taskUUID,
                 payload: {patch_id: action.data.payload.patch_id}
             }));

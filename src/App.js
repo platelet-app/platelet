@@ -8,21 +8,21 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {
     clearWhoami,
-    getWhoami, setMobileView
+    getWhoamiRequest, setMobileView
 } from "./redux/Actions";
 import {logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
-import {getAvailableDeliverables} from "./redux/deliverables/DeliverablesActions";
-import {getAvailableLocations} from "./redux/locations/LocationsActions";
-import {getAvailablePatches} from "./redux/patches/PatchesActions";
-import {getAvailablePriorities} from "./redux/priorities/PrioritiesActions";
-import {getUsers, UPDATE_USER_REQUEST} from "./redux/users/UsersActions";
+import {getAvailableDeliverablesRequest} from "./redux/deliverables/DeliverablesActions";
+import {getAvailableLocationsRequest} from "./redux/locations/LocationsActions";
+import {getAvailablePatchesRequest} from "./redux/patches/PatchesActions";
+import {getAvailablePrioritiesRequest} from "./redux/priorities/PrioritiesActions";
+import {getUsersRequest, UPDATE_USER_REQUEST} from "./redux/users/UsersActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Moment from "react-moment"
 import ApiConfig from "./scenes/ApiConfig";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import {clearServerSettings, getServerSettings} from "./redux/ServerSettings/ServerSettingsActions";
+import {clearServerSettings, getServerSettingsRequest} from "./redux/ServerSettings/ServerSettingsActions";
 import {withSnackbar} from "notistack";
 import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import {Helmet} from "react-helmet"
@@ -138,7 +138,7 @@ function App(props) {
 
     function requestServerSettings() {
         if (apiURL) {
-            dispatch(getServerSettings())
+            dispatch(getServerSettingsRequest())
             dispatch(connectSocket(apiURL + "subscribe"))
         }
     }
@@ -172,7 +172,7 @@ function App(props) {
 
     function firstWhoami() {
         if (isInitialised)
-            dispatch(getWhoami());
+            dispatch(getWhoamiRequest());
         else
             dispatch(clearWhoami())
     }
@@ -181,11 +181,11 @@ function App(props) {
 
     function getStaticData() {
         if (isInitialised) {
-            dispatch(getAvailablePriorities());
-            dispatch(getAvailableDeliverables());
-            dispatch(getAvailableLocations());
-            dispatch(getUsers());
-            dispatch(getAvailablePatches())
+            dispatch(getAvailablePrioritiesRequest());
+            dispatch(getAvailableDeliverablesRequest());
+            dispatch(getAvailableLocationsRequest());
+            dispatch(getUsersRequest());
+            dispatch(getAvailablePatchesRequest())
         }
     }
 

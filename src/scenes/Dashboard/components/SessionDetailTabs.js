@@ -115,7 +115,7 @@ export function SessionDetailTabs(props) {
                             </Tabs>
                         </Grid>
                         <Grid item>
-                            <Grid container spacing={2} direction={"row"} justify={"flex-align"} alignItems={"center"}>
+                            <Grid container spacing={2} direction={"row"} justify={"flex-start"} alignItems={"center"}>
                                 <Grid item>
                                     <CollaboratorsSection
                                         allowAdd={(whoami.uuid === currentSession.coordinator_uuid || whoami.roles.includes("admin"))}

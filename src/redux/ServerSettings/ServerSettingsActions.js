@@ -3,7 +3,7 @@ export const GET_SERVER_SETTINGS_REQUEST = 'GET_SERVER_SETTINGS_REQUEST';
 export const GET_SERVER_SETTINGS_FAILURE = 'GET_SERVER_SETTINGS_FAILURE';
 export const CLEAR_SERVER_SETTINGS = 'CLEAR_SERVER_SETTINGS';
 
-export function getServerSettings() {
+export function getServerSettingsRequest() {
     return { type: GET_SERVER_SETTINGS_REQUEST }
 }
 

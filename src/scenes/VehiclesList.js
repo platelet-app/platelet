@@ -5,7 +5,7 @@ import {PaddedPaper} from '../styles/common';
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
-import {addVehicle, getAllVehicles} from "../redux/vehicles/VehiclesActions";
+import {addVehicleRequest, getAllVehiclesRequest} from "../redux/vehicles/VehiclesActions";
 import {encodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
@@ -21,7 +21,7 @@ function VehicleList() {
     const isFetching = useSelector(state => loadingSelector(state));
 
     function componentDidMount() {
-        dispatch(getAllVehicles());
+        dispatch(getAllVehiclesRequest());
     }
 
     useEffect(componentDidMount, []);
@@ -35,7 +35,7 @@ function VehicleList() {
     const addButton =
         <Button
             onClick={() => {
-                dispatch(addVehicle({}))
+                dispatch(addVehicleRequest({}))
             }}>
             Add a new vehicle
         </Button>

@@ -19,12 +19,14 @@ import {
     vehicleNotFound,
     getVehicleFailure,
     deleteVehicleFailure,
-    restoreVehicleFailure, getAllVehiclesFailure, updateVehicleFailure
+    restoreVehicleFailure, getAllVehiclesFailure, updateVehicleFailure, restoreVehicleRequest
 } from "./VehiclesActions"
 
 import {getWhoamiSuccess} from "../Actions"
 import {getUsersSuccess} from "../users/UsersActions"
 import {getApiControl, getWhoami} from "../Api";
+import {restoreTaskRequest} from "../tasks/TasksActions";
+import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function* postNewVehicle(action) {
     const api = yield select(getApiControl);
@@ -116,9 +118,11 @@ export function* watchVehicle() {
 
 function* deleteVehicle(action) {
     try {
+        const restoreAction = () => restoreVehicleRequest(action.data);
         const api = yield select(getApiControl);
         yield call([api, api.vehicles.deleteVehicle], action.data);
         yield put(deleteVehicleSuccess(action.data))
+        yield put(displayInfoNotification("Vehicle deleted", restoreAction))
     } catch (error) {
         yield put(deleteVehicleFailure(error))
     }

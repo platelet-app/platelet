@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {
-    addDeliverable,
-    deleteDeliverable,
-    getDeliverables,
-    updateDeliverable
+    addDeliverableRequest,
+    deleteDeliverableRequest,
+    getDeliverablesRequest,
+    updateDeliverableRequest
 } from "../../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
@@ -30,7 +30,7 @@ export default function DeliverableGridSelect(props) {
 
     const onSelectDeliverable = (deliverable) => {
         let newDeliverable = {...emptyDeliverable, ...deliverable};
-        dispatch(addDeliverable(newDeliverable))
+        dispatch(addDeliverableRequest(newDeliverable))
         setAddMode(false);
     };
 
@@ -43,7 +43,7 @@ export default function DeliverableGridSelect(props) {
 
     React.useEffect(() => {
         if (availableDeliverables.length > 0)
-            dispatch(getDeliverables(props.taskUUID))
+            dispatch(getDeliverablesRequest(props.taskUUID))
 
     }, [availableDeliverables]);
 
@@ -56,7 +56,7 @@ export default function DeliverableGridSelect(props) {
                 setAddMode(!addMode)
                 return
                 let newDeliverable = {...emptyDeliverable};
-                dispatch(addDeliverable(newDeliverable))
+                dispatch(addDeliverableRequest(newDeliverable))
             }}
         >
             {addMode ? "Cancel" : "Add a deliverable"}
@@ -76,7 +76,7 @@ export default function DeliverableGridSelect(props) {
                     return (
                         <Grid item key={deliverable.uuid}>
                             <DeliverableCard
-                                onDelete={() => dispatch(deleteDeliverable(deliverable.uuid))}
+                                onDelete={() => dispatch(deleteDeliverableRequest(deliverable.uuid))}
                                 deliverable={deliverable}
                             />
                         </Grid>

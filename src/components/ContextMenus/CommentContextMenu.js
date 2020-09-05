@@ -2,14 +2,12 @@ import React, {useEffect} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
-    deleteComment, deleteSidebarComment,
-    restoreComment, restoreSidebarComment
+    deleteCommentRequest, deleteSidebarCommentRequest,
+    restoreCommentRequest, restoreSidebarCommentRequest
 } from "../../redux/comments/CommentsActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
-import Button from "@material-ui/core/Button";
-import { withSnackbar } from 'notistack';
 import {createPostingSelector} from "../../redux/selectors";
 
 
@@ -19,7 +17,7 @@ const initialState = {
 };
 
 
-function CommentContextMenu(props) {
+export default function CommentContextMenu(props) {
     const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(props.sidebar ?  ["DELETE_SIDEBAR_COMMENT", "RESTORE_SIDEBAR_COMMENT"] : ["DELETE_COMMENT", "RESTORE_COMMENT"]);
@@ -34,31 +32,13 @@ function CommentContextMenu(props) {
         });
     };
 
-    function undoDelete(key) {
-        props.closeSnackbar(key);
-        if (props.sidebar)
-            dispatch(restoreSidebarComment(props.comment.uuid));
-        else
-            dispatch(restoreComment(props.comment.uuid));
-    }
 
     function onDelete() {
         handleClose();
         if (props.sidebar)
-            dispatch(deleteSidebarComment(props.comment.uuid));
+            dispatch(deleteSidebarCommentRequest(props.comment.uuid));
         else
-            dispatch(deleteComment(props.comment.uuid));
-        const action = key => (
-            <React.Fragment>
-                <Button color="secondary" size="small" onClick={() => {undoDelete(key)}}>
-                    UNDO
-                </Button>
-            </React.Fragment>
-        );
-        const snack = () => {
-            props.enqueueSnackbar('Comment deleted.', {variant: "info", action, autoHideDuration: 8000});
-        }
-        props.setSnack({ snack })
+            dispatch(deleteCommentRequest(props.comment.uuid));
     }
 
     const handleClose = () => {
@@ -95,5 +75,3 @@ function CommentContextMenu(props) {
         </>
     );
 }
-
-export default withSnackbar(CommentContextMenu)

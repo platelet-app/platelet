@@ -11,7 +11,7 @@ export default function CollaboratorsSection(props) {
          : <></>
 
     return (
-    <Grid container spacing={1} direction={"row"} justify={"flex-left"} alignItems={"center"}>
+    <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
         <Grid item>
 
             <AvatarGroup>

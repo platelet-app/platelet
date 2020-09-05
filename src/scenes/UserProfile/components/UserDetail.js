@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {decodeUUID} from "../../../utilities";
 import {useDispatch, useSelector} from "react-redux";
-import {getUser} from "../../../redux/users/UsersActions";
+import {getUserRequest} from "../../../redux/users/UsersActions";
 import UserProfile from "../UserProfile";
 import {createLoadingSelector} from "../../../redux/selectors";
 import DetailSkeleton from "./DetailSkeleton";
@@ -18,7 +18,7 @@ export default function UserDetail (props) {
     const isFetching = useSelector(state => loadingSelector(state));
 
     function newUserProfile() {
-        dispatch(getUser(userUUID));
+        dispatch(getUserRequest(userUUID));
     }
     useEffect(newUserProfile, [props.location.key]);
 

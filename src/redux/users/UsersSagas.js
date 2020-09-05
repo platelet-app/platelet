@@ -15,9 +15,11 @@ import {
     getUserFailure,
     updateUserFailure,
     deleteUserFailure,
-    restoreUserFailure, addUserFailure, UPDATE_USER_PASSWORD_REQUEST, clearForceResetPasswordStatus,
+    restoreUserFailure, addUserFailure, UPDATE_USER_PASSWORD_REQUEST, clearForceResetPasswordStatus, restoreUserRequest,
 } from "./UsersActions";
 import {getApiControl} from "../Api"
+import {restoreVehicleRequest} from "../vehicles/VehiclesActions";
+import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function* getUsers() {
     try {
@@ -78,9 +80,11 @@ export function* watchUpdateUserPassword() {
 
 function* deleteUser(action) {
     try {
+        const restoreAction = () => restoreUserRequest(action.data);
         const api = yield select(getApiControl);
         yield call([api, api.users.deleteUser], action.data);
         yield put(deleteUserSuccess(action.data))
+        yield put(displayInfoNotification("User deleted", restoreAction))
     } catch (error) {
         yield put(deleteUserFailure(error))
     }

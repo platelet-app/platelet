@@ -32,7 +32,7 @@ import {
     deleteSidebarCommentFailure,
     restoreSidebarCommentSuccess,
     restoreSidebarCommentFailure,
-    RESTORE_SIDEBAR_COMMENT_REQUEST, DELETE_SIDEBAR_COMMENT_REQUEST
+    RESTORE_SIDEBAR_COMMENT_REQUEST, DELETE_SIDEBAR_COMMENT_REQUEST, restoreCommentRequest, restoreSidebarCommentRequest
 } from "./CommentsActions"
 
 import {getApiControl} from "../Api";
@@ -42,6 +42,9 @@ import {
     deleteSessionSuccess, RESTORE_SESSION_REQUEST,
     restoreSessionSuccess
 } from "../sessions/SessionsActions";
+import {deleteTaskSuccess, restoreTaskRequest} from "../tasks/TasksActions";
+import {unsubscribeFromUUID} from "../sockets/SocketActions";
+import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 export function* postNewComment(action) {
     try {
@@ -106,11 +109,14 @@ export function* postNewSidebarComment(action) {
     }
 }
 
+
 function* deleteComment(action) {
     try {
+        const restoreAction = () => restoreCommentRequest(action.data);
         const api = yield select(getApiControl);
         yield call([api, api.comments.deleteComment], action.data);
         yield put(deleteCommentSuccess(action.data))
+        yield put(displayInfoNotification("Comment deleted", restoreAction))
     } catch (error) {
         yield put(deleteCommentFailure(error));
     }
@@ -177,9 +183,11 @@ export function* watchGetSidebarComments() {
 }
 function* deleteSidebarComment(action) {
     try {
+        const restoreAction = () => restoreSidebarCommentRequest(action.data);
         const api = yield select(getApiControl);
         yield call([api, api.comments.deleteComment], action.data);
         yield put(deleteSidebarCommentSuccess(action.data))
+        yield put(displayInfoNotification("Comment deleted", restoreAction))
     } catch (error) {
         yield put(deleteSidebarCommentFailure(error));
     }

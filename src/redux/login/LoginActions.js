@@ -8,7 +8,7 @@ export const LOGIN_INCORRECT_PASSWORD = 'LOGIN_INCORRECT_PASSWORD';
 export const LOGIN_AUTHORISED = 'LOGIN_AUTHORISED';
 export const REFRESH_TOKEN = 'REFRESH_TOKEN';
 
-export function loginUser(data) {
+export function loginRequest(data) {
     return { type: LOGIN_REQUEST, data }
 }
 

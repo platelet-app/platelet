@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import UserCard from "../../../components/UserCard";
 import UsersSelect from "../../../components/UsersSelect";
 import {useDispatch} from "react-redux";
-import {addSessionCollaborator} from "../../../redux/sessions/SessionsActions";
+import {addSessionCollaboratorRequest} from "../../../redux/sessions/SessionsActions";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -42,7 +42,7 @@ export default function CollaboratorPickerPopover(props) {
     const handleSelectUser = (user) => {
         if (user) {
             const payload = {user_uuid: user.uuid, user}
-            dispatch(addSessionCollaborator({sessionUUID: props.sessionUUID, payload}))
+            dispatch(addSessionCollaboratorRequest({sessionUUID: props.sessionUUID, payload}))
             handleClose();
         }
     }

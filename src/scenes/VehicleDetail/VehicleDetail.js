@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import VehicleProfile from "./components/VehicleProfile";
 import {decodeUUID} from "../../utilities";
-import {getVehicle, updateVehicle} from "../../redux/vehicles/VehiclesActions";
+import {getVehicleRequest, updateVehicleRequest} from "../../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
@@ -27,7 +27,7 @@ export default function VehicleDetail(props) {
 
 
     function componentDidMount() {
-        dispatch(getVehicle(vehicleUUID));
+        dispatch(getVehicleRequest(vehicleUUID));
     }
     useEffect(componentDidMount, [props.location.key]);
 
@@ -37,7 +37,7 @@ export default function VehicleDetail(props) {
     function onAssignUser(user) {
         if (user)
             dispatch(
-                updateVehicle(
+                updateVehicleRequest(
                     {vehicleUUID: vehicle.uuid, payload: {...vehicle, assigned_user: user, assigned_user_uuid: user.uuid}}
                     )
             );

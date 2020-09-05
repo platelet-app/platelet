@@ -17,7 +17,7 @@ export const GET_COMMENTS_FORBIDDEN = 'GET_COMMENTS_FORBIDDEN';
 export const GET_COMMENTS_SUCCESS = 'GET_COMMENTS_SUCCESS';
 export const CLEAR_COMMENTS = 'CLEAR_COMMENTS';
 
-export function addComment(data) {
+export function addCommentRequest(data) {
     return { type: ADD_COMMENT_REQUEST, data }
 }
 
@@ -29,7 +29,7 @@ export function addCommentFailure(error) {
     return { type: ADD_COMMENT_FAILURE, error }
 }
 
-export function restoreComment(data) {
+export function restoreCommentRequest(data) {
     return { type: RESTORE_COMMENT_REQUEST, data }
 }
 
@@ -41,7 +41,7 @@ export function restoreCommentFailure(error) {
     return { type: RESTORE_COMMENT_FAILURE, error }
 }
 
-export function deleteComment(data) {
+export function deleteCommentRequest(data) {
     return { type: DELETE_COMMENT_REQUEST, data }
 }
 
@@ -57,7 +57,7 @@ export function clearComments() {
     return { type: CLEAR_COMMENTS }
 }
 
-export function getComments(data) {
+export function getCommentsRequest(data) {
     return { type: GET_COMMENTS_REQUEST, data }
 }
 
@@ -77,7 +77,7 @@ export function getCommentsSuccess(data) {
     return { type: GET_COMMENTS_SUCCESS, data }
 }
 
-export function updateComment(data) {
+export function updateCommentRequest(data) {
     return { type: UPDATE_COMMENT_REQUEST, data }
 }
 
@@ -108,7 +108,7 @@ export const GET_SIDEBAR_COMMENTS_NOTFOUND = 'GET_SIDEBAR_COMMENTS_NOTFOUND';
 export const GET_SIDEBAR_COMMENTS_FORBIDDEN = 'GET_SIDEBAR_COMMENTS_FORBIDDEN';
 export const CLEAR_SIDEBAR_COMMENTS = 'CLEAR_SIDEBAR_COMMENTS';
 
-export function addSidebarComment(data) {
+export function addSidebarCommentRequest(data) {
     return { type: ADD_SIDEBAR_COMMENT_REQUEST, data }
 }
 
@@ -120,7 +120,7 @@ export function addSidebarCommentFailure(error) {
     return { type: ADD_SIDEBAR_COMMENT_FAILURE, error }
 }
 
-export function restoreSidebarComment(data) {
+export function restoreSidebarCommentRequest(data) {
     return { type: RESTORE_SIDEBAR_COMMENT_REQUEST, data }
 }
 
@@ -132,7 +132,7 @@ export function restoreSidebarCommentFailure(error) {
     return { type: RESTORE_SIDEBAR_COMMENT_FAILURE, error }
 }
 
-export function deleteSidebarComment(data) {
+export function deleteSidebarCommentRequest(data) {
     return { type: DELETE_SIDEBAR_COMMENT_REQUEST, data }
 }
 
@@ -148,7 +148,7 @@ export function clearSidebarComments() {
     return { type: CLEAR_SIDEBAR_COMMENTS }
 }
 
-export function getSidebarComments(data) {
+export function getSidebarCommentsRequest(data) {
     return { type: GET_SIDEBAR_COMMENTS_REQUEST, data }
 }
 
@@ -168,7 +168,7 @@ export function getSidebarCommentsFailure(error) {
     return { type: GET_SIDEBAR_COMMENTS_FAILURE, error }
 }
 
-export function updateSidebarComment(data) {
+export function updateSidebarCommentRequest(data) {
     return { type: UPDATE_SIDEBAR_COMMENT_REQUEST, data }
 }
 
