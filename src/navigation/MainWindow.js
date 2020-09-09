@@ -22,9 +22,8 @@ export default function MainWindow(_props) {
         <MainWindowContainer>
             <main>
                 <Switch location={location}>
-                    <Route exact path='/' component={Home}/>
-                    <Route path='/sessions'
-                           render={(props) => <SessionsList {...props} apiControl={_props.apiControl}/>}
+                    <Route exact path='/'
+                           render={(props) => <Dashboard {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route path='/profile'
                            render={(props) => <MyUserProfile {...props} apiControl={_props.apiControl}/>}
@@ -47,13 +46,7 @@ export default function MainWindow(_props) {
                     <Route exact path='/user/:user_uuid_b62'
                            render={(props) => <UserDetail {...props} apiControl={_props.apiControl}/>}
                     />
-                    <Route exact path='/session/:session_uuid_b62'
-                           render={(props) => <Dashboard {...props} apiControl={_props.apiControl}/>}
-                    />
-                    <Route exact path='/session/:session_uuid_b62/statistics'
-                           render={(props) => <Dashboard {...props} statsView={true} apiControl={_props.apiControl}/>}
-                    />
-                    <Route exact path="/session/:session_uuid_b62/task/:task_uuid_b62"
+                    <Route exact path="/task/:task_uuid_b62"
                            render={(props) => {
                                return (
                                    <>

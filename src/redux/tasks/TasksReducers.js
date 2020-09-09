@@ -40,11 +40,11 @@ const initialState = {
         deliverables: null,
         comments: null,
         links: null,
-        assigned_rider: null,
         time_picked_up: null,
         time_dropped_off: null,
         rider: null,
-        assigned_users: [],
+        assigned_riders: [],
+        assigned_coordinators: [],
         priority_id: null,
         time_cancelled: null,
         time_rejected: null,
@@ -108,7 +108,6 @@ export function tasks(state = initialTasksState, action) {
             const resultAdd = sortAndConcat(state.tasks, action.data)
             return {tasks: Object.assign({}, state.tasks, resultAdd), error: null}
         case RESTORE_TASK_SUCCESS:
-            //TODO: should this check that the task matches the session? it's unlikely a task will be deleted from anything other than it's own session view
             const resultRestore = sortAndConcat(state.tasks, action.data)
             return {tasks: Object.assign({}, state.tasks, resultRestore), error: null}
         case UPDATE_TASK_SUCCESS:

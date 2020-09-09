@@ -395,9 +395,17 @@ export function* watchUpdateTaskRejectedTime() {
 
 function* getTask(action) {
     try {
-        const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.getTask], action.data);
-        yield put(getTaskSuccess(result))
+        const currentTasks = yield select((state) => state.tasks.tasks);
+        const {task} = findExistingTask(currentTasks, action.data)
+        if (task) {
+            // if it's already in the list of tasks, no need to get it
+            yield put(getTaskSuccess(task))
+        } else {
+            // not in the list so call the api
+            const api = yield select(getApiControl);
+            const result = yield call([api, api.tasks.getTask], action.data);
+            yield put(getTaskSuccess(result))
+        }
     } catch (error) {
         yield put(getTaskFailure(error))
     }

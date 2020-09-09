@@ -6,7 +6,7 @@ import {encodeUUID} from "../../../utilities";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 
 const TaskItem = React.memo((props) => {
-    const currentLocation = useLocation();
+    let location = useLocation();
     const task =
         <TaskCard
             title={"Task"}
@@ -25,7 +25,8 @@ const TaskItem = React.memo((props) => {
             <div style={{cursor: 'context-menu', position: "relative"}}>
                 <Link style={{textDecoration: 'none'}}
                       key={props.task.uuid}
-                      to={`${currentLocation.pathname}/task/${encodeUUID(props.task.uuid)}`}>
+
+                      to={{pathname:`/task/${encodeUUID(props.task.uuid)}`, state: {prevPath: location.pathname}}}>
                     {task}
                 </Link>
                 <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>

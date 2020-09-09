@@ -131,7 +131,6 @@ export function SessionDetailTabs(props) {
                                                 checked={props.hideDelivered}
                                                 onChange={() => {
                                                     dispatch(setHideDelivered(!props.hideDelivered));
-                                                    //setToggleHideDelivered(!toggleHideDelivered);
                                                 }}
                                                 name="hide-delivered"/>}
                                         label="Hide Delivered"

@@ -94,7 +94,6 @@ function Dashboard(props) {
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
-        dispatch(getAllTasksRequest(whoami.uuid));
         dispatch(setCommentsObjectUUID(session_uuid));
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
@@ -111,8 +110,12 @@ function Dashboard(props) {
             })
         }
     }
-
     useEffect(componentDidMount, []);
+
+    function getTasks() {
+        dispatch(getAllTasksRequest(whoami.uuid));
+    }
+    useEffect(getTasks, [whoami])
 
     useEffect(() => {
         if (Object.keys(socketSubscription).length === 0 && socketSubscription.constructor === Object) {

@@ -80,7 +80,7 @@ const getColumnTitle = key => {
 function getStatusColour(task) {
 
     let hasRider = false;
-    if (task.assigned_users && task.assigned_users.length > 0) {
+    if (task.assigned_riders && task.assigned_riders.length > 0) {
         hasRider = true;
     }
     if (task.time_cancelled || task.time_rejected) {
@@ -128,7 +128,7 @@ function tasksDataColumns(tasks, hideDelivered) {
                                           dropoffTime={task.time_dropped_off}
                                           cancelledTime={task.time_cancelled}
                                           rejectedTime={task.time_rejected}
-                                          assignedUsers={task.assigned_users}/>,
+                                          assignedUsers={task.assigned_riders}/>,
             uuid: task.uuid
         }
     }))

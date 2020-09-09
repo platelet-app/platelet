@@ -8,7 +8,6 @@ import Grid from "@material-ui/core/Grid";
 import {useHistory, useLocation} from "react-router-dom";
 import AddressDetailsCollapsible from "../../components/AddressDetail";
 import ToggleTimeStamp from "./components/ToggleTimeStamp";
-import moment from 'moment/min/moment-with-locales';
 import Moment from "react-moment";
 import PrioritySelect from "./components/PrioritySelect";
 import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
@@ -24,9 +23,7 @@ import {
     updateTaskPickupAddressRequest, updateTaskCancelledTimeRequest, setCurrentTask, clearCurrentTask, getTaskRequest
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
-import Box from "@material-ui/core/Box";
 import {PaddedPaper} from "../../styles/common";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import {decodeUUID, encodeUUID, findExistingTask} from "../../utilities";
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
@@ -58,7 +55,7 @@ export default function TaskDialog(props) {
     const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
     const mobileView = useSelector(state => state.mobileView);
-    const task = useSelector(state => state.currentTask.task);
+    const task = useSelector(state => state.task.task);
     const sessionUUID = useSelector(state => state.currentTask.task.session_uuid);
     const session = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
@@ -67,12 +64,9 @@ export default function TaskDialog(props) {
     const currentLocation = useLocation();
     const [pickedUpStatus, setPickedUpStatus] = useState(false);
 
-    const tasks = useSelector(state => state.tasks.tasks);
-
     let history = useHistory();
-
-
     let taskUUID = null;
+
     if (props.match) {
         taskUUID = decodeUUID(props.match.params.task_uuid_b62)
     } else {
@@ -81,20 +75,10 @@ export default function TaskDialog(props) {
     const [editMode, setEditMode] = useState(false);
 
     function componentDidMount() {
-        if (!tasks) {
-            dispatch(getTaskRequest(taskUUID));
-        }
+        dispatch(getTaskRequest(taskUUID));
     }
 
     useEffect(componentDidMount, []);
-
-    function getSessionData() {
-        return
-        if (sessionUUID && !tasks.length)
-            dispatch(getAllTasksRequest(sessionUUID));
-    }
-
-    useEffect(getSessionData, [sessionUUID])
 
     function editModeSetter() {
         setEditMode(session.coordinator_uuid === whoami.uuid || whoami.roles.includes("admin"));
@@ -102,14 +86,14 @@ export default function TaskDialog(props) {
 
     useEffect(editModeSetter, [whoamiUUID, whoamiRoles])
 
-    function currentTask() {
-        const {task} = findExistingTask(tasks, taskUUID)
-        if (task) {
-            setPickedUpStatus(task.time_picked_up !== null);
-            dispatch(setCurrentTask(task));
-        }
-    }
-    useEffect(currentTask, [tasks])
+    //function currentTask() {
+    //    const {task} = findExistingTask(tasks, taskUUID)
+    //    if (task) {
+    //        setPickedUpStatus(task.time_picked_up !== null);
+    //        dispatch(setCurrentTask(task));
+    //    }
+    //}
+    //useEffect(currentTask, [tasks])
 
     function updateEditMode() {
         setEditMode(session.coordinator_uuid === whoamiUUID || whoamiRoles.includes("admin"));
@@ -160,11 +144,8 @@ export default function TaskDialog(props) {
 
     let handleClose = e => {
         e.stopPropagation();
-        //TODO: might be a better way of doing this
-        if (currentLocation.pathname.includes("session"))
-            history.push("/session/" + encodeUUID(sessionUUID));
-        else if (currentLocation.pathname.includes("mytasks"))
-            history.push("/mytasks");
+        if (props.location.state.prevPath)
+            history.goBack();
         else
             history.push("/");
 
