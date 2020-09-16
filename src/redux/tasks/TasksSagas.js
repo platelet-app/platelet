@@ -418,7 +418,7 @@ export function* watchGetTask() {
 function* getTasks(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.getTasks], action.data);
+        const result = yield call([api, api.tasks.getTasks], action.data, action.page);
         yield put(getAllTasksSuccess(result))
     } catch (error) {
         if (error.name === "HttpError") {

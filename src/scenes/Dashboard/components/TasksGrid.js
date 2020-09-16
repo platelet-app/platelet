@@ -3,10 +3,12 @@ import Grid from "@material-ui/core/Grid";
 import {AddCircleButton} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
 import {createPostingSelector} from "../../../redux/selectors";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
 import {TextFieldControlled} from "../../../components/TextFields";
 import {task} from "../../../redux/tasks/TasksReducers";
+import {Waypoint} from "react-waypoint";
+import {getAllTasksRequest} from "../../../redux/tasks/TasksActions";
 
 const initialTasksState = {tasksNew: [], tasksActive: [], tasksPickedUp: [], tasksDelivered: []}
 
@@ -18,7 +20,7 @@ function filterTasks(tasks, search) {
         for (const [key, value] of Object.entries(tasks)) {
             result[key] = value.filter(task => {
                 const searchTerm = search.toLowerCase();
-                if (task.assigned_users_display_string ? task.assigned_users_display_string.toLowerCase().includes(searchTerm) : false) {
+                if (task.assigned_riders_display_string ? task.assigned_riders_display_string.toLowerCase().includes(searchTerm) : false) {
                     return task
                 } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
                     return task;
@@ -45,8 +47,8 @@ const getColumnTitle = key => {
             return <h3>New</h3>;
         case "tasksActive":
             return <h3>Active</h3>;
-        case "tasksPickedUp":
-            return <h3>Picked up</h3>;
+        case "tasksActivePickedUp":
+            return <h3>Active</h3>;
         case "tasksDelivered":
             return <h3>Delivered</h3>;
         case "tasksRejected":
@@ -88,6 +90,7 @@ const GridColumn = React.memo((props) => {
 
 export default function TasksGrid(props) {
     const postingSelector = createPostingSelector(["ADD_TASK"]);
+    const dispatch = useDispatch();
     const isPosting = useSelector(state => postingSelector(state));
     const [filteredTasks, setFilteredTasks] = useState(initialTasksState);
     const tasks = useSelector(state => state.tasks.tasks);
@@ -96,12 +99,14 @@ export default function TasksGrid(props) {
     function updateFilteredTasks() {
         setFilteredTasks(filterTasks(tasks))
     }
+
     useEffect(updateFilteredTasks, [tasks])
 
     function doSearch() {
         const result = filterTasks(tasks, searchQuery)
         setFilteredTasks(result);
     }
+
     useEffect(doSearch, [searchQuery])
     //TODO: separate task columns into individual components so that there is less rerendering
     return (
@@ -137,6 +142,14 @@ export default function TasksGrid(props) {
                         return (
                             <Grid item xs sm md lg key={taskList[0]}>
                                 {gridColumn}
+                                    <Waypoint
+                                        onEnter={() => {
+                                           // dispatch(getAllTasksRequest("42acdac8-8d07-4c4b-b698-dd81ed44b561", "2"))
+                                            console.log("YAY ENTER")
+                                        }
+                                        }
+                                        onLeave={() => console.log("YAY LEAVE")}
+                                    />
                             </Grid>
                         )
                     })}

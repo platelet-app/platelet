@@ -110,8 +110,7 @@ export function throttle(func, limit) {
 
 export function orderTaskList(tasks) {
     let tasksNew = [];
-    let tasksActive = [];
-    let tasksPickedUp = [];
+    let tasksActivePickedUp = [];
     let tasksDelivered = [];
     let tasksCancelled = [];
     let tasksRejected = [];
@@ -125,12 +124,10 @@ export function orderTaskList(tasks) {
             tasksCancelled.unshift(task);
         } else if (task.time_rejected) {
             tasksRejected.unshift(task);
-        } else if (!task.assigned_users || !task.assigned_users.length) {
+        } else if (!task.assigned_riders || !task.assigned_riders.length) {
             tasksNew.unshift(task);
-        } else if (task.assigned_users.length && !task.time_picked_up) {
-            tasksActive.unshift(task);
-        } else if (task.assigned_users.length && task.time_picked_up && !task.time_dropped_off) {
-            tasksPickedUp.unshift(task);
+        } else if ((task.assigned_riders.length || task.time_picked_up) && !task.time_dropped_off) {
+            tasksActivePickedUp.unshift(task);
         } else if (task.time_dropped_off) {
             tasksDelivered.unshift(task);
         } else {
@@ -147,17 +144,14 @@ export function orderTaskList(tasks) {
     tasksRejected.sort(function (a, b) {
         return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
-    tasksActive.sort(function (b, a) {
-        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
-    });
-    tasksPickedUp.sort(function (b, a) {
+    tasksActivePickedUp.sort(function (b, a) {
         return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
     tasksDelivered.sort(function (b, a) {
         return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
     });
     const tasksRejectedCancelled = tasksCancelled.concat(tasksRejected)
-    return {tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksRejectedCancelled}
+    return {tasksNew, tasksActivePickedUp, tasksDelivered, tasksRejectedCancelled}
 }
 
 export function determineTaskType(task) {
@@ -165,12 +159,10 @@ export function determineTaskType(task) {
         return { tasksRejectedCancelled: [task] };
     } else if (task.time_rejected) {
         return { tasksRejectedCancelled: [task] };
-    } else if (!task.assigned_users || !task.assigned_users.length) {
+    } else if (!task.assigned_riders || !task.assigned_riders.length) {
         return { tasksNew: [task] };
-    } else if (task.assigned_users.length && !task.time_picked_up) {
-        return { tasksActive: [task] };
-    } else if (task.assigned_users.length && task.time_picked_up && !task.time_dropped_off) {
-        return { tasksPickedUp: [task] };
+    } else if ((task.assigned_riders.length || task.time_picked_up) && !task.time_dropped_off) {
+        return { tasksActivePickedUp: [task] };
     } else if (task.time_dropped_off) {
         return { tasksDelivered: [task] };
     } else {

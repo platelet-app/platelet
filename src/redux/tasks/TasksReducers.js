@@ -53,7 +53,9 @@ const initialState = {
         destination_contact_number: null,
         destination_contact_name: null,
         time_created: null,
-        time_modified: null
+        time_modified: null,
+        assigned_riders_display_string: "",
+        assigned_coordinators_display_string: ""
     },
     error: null
 }
@@ -81,8 +83,7 @@ export function currentTask(state = initialState, action) {
 const initialTasksState = {
     tasks: {
         tasksNew: [],
-        tasksActive: [],
-        tasksPickedUp: [],
+        tasksActivePickedUp: [],
         tasksDelivered: []
     },
     error: null
@@ -141,9 +142,9 @@ export function tasks(state = initialTasksState, action) {
                 {[taskToUpdateAssignedRider.listType]: {$set: state.tasks[taskToUpdateAssignedRider.listType].filter(t => t.uuid !== taskToUpdateAssignedRider.task.uuid)}}
                 );
             if (taskToUpdateAssignedRider.task) {
-                let assigneesList = taskToUpdateAssignedRider.task.assigned_users
+                let assigneesList = taskToUpdateAssignedRider.task.assigned_riders
                 assigneesList.push(action.data.payload.rider)
-                const finalTask = {...taskToUpdateAssignedRider.task, assigned_users: assigneesList, assigned_users_display_string: taskToUpdateAssignedRider.task.assigned_users.map((user) => user.display_name).join(", ")}
+                const finalTask = {...taskToUpdateAssignedRider.task, assigned_riders: assigneesList, assigned_riders_display_string: taskToUpdateAssignedRider.task.assigned_riders.map((user) => user.display_name).join(", ")}
                 const resultAdd = sortAndConcat(newTasksAssignedRider, finalTask)
                 const finalTasksAssignedRider = update(newTasksAssignedRider, {$merge: resultAdd});
                 return {tasks: finalTasksAssignedRider, error: null}
@@ -157,8 +158,8 @@ export function tasks(state = initialTasksState, action) {
                 {[taskUnassign.listType]: {$set: state.tasks[taskUnassign.listType].filter(t => t.uuid !== taskUnassign.task.uuid)}}
             );
             if (taskUnassign) {
-                const filteredAssigneeList = taskUnassign.task.assigned_users.filter((u) => u.uuid !== action.data.payload.user_uuid);
-                const finalTask = {...taskUnassign.task, assigned_users: filteredAssigneeList, assigned_users_display_string: filteredAssigneeList.map((user) => user.display_name).join(", ")}
+                const filteredAssigneeList = taskUnassign.task.assigned_riders.filter((u) => u.uuid !== action.data.payload.user_uuid);
+                const finalTask = {...taskUnassign.task, assigned_riders: filteredAssigneeList, assigned_riders_display_string: filteredAssigneeList.map((user) => user.display_name).join(", ")}
                 const resultAdd = sortAndConcat(newTasksAssignedRiderRemove, finalTask)
                 const finalTasksAssignedRiderRemove = update(newTasksAssignedRiderRemove, {$merge: resultAdd});
                 return {tasks: finalTasksAssignedRiderRemove, error: null}

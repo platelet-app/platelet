@@ -12,7 +12,7 @@ const TaskItem = React.memo((props) => {
             title={"Task"}
             pickupAddress={props.task.pickup_address}
             dropoffAddress={props.task.dropoff_address}
-            assignedUsers={props.task.assigned_users_display_string}
+            assignedUsers={props.task.assigned_riders_display_string}
             pickupTime={props.task.time_picked_up}
             dropoffTime={props.task.time_dropped_off}
             time_of_call={props.task.time_of_call}

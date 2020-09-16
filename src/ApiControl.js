@@ -187,8 +187,9 @@ class Task {
         this.api_url = api_url;
     }
 
-    async getTasks(session_id) {
-        return makeAxios(this.api_url, "tasks/" + session_id, "GET", this.bearer)
+    async getTasks(user_id, page) {
+        console.log("tasks/" + user_id + "?page=" + (page || "1"))
+        return makeAxios(this.api_url, "tasks/" + user_id + "?page=" + (page || "1"), "GET", this.bearer)
     }
 
     async getTask(task_id) {

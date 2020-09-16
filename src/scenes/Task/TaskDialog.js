@@ -144,7 +144,7 @@ export default function TaskDialog(props) {
 
     let handleClose = e => {
         e.stopPropagation();
-        if (props.location.state.prevPath)
+        if (props.location.state)
             history.goBack();
         else
             history.push("/");
