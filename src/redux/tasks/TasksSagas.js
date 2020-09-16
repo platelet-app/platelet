@@ -14,7 +14,9 @@ import {
     updateTaskRejectedTimeRequest,
     updateTaskCancelledTimeRequest,
     updateTaskDropoffTimeRequest,
-    updateTaskPickupTimeRequest
+    updateTaskPickupTimeRequest,
+    UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST,
+    UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -87,7 +89,6 @@ import {updateTaskPatchRequest as updateTaskPatchAction} from "./TasksActions"
 
 
 import {getApiControl} from "../Api"
-import {setCurrentSession, setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
 import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
 import React from "react";
 import Button from "@material-ui/core/Button";
@@ -118,7 +119,6 @@ function* throttlePerKey(pattern, selector, timeout, saga) {
 
 function* postNewTask(action) {
     try {
-        put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data);
         const task = {...action.data, "uuid": result.uuid};
@@ -169,7 +169,6 @@ export function* watchRestoreTask() {
 
 function* updateTask(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskSuccess(action.data))
@@ -180,7 +179,6 @@ function* updateTask(action) {
 
 function* updateTaskContactName(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskContactNameSuccess(action.data))
@@ -191,7 +189,6 @@ function* updateTaskContactName(action) {
 
 function* updateTaskContactNumber(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskContactNumberSuccess(action.data))
@@ -202,7 +199,6 @@ function* updateTaskContactNumber(action) {
 
 function* updateTaskPickupAddress(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskPickupAddressSuccess(action.data))
@@ -211,9 +207,20 @@ function* updateTaskPickupAddress(action) {
     }
 }
 
+function* updateTaskPickupAddressFromSaved(action) {
+    try {
+        const api = yield select(getApiControl);
+        const presetDetails = yield call([api, api.locations.getLocation], action.data.payload);
+        const pickup_address = presetDetails.address;
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, { pickup_address });
+        yield put(updateTaskPickupAddressSuccess({taskUUID: action.data.taskUUID, payload: {pickup_address}}))
+    } catch (error) {
+        yield put(updateTaskPickupAddressFailure(error))
+    }
+}
+
 function* updateTaskDropoffAddress(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskDropoffAddressSuccess(action.data))
@@ -222,9 +229,20 @@ function* updateTaskDropoffAddress(action) {
     }
 }
 
+function* updateTaskDropoffAddressFromSaved(action) {
+    try {
+        const api = yield select(getApiControl);
+        const presetDetails = yield call([api, api.locations.getLocation], action.data.payload);
+        const dropoff_address = presetDetails.address;
+        yield call([api, api.tasks.updateTask], action.data.taskUUID, { dropoff_address });
+        yield put(updateTaskDropoffAddressSuccess({taskUUID: action.data.taskUUID, payload: {dropoff_address}}))
+    } catch (error) {
+        yield put(updateTaskDropoffAddressFailure(error))
+    }
+}
+
 function* updateTaskPickupTime(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const currentTasks = yield select((state) => state.tasks.tasks);
         const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
         const currentValue = task ? task.time_picked_up : null;
@@ -245,7 +263,6 @@ function* updateTaskPickupTime(action) {
 
 function* updateTaskDropoffTime(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const currentTasks = yield select((state) => state.tasks.tasks);
         const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
         const currentValue = task ? task.time_dropped_off : null;
@@ -266,7 +283,6 @@ function* updateTaskDropoffTime(action) {
 
 function* updateTaskPriority(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskPrioritySuccess(action.data))
@@ -277,7 +293,6 @@ function* updateTaskPriority(action) {
 
 function* updateTaskPatch(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskPatchSuccess(action.data))
@@ -311,7 +326,6 @@ function* updateTaskCancelledTime(action) {
             taskUUID: action.data.taskUUID,
             payload: {time_cancelled: null}
         });
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskCancelledTimeSuccess(action.data))
@@ -333,7 +347,6 @@ function* updateTaskRejectedTime(action) {
             taskUUID: action.data.taskUUID,
             payload: {time_rejected: null}
         });
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         yield put(updateTaskRejectedTimeSuccess(action.data))
@@ -361,8 +374,16 @@ export function* watchUpdateTaskPickupAddress() {
     yield debounce(500, UPDATE_TASK_PICKUP_ADDRESS_REQUEST, updateTaskPickupAddress)
 }
 
+export function* watchUpdateTaskPickupAddressFromSaved() {
+    yield takeEvery(UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST, updateTaskPickupAddressFromSaved)
+}
+
 export function* watchUpdateTaskDropoffAddress() {
     yield debounce(500, UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, updateTaskDropoffAddress)
+}
+
+export function* watchUpdateTaskDropoffAddressFromSaved() {
+    yield takeEvery(UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST, updateTaskDropoffAddressFromSaved)
 }
 
 export function* watchUpdateTaskPickupTime() {

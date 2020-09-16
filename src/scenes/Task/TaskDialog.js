@@ -20,7 +20,12 @@ import {
     updateTaskContactNumberRequest,
     updateTaskDropoffAddressRequest,
     updateTaskDropoffTimeRequest,
-    updateTaskPickupAddressRequest, updateTaskCancelledTimeRequest, setCurrentTask, clearCurrentTask, getTaskRequest
+    updateTaskPickupAddressRequest,
+    updateTaskCancelledTimeRequest,
+    setCurrentTask,
+    clearCurrentTask,
+    getTaskRequest,
+    updateTaskPickupAddressFromSavedRequest, updateTaskDropoffAddressFromSavedRequest
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import {PaddedPaper} from "../../styles/common";
@@ -118,10 +123,22 @@ export default function TaskDialog(props) {
         }
     }
 
+    function onSelectPickupFromSaved(payload) {
+        if (payload) {
+            dispatch(updateTaskPickupAddressFromSavedRequest({taskUUID, payload}));
+        }
+    }
+
     function onSelectDropoff(dropoffAddress) {
         if (dropoffAddress) {
             const payload = {dropoff_address: dropoffAddress};
             dispatch(updateTaskDropoffAddressRequest({taskUUID, payload}));
+        }
+    }
+
+    function onSelectDropoffFromSaved(payload) {
+        if (payload) {
+            dispatch(updateTaskDropoffAddressFromSavedRequest({taskUUID, payload}));
         }
     }
 
@@ -262,6 +279,7 @@ export default function TaskDialog(props) {
                     <Typography variant={"h5"}>From:</Typography>
                     <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectPickup}
+                                               onSelectPreset={onSelectPickupFromSaved}
                                                address={task.pickup_address}
                                                disabled={!editMode}
                     />
@@ -273,6 +291,7 @@ export default function TaskDialog(props) {
                     <Typography variant={"h5"}>To:</Typography>
                     <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectDropoff}
+                                               onSelectPreset={onSelectDropoffFromSaved}
                                                address={task.dropoff_address}
                                                disabled={!editMode}/>
                 </PaddedPaper>
@@ -416,6 +435,7 @@ export default function TaskDialog(props) {
                         <Grid item>
                             <AddressDetailsCollapsible label={"Pickup Address"}
                                                        onSelect={onSelectPickup}
+                                                       onSelectPreset={onSelectPickupFromSaved}
                                                        address={task.pickup_address}
                                                        disabled={!editMode}
                             />

@@ -24,16 +24,7 @@ export default function AddressDetailsCollapsible(props){
 
 
     const onSelectPreset = selectedItem => {
-        if (selectedItem && selectedItem['address']) {
-            setWard(selectedItem['address']['ward']);
-            setLine1(selectedItem['address']['line1']);
-            setLine2(selectedItem['address']['line2']);
-            setTown(selectedItem['address']['town']);
-            setCounty(selectedItem['address']['county']);
-            setCountry(selectedItem['address']['country']);
-            setPostcode(selectedItem['address']['postcode']);
-            setWhat3words(selectedItem['address']['what3words']);
-        }
+        props.onSelectPreset(selectedItem.uuid)
         setPresetMode(false);
 
     };
