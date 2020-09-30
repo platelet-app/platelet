@@ -76,7 +76,9 @@ const initialUserState = {
         patch_id: null,
         contact_number: null,
         time_created: null,
-        time_modified: null
+        time_modified: null,
+        profile_picture_url: "",
+        profile_picture_thumbnail_url: ""
     }, error: null
 
 }

@@ -89,6 +89,9 @@ export default function UserProfile(props) {
                 <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"}
                       spacing={1}>
                     <Grid item>
+                        <img alt={props.user.display_name} src={props.user.profile_picture_url}/>
+                    </Grid>
+                    <Grid item>
                         <TextFieldUncontrolled
                             value={state.name}
                             readOnly={!editMode}

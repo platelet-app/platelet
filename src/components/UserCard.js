@@ -9,6 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
 
 export default function UserCard(props) {
+    console.log(props.user)
     const deleteButton = props.onDelete ?
         <IconButton
             color={"inherit"}
@@ -28,7 +29,7 @@ export default function UserCard(props) {
                         <Grid container spacing={2} direction={"row"} justify={"flex-start"} alignItems={"center"}>
                             <Grid item>
                                 <UserAvatar userUUID={props.user.uuid} displayName={props.user.display_name}
-                                            avatarURL={props.user.avatar_url}/>
+                                            avatarURL={props.user.profile_picture_thumbnail_url}/>
                             </Grid>
                             <Grid item>
                                 <Grid container spacing={1} alignItems={"flex-start"} direction={"column"}>
