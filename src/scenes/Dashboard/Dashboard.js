@@ -113,7 +113,8 @@ function Dashboard(props) {
     useEffect(componentDidMount, []);
 
     function getTasks() {
-        dispatch(getAllTasksRequest(whoami.uuid));
+        if (whoami.uuid)
+            dispatch(getAllTasksRequest(whoami.uuid));
     }
     useEffect(getTasks, [whoami])
 
