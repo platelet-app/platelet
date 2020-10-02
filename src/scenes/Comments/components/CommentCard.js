@@ -11,9 +11,10 @@ import LockIcon from '@material-ui/icons/Lock';
 import Tooltip from "@material-ui/core/Tooltip";
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import moment from "moment";
+import UserAvatar from "../../../components/UserAvatar";
+import CommentAuthor from "./CommentAuthor";
 
 
-// TODO: figure out time posted and a tooltip for more detail maybe like reddit?
 const CommentCard = React.memo((props) => {
     const Card = props.public ? (props) => {
             return <PublicCommentCard>{props.children}</PublicCommentCard>
@@ -25,14 +26,12 @@ const CommentCard = React.memo((props) => {
         <Card>
             <Grid container direction={"column"} alignItems={"flex-start"} spacing={1}>
                 <Grid item style={{width: "280px"}}>
-                    <Grid container direction={"row"} justify={"space-between"}>
+                    <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
                         <Grid item>
-                            <Link component={RouterLink} to={"/user/" + encodeUUID(props.author.uuid)}>
-                                <Typography style={{fontWeight: "bold"}}>{props.author.display_name}</Typography>
-                            </Link>
-                        </Grid>
-                        <Grid item>
-
+                            <CommentAuthor
+                                uuid={props.author.uuid}
+                                displayName={props.author.display_name}
+                                avatarURL={props.author.profile_picture_thumbnail_url}/>
                         </Grid>
                         <Grid item>
                             {props.public ? (

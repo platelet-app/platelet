@@ -12,6 +12,7 @@ import Button from "@material-ui/core/Button";
 import {useDispatch, useSelector} from "react-redux";
 import {addCommentRequest, addSidebarCommentRequest} from "../../../redux/comments/CommentsActions";
 import {createPostingSelector} from "../../../redux/selectors";
+import CommentAuthor from "./CommentAuthor";
 
 export default function CommentCard(props) {
     const dispatch = useDispatch();
@@ -33,7 +34,10 @@ export default function CommentCard(props) {
                 <Grid item style={{width: "280px"}}>
                     <Grid container direction={"row"} justify={"space-between"}>
                         <Grid item>
-                            <Typography style={{fontWeight: "bold"}}>{props.author.display_name}</Typography>
+                            <CommentAuthor
+                                uuid={props.author.uuid}
+                                displayName={props.author.display_name}
+                                avatarURL={props.author.profile_picture_thumbnail_url}/>
                         </Grid>
                         <Grid item>
                             <Tooltip title={publicComment ? "Visible to everyone" : "Only visible to you"}>
