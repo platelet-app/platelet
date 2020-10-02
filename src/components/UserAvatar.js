@@ -39,7 +39,7 @@ function stringToColor(string) {
 
 
 const UserAvatar = React.memo((props) => {
-    const nameArray = props.displayName.split(" ");
+    const nameArray = props.displayName ? props.displayName.split(" ") : "";
     const reducer = (accumulator, currentValue) => accumulator + currentValue[0];
     const initials = nameArray.reduce(reducer, '').slice(0, 2);
     const avatarFallbackColor = generateColorFromString(props.userUUID);

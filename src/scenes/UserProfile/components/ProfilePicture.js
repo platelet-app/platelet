@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Cropper from "react-cropper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -8,9 +8,7 @@ import {uploadUserProfilePictureRequest} from "../../../redux/users/UsersActions
 import {useDispatch} from "react-redux";
 
 
-
-export default function ProfilePicture(props)
-{
+export default function ProfilePicture(props) {
     const [image, setImage] = useState("");
     const [cropper, setCropper] = useState();
     const dispatch = useDispatch();
@@ -37,7 +35,8 @@ export default function ProfilePicture(props)
             dispatch(uploadUserProfilePictureRequest(
                 {
                     userUUID: props.userUUID,
-                    payload: {image_data: cropper.getCroppedCanvas().toDataURL("image/jpeg").split(';base64,')[1]}}));
+                    payload: {image_data: cropper.getCroppedCanvas().toDataURL("image/jpeg").split(';base64,')[1]}
+                }));
             //setCropData(cropper.getCroppedCanvas());
         }
     };
@@ -45,7 +44,7 @@ export default function ProfilePicture(props)
 
     const profilePicture = image ?
         <Cropper
-            style={{ height: 300, width: "50%" }}
+            style={{height: 300, width: "50%"}}
             initialAspectRatio={1}
             aspectRatio={1}
             src={image}
@@ -73,8 +72,8 @@ export default function ProfilePicture(props)
                 <Button onClick={() => setImage("")}>Discard</Button>
             </Grid>
         </Grid>
-:
-    <>
+        :
+        <>
             <input
                 accept="image/*"
                 style={{display: 'none'}}
@@ -93,10 +92,10 @@ export default function ProfilePicture(props)
         <PaddedPaper minWidth={"360px"} minHeight={"360px"}>
             <Grid container direction={"column"} spacing={2}>
                 <Grid item>
-                {profilePicture}
+                    {profilePicture}
                 </Grid>
                 <Grid item>
-                {picUploadButton}
+                    {props.editable ? picUploadButton : <></>}
                 </Grid>
                 <Grid item>
                 </Grid>

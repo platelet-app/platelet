@@ -27,6 +27,7 @@ export default function UserDetail(props) {
     useEffect(newUserProfile, [props.location.key]);
 
 
+
     if (isFetching) {
         return (
             <DetailSkeleton/>
@@ -41,7 +42,12 @@ export default function UserDetail(props) {
                         </PaddedPaper>
                     </Grid>
                     <Grid item>
-                        <ProfilePicture pictureURL={user.profile_picture_url} userUUID={user.uuid} altText={user.display_name}/>
+                        <ProfilePicture
+                            pictureURL={user.profile_picture_url}
+                            userUUID={user.uuid}
+                            altText={user.display_name}
+                            editable={user.uuid === whoami.uuid || whoami.roles.includes("admin")}
+                        />
                     </Grid>
                 </Grid>
                 <Grid item>
