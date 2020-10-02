@@ -9,6 +9,7 @@ import {PaddedPaper} from "../../styles/common";
 import CommentsSection from "../Comments/CommentsSection";
 import DetailSkeleton from "./components/DetailSkeleton";
 import Button from "@material-ui/core/Button";
+import ProfilePicture from "./components/ProfilePicture";
 
 export default function UserDetail(props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
@@ -25,26 +26,6 @@ export default function UserDetail(props) {
 
     useEffect(newUserProfile, [props.location.key]);
 
-    const profilePicture = user.profile_picture_url ?
-        <Grid item>
-            <img alt={user.display_name} src={user.profile_picture_url}/>
-        </Grid> : <></>
-
-    const picUploadButton = user.uuid === whoami.uuid || whoami.roles.includes("admin") ?
-        <Grid item>
-            <input
-                accept="image/*"
-                style={{display: 'none'}}
-                id="raised-button-file"
-                multiple
-                type="file"
-            />
-            <label htmlFor="raised-button-file">
-                <Button variant="raised" component="span">
-                    {user.profile_picture_url ? "Change" : "Upload Picture"}
-                </Button>
-            </label>
-        </Grid> : <></>
 
     if (isFetching) {
         return (
@@ -60,12 +41,7 @@ export default function UserDetail(props) {
                         </PaddedPaper>
                     </Grid>
                     <Grid item>
-                        <PaddedPaper width={"360px"} minHeight={"360px"}>
-                            <Grid container direction={"column"} spacing={2}>
-                                {profilePicture}
-                                {picUploadButton}
-                            </Grid>
-                        </PaddedPaper>
+                        <ProfilePicture pictureURL={user.profile_picture_url} altText={user.display_name}/>
                     </Grid>
                 </Grid>
                 <Grid item>
