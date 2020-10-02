@@ -1,15 +1,18 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import {TextFieldUncontrolled} from "../../components/TextFields";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import {useDispatch, useSelector} from "react-redux";
-import {setCommentsObjectUUID} from "../../redux/Actions";
 import Divider from "@material-ui/core/Divider";
 import Tooltip from "@material-ui/core/Tooltip";
-import {updateUserRequest} from "../../redux/users/UsersActions";
-import {createPostingSelector} from "../../redux/selectors";
-import SaveCancelButtons from "../../components/SaveCancelButtons";
+import Image from "material-ui-image"
+import Button from "@material-ui/core/Button";
+import {CardMedia} from "@material-ui/core";
+import SaveCancelButtons from "../../../components/SaveCancelButtons";
+import {updateUserRequest} from "../../../redux/users/UsersActions";
+import {TextFieldUncontrolled} from "../../../components/TextFields";
+import {createPostingSelector} from "../../../redux/selectors";
+import {setCommentsObjectUUID} from "../../../redux/Actions";
 
 export default function UserProfile(props) {
     const dispatch = useDispatch()
@@ -88,9 +91,6 @@ export default function UserProfile(props) {
             <Grid item>
                 <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"}
                       spacing={1}>
-                    <Grid item>
-                        <img alt={props.user.display_name} src={props.user.profile_picture_url}/>
-                    </Grid>
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.name}

@@ -1,9 +1,6 @@
 import React from 'react';
 import 'typeface-roboto'
-import Home from '../scenes/Home'
 import '../index.css';
-import SessionsList from '../scenes/SessionList';
-import MyUserProfile from '../scenes/UserProfile/MyUserProfile'
 import {Route, Switch, useLocation} from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
 import UsersTasks from "../scenes/Dashboard/UsersTasks";
@@ -11,7 +8,7 @@ import TaskDialog from "../scenes/Task/TaskDialog";
 import VehicleList from "../scenes/VehiclesList";
 import {MainWindowContainer} from "../styles/common";
 import UsersList from "../scenes/UsersList";
-import UserDetail from "../scenes/UserProfile/components/UserDetail";
+import UserDetail from "../scenes/UserProfile/UserDetail";
 import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
 import {AdminControl} from "../scenes/AdminControl/AdminControl";
 
@@ -24,9 +21,6 @@ export default function MainWindow(_props) {
                 <Switch location={location}>
                     <Route exact path='/'
                            render={(props) => <Dashboard {...props} apiControl={_props.apiControl}/>}
-                    />
-                    <Route path='/profile'
-                           render={(props) => <MyUserProfile {...props} apiControl={_props.apiControl}/>}
                     />
                     <Route path='/vehicles'
                            render={(props) => <VehicleList {...props} apiControl={_props.apiControl}/>}

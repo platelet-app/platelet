@@ -8,32 +8,19 @@ import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import AppsIcon from '@material-ui/icons/Apps';
-import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import {useTheme} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import MainWindow from "./MainWindow";
 import {createLoadingSelector} from "../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import MenuSkeleton from "../SharedLoadingSkeletons/MenuSkeleton";
-import MotorcycleIcon from '@material-ui/icons/Motorcycle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import {encodeUUID} from "../utilities";
-import {SwipeableDrawer} from "@material-ui/core";
 import {logoutUser, removeApiURL} from "../redux/login/LoginActions";
 import {clearServerSettings} from "../redux/ServerSettings/ServerSettingsActions";
 
@@ -69,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     appBar: {
         marginLeft: drawerWidth,
         [theme.breakpoints.up('sm')]: {
-            width: `calc(100% - ${drawerWidth}px)`,
+            width: "100%",
         },
     },
     menuButton: {
@@ -93,74 +80,41 @@ export function MenuMainContainer(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami.user);
     const serverSettings = useSelector(state => state.serverSettings);
-    const mobileView = useSelector(state => state.mobileView);
-    const menuIndex = useSelector(state => state.menuIndex);
-    const {container} = props;
     const classes = useStyles();
     //const rightBarClasses = rightSideBarUseStyles()
-    const theme = useTheme();
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
+    const [anchorElDashMenu, setAnchorElDashMenu] = React.useState(null);
 
-    const handleDrawerToggle = () => {
-        if (mobileView)
-            setMobileOpen(!mobileOpen);
-    };
-
-    let sessionLink = <></>;
-    let ridersTasksLink = <></>
     let adminLink = <></>
-    let drawer = <MenuSkeleton/>;
+    let dashboardMenu = <MenuSkeleton/>;
 
     if (!isFetching) {
         if (whoami.roles) {
-            if (whoami.roles.includes("coordinator")) {
-                sessionLink =
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 2)} component={Link} to="/sessions"
-                              button>
-                        <ListItemIcon><AppsIcon/></ListItemIcon>
-                        <ListItemText primary={"Shifts"}/>
-                    </ListItem>;
-            }
-            if (whoami.roles.includes("rider")) {
-                ridersTasksLink =
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 3)} component={Link} to={"/mytasks"}
-                              button>
-                        <ListItemIcon><InboxIcon/></ListItemIcon>
-                        <ListItemText primary={"My Assigned Tasks"}/>
-                    </ListItem>
-            }
             if (whoami.roles.includes("admin")) {
                 adminLink =
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 6)} component={Link} to={"/admin"}
-                              button>
-                        <ListItemIcon><SupervisorAccountIcon/></ListItemIcon>
-                        <ListItemText primary={"Admin"}/>
-                    </ListItem>
+                    <MenuItem onClick={() => {
+                        setAnchorElDashMenu(null);
+                    }} component={Link} to={"/admin"}>
+                        Admin
+                    </MenuItem>
             }
         }
-        drawer = (
-            <div>
-                <div className={classes.toolbar}/>
-                <Divider/>
-                <List component="nav">
-                    {sessionLink}
-                    {ridersTasksLink}
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 4)} component={Link} to="/vehicles"
-                              button>
-                        <ListItemIcon><MotorcycleIcon/></ListItemIcon>
-                        <ListItemText primary={"Vehicles"}/>
-                    </ListItem>
-                    <ListItem onClick={handleDrawerToggle} selected={(menuIndex === 5)} component={Link} to="/users"
-                              button>
-                        <ListItemIcon><PeopleAltIcon/></ListItemIcon>
-                        <ListItemText primary={"Users"}/>
-                    </ListItem>
-                    {adminLink}
-                </List>
-            </div>
+        dashboardMenu = (
+            <List component="nav">
+                <MenuItem onClick={() => {
+                    setAnchorElDashMenu(null);
+                }} component={Link} to={"/users"}>
+                    Users
+                </MenuItem>
+                <MenuItem onClick={() => {
+                    setAnchorElDashMenu(null);
+                }} component={Link} to={"/vehicles"}>
+                    Vehicles
+                </MenuItem>
+                {adminLink}
+            </List>
         );
     }
-    const [anchorEl, setAnchorEl] = React.useState(null);
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -169,23 +123,45 @@ export function MenuMainContainer(props) {
             <CssBaseline/>
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
-                    <Grid container direction={"row"} spacing={1} justify={"flex-start"} alignItems={"center"}>
-                        <Grid item>
-                            <IconButton
-                                color="inherit"
-                                aria-label="open drawer"
-                                edge="start"
-                                onClick={handleDrawerToggle}
-                                className={classes.menuButton}
-                            >
-                                <MenuIcon/>
-                            </IconButton>
-
-                        </Grid>
+                    <Grid container direction={"row"} spacing={3} justify={"flex-start"} alignItems={"center"}>
                         <Grid item>
                             <Typography variant="h6">
                                 {serverSettings ? serverSettings.organisation_name : ""}
                             </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Divider orientation={"vertical"} />
+                        </Grid>
+                        <Grid item>
+                            <Grid container direction={"row"} spacing={0} justify={"flex-start"} alignItems={"center"}>
+                                <Grid item>
+                                    <Typography variant="h6">
+                                        <Link to={"/"} style={{ textDecoration: 'none', color: "white" }}>Dashboard</Link>
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <IconButton
+                                        color="inherit"
+                                        aria-controls="simple-menu"
+                                        aria-haspopup="true"
+                                        onClick={(event) => {
+                                            setAnchorElDashMenu(event.currentTarget);
+                                        }}>
+                                        <ArrowDropDownIcon/>
+                                    </IconButton>
+                                    <Menu
+                                        id="dasboard-menu"
+                                        anchorEl={anchorElDashMenu}
+                                        keepMounted
+                                        open={Boolean(anchorElDashMenu)}
+                                        onClose={() => {
+                                            setAnchorElDashMenu(null);
+                                        }}
+                                    >
+                                        {dashboardMenu}
+                                    </Menu>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                     <Grid container direction={"row-reverse"} justify={"flex-start"} alignItems={"center"}>
@@ -196,26 +172,26 @@ export function MenuMainContainer(props) {
                                     aria-controls="simple-menu"
                                     aria-haspopup="true"
                                     onClick={(event) => {
-                                        setAnchorEl(event.currentTarget);
+                                        setAnchorElProfileMenu(event.currentTarget);
                                     }}>
                                     <ArrowDropDownIcon/>
                                 </IconButton>
                                 <Menu
                                     id="profile-menu"
-                                    anchorEl={anchorEl}
+                                    anchorEl={anchorElProfileMenu}
                                     keepMounted
-                                    open={Boolean(anchorEl)}
+                                    open={Boolean(anchorElProfileMenu)}
                                     onClose={() => {
-                                        setAnchorEl(null);
+                                        setAnchorElProfileMenu(null);
                                     }}
                                 >
                                     <MenuItem onClick={() => {
-                                        setAnchorEl(null);
+                                        setAnchorElProfileMenu(null);
                                     }} component={Link} to={`/user/${encodeUUID(whoami.uuid)}`}>
                                         Profile
                                     </MenuItem>
                                     <MenuItem onClick={() => {
-                                        setAnchorEl(null);
+                                        setAnchorElProfileMenu(null);
                                         dispatch(logoutUser());
                                         history.push("/");
                                     }}>
@@ -224,7 +200,7 @@ export function MenuMainContainer(props) {
                                     {process.env.REACT_APP_API_URL ? "" :
                                         // No need for change organisation entry if the api url is hard coded
                                         <MenuItem onClick={() => {
-                                            setAnchorEl(null);
+                                            setAnchorElProfileMenu(null);
                                             dispatch(removeApiURL());
                                             dispatch(clearServerSettings());
                                             history.push("/");
@@ -243,38 +219,6 @@ export function MenuMainContainer(props) {
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <nav className={classes.drawer} aria-label="mailbox folders">
-                {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-                <Hidden smUp implementation="css">
-                    <SwipeableDrawer
-                        container={container}
-                        variant="temporary"
-                        onOpen={handleDrawerToggle}
-                        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-                        open={mobileOpen}
-                        onClose={handleDrawerToggle}
-                        classes={{
-                            paper: classes.drawerPaper,
-                        }}
-                        ModalProps={{
-                            keepMounted: true, // Better open performance on mobile.
-                        }}
-                    >
-                        {drawer}
-                    </SwipeableDrawer>
-                </Hidden>
-                <Hidden xsDown implementation="css">
-                    <Drawer
-                        classes={{
-                            paper: classes.drawerPaper,
-                        }}
-                        variant="permanent"
-                        open
-                    >
-                        {drawer}
-                    </Drawer>
-                </Hidden>
-            </nav>
             <MainWindow apiControl={props.apiControl}/>
         </div>
     );
