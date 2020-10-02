@@ -41,7 +41,7 @@ export default function UserDetail(props) {
                         </PaddedPaper>
                     </Grid>
                     <Grid item>
-                        <ProfilePicture pictureURL={user.profile_picture_url} altText={user.display_name}/>
+                        <ProfilePicture pictureURL={user.profile_picture_url} userUUID={user.uuid} altText={user.display_name}/>
                     </Grid>
                 </Grid>
                 <Grid item>

@@ -15,7 +15,12 @@ import {
     getUserFailure,
     updateUserFailure,
     deleteUserFailure,
-    restoreUserFailure, addUserFailure, UPDATE_USER_PASSWORD_REQUEST, clearForceResetPasswordStatus, restoreUserRequest,
+    restoreUserFailure,
+    addUserFailure,
+    UPDATE_USER_PASSWORD_REQUEST,
+    clearForceResetPasswordStatus,
+    restoreUserRequest,
+    UPLOAD_USER_PROFILE_PICTURE_REQUEST, uploadUserProfilePictureSuccess, uploadUserProfilePictureFailure,
 } from "./UsersActions";
 import {getApiControl} from "../Api"
 import {restoreVehicleRequest} from "../vehicles/VehiclesActions";
@@ -76,6 +81,20 @@ function* updateUserPassword(action) {
 
 export function* watchUpdateUserPassword() {
     yield takeLatest(UPDATE_USER_PASSWORD_REQUEST, updateUserPassword)
+}
+
+function* uploadUserProfilePicture(action) {
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.users.uploadProfilePicture], action.data.userUUID, action.data.payload);
+        yield put(uploadUserProfilePictureSuccess(action.data))
+    } catch (error) {
+        yield put(uploadUserProfilePictureFailure(error))
+    }
+}
+
+export function* watchUploadUserProfilePicture() {
+    yield takeLatest(UPLOAD_USER_PROFILE_PICTURE_REQUEST, uploadUserProfilePicture)
 }
 
 function* deleteUser(action) {

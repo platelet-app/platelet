@@ -68,7 +68,7 @@ import {
     watchAddUser,
     watchDeleteUser,
     watchRestoreUser,
-    watchUpdateUser, watchUpdateUserPassword
+    watchUpdateUser, watchUpdateUserPassword, watchUploadUserProfilePicture
 } from "./users/UsersSagas";
 import {watchGetWhoami, watchRefreshWhoami} from "./WhoamiSaga";
 import {watchLogin} from "./login/LoginSagas"
@@ -153,6 +153,7 @@ export default function* rootSaga() {
         call(watchDeleteUser),
         call(watchRestoreUser),
         call(watchUpdateUser),
+        call(watchUploadUserProfilePicture),
         call(watchUpdateUserPassword)
     ])
 }

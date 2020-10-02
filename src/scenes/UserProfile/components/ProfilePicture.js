@@ -4,14 +4,16 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import {PaddedPaper} from "../../../styles/common";
 import "cropperjs/dist/cropper.css";
+import {uploadUserProfilePictureRequest} from "../../../redux/users/UsersActions";
+import {useDispatch} from "react-redux";
 
 
 
 export default function ProfilePicture(props)
 {
     const [image, setImage] = useState("");
-    const [cropData, setCropData] = useState("#");
     const [cropper, setCropper] = useState();
+    const dispatch = useDispatch();
 
 
     const onChange = (e) => {
@@ -29,10 +31,14 @@ export default function ProfilePicture(props)
         reader.readAsDataURL(files[0]);
     };
 
-    const getCropData = () => {
+    const sendPictureData = () => {
         console.log(cropper.getData())
         if (typeof cropper !== "undefined") {
-            setCropData(cropper.getData());
+            dispatch(uploadUserProfilePictureRequest(
+                {
+                    userUUID: props.userUUID,
+                    payload: {image_data: cropper.getCroppedCanvas().toDataURL("image/jpeg").split(';base64,')[1]}}));
+            //setCropData(cropper.getCroppedCanvas());
         }
     };
 
@@ -61,7 +67,7 @@ export default function ProfilePicture(props)
     const picUploadButton = image ?
         <Grid container direction={"row"}>
             <Grid item>
-                <Button onClick={getCropData}>Post</Button>
+                <Button onClick={sendPictureData}>Post</Button>
             </Grid>
             <Grid item>
                 <Button onClick={() => setImage("")}>Discard</Button>

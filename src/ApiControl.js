@@ -350,6 +350,16 @@ class User {
         return makeAxios(this.api_url, "user/" + user_id, "PUT", this.bearer, "application/json", input_data)
     }
 
+    //async uploadProfilePicture(user_id, image_data, crop_dimensions) {
+    //    let bodyFormData = new FormData();
+    //    bodyFormData.append('file', image_data)
+    //    bodyFormData.append('crop_dimensions', crop_dimensions)
+    //    return makeAxios(this.api_url, "user/" + user_id + "profile_picture", "POST", this.bearer, "multipart/form-data", bodyFormData)
+    //}
+    async uploadProfilePicture(user_id, input_data) {
+        return makeAxios(this.api_url, "user/" + user_id + "/profile_picture", "PUT", this.bearer, "application/json", input_data)
+    }
+
     async deleteUser(user_id) {
         return makeAxios(this.api_url, "user/" + user_id, "DELETE", this.bearer, "application/json")
     }

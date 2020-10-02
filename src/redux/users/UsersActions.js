@@ -29,6 +29,9 @@ export const UPDATE_USER_PATCH_REQUEST = 'UPDATE_USER_PATCH_REQUEST';
 export const UPDATE_USER_PASSWORD_REQUEST = 'UPDATE_USER_PASSWORD_REQUEST';
 export const UPDATE_USER_PASSWORD_SUCCESS = 'UPDATE_USER_PASSWORD_SUCCESS';
 export const UPDATE_USER_PASSWORD_FAILURE = 'UPDATE_USER_PASSWORD_FAILURE';
+export const UPLOAD_USER_PROFILE_PICTURE_REQUEST = 'UPLOAD_USER_PROFILE_PICTURE_REQUEST'
+export const UPLOAD_USER_PROFILE_PICTURE_FAILURE = 'UPLOAD_USER_PROFILE_PICTURE_FAILURE'
+export const UPLOAD_USER_PROFILE_PICTURE_SUCCESS = 'UPLOAD_USER_PROFILE_PICTURE_SUCCESS'
 
 export const CLEAR_FORCE_RESET_PASSWORD_STATUS = 'CLEAR_FORCE_RESET_PASSWORD_STATUS';
 
@@ -114,6 +117,18 @@ export function updateUserPasswordSuccess(data) {
 
 export function updateUserPasswordFailure(error) {
     return { type: UPDATE_USER_PASSWORD_FAILURE, error }
+}
+
+export function uploadUserProfilePictureRequest(data) {
+    return { type: UPLOAD_USER_PROFILE_PICTURE_REQUEST, data }
+}
+
+export function uploadUserProfilePictureSuccess(data) {
+    return { type: UPLOAD_USER_PROFILE_PICTURE_SUCCESS, data }
+}
+
+export function uploadUserProfilePictureFailure(error) {
+    return { type: UPLOAD_USER_PROFILE_PICTURE_FAILURE, error }
 }
 
 export function clearForceResetPasswordStatus() {
