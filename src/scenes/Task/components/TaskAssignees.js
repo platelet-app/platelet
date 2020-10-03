@@ -49,12 +49,9 @@ export default function TaskAssignees(props) {
         </Button>
 
     function onSelectRider(rider) {
+        console.log(rider)
         if (rider) {
-            const patchFilter = availablePatches.filter(patch => patch.id === rider.patch_id);
-            const patchLabel = patchFilter.length === 1 ? patchFilter[0].label : "";
-            const patchPayload = {patch_id: rider.patch_id, patch: patchLabel, user_uuid: rider.uuid, rider};
             const riderPayload = {user_uuid: rider.uuid, rider};
-            //dispatch(updateTaskPatch({taskUUID, payload: patchPayload}))
             dispatch(addTaskAssignedRiderRequest({taskUUID, payload: riderPayload}))
         }
         setAddMode(false);

@@ -33,6 +33,10 @@ export const createNotFoundSelector = actions => state => {
     return actions.some(action => state.notFoundReducer[action]);
 };
 
+export const createErrorSelector = actions => state => {
+    return actions.some(action => state.errorReducer[action]);
+};
+
 export const createContextMenuSnackSelector = uuid => state => {
     // This is redundant but kept in case I decide I need it after all
     return state.taskContextMenuSnack.uuid === uuid ? state.taskContextMenuSnack : undefined;

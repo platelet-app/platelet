@@ -1,18 +1,41 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Cropper from "react-cropper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import {PaddedPaper} from "../../../styles/common";
 import "cropperjs/dist/cropper.css";
 import {uploadUserProfilePictureRequest} from "../../../redux/users/UsersActions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {createErrorSelector, createPostingSelector} from "../../../redux/selectors";
 
 
 export default function ProfilePicture(props) {
     const [image, setImage] = useState("");
+    const [newImage, setNewImage] = useState("")
     const [cropper, setCropper] = useState();
+    const postingSelector = createPostingSelector(["UPLOAD_USER_PROFILE_PICTURE"]);
+    const isPosting = useSelector(state => postingSelector(state));
+    const errorSelector = createErrorSelector(["UPLOAD_USER_PROFILE_PICTURE"]);
+    const isError = useSelector(state => errorSelector(state));
     const dispatch = useDispatch();
+    const firstUpdate = useRef(true);
 
+    useEffect(() => {
+        if (firstUpdate.current) {
+            // ignore first run
+            firstUpdate.current = false;
+        } else {
+            if (!isPosting) {
+                setImage("")
+            }
+        }
+    }, [isPosting])
+
+    useEffect(() => {
+        if (isError) {
+            setNewImage("");
+        }
+    }, [isError])
 
     const onChange = (e) => {
         e.preventDefault();
@@ -32,12 +55,13 @@ export default function ProfilePicture(props) {
     const sendPictureData = () => {
         console.log(cropper.getData())
         if (typeof cropper !== "undefined") {
+            const dataUURL = cropper.getCroppedCanvas().toDataURL("image/jpeg");
             dispatch(uploadUserProfilePictureRequest(
                 {
                     userUUID: props.userUUID,
-                    payload: {image_data: cropper.getCroppedCanvas().toDataURL("image/jpeg").split(';base64,')[1]}
+                    payload: {image_data: dataUURL.split(';base64,')[1]}
                 }));
-            //setCropData(cropper.getCroppedCanvas());
+            setNewImage(dataUURL);
         }
     };
 
@@ -61,15 +85,15 @@ export default function ProfilePicture(props) {
             onInitialized={(instance) => {
                 setCropper(instance);
             }}
-        /> : <img alt={props.altText} src={props.pictureURL}/>
+        /> : <img width={300} height={300} alt={props.altText} src={newImage || props.pictureURL}/>
 
     const picUploadButton = image ?
-        <Grid container direction={"row"}>
+        <Grid container direction={"row"} justify={"space-between"}>
             <Grid item>
-                <Button onClick={sendPictureData}>Post</Button>
+                <Button disabled={isPosting} onClick={sendPictureData}>Finish</Button>
             </Grid>
             <Grid item>
-                <Button onClick={() => setImage("")}>Discard</Button>
+                <Button disabled={isPosting} onClick={() => setImage("")}>Discard</Button>
             </Grid>
         </Grid>
         :
@@ -99,7 +123,6 @@ export default function ProfilePicture(props) {
                 </Grid>
                 <Grid item>
                 </Grid>
-
             </Grid>
         </PaddedPaper>
     );

@@ -153,7 +153,8 @@ function UsersSelect(props) {
                 patch: result[0]['patch'],
                 vehicle: result[0]['vehicle'],
                 uuid: result[0]['uuid'],
-                patch_id: result[0]['patch_id']
+                patch_id: result[0]['patch_id'],
+                profile_picture_thumbnail_url: result[0]['profile_picture_thumbnail_url']
             };
             props.onSelect(rider);
         } else {
