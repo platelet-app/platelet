@@ -1,6 +1,7 @@
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FROM_SOCKET = 'ADD_COMMENT_FROM_SOCKET';
 export const DELETE_COMMENT_REQUEST = 'DELETE_COMMENT_REQUEST';
 export const DELETE_COMMENT_FAILURE = 'DELETE_COMMENT_FAILURE';
 export const DELETE_COMMENT_SUCCESS = 'DELETE_COMMENT_SUCCESS';
@@ -27,6 +28,10 @@ export function addCommentSuccess(data) {
 
 export function addCommentFailure(error) {
     return { type: ADD_COMMENT_FAILURE, error }
+}
+
+export function addCommentFromSocket(data) {
+    return { type: ADD_COMMENT_FROM_SOCKET, data }
 }
 
 export function restoreCommentRequest(data) {

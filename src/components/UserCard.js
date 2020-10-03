@@ -9,7 +9,6 @@ import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
 
 export default function UserCard(props) {
-    console.log(props.user)
     const deleteButton = props.onDelete ?
         <IconButton
             color={"inherit"}

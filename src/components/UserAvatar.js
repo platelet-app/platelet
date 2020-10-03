@@ -54,7 +54,6 @@ const UserAvatar = React.memo((props) => {
     }));
 
     const classes = useStyles();
-    console.log(props)
     return (
         <Avatar alt={props.displayName} src={props.avatarURL} className={classes.card}>{initials}</Avatar>
     )

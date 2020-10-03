@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
 import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -8,7 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {useDispatch, useSelector} from "react-redux";
 import {createPostingSelector} from "../../../redux/selectors";
-import {clearTaskContextMenuSnack, setHideDelivered, setTaskContextMenuSnack} from "../../../redux/Actions";
+import {clearTaskContextMenuSnack, setHideDelivered} from "../../../redux/Actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import ChatIcon from "@material-ui/icons/Chat";
@@ -16,12 +15,6 @@ import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import AvatarGroup from "@material-ui/lab/AvatarGroup";
-import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
-import UserAvatar from "../../../components/UserAvatar";
-import {AddCircleButtonSmall} from "../../../components/Buttons";
-import {StyledAddCircleOutlineSmall, StyledAddCircleOutlineSmallDisabled} from "../../../styles/Buttons";
 import CollaboratorsSection from "./CollaboratorsSection";
 
 export function TabPanel(props) {
@@ -100,10 +93,7 @@ export function SessionDetailTabs(props) {
 
 
     return (
-        <div className={classes.root}>
-            <PersistentDrawerRight open={rightSideBarOpen}
-                                   handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
-                                   handleDrawerClose={() => setRightSideBarOpen(false)}>
+        <>
                 <AppBar position="static">
                     <Grid container spacing={1} direction={"row"} justify={"space-between"} alignItems={"center"}>
                         <Grid item>
@@ -152,8 +142,11 @@ export function SessionDetailTabs(props) {
                         </Grid>
                     </Grid>
                 </AppBar>
-                {props.children}
-            </PersistentDrawerRight>
-        </div>
+    <PersistentDrawerRight open={rightSideBarOpen}
+                           handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
+                           handleDrawerClose={() => setRightSideBarOpen(false)}>
+        {props.children}
+    </PersistentDrawerRight>
+        </>
     );
 }

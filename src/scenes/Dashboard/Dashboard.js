@@ -6,11 +6,9 @@ import {
     addTaskRequest,
     clearCurrentTask,
     getAllTasksRequest,
-    refreshAllTasksRequest,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket,
-    updateTaskSuccess,
 } from '../../redux/tasks/TasksActions'
 import {
     setCommentsObjectUUID,
@@ -19,10 +17,6 @@ import {
     setNewTaskAddedView,
     setHideDelivered
 } from "../../redux/Actions";
-import {
-    getSessionRequest,
-    refreshCurrentSessionRequest,
-} from "../../redux/sessions/SessionsActions";
 import TasksGrid from "./components/TasksGrid";
 import {
     decodeUUID,
@@ -50,7 +44,6 @@ import {Redirect, useHistory} from "react-router";
 import {SessionDetailTabs, TabPanel} from "./components/SessionDetailTabs";
 import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
 import {concatTasks} from "./utilities";
-import {users} from "../../redux/users/UsersReducers";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -83,12 +76,12 @@ function Dashboard(props) {
     const currentSession = useSelector(state => state.session.session);
     const currentTaskUUID = useSelector(state => state.currentTask.task.uuid);
     const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
-    const history = useHistory();
     const firstUpdateNewTask = useRef(true);
     const firstTaskSubscribeCompleted = useRef(false);
     const whoami = useSelector(state => state.whoami.user);
     const socketSubscription = useSelector(state => state.subscription);
     const [postPermission, setPostPermission] = useState(false);
+    const [newTaskAdded, setNewTaskAdded] = useState(false);
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
 
@@ -183,16 +176,15 @@ function Dashboard(props) {
         dispatch(addTaskRequest(emptyTask))
     }
 
-    function setNewTaskAdded() {
+    function onAddNewTask() {
         return
         // We don't want it to run the first time
         if (firstUpdateNewTask.current)
             firstUpdateNewTask.current = false;
         else if (!isPostingNewTask)
-            dispatch(setNewTaskAddedView(true))
+            setNewTaskAddedView(true)
     }
-
-    useEffect(setNewTaskAdded, [isPostingNewTask])
+    useEffect(onAddNewTask, [isPostingNewTask])
 
     useEffect(() => {
         dispatch(setMenuIndex(2))
@@ -263,11 +255,11 @@ function Dashboard(props) {
         </Grid>
     ;
 
-    if (false) {
     //if (newTaskAddedView) {
+    if (false) {
         if (currentTaskUUID) {
             //TODO: for some reason this makes the session in the background disappear
-            return <Redirect to={`/session/${encodeUUID(session_uuid)}/task/${encodeUUID(currentTaskUUID)}`}/>
+            return <Redirect to={`/task/${encodeUUID(currentTaskUUID)}`}/>
         }
     }
     if (isFetching || viewMode === null) {

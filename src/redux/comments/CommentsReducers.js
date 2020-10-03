@@ -11,7 +11,8 @@ import {
     DELETE_COMMENT_SUCCESS,
     RESTORE_COMMENT_SUCCESS,
     DELETE_SIDEBAR_COMMENT_SUCCESS,
-    RESTORE_SIDEBAR_COMMENT_SUCCESS
+    RESTORE_SIDEBAR_COMMENT_SUCCESS,
+    ADD_COMMENT_FROM_SOCKET
 } from "./CommentsActions";
 
 const initialState = {
@@ -21,6 +22,7 @@ const initialState = {
 
 export function comments(state = initialState, action) {
     switch (action.type) {
+        case ADD_COMMENT_FROM_SOCKET:
         case ADD_COMMENT_SUCCESS:
             return {comments: [
                 ...state.comments,

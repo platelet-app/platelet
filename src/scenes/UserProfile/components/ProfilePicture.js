@@ -53,7 +53,6 @@ export default function ProfilePicture(props) {
     };
 
     const sendPictureData = () => {
-        console.log(cropper.getData())
         if (typeof cropper !== "undefined") {
             const dataUURL = cropper.getCroppedCanvas().toDataURL("image/jpeg");
             dispatch(uploadUserProfilePictureRequest(

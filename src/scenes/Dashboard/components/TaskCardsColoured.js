@@ -30,7 +30,7 @@ const TaskCard = React.memo((props) => {
     const cardInnerContent =
         <CardContent>
             <Grid container spacing={0} direction={"column"}>
-                <CardItem width={"170px"} label={"Assignee"}>{ridersNames}</CardItem>
+                <CardItem width={"270px"} label={"Assignee"}>{ridersNames}</CardItem>
                 <CardItem label={"Patch"}>{patch}</CardItem>
                 <CardItem label={"From"}>{pickupTitle}</CardItem>
                 <CardItem label={"Ward"}>{pickupWard}</CardItem>

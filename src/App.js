@@ -28,7 +28,7 @@ import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
 import {getApiURL} from "./utilities";
-import {connectSocket} from "./redux/sockets/SocketActions";
+import {connectCommentsSocket, connectSocket} from "./redux/sockets/SocketActions";
 import {DismissButton} from "./styles/common";
 
 
@@ -140,6 +140,7 @@ function App(props) {
         if (apiURL) {
             dispatch(getServerSettingsRequest())
             dispatch(connectSocket(apiURL + "subscribe"))
+            dispatch(connectCommentsSocket(apiURL + "subscribe_comments"))
         }
     }
 
@@ -193,8 +194,6 @@ function App(props) {
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up('sm'))));
-
-    console.log(forceResetPassword)
 
     if (!apiURL) {
         return (

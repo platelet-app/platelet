@@ -1,29 +1,66 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {clearComments, getCommentsRequest, getSidebarCommentsRequest} from "../../redux/comments/CommentsActions";
+import {
+    addCommentFailure,
+    addCommentFromSocket,
+    clearComments,
+    getCommentsRequest
+} from "../../redux/comments/CommentsActions";
 import CommentsMain from "./components/CommentsMain";
 import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
 import CommentsSkeleton from "./components/CommentsSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
+import {subscribeToComments, unsubscribeFromComments} from "../../redux/sockets/SocketActions";
+import {getTabIdentifier} from "../../utilities";
+import {
+    updateTaskAssignedRiderFromSocket,
+    updateTaskFromSocket,
+    updateTaskRemoveAssignedRiderFromSocket
+} from "../../redux/tasks/TasksActions";
 
 export default function CommentsSection(props) {
     const dispatch = useDispatch();
-    const loadingSelector = props.session ? createLoadingSelector(["GET_SIDEBAR_COMMENTS"]) : createLoadingSelector(["GET_COMMENTS"]);
+    const loadingSelector = createLoadingSelector(["GET_COMMENTS"]);
     const isFetching = useSelector(state => loadingSelector(state));
-    const notFoundSelector = props.session ? createNotFoundSelector(["GET_SIDEBAR_COMMENTS"]) : createNotFoundSelector(["GET_COMMENTS"]);
+    const notFoundSelector = createNotFoundSelector(["GET_COMMENTS"]);
     const notFound = useSelector(state => notFoundSelector(state));
-    const comments = useSelector(state => props.session ? state.sidebarComments.comments : state.comments.comments);
+    const comments = useSelector(state => state.comments.comments);
+    const socketSubscription = useSelector(state => state.commentsSubscription);
     function updateComments() {
         if (props.parentUUID) {
-            if (props.session)
-                dispatch(getSidebarCommentsRequest(props.parentUUID));
-            else
-                dispatch(getCommentsRequest(props.parentUUID));
+            dispatch(getCommentsRequest(props.parentUUID));
         } else {
             dispatch(clearComments())
         }
     }
     useEffect(updateComments, [props.parentUUID]);
+
+    useEffect(() => {
+        if (Object.keys(socketSubscription).length === 0 && socketSubscription.constructor === Object) {
+            console.log("ignore")
+        } else {
+            if (socketSubscription.tab_id != null && getTabIdentifier() !== socketSubscription.tab_id) {
+                switch (socketSubscription.type) {
+                    case "post":
+                        dispatch(addCommentFromSocket(socketSubscription.data))
+                        break;
+                    default:
+                        break;
+                }
+                console.log(socketSubscription.data)
+            } else
+                console.log("this came from us")
+        }
+
+    }, [socketSubscription])
+
+    function componentDidMount() {
+        dispatch(subscribeToComments(props.parentUUID));
+        return function cleanup() {
+            dispatch(unsubscribeFromComments(props.parentUUID));
+        }
+    }
+    useEffect(componentDidMount, []);
 
     if (isFetching) {
         return <CommentsSkeleton/>
@@ -32,7 +69,7 @@ export default function CommentsSection(props) {
     } else {
         return (
             <div style={{paddingTop: "30px"}}>
-                <CommentsMain sidebar={props.session} parentUUID={props.parentUUID} comments={comments}/>
+                <CommentsMain parentUUID={props.parentUUID} comments={comments}/>
             </div>
         )
     }

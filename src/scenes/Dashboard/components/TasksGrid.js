@@ -124,6 +124,7 @@ export default function TasksGrid(props) {
                       direction={"row"}
                       justify={"flex-start"}
                       alignItems={"stretch"}
+                      wrap={"nowrap"}
                 >
                     {Object.entries(filteredTasks).map(taskList => {
                         if (props.excludeColumnList && props.excludeColumnList.includes(taskList[0]))

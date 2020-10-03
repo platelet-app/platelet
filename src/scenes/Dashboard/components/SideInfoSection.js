@@ -33,14 +33,10 @@ const useStyles = makeStyles((theme) => ({
     drawerHeader: {
         display: 'flex',
         alignItems: 'center',
-        padding: theme.spacing(0, 1),
-        // necessary for content to be below app bar
-        ...theme.mixins.toolbar,
         justifyContent: 'flex-start',
     },
     content: {
         flexGrow: 1,
-        padding: theme.spacing(3),
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
@@ -59,7 +55,6 @@ const useStyles = makeStyles((theme) => ({
 export default function PersistentDrawerRight(props) {
     const classes = useStyles();
     const theme = useTheme();
-    const commentsParentUUID = useSelector(state => state.commentsObjectUUID);
 
     return (
         <div className={classes.root}>
@@ -89,7 +84,7 @@ export default function PersistentDrawerRight(props) {
                     </IconButton>
                 </div>
                 <Divider/>
-                <CommentsSection session={true} parentUUID={commentsParentUUID}/>
+                Log goes here
             </SwipeableDrawer>
         </div>
     );

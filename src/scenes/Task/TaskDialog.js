@@ -13,7 +13,6 @@ import PrioritySelect from "./components/PrioritySelect";
 import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
 import DeliverableInformation from "../Deliverables/DeliverableInformation";
 import {
-    getAllTasksRequest,
     updateTaskPickupTimeRequest,
     updateTaskPriorityRequest,
     updateTaskContactNameRequest,
@@ -22,7 +21,6 @@ import {
     updateTaskDropoffTimeRequest,
     updateTaskPickupAddressRequest,
     updateTaskCancelledTimeRequest,
-    setCurrentTask,
     clearCurrentTask,
     getTaskRequest,
     updateTaskPickupAddressFromSavedRequest, updateTaskDropoffAddressFromSavedRequest
@@ -61,13 +59,11 @@ export default function TaskDialog(props) {
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
     const mobileView = useSelector(state => state.mobileView);
     const task = useSelector(state => state.task.task);
-    const sessionUUID = useSelector(state => state.currentTask.task.session_uuid);
     const session = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
     const whoamiUUID = useSelector(state => state.whoami.user.uuid);
     const whoamiRoles = useSelector(state => state.whoami.user.roles);
-    const currentLocation = useLocation();
-    const [pickedUpStatus, setPickedUpStatus] = useState(false);
+    const [pickedUpStatus, setPickedUpStatus] = useState(true);
 
     let history = useHistory();
     let taskUUID = null;
@@ -88,17 +84,7 @@ export default function TaskDialog(props) {
     function editModeSetter() {
         setEditMode(session.coordinator_uuid === whoami.uuid || whoami.roles.includes("admin"));
     }
-
     useEffect(editModeSetter, [whoamiUUID, whoamiRoles])
-
-    //function currentTask() {
-    //    const {task} = findExistingTask(tasks, taskUUID)
-    //    if (task) {
-    //        setPickedUpStatus(task.time_picked_up !== null);
-    //        dispatch(setCurrentTask(task));
-    //    }
-    //}
-    //useEffect(currentTask, [tasks])
 
     function updateEditMode() {
         setEditMode(session.coordinator_uuid === whoamiUUID || whoamiRoles.includes("admin"));
@@ -324,7 +310,7 @@ export default function TaskDialog(props) {
             </Grid>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <TaskModalTimePicker disabled={isPostingDropoffTime || !pickedUpStatus}
+                    <TaskModalTimePicker disabled={isPostingDropoffTime || !task.time_picked_up || !pickedUpStatus}
                                          label={"Mark Dropped Off"}
                                          time={task.time_dropped_off}
                                          onChange={onSelectDroppedOff}

@@ -35,7 +35,7 @@ export default function UserDetail(props) {
     } else {
         return (
             <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>
-                <Grid container direction={"row"} spacing={4}>
+                <Grid container direction={"row"} spacing={4} wrap={"nowrap"}>
                     <Grid item>
                         <PaddedPaper width={"600px"}>
                             <UserProfile user={user}/>

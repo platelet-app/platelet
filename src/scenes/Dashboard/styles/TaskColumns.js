@@ -2,8 +2,8 @@ import {styled} from "@material-ui/styles";
 import {StyledColumn} from "../../../styles/common"
 
 export const TasksKanbanColumn = styled(StyledColumn)({
-    maxWidth: "400px",
-    minWidth: "250px",
+    maxWidth: "600px",
+    minWidth: "350px",
     borderRadius: 5,
 });
 
