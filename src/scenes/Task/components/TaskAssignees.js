@@ -3,10 +3,6 @@ import UsersSelect from "../../../components/UsersSelect";
 import Typography from "@material-ui/core/Typography";
 import UserCard from "../../../components/UserCard";
 import React, {useEffect, useState} from "react";
-import {
-    updateTaskPatchRequest,
-} from "../../../redux/tasks/TasksActions";
-
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector, createPostingSelector} from "../../../redux/selectors";
 import Button from "@material-ui/core/Button";
@@ -19,17 +15,13 @@ import TaskAssigneesSkeleton from "./TaskAssigneesSkeleton";
 
 export default function TaskAssignees(props) {
     const [addMode, setAddMode] = useState(false);
-    const availablePatches = useSelector(state => state.availablePatches.patches);
     const postingSelector = createPostingSelector(["ADD_TASK_ASSIGNED_RIDER", "UPDATE_TASK_PATCH"]);
     const isPosting = useSelector(state => postingSelector(state));
     const loadingSelector = createLoadingSelector(["GET_TASK_ASSIGNED_RIDERS"]);
     const isFetching = useSelector(state => loadingSelector(state));
     const dispatch = useDispatch();
     const taskUUID = props.taskUUID;
-    //const assignees = useSelector(state => state.currentTask.task.assigned_users);
     const assignees = useSelector(state => state.taskAssignees.assignees);
-
-    //const addButton = <AddCircleButtonSmall disabled={isPosting} onClick={() => setAddMode(!addMode)}/>
 
     function componentDidMount() {
         dispatch(getTaskAssignedRidersRequest(taskUUID))
@@ -64,6 +56,7 @@ export default function TaskAssignees(props) {
                      vehicleAssignedUsersFirst={true}
                      onSelect={onSelectRider}
                      excludeList={assignees.map((u) => u.uuid)}/>
+
                      :
         <></>
 

@@ -16,7 +16,7 @@ import {
     UPDATE_VEHICLE_MODEL_REQUEST,
     UPDATE_VEHICLE_REGISTRATION_REQUEST,
     UPDATE_VEHICLE_MANUFACTURER_REQUEST,
-    vehicleNotFound,
+    getVehicleNotFound,
     getVehicleFailure,
     deleteVehicleFailure,
     restoreVehicleFailure, getAllVehiclesFailure, updateVehicleFailure, restoreVehicleRequest
@@ -103,12 +103,10 @@ function* getVehicle(action) {
         yield put(getVehicleSuccess(result))
     } catch (error) {
         if (error.name === "HttpError") {
-            if (error.response.status === 404) {
-                yield put(vehicleNotFound())
-            } else {
-                yield put(getVehicleFailure(error))
-            }
+            if (error.response.status === 404)
+                yield put(getVehicleNotFound(error))
         }
+        yield put(getVehicleFailure(error))
     }
 }
 

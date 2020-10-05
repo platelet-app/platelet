@@ -80,7 +80,7 @@ function Dashboard(props) {
     const firstTaskSubscribeCompleted = useRef(false);
     const whoami = useSelector(state => state.whoami.user);
     const socketSubscription = useSelector(state => state.subscription);
-    const [postPermission, setPostPermission] = useState(false);
+    const [postPermission, setPostPermission] = useState(true);
     const [newTaskAdded, setNewTaskAdded] = useState(false);
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
@@ -154,18 +154,10 @@ function Dashboard(props) {
     }
     useEffect(subscribeTasks, [tasks])
 
-    useEffect(() => {
-        const permission = whoami.uuid === currentSession.coordinator_uuid || currentSession.collaborators.map((u) => u.uuid).includes(whoami.uuid);
-        setPostPermission(permission);
-        },[currentSession])
-
-
     const emptyTask = {
-        session_uuid: session_uuid,
         time_of_call: new Date().toISOString(),
         time_created: new Date().toISOString(),
-        assigned_users: [],
-        assigned_users_display_string: "",
+        assigned_riders: [],
         time_picked_up: null,
         time_dropped_off: null,
         time_rejected: null,

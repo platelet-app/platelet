@@ -16,7 +16,7 @@ import {
     updateTaskDropoffTimeRequest,
     updateTaskPickupTimeRequest,
     UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST,
-    UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST
+    UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST, getTaskNotFound
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -428,6 +428,11 @@ function* getTask(action) {
             yield put(getTaskSuccess(result))
         }
     } catch (error) {
+        if (error.name === "HttpError") {
+            if (error.response.status === 404) {
+                yield put(getTaskNotFound(error))
+            }
+        }
         yield put(getTaskFailure(error))
     }
 }

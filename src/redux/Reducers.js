@@ -25,7 +25,7 @@ import {users, user} from "./users/UsersReducers";
 import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
 import {comments, sidebarComments} from "./comments/CommentsReducers";
 import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
-import {subscription, commentsSubscription} from "./sockets/SocketReducers";
+import {subscription, commentsSubscription, socketCommentsConnectionStatus, socketConnectionStatus} from "./sockets/SocketReducers";
 import {infoNotifications} from "./notifications/NotificationsReducers";
 import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
 
@@ -257,6 +257,8 @@ const rootReducer = combineReducers({
     taskContextMenuSnack,
     subscription,
     commentsSubscription,
+    socketConnectionStatus,
+    socketCommentsConnectionStatus,
     infoNotifications
 });
 

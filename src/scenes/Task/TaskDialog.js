@@ -28,13 +28,14 @@ import {
 import {useDispatch, useSelector} from "react-redux"
 import {PaddedPaper} from "../../styles/common";
 import {decodeUUID, encodeUUID, findExistingTask} from "../../utilities";
-import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
+import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from "../../redux/selectors";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import TaskModalTimePicker from "./components/TaskModalTimePicker";
 import TaskModalNameAndContactNumber from "./components/TaskModalNameAndContactNumber";
 import CommentsSection from "../Comments/CommentsSection";
 import TaskAssignees from "./components/TaskAssignees";
 import Typography from "@material-ui/core/Typography";
+import NotFound from "../../ErrorComponents/NotFound";
 
 export default function TaskDialog(props) {
     const dispatch = useDispatch();
@@ -59,11 +60,12 @@ export default function TaskDialog(props) {
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
     const mobileView = useSelector(state => state.mobileView);
     const task = useSelector(state => state.task.task);
-    const session = useSelector(state => state.session.session);
+    const notFoundSelector = createNotFoundSelector(["GET_TASK"]);
+    const notFound = useSelector(state => notFoundSelector(state));
     const whoami = useSelector(state => state.whoami.user);
     const whoamiUUID = useSelector(state => state.whoami.user.uuid);
     const whoamiRoles = useSelector(state => state.whoami.user.roles);
-    const [pickedUpStatus, setPickedUpStatus] = useState(true);
+    const [pickedUpStatus, setPickedUpStatus] = useState(false);
 
     let history = useHistory();
     let taskUUID = null;
@@ -73,7 +75,7 @@ export default function TaskDialog(props) {
     } else {
         taskUUID = task.uuid;
     }
-    const [editMode, setEditMode] = useState(false);
+    const [editMode, setEditMode] = useState(true);
 
     function componentDidMount() {
         dispatch(getTaskRequest(taskUUID));
@@ -81,16 +83,19 @@ export default function TaskDialog(props) {
 
     useEffect(componentDidMount, []);
 
-    function editModeSetter() {
-        setEditMode(session.coordinator_uuid === whoami.uuid || whoami.roles.includes("admin"));
-    }
-    useEffect(editModeSetter, [whoamiUUID, whoamiRoles])
+    // TODO: add in collaborators once done on backend
+     function editModeSetter() {
+         if (task && task.author)
+             setEditMode(task.author.uuid === whoami.uuid || whoami.roles.includes("admin"));
+     }
+     useEffect(editModeSetter, [whoamiUUID, whoamiRoles, task])
 
-    function updateEditMode() {
-        setEditMode(session.coordinator_uuid === whoamiUUID || whoamiRoles.includes("admin"));
-    }
+     function updateEditMode() {
+         if (task && task.author)
+             setEditMode(task.author.uuid === whoamiUUID || whoamiRoles.includes("admin"));
+     }
 
-    useEffect(updateEditMode, [whoami, session])
+    useEffect(updateEditMode, [whoami, task])
 
     function onSelectContactNumber(event) {
         const payload = {contact_number: event.target.value};
@@ -314,19 +319,21 @@ export default function TaskDialog(props) {
                                          label={"Mark Dropped Off"}
                                          time={task.time_dropped_off}
                                          onChange={onSelectDroppedOff}
-                                         />
+                    />
                 </PaddedPaper>
             </Grid>
         </Grid>
-
-    if (props.modal) {
-        const modalContents = isFetching ?
-            <div style={{width: "600px"}}>
-                <DialogContent>
-                    <FormSkeleton/>
-                </DialogContent>
-            </div> :
-
+    let modalContents;
+    if (notFound) {
+        modalContents = <NotFound>Task {taskUUID} not found.</NotFound>
+    } else if (isFetching) {
+        modalContents = <div style={{width: "600px"}}>
+            <DialogContent>
+                <FormSkeleton/>
+            </DialogContent>
+        </div>
+    } else {
+        modalContents =
             <>
                 <DialogContent>
                     <Grid container
@@ -358,6 +365,7 @@ export default function TaskDialog(props) {
                     </Grid>
                 </DialogContent>
             </>;
+    }
 
         return (
             <>
@@ -384,80 +392,6 @@ export default function TaskDialog(props) {
                 </Dialog>
             </>
         );
-    } else {
-        if (isFetching) {
-            return (
-                <FormSkeleton/>
-            )
-        } else {
-            return (
-                <div style={{
-                    background: "white",
-                    paddingLeft: 30,
-                    paddingTop: 100,
-                    paddingRight: 30,
-                    paddingBottom: 100
-                }}>
-                    <Grid container
-                          spacing={2}
-                          direction={"column"}
-                          justify={"flex-start"}
-                          alignItems={"flex-start"}>
-                        <Grid item>
-                            {task.pickup_address ? "FROM: " + task.pickup_address.line1 + "." : ""}
-                        </Grid>
-                        <Grid item>
-                            {task.dropoff_address ? "TO: " + task.dropoff_address.line1 + "." : ""}
-                        </Grid>
-                        <Grid item>
-                            {task.rider ? "Assigned to: " + task.rider.display_name + "." : ""}
-                        </Grid>
-                    </Grid>
-                    <Grid container
-                          spacing={3}
-                          direction={"column"}
-                          justify={"flex-start"}
-                          alignItems={"flex-start"}>
-                        <Grid item>
-                            <AddressDetailsCollapsible label={"Pickup Address"}
-                                                       onSelect={onSelectPickup}
-                                                       onSelectPreset={onSelectPickupFromSaved}
-                                                       address={task.pickup_address}
-                                                       disabled={!editMode}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <AddressDetailsCollapsible label={"Dropoff Address"}
-                                                       onSelect={onSelectDropoff}
-                                                       address={task.dropoff_address}
-                                                       disabled={!editMode}/>
-                        </Grid>
-                        <Grid item>
-                            {usersSelect}
-                        </Grid>
-                        <Grid item>
-                            {prioritySelect}
-                        </Grid>
-                        <Grid item>
-                            {deliverableSelect}
-                        </Grid>
-                        <Grid item>
-                            <ToggleTimeStamp label={"Picked Up"} status={!!task.time_picked_up}
-                                             onSelect={onSelectPickedUp}/>
-                            {pickupTimeNotice}
-                        </Grid>
-                        <Grid item>
-                            <ToggleTimeStamp label={"Delivered"} status={!!task.time_dropped_off}
-                                             onSelect={onSelectDroppedOff}/>
-                            {dropoffTimeNotice}
-                        </Grid>
-                        <Grid item>
-                            <CommentsSection parentUUID={taskUUID}/>
-                        </Grid>
-                    </Grid>
-                </div>
-            );
-        }
-    }
+
 }
 

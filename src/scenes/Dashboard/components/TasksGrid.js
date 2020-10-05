@@ -74,6 +74,7 @@ const GridColumn = React.memo((props) => {
                 >
                     {props.newTaskButton}
                     {props.tasks.map(task => {
+                        console.log(task)
                         return (
                             <TaskItem key={task.uuid}
                                       task={task}
@@ -106,6 +107,7 @@ export default function TasksGrid(props) {
         const result = filterTasks(tasks, searchQuery)
         setFilteredTasks(result);
     }
+    console.log(props.hideAddButton)
 
     useEffect(doSearch, [searchQuery])
     //TODO: separate task columns into individual components so that there is less rerendering
@@ -130,7 +132,7 @@ export default function TasksGrid(props) {
                         if (props.excludeColumnList && props.excludeColumnList.includes(taskList[0]))
                             return <></>
                         let newTaskButton = "";
-                        if (props.sessionUUID && taskList[0] === "tasksNew" && !searchQuery && !props.hideAddButton) {
+                        if (taskList[0] === "tasksNew" && !searchQuery && !props.hideAddButton) {
                             newTaskButton = <AddCircleButton
                                 disabled={isPosting}
                                 onClick={props.onAddTaskClick}

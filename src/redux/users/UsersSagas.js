@@ -20,10 +20,13 @@ import {
     UPDATE_USER_PASSWORD_REQUEST,
     clearForceResetPasswordStatus,
     restoreUserRequest,
-    UPLOAD_USER_PROFILE_PICTURE_REQUEST, uploadUserProfilePictureSuccess, uploadUserProfilePictureFailure,
+    UPLOAD_USER_PROFILE_PICTURE_REQUEST,
+    uploadUserProfilePictureSuccess,
+    uploadUserProfilePictureFailure,
+    getUserNotFound,
 } from "./UsersActions";
 import {getApiControl} from "../Api"
-import {restoreVehicleRequest} from "../vehicles/VehiclesActions";
+import {getVehicleFailure, restoreVehicleRequest, getVehicleNotFound} from "../vehicles/VehiclesActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function* getUsers() {
@@ -42,6 +45,10 @@ function* getUser(action) {
         const result = yield call([api, api.users.getUser], action.data);
         yield put(getUserSuccess(result))
     } catch (error) {
+        if (error.name === "HttpError") {
+            if (error.response.status === 404)
+                yield put(getUserNotFound(error))
+        }
         yield put(getUserFailure(error))
     }
 }

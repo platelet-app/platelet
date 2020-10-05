@@ -58,7 +58,7 @@ export function getVehicleFailure(error) {
     return { type: GET_VEHICLE_FAILURE, error }
 }
 
-export function vehicleNotFound() {
+export function getVehicleNotFound() {
     return { type: GET_VEHICLE_NOTFOUND }
 }
 

@@ -11,6 +11,7 @@ import UsersList from "../scenes/UsersList";
 import UserDetail from "../scenes/UserProfile/UserDetail";
 import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
 import {AdminControl} from "../scenes/AdminControl/AdminControl";
+import NotFound from "../ErrorComponents/NotFound";
 
 export default function MainWindow(_props) {
     let location = useLocation();
@@ -60,6 +61,7 @@ export default function MainWindow(_props) {
                                )
                            }}
                     />
+                    <Route component={NotFound}/>
                 </Switch>
             </main>
         </MainWindowContainer>

@@ -109,6 +109,10 @@ export function getTaskFailure(error) {
     return { type: GET_TASK_FAILURE, error }
 }
 
+export function getTaskNotFound(error) {
+    return { type: GET_TASK_NOTFOUND, error }
+}
+
 export function addTaskRequest(data) {
     return { type: ADD_TASK_REQUEST, data }
 }
