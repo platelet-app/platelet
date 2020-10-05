@@ -75,8 +75,8 @@ import {watchLogin} from "./login/LoginSagas"
 import {watchGetAvailablePatches} from "./patches/PatchesSagas";
 import {watchGetServerSettings} from "./ServerSettings/ServerSettingsSagas";
 import {
-    watchGetTaskAssignedRiders,
-    watchUpdateTaskAddAssignedRider,
+    watchGetTaskAssignedRiders, watchUpdateTaskAddAssignedCoordinator,
+    watchUpdateTaskAddAssignedRider, watchUpdateTaskRemoveCoordinator,
     watchUpdateTaskRemoveRider
 } from "./taskAssignees/TaskAssigneesSagas";
 
@@ -99,7 +99,9 @@ export default function* rootSaga() {
         call(watchUpdateTask),
         call(watchGetTaskAssignedRiders),
         call(watchUpdateTaskAddAssignedRider),
+        call(watchUpdateTaskAddAssignedCoordinator),
         call(watchUpdateTaskRemoveRider),
+        call(watchUpdateTaskRemoveCoordinator),
         call(watchUpdateTaskContactName),
         call(watchUpdateTaskContactNumber),
         call(watchUpdateTaskDropoffAddress),

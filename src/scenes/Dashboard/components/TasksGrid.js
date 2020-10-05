@@ -74,7 +74,6 @@ const GridColumn = React.memo((props) => {
                 >
                     {props.newTaskButton}
                     {props.tasks.map(task => {
-                        console.log(task)
                         return (
                             <TaskItem key={task.uuid}
                                       task={task}

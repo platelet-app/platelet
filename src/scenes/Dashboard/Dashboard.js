@@ -157,6 +157,7 @@ function Dashboard(props) {
     const emptyTask = {
         time_of_call: new Date().toISOString(),
         time_created: new Date().toISOString(),
+        author_uuid: whoami.uuid,
         assigned_riders: [],
         time_picked_up: null,
         time_dropped_off: null,

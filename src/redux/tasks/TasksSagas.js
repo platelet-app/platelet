@@ -95,6 +95,7 @@ import Button from "@material-ui/core/Button";
 import {restoreUserRequest} from "../users/UsersActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {findExistingTask} from "../../utilities";
+import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
     const set = new Set()
@@ -122,6 +123,7 @@ function* postNewTask(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data);
         const task = {...action.data, "uuid": result.uuid};
+        yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: task.author_uuid}}))
         yield put(setCurrentTask(task));
         yield put(addTaskSuccess(task));
         yield put(subscribeToUUID(task.uuid))
@@ -304,7 +306,7 @@ function* updateTaskPatch(action) {
 function* updateTaskPatchFromServer(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.getTaskAssignees], action.data.taskUUID);
+        const result = yield call([api, api.tasks.getTaskAssignedRiders], action.data.taskUUID);
         const lastResult = result.slice(-1)[0]
         const payload = lastResult ? {patch: lastResult.patch, patch_id: lastResult.patch_id} : {
             patch: "",

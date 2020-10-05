@@ -29,6 +29,8 @@ import {determineTaskType, findExistingTask, orderTaskList, spliceExistingTask} 
 const initialState = {
     task: {
         uuid: null,
+        author: null,
+        author_uuid: null,
         pickup_address: null,
         dropoff_address: null,
         patch: null, patch_id: null,

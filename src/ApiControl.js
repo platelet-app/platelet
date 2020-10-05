@@ -208,12 +208,28 @@ class Task {
         return makeAxios(this.api_url, "task/" + task_id + "/assigned_users", "GET", this.bearer, "application/json")
     }
 
-    async addTaskAssignee(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users", "PUT", this.bearer, "application/json", input_data)
+    async getTaskAssignedRiders(task_id) {
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "GET", this.bearer, "application/json")
     }
 
-    async removeTaskAssignee(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users", "DELETE", this.bearer, "application/json", input_data)
+    async getTaskAssignedCoordinators(task_id) {
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "GET", this.bearer, "application/json")
+    }
+
+    async addTaskAssignedRider(task_id, input_data) {
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "PUT", this.bearer, "application/json", input_data)
+    }
+
+    async addTaskAssignedCoordinator(task_id, input_data) {
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "PUT", this.bearer, "application/json", input_data)
+    }
+
+    async removeTaskAssignedRider(task_id, input_data) {
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "DELETE", this.bearer, "application/json", input_data)
+    }
+
+    async removeTaskAssignedCoordinator(task_id, input_data) {
+        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "DELETE", this.bearer, "application/json", input_data)
     }
 
     async deleteTask(task_id) {
