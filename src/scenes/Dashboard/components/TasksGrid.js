@@ -47,8 +47,8 @@ const getColumnTitle = key => {
             return <h3>New</h3>;
         case "tasksActive":
             return <h3>Active</h3>;
-        case "tasksActivePickedUp":
-            return <h3>Active</h3>;
+        case "tasksPickedUp":
+            return <h3>Picked Up</h3>;
         case "tasksDelivered":
             return <h3>Delivered</h3>;
         case "tasksRejected":
@@ -90,7 +90,6 @@ const GridColumn = React.memo((props) => {
 
 export default function TasksGrid(props) {
     const postingSelector = createPostingSelector(["ADD_TASK"]);
-    const dispatch = useDispatch();
     const isPosting = useSelector(state => postingSelector(state));
     const [filteredTasks, setFilteredTasks] = useState(initialTasksState);
     const tasks = useSelector(state => state.tasks.tasks);
@@ -114,8 +113,6 @@ export default function TasksGrid(props) {
         <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
             <Grid item>
                 {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onChange={(e) => {
-                    //const result = filterTasks(tasks, e.target.value)
-                    //setFilteredTasks(result);
                     setSearchQuery(e.target.value)
                 }}/>}
             </Grid>

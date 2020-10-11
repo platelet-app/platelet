@@ -446,8 +446,14 @@ export function* watchGetTask() {
 function* getTasks(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.getTasks], action.data, action.page);
-        yield put(getAllTasksSuccess(result))
+        // get all the different tasks for different status and combine them
+        const tasksNew = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "new");
+        const tasksActive = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "active");
+        const tasksPickedUp = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "picked_up");
+        const tasksDelivered = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "delivered");
+        const tasksCancelled = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "cancelled");
+        const tasksRejected = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "rejected");
+        yield put(getAllTasksSuccess({tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksCancelled, tasksRejected}))
     } catch (error) {
         if (error.name === "HttpError") {
             if (error.response.status === 404) {

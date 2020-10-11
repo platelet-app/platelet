@@ -156,13 +156,15 @@ export function orderTaskList(tasks) {
 
 export function determineTaskType(task) {
     if (task.time_cancelled) {
-        return { tasksRejectedCancelled: [task] };
+        return { tasksCancelled: [task] };
     } else if (task.time_rejected) {
-        return { tasksRejectedCancelled: [task] };
+        return { tasksRejected: [task] };
     } else if (!task.assigned_riders || !task.assigned_riders.length) {
         return { tasksNew: [task] };
-    } else if ((task.assigned_riders.length || task.time_picked_up) && !task.time_dropped_off) {
-        return { tasksActivePickedUp: [task] };
+    } else if ((task.assigned_riders.length) && !task.time_picked_up) {
+        return { tasksActive: [task] };
+    } else if ((task.assigned_riders.length) && task.time_picked_up && !task.time_dropped_off) {
+        return { tasksPickedUp: [task] };
     } else if (task.time_dropped_off) {
         return { tasksDelivered: [task] };
     } else {

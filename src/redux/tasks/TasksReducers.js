@@ -177,11 +177,11 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case GET_TASKS_SUCCESS:
-            return {tasks: orderTaskList(action.data), error: null};
+            return {tasks: action.data, error: null};
         case GET_TASKS_FAILURE:
             return {...initialTasksState, error: action.error};
         case GET_MY_TASKS_SUCCESS:
-            return {tasks: orderTaskList(action.data), error: null};
+            return {tasks: action.data, error: null};
         case GET_MY_TASKS_FAILURE:
             return {...initialTasksState, error: action.error};
         default:

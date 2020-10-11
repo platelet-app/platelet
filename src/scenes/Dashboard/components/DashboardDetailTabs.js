@@ -59,15 +59,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export function SessionDetailTabs(props) {
-    const classes = useStyles();
+export function DashboardDetailTabs(props) {
     const dispatch = useDispatch();
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
     const snack = useSelector(state => state.taskContextMenuSnack);
     const currentSession = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);
-    const hideDelivered = useSelector(state => state.hideDelivered);
-    //const [toggleHideDelivered, setToggleHideDelivered] = useState(props.hideDelivered);
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -95,13 +92,12 @@ export function SessionDetailTabs(props) {
     return (
         <>
                 <AppBar position="static">
-                    <Grid container spacing={1} direction={"row"} justify={"space-between"} alignItems={"center"}>
+                    <Grid container spacing={1} wrap={"nowrap"} direction={"row"} justify={"space-between"} alignItems={"center"}>
                         <Grid item>
                             <Tabs value={parseInt(props.value)} onChange={handleChange}
                                   aria-label="simple tabs example">
-                                <Tab label="Kanban" {...a11yProps(0)} />
-                                <Tab label="Table" {...a11yProps(1)} />
-                                <Tab label="Statistics" {...a11yProps(2)} />
+                                <Tab label="Active" {...a11yProps(0)} />
+                                <Tab label="Completed" {...a11yProps(1)} />
                             </Tabs>
                         </Grid>
                         <Grid item>
@@ -115,20 +111,8 @@ export function SessionDetailTabs(props) {
                                     />
                                 </Grid>
                                 <Grid item>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                checked={props.hideDelivered}
-                                                onChange={() => {
-                                                    dispatch(setHideDelivered(!props.hideDelivered));
-                                                }}
-                                                name="hide-delivered"/>}
-                                        label="Hide Delivered"
-                                    />
-                                </Grid>
-                                <Grid item>
 
-                                    <Tooltip title="View comments">
+                                    <Tooltip title="View Log">
                                         <IconButton
                                             color="inherit"
                                             aria-label="open drawer"

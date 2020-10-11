@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from "@material-ui/core/Grid";
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import AddressDetailsCollapsible from "../../components/AddressDetail";
 import ToggleTimeStamp from "./components/ToggleTimeStamp";
 import Moment from "react-moment";
@@ -23,11 +23,12 @@ import {
     updateTaskCancelledTimeRequest,
     clearCurrentTask,
     getTaskRequest,
-    updateTaskPickupAddressFromSavedRequest, updateTaskDropoffAddressFromSavedRequest
+    updateTaskPickupAddressFromSavedRequest,
+    updateTaskDropoffAddressFromSavedRequest
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import {PaddedPaper} from "../../styles/common";
-import {decodeUUID, encodeUUID, findExistingTask} from "../../utilities";
+import {decodeUUID} from "../../utilities";
 import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from "../../redux/selectors";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import TaskModalTimePicker from "./components/TaskModalTimePicker";

@@ -41,7 +41,7 @@ import ChatIcon from "@material-ui/icons/Chat";
 import Tooltip from "@material-ui/core/Tooltip";
 import NotFound from "../../ErrorComponents/NotFound";
 import {Redirect, useHistory} from "react-router";
-import {SessionDetailTabs, TabPanel} from "./components/SessionDetailTabs";
+import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
 import {concatTasks} from "./utilities";
 
@@ -261,30 +261,28 @@ function Dashboard(props) {
         return <NotFound>{`Session with UUID ${session_uuid} not found.`}</NotFound>
     } else {
             return (
-                <SessionDetailTabs hideDelivered={hideDelivered} value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
+                <DashboardDetailTabs hideDelivered={hideDelivered} value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
                     <TabPanel value={viewMode} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
                                    onAddTaskClick={addEmptyTask}
-                                   sessionUUID={session_uuid}
                                    modalView={"edit"}
                                    hideDelivered={hideDelivered}
                                    hideAddButton={!postPermission}
+                                   excludeColumnList={["tasksDelivered", "tasksCancelled", "tasksRejected"]}
                         />
                     </TabPanel>
                     <TabPanel value={viewMode} index={1}>
-                        <TasksTable tasks={tasks}
-                                    fullScreenModal={mobileView}
-                                    onAddTaskClick={addEmptyTask}
-                                    sessionUUID={session_uuid}
-                                    modalView={"edit"}
-                                    hideDelivered={hideDelivered}
+                        <TasksGrid tasks={tasks}
+                                   fullScreenModal={mobileView}
+                                   onAddTaskClick={addEmptyTask}
+                                   modalView={"edit"}
+                                   hideDelivered={hideDelivered}
+                                   hideAddButton={!postPermission}
+                                   excludeColumnList={["tasksNew", "tasksActive", "tasksPickedUp"]}
                         />
                     </TabPanel>
-                    <TabPanel value={viewMode} index={2}>
-                        <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
-                    </TabPanel>
-                </SessionDetailTabs>
+                </DashboardDetailTabs>
             )
         }
 

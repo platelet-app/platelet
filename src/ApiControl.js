@@ -187,9 +187,9 @@ class Task {
         this.api_url = api_url;
     }
 
-    async getTasks(user_id, page) {
-        console.log("tasks/" + user_id + "?page=" + (page || "1"))
-        return makeAxios(this.api_url, "tasks/" + user_id + "?page=" + (page || "1"), "GET", this.bearer)
+    async getTasks(user_id, page, role, status) {
+        console.log(`tasks/${user_id}?page=${(page || "1")}&role=${role || ""}&status=${status || ""}`)
+        return makeAxios(this.api_url,`tasks/${user_id}?page=${(page || "1")}&role=${role || ""}&status=${status || ""}`, "GET", this.bearer)
     }
 
     async getTask(task_id) {
