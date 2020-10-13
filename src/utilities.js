@@ -62,14 +62,6 @@ export function getLocalStorageViewMode() {
     return localStorage.getItem("viewMode");
 }
 
-export function saveLocalStorageHideDelivered(status) {
-    localStorage.setItem("hideDelivered", status);
-}
-
-export function getLocalStorageHideDelivered() {
-    return localStorage.getItem("hideDelivered");
-}
-
 
 export function debounce (func, delay) {
     let inDebounce

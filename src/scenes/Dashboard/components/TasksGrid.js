@@ -136,11 +136,9 @@ export default function TasksGrid(props) {
 
                         }
                         const title = getColumnTitle(taskList[0]);
-                        const gridColumn = (props.hideDelivered && taskList[0] === "tasksDelivered") ? <></> :
-                            <GridColumn title={title} newTaskButton={newTaskButton} tasks={taskList[1]}/>
                         return (
                             <Grid item xs sm md lg key={taskList[0]}>
-                                {gridColumn}
+                                <GridColumn title={title} newTaskButton={newTaskButton} tasks={taskList[1]}/>
                                     <Waypoint
                                         onEnter={() => {
                                            // dispatch(getAllTasksRequest("42acdac8-8d07-4c4b-b698-dd81ed44b561", "2"))

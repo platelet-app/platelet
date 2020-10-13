@@ -7,14 +7,12 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {useDispatch, useSelector} from "react-redux";
 import {createPostingSelector} from "../../../redux/selectors";
-import {clearTaskContextMenuSnack, setHideDelivered} from "../../../redux/Actions";
+import {clearTaskContextMenuSnack} from "../../../redux/Actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import ChatIcon from "@material-ui/icons/Chat";
 import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import CollaboratorsSection from "./CollaboratorsSection";
 
 export function TabPanel(props) {

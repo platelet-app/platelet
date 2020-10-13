@@ -15,8 +15,7 @@ export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE';
 export const SET_CURRENT_TASK = 'SET_CURRENT_TASK';
 export const CLEAR_CURRENT_TASK = 'CLEAR_CURRENT_TASK';
 
-export const UPDATE_TASK_CONTACT_NAME_REQUEST = "UPDATE_TASK_CONTACT_NAME_REQUEST";
-export const UPDATE_TASK_CONTACT_NUMBER_REQUEST = "UPDATE_TASK_CONTACT_NUMBER_REQUEST";
+export const UPDATE_TASK_REQUESTER_CONTACT_REQUEST = "UPDATE_TASK_REQUESTER_CONTACT_REQUEST";
 export const UPDATE_TASK_PICKUP_ADDRESS_REQUEST = "UPDATE_TASK_PICKUP_ADDRESS_REQUEST";
 export const UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST = "UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST";
 export const UPDATE_TASK_DROPOFF_ADDRESS_REQUEST = "UPDATE_TASK_DROPOFF_ADDRESS_REQUEST";
@@ -36,8 +35,7 @@ export const UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET = "UPDATE_TASK_REMOVE
 export const UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET";
 export const UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET";
 
-export const UPDATE_TASK_CONTACT_NAME_SUCCESS = "UPDATE_TASK_CONTACT_NAME_SUCCESS";
-export const UPDATE_TASK_CONTACT_NUMBER_SUCCESS = "UPDATE_TASK_CONTACT_NUMBER_SUCCESS";
+export const UPDATE_TASK_REQUESTER_CONTACT_SUCCESS = "UPDATE_TASK_REQUESTER_CONTACT_SUCCESS";
 export const UPDATE_TASK_PICKUP_ADDRESS_SUCCESS = "UPDATE_TASK_PICKUP_ADDRESS_SUCCESS";
 export const UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS = "UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS";
 export const UPDATE_TASK_PICKUP_TIME_SUCCESS = "UPDATE_TASK_PICKUP_TIME_SUCCESS";
@@ -51,8 +49,7 @@ export const UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_SUCCESS = "UPDATE_TASK_REMO
 export const UPDATE_TASK_PRIORITY_SUCCESS = "UPDATE_TASK_PRIORITY_SUCCESS";
 export const UPDATE_TASK_PATCH_SUCCESS = "UPDATE_TASK_PATCH_SUCCESS";
 
-export const UPDATE_TASK_CONTACT_NAME_FAILURE = "UPDATE_TASK_CONTACT_NAME_FAILURE";
-export const UPDATE_TASK_CONTACT_NUMBER_FAILURE = "UPDATE_TASK_CONTACT_NUMBER_FAILURE";
+export const UPDATE_TASK_REQUESTER_CONTACT_FAILURE = "UPDATE_TASK_REQUESTER_CONTACT_FAILURE";
 export const UPDATE_TASK_PICKUP_ADDRESS_FAILURE = "UPDATE_TASK_PICKUP_ADDRESS_FAILURE";
 export const UPDATE_TASK_DROPOFF_ADDRESS_FAILURE = "UPDATE_TASK_DROPOFF_ADDRESS_FAILURE";
 export const UPDATE_TASK_PICKUP_TIME_FAILURE = "UPDATE_TASK_PICKUP_TIME_FAILURE";
@@ -159,11 +156,8 @@ export function updateTaskRemoveAssignedRiderFromSocket(data) {
     return { type: UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET, data }
 }
 
-export function updateTaskContactNameRequest(data) {
-    return { type: UPDATE_TASK_CONTACT_NAME_REQUEST, data }
-}
-export function updateTaskContactNumberRequest(data) {
-    return { type: UPDATE_TASK_CONTACT_NUMBER_REQUEST, data }
+export function updateTaskRequesterContactRequest(data) {
+    return { type: UPDATE_TASK_REQUESTER_CONTACT_REQUEST, data }
 }
 export function updateTaskPickupAddressRequest(data) {
     return { type: UPDATE_TASK_PICKUP_ADDRESS_REQUEST, data }
@@ -209,11 +203,8 @@ export function updateTaskPatchFromServer(data) {
     return { type: UPDATE_TASK_PATCH_FROM_SERVER, data }
 }
 
-export function updateTaskContactNameSuccess(data) {
-    return { type: UPDATE_TASK_CONTACT_NAME_SUCCESS, data }
-}
-export function updateTaskContactNumberSuccess(data) {
-    return { type: UPDATE_TASK_CONTACT_NUMBER_SUCCESS, data }
+export function updateTaskRequesterContactSuccess(data) {
+    return { type: UPDATE_TASK_REQUESTER_CONTACT_SUCCESS, data }
 }
 export function updateTaskPickupAddressSuccess(data) {
     return { type: UPDATE_TASK_PICKUP_ADDRESS_SUCCESS, data }
@@ -265,11 +256,8 @@ export function updateTaskFailure(error) {
     return { type: UPDATE_TASK_FAILURE, error }
 }
 
-export function updateTaskContactNameFailure(error) {
-    return { type: UPDATE_TASK_CONTACT_NAME_FAILURE, error }
-}
-export function updateTaskContactNumberFailure(error) {
-    return { type: UPDATE_TASK_CONTACT_NUMBER_FAILURE, error }
+export function updateTaskRequesterContactFailure(error) {
+    return { type: UPDATE_TASK_REQUESTER_CONTACT_FAILURE, error }
 }
 export function updateTaskPickupAddressFailure(error) {
     return { type: UPDATE_TASK_PICKUP_ADDRESS_FAILURE, error }

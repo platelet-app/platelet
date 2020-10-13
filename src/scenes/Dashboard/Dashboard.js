@@ -15,13 +15,11 @@ import {
     setMenuIndex,
     setViewMode,
     setNewTaskAddedView,
-    setHideDelivered
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import {
     decodeUUID,
     encodeUUID,
-    getLocalStorageHideDelivered,
     getLocalStorageViewMode,
     getTabIdentifier
 } from "../../utilities";
@@ -68,7 +66,6 @@ function Dashboard(props) {
     const tasks = useSelector(state => state.tasks.tasks);
     const users = useSelector(state => state.users.users);
     const viewMode = useSelector(state => state.viewMode);
-    const hideDelivered = useSelector(state => state.hideDelivered);
     const mobileView = useSelector(state => state.mobileView);
     const notFoundSelector = createNotFoundSelector(["GET_SESSION"]);
     const notFound = useSelector(state => notFoundSelector(state));
@@ -81,7 +78,6 @@ function Dashboard(props) {
     const whoami = useSelector(state => state.whoami.user);
     const socketSubscription = useSelector(state => state.subscription);
     const [postPermission, setPostPermission] = useState(true);
-    const [newTaskAdded, setNewTaskAdded] = useState(false);
 
     const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
 
@@ -91,10 +87,6 @@ function Dashboard(props) {
         if (!viewMode) {
             const viewModeLocalStorage = getLocalStorageViewMode();
             dispatch(setViewMode(viewModeLocalStorage === null ? 0 : viewModeLocalStorage));
-        }
-        if (hideDelivered === null) {
-            const hideDeliveredLocalStorage = getLocalStorageHideDelivered();
-            dispatch(setHideDelivered(hideDeliveredLocalStorage === null ? false : JSON.parse(hideDeliveredLocalStorage)))
         }
         return function cleanup() {
             const joinedTasks = concatTasks(tasks);
@@ -157,8 +149,13 @@ function Dashboard(props) {
     const emptyTask = {
         time_of_call: new Date().toISOString(),
         time_created: new Date().toISOString(),
+        requester_contact: {
+            name: "",
+            telephone_number: ""
+        },
         author_uuid: whoami.uuid,
         assigned_riders: [],
+        assigned_coordinators: [],
         time_picked_up: null,
         time_dropped_off: null,
         time_rejected: null,
@@ -175,7 +172,7 @@ function Dashboard(props) {
         if (firstUpdateNewTask.current)
             firstUpdateNewTask.current = false;
         else if (!isPostingNewTask)
-            setNewTaskAddedView(true)
+            dispatch(setNewTaskAddedView(true))
     }
     useEffect(onAddNewTask, [isPostingNewTask])
 
@@ -248,26 +245,19 @@ function Dashboard(props) {
         </Grid>
     ;
 
-    //if (newTaskAddedView) {
-    if (false) {
-        if (currentTaskUUID) {
-            //TODO: for some reason this makes the session in the background disappear
-            return <Redirect to={`/task/${encodeUUID(currentTaskUUID)}`}/>
-        }
-    }
     if (isFetching || viewMode === null) {
         return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
-    } else if (notFound) {
-        return <NotFound>{`Session with UUID ${session_uuid} not found.`}</NotFound>
+    // TODO: do the redirect to task thing here
+    //} else if (newTaskAddedView()) {
+    //    return <Redirect to={`/task/${encodeUUID("")}`}/>
     } else {
             return (
-                <DashboardDetailTabs hideDelivered={hideDelivered} value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
+                <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
                     <TabPanel value={viewMode} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
                                    onAddTaskClick={addEmptyTask}
                                    modalView={"edit"}
-                                   hideDelivered={hideDelivered}
                                    hideAddButton={!postPermission}
                                    excludeColumnList={["tasksDelivered", "tasksCancelled", "tasksRejected"]}
                         />
@@ -277,7 +267,6 @@ function Dashboard(props) {
                                    fullScreenModal={mobileView}
                                    onAddTaskClick={addEmptyTask}
                                    modalView={"edit"}
-                                   hideDelivered={hideDelivered}
                                    hideAddButton={!postPermission}
                                    excludeColumnList={["tasksNew", "tasksActive", "tasksPickedUp"]}
                         />
@@ -285,54 +274,6 @@ function Dashboard(props) {
                 </DashboardDetailTabs>
             )
         }
-
-
-
-
-    if (viewMode === "stats" || props.statsView) {
-        return (
-            <PersistentDrawerRight open={rightSideBarOpen}
-                                   handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
-                                   handleDrawerClose={() => setRightSideBarOpen(false)}>
-                {modeToggle}
-                <TasksStatistics tasks={tasks} sessionUUID={session_uuid}/>
-            </PersistentDrawerRight>
-        )
-    } else if (viewMode === "kanban" || mobileView) {
-        return (
-            <PersistentDrawerRight open={rightSideBarOpen}
-                                   handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
-                                   handleDrawerClose={() => setRightSideBarOpen(false)}>
-                {modeToggle}
-                <TasksGrid tasks={tasks}
-                           fullScreenModal={mobileView}
-                           onAddTaskClick={addEmptyTask}
-                           sessionUUID={session_uuid}
-                           modalView={"edit"}
-                />
-            </PersistentDrawerRight>
-
-        )
-    } else if (viewMode === "table") {
-        return (
-            <PersistentDrawerRight open={rightSideBarOpen}
-                                   handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
-                                   handleDrawerClose={() => setRightSideBarOpen(false)}>
-                {modeToggle}
-                <TasksTable tasks={tasks}
-                            fullScreenModal={mobileView}
-                            onAddTaskClick={addEmptyTask}
-                            sessionUUID={session_uuid}
-                            modalView={"edit"}
-                />
-            </PersistentDrawerRight>
-        )
-    } else {
-        return (
-            <></>
-        )
-    }
-
 }
 
 export default Dashboard;

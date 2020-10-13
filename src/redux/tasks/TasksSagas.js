@@ -33,8 +33,7 @@ import {
     getAllMyTasksSuccess,
     GET_TASK_REQUEST,
     getTaskSuccess,
-    updateTaskContactNameSuccess,
-    updateTaskContactNumberSuccess,
+    updateTaskRequesterContactSuccess,
     updateTaskPickupAddressSuccess,
     updateTaskDropoffAddressSuccess,
     updateTaskPickupTimeSuccess,
@@ -49,10 +48,9 @@ import {
     getAllMyTasksFailure,
     updateTaskPatchSuccess,
 
-    UPDATE_TASK_CONTACT_NUMBER_REQUEST,
+    UPDATE_TASK_REQUESTER_CONTACT_REQUEST,
     UPDATE_TASK_DROPOFF_ADDRESS_REQUEST,
     UPDATE_TASK_PICKUP_ADDRESS_REQUEST,
-    UPDATE_TASK_CONTACT_NAME_REQUEST,
     UPDATE_TASK_PICKUP_TIME_REQUEST,
     UPDATE_TASK_DROPOFF_TIME_REQUEST,
     UPDATE_TASK_CANCELLED_TIME_REQUEST,
@@ -67,8 +65,7 @@ import {
     deleteTaskFailure,
     restoreTaskFailure,
     updateTaskFailure,
-    updateTaskContactNameFailure,
-    updateTaskContactNumberFailure,
+    updateTaskRequesterContactFailure,
     updateTaskPickupAddressFailure,
     updateTaskDropoffAddressFailure,
     updateTaskPickupTimeFailure,
@@ -179,23 +176,13 @@ function* updateTask(action) {
     }
 }
 
-function* updateTaskContactName(action) {
+function* updateTaskRequesterContact(action) {
     try {
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskContactNameSuccess(action.data))
+        yield put(updateTaskRequesterContactSuccess(action.data))
     } catch (error) {
-        yield put(updateTaskContactNameFailure(error))
-    }
-}
-
-function* updateTaskContactNumber(action) {
-    try {
-        const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskContactNumberSuccess(action.data))
-    } catch (error) {
-        yield put(updateTaskContactNumberFailure(error))
+        yield put(updateTaskRequesterContactFailure(error))
     }
 }
 
@@ -364,12 +351,8 @@ export function* watchUpdateTask() {
     yield takeEvery(UPDATE_TASK_REQUEST, updateTask)
 }
 
-export function* watchUpdateTaskContactName() {
-    yield debounce(500, UPDATE_TASK_CONTACT_NAME_REQUEST, updateTaskContactName)
-}
-
-export function* watchUpdateTaskContactNumber() {
-    yield debounce(500, UPDATE_TASK_CONTACT_NUMBER_REQUEST, updateTaskContactNumber)
+export function* watchUpdateTaskRequesterContact() {
+    yield debounce(500, UPDATE_TASK_REQUESTER_CONTACT_REQUEST, updateTaskRequesterContact)
 }
 
 export function* watchUpdateTaskPickupAddress() {

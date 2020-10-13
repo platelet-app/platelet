@@ -51,15 +51,6 @@ function viewMode(state = null, action) {
     }
 }
 
-function hideDelivered(state = null, action) {
-    switch (action.type) {
-        case SET_HIDE_DELIVERED:
-            return action.data;
-        default:
-            return state;
-    }
-}
-
 function newTaskAddedView(state = false, action) {
     switch (action.type) {
         case SET_NEW_TASK_ADDED_VIEW:
@@ -248,7 +239,6 @@ const rootReducer = combineReducers({
     apiControl,
     authStatus,
     viewMode,
-    hideDelivered,
     newTaskAddedView,
     mobileView,
     menuIndex,

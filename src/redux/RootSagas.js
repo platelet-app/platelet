@@ -30,7 +30,7 @@ import {
     watchRefreshMyTasks,
     watchUpdateTaskPatchFromServer,
     watchUpdateTaskFromSocket,
-    watchUpdateTaskDropoffAddressFromSaved
+    watchUpdateTaskDropoffAddressFromSaved, watchUpdateTaskRequesterContact
 } from "./tasks/TasksSagas"
 import {
     watchDeleteDeliverable,
@@ -102,8 +102,7 @@ export default function* rootSaga() {
         call(watchUpdateTaskAddAssignedCoordinator),
         call(watchUpdateTaskRemoveRider),
         call(watchUpdateTaskRemoveCoordinator),
-        call(watchUpdateTaskContactName),
-        call(watchUpdateTaskContactNumber),
+        call(watchUpdateTaskRequesterContact),
         call(watchUpdateTaskDropoffAddress),
         call(watchUpdateTaskPickupAddress),
         call(watchUpdateTaskPickupAddressFromSaved),

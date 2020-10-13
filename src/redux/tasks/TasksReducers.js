@@ -11,8 +11,7 @@ import {
     SET_CURRENT_TASK, UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET,
     UPDATE_TASK_ASSIGNED_RIDER_SUCCESS,
     UPDATE_TASK_CANCELLED_TIME_SUCCESS,
-    UPDATE_TASK_CONTACT_NAME_SUCCESS,
-    UPDATE_TASK_CONTACT_NUMBER_SUCCESS,
+    UPDATE_TASK_REQUESTER_CONTACT_SUCCESS,
     UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS,
     UPDATE_TASK_DROPOFF_TIME_SUCCESS, UPDATE_TASK_FROM_SOCKET,
     UPDATE_TASK_PATCH_SUCCESS,
@@ -24,7 +23,7 @@ import {
     UPDATE_TASK_SUCCESS
 } from "./TasksActions";
 import update from "immutability-helper";
-import {determineTaskType, findExistingTask, orderTaskList, spliceExistingTask} from "../../utilities";
+import {determineTaskType, findExistingTask} from "../../utilities";
 
 const initialState = {
     task: {
@@ -33,9 +32,12 @@ const initialState = {
         author_uuid: null,
         pickup_address: null,
         dropoff_address: null,
-        patch: null, patch_id: null,
-        contact_name: null,
-        contact_number: null,
+        patch: null,
+        patch_id: null,
+        requester_contact: {
+            name: null,
+            telephone_number: null
+        },
         priority: null,
         session_uuid: null,
         time_of_call: null,
@@ -114,8 +116,7 @@ export function tasks(state = initialTasksState, action) {
             const resultRestore = sortAndConcat(state.tasks, action.data)
             return {tasks: Object.assign({}, state.tasks, resultRestore), error: null}
         case UPDATE_TASK_SUCCESS:
-        case UPDATE_TASK_CONTACT_NAME_SUCCESS:
-        case UPDATE_TASK_CONTACT_NUMBER_SUCCESS:
+        case UPDATE_TASK_REQUESTER_CONTACT_SUCCESS:
         case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
         case UPDATE_TASK_REJECTED_TIME_SUCCESS:
         case UPDATE_TASK_PRIORITY_SUCCESS:

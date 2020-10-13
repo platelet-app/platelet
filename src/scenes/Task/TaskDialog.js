@@ -24,7 +24,7 @@ import {
     clearCurrentTask,
     getTaskRequest,
     updateTaskPickupAddressFromSavedRequest,
-    updateTaskDropoffAddressFromSavedRequest
+    updateTaskDropoffAddressFromSavedRequest, updateTaskRequesterContactRequest
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import {PaddedPaper} from "../../styles/common";
@@ -98,14 +98,11 @@ export default function TaskDialog(props) {
 
     useEffect(updateEditMode, [whoami, task])
 
-    function onSelectContactNumber(event) {
-        const payload = {contact_number: event.target.value};
-        dispatch(updateTaskContactNumberRequest({taskUUID, payload}));
-    }
 
-    function onSelectName(event) {
-        const payload = {contact_name: event.target.value};
-        dispatch(updateTaskContactNameRequest({taskUUID, payload}));
+    function onSelectRequesterContact(value) {
+        const payload = {requester_contact: value};
+        dispatch(updateTaskRequesterContactRequest({taskUUID, payload}));
+
     }
 
     function onSelectPickup(pickupAddress) {
@@ -245,12 +242,11 @@ export default function TaskDialog(props) {
         <Grid container direction={"row"} spacing={layerSpacing}>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <Typography variant={"h5"}>Contact:</Typography>
+                    <Typography variant={"h5"}>Requester Contact:</Typography>
                     <TaskModalNameAndContactNumber
-                        contactName={task.contact_name}
-                        contactNumber={task.contact_number}
-                        onSelectName={onSelectName}
-                        onSelectContactNumber={onSelectContactNumber}
+                        contactName={task.requester_contact ? task.requester_contact.name : ""}
+                        contactNumber={task.requester_contact ? task.requester_contact.telephone_number : ""}
+                        onSelect={onSelectRequesterContact}
                     />
                 </PaddedPaper>
             </Grid>
