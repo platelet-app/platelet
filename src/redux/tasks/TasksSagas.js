@@ -91,7 +91,7 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import {restoreUserRequest} from "../users/UsersActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
-import {findExistingTask} from "../../utilities";
+import {findExistingTask, findExistingTaskParent} from "../../utilities";
 import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
 
 function* throttlePerKey(pattern, selector, timeout, saga) {
@@ -402,7 +402,7 @@ export function* watchUpdateTaskRejectedTime() {
 function* getTask(action) {
     try {
         const currentTasks = yield select((state) => state.tasks.tasks);
-        const {task} = findExistingTask(currentTasks, action.data)
+        let {task} = findExistingTask(currentTasks, action.data)
         if (task) {
             // if it's already in the list of tasks, no need to get it
             yield put(getTaskSuccess(task))

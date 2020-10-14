@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 export function DashboardDetailTabs(props) {
     const dispatch = useDispatch();
-    const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
+    const [rightSideBarOpen, setRightSideBarOpen] = useState(false);
     const snack = useSelector(state => state.taskContextMenuSnack);
     const currentSession = useSelector(state => state.session.session);
     const whoami = useSelector(state => state.whoami.user);

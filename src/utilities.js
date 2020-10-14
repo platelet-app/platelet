@@ -146,6 +146,14 @@ export function orderTaskList(tasks) {
     return {tasksNew, tasksActivePickedUp, tasksDelivered, tasksRejectedCancelled}
 }
 
+function determineTaskFinishedState(task) {
+    if (task.relay_next) {
+        return determineTaskFinishedState(task.relay_next)
+    } else {
+        return !!task.time_dropped_off
+    }
+}
+
 export function determineTaskType(task) {
     if (task.time_cancelled) {
         return { tasksCancelled: [task] };
@@ -155,31 +163,59 @@ export function determineTaskType(task) {
         return { tasksNew: [task] };
     } else if ((task.assigned_riders.length) && !task.time_picked_up) {
         return { tasksActive: [task] };
-    } else if ((task.assigned_riders.length) && task.time_picked_up && !task.time_dropped_off) {
+    } else if ((task.assigned_riders.length) && task.time_picked_up && !determineTaskFinishedState(task)) {
         return { tasksPickedUp: [task] };
-    } else if (task.time_dropped_off) {
+    } else if (determineTaskFinishedState(task)) {
         return { tasksDelivered: [task] };
     } else {
         return null;
     }
 }
 
+function recursiveRelaySearch(uuidToFind, task) {
+    if (task.uuid === uuidToFind)
+        return true
+    else if (task.relay_next)
+        return recursiveRelaySearch(uuidToFind, task.relay_next)
+    else
+        return false
+}
 
-export function findExistingTask(tasks, uuid) {
+export function findExistingTaskParent(tasks, uuid) {
+    // this returns the PARENT if given the UUID of a relay task
     let result = {};
     let listType = undefined;
     let index = undefined;
     let task = undefined;
 
     for (const [type, value] of Object.entries(tasks)) {
-        result = value.filter(task => task.uuid === uuid);
+        result = value.filter(recursiveRelaySearch.bind(this, uuid));
         if (result.length === 1) {
             index = value.indexOf(result[0]);
             task = result[0]
             listType = type;
+            return { listType, index, task };
         }
     }
     return { listType, index, task };
+}
+
+export function recursiveFindTaskChild(task, uuid) {
+    if (task.uuid === uuid)
+        return task
+    else
+        return recursiveFindTaskChild(task.relay_next, uuid)
+
+}
+
+export function findExistingTask(tasks, uuid) {
+    const {listType, index, task} = findExistingTaskParent(tasks, uuid)
+    if (task)
+        return task.uuid === uuid ? {listType, index, task} : {listType, index, task: recursiveFindTaskChild(task, uuid)}
+    else
+        return {listType, index, task}
+
+
 }
 
 export function spliceExistingTask(tasks, uuid) {

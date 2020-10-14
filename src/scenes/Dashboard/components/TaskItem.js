@@ -4,9 +4,35 @@ import {Link, useLocation} from "react-router-dom";
 import TaskCard from "./TaskCardsColoured"
 import {encodeUUID} from "../../../utilities";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import Tooltip from "@material-ui/core/Tooltip";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import clsx from "clsx";
+import IconButton from "@material-ui/core/IconButton";
 
+
+const useStyles = makeStyles(theme => ({
+    addRelay: {
+        visibility: "hidden",
+        "&:hover $hoverDiv": {
+            visibility: "visible"
+        }
+    },
+    hoverDiv: {
+        width: "100%",
+        height: "45px",
+        "& .hidden-button": {
+            display: "none"
+        },
+        "&:hover .hidden-button": {
+            display: "inline"
+        }
+    }
+}));
 const TaskItem = React.memo((props) => {
     let location = useLocation();
+    const classes = useStyles();
+
     const task =
         <TaskCard
             title={"Task"}
@@ -21,28 +47,60 @@ const TaskItem = React.memo((props) => {
         />;
 
     return (
-        <Grid item key={props.task.uuid}>
-            <div style={{cursor: 'context-menu', position: "relative"}}>
-                <Link style={{textDecoration: 'none'}}
-                      key={props.task.uuid}
+        <>
+            <Grid item key={props.task.uuid}>
+                <div style={{cursor: 'context-menu', position: "relative"}}>
+                    <Link style={{textDecoration: 'none'}}
+                          key={props.task.uuid}
 
-                      to={{pathname:`/task/${encodeUUID(props.task.uuid)}`, state: {prevPath: location.pathname}}}>
-                    {task}
-                </Link>
-                <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>
-                    <TaskContextMenu
-                        taskUUID={props.task.uuid}
-                        deleteDisabled={props.deleteDisabled}
-                        pickupTime={props.task.time_picked_up}
-                        dropoffTime={props.task.time_dropped_off}
-                        assignedUsers={props.task.assigned_riders}
-                        cancelledTime={props.task.time_cancelled}
-                        rejectedTime={props.task.time_rejected}
-                    />
+                          to={{pathname: `/task/${encodeUUID(props.task.uuid)}`, state: {prevPath: location.pathname}}}>
+                        {task}
+                    </Link>
+                    <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>
+                        <TaskContextMenu
+                            taskUUID={props.task.uuid}
+                            deleteDisabled={props.deleteDisabled}
+                            pickupTime={props.task.time_picked_up}
+                            dropoffTime={props.task.time_dropped_off}
+                            assignedUsers={props.task.assigned_riders}
+                            cancelledTime={props.task.time_cancelled}
+                            rejectedTime={props.task.time_rejected}
+                        />
+                    </div>
                 </div>
-            </div>
 
-        </Grid>
+            </Grid>
+            {props.task.relay_next ?
+                <>
+                <Grid alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                    <Grid item>
+                    <Tooltip title="Relay">
+                            <ArrowDownwardIcon style={{height: "45px"}}/>
+
+                    </Tooltip>
+                    </Grid>
+                </Grid>
+                    <TaskItem key={props.task.relay_next.uuid}
+                              task={props.task.relay_next}
+                              view={props.view}
+                              deleteDisabled={props.deleteDisabled}/>
+                              </>
+                :
+                <Grid alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                    <Grid item>
+                        <Tooltip title={"Add Relay"}>
+                        <IconButton
+                            className={"hidden-button"}
+                            onClick={() => {
+                            }}
+                        >
+                            <ArrowDownwardIcon/>
+                        </IconButton>
+                        </Tooltip>
+                    </Grid>
+                </Grid>
+            }
+        </>
     )
 });
 

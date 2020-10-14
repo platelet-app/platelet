@@ -23,7 +23,7 @@ import {
     UPDATE_TASK_SUCCESS
 } from "./TasksActions";
 import update from "immutability-helper";
-import {determineTaskType, findExistingTask} from "../../utilities";
+import {determineTaskType, findExistingTask, findExistingTaskParent, recursiveFindTaskChild} from "../../utilities";
 
 const initialState = {
     task: {
@@ -107,6 +107,15 @@ function sortAndConcat(tasks, data) {
     return result;
 }
 
+function recursiveTaskUpdate(task, previousTask, taskUUID, payload) {
+    if (task.uuid === taskUUID) {
+        return {...previousTask, relay_next: {...task, ...payload}}
+    }
+    else if (task.relay_next) {
+        return {...previousTask, relay_next: recursiveTaskUpdate(task.relay_next, task, taskUUID, payload)}
+    }
+}
+
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
@@ -126,12 +135,17 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_PICKUP_TIME_SUCCESS:
         case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
         case UPDATE_TASK_FROM_SOCKET:
-            let taskToUpdate = findExistingTask(state.tasks, action.data.taskUUID);
+            const taskToUpdate = findExistingTaskParent(state.tasks, action.data.taskUUID);
             const newTasks = update(
                 state.tasks, {[taskToUpdate.listType]: {$set: state.tasks[taskToUpdate.listType].filter(t => t.uuid !== taskToUpdate.task.uuid)}}
                 );
-            if (taskToUpdate) {
-                const updatedItem = {...taskToUpdate.task, ...action.data.payload};
+            if (taskToUpdate.task) {
+                let updatedItem;
+                if (taskToUpdate.task.uuid === action.data.taskUUID) {
+                    updatedItem = {...taskToUpdate.task, ...action.data.payload}
+                } else if (taskToUpdate.task.relay_next) {
+                    updatedItem = recursiveTaskUpdate(taskToUpdate.task.relay_next, taskToUpdate.task, action.data.taskUUID, action.data.payload)
+                }
                 const resultAdd = sortAndConcat(newTasks, updatedItem)
                 const finalTasks = update(newTasks, {$merge: resultAdd});
                 return {tasks: finalTasks, error: null}
@@ -140,15 +154,46 @@ export function tasks(state = initialTasksState, action) {
             }
         case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
         case UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET:
-            const taskToUpdateAssignedRider = findExistingTask(state.tasks, action.data.taskUUID);
+            // Get the parent first
+            const taskToUpdateAssignedRiderParent = findExistingTaskParent(state.tasks, action.data.taskUUID);
+            // remove it from the list
             const newTasksAssignedRider = update(state.tasks,
-                {[taskToUpdateAssignedRider.listType]: {$set: state.tasks[taskToUpdateAssignedRider.listType].filter(t => t.uuid !== taskToUpdateAssignedRider.task.uuid)}}
+                {[taskToUpdateAssignedRiderParent.listType]: {$set: state.tasks[taskToUpdateAssignedRiderParent.listType].filter(t => t.uuid !== taskToUpdateAssignedRiderParent.task.uuid)}}
                 );
-            if (taskToUpdateAssignedRider.task) {
-                let assigneesList = taskToUpdateAssignedRider.task.assigned_riders
-                assigneesList.push(action.data.payload.rider)
-                const finalTask = {...taskToUpdateAssignedRider.task, assigned_riders: assigneesList, assigned_riders_display_string: taskToUpdateAssignedRider.task.assigned_riders.map((user) => user.display_name).join(", ")}
-                const resultAdd = sortAndConcat(newTasksAssignedRider, finalTask)
+            const updateList = (task, rider) =>
+            {
+                // add the assignee to the list
+                let assigneesList = task.assigned_riders
+                assigneesList.push(rider)
+                return {
+                    assigned_riders: assigneesList,
+                    assigned_riders_display_string: task.assigned_riders.map(
+                        (user) => user.display_name
+                    ).join(", ")
+                }
+            }
+            let updatedItem;
+            if (taskToUpdateAssignedRiderParent.task) {
+                // see if the parent is the task we are looking for
+                if (taskToUpdateAssignedRiderParent.task.uuid === action.data.taskUUID) {
+                    updatedItem = {
+                        ...taskToUpdateAssignedRiderParent.task,
+                        ...updateList(taskToUpdateAssignedRiderParent.task,
+                            action.data.payload.rider)}
+
+                } else if (taskToUpdateAssignedRiderParent.task.relay_next) {
+                    // if it isn't the parent, find the relay child
+                    const taskToUpdateAssignedRider = recursiveFindTaskChild(taskToUpdateAssignedRiderParent.task, action.data.taskUUID);
+                    // get the list
+                    const result = updateList(taskToUpdateAssignedRider, action.data.payload.rider)
+                    // make use of the recursive task update function to push new assignees list
+                    updatedItem = recursiveTaskUpdate(
+                        taskToUpdateAssignedRiderParent.task.relay_next,
+                        taskToUpdateAssignedRiderParent.task,
+                        action.data.taskUUID, result)
+                }
+                // sort the item and merge it
+                const resultAdd = sortAndConcat(newTasksAssignedRider, updatedItem)
                 const finalTasksAssignedRider = update(newTasksAssignedRider, {$merge: resultAdd});
                 return {tasks: finalTasksAssignedRider, error: null}
             } else {

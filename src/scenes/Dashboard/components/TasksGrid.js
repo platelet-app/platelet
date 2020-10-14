@@ -67,7 +67,7 @@ const GridColumn = React.memo((props) => {
             <TasksKanbanColumn>
                 {props.title}
                 <Grid container
-                      spacing={3}
+                      spacing={0}
                       direction={"column"}
                       justify={"flex-start"}
                       alignItems={"center"}
@@ -78,7 +78,6 @@ const GridColumn = React.memo((props) => {
                             <TaskItem key={task.uuid}
                                       task={task}
                                       view={props.modalView}
-                                      location={props.location}
                                       deleteDisabled={props.deleteDisabled}/>
                         )
                     })}
@@ -105,6 +104,7 @@ export default function TasksGrid(props) {
         const result = filterTasks(tasks, searchQuery)
         setFilteredTasks(result);
     }
+
     console.log(props.hideAddButton)
 
     useEffect(doSearch, [searchQuery])
@@ -139,14 +139,14 @@ export default function TasksGrid(props) {
                         return (
                             <Grid item xs sm md lg key={taskList[0]}>
                                 <GridColumn title={title} newTaskButton={newTaskButton} tasks={taskList[1]}/>
-                                    <Waypoint
-                                        onEnter={() => {
-                                           // dispatch(getAllTasksRequest("42acdac8-8d07-4c4b-b698-dd81ed44b561", "2"))
-                                            console.log("YAY ENTER")
-                                        }
-                                        }
-                                        onLeave={() => console.log("YAY LEAVE")}
-                                    />
+                                <Waypoint
+                                    onEnter={() => {
+                                        // dispatch(getAllTasksRequest("42acdac8-8d07-4c4b-b698-dd81ed44b561", "2"))
+                                        console.log("YAY ENTER")
+                                    }
+                                    }
+                                    onLeave={() => console.log("YAY LEAVE")}
+                                />
                             </Grid>
                         )
                     })}
