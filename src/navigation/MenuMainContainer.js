@@ -23,6 +23,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {encodeUUID} from "../utilities";
 import {logoutUser, removeApiURL} from "../redux/login/LoginActions";
 import {clearServerSettings} from "../redux/ServerSettings/ServerSettingsActions";
+import UserAvatar from "../components/UserAvatar";
 
 const drawerWidth = 240;
 
@@ -130,13 +131,13 @@ export function MenuMainContainer(props) {
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <Divider orientation={"vertical"} />
+                            <Divider orientation={"vertical"}/>
                         </Grid>
                         <Grid item>
                             <Grid container direction={"row"} spacing={0} justify={"flex-start"} alignItems={"center"}>
                                 <Grid item>
                                     <Typography variant="h6">
-                                        <Link to={"/"} style={{ textDecoration: 'none', color: "white" }}>Dashboard</Link>
+                                        <Link to={"/"} style={{textDecoration: 'none', color: "white"}}>Dashboard</Link>
                                     </Typography>
                                 </Grid>
                                 <Grid item>
@@ -212,9 +213,23 @@ export function MenuMainContainer(props) {
                             </div>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" noWrap>
-                                {whoami.display_name}
-                            </Typography>
+                            <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"} spacing={1}>
+                                <Grid item>
+                                    <Link to={`/user/${encodeUUID(whoami.uuid)}`}
+                                          style={{textDecoration: 'none', color:"white"}}>
+                                        <Typography variant="h6" noWrap>
+                                            {whoami.display_name}
+                                        </Typography>
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link to={`/user/${encodeUUID(whoami.uuid)}`}
+                                          style={{textDecoration: 'none'}}>
+                                    <UserAvatar userUUID={whoami.uuid} displayName={whoami.display_name}
+                                                avatarURL={whoami.profile_picture_thumbnail_url}/>
+                                    </Link>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Toolbar>
