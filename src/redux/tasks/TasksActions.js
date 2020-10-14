@@ -5,6 +5,9 @@ export const GET_TASK_NOTFOUND = 'GET_TASK_NOTFOUND';
 export const ADD_TASK_REQUEST = 'ADD_TASK_REQUEST';
 export const ADD_TASK_SUCCESS = 'ADD_TASK_SUCCESS';
 export const ADD_TASK_FAILURE = 'ADD_TASK_FAILURE';
+export const ADD_TASK_RELAY_REQUEST = 'ADD_TASK_RELAY_REQUEST';
+export const ADD_TASK_RELAY_SUCCESS = 'ADD_TASK_RELAY_SUCCESS';
+export const ADD_TASK_RELAY_FAILURE = 'ADD_TASK_RELAY_FAILURE';
 export const DELETE_TASK_REQUEST = 'DELETE_TASK_REQUEST';
 export const DELETE_TASK_SUCCESS = 'DELETE_TASK_SUCCESS';
 export const DELETE_TASK_FAILURE = 'DELETE_TASK_FAILURE';
@@ -126,6 +129,18 @@ export function addTaskSuccess(data) {
 
 export function addTaskFailure(error) {
     return { type: ADD_TASK_FAILURE, error }
+}
+
+export function addTaskRelayRequest(data) {
+    return { type: ADD_TASK_RELAY_REQUEST, data }
+}
+
+export function addTaskRelaySuccess(data) {
+    return { type: ADD_TASK_RELAY_SUCCESS, data }
+}
+
+export function addTaskRelayFailure(error) {
+    return { type: ADD_TASK_RELAY_FAILURE, error }
 }
 
 export function deleteTaskRequest(data) {

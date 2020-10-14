@@ -9,6 +9,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import clsx from "clsx";
 import IconButton from "@material-ui/core/IconButton";
+import {useDispatch} from "react-redux";
+import {addTaskRelayRequest} from "../../../redux/tasks/TasksActions";
 
 
 const useStyles = makeStyles(theme => ({
@@ -32,6 +34,18 @@ const useStyles = makeStyles(theme => ({
 const TaskItem = React.memo((props) => {
     let location = useLocation();
     const classes = useStyles();
+    const dispatch = useDispatch();
+
+    const emptyTask = {
+        time_created: new Date().toISOString(),
+        assigned_riders: [],
+        assigned_coordinators: [],
+        time_picked_up: null,
+        time_dropped_off: null,
+        time_rejected: null,
+        time_cancelled: null
+    };
+
 
     const task =
         <TaskCard
@@ -92,6 +106,16 @@ const TaskItem = React.memo((props) => {
                         <IconButton
                             className={"hidden-button"}
                             onClick={() => {
+                                const {requester_contact, priority, priority_id, time_of_call, dropoff_address} = {...props.task}
+                                dispatch(addTaskRelayRequest({
+                                    ...emptyTask,
+                                    time_of_call,
+                                    requester_contact,
+                                    priority,
+                                    priority_id,
+                                    pickup_address: dropoff_address,
+                                    relay_previous_uuid: props.task.uuid
+                                }))
                             }}
                         >
                             <ArrowDownwardIcon/>

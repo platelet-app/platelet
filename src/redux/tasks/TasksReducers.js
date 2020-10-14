@@ -20,7 +20,7 @@ import {
     UPDATE_TASK_PRIORITY_SUCCESS,
     UPDATE_TASK_REJECTED_TIME_SUCCESS, UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET,
     UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS,
-    UPDATE_TASK_SUCCESS
+    UPDATE_TASK_SUCCESS, ADD_TASK_RELAY_REQUEST, ADD_TASK_RELAY_SUCCESS
 } from "./TasksActions";
 import update from "immutability-helper";
 import {determineTaskType, findExistingTask, findExistingTaskParent, recursiveFindTaskChild} from "../../utilities";
@@ -135,6 +135,7 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_PICKUP_TIME_SUCCESS:
         case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
         case UPDATE_TASK_FROM_SOCKET:
+        case ADD_TASK_RELAY_SUCCESS:
             const taskToUpdate = findExistingTaskParent(state.tasks, action.data.taskUUID);
             const newTasks = update(
                 state.tasks, {[taskToUpdate.listType]: {$set: state.tasks[taskToUpdate.listType].filter(t => t.uuid !== taskToUpdate.task.uuid)}}

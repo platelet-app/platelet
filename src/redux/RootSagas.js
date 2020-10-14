@@ -1,14 +1,6 @@
 import {
-    watchGetSessions,
-    watchPostNewSession,
-    watchPostNewSessionAndSetcurrent,
-    watchGetSession,
-    watchDeleteSession,
-    watchRestoreSession,
-    watchGetSessionStatistics, watchRefreshCurrentSession, watchAddSessionCollaborator
-} from "./sessions/SessionsSagas"
-import {
     watchPostNewTask,
+    watchPostNewTaskRelay,
     watchGetTasks,
     watchUpdateTask,
     watchGetMyTasks,
@@ -82,16 +74,9 @@ import {
 
 export default function* rootSaga() {
     yield all([
-        call(watchPostNewSession),
         call(watchPostNewTask),
+        call(watchPostNewTaskRelay),
         call(watchDeleteTask),
-        call(watchGetSessions),
-        call(watchGetSession),
-        call(watchRefreshCurrentSession),
-        call(watchGetSessionStatistics),
-        call(watchDeleteSession),
-        call(watchRestoreSession),
-        call(watchAddSessionCollaborator),
         call(watchGetTask),
         call(watchGetTasks),
         call(watchRefreshTasks),
