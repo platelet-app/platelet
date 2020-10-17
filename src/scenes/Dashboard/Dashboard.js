@@ -114,9 +114,9 @@ function Dashboard(props) {
                         break;
                     case "assign_user":
                         const user_uuid = socketSubscription.data.user_uuid
-                        const assignedUser = users.filter(u => user_uuid === u.uuid)
-                        if (assignedUser.length === 1) {
-                            const rider = assignedUser[0]
+                        const assignedUser = users.find(u => user_uuid === u.uuid)
+                        if (assignedUser) {
+                            const rider = assignedUser
                             dispatch(updateTaskAssignedRiderFromSocket({taskUUID: socketSubscription.object_uuid, payload: {rider, user_uuid }}))
                         }
                         break;

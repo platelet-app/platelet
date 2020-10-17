@@ -11,10 +11,10 @@ export default function PrioritySelect(props) {
     const availablePriorities = useSelector(state => state.availablePriorities.priorities);
 
     const handleChange = event => {
-        let result = availablePriorities.filter(item => item.id == event.target.value);
-        if (result.length === 1) {
-            props.onSelect(event.target.value, result[0].label);
-            setValue(result[0].id)
+        let result = availablePriorities.find(item => item.id == event.target.value);
+        if (result) {
+            props.onSelect(event.target.value, result.label);
+            setValue(result.id)
         }
     };
     useEffect(() => {

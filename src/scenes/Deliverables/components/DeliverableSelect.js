@@ -135,11 +135,11 @@ export default function DeliverablesSelect(props) {
     //}, [userSuggestions]);
 
     function onSelect(selectedItem) {
-        let result = availableDeliverables.filter(deliverable => deliverable.label === selectedItem);
-        if (result.length === 1) {
+        let result = availableDeliverables.find(deliverable => deliverable.label === selectedItem);
+        if (result) {
             let deliverable = {
-                type: result[0].label,
-                type_id: result[0].id,
+                type: result.label,
+                type_id: result.id,
             };
             props.onSelect(deliverable);
         } else {

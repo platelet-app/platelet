@@ -28,10 +28,10 @@ export function users(state = initialState, action) {
                 ], error: null
             };
         case UPDATE_USER_SUCCESS:
-            let result = state.users.filter(user => user.uuid === action.data.userUUID);
-            if (result.length === 1) {
-                const updated_item = {...result[0], ...action.data.payload};
-                const index = state.users.indexOf(result[0]);
+            let result = state.users.find(user => user.uuid === action.data.userUUID);
+            if (result) {
+                const updated_item = {...result, ...action.data.payload};
+                const index = state.users.indexOf(result);
                 return {users: update(state.users, {[index]: {$set: updated_item}}), error: null};
             } else {
                 return state;
@@ -46,9 +46,9 @@ export function users(state = initialState, action) {
                 ], error: null
             };
         case DELETE_USER_SUCCESS:
-            let result_delete = state.users.filter(user => user.uuid === action.data);
-            if (result_delete.length === 1) {
-                const index = state.users.indexOf(result_delete[0]);
+            let result_delete = state.users.find(user => user.uuid === action.data);
+            if (result_delete) {
+                const index = state.users.indexOf(result_delete);
                 return {users: update(state.users, {$splice: [[index, 1]]}), error: null};
             } else {
                 return state;

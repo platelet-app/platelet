@@ -38,9 +38,9 @@ export function vehicles(state = initialState, action) {
                 ], error: null
             };
         case DELETE_VEHICLE_SUCCESS:
-            let result_delete = state.vehicles.filter(vehicle => vehicle.uuid === action.data);
-            if (result_delete.length === 1) {
-                const index = state.vehicles.indexOf(result_delete[0]);
+            let result_delete = state.vehicles.find(vehicle => vehicle.uuid === action.data);
+            if (result_delete) {
+                const index = state.vehicles.indexOf(result_delete);
                 return {vehicles: update(state.vehicles, {$splice: [[index, 1]]}), error: null};
             } else {
                 return state;

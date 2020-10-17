@@ -223,9 +223,9 @@ export function spliceExistingTask(tasks, uuid) {
     let index = undefined;
     let task = undefined;
     for (const [type, value] of Object.entries(tasks)) {
-        result = value.filter(task => task.uuid === uuid);
-        if (result.length === 1) {
-            index = value.indexOf(result[0]);
+        result = value.find(task => task.uuid === uuid);
+        if (result) {
+            index = value.indexOf(result);
             task = value.splice(index, 1)[0]
             listType = type;
         }

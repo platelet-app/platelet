@@ -89,9 +89,9 @@ export default function FavouriteLocationsSelect(props) {
     const availableLocations = useSelector(state => state.availableLocations.locations);
     const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
     const onSelect = selectedItem => {
-        let result = availableLocations.filter(location => location.name === selectedItem);
-        if (result.length === 1)
-            props.onSelect(result[0]);
+        let result = availableLocations.find(location => location.name === selectedItem);
+        if (result)
+            props.onSelect(result);
     };
 
     useEffect(() => {

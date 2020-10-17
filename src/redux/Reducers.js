@@ -11,7 +11,6 @@ import {
     SET_COMMENTS_OBJECT_UUID,
     CLEAR_WHOAMI,
     GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK,
-    SET_HIDE_DELIVERED
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
@@ -23,7 +22,7 @@ import {availablePatches} from "./patches/PatchesReducers";
 import {availablePriorities} from "./priorities/PrioritiesReducers";
 import {users, user} from "./users/UsersReducers";
 import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
-import {comments, sidebarComments} from "./comments/CommentsReducers";
+import {comments} from "./comments/CommentsReducers";
 import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 import {subscription, commentsSubscription, socketCommentsConnectionStatus, socketConnectionStatus} from "./sockets/SocketReducers";
 import {infoNotifications} from "./notifications/NotificationsReducers";
@@ -229,7 +228,6 @@ const rootReducer = combineReducers({
     user,
     whoami,
     comments,
-    sidebarComments,
     sessionActiveTaskUUID,
     loadingReducer,
     postingReducer,

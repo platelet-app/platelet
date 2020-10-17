@@ -5,7 +5,6 @@ import {
     UPDATE_DELIVERABLE_SUCCESS,
     GET_AVAILABLE_DELIVERABLES_SUCCESS, GET_DELIVERABLES_FAILURE, DELETE_DELIVERABLE_SUCCESS, DELETE_DELIVERABLE_FAILURE
 } from "./DeliverablesActions";
-import {DELETE_SESSION_SUCCESS} from "../sessions/SessionsActions";
 
 const initialState = {
     deliverables: [],
@@ -26,10 +25,10 @@ export function deliverables(state = initialState, action) {
                 error: null
             };
         case UPDATE_DELIVERABLE_SUCCESS:
-            let result = state.deliverables.filter(deliverable => deliverable.uuid === action.data.deliverableUUID);
-            if (result.length === 1) {
-                const updated_item = {...result[0], ...action.data.payload};
-                const index = state.deliverables.indexOf(result[0]);
+            let result = state.deliverables.find(deliverable => deliverable.uuid === action.data.deliverableUUID);
+            if (result) {
+                const updated_item = {...result, ...action.data.payload};
+                const index = state.deliverables.indexOf(result);
                 return {deliverables: update(state.deliverables, {[index]: {$set: updated_item}}), error: null};
             } else {
                 return state
@@ -39,9 +38,9 @@ export function deliverables(state = initialState, action) {
         case GET_DELIVERABLES_FAILURE:
             return {deliverables: [], error: action.error}
         case DELETE_DELIVERABLE_SUCCESS:
-            let result_delete = state.deliverables.filter(deliverable => deliverable.uuid === action.data);
-            if (result_delete.length === 1) {
-                const index = state.deliverables.indexOf(result_delete[0]);
+            let result_delete = state.deliverables.find(deliverable => deliverable.uuid === action.data);
+            if (result_delete) {
+                const index = state.deliverables.indexOf(result_delete);
                 return {deliverables: update(state.deliverables, {$splice: [[index, 1]]}), error: null};
             } else {
                 return state;
