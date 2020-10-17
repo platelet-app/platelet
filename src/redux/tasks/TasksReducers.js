@@ -137,10 +137,10 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_FROM_SOCKET:
         case ADD_TASK_RELAY_SUCCESS:
             const taskToUpdate = findExistingTaskParent(state.tasks, action.data.taskUUID);
-            const newTasks = update(
-                state.tasks, {[taskToUpdate.listType]: {$set: state.tasks[taskToUpdate.listType].filter(t => t.uuid !== taskToUpdate.task.uuid)}}
-                );
             if (taskToUpdate.task) {
+                const newTasks = update(
+                    state.tasks, {[taskToUpdate.listType]: {$set: state.tasks[taskToUpdate.listType].filter(t => t.uuid !== taskToUpdate.task.uuid)}}
+                );
                 let updatedItem;
                 if (taskToUpdate.task.uuid === action.data.taskUUID) {
                     updatedItem = {...taskToUpdate.task, ...action.data.payload}

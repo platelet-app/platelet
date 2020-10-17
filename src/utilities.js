@@ -173,26 +173,25 @@ export function determineTaskType(task) {
 }
 
 function recursiveRelaySearch(uuidToFind, task) {
-    if (task.uuid === uuidToFind)
+    if (task.uuid === uuidToFind) {
         return true
-    else if (task.relay_next)
+    } else if (task.relay_next) {
         return recursiveRelaySearch(uuidToFind, task.relay_next)
-    else
+    } else {
         return false
+    }
 }
 
 export function findExistingTaskParent(tasks, uuid) {
     // this returns the PARENT if given the UUID of a relay task
-    let result = {};
     let listType = undefined;
     let index = undefined;
     let task = undefined;
 
     for (const [type, value] of Object.entries(tasks)) {
-        result = value.filter(recursiveRelaySearch.bind(this, uuid));
-        if (result.length === 1) {
-            index = value.indexOf(result[0]);
-            task = result[0]
+        task = value.find(recursiveRelaySearch.bind(this, uuid));
+        if (task) {
+            index = value.indexOf(task);
             listType = type;
             return { listType, index, task };
         }

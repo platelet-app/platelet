@@ -10,7 +10,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import clsx from "clsx";
 import IconButton from "@material-ui/core/IconButton";
 import {useDispatch} from "react-redux";
-import {addTaskRelayRequest} from "../../../redux/tasks/TasksActions";
+import {addTaskRelayRequest, updateTaskDropoffAddressRequest} from "../../../redux/tasks/TasksActions";
 
 
 const useStyles = makeStyles(theme => ({
@@ -100,22 +100,29 @@ const TaskItem = React.memo((props) => {
                               deleteDisabled={props.deleteDisabled}/>
                               </>
                 :
-                <Grid alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
                     <Grid item>
                         <Tooltip title={"Add Relay"}>
                         <IconButton
                             className={"hidden-button"}
                             onClick={() => {
-                                const {requester_contact, priority, priority_id, time_of_call, dropoff_address} = {...props.task}
+                                const {requester_contact, priority, priority_id, time_of_call, dropoff_address} = {...props.task};
                                 dispatch(addTaskRelayRequest({
                                     ...emptyTask,
                                     time_of_call,
-                                    requester_contact,
+                                    requester_contact: requester_contact ? requester_contact : {
+                                        name: "",
+                                        telephone_number: ""
+                                    },
                                     priority,
                                     priority_id,
-                                    pickup_address: dropoff_address,
+                                    dropoff_address,
                                     relay_previous_uuid: props.task.uuid
-                                }))
+                                }));
+                                dispatch(updateTaskDropoffAddressRequest({
+                                    taskUUID: props.task.uuid,
+                                    payload: {dropoff_address: null},
+                            }));
                             }}
                         >
                             <ArrowDownwardIcon/>
