@@ -14,6 +14,7 @@ import ChatIcon from "@material-ui/icons/Chat";
 import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
 import CollaboratorsSection from "./CollaboratorsSection";
+import Toolbar from "@material-ui/core/Toolbar";
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -90,6 +91,7 @@ export function DashboardDetailTabs(props) {
     return (
         <>
                 <AppBar position="static">
+                    <Toolbar variant="dense">
                     <Grid container spacing={1} wrap={"nowrap"} direction={"row"} justify={"space-between"} alignItems={"center"}>
                         <Grid item>
                             <Tabs value={parseInt(props.value)} onChange={handleChange}
@@ -123,6 +125,7 @@ export function DashboardDetailTabs(props) {
                             </Grid>
                         </Grid>
                     </Grid>
+                    </Toolbar>
                 </AppBar>
     <PersistentDrawerRight open={rightSideBarOpen}
                            handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}

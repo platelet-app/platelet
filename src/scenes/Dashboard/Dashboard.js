@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import '../../App.css';
 import 'typeface-roboto'
-import Grid from "@material-ui/core/Grid";
+import {PaddedPaper} from "../../styles/common";
+import {Paper} from "@material-ui/core";
 import {
     addTaskRequest,
     clearCurrentTask,
@@ -180,71 +181,6 @@ function Dashboard(props) {
         dispatch(setMenuIndex(2))
     }, []);
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const modeToggle = mobileView || props.statsView ? <></> :
-        <Grid container
-              spacing={1}
-              direction={"row"}
-              justify={"flex-start"}
-              alignItems={"center"}
-        >
-            <Grid item>
-                <Tooltip title="Change mode">
-                    <IconButton
-                        color="inherit"
-                        aria-controls="simple-menu"
-                        aria-haspopup="true"
-                        onClick={(event) => {
-                            setAnchorEl(event.currentTarget);
-                        }}>
-                        <GetViewTitle type={viewMode}/>
-                        <ArrowDropDownIcon/>
-                    </IconButton>
-                </Tooltip>
-                <Menu
-                    id="profile-menu"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={() => {
-                        setAnchorEl(null);
-                    }}
-                >
-                    <MenuItem selected={viewMode === "kanban"} onClick={() => {
-                        setAnchorEl(null);
-                        dispatch(setViewMode("kanban"))
-                    }}>
-                        <Typography>Kanban</Typography>
-                    </MenuItem>
-                    <MenuItem selected={viewMode === "table"} onClick={() => {
-                        setAnchorEl(null);
-                        dispatch(setViewMode("table"))
-                    }}>
-                        <Typography>Table</Typography>
-                    </MenuItem>
-                    <MenuItem selected={viewMode === "stats"} onClick={() => {
-                        setAnchorEl(null);
-                        dispatch(setViewMode("stats"))
-                    }}>
-                        <Typography>Statistics</Typography>
-                    </MenuItem>
-                </Menu>
-
-            </Grid>
-            <Grid item>
-                <Tooltip title="View comments">
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={() => setRightSideBarOpen(!rightSideBarOpen)}
-                    >
-                        <ChatIcon/>
-                    </IconButton>
-                </Tooltip>
-            </Grid>
-        </Grid>
-    ;
-
     if (isFetching || viewMode === null) {
         return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
     // TODO: do the redirect to task thing here
@@ -252,6 +188,7 @@ function Dashboard(props) {
     //    return <Redirect to={`/task/${encodeUUID("")}`}/>
     } else {
             return (
+                <Paper maxHeight={"100%"} maxWidth={"100%"}>
                 <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
                     <TabPanel value={viewMode} index={0}>
                         <TasksGrid tasks={tasks}
@@ -272,6 +209,7 @@ function Dashboard(props) {
                         />
                     </TabPanel>
                 </DashboardDetailTabs>
+                </Paper>
             )
         }
 }
