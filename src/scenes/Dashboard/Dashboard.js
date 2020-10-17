@@ -100,7 +100,7 @@ function Dashboard(props) {
 
     function getTasks() {
         if (whoami.uuid)
-            dispatch(getAllTasksRequest(whoami.uuid));
+            dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
     }
     useEffect(getTasks, [whoami])
 

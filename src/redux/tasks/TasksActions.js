@@ -308,8 +308,8 @@ export function updateTaskPatchFailure(error) {
     return { type: UPDATE_TASK_PATCH_FAILURE, error }
 }
 
-export function getAllTasksRequest(data, page) {
-    return { type: GET_TASKS_REQUEST, data, page }
+export function getAllTasksRequest(data, page, role) {
+    return { type: GET_TASKS_REQUEST, data, page, role }
 }
 
 export function getAllTasksSuccess(data) {
