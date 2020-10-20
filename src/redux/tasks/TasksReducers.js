@@ -94,17 +94,15 @@ const initialTasksState = {
 }
 
 function sortAndConcat(tasks, data) {
-    const taskInList = determineTaskType(data);
+    const {taskType, task} = determineTaskType(data);
     let result = {};
-    for (const [key, value] of Object.entries(taskInList)) {
-        const newArray = [...tasks[key], ...value];
-        newArray.sort(function (a, b) {
-            var dateA = new Date(a.time_of_call), dateB = new Date(b.time_of_call);
-            return dateB > dateA ? -1 : dateB < dateA ? 1 : 0;
-        });
-        result[key] = key === "tasksNew" ? newArray.reverse() : newArray;
-    }
-    return result;
+    const newArray = [...tasks[taskType], task];
+    newArray.sort(function (a, b) {
+        var dateA = new Date(a.time_of_call), dateB = new Date(b.time_of_call);
+        return dateB > dateA ? -1 : dateB < dateA ? 1 : 0;
+    });
+    result = taskType === "tasksNew" ? newArray.reverse() : newArray;
+    return {taskType, result};
 }
 
 function recursiveTaskUpdate(task, previousTask, taskUUID, payload) {
@@ -147,8 +145,8 @@ export function tasks(state = initialTasksState, action) {
                 } else if (taskToUpdate.task.relay_next) {
                     updatedItem = recursiveTaskUpdate(taskToUpdate.task.relay_next, taskToUpdate.task, action.data.taskUUID, action.data.payload)
                 }
-                const resultAdd = sortAndConcat(newTasks, updatedItem)
-                const finalTasks = update(newTasks, {$merge: resultAdd});
+                const {taskType, result} = sortAndConcat(newTasks, updatedItem)
+                const finalTasks = update(newTasks, {[taskType]: {$set: result}});
                 return {tasks: finalTasks, error: null}
             } else {
                 return state;
@@ -194,8 +192,8 @@ export function tasks(state = initialTasksState, action) {
                         action.data.taskUUID, result)
                 }
                 // sort the item and merge it
-                const resultAdd = sortAndConcat(newTasksAssignedRider, updatedItem)
-                const finalTasksAssignedRider = update(newTasksAssignedRider, {$merge: resultAdd});
+                const {taskType, result} = sortAndConcat(newTasksAssignedRider, updatedItem)
+                const finalTasksAssignedRider = update(newTasksAssignedRider, {[taskType]: {$set: result}});
                 return {tasks: finalTasksAssignedRider, error: null}
             } else {
                 return state;
@@ -209,8 +207,8 @@ export function tasks(state = initialTasksState, action) {
             if (taskUnassign) {
                 const filteredAssigneeList = taskUnassign.task.assigned_riders.filter((u) => u.uuid !== action.data.payload.user_uuid);
                 const finalTask = {...taskUnassign.task, assigned_riders: filteredAssigneeList, assigned_riders_display_string: filteredAssigneeList.map((user) => user.display_name).join(", ")}
-                const resultAdd = sortAndConcat(newTasksAssignedRiderRemove, finalTask)
-                const finalTasksAssignedRiderRemove = update(newTasksAssignedRiderRemove, {$merge: resultAdd});
+                const {taskType, result} = sortAndConcat(newTasksAssignedRiderRemove, finalTask)
+                const finalTasksAssignedRiderRemove = update(newTasksAssignedRiderRemove, {[taskType]: {$set: result}});
                 return {tasks: finalTasksAssignedRiderRemove, error: null}
             } else {
                 return state;

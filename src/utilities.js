@@ -156,17 +156,17 @@ function determineTaskFinishedState(task) {
 
 export function determineTaskType(task) {
     if (task.time_cancelled) {
-        return { tasksCancelled: [task] };
+        return { taskType: "tasksCancelled", task };
     } else if (task.time_rejected) {
-        return { tasksRejected: [task] };
+        return { taskType: "tasksRejected", task };
     } else if (!task.assigned_riders || !task.assigned_riders.length) {
-        return { tasksNew: [task] };
+        return { taskType: "tasksNew", task };
     } else if ((task.assigned_riders.length) && !task.time_picked_up) {
-        return { tasksActive: [task] };
+        return { taskType: "tasksActive", task };
     } else if ((task.assigned_riders.length) && task.time_picked_up && !determineTaskFinishedState(task)) {
-        return { tasksPickedUp: [task] };
+        return { taskType: "tasksPickedUp",  task };
     } else if (determineTaskFinishedState(task)) {
-        return { tasksDelivered: [task] };
+        return { taskType: "tasksDelivered", task };
     } else {
         return null;
     }
