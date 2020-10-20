@@ -10,7 +10,6 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import {PaddedPaper} from "../../styles/common";
 import CommentsSection from "../Comments/CommentsSection";
-import {setMenuIndex} from "../../redux/Actions";
 import UserCard from "../../components/UserCard";
 import Button from "@material-ui/core/Button";
 
@@ -31,9 +30,6 @@ export default function VehicleDetail(props) {
     }
     useEffect(componentDidMount, [props.location.key]);
 
-    useEffect(() => {
-        dispatch(setMenuIndex(4))
-    }, []);
     function onAssignUser(user) {
         if (user)
             dispatch(

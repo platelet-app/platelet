@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import TasksGridSkeleton from "./components/TasksGridSkeleton"
-import {getWhoamiRequest, refreshWhoamiRequest, setMenuIndex} from "../../redux/Actions";
+import {getWhoamiRequest, refreshWhoamiRequest} from "../../redux/Actions";
 import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
 import {concatTasks} from "./utilities";
 import {getTabIdentifier} from "../../utilities";
@@ -36,7 +36,6 @@ function UsersTasks() {
     }
     useEffect(componentDidMount, []);
 
-    useEffect(() => {dispatch(setMenuIndex(3))}, []);
     useEffect(() => {
         if (Object.keys(socketSubscription).length === 0 && socketSubscription.constructor === Object) {
             console.log("ignore")

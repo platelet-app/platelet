@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {setMenuIndex} from "../../redux/Actions";
 import {useDispatch} from "react-redux";
 import * as io from 'socket.io-client'
 
@@ -10,14 +9,6 @@ import {getLogin} from "../../utilities"
 
 export function AdminControl(props) {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setMenuIndex(6));
-//        socket.on('subscribed_response', function(msg) {
-//            console.log("Received:" + msg.object_uuid);
-//            console.log(msg.data)
-//            console.log(msg.tab_id)
-//        })
-    }, []);
     return (
         <PaddedPaper>
             <Button onClick={() => {

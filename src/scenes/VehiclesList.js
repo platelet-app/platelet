@@ -10,7 +10,6 @@ import {encodeUUID} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
-import {setMenuIndex} from "../redux/Actions";
 import VehicleContextMenu from "../components/ContextMenus/VehicleContextMenu";
 import VehicleCard from "../components/VehicleCard";
 
@@ -19,18 +18,14 @@ function VehicleList() {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_VEHICLES"]);
     const isFetching = useSelector(state => loadingSelector(state));
+    const vehicles = useSelector(state => state.vehicles.vehicles);
 
     function componentDidMount() {
-        dispatch(getAllVehiclesRequest());
+        if(!vehicles.length)
+            dispatch(getAllVehiclesRequest());
     }
 
     useEffect(componentDidMount, []);
-
-    useEffect(() => {
-        dispatch(setMenuIndex(4))
-    }, []);
-    const vehicles = useSelector(state => state.vehicles.vehicles);
-
 
     const addButton =
         <Button

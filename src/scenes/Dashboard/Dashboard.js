@@ -177,10 +177,6 @@ function Dashboard(props) {
     }
     useEffect(onAddNewTask, [isPostingNewTask])
 
-    useEffect(() => {
-        dispatch(setMenuIndex(2))
-    }, []);
-
     if (isFetching || viewMode === null) {
         return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
     // TODO: do the redirect to task thing here

@@ -8,7 +8,6 @@ import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../redux/selectors";
 
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
-import {setMenuIndex} from "../redux/Actions";
 import SessionContextMenu from "../components/ContextMenus/SessionContextMenu";
 import SessionCard from "../components/SessionCard";
 import Button from "@material-ui/core/Button";
@@ -117,9 +116,6 @@ function SessionList(props) {
     }
 
     useEffect(updateSessionsList, [whoami]);
-    useEffect(() => {
-        dispatch(setMenuIndex(2))
-    }, []);
 
     function dispatchSnack() {
         if (!isDeleting) {

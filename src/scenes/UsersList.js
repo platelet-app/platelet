@@ -3,7 +3,6 @@ import {useDispatch, useSelector} from "react-redux";
 import UserCard from "../components/UserCard";
 import Grid from "@material-ui/core/Grid";
 import {TextFieldControlled} from "../components/TextFields";
-import {setMenuIndex} from "../redux/Actions";
 import {AddCircleButton} from "../components/Buttons";
 import {addUserRequest} from "../redux/users/UsersActions";
 import UserContextMenu from "../components/ContextMenus/UserContextMenu";
@@ -37,9 +36,6 @@ export default function UsersList(props) {
     const isPosting = useSelector(state => postingSelector(state));
     const isDeleting = useSelector(state => deletingSelector(state));
     useEffect(() => setFilteredUsers(users), [users]);
-    useEffect(() => {
-        dispatch(setMenuIndex(5))
-    }, []);
     const [snack, setSnack] = React.useState(initialSnack)
 
     function dispatchSnack() {
