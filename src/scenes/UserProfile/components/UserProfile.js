@@ -13,6 +13,7 @@ import {updateUserRequest} from "../../../redux/users/UsersActions";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
 import {createPostingSelector} from "../../../redux/selectors";
 import {setCommentsObjectUUID} from "../../../redux/Actions";
+import {EditModeToggleButton} from "../../../components/EditModeToggleButton";
 
 export default function UserProfile(props) {
     const dispatch = useDispatch()
@@ -38,25 +39,15 @@ export default function UserProfile(props) {
     let editToggle = <></>;
     if (whoami.roles) {
         if (whoami.roles.includes("admin") || whoami.uuid === props.user.uuid) {
-            editToggle = editMode ?
-                <IconButton
-                    color="inherit"
-                    aria-controls="simple-menu"
-                    aria-haspopup="true"
-                    onClick={() => {
-                        setEditMode(!editMode);
-                    }}>
-                    <EditIcon/>
-                </IconButton> :
-                <IconButton
-                    color="gray"
-                    aria-controls="simple-menu"
-                    aria-haspopup="true"
-                    onClick={() => {
-                        setEditMode(!editMode);
-                    }}>
-                    <EditIcon/>
-                </IconButton>;
+            editToggle = <EditModeToggleButton
+                tooltipDefault={props.user.uuid === whoami.uuid ? "Edit your profile" : "Edit this user"}
+                value={editMode}
+                //TODO: should be a proper event object?
+                onChange={(v) => {
+                    setEditMode(v)
+                    if (!v)
+                        setState(oldState);
+                }}/>
         }
     }
 
@@ -82,9 +73,7 @@ export default function UserProfile(props) {
                         {header}
                     </Grid>
                     <Grid item>
-                        <Tooltip title={props.user.uuid === whoami.uuid ? "Edit your profile" : "Edit this user"}>
-                            {editToggle}
-                        </Tooltip>
+                        {editToggle}
                     </Grid>
                 </Grid>
             </Grid>
@@ -108,7 +97,7 @@ export default function UserProfile(props) {
                             readOnly={!editMode}
                             disabled={isPosting}
                             label={"Display Name"}
-                            id={"dispay-name"}
+                            id={"display-name"}
                             onChange={(e) => {
                                 setState({...state, display_name: e.target.value})
                             }}/>
