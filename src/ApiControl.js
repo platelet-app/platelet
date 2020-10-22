@@ -188,8 +188,7 @@ class Task {
     }
 
     async getTasks(user_id, page, role, status) {
-        console.log(`tasks/${user_id}?page=${(page || "1")}&role=${role || ""}&status=${status || ""}`)
-        return makeAxios(this.api_url,`tasks/${user_id}?page=${(page || "1")}&role=${role || ""}&status=${status || ""}`, "GET", this.bearer)
+        return makeAxios(this.api_url,`tasks/${user_id}?page=${(page || "0")}&role=${role || ""}&status=${status || ""}`, "GET", this.bearer)
     }
 
     async getTask(task_id) {

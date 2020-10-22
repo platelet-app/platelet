@@ -142,8 +142,6 @@ function Dashboard(props) {
             firstTaskSubscribeCompleted.current = true;
             joinedTasks.forEach(task => dispatch(subscribeToUUID(task.uuid)))
         }
-        if (firstTaskSubscribeCompleted)
-            tasks.tasksNew.forEach(task => dispatch(subscribeToUUID(task.uuid)))
     }
     useEffect(subscribeTasks, [tasks])
 
@@ -154,7 +152,6 @@ function Dashboard(props) {
             name: "",
             telephone_number: ""
         },
-        author_uuid: whoami.uuid,
         assigned_riders: [],
         assigned_coordinators: [],
         time_picked_up: null,

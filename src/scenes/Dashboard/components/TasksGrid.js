@@ -142,7 +142,8 @@ const GridColumn = React.memo((props) => {
                                                     priority,
                                                     priority_id,
                                                     dropoff_address,
-                                                    parent_id
+                                                    parent_id,
+                                                    relay_previous_uuid: task.uuid
                                                 }));
                                                 dispatch(updateTaskDropoffAddressRequest({
                                                     taskUUID: task.uuid,
@@ -164,7 +165,7 @@ const GridColumn = React.memo((props) => {
                                           deleteDisabled={props.deleteDisabled}/>
                                 {relayIcon}
                             </>
-                    )
+                        )
                     })}
                 </Grid>
             </TasksKanbanColumn>
@@ -191,7 +192,6 @@ export default function TasksGrid(props) {
     }
 
     useEffect(doSearch, [searchQuery])
-    //TODO: separate task columns into individual components so that there is less rerendering
     return (
         <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
             <Grid item>

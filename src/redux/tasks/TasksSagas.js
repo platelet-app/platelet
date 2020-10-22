@@ -65,6 +65,7 @@ import {
     UPDATE_TASK_PATCH_REQUEST,
     REFRESH_TASKS_REQUEST,
     REFRESH_MY_TASKS_REQUEST,
+    UPDATE_TASK_PATCH_FROM_SERVER,
     addTaskFailure,
     deleteTaskFailure,
     restoreTaskFailure,
@@ -79,12 +80,7 @@ import {
     updateTaskPatchFailure,
     updateTaskCancelledTimeFailure,
     updateTaskRejectedTimeFailure,
-    getTaskFailure,
-    setCurrentTask,
-    updateTaskRemoveRiderSuccess,
-    updateTaskRemoveRiderFailure,
-    UPDATE_TASK_REMOVE_RIDER_REQUEST,
-    UPDATE_TASK_PATCH_FROM_SERVER, UPDATE_TASK_FROM_SOCKET
+    getTaskFailure
 } from "./TasksActions"
 import {updateTaskPatchRequest as updateTaskPatchAction} from "./TasksActions"
 
@@ -101,7 +97,7 @@ function* postNewTask(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data);
         const task = {...action.data, "uuid": result.uuid};
-        yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: task.author_uuid}}))
+        yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: result.author_uuid}}))
         yield put(addTaskSuccess(task));
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {
@@ -429,9 +425,9 @@ function* getTasks(action) {
     try {
         const api = yield select(getApiControl);
         // get all the different tasks for different status and combine them
-        const tasksNew = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "new");
-        const tasksActive = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "active");
-        const tasksPickedUp = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "picked_up");
+        const tasksNew = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "new");
+        const tasksActive = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "active");
+        const tasksPickedUp = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "picked_up");
         const tasksDelivered = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "delivered");
         const tasksCancelled = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "cancelled");
         const tasksRejected = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "rejected");
