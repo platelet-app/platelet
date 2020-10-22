@@ -8,7 +8,15 @@ import {TasksKanbanColumn} from "../styles/TaskColumns";
 import {TextFieldControlled} from "../../../components/TextFields";
 import {task} from "../../../redux/tasks/TasksReducers";
 import {Waypoint} from "react-waypoint";
-import {getAllTasksRequest} from "../../../redux/tasks/TasksActions";
+import {
+    addTaskRelayRequest, addTaskRequest,
+    getAllTasksRequest,
+    updateTaskDropoffAddressRequest
+} from "../../../redux/tasks/TasksActions";
+import Tooltip from "@material-ui/core/Tooltip";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import IconButton from "@material-ui/core/IconButton";
 
 const initialTasksState = {tasksNew: [], tasksActive: [], tasksPickedUp: [], tasksDelivered: []}
 
@@ -62,7 +70,40 @@ const getColumnTitle = key => {
     }
 };
 
+const useStyles = makeStyles(theme => ({
+    addRelay: {
+        visibility: "hidden",
+        "&:hover $hoverDiv": {
+            visibility: "visible"
+        }
+    },
+    hoverDiv: {
+        width: "100%",
+        height: "45px",
+        "& .hidden-button": {
+            display: "none"
+        },
+        "&:hover .hidden-button": {
+            display: "inline"
+        }
+    }
+}));
+
+const emptyTask = {
+    time_created: new Date().toISOString(),
+    assigned_riders: [],
+    assigned_coordinators: [],
+    time_picked_up: null,
+    time_dropped_off: null,
+    time_rejected: null,
+    time_cancelled: null
+};
+
+
 const GridColumn = React.memo((props) => {
+        let prevTaskParentId = 0;
+        const dispatch = useDispatch();
+        const classes = useStyles();
         return (
             <TasksKanbanColumn>
                 {props.title}
@@ -74,12 +115,56 @@ const GridColumn = React.memo((props) => {
                 >
                     {props.newTaskButton}
                     {props.tasks.map(task => {
+                        const relayIcon = task.parent_id === prevTaskParentId ?
+                            <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                                <Grid item>
+                                    <Tooltip title="Relay">
+                                        <ArrowDownwardIcon style={{height: "45px"}}/>
+
+                                    </Tooltip>
+                                </Grid>
+                            </Grid>
+                            :
+                            <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                                <Grid item>
+                                    <Tooltip title={"Add Relay"}>
+                                        <IconButton
+                                            className={"hidden-button"}
+                                            onClick={() => {
+                                                const {requester_contact, priority, priority_id, time_of_call, dropoff_address, parent_id} = {...task};
+                                                dispatch(addTaskRequest({
+                                                    ...emptyTask,
+                                                    time_of_call,
+                                                    requester_contact: requester_contact ? requester_contact : {
+                                                        name: "",
+                                                        telephone_number: ""
+                                                    },
+                                                    priority,
+                                                    priority_id,
+                                                    dropoff_address,
+                                                    parent_id
+                                                }));
+                                                dispatch(updateTaskDropoffAddressRequest({
+                                                    taskUUID: task.uuid,
+                                                    payload: {dropoff_address: null},
+                                                }));
+                                            }}
+                                        >
+                                            <ArrowDownwardIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                            </Grid>
+                        prevTaskParentId = task.parent_id;
                         return (
-                            <TaskItem key={task.uuid}
-                                      task={task}
-                                      view={props.modalView}
-                                      deleteDisabled={props.deleteDisabled}/>
-                        )
+                            <>
+                                <TaskItem key={task.uuid}
+                                          task={task}
+                                          view={props.modalView}
+                                          deleteDisabled={props.deleteDisabled}/>
+                                {relayIcon}
+                            </>
+                    )
                     })}
                 </Grid>
             </TasksKanbanColumn>
@@ -104,8 +189,6 @@ export default function TasksGrid(props) {
         const result = filterTasks(tasks, searchQuery)
         setFilteredTasks(result);
     }
-
-    console.log(props.hideAddButton)
 
     useEffect(doSearch, [searchQuery])
     //TODO: separate task columns into individual components so that there is less rerendering
