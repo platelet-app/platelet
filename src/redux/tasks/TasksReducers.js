@@ -121,8 +121,8 @@ export function tasks(state = initialTasksState, action) {
             const finalTasks = update(state.tasks, {[taskType]: {$set: result}});
             return {tasks: finalTasks, error: null}
         case RESTORE_TASK_SUCCESS:
-            const {taskTypeRestore, resultRestore} = sortAndConcat(state.tasks, action.data)
-            const finalTasksRestore = update(state.tasks, {[taskTypeRestore]: {$set: resultRestore}});
+            const sortedConcatted = sortAndConcat(state.tasks, action.data)
+            const finalTasksRestore = update(state.tasks, {[sortedConcatted.taskType]: {$set: sortedConcatted.result}});
             return {tasks: finalTasksRestore, error: null}
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_REQUESTER_CONTACT_SUCCESS:
