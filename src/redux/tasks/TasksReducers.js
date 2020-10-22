@@ -117,11 +117,13 @@ function recursiveTaskUpdate(task, previousTask, taskUUID, payload) {
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
-            const resultAdd = sortAndConcat(state.tasks, action.data)
-            return {tasks: Object.assign({}, state.tasks, resultAdd), error: null}
+            const {taskType, result} = sortAndConcat(state.tasks, action.data)
+            const finalTasks = update(state.tasks, {[taskType]: {$set: result}});
+            return {tasks: finalTasks, error: null}
         case RESTORE_TASK_SUCCESS:
-            const resultRestore = sortAndConcat(state.tasks, action.data)
-            return {tasks: Object.assign({}, state.tasks, resultRestore), error: null}
+            const {taskTypeRestore, resultRestore} = sortAndConcat(state.tasks, action.data)
+            const finalTasksRestore = update(state.tasks, {[taskTypeRestore]: {$set: resultRestore}});
+            return {tasks: finalTasksRestore, error: null}
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_REQUESTER_CONTACT_SUCCESS:
         case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
