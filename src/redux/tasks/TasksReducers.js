@@ -23,7 +23,13 @@ import {
     UPDATE_TASK_SUCCESS, ADD_TASK_RELAY_REQUEST, ADD_TASK_RELAY_SUCCESS
 } from "./TasksActions";
 import update from "immutability-helper";
-import {determineTaskType, findExistingTask, findExistingTaskParent, recursiveFindTaskChild} from "../../utilities";
+import {
+    determineTaskType,
+    findExistingTask,
+    findExistingTaskParent,
+    findExistingTaskParentByID,
+    recursiveFindTaskChild
+} from "../../utilities";
 
 const initialState = {
     task: {
@@ -94,11 +100,11 @@ const initialTasksState = {
 }
 
 function sortAndConcat(tasks, data) {
-    const {taskType, task} = determineTaskType(data);
+    const {taskType, taskGroup} = determineTaskType(data);
     let result = {};
-    const newArray = [...tasks[taskType], task];
+    const newArray = [...tasks[taskType], taskGroup];
     newArray.sort(function (a, b) {
-        var dateA = new Date(a.time_of_call), dateB = new Date(b.time_of_call);
+        var dateA = new Date(a[0].time_of_call), dateB = new Date(b[0].time_of_call);
         return dateB > dateA ? -1 : dateB < dateA ? 1 : 0;
     });
     result = taskType === "tasksNew" ? newArray.reverse() : newArray;
@@ -114,16 +120,44 @@ function recursiveTaskUpdate(task, previousTask, taskUUID, payload) {
     }
 }
 
+function groupRelaysTogether(tasks) {
+    let groupedTasks = {};
+    for(const [key, value] of Object.entries(tasks)) {
+        groupedTasks[key] = [];
+        let currentParentId = -1;
+        let currentIndex = -1;
+        for (const t of value) {
+            if (currentParentId !== t.parent_id) {
+                currentParentId = t.parent_id;
+                currentIndex += 1;
+                groupedTasks[key][currentIndex] = [];
+            }
+            groupedTasks[key][currentIndex].push(t);
+        }
+    }
+    for(const [key, value] of Object.entries(groupedTasks)) {
+        groupedTasks[key] = value.sort((a, b) => a.order_in_relay < b.order_in_relay);
+    }
+    return groupedTasks;
+}
+
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
-            const {taskType, result} = sortAndConcat(state.tasks, action.data)
+            const {taskType, result} = sortAndConcat(state.tasks, [action.data])
             const finalTasks = update(state.tasks, {[taskType]: {$set: result}});
             return {tasks: finalTasks, error: null}
         case RESTORE_TASK_SUCCESS:
             const {taskTypeRestore, resultRestore} = sortAndConcat(state.tasks, action.data)
             const finalTasksRestore = update(state.tasks, {[taskTypeRestore]: {$set: resultRestore}});
             return {tasks: finalTasksRestore, error: null}
+        case ADD_TASK_RELAY_SUCCESS:
+            const findParent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
+            const newGroup = [...findParent.taskGroup, action.data]
+            const newTasks = update(state.tasks, {[findParent.listType]: {$set: state.tasks[findParent.listType].filter(t => action.data.parent_id !== t[0].parent_id)}});
+            const sortedRelay = sortAndConcat(newTasks, newGroup)
+            const finalTasksRelay = update(state.tasks, {[sortedRelay.taskType]: {$set: sortedRelay.result}});
+            return {tasks: finalTasksRelay, error: null}
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_REQUESTER_CONTACT_SUCCESS:
         case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
@@ -135,21 +169,19 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_PICKUP_TIME_SUCCESS:
         case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
         case UPDATE_TASK_FROM_SOCKET:
-        case ADD_TASK_RELAY_SUCCESS:
-            const taskToUpdate = findExistingTaskParent(state.tasks, action.data.taskUUID);
-            if (taskToUpdate.task) {
+            const taskToUpdateParent = findExistingTaskParent(state.tasks, action.data.taskUUID);
+            if (taskToUpdateParent.taskGroup) {
                 const newTasks = update(
-                    state.tasks, {[taskToUpdate.listType]: {$set: state.tasks[taskToUpdate.listType].filter(t => t.uuid !== taskToUpdate.task.uuid)}}
-                );
+                    state.tasks, {[taskToUpdateParent.listType]: {$set: state.tasks[taskToUpdateParent.listType].filter(t => taskToUpdateParent.taskGroup[0].parent_id !== t[0].parent_id)}}
+                    );
                 let updatedItem;
-                if (taskToUpdate.task.uuid === action.data.taskUUID) {
-                    updatedItem = {...taskToUpdate.task, ...action.data.payload}
-                } else if (taskToUpdate.task.relay_next) {
-                    updatedItem = recursiveTaskUpdate(taskToUpdate.task.relay_next, taskToUpdate.task, action.data.taskUUID, action.data.payload)
-                }
-                const {taskType, result} = sortAndConcat(newTasks, updatedItem)
+                const taskToUpdate = taskToUpdateParent.taskGroup.find(t => t.uuid === action.data.taskUUID);
+                const taskIndex = taskToUpdateParent.taskGroup.indexOf(taskToUpdate);
+                updatedItem = {...taskToUpdate, ...action.data.payload};
+                const updatedGroup = update(taskToUpdateParent.taskGroup, {[taskIndex]: {$set: updatedItem}})
+                const {taskType, result} = sortAndConcat(newTasks, updatedGroup);
                 const finalTasks = update(newTasks, {[taskType]: {$set: result}});
-                return {tasks: finalTasks, error: null}
+                return {tasks: finalTasks, error: null};
             } else {
                 return state;
             }
@@ -224,7 +256,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case GET_TASKS_SUCCESS:
-            return {tasks: action.data, error: null};
+            return {tasks: groupRelaysTogether(action.data), error: null};
         case GET_TASKS_FAILURE:
             return {...initialTasksState, error: action.error};
         case GET_MY_TASKS_SUCCESS:

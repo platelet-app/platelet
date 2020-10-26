@@ -101,7 +101,6 @@ const emptyTask = {
 
 
 const GridColumn = React.memo((props) => {
-        let prevTaskParentId = 0;
         const dispatch = useDispatch();
         const classes = useStyles();
         return (
@@ -114,59 +113,63 @@ const GridColumn = React.memo((props) => {
                       alignItems={"center"}
                 >
                     {props.newTaskButton}
-                    {props.tasks.map(task => {
-                        const relayIcon = task.parent_id === prevTaskParentId ?
-                            <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                                <Grid item>
-                                    <Tooltip title="Relay">
-                                        <ArrowDownwardIcon style={{height: "45px"}}/>
+                    {props.tasks.map(taskList => {
+                        return !taskList ? <></> : taskList.map((task, i, arr) => {
+                            const relayIcon = arr.length - 1 !== i ?
+                                <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                                    <Grid item>
+                                        <Tooltip title="Relay">
+                                            <ArrowDownwardIcon style={{height: "45px"}}/>
+                                        </Tooltip>
+                                    </Grid>
+                                </Grid>
+                                :
+                                <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                                    <Grid item>
+                                        <Tooltip title={"Add Relay"}>
+                                            <IconButton
+                                                className={"hidden-button"}
+                                                onClick={() => {
+                                                    const {requester_contact, priority, priority_id, time_of_call, dropoff_address, parent_id} = {...task};
+                                                    dispatch(addTaskRelayRequest({
+                                                        ...emptyTask,
+                                                        time_of_call,
+                                                        requester_contact: requester_contact ? requester_contact : {
+                                                            name: "",
+                                                            telephone_number: ""
+                                                        },
+                                                        priority,
+                                                        priority_id,
+                                                        dropoff_address,
+                                                        parent_id,
+                                                        relay_previous_uuid: task.uuid
+                                                    }));
+                                                    //dispatch(updateTaskDropoffAddressRequest({
+                                                     //   taskUUID: task.uuid,
+                                                    //    payload: {dropoff_address: null},
+                                                    //}));
+                                                }}
+                                            >
+                                                <ArrowDownwardIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                </Grid>;
+                            return (
+                                <>
+                                    {task.parent_id}
+                                    <TaskItem key={task.uuid}
+                                              task={task}
+                                              view={props.modalView}
+                                              deleteDisabled={props.deleteDisabled}/>
+                                    {relayIcon}
+                                </>
+                            )
 
-                                    </Tooltip>
-                                </Grid>
-                            </Grid>
-                            :
-                            <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                                <Grid item>
-                                    <Tooltip title={"Add Relay"}>
-                                        <IconButton
-                                            className={"hidden-button"}
-                                            onClick={() => {
-                                                const {requester_contact, priority, priority_id, time_of_call, dropoff_address, parent_id} = {...task};
-                                                dispatch(addTaskRequest({
-                                                    ...emptyTask,
-                                                    time_of_call,
-                                                    requester_contact: requester_contact ? requester_contact : {
-                                                        name: "",
-                                                        telephone_number: ""
-                                                    },
-                                                    priority,
-                                                    priority_id,
-                                                    dropoff_address,
-                                                    parent_id,
-                                                    relay_previous_uuid: task.uuid
-                                                }));
-                                                dispatch(updateTaskDropoffAddressRequest({
-                                                    taskUUID: task.uuid,
-                                                    payload: {dropoff_address: null},
-                                                }));
-                                            }}
-                                        >
-                                            <ArrowDownwardIcon/>
-                                        </IconButton>
-                                    </Tooltip>
-                                </Grid>
-                            </Grid>
-                        prevTaskParentId = task.parent_id;
-                        return (
-                            <>
-                                <TaskItem key={task.uuid}
-                                          task={task}
-                                          view={props.modalView}
-                                          deleteDisabled={props.deleteDisabled}/>
-                                {relayIcon}
-                            </>
-                        )
-                    })}
+                        })
+                    })
+                    }
+
                 </Grid>
             </TasksKanbanColumn>
         )

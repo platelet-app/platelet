@@ -96,7 +96,7 @@ function* postNewTask(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data);
-        const task = {...action.data, "uuid": result.uuid};
+        const task = {...action.data, "uuid": result.uuid, parent_id: result.parent_id};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: result.author_uuid}}))
         yield put(addTaskSuccess(task));
         yield put(subscribeToUUID(task.uuid))
@@ -113,10 +113,10 @@ function* postNewTaskRelay(action) {
     try {
         const api = yield select(getApiControl);
         const whoami = yield call([api, api.users.whoami]);
-        const result = yield call([api, api.tasks.createTask], {...action.data, author_uuid: whoami.uuid});
+        const result = yield call([api, api.tasks.createTask], {...action.data});
         const task = {...action.data, author_uuid: whoami.uuid, "uuid": result.uuid};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: task.author_uuid}}))
-        yield put(addTaskRelaySuccess({payload: {relay_next: task}, taskUUID: action.data.relay_previous_uuid}));
+        yield put(addTaskRelaySuccess(task));
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {
         yield put(addTaskRelayFailure(error))
@@ -433,6 +433,7 @@ function* getTasks(action) {
         const tasksRejected = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "rejected");
         yield put(getAllTasksSuccess({tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksCancelled, tasksRejected}))
     } catch (error) {
+        throw error;
         if (error.name === "HttpError") {
             if (error.response.status === 404) {
                 yield put(getAllTasksNotFound(error))
