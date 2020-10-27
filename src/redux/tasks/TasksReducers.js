@@ -141,6 +141,30 @@ function groupRelaysTogether(tasks) {
     return groupedTasks;
 }
 
+const addAssigneeToList = (task, rider) =>
+{
+    // add the assignee to the list
+    let assigneesList = [...task.assigned_riders, rider]
+    return {
+        assigned_riders: assigneesList,
+        assigned_riders_display_string: assigneesList.map(
+            (user) => user.display_name
+        ).join(", ")
+    }
+}
+
+const removeAssigneeFromList = (task, userUUID) =>
+{
+    // remove the assignee from the list
+    let assigneesList = task.assigned_riders.filter(u => u.uuid !== userUUID)
+    return {
+        assigned_riders: assigneesList,
+        assigned_riders_display_string: assigneesList.map(
+            (user) => user.display_name
+        ).join(", ")
+    }
+}
+
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
@@ -187,46 +211,28 @@ export function tasks(state = initialTasksState, action) {
             }
         case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
         case UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET:
-            // Get the parent first
+            // Get the parent group first
             const taskToUpdateAssignedRiderParent = findExistingTaskParent(state.tasks, action.data.taskUUID);
             // remove it from the list
-            const newTasksAssignedRider = update(state.tasks,
-                {[taskToUpdateAssignedRiderParent.listType]: {$set: state.tasks[taskToUpdateAssignedRiderParent.listType].filter(t => t.uuid !== taskToUpdateAssignedRiderParent.task.uuid)}}
-                );
-            const updateList = (task, rider) =>
-            {
-                // add the assignee to the list
-                let assigneesList = task.assigned_riders
-                assigneesList.push(rider)
-                return {
-                    assigned_riders: assigneesList,
-                    assigned_riders_display_string: task.assigned_riders.map(
-                        (user) => user.display_name
-                    ).join(", ")
-                }
-            }
-            let updatedItem;
-            if (taskToUpdateAssignedRiderParent.task) {
-                // see if the parent is the task we are looking for
-                if (taskToUpdateAssignedRiderParent.task.uuid === action.data.taskUUID) {
-                    updatedItem = {
-                        ...taskToUpdateAssignedRiderParent.task,
-                        ...updateList(taskToUpdateAssignedRiderParent.task,
-                            action.data.payload.rider)}
+            const newTasksAssignedRider = update(
+                state.tasks, {
+                    [taskToUpdateAssignedRiderParent.listType]: {$set: state.tasks[taskToUpdateAssignedRiderParent.listType].filter(
+                        t => taskToUpdateAssignedRiderParent.taskGroup[0].parent_id !== t[0].parent_id)
+                    }}
+            );
 
-                } else if (taskToUpdateAssignedRiderParent.task.relay_next) {
-                    // if it isn't the parent, find the relay child
-                    const taskToUpdateAssignedRider = recursiveFindTaskChild(taskToUpdateAssignedRiderParent.task, action.data.taskUUID);
-                    // get the list
-                    const result = updateList(taskToUpdateAssignedRider, action.data.payload.rider)
-                    // make use of the recursive task update function to push new assignees list
-                    updatedItem = recursiveTaskUpdate(
-                        taskToUpdateAssignedRiderParent.task.relay_next,
-                        taskToUpdateAssignedRiderParent.task,
-                        action.data.taskUUID, result)
+            if (taskToUpdateAssignedRiderParent.taskGroup) {
+                const taskToUpdateAssignedRider = taskToUpdateAssignedRiderParent.taskGroup.find(t => t.uuid === action.data.taskUUID);
+                const updatedItem = {
+                    ...taskToUpdateAssignedRider,
+                    ...addAssigneeToList(taskToUpdateAssignedRider,
+                        action.data.payload.rider)
                 }
+                const taskIndex = taskToUpdateAssignedRiderParent.taskGroup.indexOf(taskToUpdateAssignedRider);
+                const updatedGroup = update(taskToUpdateAssignedRiderParent.taskGroup, {[taskIndex]: {$set: updatedItem}})
+
                 // sort the item and merge it
-                const {taskType, result} = sortAndConcat(newTasksAssignedRider, updatedItem)
+                const {taskType, result} = sortAndConcat(newTasksAssignedRider, updatedGroup)
                 const finalTasksAssignedRider = update(newTasksAssignedRider, {[taskType]: {$set: result}});
                 return {tasks: finalTasksAssignedRider, error: null}
             } else {
@@ -234,16 +240,30 @@ export function tasks(state = initialTasksState, action) {
             }
         case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS:
         case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET:
-            const taskUnassign = findExistingTask(state.tasks, action.data.taskUUID);
-            const newTasksAssignedRiderRemove = update(state.tasks,
-                {[taskUnassign.listType]: {$set: state.tasks[taskUnassign.listType].filter(t => t.uuid !== taskUnassign.task.uuid)}}
+            // Get the parent group first
+            const taskToUnassignParent = findExistingTaskParent(state.tasks, action.data.taskUUID);
+            // remove it from the list
+            const newTasksUnassignedRider = update(
+                state.tasks, {
+                    [taskToUnassignParent.listType]: {$set: state.tasks[taskToUnassignParent.listType].filter(
+                            t => taskToUnassignParent.taskGroup[0].parent_id !== t[0].parent_id)
+                    }}
             );
-            if (taskUnassign) {
-                const filteredAssigneeList = taskUnassign.task.assigned_riders.filter((u) => u.uuid !== action.data.payload.user_uuid);
-                const finalTask = {...taskUnassign.task, assigned_riders: filteredAssigneeList, assigned_riders_display_string: filteredAssigneeList.map((user) => user.display_name).join(", ")}
-                const {taskType, result} = sortAndConcat(newTasksAssignedRiderRemove, finalTask)
-                const finalTasksAssignedRiderRemove = update(newTasksAssignedRiderRemove, {[taskType]: {$set: result}});
-                return {tasks: finalTasksAssignedRiderRemove, error: null}
+
+            if (taskToUnassignParent.taskGroup) {
+                const taskToUpdateUnassignedRider = taskToUnassignParent.taskGroup.find(t => t.uuid === action.data.taskUUID);
+                const updatedItem = {
+                    ...taskToUpdateUnassignedRider,
+                    ...removeAssigneeFromList(taskToUpdateUnassignedRider,
+                        action.data.payload.user_uuid)
+                }
+                const taskIndex = taskToUnassignParent.taskGroup.indexOf(taskToUpdateUnassignedRider);
+                const updatedGroup = update(taskToUnassignParent.taskGroup, {[taskIndex]: {$set: updatedItem}})
+
+                // sort the item and merge it
+                const {taskType, result} = sortAndConcat(newTasksUnassignedRider, updatedGroup)
+                const finalTasksAssignedRider = update(newTasksUnassignedRider, {[taskType]: {$set: result}});
+                return {tasks: finalTasksAssignedRider, error: null}
             } else {
                 return state;
             }
