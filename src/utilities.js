@@ -154,19 +154,21 @@ function determineTaskFinishedState(task) {
     }
 }
 
-export function determineTaskType(task) {
-    if (task.time_cancelled) {
-        return { taskType: "tasksCancelled", task };
-    } else if (task.time_rejected) {
-        return { taskType: "tasksRejected", task };
-    } else if (!task.assigned_riders || !task.assigned_riders.length) {
-        return { taskType: "tasksNew", task };
-    } else if ((task.assigned_riders.length) && !task.time_picked_up) {
-        return { taskType: "tasksActive", task };
-    } else if ((task.assigned_riders.length) && task.time_picked_up && !determineTaskFinishedState(task)) {
-        return { taskType: "tasksPickedUp",  task };
-    } else if (determineTaskFinishedState(task)) {
-        return { taskType: "tasksDelivered", task };
+export function determineTaskType(taskGroup) {
+    if (taskGroup.length === 0)
+        return null;
+    if (taskGroup.some(t => t.time_cancelled)) {
+        return { taskType: "tasksCancelled", taskGroup };
+    } else if (taskGroup.some(t => t.time_rejected)) {
+        return { taskType: "tasksRejected", taskGroup };
+    } else if (!taskGroup.some(t => t.assigned_riders.length)) {
+        return { taskType: "tasksNew", taskGroup };
+    } else if ((taskGroup.some(t => t.assigned_riders.length) && !taskGroup.some(t => !!t.time_picked_up))) {
+        return { taskType: "tasksActive", taskGroup };
+    } else if ((taskGroup.some(t => t.assigned_riders.length)) && taskGroup.some(t => !!t.time_picked_up) && !!!taskGroup[taskGroup.length - 1].time_dropped_off) {
+        return { taskType: "tasksPickedUp",  taskGroup };
+    } else if (!!taskGroup[taskGroup.length - 1].time_dropped_off) {
+        return { taskType: "tasksDelivered", taskGroup };
     } else {
         return null;
     }
@@ -182,21 +184,37 @@ function recursiveRelaySearch(uuidToFind, task) {
     }
 }
 
-export function findExistingTaskParent(tasks, uuid) {
-    // this returns the PARENT if given the UUID of a relay task
+export function findExistingTaskParentByID(tasks, ID) {
+    // this returns the task parent by it's integer id
     let listType = undefined;
     let index = undefined;
-    let task = undefined;
-
+    let taskGroup = undefined;
     for (const [type, value] of Object.entries(tasks)) {
-        task = value.find(recursiveRelaySearch.bind(this, uuid));
-        if (task) {
-            index = value.indexOf(task);
+        taskGroup = value.find((t) => t[0].parent_id === ID);
+        if (taskGroup) {
+            index = value.indexOf(taskGroup);
             listType = type;
-            return { listType, index, task };
+            return { listType, index, taskGroup };
         }
     }
-    return { listType, index, task };
+    return { listType, index, taskGroup };
+}
+
+export function findExistingTaskParent(tasks, uuid) {
+    // this returns the PARENT list if given the UUID of any task
+    let listType = undefined;
+    let index = undefined;
+    let taskGroup = undefined;
+
+    for (const [type, value] of Object.entries(tasks)) {
+        taskGroup = value.find(group => group.map(t => t.uuid).includes(uuid));
+        if (taskGroup) {
+            index = value.indexOf(taskGroup);
+            listType = type;
+            return { listType, index, taskGroup };
+        }
+    }
+    return { listType, index, taskGroup };
 }
 
 export function recursiveFindTaskChild(task, uuid) {

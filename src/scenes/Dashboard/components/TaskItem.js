@@ -13,40 +13,9 @@ import {useDispatch} from "react-redux";
 import {addTaskRelayRequest, updateTaskDropoffAddressRequest} from "../../../redux/tasks/TasksActions";
 
 
-const useStyles = makeStyles(theme => ({
-    addRelay: {
-        visibility: "hidden",
-        "&:hover $hoverDiv": {
-            visibility: "visible"
-        }
-    },
-    hoverDiv: {
-        width: "100%",
-        height: "45px",
-        "& .hidden-button": {
-            display: "none"
-        },
-        "&:hover .hidden-button": {
-            display: "inline"
-        }
-    }
-}));
+
 const TaskItem = React.memo((props) => {
     let location = useLocation();
-    const classes = useStyles();
-    const dispatch = useDispatch();
-
-    const emptyTask = {
-        time_created: new Date().toISOString(),
-        assigned_riders: [],
-        assigned_coordinators: [],
-        time_picked_up: null,
-        time_dropped_off: null,
-        time_rejected: null,
-        time_cancelled: null
-    };
-
-
     const task =
         <TaskCard
             title={"Task"}
@@ -84,53 +53,6 @@ const TaskItem = React.memo((props) => {
                 </div>
 
             </Grid>
-            {props.task.relay_next ?
-                <>
-                <Grid alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                    <Grid item>
-                    <Tooltip title="Relay">
-                            <ArrowDownwardIcon style={{height: "45px"}}/>
-
-                    </Tooltip>
-                    </Grid>
-                </Grid>
-                    <TaskItem key={props.task.relay_next.uuid}
-                              task={props.task.relay_next}
-                              view={props.view}
-                              deleteDisabled={props.deleteDisabled}/>
-                              </>
-                :
-                <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                    <Grid item>
-                        <Tooltip title={"Add Relay"}>
-                        <IconButton
-                            className={"hidden-button"}
-                            onClick={() => {
-                                const {requester_contact, priority, priority_id, time_of_call, dropoff_address} = {...props.task};
-                                dispatch(addTaskRelayRequest({
-                                    ...emptyTask,
-                                    time_of_call,
-                                    requester_contact: requester_contact ? requester_contact : {
-                                        name: "",
-                                        telephone_number: ""
-                                    },
-                                    priority,
-                                    priority_id,
-                                    dropoff_address,
-                                    relay_previous_uuid: props.task.uuid
-                                }));
-                                dispatch(updateTaskDropoffAddressRequest({
-                                    taskUUID: props.task.uuid,
-                                    payload: {dropoff_address: null},
-                            }));
-                            }}
-                        >
-                            <ArrowDownwardIcon/>
-                        </IconButton>
-                        </Tooltip>
-                    </Grid>
-                </Grid>
-            }
         </>
     )
 });

@@ -96,12 +96,14 @@ function Dashboard(props) {
             })
         }
     }
+
     useEffect(componentDidMount, []);
 
     function getTasks() {
         if (whoami.uuid)
             dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
     }
+
     useEffect(getTasks, [whoami])
 
     useEffect(() => {
@@ -111,19 +113,28 @@ function Dashboard(props) {
             if (socketSubscription.tab_id != null && getTabIdentifier() !== socketSubscription.tab_id) {
                 switch (socketSubscription.type) {
                     case "update":
-                        dispatch(updateTaskFromSocket({taskUUID: socketSubscription.object_uuid, payload: socketSubscription.data}))
+                        dispatch(updateTaskFromSocket({
+                            taskUUID: socketSubscription.object_uuid,
+                            payload: socketSubscription.data
+                        }))
                         break;
                     case "assign_user":
                         const user_uuid = socketSubscription.data.user_uuid
                         const assignedUser = users.find(u => user_uuid === u.uuid)
                         if (assignedUser) {
                             const rider = assignedUser
-                            dispatch(updateTaskAssignedRiderFromSocket({taskUUID: socketSubscription.object_uuid, payload: {rider, user_uuid }}))
+                            dispatch(updateTaskAssignedRiderFromSocket({
+                                taskUUID: socketSubscription.object_uuid,
+                                payload: {rider, user_uuid}
+                            }))
                         }
                         break;
                     case "remove_assigned_user":
                         const user_uuid_remove = socketSubscription.data.user_uuid
-                        dispatch(updateTaskRemoveAssignedRiderFromSocket({taskUUID: socketSubscription.object_uuid, payload: {user_uuid: user_uuid_remove }}))
+                        dispatch(updateTaskRemoveAssignedRiderFromSocket({
+                            taskUUID: socketSubscription.object_uuid,
+                            payload: {user_uuid: user_uuid_remove}
+                        }))
                         break;
 
                     default:
@@ -142,9 +153,8 @@ function Dashboard(props) {
             firstTaskSubscribeCompleted.current = true;
             joinedTasks.forEach(task => dispatch(subscribeToUUID(task.uuid)))
         }
-        if (firstTaskSubscribeCompleted)
-            tasks.tasksNew.forEach(task => dispatch(subscribeToUUID(task.uuid)))
     }
+
     useEffect(subscribeTasks, [tasks])
 
     const emptyTask = {
@@ -154,7 +164,6 @@ function Dashboard(props) {
             name: "",
             telephone_number: ""
         },
-        author_uuid: whoami.uuid,
         assigned_riders: [],
         assigned_coordinators: [],
         time_picked_up: null,
@@ -175,16 +184,17 @@ function Dashboard(props) {
         else if (!isPostingNewTask)
             dispatch(setNewTaskAddedView(true))
     }
+
     useEffect(onAddNewTask, [isPostingNewTask])
 
     if (isFetching || viewMode === null) {
         return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
-    // TODO: do the redirect to task thing here
-    //} else if (newTaskAddedView()) {
-    //    return <Redirect to={`/task/${encodeUUID("")}`}/>
+        // TODO: do the redirect to task thing here
+        //} else if (newTaskAddedView()) {
+        //    return <Redirect to={`/task/${encodeUUID("")}`}/>
     } else {
-            return (
-                <Paper maxHeight={"100%"} maxWidth={"100%"}>
+        return (
+            <Paper maxHeight={"100%"} maxWidth={"100%"}>
                 <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
                     <TabPanel value={viewMode} index={0}>
                         <TasksGrid tasks={tasks}
@@ -205,9 +215,9 @@ function Dashboard(props) {
                         />
                     </TabPanel>
                 </DashboardDetailTabs>
-                </Paper>
-            )
-        }
+            </Paper>
+        )
+    }
 }
 
 export default Dashboard;
