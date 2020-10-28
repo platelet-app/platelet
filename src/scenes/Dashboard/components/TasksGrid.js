@@ -157,7 +157,6 @@ const GridColumn = React.memo((props) => {
                                 </Grid>;
                             return (
                                 <>
-                                    {task.parent_id}
                                     <TaskItem key={task.uuid}
                                               task={task}
                                               view={props.modalView}
