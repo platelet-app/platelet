@@ -144,10 +144,10 @@ const GridColumn = React.memo((props) => {
                                                         parent_id,
                                                         relay_previous_uuid: task.uuid
                                                     }));
-                                                    //dispatch(updateTaskDropoffAddressRequest({
-                                                     //   taskUUID: task.uuid,
-                                                    //    payload: {dropoff_address: null},
-                                                    //}));
+                                                    dispatch(updateTaskDropoffAddressRequest({
+                                                       taskUUID: task.uuid,
+                                                        payload: {dropoff_address: null},
+                                                    }));
                                                 }}
                                             >
                                                 <ArrowDownwardIcon/>

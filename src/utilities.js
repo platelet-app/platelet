@@ -161,13 +161,13 @@ export function determineTaskType(taskGroup) {
         return { taskType: "tasksCancelled", taskGroup };
     } else if (taskGroup.some(t => t.time_rejected)) {
         return { taskType: "tasksRejected", taskGroup };
-    } else if (!taskGroup[0].assigned_riders || !taskGroup[0].assigned_riders.length) {
+    } else if (!taskGroup.some(t => t.assigned_riders.length)) {
         return { taskType: "tasksNew", taskGroup };
-    } else if ((taskGroup[0].assigned_riders.length) && !!!taskGroup[0].time_picked_up) {
+    } else if ((taskGroup.some(t => t.assigned_riders.length) && !taskGroup.some(t => !!t.time_picked_up))) {
         return { taskType: "tasksActive", taskGroup };
-    } else if ((taskGroup[0].assigned_riders.length) && !!taskGroup[0].time_picked_up && !!!taskGroup[taskGroup.length - 1].time_picked_up) {
+    } else if ((taskGroup.some(t => t.assigned_riders.length)) && taskGroup.some(t => !!t.time_picked_up) && !!!taskGroup[taskGroup.length - 1].time_dropped_off) {
         return { taskType: "tasksPickedUp",  taskGroup };
-    } else if (!!taskGroup[taskGroup.length - 1].time_picked_up) {
+    } else if (!!taskGroup[taskGroup.length - 1].time_dropped_off) {
         return { taskType: "tasksDelivered", taskGroup };
     } else {
         return null;
