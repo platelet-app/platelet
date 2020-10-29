@@ -64,6 +64,8 @@ const initialState = {
         destination_contact_name: null,
         time_created: null,
         time_modified: null,
+        parent_id: 0,
+        order_in_relay: 0,
         assigned_riders_display_string: "",
         assigned_coordinators_display_string: ""
     },
@@ -114,15 +116,14 @@ function sortAndConcat(tasks, data) {
 function recursiveTaskUpdate(task, previousTask, taskUUID, payload) {
     if (task.uuid === taskUUID) {
         return {...previousTask, relay_next: {...task, ...payload}}
-    }
-    else if (task.relay_next) {
+    } else if (task.relay_next) {
         return {...previousTask, relay_next: recursiveTaskUpdate(task.relay_next, task, taskUUID, payload)}
     }
 }
 
 function groupRelaysTogether(tasks) {
     let groupedTasks = {};
-    for(const [key, value] of Object.entries(tasks)) {
+    for (const [key, value] of Object.entries(tasks)) {
         groupedTasks[key] = [];
         let currentParentId = -1;
         let currentIndex = -1;
@@ -135,14 +136,13 @@ function groupRelaysTogether(tasks) {
             groupedTasks[key][currentIndex].push(t);
         }
     }
-    for(const [key, value] of Object.entries(groupedTasks)) {
+    for (const [key, value] of Object.entries(groupedTasks)) {
         groupedTasks[key] = value.sort((a, b) => a.order_in_relay < b.order_in_relay);
     }
     return groupedTasks;
 }
 
-const addAssigneeToList = (task, rider) =>
-{
+const addAssigneeToList = (task, rider) => {
     // add the assignee to the list
     let assigneesList = [...task.assigned_riders, rider]
     return {
@@ -153,8 +153,7 @@ const addAssigneeToList = (task, rider) =>
     }
 }
 
-const removeAssigneeFromList = (task, userUUID) =>
-{
+const removeAssigneeFromList = (task, userUUID) => {
     // remove the assignee from the list
     let assigneesList = task.assigned_riders.filter(u => u.uuid !== userUUID)
     return {
@@ -165,6 +164,10 @@ const removeAssigneeFromList = (task, userUUID) =>
     }
 }
 
+function taskGroupSort(a, b) {
+    return a.order_in_relay - b.order_in_relay;
+}
+
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
@@ -172,8 +175,20 @@ export function tasks(state = initialTasksState, action) {
             const finalTasks = update(state.tasks, {[taskType]: {$set: result}});
             return {tasks: finalTasks, error: null}
         case RESTORE_TASK_SUCCESS:
-            const sortedConcatted = sortAndConcat(state.tasks, action.data)
-            const finalTasksRestore = update(state.tasks, {[sortedConcatted.taskType]: {$set: sortedConcatted.result}});
+            const findParentRestore = findExistingTaskParentByID(state.tasks, action.data.parent_id);
+            let newGroupRestore;
+            let newTasksRestore;
+            if (findParentRestore.taskGroup) {
+                newGroupRestore = [...findParentRestore.taskGroup, action.data].sort(taskGroupSort)
+                newTasksRestore = update(state.tasks,
+                    {[findParentRestore.listType]: {$set: state.tasks[findParentRestore.listType].filter(t => action.data.parent_id !== t[0].parent_id)}}
+                );
+            } else {
+                newGroupRestore = [action.data]
+                newTasksRestore = state.tasks;
+            }
+            const sortedRestore = sortAndConcat(newTasksRestore, newGroupRestore)
+            const finalTasksRestore = update(state.tasks, {[sortedRestore.taskType]: {$set: sortedRestore.result}});
             return {tasks: finalTasksRestore, error: null}
         case ADD_TASK_RELAY_SUCCESS:
             const findParent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
@@ -197,7 +212,7 @@ export function tasks(state = initialTasksState, action) {
             if (taskToUpdateParent.taskGroup) {
                 const newTasks = update(
                     state.tasks, {[taskToUpdateParent.listType]: {$set: state.tasks[taskToUpdateParent.listType].filter(t => taskToUpdateParent.taskGroup[0].parent_id !== t[0].parent_id)}}
-                    );
+                );
                 let updatedItem;
                 const taskToUpdate = taskToUpdateParent.taskGroup.find(t => t.uuid === action.data.taskUUID);
                 const taskIndex = taskToUpdateParent.taskGroup.indexOf(taskToUpdate);
@@ -216,9 +231,11 @@ export function tasks(state = initialTasksState, action) {
             // remove it from the list
             const newTasksAssignedRider = update(
                 state.tasks, {
-                    [taskToUpdateAssignedRiderParent.listType]: {$set: state.tasks[taskToUpdateAssignedRiderParent.listType].filter(
-                        t => taskToUpdateAssignedRiderParent.taskGroup[0].parent_id !== t[0].parent_id)
-                    }}
+                    [taskToUpdateAssignedRiderParent.listType]: {
+                        $set: state.tasks[taskToUpdateAssignedRiderParent.listType].filter(
+                            t => taskToUpdateAssignedRiderParent.taskGroup[0].parent_id !== t[0].parent_id)
+                    }
+                }
             );
 
             if (taskToUpdateAssignedRiderParent.taskGroup) {
@@ -245,9 +262,11 @@ export function tasks(state = initialTasksState, action) {
             // remove it from the list
             const newTasksUnassignedRider = update(
                 state.tasks, {
-                    [taskToUnassignParent.listType]: {$set: state.tasks[taskToUnassignParent.listType].filter(
+                    [taskToUnassignParent.listType]: {
+                        $set: state.tasks[taskToUnassignParent.listType].filter(
                             t => taskToUnassignParent.taskGroup[0].parent_id !== t[0].parent_id)
-                    }}
+                    }
+                }
             );
 
             if (taskToUnassignParent.taskGroup) {
@@ -268,10 +287,25 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case DELETE_TASK_SUCCESS:
-            const findDelete = findExistingTask(state.tasks, action.data)
-            if (findDelete) {
-                const newTasks = update(state.tasks, {[findDelete.listType]: {$set: state.tasks[findDelete.listType].filter(t => t.uuid !== findDelete.task.uuid)}})
-                return {tasks: Object.assign({}, state.tasks, newTasks), error: null};
+            const findDelete = findExistingTaskParent(state.tasks, action.data)
+            if (findDelete.taskGroup) {
+                const newDeletedTasks = update(
+                    state.tasks, {
+                        [findDelete.listType]: {
+                            $set: state.tasks[findDelete.listType].filter(
+                                t => findDelete.taskGroup[0].parent_id !== t[0].parent_id)
+                        }
+                    }
+                );
+                const filteredGroup = findDelete.taskGroup.filter(t => t.uuid !== action.data);
+                if (filteredGroup.length === 0) {
+                    return {tasks: newDeletedTasks, error: null}
+                } else {
+                    const {taskType, result} = sortAndConcat(newDeletedTasks, filteredGroup);
+                    const newTasks = update(newDeletedTasks,
+                        {[taskType]: {$set: result}})
+                    return {tasks: newTasks, error: null};
+                }
             } else {
                 return state;
             }

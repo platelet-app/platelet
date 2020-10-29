@@ -75,6 +75,7 @@ const initialVehicleState = {
 export function vehicle(state = initialVehicleState, action) {
     switch (action.type) {
         case UPDATE_VEHICLE_SUCCESS:
+            // TODO: this should be immutable
             return {vehicle: Object.assign(state, action.data.payload), error: null};
         case GET_VEHICLE_SUCCESS:
             return {vehicle: action.data, error: null};
