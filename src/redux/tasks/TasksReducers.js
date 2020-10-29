@@ -103,13 +103,9 @@ const initialTasksState = {
 
 function sortAndConcat(tasks, data) {
     const {taskType, taskGroup} = determineTaskType(data);
-    let result = {};
-    const newArray = [...tasks[taskType], taskGroup];
-    newArray.sort(function (a, b) {
-        var dateA = new Date(a[0].time_of_call), dateB = new Date(b[0].time_of_call);
-        return dateB > dateA ? -1 : dateB < dateA ? 1 : 0;
-    });
-    result = taskType === "tasksNew" ? newArray.reverse() : newArray;
+    const result = [...tasks[taskType], taskGroup];
+    const sort = taskType === "tasksNew" ? (a, b) => b[0].parent_id - a[0].parent_id : (a, b) => a[0].parent_id - b[0].parent_id
+    result.sort(sort);
     return {taskType, result};
 }
 
@@ -136,9 +132,9 @@ function groupRelaysTogether(tasks) {
             groupedTasks[key][currentIndex].push(t);
         }
     }
-    for (const [key, value] of Object.entries(groupedTasks)) {
-        groupedTasks[key] = value.sort((a, b) => a.order_in_relay < b.order_in_relay);
-    }
+  //  for (const [key, value] of Object.entries(groupedTasks)) {
+  //      groupedTasks[key] = value.sort((a, b) => a.order_in_relay < b.order_in_relay);
+  //  }
     return groupedTasks;
 }
 
