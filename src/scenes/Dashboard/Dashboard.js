@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import '../../App.css';
 import 'typeface-roboto'
-import {PaddedPaper} from "../../styles/common";
 import {Paper} from "@material-ui/core";
 import {
     addTaskRequest,
@@ -13,33 +12,20 @@ import {
 } from '../../redux/tasks/TasksActions'
 import {
     setCommentsObjectUUID,
-    setMenuIndex,
     setViewMode,
     setNewTaskAddedView,
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import {
     decodeUUID,
-    encodeUUID,
     getLocalStorageViewMode,
     getTabIdentifier
 } from "../../utilities";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from "../../redux/selectors";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
-import TasksTable from "./components/TasksTable";
-import MenuItem from "@material-ui/core/MenuItem";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import Menu from "@material-ui/core/Menu";
 import {Typography} from "@material-ui/core";
-import TasksStatistics from "./components/TasksStatistics";
 import StatsSkeleton from "./components/StatsSkeleton";
-import PersistentDrawerRight from "./components/SideInfoSection";
-import ChatIcon from "@material-ui/icons/Chat";
-import Tooltip from "@material-ui/core/Tooltip";
-import NotFound from "../../ErrorComponents/NotFound";
-import {Redirect, useHistory} from "react-router";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
 import {concatTasks} from "./utilities";
@@ -66,29 +52,16 @@ function Dashboard(props) {
     const isPostingNewTask = useSelector(state => isPostingNewTaskSelector(state));
     const tasks = useSelector(state => state.tasks.tasks);
     const users = useSelector(state => state.users.users);
-    const viewMode = useSelector(state => state.viewMode);
     const mobileView = useSelector(state => state.mobileView);
-    const notFoundSelector = createNotFoundSelector(["GET_SESSION"]);
-    const notFound = useSelector(state => notFoundSelector(state));
-    //TODO: This could put data into title
-    const currentSession = useSelector(state => state.session.session);
-    const currentTaskUUID = useSelector(state => state.currentTask.task.uuid);
-    const session_uuid = props.match ? decodeUUID(props.match.params.session_uuid_b62) : currentSession.uuid;
     const firstUpdateNewTask = useRef(true);
     const firstTaskSubscribeCompleted = useRef(false);
     const whoami = useSelector(state => state.whoami.user);
     const socketSubscription = useSelector(state => state.subscription);
     const [postPermission, setPostPermission] = useState(true);
-
-    const [rightSideBarOpen, setRightSideBarOpen] = useState(true);
+    const [viewMode, setViewMode] = useState(0);
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
-        dispatch(setCommentsObjectUUID(session_uuid));
-        if (!viewMode) {
-            const viewModeLocalStorage = getLocalStorageViewMode();
-            dispatch(setViewMode(viewModeLocalStorage === null ? 0 : viewModeLocalStorage));
-        }
         return function cleanup() {
             const joinedTasks = concatTasks(tasks);
             joinedTasks.forEach((task) => {
@@ -195,14 +168,14 @@ function Dashboard(props) {
     } else {
         return (
             <Paper maxHeight={"100%"} maxWidth={"100%"}>
-                <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
+                <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => setViewMode(newValue)}>
                     <TabPanel value={0} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
                                    onAddTaskClick={addEmptyTask}
                                    modalView={"edit"}
                                    hideAddButton={!postPermission}
-                                   excludeColumnList={viewMode === 0 ? ["tasksDelivered", "tasksCancelled", "tasksRejected"] : ["tasksNew", "tasksActive", "tasksPickedUp"]}
+                                   excludeColumnList={viewMode === 1 ? ["tasksNew", "tasksActive", "tasksPickedUp"] : ["tasksDelivered", "tasksCancelled", "tasksRejected"] }
                         />
                     </TabPanel>
                 </DashboardDetailTabs>
