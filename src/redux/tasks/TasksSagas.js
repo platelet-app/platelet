@@ -230,7 +230,7 @@ function* updateTaskDropoffAddressFromSaved(action) {
 function* updateTaskPickupTime(action) {
     try {
         const currentTasks = yield select((state) => state.tasks.tasks);
-        const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
+        const task = yield findExistingTask(currentTasks, action.data.taskUUID)
         const currentValue = task ? task.time_picked_up : null;
         const restoreAction = () => updateTaskPickupTimeRequest({
             taskUUID: action.data.taskUUID,
@@ -250,7 +250,7 @@ function* updateTaskPickupTime(action) {
 function* updateTaskDropoffTime(action) {
     try {
         const currentTasks = yield select((state) => state.tasks.tasks);
-        const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
+        const task = yield findExistingTask(currentTasks, action.data.taskUUID)
         const currentValue = task ? task.time_dropped_off : null;
         const restoreAction = () => updateTaskDropoffTimeRequest({
             taskUUID: action.data.taskUUID,
@@ -306,7 +306,7 @@ function* updateTaskCancelledTime(action) {
     try {
         // get the current task rejected_time value to make sure it isn't already marked
         const currentTasks = yield select((state) => state.tasks.tasks);
-        const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
+        const task = yield findExistingTask(currentTasks, action.data.taskUUID)
         const currentValue = task ? task.time_cancelled : null;
         const restoreAction = () => updateTaskCancelledTimeRequest({
             taskUUID: action.data.taskUUID,
@@ -327,7 +327,7 @@ function* updateTaskRejectedTime(action) {
     try {
         // get the current task rejected_time value to make sure it isn't already marked
         const currentTasks = yield select((state) => state.tasks.tasks);
-        const {task} = yield findExistingTask(currentTasks, action.data.taskUUID)
+        const task = yield findExistingTask(currentTasks, action.data.taskUUID)
         const currentValue = task ? task.time_rejected : null;
         const restoreAction = () => updateTaskRejectedTimeRequest({
             taskUUID: action.data.taskUUID,

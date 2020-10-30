@@ -226,13 +226,9 @@ export function recursiveFindTaskChild(task, uuid) {
 }
 
 export function findExistingTask(tasks, uuid) {
-    const {listType, index, task} = findExistingTaskParent(tasks, uuid)
-    if (task)
-        return task.uuid === uuid ? {listType, index, task} : {listType, index, task: recursiveFindTaskChild(task, uuid)}
-    else
-        return {listType, index, task}
-
-
+    const taskParent = findExistingTaskParent(tasks, uuid);
+    const task = taskParent.taskGroup.find(t => t.uuid === uuid);
+    return task || undefined;
 }
 
 export function spliceExistingTask(tasks, uuid) {

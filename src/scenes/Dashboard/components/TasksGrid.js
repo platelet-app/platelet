@@ -166,6 +166,8 @@ const GridColumn = React.memo((props) => {
                                 assigned_riders_display_string,
                                 time_picked_up,
                                 time_dropped_off,
+                                time_rejected,
+                                time_cancelled,
                                 time_of_call,
                                 priority,
                                 patch,
@@ -181,6 +183,8 @@ const GridColumn = React.memo((props) => {
                                               dropoffAddress={dropoff_address}
                                               timePickedUp={time_picked_up}
                                               timeDroppedOff={time_dropped_off}
+                                              timeRejected={time_rejected}
+                                              timeCancelled={time_cancelled}
                                               timeOfCall={time_of_call}
                                               priority={priority}
                                               patch={patch}

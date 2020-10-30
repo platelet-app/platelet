@@ -97,10 +97,10 @@ export default function TaskContextMenu(props) {
                         : undefined
                 }
             >
-                <MenuItem disabled={ (!!props.pickupTime || !props.assignedRiders.length || !!props.rejectedTime || !!props.cancelledTime)} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
-                <MenuItem disabled={ (!!props.dropoffTime || !!!props.pickupTime || !!props.rejectedTime || !!props.cancelledTime) } onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
-                <MenuItem disabled={ !!props.rejectedTime || !!props.cancelledTime } onClick={onSelectRejected}>Mark rejected</MenuItem>
-                <MenuItem disabled={ !!props.cancelledTime || !!props.rejectedTime } onClick={onSelectCancelled}>Mark cancelled</MenuItem>
+                <MenuItem disabled={ (!!props.timePickedUp || !props.assignedRiders.length || !!props.timeRejected || !!props.timeCancelled)} onClick={onSelectPickedUp}>Mark picked up</MenuItem>
+                <MenuItem disabled={ (!!props.timeDroppedOff || !!!props.timePickedUp || !!props.timeRejected || !!props.timeCancelled) } onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
+                <MenuItem disabled={ !!props.timeRejected || !!props.timeCancelled } onClick={onSelectRejected}>Mark rejected</MenuItem>
+                <MenuItem disabled={ !!props.timeCancelled || !!props.timeRejected } onClick={onSelectCancelled}>Mark cancelled</MenuItem>
                 {deleteOption}
             </Menu>
             </>
