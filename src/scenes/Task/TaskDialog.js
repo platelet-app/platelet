@@ -15,8 +15,6 @@ import DeliverableInformation from "../Deliverables/DeliverableInformation";
 import {
     updateTaskPickupTimeRequest,
     updateTaskPriorityRequest,
-    updateTaskContactNameRequest,
-    updateTaskContactNumberRequest,
     updateTaskDropoffAddressRequest,
     updateTaskDropoffTimeRequest,
     updateTaskPickupAddressRequest,
@@ -37,26 +35,28 @@ import CommentsSection from "../Comments/CommentsSection";
 import TaskAssignees from "./components/TaskAssignees";
 import Typography from "@material-ui/core/Typography";
 import NotFound from "../../ErrorComponents/NotFound";
+import {Skeleton} from "@material-ui/lab";
 
 export default function TaskDialog(props) {
     const dispatch = useDispatch();
-    // Leave this here in case app.js dispatchers haven't finished before the modal is opened
+    // Leave these here in case app.js dispatchers haven't finished before the modal is opened
     const loadingSelector = createLoadingSelector([
         "GET_TASK",
-        "GET_TASKS",
-        "GET_AVAILABLE_LOCATIONS",
-        "GET_AVAILABLE_PRIORITIES",
-        "GET_USERS",
-        "GET_AVAILABLE_LOCATIONS",
-        "GET_SESSION",
         "GET_WHOAMI"]);
+    const loadingSelectorLocations = createLoadingSelector(["GET_AVAILABLE_LOCATIONS",]);
+    const loadingSelectorPriorities = createLoadingSelector(["GET_AVAILABLE_PRIORITIES",]);
+    const loadingSelectorUsers = createLoadingSelector(["GET_USERS",]);
+    const isFetching = useSelector(state => loadingSelector(state));
+    const isFetchingLocations = useSelector(state => loadingSelectorLocations(state));
+    const isFetchingPriorities = useSelector(state => loadingSelectorPriorities(state));
+    const isFetchingUsers = useSelector(state => loadingSelectorUsers(state));
+
     const isPostingPickupSelector = createPostingSelector([
         "UPDATE_TASK_PICKUP_TIME"
     ]);
     const isPostingDropoffSelector = createPostingSelector([
         "UPDATE_TASK_DROPOFF_TIME"
     ]);
-    const isFetching = useSelector(state => loadingSelector(state));
     const isPostingDropoffTime = useSelector(state => isPostingDropoffSelector(state));
     const isPostingPickupTime = useSelector(state => isPostingPickupSelector(state));
     const mobileView = useSelector(state => state.mobileView);
@@ -66,7 +66,6 @@ export default function TaskDialog(props) {
     const whoami = useSelector(state => state.whoami.user);
     const whoamiUUID = useSelector(state => state.whoami.user.uuid);
     const whoamiRoles = useSelector(state => state.whoami.user.roles);
-    const [pickedUpStatus, setPickedUpStatus] = useState(false);
 
     let history = useHistory();
     let taskUUID = null;
@@ -138,7 +137,6 @@ export default function TaskDialog(props) {
     }
 
     function onSelectPickedUp(dateTime) {
-        setPickedUpStatus(dateTime !== null);
         const payload = {time_picked_up: dateTime};
         dispatch(updateTaskPickupTimeRequest({taskUUID, payload}));
     }
@@ -177,14 +175,6 @@ export default function TaskDialog(props) {
     } else {
         prioritySelect = <PrioritySelect priority={task.priority_id}
                                          onSelect={onSelectPriority}/>;
-    }
-    let pickupTimeNotice = <></>;
-    if (task.time_picked_up) {
-        pickupTimeNotice = <>Picked up at <Moment local format={"llll"}>{task.time_picked_up}</Moment></>
-    }
-    let dropoffTimeNotice = <></>;
-    if (task.time_dropped_off) {
-        dropoffTimeNotice = <>Dropped off at <Moment local format={"llll"}>{task.time_dropped_off}</Moment></>
     }
     let cancelledStatus = <></>
     if (task.time_cancelled) {
@@ -312,7 +302,7 @@ export default function TaskDialog(props) {
             </Grid>
             <Grid item>
                 <PaddedPaper width={"400px"}>
-                    <TaskModalTimePicker disabled={isPostingDropoffTime || !task.time_picked_up || !pickedUpStatus}
+                    <TaskModalTimePicker disabled={isPostingDropoffTime || !!!task.time_picked_up}
                                          label={"Mark Dropped Off"}
                                          time={task.time_dropped_off}
                                          onChange={onSelectDroppedOff}
@@ -339,14 +329,13 @@ export default function TaskDialog(props) {
                           justify={"flex-start"}
                           alignItems={"flex-start"}>
                         <Grid item>
-                            {layerOne}
+                            {isFetchingPriorities ? <Skeleton variant="text" width={500} height={250}/> : layerOne}
                         </Grid>
                         <Grid item>
-                            {layerTwo}
+                            {isFetchingLocations ? <Skeleton variant="text" width={500} height={250}/> : layerTwo}
                         </Grid>
-
                         <Grid item>
-                            {layerThree}
+                            {isFetchingUsers ? <Skeleton variant="text" width={500} height={250}/> : layerThree}
                         </Grid>
                         <Grid item>
                             {layerFour}

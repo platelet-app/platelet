@@ -27,8 +27,13 @@ import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import {Typography} from "@material-ui/core";
 import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
-import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
-import {concatTasks} from "./utilities";
+import {
+    subscribeToUUID,
+    subscribeToUUIDs,
+    unsubscribeFromUUID,
+    unsubscribeFromUUIDs
+} from "../../redux/sockets/SocketActions";
+import {concatTasks, getTaskUUIDs} from "./utilities";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -63,10 +68,8 @@ function Dashboard(props) {
     function componentDidMount() {
         dispatch(clearCurrentTask());
         return function cleanup() {
-            const joinedTasks = concatTasks(tasks);
-            joinedTasks.forEach((task) => {
-                dispatch(unsubscribeFromUUID(task.uuid))
-            })
+            const taskUUIDs = getTaskUUIDs(tasks);
+            dispatch(unsubscribeFromUUIDs(taskUUIDs));
         }
     }
 
@@ -121,10 +124,10 @@ function Dashboard(props) {
     }, [socketSubscription])
 
     function subscribeTasks() {
-        const joinedTasks = concatTasks(tasks);
-        if (joinedTasks.length !== 0 && !firstTaskSubscribeCompleted.current) {
+        const taskUUIDs = getTaskUUIDs(tasks);
+        if (taskUUIDs.length !== 0 && !firstTaskSubscribeCompleted.current) {
             firstTaskSubscribeCompleted.current = true;
-            joinedTasks.forEach(task => dispatch(subscribeToUUID(task.uuid)))
+            dispatch(subscribeToUUIDs(taskUUIDs))
         }
     }
 

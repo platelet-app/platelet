@@ -399,7 +399,7 @@ export function* watchUpdateTaskRejectedTime() {
 function* getTask(action) {
     try {
         const currentTasks = yield select((state) => state.tasks.tasks);
-        let {task} = findExistingTask(currentTasks, action.data)
+        let task = findExistingTask(currentTasks, action.data)
         if (task) {
             // if it's already in the list of tasks, no need to get it
             yield put(getTaskSuccess(task))

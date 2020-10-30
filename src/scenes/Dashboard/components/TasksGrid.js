@@ -99,8 +99,7 @@ const emptyTask = {
 
 
 const GridColumn = React.memo((props) => {
-        const dispatch = useDispatch();
-        const classes = useStyles();
+        const classes = props.classes;
         const newTaskButton =
             props.showAddTaskButton ?
                 <AddCircleButton
@@ -119,47 +118,6 @@ const GridColumn = React.memo((props) => {
                     {newTaskButton}
                     {props.tasks.map(taskList => {
                         return !taskList ? <></> : taskList.map((task, i, arr) => {
-                            const relayIcon = arr.length - 1 !== i ?
-                                <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                                    <Grid item>
-                                        <Tooltip title="Relay">
-                                            <ArrowDownwardIcon style={{height: "45px"}}/>
-                                        </Tooltip>
-                                    </Grid>
-                                </Grid>
-                                :
-                                <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                                    <Grid item>
-                                        <Tooltip title={"Add Relay"}>
-                                            <IconButton
-                                                className={"hidden-button"}
-                                                onClick={() => {
-                                                    const {requester_contact, priority, priority_id, time_of_call, dropoff_address, parent_id} = {...task};
-                                                    dispatch(addTaskRelayRequest({
-                                                        ...emptyTask,
-                                                        time_of_call,
-                                                        requester_contact: requester_contact ? requester_contact : {
-                                                            name: "",
-                                                            telephone_number: ""
-                                                        },
-                                                        priority,
-                                                        priority_id,
-                                                        dropoff_address,
-                                                        parent_id,
-                                                        relay_previous_uuid: task.uuid
-                                                    }));
-                                                    dispatch(updateTaskDropoffAddressRequest({
-                                                        taskUUID: task.uuid,
-                                                        payload: {dropoff_address: null},
-                                                    }));
-                                                }}
-                                            >
-                                                <ArrowDownwardIcon/>
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Grid>
-                                </Grid>;
-
                             const {
                                 pickup_address,
                                 dropoff_address,
@@ -172,8 +130,44 @@ const GridColumn = React.memo((props) => {
                                 priority,
                                 patch,
                                 uuid,
-                                assigned_riders
+                                assigned_riders,
+                                requester_contact,
+                                priority_id,
+                                parent_id
                             } = task;
+                            const relayStatus = (arr.length - 1 !== i)
+                            const relayIcon =
+                                <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                                    <Grid style={{display: relayStatus ? "inherit" : "none"}} item>
+                                        <Tooltip title="Relay">
+                                            <ArrowDownwardIcon style={{height: "45px"}}/>
+                                        </Tooltip>
+                                    </Grid>
+                                    <Grid style={{display: relayStatus ? "none" : "inherit"}} item>
+                                        <Tooltip title={"Add Relay"}>
+                                            <IconButton
+                                                className={"hidden-button"}
+                                                onClick={() => {props.onAddRelayClick({
+                                                    ...emptyTask,
+                                                    time_of_call,
+                                                    requester_contact: requester_contact ? requester_contact : {
+                                                        name: "",
+                                                        telephone_number: ""
+                                                    },
+                                                    priority,
+                                                    priority_id,
+                                                    dropoff_address,
+                                                    parent_id,
+                                                    relay_previous_uuid: task.uuid
+                                                })
+                                                }}
+                                            >
+                                                <ArrowDownwardIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                </Grid>
+
 
                             return (
                                 <>
@@ -207,11 +201,13 @@ const GridColumn = React.memo((props) => {
 )
 
 export default function TasksGrid(props) {
+    const classes = useStyles();
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
     const [filteredTasks, setFilteredTasks] = useState(initialTasksState);
     const tasks = useSelector(state => state.tasks.tasks);
     const [searchQuery, setSearchQuery] = useState("");
+    const dispatch = useDispatch();
 
     function updateFilteredTasks() {
         setFilteredTasks(filterTasks(tasks))
@@ -245,8 +241,16 @@ export default function TasksGrid(props) {
                         return (
                             <Grid item xs sm md lg key={taskList[0]}>
                                 <GridColumn title={title}
+                                            classes={classes}
                                             hidden={props.excludeColumnList && props.excludeColumnList.includes(taskList[0])}
                                             onAddTaskClick={props.onAddTaskClick}
+                                            onAddRelayClick={(data) => {
+                                                dispatch(addTaskRelayRequest(data));
+                                                dispatch(updateTaskDropoffAddressRequest({
+                                                    taskUUID: data.relay_previous_uuid,
+                                                    payload: {dropoff_address: null}
+                                                }));
+                                            }}
                                             showAddTaskButton={taskList[0] === "tasksNew" && !searchQuery && !props.hideAddButton}
                                             disableAddTaskButton={isPosting}
                                             tasks={taskList[1]}

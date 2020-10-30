@@ -10,6 +10,8 @@ export const SOCKET_SUBSCRIBE_RESPONSE_RECEIVED = "SOCKET_SUBSCRIBE_RESPONSE_REC
 export const SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED = "SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED";
 export const SOCKET_SUBSCRIBE_UUID = "SOCKET_SUBSCRIBE_UUID";
 export const SOCKET_UNSUBSCRIBE_UUID = "SOCKET_UNSUBSCRIBE_UUID";
+export const SOCKET_SUBSCRIBE_UUID_MANY = "SOCKET_SUBSCRIBE_UUID_MANY";
+export const SOCKET_UNSUBSCRIBE_UUID_MANY = "SOCKET_UNSUBSCRIBE_UUID_MANY";
 export const SOCKET_SUBSCRIBE_COMMENTS = "SOCKET_SUBSCRIBE_COMMENTS";
 export const SOCKET_UNSUBSCRIBE_COMMENTS = "SOCKET_UNSUBSCRIBE_COMMENTS";
 
@@ -61,8 +63,16 @@ export function subscribeToUUID(uuid) {
     return { type: SOCKET_SUBSCRIBE_UUID, uuid };
 }
 
+export function subscribeToUUIDs(uuids) {
+    return { type: SOCKET_SUBSCRIBE_UUID_MANY, uuids };
+}
+
 export function unsubscribeFromUUID(uuid) {
     return { type: SOCKET_UNSUBSCRIBE_UUID, uuid };
+}
+
+export function unsubscribeFromUUIDs(uuids) {
+    return { type: SOCKET_UNSUBSCRIBE_UUID_MANY, uuids };
 }
 
 export function subscribeToComments(uuid) {

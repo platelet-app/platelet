@@ -1,8 +1,8 @@
 import * as io from 'socket.io-client'
 import {
     SOCKET_CONNECT, SOCKET_CONNECT_COMMENTS, SOCKET_SUBSCRIBE_COMMENTS,
-    SOCKET_SUBSCRIBE_UUID, SOCKET_UNSUBSCRIBE_COMMENTS,
-    SOCKET_UNSUBSCRIBE_UUID, subscribedCommentsResponseReceived,
+    SOCKET_SUBSCRIBE_UUID, SOCKET_SUBSCRIBE_UUID_MANY, SOCKET_UNSUBSCRIBE_COMMENTS,
+    SOCKET_UNSUBSCRIBE_UUID, SOCKET_UNSUBSCRIBE_UUID_MANY, subscribedCommentsResponseReceived,
     subscribedResponseReceived
 } from "./SocketActions";
 
@@ -29,6 +29,16 @@ export const createSubscribeSocketMiddleware = () => {
             case SOCKET_UNSUBSCRIBE_UUID: {
                 if (socket)
                     socket.emit('unsubscribe', action.uuid);
+                break;
+            }
+            case SOCKET_SUBSCRIBE_UUID_MANY: {
+                if (socket)
+                    socket.emit('subscribe_many', action.uuids);
+                break;
+            }
+            case SOCKET_UNSUBSCRIBE_UUID_MANY: {
+                if (socket)
+                    socket.emit('unsubscribe_many', action.uuids);
                 break;
             }
         default:
