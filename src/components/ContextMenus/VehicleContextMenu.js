@@ -63,7 +63,7 @@ export default function VehicleContextMenu(props) {
                         : undefined
                 }
             >
-                <MenuItem disabled={!whoami.roles.includes("admin")} style={{color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>
+                <MenuItem style={{display: whoami.roles.includes("admin") ? "inherit" : "none", color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>
             </Menu>
             </>
     );

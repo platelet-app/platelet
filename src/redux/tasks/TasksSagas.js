@@ -85,7 +85,7 @@ import {
 import {updateTaskPatchRequest as updateTaskPatchAction} from "./TasksActions"
 
 
-import {getApiControl} from "../Api"
+import {getApiControl, getWhoami} from "../Api"
 import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
 import React from "react";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
@@ -98,7 +98,9 @@ function* postNewTask(action) {
         const result = yield call([api, api.tasks.createTask], action.data);
         const task = {...action.data, "uuid": result.uuid, parent_id: result.parent_id};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: result.author_uuid}}))
+        const t0 = performance.now();
         yield put(addTaskSuccess(task));
+        console.log(performance.now() - t0)
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {
         yield put(addTaskFailure(error))
@@ -112,7 +114,7 @@ export function* watchPostNewTask() {
 function* postNewTaskRelay(action) {
     try {
         const api = yield select(getApiControl);
-        const whoami = yield call([api, api.users.whoami]);
+        const whoami = yield select(getWhoami);
         const result = yield call([api, api.tasks.createTask], {...action.data});
         const task = {...action.data, author_uuid: whoami.uuid, "uuid": result.uuid};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: task.author_uuid}}))

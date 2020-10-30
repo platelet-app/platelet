@@ -172,7 +172,7 @@ function Dashboard(props) {
         time_cancelled: null
     };
 
-    function addEmptyTask() {
+    const addEmptyTask = () => {
         dispatch(addTaskRequest(emptyTask))
     }
 
@@ -196,22 +196,13 @@ function Dashboard(props) {
         return (
             <Paper maxHeight={"100%"} maxWidth={"100%"}>
                 <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => dispatch(setViewMode(newValue))}>
-                    <TabPanel value={viewMode} index={0}>
+                    <TabPanel value={0} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
                                    onAddTaskClick={addEmptyTask}
                                    modalView={"edit"}
                                    hideAddButton={!postPermission}
-                                   excludeColumnList={["tasksDelivered", "tasksCancelled", "tasksRejected"]}
-                        />
-                    </TabPanel>
-                    <TabPanel value={viewMode} index={1}>
-                        <TasksGrid tasks={tasks}
-                                   fullScreenModal={mobileView}
-                                   onAddTaskClick={addEmptyTask}
-                                   modalView={"edit"}
-                                   hideAddButton={!postPermission}
-                                   excludeColumnList={["tasksNew", "tasksActive", "tasksPickedUp"]}
+                                   excludeColumnList={viewMode === 0 ? ["tasksDelivered", "tasksCancelled", "tasksRejected"] : ["tasksNew", "tasksActive", "tasksPickedUp"]}
                         />
                     </TabPanel>
                 </DashboardDetailTabs>

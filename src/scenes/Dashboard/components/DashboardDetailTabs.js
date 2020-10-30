@@ -95,7 +95,7 @@ export function DashboardDetailTabs(props) {
                     <Grid container spacing={1} wrap={"nowrap"} direction={"row"} justify={"space-between"} alignItems={"center"}>
                         <Grid item>
                             <Tabs value={parseInt(props.value)} onChange={handleChange}
-                                  aria-label="simple tabs example">
+                                  aria-label={"dashboard-tabs"}>
                                 <Tab label="Active" {...a11yProps(0)} />
                                 <Tab label="Completed" {...a11yProps(1)} />
                             </Tabs>

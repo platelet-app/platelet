@@ -13,9 +13,6 @@ import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import DateFnsUtils from "@date-io/date-fns";
 import 'typeface-roboto'
 
-window.store = store;
-
-
 ReactDOM.render((
         <Provider store={store}>
             <BrowserRouter>

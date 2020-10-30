@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from "react-redux";
-import SessionList from "./SessionList";
 import UsersTasks from "./Dashboard/UsersTasks";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
 import Dashboard from "./Dashboard/Dashboard";

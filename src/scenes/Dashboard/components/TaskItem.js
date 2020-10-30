@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {Link, useLocation} from "react-router-dom";
 import TaskCard from "./TaskCardsColoured"
@@ -11,50 +11,46 @@ import clsx from "clsx";
 import IconButton from "@material-ui/core/IconButton";
 import {useDispatch} from "react-redux";
 import {addTaskRelayRequest, updateTaskDropoffAddressRequest} from "../../../redux/tasks/TasksActions";
-
+import Grow from "@material-ui/core/Grow";
 
 
 const TaskItem = React.memo((props) => {
-    let location = useLocation();
+    console.log("yee tis run")
     const task =
         <TaskCard
             title={"Task"}
-            pickupAddress={props.task.pickup_address}
-            dropoffAddress={props.task.dropoff_address}
-            assignedUsers={props.task.assigned_riders_display_string}
-            pickupTime={props.task.time_picked_up}
-            dropoffTime={props.task.time_dropped_off}
-            time_of_call={props.task.time_of_call}
-            priority={props.task.priority}
-            patch={props.task.patch}
+            {...props}
         />;
 
-    return (
-        <>
-            <Grid item key={props.task.uuid}>
+    const child =
+        <div style={{}}>
+            <Grid item key={props.taskUUID}>
                 <div style={{cursor: 'context-menu', position: "relative"}}>
                     <Link style={{textDecoration: 'none'}}
-                          key={props.task.uuid}
-
-                          to={{pathname: `/task/${encodeUUID(props.task.uuid)}`, state: {prevPath: location.pathname}}}>
+                          key={props.taskUUID}
+                          to={{
+                              pathname: `/task/${encodeUUID(props.taskUUID)}`
+                          }}>
                         {task}
                     </Link>
                     <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>
                         <TaskContextMenu
-                            taskUUID={props.task.uuid}
                             deleteDisabled={props.deleteDisabled}
-                            pickupTime={props.task.time_picked_up}
-                            dropoffTime={props.task.time_dropped_off}
-                            assignedUsers={props.task.assigned_riders}
-                            cancelledTime={props.task.time_cancelled}
-                            rejectedTime={props.task.time_rejected}
+                            {...props}
                         />
                     </div>
                 </div>
 
             </Grid>
-        </>
-    )
+        </div>
+
+        return (
+            <Grow in={true}>
+                {child}
+                </Grow>
+        )
+
+
 });
 
 export default TaskItem;

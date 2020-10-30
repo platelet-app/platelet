@@ -95,6 +95,9 @@ export function currentTask(state = initialState, action) {
 const initialTasksState = {
     tasks: {
         tasksNew: [],
+        tasksActive: [],
+        tasksRejected: [],
+        tasksCancelled: [],
         tasksActivePickedUp: [],
         tasksDelivered: []
     },
@@ -167,8 +170,10 @@ function taskGroupSort(a, b) {
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
+            const t0 = performance.now();
             const {taskType, result} = sortAndConcat(state.tasks, [action.data])
             const finalTasks = update(state.tasks, {[taskType]: {$set: result}});
+            console.log(performance.now() - t0)
             return {tasks: finalTasks, error: null}
         case RESTORE_TASK_SUCCESS:
             const findParentRestore = findExistingTaskParentByID(state.tasks, action.data.parent_id);
@@ -306,6 +311,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case GET_TASKS_SUCCESS:
+            //return {...initialTasksState, error: null}
             return {tasks: groupRelaysTogether(action.data), error: null};
         case GET_TASKS_FAILURE:
             return {...initialTasksState, error: action.error};

@@ -24,8 +24,8 @@ const TaskCard = React.memo((props) => {
     if (props.dropoffAddress) {
         dropoffWard = props.dropoffAddress.ward ? props.dropoffAddress.ward : ""
     }
-    const hasRider = props.assignedUsers ? !!props.assignedUsers.length : false;
-    const ridersNames = props.assignedUsers ? props.assignedUsers : "";
+    const hasRider = props.assignedRiders ? !!props.assignedRiders.length : false;
+    const ridersNames = props.assignedRidersDisplayString ? props.assignedRidersDisplayString : "";
     const patch = props.patch ? props.patch : "";
     const cardInnerContent =
         <CardContent>
@@ -36,7 +36,7 @@ const TaskCard = React.memo((props) => {
                 <CardItem label={"Ward"}>{pickupWard}</CardItem>
                 <CardItem label={"To"}>{dropoffTitle}</CardItem>
                 <CardItem label={"Ward"}>{dropoffWard}</CardItem>
-                <CardItem label={"TOC"}><Moment local calendar>{props.time_of_call}</Moment></CardItem>
+                <CardItem label={"TOC"}><Moment local calendar>{props.timeOfCall}</Moment></CardItem>
                 <CardItem width={"185px"} label={"Priority"}>{props.priority}</CardItem>
             </Grid>
         </CardContent>;
@@ -46,20 +46,20 @@ const TaskCard = React.memo((props) => {
                 {cardInnerContent}
             </TaskNew>
         )
-    } else if (hasRider && !props.pickupTime) {
+    } else if (hasRider && !props.timePickedUp) {
         return (
             <TaskAssigned>
                 {cardInnerContent}
             </TaskAssigned>
         )
-    } else if (hasRider && props.pickupTime && !props.dropoffTime) {
+    } else if (hasRider && props.timePickedUp && !props.timeDroppedOff) {
         return (
             <TaskActive>
                 {cardInnerContent}
             </TaskActive>
         )
 
-    } else if (props.dropoffTime) {
+    } else if (props.timeDroppedOff) {
         return (
             <TaskDelivered>
                 {cardInnerContent}

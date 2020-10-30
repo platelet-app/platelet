@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {AddCircleButton} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
@@ -6,11 +6,9 @@ import {createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
 import {TextFieldControlled} from "../../../components/TextFields";
-import {task} from "../../../redux/tasks/TasksReducers";
 import {Waypoint} from "react-waypoint";
 import {
-    addTaskRelayRequest, addTaskRequest,
-    getAllTasksRequest,
+    addTaskRelayRequest,
     updateTaskDropoffAddressRequest
 } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -52,19 +50,19 @@ function filterTasks(tasks, search) {
 const getColumnTitle = key => {
     switch (key) {
         case "tasksNew":
-            return <h3>New</h3>;
+            return "New";
         case "tasksActive":
-            return <h3>Active</h3>;
+            return "Active";
         case "tasksPickedUp":
-            return <h3>Picked Up</h3>;
+            return "Picked Up";
         case "tasksDelivered":
-            return <h3>Delivered</h3>;
+            return "Delivered";
         case "tasksRejected":
-            return <h3>Rejected</h3>;
+            return "Rejected";
         case "tasksCancelled":
-            return <h3>Cancelled</h3>;
+            return "Cancelled";
         case "tasksRejectedCancelled":
-            return <h3>Rejected/Cancelled</h3>;
+            return "Rejected/Cancelled";
         default:
             return ""
     }
@@ -103,16 +101,22 @@ const emptyTask = {
 const GridColumn = React.memo((props) => {
         const dispatch = useDispatch();
         const classes = useStyles();
+        const newTaskButton =
+            props.showAddTaskButton ?
+                <AddCircleButton
+                    disabled={props.disableAddTaskButton}
+                    onClick={props.onAddTaskClick}
+                /> : <></>
         return (
-            <TasksKanbanColumn>
-                {props.title}
+            <TasksKanbanColumn style={{marginRight: "20px", display: props.hidden ? "none" : "inherit"}}>
+                <h3>{props.title}</h3>
                 <Grid container
                       spacing={0}
                       direction={"column"}
                       justify={"flex-start"}
                       alignItems={"center"}
                 >
-                    {props.newTaskButton}
+                    {newTaskButton}
                     {props.tasks.map(taskList => {
                         return !taskList ? <></> : taskList.map((task, i, arr) => {
                             const relayIcon = arr.length - 1 !== i ?
@@ -145,7 +149,7 @@ const GridColumn = React.memo((props) => {
                                                         relay_previous_uuid: task.uuid
                                                     }));
                                                     dispatch(updateTaskDropoffAddressRequest({
-                                                       taskUUID: task.uuid,
+                                                        taskUUID: task.uuid,
                                                         payload: {dropoff_address: null},
                                                     }));
                                                 }}
@@ -155,10 +159,33 @@ const GridColumn = React.memo((props) => {
                                         </Tooltip>
                                     </Grid>
                                 </Grid>;
+
+                            const {
+                                pickup_address,
+                                dropoff_address,
+                                assigned_riders_display_string,
+                                time_picked_up,
+                                time_dropped_off,
+                                time_of_call,
+                                priority,
+                                patch,
+                                uuid,
+                                assigned_riders
+                            } = task;
+
                             return (
                                 <>
-                                    <TaskItem key={task.uuid}
-                                              task={task}
+                                    <TaskItem key={uuid}
+                                              pickupAddress={pickup_address}
+                                              assignedRidersDisplayString={assigned_riders_display_string}
+                                              dropoffAddress={dropoff_address}
+                                              timePickedUp={time_picked_up}
+                                              timeDroppedOff={time_dropped_off}
+                                              timeOfCall={time_of_call}
+                                              priority={priority}
+                                              patch={patch}
+                                              assignedRiders={assigned_riders}
+                                              taskUUID={uuid}
                                               view={props.modalView}
                                               deleteDisabled={props.deleteDisabled}/>
                                     {relayIcon}
@@ -196,37 +223,32 @@ export default function TasksGrid(props) {
     useEffect(doSearch, [searchQuery])
     return (
         <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
-            <Grid item>
+            <Grid item key={"search"}>
                 {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onChange={(e) => {
                     setSearchQuery(e.target.value)
                 }}/>}
             </Grid>
-            <Grid item>
+            <Grid item key={"tasks"}>
                 <Grid container
-                      spacing={3}
+                      spacing={0}
                       direction={"row"}
                       justify={"flex-start"}
                       alignItems={"stretch"}
                       wrap={"nowrap"}
                 >
                     {Object.entries(filteredTasks).map(taskList => {
-                        if (props.excludeColumnList && props.excludeColumnList.includes(taskList[0]))
-                            return <></>
-                        let newTaskButton = "";
-                        if (taskList[0] === "tasksNew" && !searchQuery && !props.hideAddButton) {
-                            newTaskButton = <AddCircleButton
-                                disabled={isPosting}
-                                onClick={props.onAddTaskClick}
-                            />
-
-                        }
                         const title = getColumnTitle(taskList[0]);
                         return (
                             <Grid item xs sm md lg key={taskList[0]}>
-                                <GridColumn title={title} newTaskButton={newTaskButton} tasks={taskList[1]}/>
+                                <GridColumn title={title}
+                                            hidden={props.excludeColumnList && props.excludeColumnList.includes(taskList[0])}
+                                            onAddTaskClick={props.onAddTaskClick}
+                                            showAddTaskButton={taskList[0] === "tasksNew" && !searchQuery && !props.hideAddButton}
+                                            disableAddTaskButton={isPosting}
+                                            tasks={taskList[1]}
+                                            key={taskList[0]}/>
                                 <Waypoint
                                     onEnter={() => {
-                                        // dispatch(getAllTasksRequest("42acdac8-8d07-4c4b-b698-dd81ed44b561", "2"))
                                         console.log("YAY ENTER")
                                     }
                                     }
