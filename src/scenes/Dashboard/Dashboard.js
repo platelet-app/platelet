@@ -133,25 +133,6 @@ function Dashboard(props) {
 
     useEffect(subscribeTasks, [tasks])
 
-    const emptyTask = {
-        time_of_call: new Date().toISOString(),
-        time_created: new Date().toISOString(),
-        requester_contact: {
-            name: "",
-            telephone_number: ""
-        },
-        assigned_riders: [],
-        assigned_coordinators: [],
-        time_picked_up: null,
-        time_dropped_off: null,
-        time_rejected: null,
-        time_cancelled: null
-    };
-
-    const addEmptyTask = () => {
-        dispatch(addTaskRequest(emptyTask))
-    }
-
     function onAddNewTask() {
         return
         // We don't want it to run the first time
@@ -175,7 +156,6 @@ function Dashboard(props) {
                     <TabPanel value={0} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
-                                   onAddTaskClick={addEmptyTask}
                                    modalView={"edit"}
                                    hideAddButton={!postPermission}
                                    excludeColumnList={viewMode === 1 ? ["tasksNew", "tasksActive", "tasksPickedUp"] : ["tasksDelivered", "tasksCancelled", "tasksRejected"] }
