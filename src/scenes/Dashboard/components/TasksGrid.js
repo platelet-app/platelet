@@ -170,43 +170,48 @@ const TaskGroup = props => {
                     </Grid>
                 </Grid>
             </React.Fragment>
-    )
+        )
     })
 }
 
-    const GridColumn = (props) => {
-        const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
-        return (
-            <TasksKanbanColumn style={{marginRight: "20px", display: props.hidden ? "none" : "inherit"}}>
-                <h3>{props.title}</h3>
-                <Grid container
-                      spacing={0}
-                      direction={"column"}
-                      justify={"flex-start"}
-                      alignItems={"center"}
-                      key={props.title + "column"}
-                >
-
-                    {tasks.map(taskList => {
-                        return (
-                            <TaskGroup {...props} group={taskList} key={taskList[0].parent_id}/>
-                        )
-                    })}
-
+const GridColumn = (props) => {
+    const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
+    return (
+        <TasksKanbanColumn style={{marginRight: "20px", display: props.hidden ? "none" : "inherit"}}>
+            <h3>{props.title}</h3>
+            <Grid container
+                  spacing={0}
+                  direction={"column"}
+                  justify={"flex-start"}
+                  alignItems={"center"}
+                  key={props.title + "column"}
+            >
+                <Grid item>
+                    <AddCircleButton
+                        disabled={props.disableAddButton}
+                        onClick={props.onAddTaskClick}
+                        style={{display: (props.taskKey === "tasksNew" && !props.hideAddButton) ? "inherit" : "none"}}
+                    />
                 </Grid>
-            </TasksKanbanColumn>
-        )
-    }
+
+                {tasks.map(taskList => {
+                    return (
+                        <TaskGroup {...props} group={taskList} key={taskList[0].parent_id}/>
+                    )
+                })}
+
+            </Grid>
+        </TasksKanbanColumn>
+    )
+}
 
 
-
-
-    export default function TasksGrid(props) {
-        const classes = useStyles();
-        const postingSelector = createPostingSelector(["ADD_TASK"]);
-        const isPosting = useSelector(state => postingSelector(state));
-        const [filteredTasks, setFilteredTasks] = useState(initialTasksState);
-        const tasks = useSelector(state => state.tasks.tasks);
+export default function TasksGrid(props) {
+    const classes = useStyles();
+    const postingSelector = createPostingSelector(["ADD_TASK"]);
+    const isPosting = useSelector(state => postingSelector(state));
+    const [filteredTasks, setFilteredTasks] = useState(initialTasksState);
+    const tasks = useSelector(state => state.tasks.tasks);
     const [searchQuery, setSearchQuery] = useState("");
     const dispatch = useDispatch();
 
@@ -271,19 +276,13 @@ const TaskGroup = props => {
                         const title = getColumnTitle(taskKey);
                         return (
                             <React.Fragment key={taskKey}>
-                                <Grid item>
-                                    <AddCircleButton
-                                        disabled={isPosting}
-                                        onClick={addEmptyTask}
-                                        style={{display: (taskKey === "tasksNew" && !searchQuery && !props.hideAddButton) ? "inherit" : "none"}}
-                                    />
-                                </Grid>
                                 <Grid item xs sm md lg>
                                     <GridColumn title={title}
                                                 classes={classes}
                                                 hidden={props.excludeColumnList && props.excludeColumnList.includes(taskKey)}
                                                 onAddTaskClick={addEmptyTask}
                                                 onAddRelayClick={addRelay}
+                                                disableAddButton={isPosting}
                                                 taskKey={taskKey}
                                                 key={title}/>
                                     <Waypoint
