@@ -13,6 +13,7 @@
     "axios": "^0.19.2",
     "date-fns": "^2.11.1",
     "downshift": "^3.4.8",
+    "framer-motion": "^2.9.4",
     "immutability-helper": "^3.0.2",
     "libphonenumber-js": "^1.7.52",
     "lodash": "^4.17.15",
