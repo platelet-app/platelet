@@ -20,15 +20,16 @@ import {
     UPDATE_TASK_PRIORITY_SUCCESS,
     UPDATE_TASK_REJECTED_TIME_SUCCESS, UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET,
     UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS,
-    UPDATE_TASK_SUCCESS, ADD_TASK_RELAY_REQUEST, ADD_TASK_RELAY_SUCCESS
+    UPDATE_TASK_SUCCESS,
+    ADD_TASK_RELAY_SUCCESS,
+    ADD_TASK_FROM_SOCKET
+
 } from "./TasksActions";
 import update from "immutability-helper";
 import {
     determineTaskType,
-    findExistingTask,
     findExistingTaskParent,
     findExistingTaskParentByID,
-    recursiveFindTaskChild
 } from "../../utilities";
 
 const initialState = {
@@ -92,7 +93,7 @@ export function currentTask(state = initialState, action) {
     }
 }
 
-const initialTasksState = {
+export const initialTasksState = {
     tasks: {
         tasksNew: [],
         tasksActive: [],
@@ -170,10 +171,9 @@ function taskGroupSort(a, b) {
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
-            const t0 = performance.now();
+        case ADD_TASK_FROM_SOCKET:
             const {taskType, result} = sortAndConcat(state.tasks, [action.data])
             const finalTasks = update(state.tasks, {[taskType]: {$set: result}});
-            console.log(performance.now() - t0)
             return {tasks: finalTasks, error: null}
         case RESTORE_TASK_SUCCESS:
             const findParentRestore = findExistingTaskParentByID(state.tasks, action.data.parent_id);
@@ -311,7 +311,6 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case GET_TASKS_SUCCESS:
-            //return {...initialTasksState, error: null}
             return {tasks: groupRelaysTogether(action.data), error: null};
         case GET_TASKS_FAILURE:
             return {...initialTasksState, error: action.error};

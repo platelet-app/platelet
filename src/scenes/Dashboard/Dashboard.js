@@ -34,6 +34,7 @@ import {
     unsubscribeFromUUIDs
 } from "../../redux/sockets/SocketActions";
 import {concatTasks, getTaskUUIDs} from "./utilities";
+import {initialTasksState} from "../../redux/tasks/TasksReducers";
 
 function GetViewTitle(props) {
     switch (props.type) {
@@ -56,72 +57,28 @@ function Dashboard(props) {
     const isPostingNewTaskSelector = createPostingSelector(["ADD_TASK"]);
     const isPostingNewTask = useSelector(state => isPostingNewTaskSelector(state));
     const tasks = useSelector(state => state.tasks.tasks);
-    const users = useSelector(state => state.users.users);
     const mobileView = useSelector(state => state.mobileView);
     const firstUpdateNewTask = useRef(true);
     const firstTaskSubscribeCompleted = useRef(false);
     const whoami = useSelector(state => state.whoami.user);
-    const socketSubscription = useSelector(state => state.subscription);
     const [postPermission, setPostPermission] = useState(true);
     const [viewMode, setViewMode] = useState(0);
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
-        return function cleanup() {
-            const taskUUIDs = getTaskUUIDs(tasks);
-            dispatch(unsubscribeFromUUIDs(taskUUIDs));
-        }
     }
 
     useEffect(componentDidMount, []);
 
     function getTasks() {
-        if (whoami.uuid)
-            dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
-    }
+        if (whoami.uuid) {
+            if (tasks === initialTasksState.tasks)
+                dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
+        }
+        }
 
     useEffect(getTasks, [whoami])
 
-    useEffect(() => {
-        if (Object.keys(socketSubscription).length === 0 && socketSubscription.constructor === Object) {
-            console.log("ignore")
-        } else {
-            if (socketSubscription.tab_id != null && getTabIdentifier() !== socketSubscription.tab_id) {
-                switch (socketSubscription.type) {
-                    case "update":
-                        dispatch(updateTaskFromSocket({
-                            taskUUID: socketSubscription.object_uuid,
-                            payload: socketSubscription.data
-                        }))
-                        break;
-                    case "assign_user":
-                        const user_uuid = socketSubscription.data.user_uuid
-                        const assignedUser = users.find(u => user_uuid === u.uuid)
-                        if (assignedUser) {
-                            const rider = assignedUser
-                            dispatch(updateTaskAssignedRiderFromSocket({
-                                taskUUID: socketSubscription.object_uuid,
-                                payload: {rider, user_uuid}
-                            }))
-                        }
-                        break;
-                    case "remove_assigned_user":
-                        const user_uuid_remove = socketSubscription.data.user_uuid
-                        dispatch(updateTaskRemoveAssignedRiderFromSocket({
-                            taskUUID: socketSubscription.object_uuid,
-                            payload: {user_uuid: user_uuid_remove}
-                        }))
-                        break;
-
-                    default:
-                        break;
-                }
-                console.log(socketSubscription.data)
-            } else
-                console.log("this came from us")
-        }
-
-    }, [socketSubscription])
 
     function subscribeTasks() {
         const taskUUIDs = getTaskUUIDs(tasks);
