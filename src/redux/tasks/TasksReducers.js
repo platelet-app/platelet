@@ -22,7 +22,7 @@ import {
     UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS,
     UPDATE_TASK_SUCCESS,
     ADD_TASK_RELAY_SUCCESS,
-    ADD_TASK_FROM_SOCKET
+    ADD_TASK_FROM_SOCKET, DELETE_TASK_FROM_SOCKET
 
 } from "./TasksActions";
 import update from "immutability-helper";
@@ -288,6 +288,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         case DELETE_TASK_SUCCESS:
+        case DELETE_TASK_FROM_SOCKET:
             const findDelete = findExistingTaskParent(state.tasks, action.data)
             if (findDelete.taskGroup) {
                 const newDeletedTasks = update(

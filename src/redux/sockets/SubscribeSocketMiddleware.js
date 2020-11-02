@@ -7,7 +7,7 @@ import {
 } from "./SocketActions";
 import {getTabIdentifier} from "../../utilities";
 import {
-    addTaskFromSocket,
+    addTaskFromSocket, deleteTaskFromSocket,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket
@@ -83,6 +83,12 @@ export const createSubscribeSocketMiddleware = () => {
                                     payload: action.data.data
                                 }))
                                 break;
+                            case "DELETE_TASK":
+                                storeAPI.dispatch(deleteTaskFromSocket(
+                                    action.data.object_uuid
+                                ))
+                                break;
+
 
 
                             default:
