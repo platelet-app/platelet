@@ -176,7 +176,7 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                                 const task = findExistingTask(storeAPI.getState().tasks.tasks, action.data.uuid)
                                 if (task)
                                     break;
-                                const parent = findExistingTaskParentByID(storeAPI.getState().tasks.tasks, action.data.parent_id)
+                                const parent = findExistingTaskParentByID(storeAPI.getState().tasks.tasks, action.data.data.parent_id)
                                 if (parent.taskGroup) {
                                     storeAPI.dispatch(addTaskRelayFromSocket({
                                         ...action.data.data
