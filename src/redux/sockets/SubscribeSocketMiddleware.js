@@ -13,9 +13,9 @@ import {
     subscribedCommentsResponseReceived,
     subscribedResponseReceived, subscribeToUUID
 } from "./SocketActions";
-import {findExistingTask, getTabIdentifier} from "../../utilities";
+import {findExistingTask, findExistingTaskParentByID, getTabIdentifier} from "../../utilities";
 import {
-    addTaskFromSocket, deleteTaskFromSocket, restoreTaskFromSocket,
+    addTaskFromSocket, addTaskRelayFromSocket, deleteTaskFromSocket, restoreTaskFromSocket,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket
@@ -176,9 +176,16 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                                 const task = findExistingTask(storeAPI.getState().tasks.tasks, action.data.uuid)
                                 if (task)
                                     break;
-                                storeAPI.dispatch(addTaskFromSocket({
-                                    ...action.data.data
-                                }))
+                                const parent = findExistingTaskParentByID(storeAPI.getState().tasks.tasks, action.data.parent_id)
+                                if (parent) {
+                                    storeAPI.dispatch(addTaskRelayFromSocket({
+                                        ...action.data.data
+                                    }))
+                                } else {
+                                    storeAPI.dispatch(addTaskFromSocket({
+                                        ...action.data.data
+                                    }))
+                                }
                                 storeAPI.dispatch(subscribeToUUID(action.data.data.uuid))
                                 break;
                             }

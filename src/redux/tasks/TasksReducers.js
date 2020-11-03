@@ -22,7 +22,7 @@ import {
     UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS,
     UPDATE_TASK_SUCCESS,
     ADD_TASK_RELAY_SUCCESS,
-    ADD_TASK_FROM_SOCKET, DELETE_TASK_FROM_SOCKET, RESTORE_TASK_FROM_SOCKET
+    ADD_TASK_FROM_SOCKET, DELETE_TASK_FROM_SOCKET, RESTORE_TASK_FROM_SOCKET, ADD_TASK_RELAY_FROM_SOCKET
 
 } from "./TasksActions";
 import update from "immutability-helper";
@@ -193,6 +193,7 @@ export function tasks(state = initialTasksState, action) {
             const finalTasksRestore = update(state.tasks, {[sortedRestore.taskType]: {$set: sortedRestore.result}});
             return {tasks: finalTasksRestore, error: null}
         case ADD_TASK_RELAY_SUCCESS:
+        case ADD_TASK_RELAY_FROM_SOCKET:
             const findParent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
             const newGroup = [...findParent.taskGroup, action.data]
             const newTasks = update(state.tasks, {[findParent.listType]: {$set: state.tasks[findParent.listType].filter(t => action.data.parent_id !== t[0].parent_id)}});
