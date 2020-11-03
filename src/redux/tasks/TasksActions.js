@@ -39,6 +39,7 @@ export const UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_ASSIGNE
 export const UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET";
 export const ADD_TASK_FROM_SOCKET = "ADD_TASK_FROM_SOCKET"
 export const DELETE_TASK_FROM_SOCKET = "DELETE_TASK_FROM_SOCKET"
+export const RESTORE_TASK_FROM_SOCKET = "RESTORE_TASK_FROM_SOCKET"
 
 export const UPDATE_TASK_REQUESTER_CONTACT_SUCCESS = "UPDATE_TASK_REQUESTER_CONTACT_SUCCESS";
 export const UPDATE_TASK_PICKUP_ADDRESS_SUCCESS = "UPDATE_TASK_PICKUP_ADDRESS_SUCCESS";
@@ -167,6 +168,10 @@ export function addTaskFromSocket(data) {
 
 export function deleteTaskFromSocket(data) {
     return { type: DELETE_TASK_FROM_SOCKET, data }
+}
+
+export function restoreTaskFromSocket(data) {
+    return { type: RESTORE_TASK_FROM_SOCKET, data }
 }
 
 export function updateTaskFromSocket(data) {

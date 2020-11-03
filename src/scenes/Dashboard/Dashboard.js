@@ -28,6 +28,7 @@ import {Typography} from "@material-ui/core";
 import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
+    subscribeToAssignments,
     subscribeToUUID,
     subscribeToUUIDs,
     unsubscribeFromUUID,
@@ -87,8 +88,13 @@ function Dashboard(props) {
             dispatch(subscribeToUUIDs(taskUUIDs))
         }
     }
+    useEffect(subscribeTasks, [tasks]);
 
-    useEffect(subscribeTasks, [tasks])
+    function subscribeAssignmentsToMe() {
+        if (whoami.uuid)
+            dispatch(subscribeToAssignments(whoami.uuid))
+    }
+    useEffect(subscribeAssignmentsToMe, [whoami]);
 
     function onAddNewTask() {
         return

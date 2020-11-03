@@ -1,13 +1,21 @@
 import * as io from 'socket.io-client'
 import {
-    SOCKET_CONNECT, SOCKET_CONNECT_COMMENTS, SOCKET_SUBSCRIBE_COMMENTS, SOCKET_SUBSCRIBE_RESPONSE_RECEIVED,
-    SOCKET_SUBSCRIBE_UUID, SOCKET_SUBSCRIBE_UUID_MANY, SOCKET_UNSUBSCRIBE_COMMENTS,
-    SOCKET_UNSUBSCRIBE_UUID, SOCKET_UNSUBSCRIBE_UUID_MANY, subscribedCommentsResponseReceived,
-    subscribedResponseReceived
+    SOCKET_CONNECT,
+    SOCKET_CONNECT_ASSIGNMENTS,
+    SOCKET_CONNECT_COMMENTS, SOCKET_SUBSCRIBE_ASSIGNMENTS, SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED,
+    SOCKET_SUBSCRIBE_COMMENTS,
+    SOCKET_SUBSCRIBE_RESPONSE_RECEIVED,
+    SOCKET_SUBSCRIBE_UUID,
+    SOCKET_SUBSCRIBE_UUID_MANY, SOCKET_UNSUBSCRIBE_ASSIGNMENTS,
+    SOCKET_UNSUBSCRIBE_COMMENTS,
+    SOCKET_UNSUBSCRIBE_UUID,
+    SOCKET_UNSUBSCRIBE_UUID_MANY, subscribedAssignmentsResponseReceived,
+    subscribedCommentsResponseReceived,
+    subscribedResponseReceived, subscribeToUUID
 } from "./SocketActions";
-import {getTabIdentifier} from "../../utilities";
+import {findExistingTask, getTabIdentifier} from "../../utilities";
 import {
-    addTaskFromSocket, deleteTaskFromSocket,
+    addTaskFromSocket, deleteTaskFromSocket, restoreTaskFromSocket,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket
@@ -78,19 +86,16 @@ export const createSubscribeSocketMiddleware = () => {
                                     payload: {user_uuid: user_uuid_remove}
                                 }))
                                 break;
-                            case "ADD_NEW_TASK":
-                                storeAPI.dispatch(addTaskFromSocket({
-                                    payload: action.data.data
-                                }))
-                                break;
                             case "DELETE_TASK":
                                 storeAPI.dispatch(deleteTaskFromSocket(
                                     action.data.object_uuid
                                 ))
                                 break;
-
-
-
+                            case "RESTORE_TASK":
+                                storeAPI.dispatch(restoreTaskFromSocket(
+                                    action.data.data
+                                ))
+                                break;
                             default:
                                 break;
                         }
@@ -134,3 +139,56 @@ export const createSubscribeCommentsSocketMiddleware = () => {
         }
     }
 }
+
+export const createSubscribeAssignmentsSocketMiddleware = () => {
+    let socket;
+    return storeAPI => next => action => {
+        switch(action.type) {
+            case SOCKET_CONNECT_ASSIGNMENTS: {
+                socket = io.connect(action.url);
+                socket.on("subscribed_response", (message) => {
+                    console.log(message)
+                    storeAPI.dispatch(subscribedAssignmentsResponseReceived(message));
+                });
+                socket.on("response", (message) => {
+                    console.log(message.data);
+                });
+                break;
+            }
+            case SOCKET_SUBSCRIBE_ASSIGNMENTS: {
+                if (socket)
+                    socket.emit('subscribe', action.uuid);
+
+                break;
+            }
+            case SOCKET_UNSUBSCRIBE_ASSIGNMENTS: {
+                if (socket)
+                    socket.emit('unsubscribe', action.uuid);
+                break;
+            }
+            case SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED:
+                if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
+                    console.log("ignore")
+                } else {
+                    if (action.data.tab_id != null && getTabIdentifier() !== action.data.tab_id) {
+                        switch (action.data.type) {
+                            case "ASSIGN_COORDINATOR_TO_TASK": {
+                                const task = findExistingTask(storeAPI.getState().tasks.tasks, action.data.uuid)
+                                if (task)
+                                    break;
+                                storeAPI.dispatch(addTaskFromSocket({
+                                    ...action.data.data
+                                }))
+                                storeAPI.dispatch(subscribeToUUID(action.data.data.uuid))
+                                break;
+                            }
+
+                        }
+                    }
+                }
+            default:
+                return next(action);
+        }
+        }
+    }
+

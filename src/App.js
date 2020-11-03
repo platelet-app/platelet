@@ -28,7 +28,11 @@ import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
 import {getApiURL} from "./utilities";
-import {connectCommentsSocket, connectSocket} from "./redux/sockets/SocketActions";
+import {
+    connectAssignmentsSocket,
+    connectCommentsSocket,
+    connectSocket,
+} from "./redux/sockets/SocketActions";
 import {DismissButton} from "./styles/common";
 
 
@@ -141,6 +145,7 @@ function App(props) {
             dispatch(getServerSettingsRequest())
             dispatch(connectSocket(apiURL + "subscribe"))
             dispatch(connectCommentsSocket(apiURL + "subscribe_comments"))
+            dispatch(connectAssignmentsSocket(apiURL + "subscribe_assignments"))
         }
     }
 

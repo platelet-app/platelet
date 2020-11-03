@@ -3,6 +3,7 @@ import rootReducer from "./Reducers";
 import rootSaga from "./RootSagas";
 import createSagaMiddleware from "redux-saga"
 import {
+    createSubscribeAssignmentsSocketMiddleware,
     createSubscribeCommentsSocketMiddleware,
     createSubscribeSocketMiddleware
 } from "./sockets/SubscribeSocketMiddleware";
@@ -20,10 +21,11 @@ const sagaOptions = {
 const sagaMiddleWare = createSagaMiddleware(sagaOptions);
 const subscribeSocketMiddleware = createSubscribeSocketMiddleware();
 const subscribeCommentsSocketMiddleware = createSubscribeCommentsSocketMiddleware();
+const subscribeAssignmentsSocketMiddleware = createSubscribeAssignmentsSocketMiddleware();
 
 const store = createStore(
     rootReducer,
-    applyMiddleware(sagaMiddleWare, subscribeSocketMiddleware, subscribeCommentsSocketMiddleware)
+    applyMiddleware(sagaMiddleWare, subscribeSocketMiddleware, subscribeCommentsSocketMiddleware, subscribeAssignmentsSocketMiddleware)
 );
 
 sagaMiddleWare.run(rootSaga);
