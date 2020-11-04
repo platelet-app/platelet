@@ -222,7 +222,7 @@ export default function TasksGrid(props) {
 
 
     // TODO: why doesn't search work on newly added items?
-    const debouncedSearch = useCallback(_.debounce(q => doSearch(q), 500), []);
+    const debouncedSearch = _.debounce(q => doSearch(q), 500);
 
     function doSearch(e) {
         const result = filterTasks(tasks, e.target.value)
