@@ -3,38 +3,24 @@ import '../../App.css';
 import 'typeface-roboto'
 import {Paper} from "@material-ui/core";
 import {
-    addTaskRequest,
     clearCurrentTask,
     getAllTasksRequest,
-    updateTaskAssignedRiderFromSocket,
-    updateTaskFromSocket,
-    updateTaskRemoveAssignedRiderFromSocket,
 } from '../../redux/tasks/TasksActions'
 import {
-    setCommentsObjectUUID,
-    setViewMode,
     setNewTaskAddedView,
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
-import {
-    decodeUUID,
-    getLocalStorageViewMode,
-    getTabIdentifier
-} from "../../utilities";
 import {useDispatch, useSelector} from "react-redux"
-import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from "../../redux/selectors";
+import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import {Typography} from "@material-ui/core";
 import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
     subscribeToAssignments,
-    subscribeToUUID,
     subscribeToUUIDs,
-    unsubscribeFromUUID,
-    unsubscribeFromUUIDs
 } from "../../redux/sockets/SocketActions";
-import {concatTasks, getTaskUUIDs} from "./utilities";
+import {getTaskUUIDs} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
 
 function GetViewTitle(props) {

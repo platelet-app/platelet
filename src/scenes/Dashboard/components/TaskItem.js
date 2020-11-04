@@ -7,6 +7,7 @@ import {AnimatePresence, motion} from "framer-motion"
 
 
 const TaskItem = React.memo(function TaskItem(props) {
+    console.log("yeeee")
     return (
         <AnimatePresence>
 
