@@ -13,11 +13,22 @@ export function TextFieldControlled(props) {
             multiline={props.multiline}
             id={props.id}
             label={props.label}
-            onKeyPress={(ev) => {
-                if (ev.key === 'Enter') {
-                    if (props.onPressEnter)
-                        props.onPressEnter(ev);
-                    ev.preventDefault();
+            onKeyUp={(ev) => {
+                switch(ev.key) {
+                    case "Enter": {
+                        if (props.onPressEnter)
+                            props.onPressEnter(ev);
+                        ev.preventDefault();
+                        break;
+                    }
+                    case "Escape": {
+                        setCurrentValue("");
+                        props.onChange({target: {value: ""}});
+                        ev.preventDefault();
+                        break;
+                    }
+                    default:
+                        break;
                 }
             }}
             value={currentValue || ''}

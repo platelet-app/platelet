@@ -18,8 +18,8 @@ export default function PasswordField(props) {
                 id="outlined-adornment-password"
                 onKeyPress={(ev) => {
                     if (ev.key === 'Enter') {
-                        if (props.onHitEnter)
-                            props.onHitEnter(ev);
+                        if (props.onPressEnter)
+                            props.onPressEnter(ev);
                         ev.preventDefault();
                     }
                 }}

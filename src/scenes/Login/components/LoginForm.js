@@ -26,13 +26,23 @@ export default function LoginForm(props) {
                 <TextFieldUncontrolled label={"username"} value={username}
                                        variant={"outlined"}
                                        disabled={isLoggingIn}
-                                       onPressEnter={handleLogin}
+                                       onPressEnter={() => {
+                                           if (password && username)
+                                               handleLogin();
+                                       }}
                                        onChange={(e) => {
                                            setUsername(e.target.value)
                                        }}/>
             </Grid>
             <Grid item>
-                <PasswordField onChange={(e) => setPassword(e.target.value)} password={password} disabled={isLoggingIn}/>
+                <PasswordField
+                    onChange={(e) => setPassword(e.target.value)}
+                    password={password}
+                    onPressEnter={() => {
+                        if (password && username)
+                            handleLogin();
+                    }}
+                    disabled={isLoggingIn}/>
             </Grid>
             <Grid item>
                 <Button disabled={!username || !password || isLoggingIn} variant="contained" color="primary"
