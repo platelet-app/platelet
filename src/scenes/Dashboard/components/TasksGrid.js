@@ -5,7 +5,7 @@ import TaskItem from "./TaskItem";
 import {createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
-import {TextFieldControlled, TextFieldUncontrolled} from "../../../components/TextFields";
+import {TextFieldControlled} from "../../../components/TextFields";
 import _ from "lodash";
 import {Waypoint} from "react-waypoint";
 import {
@@ -19,34 +19,41 @@ import IconButton from "@material-ui/core/IconButton";
 
 
 function filterTasks(tasks, search) {
-
-    let result = [];
     if (!search) {
         return null;
     } else {
-        const searchTerm = search.toLowerCase();
-        for (const [key, taskGroup] of Object.entries(tasks)) {
-            for (const task of taskGroup) {
-                const filtered = task.filter(task => {
-                    if (task.assigned_riders_display_string ? task.assigned_riders_display_string.toLowerCase().includes(searchTerm) : false) {
-                        return true
-                    } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
-                        return true;
-                    } else if (task.priority ? task.priority.toLowerCase().includes(searchTerm) : false) {
-                        return true;
-                    } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {
-                        return true;
-                    } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
-                        return true;
-                    } else if (task.pickup_address && task.pickup_address.ward ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
-                        return true;
-                    } else if (task.dropoff_address && task.dropoff_address.ward ? task.dropoff_address.ward.toLowerCase().includes(searchTerm) : false) {
-                        return true;
-                    }
-                }).map(t => t.uuid);
-                result = [...result, ...filtered];
+        const searchTerms = search.toLowerCase().split(" ").filter(Boolean);
+        //const searchTerm = search.toLowerCase();
+        const results = [];
+        for (const searchTerm of searchTerms) {
+            let filteredResult = [];
+            for (const groupList of Object.values(tasks)) {
+                for (const taskGroup of groupList) {
+                    const filtered = taskGroup.filter(task => {
+                        if (task.assigned_riders_display_string ? task.assigned_riders_display_string.toLowerCase().includes(searchTerm) : false) {
+                            return true
+                        } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
+                            return true;
+                        } else if (task.priority ? task.priority.toLowerCase().includes(searchTerm) : false) {
+                            return true;
+                        } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {
+                            return true;
+                        } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
+                            return true;
+                        } else if (task.pickup_address && task.pickup_address.ward ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
+                            return true;
+                        } else if (task.dropoff_address && task.dropoff_address.ward ? task.dropoff_address.ward.toLowerCase().includes(searchTerm) : false) {
+                            return true;
+                        }
+                        return false;
+                    }).map(t => t.uuid);
+                    if (filtered.length !== 0)
+                        filteredResult = [...filteredResult, ...filtered];
+                }
             }
+            results.push(filteredResult)
         }
+        const result = _.intersection(...results);
         console.log(result)
         return result;
     }
@@ -126,55 +133,56 @@ const TaskGroup = props => {
         const relayStatus = (arr.length - 1 !== i)
 
         return (
-            <div style={{display: (props.showTasks === null || props.showTasks.includes(uuid)) ? "inherit" : "none"}} key={uuid}>
+            <div style={{display: (props.showTasks === null || props.showTasks.includes(uuid)) ? "inherit" : "none"}}
+                 key={uuid}>
                 <Grid container alignItems={"center"} justify={"center"}>
                     <Grid item>
-                    <TaskItem
-                        pickupAddress={pickup_address}
-                        assignedRidersDisplayString={assigned_riders_display_string}
-                        dropoffAddress={dropoff_address}
-                        timePickedUp={time_picked_up}
-                        timeDroppedOff={time_dropped_off}
-                        timeRejected={time_rejected}
-                        timeCancelled={time_cancelled}
-                        timeOfCall={time_of_call}
-                        priority={priority}
-                        patch={patch}
-                        assignedRiders={assigned_riders}
-                        taskUUID={uuid}
-                        view={props.modalView}
-                        deleteDisabled={props.deleteDisabled}/>
-                    <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                        <Grid style={{display: relayStatus ? "inherit" : "none"}} item>
-                            <Tooltip title="Relay">
-                                <ArrowDownwardIcon style={{height: "45px"}}/>
-                            </Tooltip>
+                        <TaskItem
+                            pickupAddress={pickup_address}
+                            assignedRidersDisplayString={assigned_riders_display_string}
+                            dropoffAddress={dropoff_address}
+                            timePickedUp={time_picked_up}
+                            timeDroppedOff={time_dropped_off}
+                            timeRejected={time_rejected}
+                            timeCancelled={time_cancelled}
+                            timeOfCall={time_of_call}
+                            priority={priority}
+                            patch={patch}
+                            assignedRiders={assigned_riders}
+                            taskUUID={uuid}
+                            view={props.modalView}
+                            deleteDisabled={props.deleteDisabled}/>
+                        <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
+                            <Grid style={{display: relayStatus ? "inherit" : "none"}} item>
+                                <Tooltip title="Relay">
+                                    <ArrowDownwardIcon style={{height: "45px"}}/>
+                                </Tooltip>
+                            </Grid>
+                            <Grid style={{display: relayStatus ? "none" : "inherit"}} item>
+                                <Tooltip title={"Add Relay"}>
+                                    <IconButton
+                                        className={"hidden-button"}
+                                        onClick={() => {
+                                            props.onAddRelayClick({
+                                                ...emptyTask,
+                                                time_of_call,
+                                                requester_contact: requester_contact ? requester_contact : {
+                                                    name: "",
+                                                    telephone_number: ""
+                                                },
+                                                priority,
+                                                priority_id,
+                                                dropoff_address,
+                                                parent_id,
+                                                relay_previous_uuid: task.uuid
+                                            })
+                                        }}
+                                    >
+                                        <ArrowDownwardIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
                         </Grid>
-                        <Grid style={{display: relayStatus ? "none" : "inherit"}} item>
-                            <Tooltip title={"Add Relay"}>
-                                <IconButton
-                                    className={"hidden-button"}
-                                    onClick={() => {
-                                        props.onAddRelayClick({
-                                            ...emptyTask,
-                                            time_of_call,
-                                            requester_contact: requester_contact ? requester_contact : {
-                                                name: "",
-                                                telephone_number: ""
-                                            },
-                                            priority,
-                                            priority_id,
-                                            dropoff_address,
-                                            parent_id,
-                                            relay_previous_uuid: task.uuid
-                                        })
-                                    }}
-                                >
-                                    <ArrowDownwardIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
-                    </Grid>
                     </Grid>
                 </Grid>
             </div>
@@ -218,9 +226,8 @@ export default function TasksGrid(props) {
     const classes = useStyles();
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
-    const [filteredTasks, setFilteredTasks] = useState([]);
+    const [filteredTasks, setFilteredTasks] = useState(null);
     const tasks = useSelector(state => state.tasks.tasks);
-    const [searchQuery, setSearchQuery] = useState("");
     const dispatch = useDispatch();
 
 
@@ -253,12 +260,9 @@ export default function TasksGrid(props) {
     }, [])
 
 
-    function updateFilteredTasks() {
-        setFilteredTasks(filterTasks(tasks))
-    }
-    useEffect(updateFilteredTasks, [tasks])
-
+    // TODO: why doesn't search work on newly added items?
     const debouncedSearch = useCallback(_.debounce(q => doSearch(q), 500), []);
+
     function doSearch(e) {
         console.log(e.target.value)
         const result = filterTasks(tasks, e.target.value)
