@@ -16,48 +16,9 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import IconButton from "@material-ui/core/IconButton";
+import {filterTasks} from "../utilities/functions";
 
 
-function filterTasks(tasks, search) {
-    if (!search) {
-        return null;
-    } else {
-        const searchTerms = search.toLowerCase().split(" ").filter(Boolean);
-        //const searchTerm = search.toLowerCase();
-        const results = [];
-        for (const searchTerm of searchTerms) {
-            let filteredResult = [];
-            for (const groupList of Object.values(tasks)) {
-                for (const taskGroup of groupList) {
-                    const filtered = taskGroup.filter(task => {
-                        if (task.assigned_riders_display_string ? task.assigned_riders_display_string.toLowerCase().includes(searchTerm) : false) {
-                            return true
-                        } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
-                            return true;
-                        } else if (task.priority ? task.priority.toLowerCase().includes(searchTerm) : false) {
-                            return true;
-                        } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {
-                            return true;
-                        } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
-                            return true;
-                        } else if (task.pickup_address && task.pickup_address.ward ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
-                            return true;
-                        } else if (task.dropoff_address && task.dropoff_address.ward ? task.dropoff_address.ward.toLowerCase().includes(searchTerm) : false) {
-                            return true;
-                        }
-                        return false;
-                    }).map(t => t.uuid);
-                    if (filtered.length !== 0)
-                        filteredResult = [...filteredResult, ...filtered];
-                }
-            }
-            results.push(filteredResult)
-        }
-        const result = _.intersection(...results);
-        console.log(result)
-        return result;
-    }
-}
 
 const getColumnTitle = key => {
     switch (key) {
@@ -153,12 +114,12 @@ const TaskGroup = props => {
                             view={props.modalView}
                             deleteDisabled={props.deleteDisabled}/>
                         <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                            <Grid style={{display: relayStatus ? "inherit" : "none"}} item>
+                            <Grid style={{display: (relayStatus && props.showTasks === null) ? "inherit" : "none"}} item>
                                 <Tooltip title="Relay">
                                     <ArrowDownwardIcon style={{height: "45px"}}/>
                                 </Tooltip>
                             </Grid>
-                            <Grid style={{display: relayStatus ? "none" : "inherit"}} item>
+                            <Grid style={{display: (!relayStatus && props.showTasks === null) ? "inherit" : "none"}} item>
                                 <Tooltip title={"Add Relay"}>
                                     <IconButton
                                         className={"hidden-button"}
@@ -264,10 +225,8 @@ export default function TasksGrid(props) {
     const debouncedSearch = useCallback(_.debounce(q => doSearch(q), 500), []);
 
     function doSearch(e) {
-        console.log(e.target.value)
         const result = filterTasks(tasks, e.target.value)
         setFilteredTasks(result);
-        console.log(result)
     }
 
     return (
