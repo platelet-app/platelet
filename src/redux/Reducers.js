@@ -10,7 +10,7 @@ import {
     SET_MENU_INDEX,
     SET_COMMENTS_OBJECT_UUID,
     CLEAR_WHOAMI,
-    GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK,
+    GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK, SET_DASHBOARD_FILTER,
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
@@ -27,6 +27,15 @@ import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 import {subscription, commentsSubscription, socketCommentsConnectionStatus, socketConnectionStatus} from "./sockets/SocketReducers";
 import {infoNotifications} from "./notifications/NotificationsReducers";
 import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
+
+function dashboardFilter(state = "", action) {
+    switch (action.type) {
+        case SET_DASHBOARD_FILTER:
+            return action.data;
+        default:
+            return state;
+    }
+}
 
 const taskContextMenuSnackInitialState = {snack: () => {}, uuid: ""}
 
@@ -247,7 +256,8 @@ const rootReducer = combineReducers({
     commentsSubscription,
     socketConnectionStatus,
     socketCommentsConnectionStatus,
-    infoNotifications
+    infoNotifications,
+    dashboardFilter
 });
 
 export default rootReducer

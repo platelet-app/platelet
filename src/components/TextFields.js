@@ -7,7 +7,7 @@ export function TextFieldControlled(props) {
     const [currentValue, setCurrentValue] = useState(props.forceUppercase && props.value ? props.value.toUpperCase() : props.value);
     return (
         <TextField
-            style={props.style}
+            {...props}
             key={props.key}
             margin="dense"
             multiline={props.multiline}
@@ -33,6 +33,7 @@ export function TextFieldControlled(props) {
             }}
             value={currentValue || ''}
             InputProps={{
+                ...props.InputProps,
                 maxLength: props.maxLength,
                 readOnly: props.readOnly,
                 disableUnderline: props.readOnly

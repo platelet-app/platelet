@@ -6,6 +6,12 @@ export function setNewTaskAddedView(data) {
     return { type: SET_NEW_TASK_ADDED_VIEW, data }
 }
 
+export const SET_DASHBOARD_FILTER = 'SET_DASHBOARD_FILTER';
+
+export function setDashboardFilter(data) {
+    return { type: SET_DASHBOARD_FILTER, data }
+}
+
 export const SET_TASK_CONTEXT_MENU_SNACK = 'SET_TASK_CONTEXT_MENU_SNACK';
 export const CLEAR_TASK_CONTEXT_MENU_SNACK = 'CLEAR_TASK_CONTEXT_MENU_SNACK'
 

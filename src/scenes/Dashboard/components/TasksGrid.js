@@ -187,9 +187,10 @@ export default function TasksGrid(props) {
     const classes = useStyles();
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
-    const [filteredTasks, setFilteredTasks] = useState(null);
+    const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
     const tasks = useSelector(state => state.tasks.tasks);
     const dispatch = useDispatch();
+    const dashboardFilter = useSelector(state => state.dashboardFilter);
 
 
     const emptyTask = {
@@ -221,19 +222,16 @@ export default function TasksGrid(props) {
     }, [])
 
 
-    // TODO: why doesn't search work on newly added items?
-    const debouncedSearch = _.debounce(q => doSearch(q), 500);
 
-    function doSearch(e) {
-        const result = filterTasks(tasks, e.target.value)
-        setFilteredTasks(result);
+    function doSearch() {
+        const result = filterTasks(tasks, dashboardFilter)
+        setFilteredTasksUUIDs(result);
     }
+
+    useEffect(doSearch, [dashboardFilter])
 
     return (
         <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
-            <Grid item key={"search"}>
-                {props.noFilter ? <></> : <TextFieldControlled label={"Search"} onChange={debouncedSearch}/>}
-            </Grid>
             <Grid item key={"tasks"}>
                 <Grid container
                       spacing={0}
@@ -254,7 +252,7 @@ export default function TasksGrid(props) {
                                                 onAddRelayClick={addRelay}
                                                 disableAddButton={isPosting}
                                                 taskKey={taskKey}
-                                                showTasks={filteredTasks}
+                                                showTasks={filteredTasksUUIDs}
                                                 key={title}/>
                                     <Waypoint
                                         onEnter={() => {
