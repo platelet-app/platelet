@@ -20,8 +20,7 @@ import _ from "lodash";
 import {InputAdornment} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
 import {
-    createMuiTheme,
-    ThemeProvider
+    createMuiTheme
 } from '@material-ui/core/styles';
 
 export function TabPanel(props) {

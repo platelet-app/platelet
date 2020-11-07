@@ -38,8 +38,8 @@ function GetViewTitle(props) {
 }
 
 function Dashboard(props) {
-    const loadingSelector = createLoadingSelector(['GET_TASKS', "GET_SESSION"]);
     const dispatch = useDispatch();
+    const loadingSelector = createLoadingSelector(['GET_TASKS']);
     const isFetching = useSelector(state => loadingSelector(state));
     const isPostingNewTaskSelector = createPostingSelector(["ADD_TASK"]);
     const isPostingNewTask = useSelector(state => isPostingNewTaskSelector(state));
