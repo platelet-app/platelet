@@ -71,6 +71,7 @@ import {
     watchUpdateTaskAddAssignedRider, watchUpdateTaskRemoveCoordinator,
     watchUpdateTaskRemoveRider
 } from "./taskAssignees/TaskAssigneesSagas";
+import {watchGetActionsRecord} from "./actionsRecord/ActionsRecordSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -140,6 +141,7 @@ export default function* rootSaga() {
         call(watchRestoreUser),
         call(watchUpdateUser),
         call(watchUploadUserProfilePicture),
-        call(watchUpdateUserPassword)
+        call(watchUpdateUserPassword),
+        call(watchGetActionsRecord)
     ])
 }

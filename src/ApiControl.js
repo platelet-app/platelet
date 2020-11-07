@@ -341,6 +341,18 @@ class Patch {
 }
 
 
+class Log {
+    constructor(bearer, api_url){
+        this.bearer = bearer;
+        this.api_url = api_url;
+    }
+
+    async getRecords(object_id) {
+        return makeAxios(this.api_url, "logs/" + object_id, "GET", this.bearer);
+    }
+}
+
+
 class User {
     constructor(bearer, api_url){
         this.bearer = bearer;
@@ -593,6 +605,7 @@ class Control {
         this.locations = new Location(this.bearer, this.api_url);
         this.priorities = new Priority(this.bearer, this.api_url);
         this.patches = new Patch(this.bearer, this.api_url);
+        this.log = new Log(this.bearer, this.api_url);
         this.initialised = true;
         const self = this;
         //TODO: This doesn't work if the token has expired fully fixxxxx

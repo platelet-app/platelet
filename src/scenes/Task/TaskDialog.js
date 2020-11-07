@@ -36,6 +36,7 @@ import TaskAssignees from "./components/TaskAssignees";
 import Typography from "@material-ui/core/Typography";
 import NotFound from "../../ErrorComponents/NotFound";
 import {Skeleton} from "@material-ui/lab";
+import ActionsRecord from "../ActionsRecord/ActionsRecord";
 
 export default function TaskDialog(props) {
     const dispatch = useDispatch();
@@ -344,8 +345,13 @@ export default function TaskDialog(props) {
                             {layerFive}
                         </Grid>
                         <Grid item>
-                            <PaddedPaper width={"400px"}>
+                            <PaddedPaper width={"830px"}>
                                 <CommentsSection parentUUID={taskUUID}/>
+                            </PaddedPaper>
+                        </Grid>
+                        <Grid item>
+                            <PaddedPaper width={"830px"}>
+                                <ActionsRecord parentUUID={taskUUID}/>
                             </PaddedPaper>
                         </Grid>
                     </Grid>

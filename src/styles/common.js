@@ -11,8 +11,9 @@ import Box from "@material-ui/core/Box";
 import {Link} from "react-router-dom"
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
+import Grid from "@material-ui/core/Grid";
 
-export function DismissButton (props) {
+export function DismissButton(props) {
     return (
         <IconButton
             color="inherit"
@@ -53,7 +54,7 @@ export function MainWindowContainer(props) {
     )
 }
 
-export const StyledTextLink = styled(Link) ({
+export const StyledTextLink = styled(Link)({
     a: {
         "&:hover": {
             background: "red"
@@ -118,9 +119,14 @@ export function PaddedPaper(props) {
                 minWidth: minWidth,
                 maxHeight: maxHeight,
                 minHeight: minHeight,
-                padding: padding}
+                padding: padding
+            }
         }>
-            {props.children}
+            <Grid container alignItems={"flex-start"} justify={"flex-start"}>
+                <Grid item>
+                    {props.children}
+                </Grid>
+            </Grid>
         </Paper>
     )
 }

@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    addCommentFailure,
     addCommentFromSocket,
     clearComments,
     getCommentsRequest
@@ -12,11 +11,6 @@ import CommentsSkeleton from "./components/CommentsSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
 import {subscribeToComments, unsubscribeFromComments} from "../../redux/sockets/SocketActions";
 import {getTabIdentifier} from "../../utilities";
-import {
-    updateTaskAssignedRiderFromSocket,
-    updateTaskFromSocket,
-    updateTaskRemoveAssignedRiderFromSocket
-} from "../../redux/tasks/TasksActions";
 
 export default function CommentsSection(props) {
     const dispatch = useDispatch();
