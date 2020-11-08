@@ -76,7 +76,7 @@ export default function ActionsRecord(props) {
                 } else {
                     return (
                     <React.Fragment key={record.uuid}>
-                        <></>;
+                        <></>
                     </React.Fragment>
                     )
                 }
