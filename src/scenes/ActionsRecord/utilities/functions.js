@@ -33,10 +33,10 @@ function getFields(values) {
     if (humanised.length === 0)
         return "";
     else if (humanised.length === 1)
-        return humanised[0];
+        return `the ${humanised[0]}`;
     else
-        return values.map((value, index, arr) => {
-                return arr.length - 1 !== index ? `${index !== 0 ? ", " : " "}${humanised}` : ` and ${humanised}`
+        return humanised.map((value, index, arr) => {
+                return arr.length - 1 !== index ? `${index === 0 ? "the " : ", "}${value}` : ` and ${value}`
             }
         ).join("")
 }
@@ -48,11 +48,11 @@ function fieldToHumanReadable(field) {
         case "dropoff_address":
             return "delivery address";
         case "patch_id":
-            return "the patch";
+            return "patch";
         case "requester_contact":
-            return "the requester's contact details";
+            return "requester's contact details";
         case "priority_id":
-            return "the priority";
+            return "priority";
         case "time_of_call":
             return "time of call";
         case "time_picked_up":
