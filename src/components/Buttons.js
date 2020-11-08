@@ -12,7 +12,7 @@ export function AddCircleButton(props) {
             aria-haspopup="true"
             onClick={props.onClick}
             disabled={props.disabled}
-            style={props.style}
+            className={props.className}
         >
             {props.disabled ? <StyledAddCircleOutlineDisabled/> : <StyledAddCircleOutline/>}
         </IconButton>
@@ -26,6 +26,7 @@ export function AddCircleButtonSmall(props) {
             aria-haspopup="true"
             onClick={props.onClick}
             disabled={props.disabled}
+            className={props.className}
         >
             {props.disabled ? <StyledAddCircleOutlineSmallDisabled/> : <StyledAddCircleOutlineSmall/>}
         </IconButton>

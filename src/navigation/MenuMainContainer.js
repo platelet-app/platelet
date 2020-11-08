@@ -86,8 +86,8 @@ export function MenuMainContainer(props) {
     const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
     const [anchorElDashMenu, setAnchorElDashMenu] = React.useState(null);
 
-    let adminLink = <></>
-    let dashboardMenu = <></>;
+    let adminLink = <></>;
+    let dashboardMenu = <List/>;
 
     if (!isFetching) {
         if (whoami.roles) {

@@ -2,7 +2,6 @@ import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
 import Card from '@material-ui/core/Card';
-import Container from "@material-ui/core/Container";
 import {styled} from '@material-ui/styles';
 
 import {makeStyles} from '@material-ui/core/styles';
@@ -12,6 +11,11 @@ import {Link} from "react-router-dom"
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
 import Grid from "@material-ui/core/Grid";
+
+export const showHide = makeStyles({
+    hide: {display: "none"},
+    show: {display: "inherit"},
+})
 
 export function DismissButton(props) {
     return (

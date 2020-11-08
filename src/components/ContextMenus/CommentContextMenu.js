@@ -1,14 +1,14 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
-    deleteCommentRequest, deleteSidebarCommentRequest,
-    restoreCommentRequest, restoreSidebarCommentRequest
+    deleteCommentRequest, deleteSidebarCommentRequest
 } from "../../redux/comments/CommentsActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import {createPostingSelector} from "../../redux/selectors";
+import contextMenuStyles from "./contextMenuCSS";
 
 
 const initialState = {
@@ -18,6 +18,7 @@ const initialState = {
 
 
 export default function CommentContextMenu(props) {
+    const classes = contextMenuStyles();
     const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(props.sidebar ?  ["DELETE_SIDEBAR_COMMENT", "RESTORE_SIDEBAR_COMMENT"] : ["DELETE_COMMENT", "RESTORE_COMMENT"]);
@@ -68,7 +69,7 @@ export default function CommentContextMenu(props) {
                 }
             >
                 <MenuItem
-                    style={{display: (whoami.roles.includes("admin") || whoami.uuid !== props.comment.author_uuid) ? "inherit" : "none", color: "rgb(235, 86, 75)"}}
+                    className={(whoami.roles.includes("admin") || whoami.uuid !== props.comment.author_uuid) ? classes.deleteButton : classes.deleteButtonDisabled}
                     onClick={onDelete}>Delete</MenuItem>
             </Menu>
         </>

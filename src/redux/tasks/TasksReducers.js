@@ -211,7 +211,9 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_PICKUP_TIME_SUCCESS:
         case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
         case UPDATE_TASK_FROM_SOCKET:
+            const t0 = performance.now();
             const taskToUpdateParent = findExistingTaskParent(state.tasks, action.data.taskUUID);
+            console.log(performance.now() - t0)
             if (taskToUpdateParent.taskGroup) {
                 const newTasks = update(
                     state.tasks, {[taskToUpdateParent.listType]: {$set: state.tasks[taskToUpdateParent.listType].filter(t => taskToUpdateParent.taskGroup[0].parent_id !== t[0].parent_id)}}

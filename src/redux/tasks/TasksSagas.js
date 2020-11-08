@@ -98,9 +98,7 @@ function* postNewTask(action) {
         const result = yield call([api, api.tasks.createTask], action.data);
         const task = {...action.data, "uuid": result.uuid, parent_id: result.parent_id};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: result.author_uuid}}))
-        const t0 = performance.now();
         yield put(addTaskSuccess(task));
-        console.log(performance.now() - t0)
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {
         yield put(addTaskFailure(error))

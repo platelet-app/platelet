@@ -42,9 +42,16 @@ export default function ActionsRecord(props) {
     return (
         <Timeline>
             {records.map((record, index, arr) => {
+                if (!record.data_fields)
+                return (
+                    <React.Fragment key={record.uuid}>
+                            <></>
+                    </React.Fragment>
+                        )
                 const fields = _.intersection(record.data_fields.split(","), displayFields);
                 if (fields.length > 0) {
                     return (
+                        <React.Fragment key={record.uuid}>
                         <TimelineItem>
                             <TimelineOppositeContent>
                                 <Typography color="textSecondary">{moment(record.time_created).calendar()}</Typography>
@@ -64,9 +71,14 @@ export default function ActionsRecord(props) {
                                 </React.Fragment>
                             </TimelineContent>
                         </TimelineItem>
+                        </React.Fragment>
                     )
                 } else {
-                    return <></>;
+                    return (
+                    <React.Fragment key={record.uuid}>
+                        <></>;
+                    </React.Fragment>
+                    )
                 }
             })}
         </Timeline>

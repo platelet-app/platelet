@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import {createPostingSelector} from "../../redux/selectors";
+import contextMenuStyles from "./contextMenuCSS";
 
 
 const initialState = {
@@ -22,6 +23,7 @@ const initialState = {
 export default function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const [state, setState] = React.useState(initialState);
+    const classes = contextMenuStyles();
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -73,8 +75,6 @@ export default function TaskContextMenu(props) {
         setState(initialState);
     };
 
-    const deleteOption = <MenuItem style={{display: props.deleteDisabled ? "none" : "inherit", color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>;
-
     return (
         <>
             <IconButton
@@ -101,7 +101,7 @@ export default function TaskContextMenu(props) {
                 <MenuItem disabled={ (!!props.timeDroppedOff || !!!props.timePickedUp || !!props.timeRejected || !!props.timeCancelled) } onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
                 <MenuItem disabled={ !!props.timeRejected || !!props.timeCancelled } onClick={onSelectRejected}>Mark rejected</MenuItem>
                 <MenuItem disabled={ !!props.timeCancelled || !!props.timeRejected } onClick={onSelectCancelled}>Mark cancelled</MenuItem>
-                {deleteOption}
+                <MenuItem className={props.deleteDisabled ? classes.deleteButtonDisabled : classes.deleteButton} onClick={onDelete}>Delete</MenuItem>
             </Menu>
             </>
     );

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Accordian from '@material-ui/core/Accordion';
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
@@ -74,15 +74,15 @@ export default function AddressDetailsCollapsible(props){
                         {presetSelect}
                     </Grid>
                     <Grid item>
-                <ExpansionPanel>
-                    <ExpansionPanelSummary
+                <Accordian>
+                    <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="address-content"
                         id="address-header"
                     >
                         <Typography>{props.label ? props.label + " - " + line1 : line1}</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                         <Grid container spacing={0} direction={"column"} alignItems={"flex-start"} justify={"center"}>
                             <Grid item>
                             <TextFieldUncontrolled
@@ -165,8 +165,8 @@ export default function AddressDetailsCollapsible(props){
                             />
                             </Grid>
                         </Grid>
-                    </ExpansionPanelDetails>
-                </ExpansionPanel>
+                    </AccordionDetails>
+                </Accordian>
                     </Grid>
                 </Grid>
         )

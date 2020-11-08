@@ -8,6 +8,7 @@ import Button from "@material-ui/core/Button";
 import { withSnackbar } from 'notistack';
 import {createPostingSelector} from "../../redux/selectors";
 import {deleteUserRequest, restoreUserRequest} from "../../redux/users/UsersActions";
+import contextMenuStyles from "./contextMenuCSS";
 
 
 const initialState = {
@@ -17,6 +18,7 @@ const initialState = {
 
 
 export default function UserContextMenu(props) {
+    const classes = contextMenuStyles();
     const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(["DELETE_USER", "RESTORE_USER"]);
@@ -63,7 +65,7 @@ export default function UserContextMenu(props) {
                         : undefined
                 }
             >
-                <MenuItem style={{display: whoami.roles.includes("admin") ? "inherit" : "none", color: "rgb(235, 86, 75)"}} onClick={onDelete}>Delete</MenuItem>
+                <MenuItem className={whoami.roles.includes("admin") ? classes.deleteButton : classes.deleteButtonDisabled} onClick={onDelete}>Delete</MenuItem>
             </Menu>
             </>
     );

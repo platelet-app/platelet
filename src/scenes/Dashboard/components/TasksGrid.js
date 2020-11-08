@@ -1,12 +1,10 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {AddCircleButton} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
 import {createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
-import {TextFieldControlled} from "../../../components/TextFields";
-import _ from "lodash";
 import {Waypoint} from "react-waypoint";
 import {
     addTaskRelayRequest, addTaskRequest,
@@ -17,6 +15,7 @@ import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import IconButton from "@material-ui/core/IconButton";
 import {filterTasks} from "../utilities/functions";
+import {showHide} from "../../../styles/common";
 
 
 
@@ -73,6 +72,7 @@ const emptyTask = {
 
 const TaskGroup = props => {
     const classes = props.classes;
+    const {show, hide} = showHide();
     return !props.group ? <></> : props.group.map((task, i, arr) => {
         const {
             pickup_address,
@@ -94,7 +94,7 @@ const TaskGroup = props => {
         const relayStatus = (arr.length - 1 !== i)
 
         return (
-            <div style={{display: (props.showTasks === null || props.showTasks.includes(uuid)) ? "inherit" : "none"}}
+            <div className={(props.showTasks === null || props.showTasks.includes(uuid)) ? show : hide}
                  key={uuid}>
                 <Grid container alignItems={"center"} justify={"center"}>
                     <Grid item>
@@ -114,12 +114,12 @@ const TaskGroup = props => {
                             view={props.modalView}
                             deleteDisabled={props.deleteDisabled}/>
                         <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                            <Grid style={{display: (relayStatus && props.showTasks === null) ? "inherit" : "none"}} item>
+                            <Grid className={(relayStatus && props.showTasks === null) ? show : hide} item>
                                 <Tooltip title="Relay">
                                     <ArrowDownwardIcon style={{height: "45px"}}/>
                                 </Tooltip>
                             </Grid>
-                            <Grid style={{display: (!relayStatus && props.showTasks === null) ? "inherit" : "none"}} item>
+                            <Grid className={(!relayStatus && props.showTasks === null) ? show : hide} item>
                                 <Tooltip title={"Add Relay"}>
                                     <IconButton
                                         className={"hidden-button"}
@@ -152,9 +152,10 @@ const TaskGroup = props => {
 }
 
 const GridColumn = (props) => {
+    const {show, hide} = showHide();
     const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
     return (
-        <TasksKanbanColumn style={{marginRight: "20px", display: props.hidden ? "none" : "inherit"}}>
+        <TasksKanbanColumn className={props.hidden ? hide : show}>
             <h3>{props.title}</h3>
             <Grid container
                   spacing={0}
@@ -167,7 +168,7 @@ const GridColumn = (props) => {
                     <AddCircleButton
                         disabled={props.disableAddButton}
                         onClick={props.onAddTaskClick}
-                        style={{display: (props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? "inherit" : "none"}}
+                        className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
                     />
                 </Grid>
 

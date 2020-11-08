@@ -50,7 +50,7 @@ function fieldToHumanReadable(field) {
         case "patch_id":
             return "the patch";
         case "requester_contact":
-            return "requester's contact details";
+            return "the requester's contact details";
         case "priority_id":
             return "the priority";
         case "time_of_call":
