@@ -13,42 +13,21 @@ import moment from "moment";
 import Link from "@material-ui/core/Link";
 import {Link as RouterLink} from "react-router-dom";
 import {encodeUUID} from "../../utilities";
+import {generateMessage} from "./utilities/functions";
+import _ from "lodash"
 
-function getActionString(HTTPType) {
-    switch (HTTPType) {
-        case "POST":
-            return "created"
-        case "PUT":
-            return "updated"
-        case "DELETE":
-            return "deleted"
-        default:
-            return "unknown actioned"
-    }
-}
-
-function generateMessage(record) {
-    switch (record.http_request_type) {
-        case "POST":
-        case "DELETE":
-            return `${getActionString(record.http_request_type)} this ${record.parent_type}.`
-        case "PUT":
-            return `${getActionString(record.http_request_type)} ${getFields(record.data_fields)}.`
-        default:
-            return "Unknown action"
-    }
-
-}
-
-function getFields(comma_values) {
-    const values = comma_values.split(",")
-    if (values.length === 1)
-        return values[0]
-    return values.map((value, index, arr) => {
-            return arr.length - 1 !== index ? `${index !== 0 ? ", " : " "}${value}` : ` and ${value}`
-        }
-    ).join("")
-}
+const displayFields = [
+    "pickup_address",
+    "dropoff_address",
+    "patch_id",
+    "requester_contact",
+    "priority_id",
+    "time_of_call",
+    "time_picked_up",
+    "time_dropped_off",
+    "time_cancelled",
+    "time_rejected",
+]
 
 export default function ActionsRecord(props) {
     const dispatch = useDispatch();
@@ -57,11 +36,14 @@ export default function ActionsRecord(props) {
     function componentDidMount() {
         dispatch(getActionsRecordRequest(props.parentUUID))
     }
+
     useEffect(componentDidMount, [])
 
     return (
-            <Timeline>
-                {records.map((record, index, arr) => {
+        <Timeline>
+            {records.map((record, index, arr) => {
+                const fields = _.intersection(record.data_fields.split(","), displayFields);
+                if (fields.length > 0) {
                     return (
                         <TimelineItem>
                             <TimelineOppositeContent>
@@ -78,12 +60,15 @@ export default function ActionsRecord(props) {
                                         <Typography
                                             style={{fontWeight: "bold"}}>{record.calling_user.display_name}</Typography>
                                     </Link>
-                                    <Typography>{generateMessage(record)}</Typography>
+                                    <Typography>{generateMessage(record, fields)}</Typography>
                                 </React.Fragment>
                             </TimelineContent>
                         </TimelineItem>
                     )
-                })}
-            </Timeline>
+                } else {
+                    return <></>;
+                }
+            })}
+        </Timeline>
     );
 }

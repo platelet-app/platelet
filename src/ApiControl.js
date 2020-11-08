@@ -347,8 +347,8 @@ class Log {
         this.api_url = api_url;
     }
 
-    async getRecords(object_id) {
-        return makeAxios(this.api_url, "logs/" + object_id, "GET", this.bearer);
+    async getRecords(object_id, order="newest") {
+        return makeAxios(this.api_url, "logs/" + object_id + "?order=" + order, "GET", this.bearer);
     }
 }
 

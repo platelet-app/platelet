@@ -10,7 +10,7 @@ import {
 function* getActionsRecord(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.log.getRecords], action.data);
+        const result = yield call([api, api.log.getRecords], action.data, "newest");
         yield put(getActionsRecordSuccess(result))
     } catch (error) {
         if (error.name === "HttpError") {
