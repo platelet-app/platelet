@@ -10,10 +10,10 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 import moment from "moment";
 import CommentAuthor from "./CommentAuthor";
 import EditIcon from '@material-ui/icons/Edit';
-import {Edit} from "@material-ui/icons";
-
+import {showHide} from "../../../styles/common";
 
 const CommentCard = React.memo((props) => {
+    const {show, hide} = showHide();
     const Card = props.public ? (props) => {
             return <PublicCommentCard>{props.children}</PublicCommentCard>
         } :
@@ -32,22 +32,24 @@ const CommentCard = React.memo((props) => {
                                 avatarURL={props.author.profile_picture_thumbnail_url}/>
                         </Grid>
                         <Grid item>
-                            {props.public ? (
-                                <></>
-                            ) : (
-                                <Tooltip title="Only visible to you">
-                                    <LockIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
-                                </Tooltip>
-                            )}
-                            <Tooltip title={moment(props.timeCreated).calendar()}>
-                                <ScheduleIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
-                            </Tooltip>
-                            {props.numEdits && props.numEdits !== "0" ?
-                                <Tooltip title={`Edited ${props.numEdits} times.`}>
-                                    <EditIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
-                                </Tooltip>
-                                : <></>
-                            }
+                            <Grid container direction={"row"} justify={"flex-end"} alignItems={"flex-start"}>
+                                <Grid item>
+                                    <Tooltip className={props.public ? hide : show} title="Only visible to you">
+                                        <LockIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item>
+                                    <Tooltip title={moment(props.timeCreated).calendar()}>
+                                        <ScheduleIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item>
+                                    <Tooltip className={props.numEdits && props.numEdits !== "0" ? show : hide}
+                                             title={`Edited ${props.numEdits} times.`}>
+                                        <EditIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
+                                    </Tooltip>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>

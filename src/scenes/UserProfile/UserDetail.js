@@ -27,10 +27,7 @@ export default function UserDetail(props) {
     function newUserProfile() {
         dispatch(getUserRequest(userUUID));
     }
-
     useEffect(newUserProfile, [props.location.key]);
-
-
 
     if (isFetching) {
         return (

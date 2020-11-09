@@ -19,7 +19,6 @@ const initialState = {
 
 export default function CommentContextMenu(props) {
     const classes = deleteButtonStyles();
-    const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector( ["DELETE_COMMENT", "RESTORE_COMMENT", "EDIT_COMMENT"]);
     const isPosting = useSelector(state => postingSelector(state));
@@ -36,10 +35,7 @@ export default function CommentContextMenu(props) {
 
     function onDelete() {
         handleClose();
-        if (props.sidebar)
-            dispatch(deleteSidebarCommentRequest(props.comment.uuid));
-        else
-            dispatch(deleteCommentRequest(props.comment.uuid));
+        dispatch(deleteCommentRequest(props.commentUUID));
     }
 
     const handleClose = () => {
@@ -68,7 +64,7 @@ export default function CommentContextMenu(props) {
                         : undefined
                 }
             >
-                <MenuItem>
+                <MenuItem onClick={props.onSetEditMode}>
                     Edit
                 </MenuItem>
                 <MenuItem
