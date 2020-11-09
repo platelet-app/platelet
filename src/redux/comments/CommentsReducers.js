@@ -28,7 +28,7 @@ export function comments(state = initialState, action) {
         case UPDATE_COMMENT_SUCCESS:
             let result = state.comments.find(comment => comment.uuid === action.data.commentUUID);
             if (result) {
-                const updated_item = {...result, ...action.data.payload};
+                const updated_item = {...result, ...action.data.payload, num_edits: result.num_edits ? result.num_edits + 1 : 1};
                 const index = state.comments.indexOf(result);
                 return {comments: update(state.comments, {[index]: {$set: updated_item}}), error: null};
             } else {

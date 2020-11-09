@@ -24,7 +24,7 @@ function CommentCollection(props) {
             <CommentCard
                 author={props.author}
                 timeCreated={props.timeCreated}
-                numEdits={props.numEits}
+                numEdits={props.numEdits}
                 public={props.publiclyVisible}>
                 <Typography>{props.body}</Typography>
             </CommentCard>

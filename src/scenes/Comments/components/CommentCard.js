@@ -34,6 +34,12 @@ const CommentCard = React.memo((props) => {
                         <Grid item>
                             <Grid container direction={"row"} justify={"flex-end"} alignItems={"flex-start"}>
                                 <Grid item>
+                                    <Tooltip className={props.numEdits && props.numEdits !== "0" ? show : hide}
+                                             title={`Edited ${props.numEdits} times.`}>
+                                        <EditIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item>
                                     <Tooltip className={props.public ? hide : show} title="Only visible to you">
                                         <LockIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
                                     </Tooltip>
@@ -41,12 +47,6 @@ const CommentCard = React.memo((props) => {
                                 <Grid item>
                                     <Tooltip title={moment(props.timeCreated).calendar()}>
                                         <ScheduleIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
-                                    </Tooltip>
-                                </Grid>
-                                <Grid item>
-                                    <Tooltip className={props.numEdits && props.numEdits !== "0" ? show : hide}
-                                             title={`Edited ${props.numEdits} times.`}>
-                                        <EditIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
                                     </Tooltip>
                                 </Grid>
                             </Grid>
