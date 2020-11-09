@@ -5,9 +5,11 @@ export const ADD_COMMENT_FROM_SOCKET = 'ADD_COMMENT_FROM_SOCKET';
 export const DELETE_COMMENT_REQUEST = 'DELETE_COMMENT_REQUEST';
 export const DELETE_COMMENT_FAILURE = 'DELETE_COMMENT_FAILURE';
 export const DELETE_COMMENT_SUCCESS = 'DELETE_COMMENT_SUCCESS';
+export const DELETE_COMMENT_FROM_SOCKET = 'DELETE_COMMENT_FROM_SOCKET';
 export const RESTORE_COMMENT_REQUEST = 'RESTORE_COMMENT_REQUEST';
 export const RESTORE_COMMENT_FAILURE = 'RESTORE_COMMENT_FAILURE';
 export const RESTORE_COMMENT_SUCCESS = 'RESTORE_COMMENT_SUCCESS';
+export const RESTORE_COMMENT_FROM_SOCKET = 'RESTORE_COMMENT_FROM_SOCKET';
 export const UPDATE_COMMENT_REQUEST = 'UPDATE_COMMENT_REQUEST';
 export const UPDATE_COMMENT_FAILURE = 'UPDATE_COMMENT_FAILURE';
 export const UPDATE_COMMENT_SUCCESS = 'UPDATE_COMMENT_SUCCESS';
@@ -46,6 +48,10 @@ export function restoreCommentFailure(error) {
     return { type: RESTORE_COMMENT_FAILURE, error }
 }
 
+export function restoreCommentFromSocket(data) {
+    return { type: RESTORE_COMMENT_FROM_SOCKET, data }
+}
+
 export function deleteCommentRequest(data) {
     return { type: DELETE_COMMENT_REQUEST, data }
 }
@@ -56,6 +62,10 @@ export function deleteCommentSuccess(data) {
 
 export function deleteCommentFailure(error) {
     return { type: DELETE_COMMENT_FAILURE, error }
+}
+
+export function deleteCommentFromSocket(data) {
+    return { type: DELETE_COMMENT_FROM_SOCKET, data }
 }
 
 export function clearComments() {

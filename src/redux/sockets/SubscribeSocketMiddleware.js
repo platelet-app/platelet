@@ -3,7 +3,7 @@ import {
     SOCKET_CONNECT,
     SOCKET_CONNECT_ASSIGNMENTS,
     SOCKET_CONNECT_COMMENTS, SOCKET_SUBSCRIBE_ASSIGNMENTS, SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED,
-    SOCKET_SUBSCRIBE_COMMENTS,
+    SOCKET_SUBSCRIBE_COMMENTS, SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_UUID,
     SOCKET_SUBSCRIBE_UUID_MANY, SOCKET_UNSUBSCRIBE_ASSIGNMENTS,
@@ -20,6 +20,7 @@ import {
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket
 } from "../tasks/TasksActions";
+import {addCommentFromSocket, deleteCommentFromSocket, restoreCommentFromSocket} from "../comments/CommentsActions";
 
 export const createSubscribeSocketMiddleware = () => {
     let socket;
@@ -134,6 +135,29 @@ export const createSubscribeCommentsSocketMiddleware = () => {
                     socket.emit('unsubscribe', action.uuid);
                 break;
             }
+            case SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED:
+                if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
+                    console.log("ignore")
+                } else {
+                    if (action.data.tab_id != null && getTabIdentifier() !== action.data.tab_id) {
+                        console.log(action.data.type)
+                        switch (action.data.type) {
+                            case "ADD_COMMENT":
+                                storeAPI.dispatch(addCommentFromSocket(action.data.data))
+                                break;
+                            case "DELETE_COMMENT":
+                                storeAPI.dispatch(deleteCommentFromSocket(action.data.uuid))
+                                break;
+                            case "RESTORE_COMMENT":
+                                storeAPI.dispatch(restoreCommentFromSocket(action.data.data))
+                                break;
+                            default:
+                                break;
+                        }
+                        console.log(action.data.data)
+                    } else
+                        console.log("this came from us")
+                }
             default:
                 return next(action);
         }

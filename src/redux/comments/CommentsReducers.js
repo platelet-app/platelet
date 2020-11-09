@@ -6,7 +6,8 @@ import {
     CLEAR_COMMENTS,
     DELETE_COMMENT_SUCCESS,
     RESTORE_COMMENT_SUCCESS,
-    ADD_COMMENT_FROM_SOCKET
+    ADD_COMMENT_FROM_SOCKET,
+    DELETE_COMMENT_FROM_SOCKET, RESTORE_COMMENT_FROM_SOCKET
 } from "./CommentsActions";
 
 const initialState = {
@@ -33,14 +34,11 @@ export function comments(state = initialState, action) {
             } else {
                 return state
             }
+        case DELETE_COMMENT_FROM_SOCKET:
         case DELETE_COMMENT_SUCCESS:
-            let result_delete = state.comments.find(comment => comment.uuid === action.data);
-            if (result_delete) {
-                const index = state.comments.indexOf(result_delete);
-                return {comments: update(state.comments, {$splice: [[index, 1]]}), error: null};
-            } else {
-                return state;
-            }
+            const newComments = state.comments.filter(comment => comment.uuid !== action.data)
+            return {comments: newComments, error: null}
+        case RESTORE_COMMENT_FROM_SOCKET:
         case RESTORE_COMMENT_SUCCESS:
             return {comments: [
                     {

@@ -10,7 +10,6 @@ import {createLoadingSelector, createNotFoundSelector} from "../../redux/selecto
 import CommentsSkeleton from "./components/CommentsSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
 import {subscribeToComments, unsubscribeFromComments} from "../../redux/sockets/SocketActions";
-import {getTabIdentifier} from "../../utilities";
 
 export default function CommentsSection(props) {
     const dispatch = useDispatch();
@@ -19,7 +18,6 @@ export default function CommentsSection(props) {
     const notFoundSelector = createNotFoundSelector(["GET_COMMENTS"]);
     const notFound = useSelector(state => notFoundSelector(state));
     const comments = useSelector(state => state.comments.comments);
-    const socketSubscription = useSelector(state => state.commentsSubscription);
     function updateComments() {
         if (props.parentUUID) {
             dispatch(getCommentsRequest(props.parentUUID));
@@ -28,25 +26,6 @@ export default function CommentsSection(props) {
         }
     }
     useEffect(updateComments, [props.parentUUID]);
-
-    useEffect(() => {
-        if (Object.keys(socketSubscription).length === 0 && socketSubscription.constructor === Object) {
-            console.log("ignore")
-        } else {
-            if (socketSubscription.tab_id != null && getTabIdentifier() !== socketSubscription.tab_id) {
-                switch (socketSubscription.type) {
-                    case "post":
-                        dispatch(addCommentFromSocket(socketSubscription.data))
-                        break;
-                    default:
-                        break;
-                }
-                console.log(socketSubscription.data)
-            } else
-                console.log("this came from us")
-        }
-
-    }, [socketSubscription])
 
     function componentDidMount() {
         dispatch(subscribeToComments(props.parentUUID));

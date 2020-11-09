@@ -43,11 +43,7 @@ export default function ActionsRecord(props) {
         <Timeline>
             {records.map((record, index, arr) => {
                 if (!record.data_fields)
-                return (
-                    <React.Fragment key={record.uuid}>
-                            <></>
-                    </React.Fragment>
-                        )
+                    return <React.Fragment key={record.uuid}/>
                 const fields = _.intersection(record.data_fields.split(","), displayFields);
                 if (fields.length > 0) {
                     return (
@@ -74,11 +70,7 @@ export default function ActionsRecord(props) {
                         </React.Fragment>
                     )
                 } else {
-                    return (
-                    <React.Fragment key={record.uuid}>
-                        <></>
-                    </React.Fragment>
-                    )
+                    return <React.Fragment key={record.uuid}/>
                 }
             })}
         </Timeline>

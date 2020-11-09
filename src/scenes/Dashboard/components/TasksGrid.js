@@ -166,6 +166,7 @@ const GridColumn = (props) => {
             >
                 <Grid item>
                     <AddCircleButton
+                        tooltip={"Add task"}
                         disabled={props.disableAddButton}
                         onClick={props.onAddTaskClick}
                         className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
