@@ -4,11 +4,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
-import Button from "@material-ui/core/Button";
-import { withSnackbar } from 'notistack';
 import {createPostingSelector} from "../../redux/selectors";
 import {deleteUserRequest, restoreUserRequest} from "../../redux/users/UsersActions";
-import contextMenuStyles from "./contextMenuCSS";
+import {deleteButtonStyles} from "./contextMenuCSS";
 
 
 const initialState = {
@@ -18,7 +16,7 @@ const initialState = {
 
 
 export default function UserContextMenu(props) {
-    const classes = contextMenuStyles();
+    const classes = deleteButtonStyles();
     const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(["DELETE_USER", "RESTORE_USER"]);

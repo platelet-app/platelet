@@ -1,6 +1,7 @@
 import {makeStyles} from "@material-ui/core/styles";
+import React from "react";
 
-const contextMenuStyles = makeStyles(theme => ({
+export const deleteButtonStyles = makeStyles(theme => ({
     deleteButton: {
         display: "inherit",
         color: "rgb(235, 86, 75)"
@@ -10,4 +11,3 @@ const contextMenuStyles = makeStyles(theme => ({
     }
 }));
 
-export default contextMenuStyles;

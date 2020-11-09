@@ -4,9 +4,11 @@ import TaskCard from "./TaskCardsColoured"
 import {encodeUUID} from "../../../utilities";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import {AnimatePresence, motion} from "framer-motion"
+import {contextDots} from "../../../styles/common";
 
 
 const TaskItem = React.memo(function TaskItem(props) {
+    const contextClass = contextDots();
     console.log("yeeee")
     return (
         <AnimatePresence>
@@ -27,7 +29,7 @@ const TaskItem = React.memo(function TaskItem(props) {
                         {...props}
                     />
             </Link>
-            <div style={{cursor: 'context-menu', position: "absolute", bottom: 0, right: 0, zIndex: 1000}}>
+            <div className={contextClass.root}>
                 <TaskContextMenu
                     deleteDisabled={props.deleteDisabled}
                     {...props}

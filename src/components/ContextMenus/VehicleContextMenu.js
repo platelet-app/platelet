@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import {createPostingSelector} from "../../redux/selectors";
-import contextMenuStyles from "./contextMenuCSS";
+import {deleteButtonStyles, contextDots} from "./contextMenuCSS";
 
 
 const initialState = {
@@ -17,7 +17,7 @@ const initialState = {
 };
 
 export default function VehicleContextMenu(props) {
-    const classes = contextMenuStyles();
+    const classes = deleteButtonStyles();
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector(["DELETE_VEHICLE", "RESTORE_VEHICLE"]);
     const isPosting = useSelector(state => postingSelector(state));

@@ -134,3 +134,13 @@ export function PaddedPaper(props) {
         </Paper>
     )
 }
+
+export const contextDots = makeStyles({
+    root: {
+        cursor: 'context-menu',
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        zIndex: 1000
+    }
+})

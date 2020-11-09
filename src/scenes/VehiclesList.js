@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import {PaddedPaper} from '../styles/common';
+import {contextDots, PaddedPaper} from '../styles/common';
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
@@ -15,6 +15,7 @@ import VehicleCard from "../components/VehicleCard";
 
 
 function VehicleList() {
+    const contextClass = contextDots();
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector(["GET_VEHICLES"]);
     const isFetching = useSelector(state => loadingSelector(state));
@@ -62,13 +63,7 @@ function VehicleList() {
                                                       style={{textDecoration: 'none'}}>
                                                     <VehicleCard vehicle={vehicle}/>
                                                 </Link>
-                                                <div style={{
-                                                    cursor: 'context-menu',
-                                                    position: "absolute",
-                                                    bottom: 0,
-                                                    right: 0,
-                                                    zIndex: 1000
-                                                }}>
+                                                <div className={contextClass.root}>
                                                     <VehicleContextMenu vehicleUUID={vehicle.uuid}/>
                                                 </div>
                                             </div>

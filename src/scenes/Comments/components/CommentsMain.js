@@ -4,11 +4,12 @@ import React from "react";
 import NewCommentCard from "./NewCommentCard";
 import {useSelector} from "react-redux";
 import CommentContextMenu from "../../../components/ContextMenus/CommentContextMenu";
+import {contextDots} from "../../../styles/common"
 
 
 export default function CommentsMain(props) {
     const whoami = useSelector(state => state.whoami.user);
-
+    const classes = contextDots();
 
     return (
         <Grid container spacing={3} direction={"column"} alignItems={"center"} >
@@ -17,18 +18,19 @@ export default function CommentsMain(props) {
             ).map((comment) => (
                 <Grid item key={comment.uuid}>
                     <div style={{position: "relative"}}>
-                        <CommentCard author={comment.author} timeCreated={comment.time_created} public={comment.publicly_visible}>
+                        <CommentCard
+                            author={comment.author}
+                            timeCreated={comment.time_created}
+                            numEdits={comment.num_edits}
+                            public={comment.publicly_visible}>
                         {comment.body}
                     </CommentCard>
-                        <div style={{
-                            cursor: 'context-menu',
-                            position: "absolute",
-                            bottom: 0,
-                            right: 0,
-                            zIndex: 1000
-                        }}>
-                            <CommentContextMenu sidebar={props.sidebar} comment={comment}/>
-                        </div>
+                        {whoami.roles.includes("admin") || whoami.uuid === comment.author_uuid ?
+                            <div className={classes.root}>
+                                <CommentContextMenu
+                                    comment={comment}/>
+                            </div>
+                         : <></> }
                     </div>
                 </Grid>
             ))}

@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import {createPostingSelector} from "../../redux/selectors";
-import contextMenuStyles from "./contextMenuCSS";
+import {deleteButtonStyles} from "./contextMenuCSS";
 
 
 const initialState = {
@@ -18,10 +18,10 @@ const initialState = {
 
 
 export default function CommentContextMenu(props) {
-    const classes = contextMenuStyles();
+    const classes = deleteButtonStyles();
     const whoami = useSelector(state => state.whoami.user);
     const [state, setState] = React.useState(initialState);
-    const postingSelector = createPostingSelector(props.sidebar ?  ["DELETE_SIDEBAR_COMMENT", "RESTORE_SIDEBAR_COMMENT"] : ["DELETE_COMMENT", "RESTORE_COMMENT"]);
+    const postingSelector = createPostingSelector( ["DELETE_COMMENT", "RESTORE_COMMENT", "EDIT_COMMENT"]);
     const isPosting = useSelector(state => postingSelector(state));
 
     const dispatch = useDispatch();
@@ -47,7 +47,7 @@ export default function CommentContextMenu(props) {
     };
 
     return (
-        <>
+        <div className={props.className}>
             <IconButton
                 aria-label="more"
                 aria-controls="long-menu"
@@ -55,7 +55,7 @@ export default function CommentContextMenu(props) {
                 onClick={handleClick}
                 disabled={isPosting}
             >
-                <MoreVertIcon />
+                <MoreVertIcon/>
             </IconButton>
             <Menu
                 keepMounted
@@ -64,14 +64,19 @@ export default function CommentContextMenu(props) {
                 anchorReference="anchorPosition"
                 anchorPosition={
                     state.mouseY !== null && state.mouseX !== null
-                        ? { top: state.mouseY, left: state.mouseX }
+                        ? {top: state.mouseY, left: state.mouseX}
                         : undefined
                 }
             >
+                <MenuItem>
+                    Edit
+                </MenuItem>
                 <MenuItem
-                    className={(whoami.roles.includes("admin") || whoami.uuid !== props.comment.author_uuid) ? classes.deleteButton : classes.deleteButtonDisabled}
-                    onClick={onDelete}>Delete</MenuItem>
-            </Menu>
-        </>
+                    className={classes.deleteButton}
+                    onClick={onDelete}>
+                    Delete
+                </MenuItem>
+        </Menu>
+        </div>
     );
 }

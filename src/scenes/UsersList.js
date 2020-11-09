@@ -6,7 +6,7 @@ import {TextFieldControlled} from "../components/TextFields";
 import {AddCircleButton} from "../components/Buttons";
 import {addUserRequest} from "../redux/users/UsersActions";
 import UserContextMenu from "../components/ContextMenus/UserContextMenu";
-import {PaddedPaper} from "../styles/common";
+import {contextDots, PaddedPaper} from "../styles/common";
 import {createPostingSelector} from "../redux/selectors";
 
 function filterUsers(users, search) {
@@ -28,6 +28,7 @@ function filterUsers(users, search) {
 const initialSnack = {snack: () => {}}
 
 export default function UsersList(props) {
+    const contextClass = contextDots();
     const dispatch = useDispatch();
     const users = useSelector(state => state.users.users);
     const [filteredUsers, setFilteredUsers] = useState(users);
@@ -70,13 +71,7 @@ export default function UsersList(props) {
                                     <Grid key={user.uuid} item>
                                         <div style={{cursor: 'context-menu', position: "relative"}}>
                                             <UserCard key={user.uuid} user={user}/>
-                                            <div style={{
-                                                cursor: 'context-menu',
-                                                position: "absolute",
-                                                bottom: 0,
-                                                right: 0,
-                                                zIndex: 1000
-                                            }}>
+                                            <div className={contextClass.root}>
                                                 <UserContextMenu user={user}/>
                                             </div>
                                         </div>
