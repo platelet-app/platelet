@@ -17,7 +17,8 @@ function CommentCollection(props) {
         {editMode ?
             <CommentCardEditMode
                 body={props.body}
-                onCancel={() => setEditMode(false)}
+                uuid={props.uuid}
+                onReset={() => setEditMode(false)}
             />
             :
             <CommentCard

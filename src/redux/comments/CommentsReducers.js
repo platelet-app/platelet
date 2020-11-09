@@ -30,7 +30,7 @@ export function comments(state = initialState, action) {
             if (result) {
                 const updated_item = {...result, ...action.data.payload};
                 const index = state.comments.indexOf(result);
-                return update(state.comments, {[index]: {$set: updated_item}});
+                return {comments: update(state.comments, {[index]: {$set: updated_item}}), error: null};
             } else {
                 return state
             }
