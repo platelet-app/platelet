@@ -16,6 +16,10 @@ function CommentCollection(props) {
     <div style={{position: "relative"}}>
         {editMode ?
             <CommentCardEditMode
+                author={props.author}
+                timeCreated={props.timeCreated}
+                numEdits={props.numEdits}
+                public={props.publiclyVisible}
                 body={props.body}
                 uuid={props.uuid}
                 onReset={() => setEditMode(false)}
