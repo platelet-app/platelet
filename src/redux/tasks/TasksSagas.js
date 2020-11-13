@@ -2,9 +2,6 @@ import {
     debounce,
     call,
     put,
-    delay,
-    take,
-    fork,
     takeEvery,
     takeLatest,
     select,
@@ -42,7 +39,6 @@ import {
     updateTaskDropoffAddressSuccess,
     updateTaskPickupTimeSuccess,
     updateTaskDropoffTimeSuccess,
-    updateTaskAssignedRiderSuccess,
     updateTaskPrioritySuccess,
     updateTaskCancelledTimeSuccess,
     updateTaskRejectedTimeSuccess,
@@ -75,7 +71,6 @@ import {
     updateTaskDropoffAddressFailure,
     updateTaskPickupTimeFailure,
     updateTaskDropoffTimeFailure,
-    updateTaskAssignedRiderFailure,
     updateTaskPriorityFailure,
     updateTaskPatchFailure,
     updateTaskCancelledTimeFailure,
@@ -89,7 +84,7 @@ import {getApiControl, getWhoami} from "../Api"
 import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
 import React from "react";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
-import {findExistingTask, findExistingTaskParent} from "../../utilities";
+import {findExistingTask} from "../../utilities";
 import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
 
 function* postNewTask(action) {

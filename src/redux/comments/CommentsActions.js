@@ -10,6 +10,7 @@ export const RESTORE_COMMENT_REQUEST = 'RESTORE_COMMENT_REQUEST';
 export const RESTORE_COMMENT_FAILURE = 'RESTORE_COMMENT_FAILURE';
 export const RESTORE_COMMENT_SUCCESS = 'RESTORE_COMMENT_SUCCESS';
 export const RESTORE_COMMENT_FROM_SOCKET = 'RESTORE_COMMENT_FROM_SOCKET';
+export const UPDATE_COMMENT_FROM_SOCKET = 'UPDATE_COMMENT_FROM_SOCKET';
 export const UPDATE_COMMENT_REQUEST = 'UPDATE_COMMENT_REQUEST';
 export const UPDATE_COMMENT_FAILURE = 'UPDATE_COMMENT_FAILURE';
 export const UPDATE_COMMENT_SUCCESS = 'UPDATE_COMMENT_SUCCESS';
@@ -50,6 +51,10 @@ export function restoreCommentFailure(error) {
 
 export function restoreCommentFromSocket(data) {
     return { type: RESTORE_COMMENT_FROM_SOCKET, data }
+}
+
+export function updateCommentFromSocket(data) {
+    return { type: UPDATE_COMMENT_FROM_SOCKET, data }
 }
 
 export function deleteCommentRequest(data) {

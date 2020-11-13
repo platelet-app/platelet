@@ -7,7 +7,7 @@ import {
     DELETE_COMMENT_SUCCESS,
     RESTORE_COMMENT_SUCCESS,
     ADD_COMMENT_FROM_SOCKET,
-    DELETE_COMMENT_FROM_SOCKET, RESTORE_COMMENT_FROM_SOCKET
+    DELETE_COMMENT_FROM_SOCKET, RESTORE_COMMENT_FROM_SOCKET, UPDATE_COMMENT_FROM_SOCKET
 } from "./CommentsActions";
 
 const initialState = {
@@ -26,6 +26,7 @@ export function comments(state = initialState, action) {
                 }
             ], error: null};
         case UPDATE_COMMENT_SUCCESS:
+        case UPDATE_COMMENT_FROM_SOCKET:
             let result = state.comments.find(comment => comment.uuid === action.data.commentUUID);
             if (result) {
                 const updated_item = {...result, ...action.data.payload, num_edits: result.num_edits ? result.num_edits + 1 : 1};

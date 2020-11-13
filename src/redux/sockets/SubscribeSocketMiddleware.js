@@ -20,7 +20,11 @@ import {
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket
 } from "../tasks/TasksActions";
-import {addCommentFromSocket, deleteCommentFromSocket, restoreCommentFromSocket} from "../comments/CommentsActions";
+import {
+    addCommentFromSocket,
+    deleteCommentFromSocket,
+    restoreCommentFromSocket, updateCommentFromSocket
+} from "../comments/CommentsActions";
 
 export const createSubscribeSocketMiddleware = () => {
     let socket;
@@ -117,6 +121,7 @@ export const createSubscribeCommentsSocketMiddleware = () => {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
+                    console.log("FUUUUUUUUUUCK")
                     storeAPI.dispatch(subscribedCommentsResponseReceived(message));
                 });
                 socket.on("response", (message) => {
@@ -150,6 +155,12 @@ export const createSubscribeCommentsSocketMiddleware = () => {
                                 break;
                             case "RESTORE_COMMENT":
                                 storeAPI.dispatch(restoreCommentFromSocket(action.data.data))
+                                break;
+                            case "EDIT_COMMENT":
+                                storeAPI.dispatch(updateCommentFromSocket({
+                                    commentUUID: action.data.uuid,
+                                    payload: action.data.data
+                                }))
                                 break;
                             default:
                                 break;
