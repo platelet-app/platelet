@@ -7,8 +7,6 @@ import {
     watchGetTask,
     watchDeleteTask,
     watchRestoreTask,
-    watchUpdateTaskContactName,
-    watchUpdateTaskContactNumber,
     watchUpdateTaskDropoffAddress,
     watchUpdateTaskDropoffTime,
     watchUpdateTaskPickupTime,
@@ -21,7 +19,6 @@ import {
     watchRefreshTasks,
     watchRefreshMyTasks,
     watchUpdateTaskPatchFromServer,
-    watchUpdateTaskFromSocket,
     watchUpdateTaskDropoffAddressFromSaved, watchUpdateTaskRequesterContact
 } from "./tasks/TasksSagas"
 import {
@@ -71,7 +68,10 @@ import {
     watchUpdateTaskAddAssignedRider, watchUpdateTaskRemoveCoordinator,
     watchUpdateTaskRemoveRider
 } from "./taskAssignees/TaskAssigneesSagas";
-import {watchGetActionsRecord} from "./actionsRecord/ActionsRecordSagas";
+import {
+    watchGetActionsRecord,
+    watchGetTasksActionsRecord,
+} from "./actionsRecord/ActionsRecordSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -142,6 +142,7 @@ export default function* rootSaga() {
         call(watchUpdateUser),
         call(watchUploadUserProfilePicture),
         call(watchUpdateUserPassword),
-        call(watchGetActionsRecord)
+        call(watchGetActionsRecord),
+        call(watchGetTasksActionsRecord)
     ])
 }

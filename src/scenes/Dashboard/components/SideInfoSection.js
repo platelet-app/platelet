@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -7,8 +7,10 @@ import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CommentsSection from "../../Comments/CommentsSection";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {SwipeableDrawer} from "@material-ui/core";
+import ActionsRecord from "../../ActionsRecord/ActionsRecord";
+import {getTasksActionsRecordRequest} from "../../../redux/actionsRecord/ActionsRecordActions";
 
 
 const drawerWidth = 350;
@@ -53,8 +55,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PersistentDrawerRight(props) {
+    const dispatch = useDispatch();
     const classes = useStyles();
     const theme = useTheme();
+    const whoami = useSelector(state => state.whoami.user);
+    const actionsRecord = useSelector(state => state.tasksActionsRecord.actionsRecord);
+
+    function getActions() {
+        if (whoami.uuid)
+            dispatch(getTasksActionsRecordRequest(whoami.uuid))
+    }
+    useEffect(getActions, [whoami])
 
     return (
         <div className={classes.root}>
@@ -84,7 +95,7 @@ export default function PersistentDrawerRight(props) {
                     </IconButton>
                 </div>
                 <Divider/>
-                Log goes here
+                <ActionsRecord taskLinks={true} actions={actionsRecord}/>
             </SwipeableDrawer>
         </div>
     );

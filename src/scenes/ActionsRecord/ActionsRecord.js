@@ -7,8 +7,6 @@ import TimelineContent from '@material-ui/lab/TimelineContent';
 import TimelineDot from '@material-ui/lab/TimelineDot';
 import TimelineOppositeContent from '@material-ui/lab/TimelineOppositeContent';
 import Typography from '@material-ui/core/Typography';
-import {useDispatch, useSelector} from "react-redux";
-import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
 import moment from "moment";
 import Link from "@material-ui/core/Link";
 import {Link as RouterLink} from "react-router-dom";
@@ -30,18 +28,9 @@ const displayFields = [
 ]
 
 export default function ActionsRecord(props) {
-    const dispatch = useDispatch();
-    const records = useSelector(state => state.actionsRecord.actionsRecord);
-
-    function componentDidMount() {
-        dispatch(getActionsRecordRequest(props.parentUUID))
-    }
-
-    useEffect(componentDidMount, [])
-
     return (
         <Timeline>
-            {records.map((record, index, arr) => {
+            {props.actions.map((record, index, arr) => {
                 if (!record.data_fields)
                     return <React.Fragment key={record.uuid}/>
                 const fields = _.intersection(record.data_fields.split(","), displayFields);
@@ -64,6 +53,13 @@ export default function ActionsRecord(props) {
                                             style={{fontWeight: "bold"}}>{record.calling_user.display_name}</Typography>
                                     </Link>
                                     <Typography>{generateMessage(record, fields)}</Typography>
+                                    {props.taskLinks ?
+                                        <Link component={RouterLink}
+                                              to={"/task/" + encodeUUID(record.parent_uuid)}>
+                                            <Typography
+                                                style={{fontWeight: "bold"}}>View Task</Typography>
+                                        </Link> : <></>
+                                    }
                                 </React.Fragment>
                             </TimelineContent>
                         </TimelineItem>

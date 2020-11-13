@@ -27,7 +27,7 @@ import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 import {subscription, commentsSubscription, socketCommentsConnectionStatus, socketConnectionStatus} from "./sockets/SocketReducers";
 import {infoNotifications} from "./notifications/NotificationsReducers";
 import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
-import {actionsRecord} from "./actionsRecord/ActionsRecordReducers";
+import {actionsRecord, tasksActionsRecord} from "./actionsRecord/ActionsRecordReducers";
 
 function dashboardFilter(state = "", action) {
     switch (action.type) {
@@ -259,7 +259,8 @@ const rootReducer = combineReducers({
     socketCommentsConnectionStatus,
     infoNotifications,
     dashboardFilter,
-    actionsRecord
+    actionsRecord,
+    tasksActionsRecord
 });
 
 export default rootReducer

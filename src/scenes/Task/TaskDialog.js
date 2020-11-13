@@ -37,6 +37,7 @@ import Typography from "@material-ui/core/Typography";
 import NotFound from "../../ErrorComponents/NotFound";
 import {Skeleton} from "@material-ui/lab";
 import ActionsRecord from "../ActionsRecord/ActionsRecord";
+import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
 
 export default function TaskDialog(props) {
     const dispatch = useDispatch();
@@ -67,6 +68,7 @@ export default function TaskDialog(props) {
     const whoami = useSelector(state => state.whoami.user);
     const whoamiUUID = useSelector(state => state.whoami.user.uuid);
     const whoamiRoles = useSelector(state => state.whoami.user.roles);
+    const actionsRecord = useSelector(state => state.actionsRecord.actionsRecord);
 
     let history = useHistory();
     let taskUUID = null;
@@ -79,9 +81,9 @@ export default function TaskDialog(props) {
     const [editMode, setEditMode] = useState(true);
 
     function componentDidMount() {
-        dispatch(getTaskRequest(taskUUID));
+        dispatch(getTaskRequest(taskUUID))
+        dispatch(getActionsRecordRequest(taskUUID))
     }
-
     useEffect(componentDidMount, []);
 
     // TODO: add in collaborators once done on backend
@@ -351,7 +353,7 @@ export default function TaskDialog(props) {
                         </Grid>
                         <Grid item>
                             <PaddedPaper width={"830px"}>
-                                <ActionsRecord parentUUID={taskUUID}/>
+                                <ActionsRecord actions={actionsRecord}/>
                             </PaddedPaper>
                         </Grid>
                     </Grid>

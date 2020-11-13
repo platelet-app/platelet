@@ -350,6 +350,10 @@ class Log {
     async getRecords(object_id, order="newest") {
         return makeAxios(this.api_url, "logs/" + object_id + "?order=" + order, "GET", this.bearer);
     }
+
+    async getTasksRecords(user_uuid, order="newest") {
+        return makeAxios(this.api_url, "logs/" + user_uuid + "/user_tasks_log_record?order=" + order + "&return=others_only", "GET", this.bearer);
+    }
 }
 
 
