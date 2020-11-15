@@ -70,7 +70,7 @@ export const StyledTextLink = styled(Link)({
 
 export const StyledColumn = styled(Box)({
     border: 0,
-    boxShadow: '0 4px 6px 3px rgba(100, 100, 100, .3)',
+    boxShadow: '0 2px 3px 1px rgba(100, 100, 100, .3)',
     height: "100%",
     background: "rgba(255, 255, 255, 0.8)",
     padding: "20px"
@@ -81,7 +81,7 @@ export const StyledCard = styled(Card)({
     background: "rgb(252, 252, 252)",
     border: 0,
     borderRadius: 2,
-    boxShadow: '0 3px 5px 2px #7a7a7a',
+    boxShadow: '0 1px 2px 1px #7a7a7a',
     color: 'black',
     padding: '20px',
     height: '250px',
