@@ -11,9 +11,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {SwipeableDrawer} from "@material-ui/core";
 import ActionsRecord from "../../ActionsRecord/ActionsRecord";
 import {getTasksActionsRecordRequest} from "../../../redux/actionsRecord/ActionsRecordActions";
+import Typography from "@material-ui/core/Typography";
 
 
-const drawerWidth = 350;
+const drawerWidth = 400;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,6 +37,9 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
+    },
+    drawerHeaderTitle: {
+        fontStyle: "italic"
     },
     content: {
         flexGrow: 1,
@@ -92,6 +96,7 @@ export default function PersistentDrawerRight(props) {
                 <div className={classes.drawerHeader}>
                     <IconButton onClick={props.handleDrawerClose}>
                         {theme.direction === 'rtl' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
+                        <Typography className={classes.drawerHeaderTitle}>Recent Activity</Typography>
                     </IconButton>
                 </div>
                 <Divider/>

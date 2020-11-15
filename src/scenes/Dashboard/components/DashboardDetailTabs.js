@@ -10,7 +10,7 @@ import {createPostingSelector} from "../../../redux/selectors";
 import {clearTaskContextMenuSnack, setDashboardFilter} from "../../../redux/Actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import ChatIcon from "@material-ui/icons/Chat";
+import TimelineIcon from '@material-ui/icons/Timeline';
 import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
 import CollaboratorsSection from "./CollaboratorsSection";
@@ -167,13 +167,13 @@ export function DashboardDetailTabs(props) {
                                 </Grid>
                                 <Grid item>
 
-                                    <Tooltip title="View Log">
+                                    <Tooltip title="Recent Activity">
                                         <IconButton
                                             color="inherit"
                                             aria-label="open drawer"
                                             onClick={() => setRightSideBarOpen(!rightSideBarOpen)}
                                         >
-                                            <ChatIcon/>
+                                            <TimelineIcon/>
                                         </IconButton>
                                     </Tooltip>
                                 </Grid>
