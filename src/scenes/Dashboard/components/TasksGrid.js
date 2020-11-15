@@ -16,7 +16,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import IconButton from "@material-ui/core/IconButton";
 import {filterTasks} from "../utilities/functions";
 import {showHide} from "../../../styles/common";
-
+import {Typography} from "@material-ui/core";
+import Divider from "@material-ui/core/Divider";
 
 
 const getColumnTitle = key => {
@@ -152,33 +153,51 @@ const TaskGroup = props => {
 }
 
 const GridColumn = (props) => {
+    const useStyles = makeStyles({
+        header: {
+            fontWeight: "bold"
+        },
+        divider: {
+            width: "300px"
+        }
+    });
+    const classes = useStyles();
     const {show, hide} = showHide();
     const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
     return (
         <TasksKanbanColumn className={props.hidden ? hide : show}>
-            <h3>{props.title}</h3>
-            <Grid container
-                  spacing={0}
-                  direction={"column"}
-                  justify={"flex-start"}
-                  alignItems={"center"}
-                  key={props.title + "column"}
-            >
+            <Grid container direction={"column"} spacing={2} alignItems={"center"} justify={"flex-start"}>
                 <Grid item>
-                    <AddCircleButton
-                        tooltip={"Add task"}
-                        disabled={props.disableAddButton}
-                        onClick={props.onAddTaskClick}
-                        className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
-                    />
+                    <Typography className={classes.header}>{props.title}</Typography>
                 </Grid>
+                <Grid item>
+                    <Divider className={classes.divider}/>
+                </Grid>
+                <Grid item>
+                    <Grid container
+                          spacing={0}
+                          direction={"column"}
+                          justify={"flex-start"}
+                          alignItems={"center"}
+                          key={props.title + "column"}
+                    >
+                        <Grid item>
+                            <AddCircleButton
+                                tooltip={"Add task"}
+                                disabled={props.disableAddButton}
+                                onClick={props.onAddTaskClick}
+                                className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
+                            />
+                        </Grid>
 
-                {tasks.map(taskList => {
-                    return (
-                        <TaskGroup {...props} group={taskList} key={taskList[0].parent_id}/>
-                    )
-                })}
+                        {tasks.map(taskList => {
+                            return (
+                                <TaskGroup {...props} group={taskList} key={taskList[0].parent_id}/>
+                            )
+                        })}
 
+                    </Grid>
+                </Grid>
             </Grid>
         </TasksKanbanColumn>
     )
@@ -222,7 +241,6 @@ export default function TasksGrid(props) {
         }));
 
     }, [])
-
 
 
     function doSearch() {
