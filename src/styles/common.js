@@ -44,8 +44,9 @@ export function MainWindowContainer(props) {
             height: "100%"
         },
         content: {
-            maxWidth: "1920px",
-            height: "100%"
+            width: "1410px",
+            height: "100%",
+            margin: "auto"
         }
     });
     const classes = styles();
@@ -126,7 +127,7 @@ export function PaddedPaper(props) {
                 padding: padding
             }
         }>
-            <Grid container alignItems={"flex-start"} justify={"flex-start"}>
+            <Grid container direction={"row"} alignItems={"flex-start"} justify={"center"}>
                 <Grid item>
                     {props.children}
                 </Grid>

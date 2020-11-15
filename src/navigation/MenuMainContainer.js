@@ -17,7 +17,6 @@ import Grid from "@material-ui/core/Grid";
 import MainWindow from "./MainWindow";
 import {createLoadingSelector} from "../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
-import MenuSkeleton from "../SharedLoadingSkeletons/MenuSkeleton";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {encodeUUID} from "../utilities";
@@ -48,6 +47,10 @@ const useStyles = makeStyles(theme => ({
     root: {
         display: 'flex',
     },
+    appBarComponents: {
+        margin: "auto",
+        width: "1410px"
+    },
     drawer: {
         [theme.breakpoints.up('sm')]: {
             width: drawerWidth,
@@ -55,15 +58,8 @@ const useStyles = makeStyles(theme => ({
         },
     },
     appBar: {
-        marginLeft: drawerWidth,
         [theme.breakpoints.up('sm')]: {
             width: "100%",
-        },
-    },
-    menuButton: {
-        marginRight: theme.spacing(2),
-        [theme.breakpoints.up('sm')]: {
-            display: 'none',
         },
     },
     toolbar: theme.mixins.toolbar,
@@ -123,7 +119,7 @@ export function MenuMainContainer(props) {
         <div className={classes.root}>
             <CssBaseline/>
             <AppBar position="fixed" className={classes.appBar}>
-                <Toolbar>
+                <Toolbar className={classes.appBarComponents}>
                     <Grid container direction={"row"} spacing={3} justify={"flex-start"} alignItems={"center"}>
                         <Grid item>
                             <Typography variant="h6">

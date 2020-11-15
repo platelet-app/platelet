@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import '../../App.css';
 import 'typeface-roboto'
-import {Paper} from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 import {
     clearCurrentTask,
     getAllTasksRequest,
@@ -13,7 +14,6 @@ import TasksGrid from "./components/TasksGrid";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
-import {Typography} from "@material-ui/core";
 import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
@@ -22,23 +22,17 @@ import {
 } from "../../redux/sockets/SocketActions";
 import {getTaskUUIDs} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
-function GetViewTitle(props) {
-    switch (props.type) {
-        case "kanban":
-            return <Typography>Kanban</Typography>;
-        case "table":
-            return <Typography>Table</Typography>;
-        case "stats":
-            return <Typography>Statistics</Typography>;
-        default:
-            return <Typography></Typography>;
-
+const useStyles = makeStyles({
+    dashboard: {
+        width: "1410px"
     }
-}
+})
 
 function Dashboard(props) {
     const dispatch = useDispatch();
+    const classes = useStyles();
     const loadingSelector = createLoadingSelector(['GET_TASKS']);
     const isFetching = useSelector(state => loadingSelector(state));
     const isPostingNewTaskSelector = createPostingSelector(["ADD_TASK"]);
@@ -62,7 +56,7 @@ function Dashboard(props) {
             if (tasks === initialTasksState.tasks)
                 dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
         }
-        }
+    }
 
     useEffect(getTasks, [whoami])
 
@@ -74,12 +68,14 @@ function Dashboard(props) {
             dispatch(subscribeToUUIDs(taskUUIDs))
         }
     }
+
     useEffect(subscribeTasks, [tasks]);
 
     function subscribeAssignmentsToMe() {
         if (whoami.uuid)
             dispatch(subscribeToAssignments(whoami.uuid))
     }
+
     useEffect(subscribeAssignmentsToMe, [whoami]);
 
     function onAddNewTask() {
@@ -100,14 +96,14 @@ function Dashboard(props) {
         //    return <Redirect to={`/task/${encodeUUID("")}`}/>
     } else {
         return (
-            <Paper maxHeight={"100%"} maxWidth={"100%"}>
+            <Paper className={classes.dashboard} elevation={3}>
                 <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => setViewMode(newValue)}>
                     <TabPanel value={0} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
                                    modalView={"edit"}
                                    hideAddButton={!postPermission}
-                                   excludeColumnList={viewMode === 1 ? ["tasksNew", "tasksActive", "tasksPickedUp"] : ["tasksDelivered", "tasksCancelled", "tasksRejected"] }
+                                   excludeColumnList={viewMode === 1 ? ["tasksNew", "tasksActive", "tasksPickedUp"] : ["tasksDelivered", "tasksCancelled", "tasksRejected"]}
                         />
                     </TabPanel>
                 </DashboardDetailTabs>
