@@ -2,8 +2,9 @@ import React from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
+    addTaskRelayRequest,
     deleteTaskRequest,
-    updateTaskCancelledTimeRequest,
+    updateTaskCancelledTimeRequest, updateTaskDropoffAddressRequest,
     updateTaskDropoffTimeRequest,
     updateTaskPickupTimeRequest, updateTaskRejectedTimeRequest
 } from "../../redux/tasks/TasksActions";
@@ -20,6 +21,7 @@ const initialState = {
 };
 
 
+
 export default function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const [state, setState] = React.useState(initialState);
@@ -33,6 +35,27 @@ export default function TaskContextMenu(props) {
         "UPDATE_TASK_CANCELLED_TIME",
         "UPDATE_TASK_REJECTED_TIME"]);
     const isPosting = useSelector(state => postingSelector(state));
+
+    const {
+        dropoffAddress,
+        timeOfCall,
+        priority,
+        taskUUID,
+        requesterContact,
+        priorityID,
+        relayNext,
+        parentID
+    } = props
+
+    const addRelay = React.useCallback((data) => {
+        handleClose();
+        dispatch(addTaskRelayRequest(data));
+        dispatch(updateTaskDropoffAddressRequest({
+            taskUUID: data.relay_previous_uuid,
+            payload: {dropoff_address: null}
+        }));
+
+    }, [])
 
     const handleClick = event => {
         setState({
@@ -101,9 +124,27 @@ export default function TaskContextMenu(props) {
                 <MenuItem disabled={ (!!props.timeDroppedOff || !!!props.timePickedUp || !!props.timeRejected || !!props.timeCancelled) } onClick={onSelectDroppedOff}>Mark delivered</MenuItem>
                 <MenuItem disabled={ !!props.timeRejected || !!props.timeCancelled } onClick={onSelectRejected}>Mark rejected</MenuItem>
                 <MenuItem disabled={ !!props.timeCancelled || !!props.timeRejected } onClick={onSelectCancelled}>Mark cancelled</MenuItem>
+                <MenuItem
+                    disabled={!!relayNext}
+                    onClick={() => {
+                        addRelay({
+                            time_of_call: timeOfCall,
+                            requester_contact: requesterContact ? requesterContact : {
+                                name: "",
+                                telephone_number: ""
+                            },
+                            priority,
+                            priority_id: priorityID,
+                            dropoff_address: dropoffAddress,
+                            parent_id: parentID,
+                            relay_previous_uuid: taskUUID
+                        })
+                    }}>
+                    Add relay
+                </MenuItem>
                 <MenuItem className={props.deleteDisabled ? classes.deleteButtonDisabled : classes.deleteButton} onClick={onDelete}>Delete</MenuItem>
             </Menu>
-            </>
+        </>
     );
 }
 

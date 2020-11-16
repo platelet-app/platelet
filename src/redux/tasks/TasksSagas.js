@@ -105,12 +105,28 @@ export function* watchPostNewTask() {
 }
 
 function* postNewTaskRelay(action) {
+    const emptyTask = {
+        time_of_call: new Date().toISOString(),
+        time_created: new Date().toISOString(),
+        requester_contact: {
+            name: "",
+            telephone_number: ""
+        },
+        assigned_riders: [],
+        assigned_coordinators: [],
+        time_picked_up: null,
+        time_dropped_off: null,
+        time_rejected: null,
+        time_cancelled: null
+    };
+
     try {
         const api = yield select(getApiControl);
         const whoami = yield select(getWhoami);
-        const result = yield call([api, api.tasks.createTask], {...action.data});
-        const task = {...action.data, author_uuid: whoami.uuid, "uuid": result.uuid};
+        const result = yield call([api, api.tasks.createTask], {...emptyTask, ...action.data});
+        const task = {...emptyTask, ...action.data, author_uuid: whoami.uuid, "uuid": result.uuid};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: task.author_uuid}}))
+        yield put(updateTaskSuccess({taskUUID: action.data.relay_previous_uuid, payload: {relay_next: task }}))
         yield put(addTaskRelaySuccess(task));
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {

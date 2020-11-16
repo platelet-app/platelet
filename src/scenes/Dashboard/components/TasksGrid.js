@@ -60,16 +60,6 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const emptyTask = {
-    time_created: new Date().toISOString(),
-    assigned_riders: [],
-    assigned_coordinators: [],
-    time_picked_up: null,
-    time_dropped_off: null,
-    time_rejected: null,
-    time_cancelled: null
-};
-
 
 const TaskGroup = props => {
     const classes = props.classes;
@@ -90,7 +80,8 @@ const TaskGroup = props => {
             assigned_riders,
             requester_contact,
             priority_id,
-            parent_id
+            parent_id,
+            relay_next
         } = task;
         const relayStatus = (arr.length - 1 !== i)
 
@@ -111,7 +102,9 @@ const TaskGroup = props => {
                             priority={priority}
                             patch={patch}
                             assignedRiders={assigned_riders}
+                            relayNext={relay_next}
                             taskUUID={uuid}
+                            parentID={parent_id}
                             view={props.modalView}
                             deleteDisabled={props.deleteDisabled}/>
                         <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
@@ -126,7 +119,6 @@ const TaskGroup = props => {
                                         className={"hidden-button"}
                                         onClick={() => {
                                             props.onAddRelayClick({
-                                                ...emptyTask,
                                                 time_of_call,
                                                 requester_contact: requester_contact ? requester_contact : {
                                                     name: "",

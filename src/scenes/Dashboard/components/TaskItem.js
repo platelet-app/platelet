@@ -9,11 +9,10 @@ import {contextDots} from "../../../styles/common";
 
 const TaskItem = React.memo(function TaskItem(props) {
     const contextClass = contextDots();
-    console.log("yeeee")
     return (
         <AnimatePresence>
 
-        <motion.div
+            <motion.div
             animate={{scale: [0.6, 1]}}
             transition={{duration: 0.5}}
             exit={{scale: [1, 0]}}
