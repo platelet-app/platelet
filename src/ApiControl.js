@@ -114,6 +114,10 @@ class Vehicle {
     }
 
     async updateVehicle(vehicle_id, input_data) {
+        return makeAxios(this.api_url, "vehicle/" + vehicle_id, "PATCH", this.bearer, "application/json", input_data)
+    }
+
+    async putVehicle(vehicle_id, input_data) {
         return makeAxios(this.api_url, "vehicle/" + vehicle_id, "PUT", this.bearer, "application/json", input_data)
     }
 
@@ -169,6 +173,10 @@ class Comment {
     }
 
     async updateComment(comment_id, input_data) {
+        return makeAxios(this.api_url, "comment/" + comment_id, "PATCH", this.bearer, "application/json", input_data)
+    }
+
+    async putComment(comment_id, input_data) {
         return makeAxios(this.api_url, "comment/" + comment_id, "PUT", this.bearer, "application/json", input_data)
     }
 
@@ -200,6 +208,10 @@ class Task {
     }
 
     async updateTask(task_id, input_data) {
+        return makeAxios(this.api_url, "task/" + task_id, "PATCH", this.bearer, "application/json", input_data)
+    }
+
+    async putTask(task_id, input_data) {
         return makeAxios(this.api_url, "task/" + task_id, "PUT", this.bearer, "application/json", input_data)
     }
 
@@ -259,6 +271,10 @@ class Deliverable {
     }
 
     async updateDeliverable(deliverable_id, input_data) {
+        return makeAxios(this.api_url, "deliverable/" + deliverable_id, "PATCH", this.bearer, "application/json", input_data)
+    }
+
+    async putDeliverable(deliverable_id, input_data) {
         return makeAxios(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
     }
 
@@ -277,46 +293,6 @@ class Deliverable {
     }
 }
 
-class Session {
-    constructor(bearer, api_url) {
-        this.bearer = bearer;
-        this.users = undefined;
-        this.api_url = api_url;
-    }
-
-    async getSessions(user_id) {
-        return makeAxios(this.api_url, "sessions/" + user_id, "GET", this.bearer)
-    }
-
-    async getSession(session_id) {
-        return makeAxios(this.api_url, "session/" + session_id, "GET", this.bearer)
-    }
-
-    async getStatistics(session_id) {
-        return makeAxios(this.api_url, "session/" + session_id + "/statistics", "GET", this.bearer)
-    }
-
-    async createSession(input_data) {
-        if (input_data) {
-            return makeAxios(this.api_url, "sessions", "POST", this.bearer, "application/json", input_data)
-        }
-        else  {
-            return makeAxios(this.api_url, "sessions", "POST", this.bearer)
-        }
-    }
-    async deleteSession(session_id) {
-        return makeAxios(this.api_url, "session/" + session_id, "DELETE", this.bearer, "application/json")
-    }
-
-    async restoreSession(session_id) {
-        return makeAxios(this.api_url, "session/" + session_id + "/restore", "PUT", this.bearer, "application/json")
-    }
-
-    async addSessionCollaborator(session_id, input_data) {
-        return makeAxios(this.api_url, "session/" + session_id + "/assign_collaborator", "PUT", this.bearer, "application/json", input_data)
-    }
-
-}
 
 class Priority {
     constructor(bearer, api_url){
@@ -378,6 +354,10 @@ class User {
     }
 
     async updateUser(user_id, input_data) {
+        return makeAxios(this.api_url, "user/" + user_id, "PATCH", this.bearer, "application/json", input_data)
+    }
+
+    async putUser(user_id, input_data) {
         return makeAxios(this.api_url, "user/" + user_id, "PUT", this.bearer, "application/json", input_data)
     }
 
@@ -427,7 +407,6 @@ class Control {
         if (bearer && api_url) {
             this.initialiseClasses(bearer)
         } else {
-            this.sessions = undefined;
             this.comments = undefined;
             this.tasks = undefined;
             this.vehicles = undefined;
@@ -586,7 +565,6 @@ class Control {
         this.bearer = "";
         this.token = "";
         this.users = undefined;
-        this.sessions = undefined;
         this.comments = undefined;
         this.tasks = undefined;
         this.deliverables = undefined;
@@ -601,7 +579,6 @@ class Control {
         this.bearer = "Bearer " + token;
         axios.defaults.headers.common['Authorization'] = this.bearer
         this.users = new User(this.bearer, this.api_url);
-        this.sessions = new Session(this.bearer, this.api_url);
         this.comments = new Comment(this.bearer, this.api_url);
         this.tasks = new Task(this.bearer, this.api_url);
         this.deliverables = new Deliverable(this.bearer, this.api_url);
