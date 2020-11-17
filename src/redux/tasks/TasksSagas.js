@@ -87,11 +87,29 @@ import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {findExistingTask} from "../../utilities";
 import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
 
+
+const emptyTask = {
+    time_of_call: new Date().toISOString(),
+    time_created: new Date().toISOString(),
+    requester_contact: {
+        name: "",
+        telephone_number: ""
+    },
+    assigned_riders: [],
+    assigned_coordinators: [],
+    time_picked_up: null,
+    time_dropped_off: null,
+    time_rejected: null,
+    time_cancelled: null
+};
+
+
 function* postNewTask(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data);
-        const task = {...action.data, "uuid": result.uuid, parent_id: result.parent_id};
+        const parentID = result.parent_id ? parseInt(result.parent_id) : 0
+        const task = {...action.data, "uuid": result.uuid, parent_id: parentID};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: result.author_uuid}}))
         yield put(addTaskSuccess(task));
         yield put(subscribeToUUID(task.uuid))
@@ -105,26 +123,12 @@ export function* watchPostNewTask() {
 }
 
 function* postNewTaskRelay(action) {
-    const emptyTask = {
-        time_of_call: new Date().toISOString(),
-        time_created: new Date().toISOString(),
-        requester_contact: {
-            name: "",
-            telephone_number: ""
-        },
-        assigned_riders: [],
-        assigned_coordinators: [],
-        time_picked_up: null,
-        time_dropped_off: null,
-        time_rejected: null,
-        time_cancelled: null
-    };
-
     try {
         const api = yield select(getApiControl);
         const whoami = yield select(getWhoami);
         const result = yield call([api, api.tasks.createTask], {...emptyTask, ...action.data});
-        const task = {...emptyTask, ...action.data, author_uuid: whoami.uuid, "uuid": result.uuid};
+        const orderInRelay = result.order_in_relay ? parseInt(result.order_in_relay) : 0;
+        const task = {...emptyTask, ...action.data, author_uuid: whoami.uuid, uuid: result.uuid, order_in_relay: orderInRelay};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: task.author_uuid}}))
         yield put(updateTaskSuccess({taskUUID: action.data.relay_previous_uuid, payload: {relay_next: task }}))
         yield put(addTaskRelaySuccess(task));

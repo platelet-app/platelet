@@ -114,6 +114,7 @@ export const initialTasksState = {
 
 function sortAndConcat(tasks, data) {
     const {taskType, taskGroup} = determineTaskType(data);
+
     const result = [...tasks[taskType], taskGroup];
     const sort = taskType === "tasksNew" ? (a, b) => b[0].parent_id - a[0].parent_id : (a, b) => a[0].parent_id - b[0].parent_id
     result.sort(sort);
