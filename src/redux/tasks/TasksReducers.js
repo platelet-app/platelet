@@ -121,13 +121,6 @@ function sortAndConcat(tasks, data) {
     return {taskType, result};
 }
 
-function recursiveTaskUpdate(task, previousTask, taskUUID, payload) {
-    if (task.uuid === taskUUID) {
-        return {...previousTask, relay_next: {...task, ...payload}}
-    } else if (task.relay_next) {
-        return {...previousTask, relay_next: recursiveTaskUpdate(task.relay_next, task, taskUUID, payload)}
-    }
-}
 
 function groupRelaysTogether(tasks) {
     let groupedTasks = {};
@@ -198,7 +191,7 @@ export function tasks(state = initialTasksState, action) {
                 newTasksRestore = state.tasks;
             }
             const sortedRestore = sortAndConcat(newTasksRestore, newGroupRestore)
-            const finalTasksRestore = update(state.tasks, {[sortedRestore.taskType]: {$set: sortedRestore.result}});
+            const finalTasksRestore = update(newTasksRestore, {[sortedRestore.taskType]: {$set: sortedRestore.result}});
             return {tasks: finalTasksRestore, error: null}
         case ADD_TASK_RELAY_SUCCESS:
         case ADD_TASK_RELAY_FROM_SOCKET:
@@ -360,7 +353,7 @@ export function tasks(state = initialTasksState, action) {
                 } else {
                     newTask = {...newTask, relay_next: null}
                 }
-                // add the final result to the list, prev_task set to current task, increment counter
+                // add the final result to the list, increment counter
                 newGroupRelayFixed.push(newTask)
                 count++;
             }
