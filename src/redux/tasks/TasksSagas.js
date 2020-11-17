@@ -17,7 +17,7 @@ import {
     getTaskNotFound,
     ADD_TASK_RELAY_REQUEST,
     addTaskRelaySuccess,
-    addTaskRelayFailure
+    addTaskRelayFailure, resetGroupRelayUUIDs
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -143,8 +143,13 @@ function* deleteTask(action) {
     try {
         const restoreAction = () => restoreTaskRequest(action.data);
         const api = yield select(getApiControl);
+        const currentTasks = yield select((state) => state.tasks.tasks);
         yield call([api, api.tasks.deleteTask], action.data);
+        const beforeDelete = yield findExistingTask(currentTasks, action.data)
         yield put(deleteTaskSuccess(action.data))
+        if (beforeDelete) {
+            yield put(resetGroupRelayUUIDs(beforeDelete.parent_id))
+        }
         yield put(unsubscribeFromUUID(action.data))
         yield put(displayInfoNotification("Task deleted", restoreAction))
     } catch (error) {
@@ -162,6 +167,11 @@ function* restoreTask(action) {
         yield call([api, api.tasks.restoreTask], action.data);
         const result = yield call([api, api.tasks.getTask], action.data);
         yield put(restoreTaskSuccess(result))
+        const currentTasks = yield select((state) => state.tasks.tasks);
+        const afterRestore = yield findExistingTask(currentTasks, action.data)
+        if (afterRestore) {
+            yield put(resetGroupRelayUUIDs(afterRestore.parent_id))
+        }
         yield put(subscribeToUUID(result.uuid))
     } catch (error) {
         yield put(restoreTaskFailure(error))
