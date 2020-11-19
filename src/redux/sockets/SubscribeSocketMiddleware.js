@@ -11,11 +11,11 @@ import {
     SOCKET_UNSUBSCRIBE_UUID,
     SOCKET_UNSUBSCRIBE_UUID_MANY, subscribedAssignmentsResponseReceived,
     subscribedCommentsResponseReceived,
-    subscribedResponseReceived, subscribeToUUID
+    subscribedResponseReceived, subscribeToUUID, unsubscribeFromUUID
 } from "./SocketActions";
 import {findExistingTask, findExistingTaskParentByID, getTabIdentifier} from "../../utilities";
 import {
-    addTaskFromSocket, addTaskRelayFromSocket, deleteTaskFromSocket, restoreTaskFromSocket,
+    addTaskFromSocket, addTaskRelayFromSocket, deleteTaskFromSocket, resetGroupRelayUUIDs, restoreTaskFromSocket,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket
@@ -25,6 +25,7 @@ import {
     deleteCommentFromSocket,
     restoreCommentFromSocket, updateCommentFromSocket
 } from "../comments/CommentsActions";
+import {put, select} from "redux-saga/effects";
 
 export const createSubscribeSocketMiddleware = () => {
     let socket;
@@ -92,14 +93,25 @@ export const createSubscribeSocketMiddleware = () => {
                                 }))
                                 break;
                             case "DELETE_TASK":
+                                const curTasks = storeAPI.getState().tasks.tasks;
+                                const beforeDeleted = findExistingTask(curTasks, action.data.object_uuid)
                                 storeAPI.dispatch(deleteTaskFromSocket(
                                     action.data.object_uuid
                                 ))
+                                if (beforeDeleted) {
+                                    storeAPI.dispatch(resetGroupRelayUUIDs(beforeDeleted.parent_id))
+                                }
                                 break;
                             case "RESTORE_TASK":
                                 storeAPI.dispatch(restoreTaskFromSocket(
                                     action.data.data
                                 ))
+                                const currentTasks = storeAPI.getState().tasks.tasks;
+                                const afterRestore = findExistingTask(currentTasks, action.data.data.uuid)
+                                if (afterRestore) {
+                                    storeAPI.dispatch(resetGroupRelayUUIDs(afterRestore.parent_id))
+                                }
+                                storeAPI.dispatch(subscribeToUUID(action.data.data.uuid))
                                 break;
                             default:
                                 break;
@@ -121,7 +133,6 @@ export const createSubscribeCommentsSocketMiddleware = () => {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
-                    console.log("FUUUUUUUUUUCK")
                     storeAPI.dispatch(subscribedCommentsResponseReceived(message));
                 });
                 socket.on("response", (message) => {
@@ -216,6 +227,7 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                                     storeAPI.dispatch(addTaskRelayFromSocket({
                                         ...action.data.data
                                     }))
+                                    storeAPI.dispatch(resetGroupRelayUUIDs(action.data.data.parent_id));
                                 } else {
                                     storeAPI.dispatch(addTaskFromSocket({
                                         ...action.data.data

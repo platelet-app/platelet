@@ -17,7 +17,7 @@ import {
     getTaskNotFound,
     ADD_TASK_RELAY_REQUEST,
     addTaskRelaySuccess,
-    addTaskRelayFailure, resetGroupRelayUUIDs
+    addTaskRelayFailure, resetGroupRelayUUIDs, groupRelaysTogether
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -337,7 +337,9 @@ function* updateTaskCancelledTime(action) {
         });
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskCancelledTimeSuccess(action.data))
+        // set the relays all to null to prevent visual indication on the grid
+        yield put(updateTaskCancelledTimeSuccess({taskUUID: action.data.taskUUID, payload: {...action.data.payload, relay_previous_uuid: null, relay_next: null, relay_previous: null}}))
+        yield put(resetGroupRelayUUIDs(task.parent_id))
         if (currentValue === null)
             // only notify if marking rejected for the first time
             yield put(displayInfoNotification("Task marked cancelled", restoreAction))
@@ -358,7 +360,12 @@ function* updateTaskRejectedTime(action) {
         });
         const api = yield select(getApiControl);
         yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskRejectedTimeSuccess(action.data))
+        // set the relays all to null to prevent visual indication on the grid
+        yield put(updateTaskRejectedTimeSuccess({taskUUID: action.data.taskUUID, payload: {...action.data.payload, relay_previous_uuid: null, relay_next: null, relay_previous: null}}))
+        // then recalculate it
+        yield put(groupRelaysTogether())
+        yield put(resetGroupRelayUUIDs(task.parent_id))
+
         if (currentValue === null)
             // only notify if marking rejected for the first time
             yield put(displayInfoNotification("Task marked rejected", restoreAction))

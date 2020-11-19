@@ -88,6 +88,7 @@ export const REFRESH_MY_TASKS_FAILURE = 'REFRESH_MY_TASKS_FAILURE';
 export const REFRESH_MY_TASKS_NOTFOUND = 'REFRESH_MY_TASKS_NOTFOUND';
 
 export const RESET_GROUP_RELAY_UUIDS = "RESET_GROUP_RELAY_UUIDS";
+export const GROUP_RELAYS_TOGETHER = "GROUP_RELAYS_TOGETHER";
 
 export function restoreTaskRequest(data) {
     return { type: RESTORE_TASK_REQUEST, data }
@@ -388,5 +389,9 @@ export function refreshAllMyTasksNotFound(error) {
 
 export function resetGroupRelayUUIDs(data) {
     return { type: RESET_GROUP_RELAY_UUIDS, data }
+}
+
+export function groupRelaysTogether() {
+    return { type: GROUP_RELAYS_TOGETHER }
 }
 
