@@ -155,20 +155,27 @@ function determineTaskFinishedState(task) {
 }
 
 export function determineTaskType(taskGroup) {
-    if (taskGroup.length === 0)
-        return null;
-    if (taskGroup.some(t => t.time_cancelled)) {
-        return { taskType: "tasksCancelled", taskGroup };
-    } else if (taskGroup.some(t => t.time_rejected)) {
-        return { taskType: "tasksRejected", taskGroup };
-    } else if (!taskGroup.some(t => t.assigned_riders.length)) {
-        return { taskType: "tasksNew", taskGroup };
+    const result = {};
+    // sort out cancelled and rejected first
+    const cancelledRejected = taskGroup.filter(t => !!t.time_rejected || !!t.time_cancelled);
+    const filteredCancelledRejected = taskGroup.filter(t => !!!t.time_rejected && !!!t.time_cancelled);
+    for (const t of cancelledRejected) {
+        if (!!t.time_cancelled) {
+            result['tasksCancelled'] = result['tasksCancelled'] ? [...result['tasksCancelled'], t] : [t]
+        } else if (!!t.time_rejected) {
+            result['tasksRejected'] = result['tasksRejected'] ? [...result['tasksRejected'], t] : [t]
+        }
+    }
+    if (filteredCancelledRejected.length === 0) {
+        return result;
+    } else if (!filteredCancelledRejected.some(t => t.assigned_riders.length)) {
+        return { ...result, tasksNew: filteredCancelledRejected };
     } else if ((taskGroup.some(t => t.assigned_riders.length) && !taskGroup.some(t => !!t.time_picked_up))) {
-        return { taskType: "tasksActive", taskGroup };
+        return { ...result, tasksActive: filteredCancelledRejected };
     } else if ((taskGroup.some(t => t.assigned_riders.length)) && taskGroup.some(t => !!t.time_picked_up) && !!!taskGroup[taskGroup.length - 1].time_dropped_off) {
-        return { taskType: "tasksPickedUp",  taskGroup };
+        return { ...result, tasksPickedUp: filteredCancelledRejected };
     } else if (!!taskGroup[taskGroup.length - 1].time_dropped_off) {
-        return { taskType: "tasksDelivered", taskGroup };
+        return { ...result, tasksDelivered: filteredCancelledRejected };
     } else {
         return null;
     }
@@ -190,6 +197,9 @@ export function findExistingTaskParentByID(tasks, ID) {
     let index = undefined;
     let taskGroup = undefined;
     for (const [type, value] of Object.entries(tasks)) {
+        if (type === "tasksCancelled" || type === "tasksRejected") {
+            continue;
+        }
         taskGroup = value.find((t) => t[0].parent_id === ID);
         if (taskGroup) {
             index = value.indexOf(taskGroup);
