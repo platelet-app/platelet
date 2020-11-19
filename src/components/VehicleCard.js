@@ -10,7 +10,7 @@ export default function VehicleCard(props) {
             <div key={props.vehicle.uuid}>
                 <StyledSharpCard style={{height: "170px"}}>
                     <CardContent>
-                        <Grid containerspacing={1} direction={"column"}>
+                        <Grid container spacing={1} direction={"column"}>
                             <CardItem label={"Name"}>{props.vehicle.name ? props.vehicle.name : ""}</CardItem>
                             <CardItem
                                 label={"Manufacturer"}>{props.vehicle.manufacturer ? props.vehicle.manufacturer : ""}</CardItem>

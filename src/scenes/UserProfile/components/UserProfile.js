@@ -83,7 +83,10 @@ export default function UserProfile(props) {
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.name}
-                            readOnly={!editMode}
+                            InputProps={{
+                                readOnly: !editMode,
+                                disableUnderline: !editMode
+                            }}
                             label={"Name"}
                             id={"users-name"}
                             onChange={(e) => {
@@ -94,7 +97,10 @@ export default function UserProfile(props) {
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.display_name}
-                            readOnly={!editMode}
+                            InputProps={{
+                                readOnly: !editMode,
+                                disableUnderline: !editMode
+                            }}
                             disabled={isPosting}
                             label={"Display Name"}
                             id={"display-name"}
@@ -106,7 +112,10 @@ export default function UserProfile(props) {
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.email}
-                            readOnly={!editMode}
+                            InputProps={{
+                                readOnly: !editMode,
+                                disableUnderline: !editMode
+                            }}
                             disabled={isPosting}
                             label={"Email Address"}
                             id={"email-address"}
@@ -118,7 +127,10 @@ export default function UserProfile(props) {
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.contact_number}
-                            readOnly={!editMode}
+                            InputProps={{
+                                readOnly: !editMode,
+                                disableUnderline: !editMode
+                            }}
                             disabled={isPosting}
                             label={"Contact Number"}
                             id={"contact-number"}

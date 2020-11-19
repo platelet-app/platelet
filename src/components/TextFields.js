@@ -5,14 +5,11 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 export function TextFieldControlled(props) {
     const [currentValue, setCurrentValue] = useState(props.forceUppercase && props.value ? props.value.toUpperCase() : props.value);
+    const {forceUppercase, onChange, ...newProps} = props;
     return (
         <TextField
-            {...props}
-            key={props.key}
+            {...newProps}
             margin="dense"
-            multiline={props.multiline}
-            id={props.id}
-            label={props.label}
             onKeyUp={(ev) => {
                 switch(ev.key) {
                     case "Enter": {
@@ -32,18 +29,11 @@ export function TextFieldControlled(props) {
                 }
             }}
             value={currentValue || ''}
-            InputProps={{
-                ...props.InputProps,
-                maxLength: props.maxLength,
-                readOnly: props.readOnly,
-                disableUnderline: props.readOnly
-            }}
             onChange={e => {
-                setCurrentValue(props.forceUppercase ? e.target.value.toUpperCase() : e.target.value);
-                if (props.onChange)
-                    props.onChange(e);
+                setCurrentValue(forceUppercase ? e.target.value.toUpperCase() : e.target.value);
+                if (onChange)
+                    onChange(e);
             }}
-            disabled={props.disabled ? props.disabled : false}
         />
     )
 }
@@ -98,11 +88,6 @@ export function TextFieldUncontrolled(props) {
             }}
             margin="dense"
             value={props.value || ''}
-            InputProps={{
-                maxLength: props.maxLength,
-                readOnly: props.readOnly,
-                disableUnderline: props.readOnly
-            }}
         />
     )
 }

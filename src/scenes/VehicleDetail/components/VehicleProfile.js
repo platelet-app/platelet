@@ -106,7 +106,10 @@ export default function VehicleProfile(props) {
                                             value={state.name}
                                             label={"Name"}
                                             id={"vehicle-name"}
-                                            readOnly={!editMode}
+                                            InputProps={{
+                                                readOnly: !editMode,
+                                                disableUnderline: !editMode
+                                            }}
                                             onChange={(e) => {
                                                 setState({...state, name: e.target.value})
                                             }}/>
@@ -117,7 +120,10 @@ export default function VehicleProfile(props) {
                                             value={state.manufacturer}
                                             label={"Manufacturer"}
                                             id={"vehicle-manufacturer"}
-                                            readOnly={!editMode}
+                                            InputProps={{
+                                                readOnly: !editMode,
+                                                disableUnderline: !editMode
+                                            }}
                                             onChange={(e) => {
                                                 setState({...state, manufacturer: e.target.value})
                                             }}/>
@@ -128,7 +134,10 @@ export default function VehicleProfile(props) {
                                             value={state.model}
                                             label={"Model"}
                                             id={"vehicle-model"}
-                                            readOnly={!editMode}
+                                            InputProps={{
+                                                readOnly: !editMode,
+                                                disableUnderline: !editMode
+                                            }}
                                             onChange={(e) => {
                                                 setState({...state, model: e.target.value})
                                             }}/>
@@ -139,11 +148,13 @@ export default function VehicleProfile(props) {
                                             value={state.registration_number}
                                             label={"Registration"}
                                             id={"vehicle-registration"}
-                                            readOnly={!editMode}
-                                            maxLength={10}
-                                            forceUppercase={true}
+                                            InputProps={{
+                                                readOnly: !editMode,
+                                                disableUnderline: !editMode,
+                                                maxLength: 10
+                                            }}
                                             onChange={(e) => {
-                                                setState({...state, registration_number: e.target.value})
+                                                setState({...state, registration_number: e.target.value.toUpperCase()})
                                             }}/>
                                     </Grid>
                                     {divider}

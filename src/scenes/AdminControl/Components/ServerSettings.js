@@ -68,7 +68,10 @@ export function ServerSettings(props) {
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.organisation_name}
-                            readOnly={!editMode}
+                            InputProps={{
+                                readOnly: !editMode,
+                                disableUnderline: !editMode
+                            }}
                             label={"Organisation Name"}
                             id={"organisation-name"}
                             onChange={(e) => {
@@ -79,7 +82,10 @@ export function ServerSettings(props) {
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.hostname}
-                            readOnly={!editMode}
+                            InputProps={{
+                                readOnly: !editMode,
+                                disableUnderline: !editMode
+                            }}
                             disabled={isPosting}
                             label={"Hostname"}
                             id={"hostname"}

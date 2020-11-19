@@ -78,7 +78,6 @@ export default function AddressDetailsCollapsible(props){
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="address-content"
-                        id="address-header"
                     >
                         <Typography>{props.label ? props.label + " - " + line1 : line1}</Typography>
                     </AccordionSummary>
@@ -86,7 +85,6 @@ export default function AddressDetailsCollapsible(props){
                         <Grid container spacing={0} direction={"column"} alignItems={"flex-start"} justify={"center"}>
                             <Grid item>
                             <TextFieldUncontrolled
-                                id={"what3words"}
                                 label={"what3words"}
                                 value={what3words}
                                 onChange={e => {
@@ -96,7 +94,6 @@ export default function AddressDetailsCollapsible(props){
                             </Grid>
                             <Grid item>
                             <TextFieldUncontrolled
-                                id={"ward"}
                                 label={"Ward"}
                                 value={ward}
                                 onChange={e => {
@@ -106,7 +103,6 @@ export default function AddressDetailsCollapsible(props){
                             </Grid>
                             <Grid item>
                             <TextFieldUncontrolled
-                                id={"line1"}
                                 label={"Line one"}
                                 value={line1}
                                 onChange={e => {
@@ -116,7 +112,6 @@ export default function AddressDetailsCollapsible(props){
                             </Grid>
                             <Grid item>
                             <TextFieldUncontrolled
-                                id={"line2"}
                                 label={"Line two"}
                                 value={line2}
                                 onChange={e => {
@@ -126,7 +121,6 @@ export default function AddressDetailsCollapsible(props){
                             </Grid>
                             <Grid item>
                             <TextFieldUncontrolled
-                                id={"town"}
                                 label={"Town"}
                                 value={town}
                                 onChange={e => {
@@ -136,7 +130,6 @@ export default function AddressDetailsCollapsible(props){
                             </Grid>
                             <Grid item>
                             <TextFieldUncontrolled
-                                id={"county"}
                                 label={"County"}
                                 value={county}
                                 onChange={e => {
@@ -146,7 +139,6 @@ export default function AddressDetailsCollapsible(props){
                             </Grid>
                             <Grid item>
                             <TextFieldUncontrolled
-                                id={"postcode"}
                                 label={"Postcode"}
                                 value={postcode}
                                 onChange={e => {
@@ -156,7 +148,6 @@ export default function AddressDetailsCollapsible(props){
                             </Grid>
                             <Grid item>
                             <TextFieldUncontrolled
-                                id={"county"}
                                 label={"Country"}
                                 value={country}
                                 onChange={e => {
