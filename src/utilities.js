@@ -168,13 +168,17 @@ export function determineTaskType(taskGroup) {
     }
     if (filteredCancelledRejected.length === 0) {
         return result;
+        // if it has no assigned riders, it goes in new
     } else if (!filteredCancelledRejected.some(t => t.assigned_riders.length)) {
         return { ...result, tasksNew: filteredCancelledRejected };
+        // if it has any assigned riders, but none are picked up, goes into active
     } else if ((taskGroup.some(t => t.assigned_riders.length) && !taskGroup.some(t => !!t.time_picked_up))) {
         return { ...result, tasksActive: filteredCancelledRejected };
-    } else if ((taskGroup.some(t => t.assigned_riders.length)) && taskGroup.some(t => !!t.time_picked_up) && !!!taskGroup[taskGroup.length - 1].time_dropped_off) {
+        // some are not delivered but some are picked up, it goes in picked up
+    } else if ((taskGroup.some(t => t.assigned_riders.length)) && taskGroup.some(t => !!t.time_picked_up) && taskGroup.some(t => !!!t.time_dropped_off)) {
         return { ...result, tasksPickedUp: filteredCancelledRejected };
-    } else if (!!taskGroup[taskGroup.length - 1].time_dropped_off) {
+        // else if the last one is delivered
+    } else if ((taskGroup.some(t => t.assigned_riders.length)) && taskGroup.some(t => !!t.time_picked_up) && !taskGroup.some(t => !!!t.time_dropped_off)) {
         return { ...result, tasksDelivered: filteredCancelledRejected };
     } else {
         return null;
