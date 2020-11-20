@@ -113,7 +113,6 @@ export const initialTasksState = {
 }
 
 function sortAndConcat(tasks, data) {
-    console.log("AAAAAAAAAAAAAAAA")
     const sorted = determineTaskType(data);
     for (const [key, value] of Object.entries(sorted)) {
         sorted[key] = [...tasks[key], value]
@@ -239,9 +238,7 @@ export function tasks(state = initialTasksState, action) {
                     const rejectedCancelledTask = {...parent.taskGroup[0], ...action.data.payload};
                     const taskCurrentParent = findExistingTaskParentByID(state.tasks, parent.taskGroup[0].parent_id)
                     if (taskCurrentParent.taskGroup) {
-                        newTasksSecond = update(
-                            newTasks, {[taskCurrentParent.listType]: {$set: state.tasks[taskCurrentParent.listType].filter(t => taskCurrentParent.taskGroup[0].parent_id !== t[0].parent_id)}}
-                        );
+                        newTasksSecond = removeParentFromTasks(newTasks, taskCurrentParent.listType, taskCurrentParent.taskGroup[0].parent_id)
                         newGroup = [...taskCurrentParent.taskGroup, rejectedCancelledTask].sort((a, b) => a.order_in_relay - b.order_in_relay)
                     } else {
                         newTasksSecond = newTasks;

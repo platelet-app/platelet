@@ -109,7 +109,7 @@ function* postNewTask(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data);
         const parentID = result.parent_id ? parseInt(result.parent_id) : 0
-        const task = {...action.data, "uuid": result.uuid, parent_id: parentID};
+        const task = {...action.data, "uuid": result.uuid, parent_id: parentID, order_in_relay: 1};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: result.author_uuid}}))
         yield put(addTaskSuccess(task));
         yield put(subscribeToUUID(task.uuid))

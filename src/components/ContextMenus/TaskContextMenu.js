@@ -12,7 +12,7 @@ import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import {createPostingSelector} from "../../redux/selectors";
-import {deleteButtonStyles, contextDots} from "./contextMenuCSS";
+import {deleteButtonStyles} from "./contextMenuCSS";
 
 
 const initialState = {
@@ -28,6 +28,7 @@ export default function TaskContextMenu(props) {
     const classes = deleteButtonStyles();
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
+        "ADD_TASK_RELAY",
         "RESTORE_TASK",
         "UPDATE_TASK",
         "UPDATE_TASK_PICKUP_TIME",

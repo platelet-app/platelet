@@ -62,6 +62,9 @@ const useStyles = makeStyles(theme => ({
 
 
 const TaskGroup = props => {
+    const postingSelector = createPostingSelector([
+        "ADD_TASK_RELAY"]);
+    const isPosting = useSelector(state => postingSelector(state));
     const classes = props.classes;
     const {show, hide} = showHide();
     return !props.group ? <></> : props.group.map((task, i, arr) => {
@@ -82,7 +85,6 @@ const TaskGroup = props => {
             priority_id,
             parent_id,
             relay_next,
-            relay_previous_uuid
         } = task;
 
         return (
@@ -116,6 +118,7 @@ const TaskGroup = props => {
                             <Grid className={(!!!relay_next && props.showTasks === null) ? show : hide} item>
                                 <Tooltip title={"Add Relay"}>
                                     <IconButton
+                                        disabled={isPosting}
                                         className={"hidden-button"}
                                         onClick={() => {
                                             props.onAddRelayClick({
