@@ -13,6 +13,7 @@ import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
 import {AdminControl} from "../scenes/AdminControl/AdminControl";
 import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
+import LocationDetail from "../scenes/Location/LocationDetail";
 
 export default function MainWindow(_props) {
     let location = useLocation();
@@ -27,11 +28,14 @@ export default function MainWindow(_props) {
                     <Route path='/vehicles'
                            render={(props) => <VehicleList {...props}/>}
                     />
-                    <Route path='/vehicle/:vehicle_uuid_b62'
+                    <Route exact path='/vehicle/:vehicle_uuid_b62'
                            render={(props) => <VehicleDetail {...props}/>}
                     />
                     <Route path='/locations'
                            render={(props) => <LocationsList {...props} />}
+                    />
+                    <Route exact path='/location/:location_uuid_b62'
+                           render={(props) => <LocationDetail {...props}/>}
                     />
                     <Route exact path='/mytasks'
                            render={(props) => <UsersTasks {...props}/>}

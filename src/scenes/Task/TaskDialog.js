@@ -315,7 +315,7 @@ export default function TaskDialog(props) {
         </Grid>
     let modalContents;
     if (notFound) {
-        modalContents = <NotFound>Task {taskUUID} not found.</NotFound>
+        modalContents = <NotFound>Task {taskUUID} could not be found.</NotFound>
     } else if (isFetching) {
         modalContents = <div style={{width: "600px"}}>
             <DialogContent>

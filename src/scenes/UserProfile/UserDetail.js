@@ -34,7 +34,7 @@ export default function UserDetail(props) {
             <DetailSkeleton/>
         )
     } else if (notFound) {
-        return <NotFound><Typography>User {userUUID} could not be found.</Typography></NotFound>
+        return <NotFound>User {userUUID} could not be found.</NotFound>
     } else {
         return (
             <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>

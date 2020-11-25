@@ -18,6 +18,7 @@ export default function CommentsSection(props) {
     const notFoundSelector = createNotFoundSelector(["GET_COMMENTS"]);
     const notFound = useSelector(state => notFoundSelector(state));
     const comments = useSelector(state => state.comments.comments);
+    console.log(props.parentUUID)
     function updateComments() {
         if (props.parentUUID) {
             dispatch(getCommentsRequest(props.parentUUID));
@@ -25,7 +26,7 @@ export default function CommentsSection(props) {
             dispatch(clearComments())
         }
     }
-    useEffect(updateComments, [props.parentUUID]);
+    useEffect(updateComments, []);
 
     function componentDidMount() {
         dispatch(subscribeToComments(props.parentUUID));
@@ -38,7 +39,7 @@ export default function CommentsSection(props) {
     if (isFetching) {
         return <CommentsSkeleton/>
     } else if (notFound) {
-        return <NotFound>Comments section not found.</NotFound>
+        return <NotFound>Comments section could not found.</NotFound>
     } else {
         return (
             <div style={{paddingTop: "30px"}}>

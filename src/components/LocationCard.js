@@ -4,21 +4,17 @@ import {StyledSharpCard} from "../styles/common";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import CardItem from "./CardItem";
-import Moment from "react-moment";
 import React from "react";
 
-export default function SessionCard(props) {
+export default function LocationCard(props) {
     return (
-        <Link to={"/session/" + encodeUUID(props.session.uuid)}
+        <Link to={"/location/" + encodeUUID(props.uuid)}
               style={{textDecoration: 'none'}}>
             <StyledSharpCard style={{height: "120px"}}>
                 <CardContent>
                     <Grid container spacing={1} direction={"column"}>
-                        <CardItem label={"Started"}>
-                            <Moment local calendar>{props.session.time_created}</Moment>
-                        </CardItem>
-                        <CardItem
-                            label={"Tasks"}>{props.session.task_count ? props.session.task_count : "0"}
+                        <CardItem>
+                            {props.name}
                         </CardItem>
                     </Grid>
                 </CardContent>
