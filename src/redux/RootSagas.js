@@ -50,7 +50,7 @@ import {
 
 import { all, call } from 'redux-saga/effects'
 import {watchGetAvailablePriorities} from "./priorities/PrioritiesSagas";
-import {watchGetAvailableLocations} from "./locations/LocationsSagas";
+import {watchGetAvailableLocations, watchGetLocation} from "./locations/LocationsSagas";
 import {
     watchGetUsers,
     watchGetUser,
@@ -106,6 +106,7 @@ export default function* rootSaga() {
         call(watchGetAvailableDeliverables),
         call(watchGetAvailablePriorities),
         call(watchGetAvailableLocations),
+        call(watchGetLocation),
         call(watchPostNewDeliverable),
         call(watchUpdateDeliverable),
         call(watchGetVehicles),

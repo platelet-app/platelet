@@ -16,7 +16,7 @@ import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
 import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
-import {availableLocations} from "./locations/LocationsReducers"
+import {availableLocations, location} from "./locations/LocationsReducers"
 import {apiControl, authStatus} from "./login/LoginReducers";
 import {availablePatches} from "./patches/PatchesReducers";
 import {availablePriorities} from "./priorities/PrioritiesReducers";
@@ -232,6 +232,7 @@ const rootReducer = combineReducers({
     availablePriorities,
     availablePatches,
     availableLocations,
+    location,
     vehicles,
     vehicle,
     users,
