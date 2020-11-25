@@ -5,13 +5,14 @@ import NewCommentCard from "./NewCommentCard";
 import {useSelector} from "react-redux";
 import CommentContextMenu from "../../../components/ContextMenus/CommentContextMenu";
 import {contextDots} from "../../../styles/common"
-import {Typography} from "@material-ui/core";
 import CommentCardEditMode from "./CommentCardEditMode";
 import Linkify from "react-linkify"
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 
 function CommentCollection(props) {
     const classes = contextDots();
+    console.log(props.body)
     const [editMode, setEditMode] = useState(false);
     return (
         <div style={{position: "relative"}}>
@@ -31,11 +32,9 @@ function CommentCollection(props) {
                     timeCreated={props.timeCreated}
                     numEdits={props.numEdits}
                     public={props.publiclyVisible}>
-                    <Typography>
                         <Linkify>
                             {props.body}
                         </Linkify>
-                    </Typography>
                 </CommentCard>
             }
             <div className={classes.root}>

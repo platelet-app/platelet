@@ -79,11 +79,13 @@ export function TextFieldUncontrolled(props) {
     return (
         <TextField
             {...props}
+            multiline
             onKeyPress={(ev) => {
                 if (ev.key === 'Enter') {
-                    if (props.onPressEnter)
+                    if (props.onPressEnter) {
                         props.onPressEnter();
-                    ev.preventDefault();
+                        ev.preventDefault();
+                    }
                 }
             }}
             margin="dense"

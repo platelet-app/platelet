@@ -13,6 +13,7 @@ const TextFieldSaveButtons = props => {
         <React.Fragment>
             <TextFieldUncontrolled
                 value={body}
+                multiline
                 disabled={props.isPosting}
                 onChange={e => setBody(e.target.value)}
             />

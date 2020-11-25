@@ -11,9 +11,17 @@ import moment from "moment";
 import CommentAuthor from "./CommentAuthor";
 import EditIcon from '@material-ui/icons/Edit';
 import {showHide} from "../../../styles/common";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const commentBodyClass = makeStyles({
+    body: {
+        whiteSpace: "pre-line"
+    }
+})
 
 const CommentCard = React.memo((props) => {
     const {show, hide} = showHide();
+    const classes = commentBodyClass();
     const Card = props.public ? (props) => {
             return <PublicCommentCard>{props.children}</PublicCommentCard>
         } :
@@ -57,7 +65,7 @@ const CommentCard = React.memo((props) => {
                     <Divider style={{width: "280px"}}/>
                 </Grid>
                 <Grid item>
-                    <Typography align={"justify"}>{props.children}</Typography>
+                    <Typography className={classes.body} align={"justify"}>{props.children}</Typography>
                 </Grid>
             </Grid>
         </Card>

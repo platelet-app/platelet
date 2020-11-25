@@ -61,7 +61,7 @@ export default function CommentCard(props) {
                     <TextFieldUncontrolled
                         id={"new-comment-field"}
                         style={{width: "280px"}}
-                        multiline={true}
+                        multiline
                         disabled={isPosting}
                         value={commentContents}
                         onChange={(e) => {
