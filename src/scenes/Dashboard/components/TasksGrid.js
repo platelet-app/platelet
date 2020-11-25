@@ -246,12 +246,10 @@ export default function TasksGrid(props) {
     useEffect(doSearch, [dashboardFilter])
 
     return (
-        <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
-            <Grid item key={"tasks"}>
                 <Grid container
-                      spacing={0}
+                      spacing={3}
                       direction={"row"}
-                      justify={"flex-start"}
+                      justify={"center"}
                       alignItems={"stretch"}
                       wrap={"nowrap"}
                 >
@@ -259,7 +257,7 @@ export default function TasksGrid(props) {
                         const title = getColumnTitle(taskKey);
                         return (
                             <React.Fragment key={taskKey}>
-                                <Grid item xs sm md lg>
+                                <Grid item>
                                     <GridColumn title={title}
                                                 classes={classes}
                                                 hidden={props.excludeColumnList && props.excludeColumnList.includes(taskKey)}
@@ -281,7 +279,5 @@ export default function TasksGrid(props) {
                         )
                     })}
                 </Grid>
-            </Grid>
-        </Grid>
     )
 }

@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import '../../App.css';
 import 'typeface-roboto'
 import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import {
     clearCurrentTask,
     getAllTasksRequest,
@@ -26,7 +25,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const useStyles = makeStyles({
     dashboard: {
-        width: "1410px"
+        width: "1280px"
     }
 })
 

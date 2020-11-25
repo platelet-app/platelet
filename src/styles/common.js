@@ -3,6 +3,7 @@ import '../App.css';
 import 'typeface-roboto'
 import Card from '@material-ui/core/Card';
 import {styled} from '@material-ui/styles';
+import Container from "@material-ui/core/Container";
 
 import {makeStyles} from '@material-ui/core/styles';
 import {Paper} from "@material-ui/core";
@@ -34,28 +35,15 @@ export function DismissButton(props) {
 export function MainWindowContainer(props) {
     const styles = makeStyles({
         root: {
-            paddingLeft: 30,
-            paddingTop: 100,
-            paddingRight: 30,
-            paddingBottom: "100%",
-            background: "rgb(230, 230, 230)",
-            align: "left",
-            width: "100%",
-            height: "100%"
-        },
-        content: {
-            width: "1410px",
-            height: "100%",
-            margin: "auto"
+            paddingTop: "100px",
+            paddingBottom: "100px"
         }
     });
     const classes = styles();
     return (
-        <div className={classes.root}>
-            <div className={classes.content}>
-                {props.children}
-            </div>
-        </div>
+        <Container className={classes.root}>
+            {props.children}
+        </Container>
     )
 }
 
@@ -73,7 +61,6 @@ export const StyledColumn = styled(Box)({
     boxShadow: '0 2px 3px 1px rgba(100, 100, 100, .3)',
     height: "100%",
     background: "rgba(255, 255, 255, 0.8)",
-    padding: "20px"
 });
 
 
@@ -83,9 +70,8 @@ export const StyledCard = styled(Card)({
     borderRadius: 2,
     boxShadow: '0 1px 2px 1px #7a7a7a',
     color: 'black',
-    padding: '20px',
-    height: '250px',
-    width: '400px',
+    width: "auto",
+    padding: '10px'
 });
 
 export const StyledSharpCard = styled(Card)({
@@ -95,8 +81,6 @@ export const StyledSharpCard = styled(Card)({
     boxShadow: '0 3px 5px 2px #7a7a7a',
     color: 'black',
     padding: '20px',
-    height: '250px',
-    width: '300px',
 });
 
 export const StyledStrip = styled(Card)({

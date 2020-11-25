@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import 'typeface-roboto'
 import {Link, useHistory} from "react-router-dom";
 import '../index.css'
@@ -6,7 +6,6 @@ import {makeStyles} from '@material-ui/core/styles';
 
 
 import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -49,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     },
     appBarComponents: {
         margin: "auto",
-        width: "1410px"
+        width: "1280px"
     },
     drawer: {
         [theme.breakpoints.up('sm')]: {
@@ -72,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export function MenuMainContainer(props) {
+export function MenuMainContainer() {
     const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
     const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami.user);
@@ -108,6 +107,11 @@ export function MenuMainContainer(props) {
                 }} component={Link} to={"/vehicles"}>
                     Vehicles
                 </MenuItem>
+                <MenuItem onClick={() => {
+                    setAnchorElDashMenu(null);
+                }} component={Link} to={"/locations"}>
+                    Locations
+                </MenuItem>
                 {adminLink}
             </List>
         );
@@ -116,8 +120,7 @@ export function MenuMainContainer(props) {
     const history = useHistory();
 
     return (
-        <div className={classes.root}>
-            <CssBaseline/>
+        <React.Fragment>
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar className={classes.appBarComponents}>
                     <Grid container direction={"row"} spacing={3} justify={"flex-start"} alignItems={"center"}>
@@ -230,7 +233,7 @@ export function MenuMainContainer(props) {
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <MainWindow apiControl={props.apiControl}/>
-        </div>
+            <MainWindow/>
+        </React.Fragment>
     );
 }

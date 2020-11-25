@@ -11,7 +11,6 @@ const TaskItem = React.memo(function TaskItem(props) {
     const contextClass = contextDots();
     return (
         <AnimatePresence>
-
             <motion.div
             animate={{scale: [0.6, 1]}}
             transition={{duration: 0.5}}

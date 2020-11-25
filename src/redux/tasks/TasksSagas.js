@@ -465,7 +465,6 @@ function* getTasks(action) {
         const tasksRejected = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "rejected");
         yield put(getAllTasksSuccess({tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksCancelled, tasksRejected}))
     } catch (error) {
-        throw error;
         if (error.name === "HttpError") {
             if (error.response.status === 404) {
                 yield put(getAllTasksNotFound(error))

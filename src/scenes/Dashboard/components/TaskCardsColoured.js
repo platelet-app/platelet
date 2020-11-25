@@ -30,14 +30,14 @@ const TaskCard = React.memo((props) => {
     const cardInnerContent =
         <CardContent>
             <Grid container spacing={0} direction={"column"}>
-                <CardItem width={"270px"} label={"Assignee"}>{ridersNames}</CardItem>
+                <CardItem label={"Assignee"}>{ridersNames}</CardItem>
                 <CardItem label={"Patch"}>{patch}</CardItem>
                 <CardItem label={"From"}>{pickupTitle}</CardItem>
                 <CardItem label={"Ward"}>{pickupWard}</CardItem>
                 <CardItem label={"To"}>{dropoffTitle}</CardItem>
                 <CardItem label={"Ward"}>{dropoffWard}</CardItem>
                 <CardItem label={"TOC"}><Moment local calendar>{props.timeOfCall}</Moment></CardItem>
-                <CardItem width={"185px"} label={"Priority"}>{props.priority}</CardItem>
+                <CardItem label={"Priority"}>{props.priority}</CardItem>
             </Grid>
         </CardContent>;
     if (!hasRider) {

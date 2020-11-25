@@ -15,7 +15,7 @@ import {getAvailableDeliverablesRequest} from "./redux/deliverables/Deliverables
 import {getAvailableLocationsRequest} from "./redux/locations/LocationsActions";
 import {getAvailablePatchesRequest} from "./redux/patches/PatchesActions";
 import {getAvailablePrioritiesRequest} from "./redux/priorities/PrioritiesActions";
-import {getUsersRequest, UPDATE_USER_REQUEST} from "./redux/users/UsersActions";
+import {getUsersRequest} from "./redux/users/UsersActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Moment from "react-moment"
@@ -34,6 +34,8 @@ import {
     connectSocket,
 } from "./redux/sockets/SocketActions";
 import {DismissButton} from "./styles/common";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -47,6 +49,25 @@ const useStyles = makeStyles(theme => ({
         background: "rgb(230, 230, 230)",
     }
 }));
+
+const themeLight = createMuiTheme({
+    palette: {
+        background: {
+            default: "rgb(230, 230, 230)"
+        }
+    }
+});
+
+const themeDark = createMuiTheme({
+    palette: {
+        background: {
+            default: "#222222"
+        },
+        text: {
+            primary: "#ffffff"
+        }
+    }
+});
 
 
 function App(props) {
@@ -202,19 +223,12 @@ function App(props) {
 
     if (!apiURL) {
         return (
-            <div className={classes.centeredDiv}>
-                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
-                    <Grid item>
                         <ApiConfig onSelect={(result) => {
                             dispatch(setApiURL(result))
                         }}/>
-                    </Grid>
-                </Grid>
-            </div>
         )
     } else if (forceResetPassword || (serverSettings && !isInitialised)) {
         return (
-            <div className={classes.centeredDiv}>
                 <Grid container direction={"column"} alignItems={"center"} spacing={3}>
                     <Grid item>
                         <Login apiUrl={apiURL}/>
@@ -231,24 +245,19 @@ function App(props) {
                         </Grid>
                     }
                 </Grid>
-            </div>
         )
     } else if (isInitialised) {
         return (
-            <div className={'body'}>
-                <React.Fragment>
+                <MuiThemeProvider theme={themeLight}>
                     <CssBaseline/>
-                    <div className="App">
                         <Helmet>
                             <title>{serverSettings.organisation_name}</title>
                             <link rel="icon" type="image/png" sizes="16x16" href={
                                 serverSettings.favicon ? "data:image/png;base64," + serverSettings.favicon : "favicon.ico"
                             }/>
                         </Helmet>
-                        <MenuMainContainer apiControl={apiControl}/>
-                    </div>
-                </React.Fragment>
-            </div>
+                        <MenuMainContainer/>
+                </MuiThemeProvider>
         );
     } else {
         return (

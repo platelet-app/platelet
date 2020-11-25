@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Grid from "@material-ui/core/Grid";
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import AddressDetailsCollapsible from "../../components/AddressDetail";
 import ToggleTimeStamp from "./components/ToggleTimeStamp";
 import Moment from "react-moment";
@@ -26,7 +26,7 @@ import {
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import {PaddedPaper} from "../../styles/common";
-import {decodeUUID} from "../../utilities";
+import {decodeUUID, encodeUUID} from "../../utilities";
 import {createLoadingSelector, createNotFoundSelector, createPostingSelector} from "../../redux/selectors";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import TaskModalTimePicker from "./components/TaskModalTimePicker";
@@ -84,19 +84,21 @@ export default function TaskDialog(props) {
         dispatch(getTaskRequest(taskUUID))
         dispatch(getActionsRecordRequest(taskUUID))
     }
-    useEffect(componentDidMount, []);
+
+    useEffect(componentDidMount, [props.location.key]);
 
     // TODO: add in collaborators once done on backend
-     function editModeSetter() {
-         if (task && task.author)
-             setEditMode(task.author.uuid === whoami.uuid || whoami.roles.includes("admin"));
-     }
-     useEffect(editModeSetter, [whoamiUUID, whoamiRoles, task])
+    function editModeSetter() {
+        if (task && task.author)
+            setEditMode(task.author.uuid === whoami.uuid || whoami.roles.includes("admin"));
+    }
 
-     function updateEditMode() {
-         if (task && task.author)
-             setEditMode(task.author.uuid === whoamiUUID || whoamiRoles.includes("admin"));
-     }
+    useEffect(editModeSetter, [whoamiUUID, whoamiRoles, task])
+
+    function updateEditMode() {
+        if (task && task.author)
+            setEditMode(task.author.uuid === whoamiUUID || whoamiRoles.includes("admin"));
+    }
 
     useEffect(updateEditMode, [whoami, task])
 
@@ -313,6 +315,29 @@ export default function TaskDialog(props) {
                 </PaddedPaper>
             </Grid>
         </Grid>
+
+    const nextTaskPrevTaskButtons =
+        <div style={{width: "500px"}}>
+            <Grid container direction={"row"} justify={"space-between"} alignItems={"flex-start"}>
+                <Grid item>
+                    {task.relay_previous_uuid ?
+                        <Button onClick={() => {
+                        }} component={Link} to={`/task/${encodeUUID(task.relay_previous_uuid)}`}>
+                            Previous Task in Relay
+                        </Button> : <></>
+                    }
+                </Grid>
+                <Grid item>
+                    {task.relay_next ?
+                    <Button onClick={() => {
+                    }} component={Link} to={`/task/${encodeUUID(task.relay_next.uuid)}`}>
+                        Next Task in Relay
+                    </Button> : <></>}
+                </Grid>
+
+            </Grid>
+        </div>
+
     let modalContents;
     if (notFound) {
         modalContents = <NotFound>Task {taskUUID} not found.</NotFound>
@@ -347,6 +372,9 @@ export default function TaskDialog(props) {
                             {layerFive}
                         </Grid>
                         <Grid item>
+                            {nextTaskPrevTaskButtons}
+                        </Grid>
+                        <Grid item>
                             <PaddedPaper width={"830px"}>
                                 <CommentsSection parentUUID={taskUUID}/>
                             </PaddedPaper>
@@ -361,31 +389,31 @@ export default function TaskDialog(props) {
             </>;
     }
 
-        return (
-            <>
-                <Dialog
-                    fullScreen={mobileView}
-                    maxWidth={"md"}
-                    fullWidth={true}
-                    open={true}
-                    onClose={handleClose}
-                    PaperProps={{
-                        style: {
-                            backgroundColor: "rgb(240, 240, 240)",
-                            boxShadow: 'none',
-                        },
-                    }}
-                    aria-labelledby="form-dialog-title">
-                    <DialogActions>
-                        <Button onClick={handleClose}
-                                color="primary">
-                            Close
-                        </Button>
-                    </DialogActions>
-                    {modalContents}
-                </Dialog>
-            </>
-        );
+    return (
+        <>
+            <Dialog
+                fullScreen={mobileView}
+                maxWidth={"md"}
+                fullWidth={true}
+                open={true}
+                onClose={handleClose}
+                PaperProps={{
+                    style: {
+                        backgroundColor: "rgb(240, 240, 240)",
+                        boxShadow: 'none',
+                    },
+                }}
+                aria-labelledby="form-dialog-title">
+                <DialogActions>
+                    <Button onClick={handleClose}
+                            color="primary">
+                        Close
+                    </Button>
+                </DialogActions>
+                {modalContents}
+            </Dialog>
+        </>
+    );
 
 }
 

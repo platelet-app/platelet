@@ -12,6 +12,7 @@ import UserDetail from "../scenes/UserProfile/UserDetail";
 import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
 import {AdminControl} from "../scenes/AdminControl/AdminControl";
 import NotFound from "../ErrorComponents/NotFound";
+import LocationsList from "../scenes/LocationsList";
 
 export default function MainWindow(_props) {
     let location = useLocation();
@@ -21,32 +22,35 @@ export default function MainWindow(_props) {
             <main>
                 <Switch location={location}>
                     <Route exact path='/'
-                           render={(props) => <Dashboard {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => <Dashboard {...props}/>}
                     />
                     <Route path='/vehicles'
-                           render={(props) => <VehicleList {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => <VehicleList {...props}/>}
                     />
                     <Route path='/vehicle/:vehicle_uuid_b62'
-                           render={(props) => <VehicleDetail {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => <VehicleDetail {...props}/>}
+                    />
+                    <Route path='/locations'
+                           render={(props) => <LocationsList {...props} />}
                     />
                     <Route exact path='/mytasks'
-                           render={(props) => <UsersTasks {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => <UsersTasks {...props}/>}
                     />
                     <Route exact path='/users'
-                           render={(props) => <UsersList {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => <UsersList {...props}/>}
                     />
                     <Route exact path='/admin'
                            render={(props) => <AdminControl {...props}/>}
                     />
                     <Route exact path='/user/:user_uuid_b62'
-                           render={(props) => <UserDetail {...props} apiControl={_props.apiControl}/>}
+                           render={(props) => <UserDetail {...props}/>}
                     />
                     <Route exact path="/task/:task_uuid_b62"
                            render={(props) => {
                                return (
                                    <>
                                <Dashboard {...props} />
-                               <TaskDialog {...props} apiControl={_props.apiControl} modal={true}/>
+                               <TaskDialog {...props} modal={true}/>
                                </>
                            )
                            }}
@@ -56,7 +60,7 @@ export default function MainWindow(_props) {
                                return (
                                    <>
                                        <UsersTasks {...props} />
-                                       <TaskDialog {...props} apiControl={_props.apiControl} modal={true}/>
+                                       <TaskDialog {...props} modal={true}/>
                                    </>
                                )
                            }}
