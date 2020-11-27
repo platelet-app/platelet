@@ -3,7 +3,7 @@ import {
     requestResponseReceived,
     SOCKET_CONNECT,
     SOCKET_CONNECT_ASSIGNMENTS,
-    SOCKET_CONNECT_COMMENTS,
+    SOCKET_CONNECT_COMMENTS, SOCKET_REFRESH_TASKS_ASSIGNMENTS,
     SOCKET_REFRESH_TASKS_DATA, SOCKET_REQUEST_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_ASSIGNMENTS,
     SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED,
@@ -51,7 +51,6 @@ export const createSubscribeSocketMiddleware = () => {
                     storeAPI.dispatch(subscribedResponseReceived(message));
                 });
                 socket.on("request_response", message => {
-                    console.log(message)
                     storeAPI.dispatch(requestResponseReceived(message))
                 })
                 socket.on("response", (message) => {
@@ -81,7 +80,11 @@ export const createSubscribeSocketMiddleware = () => {
             }
             case SOCKET_REFRESH_TASKS_DATA:
                 if (socket)
-                    socket.emit("refresh_data", action.uuids_etags)
+                    socket.emit("refresh_task_data", action.uuids_etags)
+                break;
+            case SOCKET_REFRESH_TASKS_ASSIGNMENTS:
+                if (socket)
+                    socket.emit("refresh_task_assignments", action.userUUID, action.fromDateTime, action.role)
                 break;
             case SOCKET_SUBSCRIBE_RESPONSE_RECEIVED:
                 if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
@@ -151,8 +154,8 @@ export const createSubscribeSocketMiddleware = () => {
                     console.log("ignore")
                 } else {
                     switch (action.data.type) {
-                        case "TASKS_REFRESH":
-                            const tasks = JSON.parse(action.data.data).tasks;
+                        case "TASKS_REFRESH": {
+                            const tasks = JSON.parse(action.data.data);
                             if (tasks.length !== 0) {
                                 for (const task of tasks) {
                                     storeAPI.dispatch(putTaskFromSocket(task))
@@ -160,6 +163,13 @@ export const createSubscribeSocketMiddleware = () => {
                                 }
                             }
                             break;
+                        }
+                        case "TASK_ASSIGNMENTS_REFRESH": {
+                            const tasks = JSON.parse(action.data.data);
+                            console.log(tasks)
+                            break;
+                        }
+
                         default:
                             break;
                     }

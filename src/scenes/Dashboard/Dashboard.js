@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import '../../App.css';
 import 'typeface-roboto'
 import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import {
     clearCurrentTask,
     getAllTasksRequest,
@@ -17,11 +16,12 @@ import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
-    refreshTasksData,
+    refreshTaskAssignmentsSocket,
+    refreshTasksDataSocket,
     subscribeToAssignments,
     subscribeToUUIDs,
 } from "../../redux/sockets/SocketActions";
-import {concatTasks, getTaskUUIDEtags, getTaskUUIDs} from "./utilities";
+import {getTaskUUIDEtags, getTaskUUIDs} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
@@ -50,20 +50,34 @@ function Dashboard(props) {
         dispatch(clearCurrentTask());
     }
 
+    let fetchStartedDateTime = new Date().toISOString();
     useEffect(componentDidMount, []);
 
     function getTasks() {
         if (whoami.uuid) {
-            if (tasks === initialTasksState.tasks)
+            if (tasks === initialTasksState.tasks) {
+                fetchStartedDateTime = new Date().toISOString()
                 dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
+            }
         }
     }
     useEffect(getTasks, [whoami])
 
     function refreshTasks() {
         if (!isFetching && tasks) {
+            console.log("refreshing tasks")
             const uuidEtags = getTaskUUIDEtags(tasks);
-            dispatch(refreshTasksData(uuidEtags));
+            dispatch(refreshTasksDataSocket(uuidEtags));
+            dispatch(refreshTaskAssignmentsSocket(whoami.uuid, fetchStartedDateTime, "coordinator"))
+            // Check tasks hash every 30 seconds
+            const refreshTimer = setInterval(() => {
+                console.log("refreshing tasks")
+                const uuidEtags = getTaskUUIDEtags(tasks);
+                dispatch(refreshTasksDataSocket(uuidEtags));
+            }, 30000);
+
+            // cancel refresh on unmount
+            return () => clearInterval(refreshTimer);
         }
     }
     useEffect(refreshTasks, [isFetching])

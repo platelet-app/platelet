@@ -210,8 +210,6 @@ export default function TasksGrid(props) {
 
 
     const emptyTask = {
-        time_of_call: new Date().toISOString(),
-        time_created: new Date().toISOString(),
         requester_contact: {
             name: "",
             telephone_number: ""
@@ -225,7 +223,7 @@ export default function TasksGrid(props) {
     };
 
     const addEmptyTask = React.useCallback(() => {
-        dispatch(addTaskRequest(emptyTask))
+        dispatch(addTaskRequest({...emptyTask, time_of_call: new Date().toISOString(), time_created: new Date().toISOString()}))
     }, [])
 
     const addRelay = React.useCallback((data) => {

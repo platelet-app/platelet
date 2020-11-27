@@ -8,6 +8,7 @@ export const SOCKET_UNSUBSCRIBE_UUID = "SOCKET_UNSUBSCRIBE_UUID";
 export const SOCKET_SUBSCRIBE_UUID_MANY = "SOCKET_SUBSCRIBE_UUID_MANY";
 export const SOCKET_UNSUBSCRIBE_UUID_MANY = "SOCKET_UNSUBSCRIBE_UUID_MANY";
 export const SOCKET_REFRESH_TASKS_DATA = "SOCKET_REFRESH_TASKS_DATA";
+export const SOCKET_REFRESH_TASKS_ASSIGNMENTS = "SOCKET_REFRESH_TASKS_ASSIGNMENTS";
 
 export const SOCKET_REQUEST_RESPONSE_RECEIVED = "SOCKET_REQUEST_RESPONSE_RECEIVED";
 
@@ -28,8 +29,12 @@ export const SOCKET_COMMENTS_DISCONNECTED = "SOCKET_COMMENTS_DISCONNECTED";
 export const SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED = "SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED";
 export const SOCKET_DISCONNECT_COMMENTS = "SOCKET_DISCONNECT_COMMENTS";
 
-export function refreshTasksData( uuids_etags ) {
+export function refreshTasksDataSocket( uuids_etags ) {
     return { type: SOCKET_REFRESH_TASKS_DATA, uuids_etags };
+}
+
+export function refreshTaskAssignmentsSocket( userUUID, fromDateTime, role ) {
+    return { type: SOCKET_REFRESH_TASKS_ASSIGNMENTS, userUUID, fromDateTime, role };
 }
 
 export function connectSocket( url ) {

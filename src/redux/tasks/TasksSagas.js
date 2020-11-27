@@ -89,8 +89,6 @@ import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesA
 
 
 const emptyTask = {
-    time_of_call: new Date().toISOString(),
-    time_created: new Date().toISOString(),
     requester_contact: {
         name: "",
         telephone_number: ""
@@ -126,7 +124,7 @@ function* postNewTaskRelay(action) {
     try {
         const api = yield select(getApiControl);
         const whoami = yield select(getWhoami);
-        const result = yield call([api, api.tasks.createTask], {...emptyTask, ...action.data});
+        const result = yield call([api, api.tasks.createTask], {...emptyTask, ...action.data, time_created: new Date().toISOString()});
         const orderInRelay = result.order_in_relay ? parseInt(result.order_in_relay) : 0;
         const task = {...emptyTask, ...action.data, author_uuid: whoami.uuid, uuid: result.uuid, order_in_relay: orderInRelay};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: task.author_uuid}}))
