@@ -15,6 +15,10 @@ export const RESTORE_TASK_REQUEST = 'RESTORE_TASK_REQUEST';
 export const RESTORE_TASK_SUCCESS = 'RESTORE_TASK_SUCCESS';
 export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE';
 
+
+export const PUT_TASK_SUCCESS = "PUT_TASK_SUCCESS";
+export const PUT_TASK_FROM_SOCKET = "PUT_TASK_FROM_SOCKET";
+
 export const SET_CURRENT_TASK = 'SET_CURRENT_TASK';
 export const CLEAR_CURRENT_TASK = 'CLEAR_CURRENT_TASK';
 
@@ -100,6 +104,14 @@ export function restoreTaskSuccess(data) {
 
 export function restoreTaskFailure(error) {
     return { type: RESTORE_TASK_FAILURE, error }
+}
+
+export function putTaskSuccess(data) {
+    return { type: PUT_TASK_SUCCESS, data }
+}
+
+export function putTaskFromSocket(data) {
+    return { type: PUT_TASK_FROM_SOCKET, data }
 }
 
 export function getTaskRequest(data) {

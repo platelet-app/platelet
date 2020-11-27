@@ -17,10 +17,11 @@ import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
+    refreshTasksData,
     subscribeToAssignments,
     subscribeToUUIDs,
 } from "../../redux/sockets/SocketActions";
-import {getTaskUUIDs} from "./utilities";
+import {concatTasks, getTaskUUIDEtags, getTaskUUIDs} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
@@ -57,8 +58,15 @@ function Dashboard(props) {
                 dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
         }
     }
-
     useEffect(getTasks, [whoami])
+
+    function refreshTasks() {
+        if (!isFetching && tasks) {
+            const uuidEtags = getTaskUUIDEtags(tasks);
+            dispatch(refreshTasksData(uuidEtags));
+        }
+    }
+    useEffect(refreshTasks, [isFetching])
 
 
     function subscribeTasks() {

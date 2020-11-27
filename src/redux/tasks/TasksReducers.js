@@ -29,7 +29,7 @@ import {
     DELETE_TASK_FROM_SOCKET,
     RESTORE_TASK_FROM_SOCKET,
     ADD_TASK_RELAY_FROM_SOCKET,
-    RESET_GROUP_RELAY_UUIDS, GROUP_RELAYS_TOGETHER
+    RESET_GROUP_RELAY_UUIDS, GROUP_RELAYS_TOGETHER, PUT_TASK_FROM_SOCKET, PUT_TASK_SUCCESS
 
 } from "./TasksActions";
 import update from "immutability-helper";
@@ -42,6 +42,7 @@ import {
 const initialState = {
     task: {
         uuid: null,
+        etag: "",
         author: null,
         author_uuid: null,
         pickup_address: null,
@@ -173,7 +174,7 @@ function taskGroupSort(a, b) {
     return a.order_in_relay - b.order_in_relay;
 }
 
-function removeParentFromTasks(tasks, listType,parent_id) {
+function removeParentFromTasks(tasks, listType, parent_id) {
     return update(tasks,
         {[listType]: {$set: tasks[listType].filter(t => parent_id !== t[0].parent_id)}}
     );
@@ -204,6 +205,18 @@ export function tasks(state = initialTasksState, action) {
             const newGroup = [...parent.taskGroup, action.data]
             const newTasks = removeParentFromTasks(state.tasks, parent.listType, action.data.parent_id)
             return {tasks: sortAndConcat(newTasks, newGroup), error: null}
+        }
+        case PUT_TASK_SUCCESS:
+        case PUT_TASK_FROM_SOCKET: {
+            const parent = findExistingTaskParent(state.tasks, action.data.uuid);
+            if (parent.taskGroup) {
+                const filtered = parent.taskGroup.filter(t => t.uuid !== action.data.uuid);
+                const newGroup = [...filtered, action.data].sort(taskGroupSort)
+                const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
+                return {tasks: sortAndConcat(newTasks, newGroup), error: null};
+            } else {
+                return state;
+            }
         }
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_REQUESTER_CONTACT_SUCCESS:

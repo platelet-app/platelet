@@ -1,21 +1,35 @@
 import * as io from 'socket.io-client'
 import {
+    requestResponseReceived,
     SOCKET_CONNECT,
     SOCKET_CONNECT_ASSIGNMENTS,
-    SOCKET_CONNECT_COMMENTS, SOCKET_SUBSCRIBE_ASSIGNMENTS, SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED,
-    SOCKET_SUBSCRIBE_COMMENTS, SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED,
+    SOCKET_CONNECT_COMMENTS,
+    SOCKET_REFRESH_TASKS_DATA, SOCKET_REQUEST_RESPONSE_RECEIVED,
+    SOCKET_SUBSCRIBE_ASSIGNMENTS,
+    SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED,
+    SOCKET_SUBSCRIBE_COMMENTS,
+    SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_UUID,
-    SOCKET_SUBSCRIBE_UUID_MANY, SOCKET_UNSUBSCRIBE_ASSIGNMENTS,
+    SOCKET_SUBSCRIBE_UUID_MANY,
+    SOCKET_UNSUBSCRIBE_ASSIGNMENTS,
     SOCKET_UNSUBSCRIBE_COMMENTS,
     SOCKET_UNSUBSCRIBE_UUID,
-    SOCKET_UNSUBSCRIBE_UUID_MANY, subscribedAssignmentsResponseReceived,
+    SOCKET_UNSUBSCRIBE_UUID_MANY,
+    subscribedAssignmentsResponseReceived,
     subscribedCommentsResponseReceived,
-    subscribedResponseReceived, subscribeToUUID, unsubscribeFromUUID
+    subscribedResponseReceived,
+    subscribeToUUID,
+    unsubscribeFromUUID
 } from "./SocketActions";
 import {findExistingTask, findExistingTaskParentByID, getTabIdentifier} from "../../utilities";
 import {
-    addTaskFromSocket, addTaskRelayFromSocket, deleteTaskFromSocket, resetGroupRelayUUIDs, restoreTaskFromSocket,
+    addTaskFromSocket,
+    addTaskRelayFromSocket,
+    deleteTaskFromSocket,
+    putTaskFromSocket,
+    resetGroupRelayUUIDs,
+    restoreTaskFromSocket,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
     updateTaskRemoveAssignedRiderFromSocket
@@ -25,18 +39,21 @@ import {
     deleteCommentFromSocket,
     restoreCommentFromSocket, updateCommentFromSocket
 } from "../comments/CommentsActions";
-import {put, select} from "redux-saga/effects";
 
 export const createSubscribeSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
-        switch(action.type) {
+        switch (action.type) {
             case SOCKET_CONNECT: {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedResponseReceived(message));
                 });
+                socket.on("request_response", message => {
+                    console.log(message)
+                    storeAPI.dispatch(requestResponseReceived(message))
+                })
                 socket.on("response", (message) => {
                     console.log(message.data);
                 });
@@ -62,12 +79,21 @@ export const createSubscribeSocketMiddleware = () => {
                     socket.emit('unsubscribe_many', action.uuids);
                 break;
             }
+            case SOCKET_REFRESH_TASKS_DATA:
+                if (socket)
+                    socket.emit("refresh_data", action.uuids_etags)
+                break;
             case SOCKET_SUBSCRIBE_RESPONSE_RECEIVED:
                 if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
                     console.log("ignore")
                 } else {
                     if (action.data.tab_id != null && getTabIdentifier() !== action.data.tab_id) {
                         switch (action.data.type) {
+                            case "TASKS_REFRESH":
+                                for (const task of action.data.data) {
+                                    storeAPI.dispatch(putTaskFromSocket(task))
+                                }
+                                break;
                             case "UPDATE_TASK":
                                 storeAPI.dispatch(updateTaskFromSocket({
                                     taskUUID: action.data.object_uuid,
@@ -120,15 +146,33 @@ export const createSubscribeSocketMiddleware = () => {
                     } else
                         console.log("this came from us")
                 }
-        default:
-            return next(action);
+            case SOCKET_REQUEST_RESPONSE_RECEIVED:
+                if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
+                    console.log("ignore")
+                } else {
+                    switch (action.data.type) {
+                        case "TASKS_REFRESH":
+                            const tasks = JSON.parse(action.data.data).tasks;
+                            if (tasks.length !== 0) {
+                                for (const task of tasks) {
+                                    storeAPI.dispatch(putTaskFromSocket(task))
+                                    storeAPI.dispatch(resetGroupRelayUUIDs(task.parent_id))
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            default:
+                return next(action);
         }
     }
 }
 export const createSubscribeCommentsSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
-        switch(action.type) {
+        switch (action.type) {
             case SOCKET_CONNECT_COMMENTS: {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
@@ -189,7 +233,7 @@ export const createSubscribeCommentsSocketMiddleware = () => {
 export const createSubscribeAssignmentsSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
-        switch(action.type) {
+        switch (action.type) {
             case SOCKET_CONNECT_ASSIGNMENTS: {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
@@ -243,6 +287,6 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
             default:
                 return next(action);
         }
-        }
     }
+}
 
