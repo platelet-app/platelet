@@ -10,7 +10,7 @@ import {
     SET_MENU_INDEX,
     SET_COMMENTS_OBJECT_UUID,
     CLEAR_WHOAMI,
-    GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK, SET_DASHBOARD_FILTER,
+    GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK, SET_DASHBOARD_FILTER, SET_ROLE_VIEW,
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
@@ -58,6 +58,16 @@ function viewMode(state = null, action) {
         default:
             return state;
     }
+}
+
+function roleView(state = "coordinator", action) {
+    switch (action.type) {
+        case SET_ROLE_VIEW:
+            return action.data;
+        default:
+            return state;
+    }
+
 }
 
 function newTaskAddedView(state = false, action) {
@@ -125,16 +135,6 @@ function whoami(state = whoamiInitialState, action) {
     }
 }
 
-function sessionActiveTaskUUID(state = "", action) {
-    switch (action.type) {
-        case GET_ACTIVE_TASK_UUID:
-            return state;
-        case SET_ACTIVE_TASK_UUID:
-            return action.data;
-        default:
-            return state
-    }
-}
 
 function commentsObjectUUID(state = null, action) {
     switch (action.type) {
@@ -239,7 +239,6 @@ const rootReducer = combineReducers({
     user,
     whoami,
     comments,
-    sessionActiveTaskUUID,
     loadingReducer,
     postingReducer,
     notFoundReducer,
@@ -248,6 +247,7 @@ const rootReducer = combineReducers({
     apiControl,
     authStatus,
     viewMode,
+    roleView,
     newTaskAddedView,
     mobileView,
     menuIndex,

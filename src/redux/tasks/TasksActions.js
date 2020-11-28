@@ -78,6 +78,7 @@ export const UPDATE_TASK_PATCH_FAILURE = "UPDATE_TASK_PATCH_FAILURE";
 export const UPDATE_TASK_REQUEST = 'UPDATE_TASK_REQUEST';
 export const UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS';
 export const UPDATE_TASK_FAILURE = 'UPDATE_TASK_FAILURE';
+export const SET_ROLE_VIEW_AND_GET_TASKS = "SET_ROLE_VIEW_AND_GET_TASKS";
 export const GET_TASKS_REQUEST = 'GET_TASKS_REQUEST';
 export const GET_TASKS_SUCCESS = 'GET_TASKS_SUCCESS';
 export const GET_TASKS_NOTFOUND = 'GET_TASKS_NOTFOUND';
@@ -356,6 +357,10 @@ export function updateTaskPatchFailure(error) {
 
 export function getAllTasksRequest(data, page, role) {
     return { type: GET_TASKS_REQUEST, data, page, role }
+}
+
+export function setRoleViewAndGetTasks(userUUID, page, role) {
+    return { type: SET_ROLE_VIEW_AND_GET_TASKS, userUUID, page, role }
 }
 
 export function getAllTasksSuccess(data) {

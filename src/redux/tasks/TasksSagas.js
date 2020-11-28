@@ -17,7 +17,7 @@ import {
     getTaskNotFound,
     ADD_TASK_RELAY_REQUEST,
     addTaskRelaySuccess,
-    addTaskRelayFailure, resetGroupRelayUUIDs, groupRelaysTogether
+    addTaskRelayFailure, resetGroupRelayUUIDs, groupRelaysTogether, getAllTasksRequest, SET_ROLE_VIEW_AND_GET_TASKS
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -86,6 +86,7 @@ import React from "react";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {findExistingTask} from "../../utilities";
 import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
+import {SET_ROLE_VIEW, setRoleView} from "../Actions";
 
 
 const emptyTask = {
@@ -475,6 +476,15 @@ function* getTasks(action) {
 
 export function* watchGetTasks() {
     yield takeLatest(GET_TASKS_REQUEST, getTasks)
+}
+
+function* setRoleViewAndGetTasks(action) {
+    yield put(getAllTasksRequest(action.userUUID, action.page, action.role))
+    yield put(setRoleView(action.role))
+}
+
+export function* watchSetRoleViewAndGetTasks() {
+    yield takeLatest(SET_ROLE_VIEW_AND_GET_TASKS, setRoleViewAndGetTasks)
 }
 
 function* refreshTasks(action) {

@@ -4,10 +4,11 @@ import 'typeface-roboto'
 import Paper from "@material-ui/core/Paper";
 import {
     clearCurrentTask,
-    getAllTasksRequest,
+    getAllTasksRequest, setRoleViewAndGetTasks,
 } from '../../redux/tasks/TasksActions'
 import {
     setNewTaskAddedView,
+    setRoleView
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import {useDispatch, useSelector} from "react-redux"
@@ -23,10 +24,9 @@ import {
     subscribeToUUIDs,
     unsubscribeFromCoordinatorAssignments,
     unsubscribeFromRiderAssignments,
-    unsubscribeFromUUID,
     unsubscribeFromUUIDs,
 } from "../../redux/sockets/SocketActions";
-import {getTaskUUIDEtags, getTaskUUIDs} from "./utilities";
+import {getTaskUUIDEtags} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
@@ -51,7 +51,8 @@ function Dashboard(props) {
     const whoami = useSelector(state => state.whoami.user);
     const [postPermission, setPostPermission] = useState(true);
     const [viewMode, setViewMode] = useState(0);
-    const [roleView, setRoleView] = useState("coordinator");
+    const roleView = useSelector(state => state.roleView);
+
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
@@ -59,21 +60,15 @@ function Dashboard(props) {
     useEffect(componentDidMount, []);
 
     function setInitialRoleView() {
-        if (whoami.uuid) {
+        if (whoami.uuid && tasks === initialTasksState.tasks) {
             if (whoami.roles.includes("coordinator"))
-                setRoleView("coordinator")
+                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"));
             else
-                setRoleView("rider")
+                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"));
         }
     }
     useEffect(setInitialRoleView, [whoami])
 
-    function getTasks() {
-        if (whoami.uuid) {
-            dispatch(getAllTasksRequest(whoami.uuid, "", roleView));
-        }
-    }
-    useEffect(getTasks, [whoami, roleView])
 
     function refreshTasks() {
         if (!isFetching && tasks) {
@@ -130,7 +125,7 @@ function Dashboard(props) {
     } else {
         return (
             <Paper className={classes.dashboard} elevation={3}>
-                <DashboardDetailTabs value={viewMode} roleView={roleView} onSetRoleMode={value => setRoleView(value)} onChange={(event, newValue) => setViewMode(newValue)}>
+                <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => setViewMode(newValue)}>
                     <TabPanel value={0} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}

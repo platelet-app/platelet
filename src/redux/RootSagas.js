@@ -19,7 +19,7 @@ import {
     watchRefreshTasks,
     watchRefreshMyTasks,
     watchUpdateTaskPatchFromServer,
-    watchUpdateTaskDropoffAddressFromSaved, watchUpdateTaskRequesterContact
+    watchUpdateTaskDropoffAddressFromSaved, watchUpdateTaskRequesterContact, watchSetRoleViewAndGetTasks
 } from "./tasks/TasksSagas"
 import {
     watchDeleteDeliverable,
@@ -144,6 +144,7 @@ export default function* rootSaga() {
         call(watchUploadUserProfilePicture),
         call(watchUpdateUserPassword),
         call(watchGetActionsRecord),
-        call(watchGetTasksActionsRecord)
+        call(watchGetTasksActionsRecord),
+        call(watchSetRoleViewAndGetTasks)
     ])
 }

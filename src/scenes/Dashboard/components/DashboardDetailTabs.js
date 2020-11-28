@@ -7,7 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {useDispatch, useSelector} from "react-redux";
 import {createPostingSelector} from "../../../redux/selectors";
-import {clearTaskContextMenuSnack, setDashboardFilter} from "../../../redux/Actions";
+import {clearTaskContextMenuSnack, setDashboardFilter, setRoleView} from "../../../redux/Actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import TimelineIcon from '@material-ui/icons/Timeline';
@@ -29,6 +29,7 @@ import {Link} from "react-router-dom";
 import {encodeUUID} from "../../../utilities";
 import Typography from "@material-ui/core/Typography";
 import {showHide} from "../../../styles/common";
+import {setRoleViewAndGetTasks} from "../../../redux/tasks/TasksActions";
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -101,6 +102,7 @@ export function DashboardDetailTabs(props) {
     const currentSession = useSelector(state => state.session.session);
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(state => state.whoami.user);
+    const roleView = useSelector(state => state.roleView);
     const classes = useStyles();
     const {show, hide} = showHide();
     const postingSelector = createPostingSelector([
@@ -169,7 +171,7 @@ export function DashboardDetailTabs(props) {
                                 <Grid item>
                                     <Grid container  direction={"row"} justify={"flex-start"} alignItems={"center"}>
                                         <Grid className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide} item>
-                                    <Typography>{`${props.roleView} view`.toUpperCase()}</Typography>
+                                    <Typography>{`${roleView} view`.toUpperCase()}</Typography>
                                         </Grid>
                                         <Grid className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide} item>
 
@@ -193,13 +195,13 @@ export function DashboardDetailTabs(props) {
                                     >
                                         <MenuItem onClick={() => {
                                             setAnchorElRoleMenu(null);
-                                            props.onSetRoleMode("coordinator")
+                                            dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"))
                                         }}>
                                             Coordinator
                                         </MenuItem>
                                         <MenuItem onClick={() => {
                                             setAnchorElRoleMenu(null);
-                                            props.onSetRoleMode("rider")
+                                            dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"))
                                         }}>
                                             Rider
                                         </MenuItem>
