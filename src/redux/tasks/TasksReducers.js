@@ -202,7 +202,14 @@ export function tasks(state = initialTasksState, action) {
         case ADD_TASK_RELAY_SUCCESS:
         case ADD_TASK_RELAY_FROM_SOCKET: {
             const parent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
-            const newGroup = [...parent.taskGroup, action.data]
+            const findCheck = parent.taskGroup.find(t => t.uuid === action.data.uuid)
+            let newGroup;
+            if (findCheck) {
+                const filtered = parent.taskGroup.filter(t => t.uuid !== action.data.uuid);
+                newGroup = [...filtered, action.data].sort(taskGroupSort)
+            } else {
+                newGroup = [...parent.taskGroup, action.data]
+            }
             const newTasks = removeParentFromTasks(state.tasks, parent.listType, action.data.parent_id)
             return {tasks: sortAndConcat(newTasks, newGroup), error: null}
         }

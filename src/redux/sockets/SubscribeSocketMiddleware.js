@@ -84,7 +84,7 @@ export const createSubscribeSocketMiddleware = () => {
                 break;
             case SOCKET_REFRESH_TASKS_ASSIGNMENTS:
                 if (socket)
-                    socket.emit("refresh_task_assignments", action.userUUID, action.fromDateTime, action.role)
+                    socket.emit("refresh_task_assignments", action.userUUID, action.taskUUIDs, action.role)
                 break;
             case SOCKET_SUBSCRIBE_RESPONSE_RECEIVED:
                 if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
@@ -165,7 +165,21 @@ export const createSubscribeSocketMiddleware = () => {
                             break;
                         }
                         case "TASK_ASSIGNMENTS_REFRESH": {
-                            const tasks = JSON.parse(action.data.data);
+                            const tasks = action.data.data;
+                            for (const task of tasks) {
+                                const parent = findExistingTaskParentByID(task.parent_id);
+                                if (parent.taskGroup) {
+                                    const findCheck = parent.taskGroup.find(t => t.uuid === task.uuid)
+                                    if (findCheck) {
+                                        storeAPI.dispatch(putTaskFromSocket(task))
+                                    } else {
+                                        storeAPI.dispatch(addTaskRelayFromSocket(task))
+                                    }
+                                    storeAPI.dispatch(resetGroupRelayUUIDs(task.parent_id))
+                                } else {
+                                    storeAPI.dispatch(addTaskFromSocket(task))
+                                }
+                            }
                             console.log(tasks)
                             break;
                         }

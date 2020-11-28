@@ -33,8 +33,8 @@ export function refreshTasksDataSocket( uuids_etags ) {
     return { type: SOCKET_REFRESH_TASKS_DATA, uuids_etags };
 }
 
-export function refreshTaskAssignmentsSocket( userUUID, fromDateTime, role ) {
-    return { type: SOCKET_REFRESH_TASKS_ASSIGNMENTS, userUUID, fromDateTime, role };
+export function refreshTaskAssignmentsSocket( userUUID, taskUUIDs, role ) {
+    return { type: SOCKET_REFRESH_TASKS_ASSIGNMENTS, userUUID, taskUUIDs, role };
 }
 
 export function connectSocket( url ) {

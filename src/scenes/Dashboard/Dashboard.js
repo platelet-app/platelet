@@ -50,13 +50,11 @@ function Dashboard(props) {
         dispatch(clearCurrentTask());
     }
 
-    let fetchStartedDateTime = new Date().toISOString();
     useEffect(componentDidMount, []);
 
     function getTasks() {
         if (whoami.uuid) {
             if (tasks === initialTasksState.tasks) {
-                fetchStartedDateTime = new Date().toISOString()
                 dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
             }
         }
@@ -67,11 +65,15 @@ function Dashboard(props) {
         if (!isFetching && tasks) {
             console.log("refreshing tasks")
             const uuidEtags = getTaskUUIDEtags(tasks);
+            const uuids = Object.keys(uuidEtags);
+            dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
             dispatch(refreshTasksDataSocket(uuidEtags));
-            dispatch(refreshTaskAssignmentsSocket(whoami.uuid, fetchStartedDateTime, "coordinator"))
+            dispatch(subscribeToUUIDs(uuids))
+            dispatch(subscribeToAssignments(whoami.uuid))
             // Check tasks hash every 30 seconds
             const refreshTimer = setInterval(() => {
                 console.log("refreshing tasks")
+                dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
                 const uuidEtags = getTaskUUIDEtags(tasks);
                 dispatch(refreshTasksDataSocket(uuidEtags));
             }, 30000);
@@ -87,15 +89,14 @@ function Dashboard(props) {
         const taskUUIDs = getTaskUUIDs(tasks);
         if (taskUUIDs.length !== 0 && !firstTaskSubscribeCompleted.current) {
             firstTaskSubscribeCompleted.current = true;
-            dispatch(subscribeToUUIDs(taskUUIDs))
         }
     }
 
     useEffect(subscribeTasks, [tasks]);
 
     function subscribeAssignmentsToMe() {
-        if (whoami.uuid)
-            dispatch(subscribeToAssignments(whoami.uuid))
+        if (whoami.uuid) {
+        }
     }
 
     useEffect(subscribeAssignmentsToMe, [whoami]);
