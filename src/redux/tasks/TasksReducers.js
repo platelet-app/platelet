@@ -117,7 +117,7 @@ function sortAndConcat(tasks, data) {
     const sorted = determineTaskType(data);
     for (const [key, value] of Object.entries(sorted)) {
         sorted[key] = [...tasks[key], value]
-        if (key === "tasksNew") {
+        if (["tasksNew", "tasksDelivered", "tasksRejected", "tasksCancelled"].includes(key)) {
             sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
         } else {
             sorted[key] = sorted[key].sort((a, b) => a[0].parent_id - b[0].parent_id);
