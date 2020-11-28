@@ -29,7 +29,12 @@ import {
     DELETE_TASK_FROM_SOCKET,
     RESTORE_TASK_FROM_SOCKET,
     ADD_TASK_RELAY_FROM_SOCKET,
-    RESET_GROUP_RELAY_UUIDS, GROUP_RELAYS_TOGETHER, PUT_TASK_FROM_SOCKET, PUT_TASK_SUCCESS
+    RESET_GROUP_RELAY_UUIDS,
+    GROUP_RELAYS_TOGETHER,
+    PUT_TASK_FROM_SOCKET,
+    PUT_TASK_SUCCESS,
+    UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET,
+    UPDATE_TASK_TIME_REJECTED_FROM_SOCKET
 
 } from "./TasksActions";
 import update from "immutability-helper";
@@ -247,6 +252,8 @@ export function tasks(state = initialTasksState, action) {
             }
         }
         case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
+        case UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET:
+        case UPDATE_TASK_TIME_REJECTED_FROM_SOCKET:
         case UPDATE_TASK_REJECTED_TIME_SUCCESS: {
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
             if (parent.taskGroup) {

@@ -1,4 +1,5 @@
 import * as io from 'socket.io-client'
+import _ from "lodash"
 import {
     requestResponseReceived,
     SOCKET_CONNECT,
@@ -33,7 +34,7 @@ import {
     restoreTaskFromSocket,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
-    updateTaskRemoveAssignedRiderFromSocket
+    updateTaskRemoveAssignedRiderFromSocket, updateTaskTimeCancelledFromSocket, updateTaskTimeRejectedFromSocket
 } from "../tasks/TasksActions";
 import {
     addCommentFromSocket,
@@ -99,10 +100,27 @@ export const createSubscribeSocketMiddleware = () => {
                                 }
                                 break;
                             case "UPDATE_TASK":
-                                storeAPI.dispatch(updateTaskFromSocket({
-                                    taskUUID: action.data.object_uuid,
-                                    payload: action.data.data
-                                }))
+                                const {time_rejected, time_cancelled, ...everythingElse} = {...action.data.data};
+                                if (!!time_rejected || time_rejected === null) {
+                                    console.log(time_rejected)
+                                    storeAPI.dispatch(updateTaskTimeRejectedFromSocket({
+                                        taskUUID: action.data.object_uuid,
+                                        payload: {time_rejected}
+                                    }));
+                                }
+                                if (!!time_cancelled || time_cancelled === null) {
+                                    console.log(time_cancelled)
+                                    storeAPI.dispatch(updateTaskTimeCancelledFromSocket({
+                                        taskUUID: action.data.object_uuid,
+                                        payload: {time_cancelled}
+                                    }));
+                                }
+                                if (!_.isEmpty(everythingElse)) {
+                                    storeAPI.dispatch(updateTaskFromSocket({
+                                        taskUUID: action.data.object_uuid,
+                                        payload: {...everythingElse}
+                                    }));
+                                }
                                 break;
                             case "ASSIGN_RIDER_TO_TASK":
                                 const user_uuid = action.data.data.user_uuid
