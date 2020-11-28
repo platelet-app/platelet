@@ -110,12 +110,12 @@ const TaskGroup = props => {
                             view={props.modalView}
                             deleteDisabled={props.deleteDisabled}/>
                         <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
-                            <Grid className={(!!relay_next && props.showTasks === null) ? show : hide} item>
+                            <Grid className={(!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide} item>
                                 <Tooltip title="Relay">
                                     <ArrowDownwardIcon style={{height: "45px"}}/>
                                 </Tooltip>
                             </Grid>
-                            <Grid className={(!!!relay_next && props.showTasks === null) ? show : hide} item>
+                            <Grid className={(!!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide} item>
                                 <Tooltip title={"Add Relay"}>
                                     <IconButton
                                         disabled={isPosting}
@@ -264,6 +264,7 @@ export default function TasksGrid(props) {
                                                 onAddTaskClick={addEmptyTask}
                                                 onAddRelayClick={addRelay}
                                                 disableAddButton={isPosting}
+                                                hideRelayIcons={props.hideRelayIcons}
                                                 taskKey={taskKey}
                                                 showTasks={filteredTasksUUIDs}
                                                 key={title}/>

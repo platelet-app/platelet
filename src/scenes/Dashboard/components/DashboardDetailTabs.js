@@ -22,6 +22,12 @@ import SearchIcon from '@material-ui/icons/Search';
 import {
     createMuiTheme
 } from '@material-ui/core/styles';
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import {Link} from "react-router-dom";
+import {encodeUUID} from "../../../utilities";
+import Typography from "@material-ui/core/Typography";
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -92,6 +98,7 @@ export function DashboardDetailTabs(props) {
     const [rightSideBarOpen, setRightSideBarOpen] = useState(false);
     const snack = useSelector(state => state.taskContextMenuSnack);
     const currentSession = useSelector(state => state.session.session);
+    const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(state => state.whoami.user);
     const classes = useStyles();
     const postingSelector = createPostingSelector([
@@ -157,6 +164,47 @@ export function DashboardDetailTabs(props) {
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2} direction={"row"} justify={"flex-start"} alignItems={"center"}>
+                                <Grid item>
+                                    <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"}>
+                                        <Grid item>
+                                    <Typography>{`${props.roleView} view`.toUpperCase()}</Typography>
+                                        </Grid>
+                                        <Grid item>
+
+                                    <IconButton
+                                        color="inherit"
+                                        aria-controls="simple-menu"
+                                        aria-haspopup="true"
+                                        onClick={(event) => {
+                                            setAnchorElRoleMenu(event.currentTarget);
+                                        }}>
+                                        <ArrowDropDownIcon/>
+                                    </IconButton>
+                                    <Menu
+                                        id="profile-menu"
+                                        anchorEl={anchorElRoleMenu}
+                                        keepMounted
+                                        open={Boolean(anchorElRoleMenu)}
+                                        onClose={() => {
+                                            setAnchorElRoleMenu(null);
+                                        }}
+                                    >
+                                        <MenuItem onClick={() => {
+                                            setAnchorElRoleMenu(null);
+                                            props.onSetRoleMode("coordinator")
+                                        }}>
+                                            Coordinator
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {
+                                            setAnchorElRoleMenu(null);
+                                            props.onSetRoleMode("rider")
+                                        }}>
+                                            Rider
+                                        </MenuItem>
+                                    </Menu>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
                                 <Grid item>
                                     <CollaboratorsSection
                                         allowAdd={(whoami.uuid === currentSession.coordinator_uuid || whoami.roles.includes("admin"))}

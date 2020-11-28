@@ -45,6 +45,7 @@ function Dashboard(props) {
     const whoami = useSelector(state => state.whoami.user);
     const [postPermission, setPostPermission] = useState(true);
     const [viewMode, setViewMode] = useState(0);
+    const [roleView, setRoleView] = useState("coordinator");
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
@@ -54,12 +55,10 @@ function Dashboard(props) {
 
     function getTasks() {
         if (whoami.uuid) {
-            if (tasks === initialTasksState.tasks) {
-                dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
-            }
+            dispatch(getAllTasksRequest(whoami.uuid, "", roleView));
         }
     }
-    useEffect(getTasks, [whoami])
+    useEffect(getTasks, [whoami, roleView])
 
     function refreshTasks() {
         if (!isFetching && tasks) {
@@ -121,13 +120,14 @@ function Dashboard(props) {
     } else {
         return (
             <Paper className={classes.dashboard} elevation={3}>
-                <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => setViewMode(newValue)}>
+                <DashboardDetailTabs value={viewMode} roleView={roleView} onSetRoleMode={value => setRoleView(value)} onChange={(event, newValue) => setViewMode(newValue)}>
                     <TabPanel value={0} index={0}>
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
                                    modalView={"edit"}
+                                   hideRelayIcons={(roleView === "rider")}
                                    hideAddButton={!postPermission}
-                                   excludeColumnList={viewMode === 1 ? ["tasksNew", "tasksActive", "tasksPickedUp"] : ["tasksDelivered", "tasksCancelled", "tasksRejected"]}
+                                   excludeColumnList={viewMode === 1 ? ["tasksNew", "tasksActive", "tasksPickedUp"] : [roleView === "rider" ? "tasksNew" : "", "tasksDelivered", "tasksCancelled", "tasksRejected"]}
                         />
                     </TabPanel>
                 </DashboardDetailTabs>
