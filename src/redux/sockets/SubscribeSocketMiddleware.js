@@ -5,22 +5,23 @@ import {
     SOCKET_CONNECT_ASSIGNMENTS,
     SOCKET_CONNECT_COMMENTS, SOCKET_REFRESH_TASKS_ASSIGNMENTS,
     SOCKET_REFRESH_TASKS_DATA, SOCKET_REQUEST_RESPONSE_RECEIVED,
-    SOCKET_SUBSCRIBE_ASSIGNMENTS,
+    SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS,
+    SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS,
     SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_COMMENTS,
     SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_UUID,
     SOCKET_SUBSCRIBE_UUID_MANY,
-    SOCKET_UNSUBSCRIBE_ASSIGNMENTS,
+    SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS,
+    SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS,
     SOCKET_UNSUBSCRIBE_COMMENTS,
     SOCKET_UNSUBSCRIBE_UUID,
     SOCKET_UNSUBSCRIBE_UUID_MANY,
     subscribedAssignmentsResponseReceived,
     subscribedCommentsResponseReceived,
     subscribedResponseReceived,
-    subscribeToUUID,
-    unsubscribeFromUUID
+    subscribeToUUID, unsubscribeFromUUID
 } from "./SocketActions";
 import {findExistingTask, findExistingTaskParentByID, getTabIdentifier} from "../../utilities";
 import {
@@ -273,24 +274,36 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                 });
                 break;
             }
-            case SOCKET_SUBSCRIBE_ASSIGNMENTS: {
+            case SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS: {
                 if (socket)
-                    socket.emit('subscribe', action.uuid);
+                    socket.emit('subscribe_coordinator', action.uuid);
 
                 break;
             }
-            case SOCKET_UNSUBSCRIBE_ASSIGNMENTS: {
+            case SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS: {
                 if (socket)
-                    socket.emit('unsubscribe', action.uuid);
+                    socket.emit('unsubscribe_coordinator', action.uuid);
                 break;
             }
-            case SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED:
+            case SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS: {
+                if (socket)
+                    socket.emit('subscribe_rider', action.uuid);
+
+                break;
+            }
+            case SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS: {
+                if (socket)
+                    socket.emit('unsubscribe_rider', action.uuid);
+                break;
+            }
+            case SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED: {
                 if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
                     console.log("ignore")
                 } else {
                     if (action.data.tab_id != null && getTabIdentifier() !== action.data.tab_id) {
                         switch (action.data.type) {
-                            case "ASSIGN_COORDINATOR_TO_TASK": {
+                            case "ASSIGN_COORDINATOR_TO_TASK":
+                            case "ASSIGN_RIDER_TO_TASK": {
                                 const task = findExistingTask(storeAPI.getState().tasks.tasks, action.data.uuid)
                                 if (task)
                                     break;
@@ -308,10 +321,25 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                                 storeAPI.dispatch(subscribeToUUID(action.data.data.uuid))
                                 break;
                             }
+                            case "REMOVE_ASSIGNED_COORDINATOR_FROM_TASK":
+                            case "REMOVE_ASSIGNED_RIDER_FROM_TASK": {
+                                const task = findExistingTask(storeAPI.getState().tasks.tasks, action.data.data.uuid)
+                                if (task) {
+                                    storeAPI.dispatch(deleteTaskFromSocket(task.uuid))
+                                    storeAPI.dispatch(unsubscribeFromUUID(task.uuid))
+                                } else {
+                                    break;
+                                }
 
+                                break;
+
+                            }
+                            default:
+                                break;
                         }
                     }
                 }
+            }
             default:
                 return next(action);
         }

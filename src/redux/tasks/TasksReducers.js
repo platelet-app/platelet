@@ -282,10 +282,9 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET: {
             // Get the parent group first
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
-            // remove it from the list
-            const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
-
             if (parent.taskGroup) {
+                // remove it from the list
+                const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
                 const taskToUpdateAssignedRider = parent.taskGroup.find(t => t.uuid === action.data.taskUUID);
                 const updatedItem = {
                     ...taskToUpdateAssignedRider,

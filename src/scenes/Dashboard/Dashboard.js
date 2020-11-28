@@ -18,8 +18,13 @@ import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
     refreshTaskAssignmentsSocket,
     refreshTasksDataSocket,
-    subscribeToAssignments,
+    subscribeToCoordinatorAssignments,
+    subscribeToRiderAssignments,
     subscribeToUUIDs,
+    unsubscribeFromCoordinatorAssignments,
+    unsubscribeFromRiderAssignments,
+    unsubscribeFromUUID,
+    unsubscribeFromUUIDs,
 } from "../../redux/sockets/SocketActions";
 import {getTaskUUIDEtags, getTaskUUIDs} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
@@ -42,6 +47,7 @@ function Dashboard(props) {
     const mobileView = useSelector(state => state.mobileView);
     const firstUpdateNewTask = useRef(true);
     const firstTaskSubscribeCompleted = useRef(false);
+    const currentlySubscribedUUIDs = useRef([]);
     const whoami = useSelector(state => state.whoami.user);
     const [postPermission, setPostPermission] = useState(true);
     const [viewMode, setViewMode] = useState(0);
@@ -76,8 +82,19 @@ function Dashboard(props) {
             const uuids = Object.keys(uuidEtags);
             //dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
             dispatch(refreshTasksDataSocket(uuidEtags));
+            if (firstTaskSubscribeCompleted.current) {
+                dispatch(unsubscribeFromUUIDs(currentlySubscribedUUIDs.current))
+            }
             dispatch(subscribeToUUIDs(uuids))
-            dispatch(subscribeToAssignments(whoami.uuid))
+            currentlySubscribedUUIDs.current = uuids;
+            firstTaskSubscribeCompleted.current = true;
+            if (roleView === "rider") {
+                dispatch(unsubscribeFromCoordinatorAssignments(whoami.uuid))
+                dispatch(subscribeToRiderAssignments(whoami.uuid))
+            } else {
+                dispatch(unsubscribeFromRiderAssignments(whoami.uuid))
+                dispatch(subscribeToCoordinatorAssignments(whoami.uuid))
+            }
             // Check tasks hash every 30 seconds
             const refreshTimer = setInterval(() => {
                 console.log("refreshing tasks")
@@ -93,22 +110,6 @@ function Dashboard(props) {
     }
     useEffect(refreshTasks, [isFetching])
 
-
-    function subscribeTasks() {
-        const taskUUIDs = getTaskUUIDs(tasks);
-        if (taskUUIDs.length !== 0 && !firstTaskSubscribeCompleted.current) {
-            firstTaskSubscribeCompleted.current = true;
-        }
-    }
-
-    useEffect(subscribeTasks, [tasks]);
-
-    function subscribeAssignmentsToMe() {
-        if (whoami.uuid) {
-        }
-    }
-
-    useEffect(subscribeAssignmentsToMe, [whoami]);
 
     function onAddNewTask() {
         return
