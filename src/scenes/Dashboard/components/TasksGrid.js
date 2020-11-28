@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import {AddCircleButton} from "../../../components/Buttons";
+import {AddCircleButton, AddCircleButtonSmall} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
 import {createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
+import Button from "@material-ui/core/Button";
 import {Waypoint} from "react-waypoint";
 import {
     addTaskRelayRequest, addTaskRequest,
@@ -150,7 +151,8 @@ const TaskGroup = props => {
 const GridColumn = (props) => {
     const useStyles = makeStyles({
         header: {
-            fontWeight: "bold"
+            fontWeight: "bold",
+            padding: "6px"
         },
         divider: {
             width: "300px"
@@ -159,11 +161,21 @@ const GridColumn = (props) => {
     const classes = useStyles();
     const {show, hide} = showHide();
     const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
+    const header =
+        (props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ?
+        <Button variant="contained" color="primary"
+            disabled={props.disableAddButton}
+            onClick={props.onAddTaskClick}
+            className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
+        >Create New</Button> :
+        <Typography className={classes.header}>{props.title}</Typography>
+
     return (
         <TasksKanbanColumn className={props.hidden ? hide : show}>
             <Grid container direction={"column"} spacing={2} alignItems={"center"} justify={"flex-start"}>
                 <Grid item>
-                    <Typography className={classes.header}>{props.title}</Typography>
+                    {header}
+
                 </Grid>
                 <Grid item>
                     <Divider className={classes.divider}/>
@@ -176,14 +188,6 @@ const GridColumn = (props) => {
                           alignItems={"center"}
                           key={props.title + "column"}
                     >
-                        <Grid item>
-                            <AddCircleButton
-                                tooltip={"Add task"}
-                                disabled={props.disableAddButton}
-                                onClick={props.onAddTaskClick}
-                                className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
-                            />
-                        </Grid>
 
                         {tasks.map(taskList => {
                             return (
