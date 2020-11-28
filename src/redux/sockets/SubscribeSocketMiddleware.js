@@ -158,8 +158,12 @@ export const createSubscribeSocketMiddleware = () => {
                             const tasks = JSON.parse(action.data.data);
                             if (tasks.length !== 0) {
                                 for (const task of tasks) {
-                                    storeAPI.dispatch(putTaskFromSocket(task))
-                                    storeAPI.dispatch(resetGroupRelayUUIDs(task.parent_id))
+                                    if (task.deleted) {
+                                        storeAPI.dispatch(deleteTaskFromSocket(task.uuid))
+                                    } else {
+                                        storeAPI.dispatch(putTaskFromSocket(task))
+                                        storeAPI.dispatch(resetGroupRelayUUIDs(task.parent_id))
+                                    }
                                 }
                             }
                             break;

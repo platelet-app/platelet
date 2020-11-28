@@ -66,15 +66,16 @@ function Dashboard(props) {
             console.log("refreshing tasks")
             const uuidEtags = getTaskUUIDEtags(tasks);
             const uuids = Object.keys(uuidEtags);
-            dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
+            //dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
             dispatch(refreshTasksDataSocket(uuidEtags));
             dispatch(subscribeToUUIDs(uuids))
             dispatch(subscribeToAssignments(whoami.uuid))
             // Check tasks hash every 30 seconds
             const refreshTimer = setInterval(() => {
                 console.log("refreshing tasks")
-                dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
                 const uuidEtags = getTaskUUIDEtags(tasks);
+                const uuids = Object.keys(uuidEtags);
+               // dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
                 dispatch(refreshTasksDataSocket(uuidEtags));
             }, 30000);
 
