@@ -28,6 +28,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import {Link} from "react-router-dom";
 import {encodeUUID} from "../../../utilities";
 import Typography from "@material-ui/core/Typography";
+import {showHide} from "../../../styles/common";
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -101,6 +102,7 @@ export function DashboardDetailTabs(props) {
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(state => state.whoami.user);
     const classes = useStyles();
+    const {show, hide} = showHide();
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -130,7 +132,7 @@ export function DashboardDetailTabs(props) {
 
 
     return (
-        <>
+        <React.Fragment>
             <AppBar position="static">
                 <Toolbar variant="dense">
                     <Grid container spacing={1} wrap={"nowrap"} direction={"row"} justify={"space-between"}
@@ -165,11 +167,11 @@ export function DashboardDetailTabs(props) {
                         <Grid item>
                             <Grid container spacing={2} direction={"row"} justify={"flex-start"} alignItems={"center"}>
                                 <Grid item>
-                                    <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"}>
-                                        <Grid item>
+                                    <Grid container  direction={"row"} justify={"flex-start"} alignItems={"center"}>
+                                        <Grid className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide} item>
                                     <Typography>{`${props.roleView} view`.toUpperCase()}</Typography>
                                         </Grid>
-                                        <Grid item>
+                                        <Grid className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide} item>
 
                                     <IconButton
                                         color="inherit"
@@ -235,6 +237,6 @@ export function DashboardDetailTabs(props) {
                                    handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {props.children}
             </PersistentDrawerRight>
-        </>
+        </React.Fragment>
     );
 }

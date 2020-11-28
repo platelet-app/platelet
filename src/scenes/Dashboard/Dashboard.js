@@ -50,8 +50,17 @@ function Dashboard(props) {
     function componentDidMount() {
         dispatch(clearCurrentTask());
     }
-
     useEffect(componentDidMount, []);
+
+    function setInitialRoleView() {
+        if (whoami.uuid) {
+            if (whoami.roles.includes("coordinator"))
+                setRoleView("coordinator")
+            else
+                setRoleView("rider")
+        }
+    }
+    useEffect(setInitialRoleView, [whoami])
 
     function getTasks() {
         if (whoami.uuid) {
