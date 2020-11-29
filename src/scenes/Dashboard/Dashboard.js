@@ -4,7 +4,7 @@ import 'typeface-roboto'
 import Paper from "@material-ui/core/Paper";
 import {
     clearCurrentTask,
-    getAllTasksRequest, setRoleViewAndGetTasks,
+    getAllTasksRequest, setRoleViewAndGetTasks, startRefreshTasksLoopFromSocket,
 } from '../../redux/tasks/TasksActions'
 import {
     setNewTaskAddedView,
@@ -90,17 +90,8 @@ function Dashboard(props) {
                 dispatch(unsubscribeFromRiderAssignments(whoami.uuid))
                 dispatch(subscribeToCoordinatorAssignments(whoami.uuid))
             }
-            // Check tasks hash every 30 seconds
-            const refreshTimer = setInterval(() => {
-                console.log("refreshing tasks")
-                const uuidEtags = getTaskUUIDEtags(tasks);
-                const uuids = Object.keys(uuidEtags);
-               // dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
-                dispatch(refreshTasksDataSocket(uuidEtags));
-            }, 30000);
+            dispatch(startRefreshTasksLoopFromSocket(whoami.uuid))
 
-            // cancel refresh on unmount
-            return () => clearInterval(refreshTimer);
         }
     }
     useEffect(refreshTasks, [isFetching])

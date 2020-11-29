@@ -174,7 +174,9 @@ export const createSubscribeSocketMiddleware = () => {
                 } else {
                     switch (action.data.type) {
                         case "TASKS_REFRESH": {
+                            console.log("TASKS REFRESH")
                             const tasks = JSON.parse(action.data.data);
+                            console.log(tasks)
                             if (tasks.length !== 0) {
                                 for (const task of tasks) {
                                     if (task.deleted) {
@@ -188,9 +190,10 @@ export const createSubscribeSocketMiddleware = () => {
                             break;
                         }
                         case "TASK_ASSIGNMENTS_REFRESH": {
+                            console.log("ASSIGNMENTS REFRESH")
                             const tasks = action.data.data;
                             for (const task of tasks) {
-                                const parent = findExistingTaskParentByID(task.parent_id);
+                                const parent = findExistingTaskParentByID(storeAPI.getState().tasks.tasks, task.parent_id);
                                 if (parent.taskGroup) {
                                     const findCheck = parent.taskGroup.find(t => t.uuid === task.uuid)
                                     if (findCheck) {
