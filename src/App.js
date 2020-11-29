@@ -6,7 +6,7 @@ import './App.css';
 import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
-import { useIdleTimer } from 'react-idle-timer'
+import {useIdleTimer} from 'react-idle-timer'
 import {
     clearWhoami,
     getWhoamiRequest, setIdleStatus, setMobileView
@@ -34,7 +34,9 @@ import {
     connectCommentsSocket,
     connectSocket,
 } from "./redux/sockets/SocketActions";
-import {DismissButton} from "./styles/common";
+import {DismissButton, showHide} from "./styles/common";
+import {Link} from "react-router-dom";
+import MenuItem from "@material-ui/core/MenuItem";
 
 
 const useStyles = makeStyles(theme => ({
@@ -62,6 +64,7 @@ function App(props) {
     const error = useSelector(state => state.error);
     const dispatch = useDispatch();
     const classes = useStyles();
+    const {show, hide} = showHide();
     const [confirmLogin, setConfirmLogin] = useState(false);
     const [headerSettings, setHeaderSettings] = useState({
         title: "Bloodbike Dispatch",
@@ -89,7 +92,7 @@ function App(props) {
         console.log('time remaining', getRemainingTime())
     }
 
-    const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    const {getRemainingTime, getLastActiveTime} = useIdleTimer({
         timeout: 1000 * 60 * 5,
         onIdle: handleOnIdle,
         onActive: handleOnActive,
@@ -108,7 +111,7 @@ function App(props) {
     }
 
     function handleError() {
-                // any saga that returns with an error object that is not null will be handled here
+        // any saga that returns with an error object that is not null will be handled here
         if (error) {
             if (error.name === "HttpError") {
                 if (error.message)
@@ -140,20 +143,28 @@ function App(props) {
 
     function showNotification() {
         if (incomingNotification) {
-            const {message, options, restoreAction} = incomingNotification;
-                options.action = key => (
-                    <React.Fragment>
-                        {restoreAction ?
-                            <Button color="secondary" size="small" onClick={() => {
-                                props.closeSnackbar(key);
-                                dispatch(restoreAction());
-                            }}>
-                                UNDO
-                            </Button>
-                         : <></>}
-                         <DismissButton onClick={() => props.closeSnackbar(key)}/>
-                    </React.Fragment>
-                );
+            const {message, options, restoreAction, viewLink} = incomingNotification;
+            options.action = key => (
+                <React.Fragment>
+                    <Button
+                        className={restoreAction ? show : hide}
+                        color="secondary"
+                        size="small" onClick={() => {
+                        props.closeSnackbar(key);
+                        dispatch(restoreAction());
+                    }}>
+                        UNDO
+                    </Button>
+                    <Button
+                        className={viewLink ? show : hide}
+                        color="secondary"
+                        size="small"
+                        component={Link} to={viewLink}>
+                        VIEW
+                    </Button>
+                    <DismissButton onClick={() => props.closeSnackbar(key)}/>
+                </React.Fragment>
+            );
             props.enqueueSnackbar(message, options)
         }
     }
