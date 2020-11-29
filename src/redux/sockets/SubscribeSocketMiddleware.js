@@ -100,25 +100,25 @@ export const createSubscribeSocketMiddleware = () => {
                                 }
                                 break;
                             case "UPDATE_TASK":
-                                const {time_rejected, time_cancelled, ...everythingElse} = {...action.data.data};
+                                const {time_rejected, time_cancelled, etag, ...everythingElse} = {...action.data.data};
                                 if (!!time_rejected || time_rejected === null) {
                                     console.log(time_rejected)
                                     storeAPI.dispatch(updateTaskTimeRejectedFromSocket({
                                         taskUUID: action.data.object_uuid,
-                                        payload: {time_rejected}
+                                        payload: {time_rejected, etag}
                                     }));
                                 }
                                 if (!!time_cancelled || time_cancelled === null) {
                                     console.log(time_cancelled)
                                     storeAPI.dispatch(updateTaskTimeCancelledFromSocket({
                                         taskUUID: action.data.object_uuid,
-                                        payload: {time_cancelled}
+                                        payload: {time_cancelled, etag}
                                     }));
                                 }
                                 if (!_.isEmpty(everythingElse)) {
                                     storeAPI.dispatch(updateTaskFromSocket({
                                         taskUUID: action.data.object_uuid,
-                                        payload: {...everythingElse}
+                                        payload: {...everythingElse, etag}
                                     }));
                                 }
                                 break;
