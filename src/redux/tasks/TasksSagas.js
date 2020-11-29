@@ -4,6 +4,7 @@ import {
     put,
     takeEvery,
     takeLatest,
+    delay,
     select,
 } from 'redux-saga/effects'
 import {
@@ -17,7 +18,12 @@ import {
     getTaskNotFound,
     ADD_TASK_RELAY_REQUEST,
     addTaskRelaySuccess,
-    addTaskRelayFailure, resetGroupRelayUUIDs, groupRelaysTogether
+    addTaskRelayFailure,
+    resetGroupRelayUUIDs,
+    groupRelaysTogether,
+    getAllTasksRequest,
+    SET_ROLE_VIEW_AND_GET_TASKS,
+    START_REFRESH_TASKS_LOOP_FROM_SOCKET
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -81,16 +87,23 @@ import {updateTaskPatchRequest as updateTaskPatchAction} from "./TasksActions"
 
 
 import {getApiControl, getWhoami} from "../Api"
-import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
+import {
+    refreshTaskAssignmentsSocket,
+    refreshTasksDataSocket,
+    subscribeToUUID,
+    unsubscribeFromUUID
+} from "../sockets/SocketActions";
 import React from "react";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {findExistingTask} from "../../utilities";
 import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
+import {SET_ROLE_VIEW, setRoleView} from "../Actions";
+import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
+import {createLoadingSelector, createPostingSelector} from "../selectors";
+import {useSelector} from "react-redux";
 
 
 const emptyTask = {
-    time_of_call: new Date().toISOString(),
-    time_created: new Date().toISOString(),
     requester_contact: {
         name: "",
         telephone_number: ""
@@ -126,7 +139,7 @@ function* postNewTaskRelay(action) {
     try {
         const api = yield select(getApiControl);
         const whoami = yield select(getWhoami);
-        const result = yield call([api, api.tasks.createTask], {...emptyTask, ...action.data});
+        const result = yield call([api, api.tasks.createTask], {...emptyTask, ...action.data, time_created: new Date().toISOString()});
         const orderInRelay = result.order_in_relay ? parseInt(result.order_in_relay) : 0;
         const task = {...emptyTask, ...action.data, author_uuid: whoami.uuid, uuid: result.uuid, order_in_relay: orderInRelay};
         yield put(addTaskAssignedCoordinatorRequest({taskUUID: task.uuid, payload: {task_uuid: task.uuid, user_uuid: task.author_uuid}}))
@@ -189,8 +202,8 @@ export function* watchRestoreTask() {
 function* updateTask(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskSuccess(action.data))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        yield put(updateTaskSuccess({...action.data, etag: result.etag}))
     } catch (error) {
         yield put(updateTaskFailure(error))
     }
@@ -293,8 +306,9 @@ function* updateTaskDropoffTime(action) {
 function* updateTaskPriority(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskPrioritySuccess(action.data))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskPrioritySuccess(data))
     } catch (error) {
         yield put(updateTaskPriorityFailure(error))
     }
@@ -476,6 +490,42 @@ function* getTasks(action) {
 
 export function* watchGetTasks() {
     yield takeLatest(GET_TASKS_REQUEST, getTasks)
+}
+
+export function* refreshTasksFromSocket(action) {
+    while (true) {
+        const loadingSelector = yield createLoadingSelector(['GET_TASKS']);
+        const isFetching = yield select(state => loadingSelector(state));
+        const isPostingNewTaskSelector = yield createPostingSelector(["UPDATE_TASK_PRIORITY"]);
+        const isPosting = yield select(state => isPostingNewTaskSelector(state));
+        if (isPosting || isFetching) {
+            console.log("waiting")
+            yield delay(30 * 1000);
+        } else {
+            const currentTasks = yield select((state) => state.tasks.tasks);
+            const currentRole = yield select((state) => state.roleView);
+            const uuidEtags = yield getTaskUUIDEtags(currentTasks);
+            const uuids = yield Object.keys(uuidEtags);
+            if (action.userUUID)
+                yield put (refreshTaskAssignmentsSocket(action.userUUID, uuids, currentRole))
+            yield put(refreshTasksDataSocket(uuidEtags));
+            yield delay(30 * 1000);
+        }
+    }
+}
+
+export function* watchRefreshTasksFromSocket() {
+    yield takeLatest(START_REFRESH_TASKS_LOOP_FROM_SOCKET, refreshTasksFromSocket)
+}
+
+
+function* setRoleViewAndGetTasks(action) {
+    yield put(getAllTasksRequest(action.userUUID, action.page, action.role))
+    yield put(setRoleView(action.role))
+}
+
+export function* watchSetRoleViewAndGetTasks() {
+    yield takeLatest(SET_ROLE_VIEW_AND_GET_TASKS, setRoleViewAndGetTasks)
 }
 
 function* refreshTasks(action) {

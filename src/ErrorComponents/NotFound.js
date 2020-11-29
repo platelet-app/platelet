@@ -13,7 +13,9 @@ export default function NotFound(props) {
                     </Typography>
                 </Grid>
                 <Grid item>
-                    {props.children}
+                    <Typography>
+                        {props.children}
+                    </Typography>
                 </Grid>
             </Grid>
         </PaddedPaper>

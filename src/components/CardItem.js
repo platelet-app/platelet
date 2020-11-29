@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import {Typography} from "@material-ui/core";
 import React from "react";
 import Divider from "@material-ui/core/Divider";
+import {showHide} from "../styles/common";
 
 const useStyles = makeStyles({
     titleText: {
@@ -16,10 +17,11 @@ const useStyles = makeStyles({
 
 export default function CardItem(props) {
     const classes = useStyles();
+    const {show, hide} = showHide();
     return (
         <Grid item>
             <Grid container spacing={1} direction={"row"} alignItems={"flex-end"} justify={"space-between"}>
-                <Grid item>
+                <Grid className={props.label ? show : hide} item>
                     <Typography className={classes.titleText}>{props.label}:</Typography>
                 </Grid>
                 <Grid item>
@@ -29,5 +31,4 @@ export default function CardItem(props) {
             <Grid item><Divider orientation="horizontal" flexItem/></Grid>
         </Grid>
     )
-
 }

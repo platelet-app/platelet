@@ -95,3 +95,9 @@ export const SET_MENU_INDEX = 'SET_MENU_INDEX';
 export function setMenuIndex(data) {
     return { type: SET_MENU_INDEX, data }
 }
+
+export const SET_ROLE_VIEW = "SET_ROLE_VIEW";
+
+export function setRoleView(data) {
+    return { type: SET_ROLE_VIEW, data }
+}

@@ -15,6 +15,10 @@ export const RESTORE_TASK_REQUEST = 'RESTORE_TASK_REQUEST';
 export const RESTORE_TASK_SUCCESS = 'RESTORE_TASK_SUCCESS';
 export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE';
 
+
+export const PUT_TASK_SUCCESS = "PUT_TASK_SUCCESS";
+export const PUT_TASK_FROM_SOCKET = "PUT_TASK_FROM_SOCKET";
+
 export const SET_CURRENT_TASK = 'SET_CURRENT_TASK';
 export const CLEAR_CURRENT_TASK = 'CLEAR_CURRENT_TASK';
 
@@ -27,6 +31,9 @@ export const UPDATE_TASK_PICKUP_TIME_REQUEST = "UPDATE_TASK_PICKUP_TIME_REQUEST"
 export const UPDATE_TASK_DROPOFF_TIME_REQUEST = "UPDATE_TASK_DROPOFF_TIME_REQUEST";
 export const UPDATE_TASK_CANCELLED_TIME_REQUEST = "UPDATE_TASK_CANCELLED_TIME_REQUEST";
 export const UPDATE_TASK_REJECTED_TIME_REQUEST = "UPDATE_TASK_REJECTED_TIME_REQUEST";
+
+export const UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET = "UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET";
+export const UPDATE_TASK_TIME_REJECTED_FROM_SOCKET = "UPDATE_TASK_TIME_REJECTED_FROM_SOCKET";
 export const UPDATE_TASK_ASSIGNED_RIDER_REQUEST = "UPDATE_TASK_ASSIGNED_RIDER_REQUEST";
 export const UPDATE_TASK_ASSIGNED_COORDINATOR_REQUEST = "UPDATE_TASK_ASSIGNED_COORDINATOR_REQUEST";
 export const UPDATE_TASK_PRIORITY_REQUEST = "UPDATE_TASK_PRIORITY_REQUEST";
@@ -41,6 +48,7 @@ export const UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_
 export const ADD_TASK_FROM_SOCKET = "ADD_TASK_FROM_SOCKET"
 export const DELETE_TASK_FROM_SOCKET = "DELETE_TASK_FROM_SOCKET"
 export const RESTORE_TASK_FROM_SOCKET = "RESTORE_TASK_FROM_SOCKET"
+export const START_REFRESH_TASKS_LOOP_FROM_SOCKET = "START_REFRESH_TASKS_LOOP_FROM_SOCKET";
 
 export const UPDATE_TASK_REQUESTER_CONTACT_SUCCESS = "UPDATE_TASK_REQUESTER_CONTACT_SUCCESS";
 export const UPDATE_TASK_PICKUP_ADDRESS_SUCCESS = "UPDATE_TASK_PICKUP_ADDRESS_SUCCESS";
@@ -71,6 +79,7 @@ export const UPDATE_TASK_PATCH_FAILURE = "UPDATE_TASK_PATCH_FAILURE";
 export const UPDATE_TASK_REQUEST = 'UPDATE_TASK_REQUEST';
 export const UPDATE_TASK_SUCCESS = 'UPDATE_TASK_SUCCESS';
 export const UPDATE_TASK_FAILURE = 'UPDATE_TASK_FAILURE';
+export const SET_ROLE_VIEW_AND_GET_TASKS = "SET_ROLE_VIEW_AND_GET_TASKS";
 export const GET_TASKS_REQUEST = 'GET_TASKS_REQUEST';
 export const GET_TASKS_SUCCESS = 'GET_TASKS_SUCCESS';
 export const GET_TASKS_NOTFOUND = 'GET_TASKS_NOTFOUND';
@@ -100,6 +109,14 @@ export function restoreTaskSuccess(data) {
 
 export function restoreTaskFailure(error) {
     return { type: RESTORE_TASK_FAILURE, error }
+}
+
+export function putTaskSuccess(data) {
+    return { type: PUT_TASK_SUCCESS, data }
+}
+
+export function putTaskFromSocket(data) {
+    return { type: PUT_TASK_FROM_SOCKET, data }
 }
 
 export function getTaskRequest(data) {
@@ -186,12 +203,24 @@ export function updateTaskFromSocket(data) {
     return { type: UPDATE_TASK_FROM_SOCKET, data }
 }
 
+export function updateTaskTimeRejectedFromSocket(data) {
+    return { type: UPDATE_TASK_TIME_REJECTED_FROM_SOCKET, data }
+}
+
+export function updateTaskTimeCancelledFromSocket(data) {
+    return { type: UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET, data }
+}
+
 export function updateTaskAssignedRiderFromSocket(data) {
     return { type: UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET, data }
 }
 
 export function updateTaskRemoveAssignedRiderFromSocket(data) {
     return { type: UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET, data }
+}
+
+export function startRefreshTasksLoopFromSocket(userUUID) {
+    return {type: START_REFRESH_TASKS_LOOP_FROM_SOCKET, userUUID}
 }
 
 export function updateTaskRequesterContactRequest(data) {
@@ -333,6 +362,10 @@ export function updateTaskPatchFailure(error) {
 
 export function getAllTasksRequest(data, page, role) {
     return { type: GET_TASKS_REQUEST, data, page, role }
+}
+
+export function setRoleViewAndGetTasks(userUUID, page, role) {
+    return { type: SET_ROLE_VIEW_AND_GET_TASKS, userUUID, page, role }
 }
 
 export function getAllTasksSuccess(data) {

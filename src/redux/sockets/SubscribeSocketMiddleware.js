@@ -1,42 +1,60 @@
 import * as io from 'socket.io-client'
+import _ from "lodash"
 import {
+    requestResponseReceived,
     SOCKET_CONNECT,
     SOCKET_CONNECT_ASSIGNMENTS,
-    SOCKET_CONNECT_COMMENTS, SOCKET_SUBSCRIBE_ASSIGNMENTS, SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED,
-    SOCKET_SUBSCRIBE_COMMENTS, SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED,
+    SOCKET_CONNECT_COMMENTS, SOCKET_REFRESH_TASKS_ASSIGNMENTS,
+    SOCKET_REFRESH_TASKS_DATA, SOCKET_REQUEST_RESPONSE_RECEIVED,
+    SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS,
+    SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS,
+    SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED,
+    SOCKET_SUBSCRIBE_COMMENTS,
+    SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_RESPONSE_RECEIVED,
     SOCKET_SUBSCRIBE_UUID,
-    SOCKET_SUBSCRIBE_UUID_MANY, SOCKET_UNSUBSCRIBE_ASSIGNMENTS,
+    SOCKET_SUBSCRIBE_UUID_MANY,
+    SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS,
+    SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS,
     SOCKET_UNSUBSCRIBE_COMMENTS,
     SOCKET_UNSUBSCRIBE_UUID,
-    SOCKET_UNSUBSCRIBE_UUID_MANY, subscribedAssignmentsResponseReceived,
+    SOCKET_UNSUBSCRIBE_UUID_MANY,
+    subscribedAssignmentsResponseReceived,
     subscribedCommentsResponseReceived,
-    subscribedResponseReceived, subscribeToUUID, unsubscribeFromUUID
+    subscribedResponseReceived,
+    subscribeToUUID, unsubscribeFromUUID
 } from "./SocketActions";
 import {findExistingTask, findExistingTaskParentByID, getTabIdentifier} from "../../utilities";
 import {
-    addTaskFromSocket, addTaskRelayFromSocket, deleteTaskFromSocket, resetGroupRelayUUIDs, restoreTaskFromSocket,
+    addTaskFromSocket,
+    addTaskRelayFromSocket,
+    deleteTaskFromSocket,
+    putTaskFromSocket,
+    resetGroupRelayUUIDs,
+    restoreTaskFromSocket,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
-    updateTaskRemoveAssignedRiderFromSocket
+    updateTaskRemoveAssignedRiderFromSocket, updateTaskTimeCancelledFromSocket, updateTaskTimeRejectedFromSocket
 } from "../tasks/TasksActions";
 import {
     addCommentFromSocket,
     deleteCommentFromSocket,
     restoreCommentFromSocket, updateCommentFromSocket
 } from "../comments/CommentsActions";
-import {put, select} from "redux-saga/effects";
 
 export const createSubscribeSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
-        switch(action.type) {
+        switch (action.type) {
             case SOCKET_CONNECT: {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedResponseReceived(message));
                 });
+                socket.on("request_response", message => {
+                    storeAPI.dispatch(requestResponseReceived(message))
+                })
                 socket.on("response", (message) => {
                     console.log(message.data);
                 });
@@ -62,17 +80,47 @@ export const createSubscribeSocketMiddleware = () => {
                     socket.emit('unsubscribe_many', action.uuids);
                 break;
             }
+            case SOCKET_REFRESH_TASKS_DATA:
+                if (socket)
+                    socket.emit("refresh_task_data", action.uuids_etags)
+                break;
+            case SOCKET_REFRESH_TASKS_ASSIGNMENTS:
+                if (socket)
+                    socket.emit("refresh_task_assignments", action.userUUID, action.taskUUIDs, action.role)
+                break;
             case SOCKET_SUBSCRIBE_RESPONSE_RECEIVED:
                 if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
                     console.log("ignore")
                 } else {
                     if (action.data.tab_id != null && getTabIdentifier() !== action.data.tab_id) {
                         switch (action.data.type) {
+                            case "TASKS_REFRESH":
+                                for (const task of action.data.data) {
+                                    storeAPI.dispatch(putTaskFromSocket(task))
+                                }
+                                break;
                             case "UPDATE_TASK":
-                                storeAPI.dispatch(updateTaskFromSocket({
-                                    taskUUID: action.data.object_uuid,
-                                    payload: action.data.data
-                                }))
+                                const {time_rejected, time_cancelled, etag, ...everythingElse} = {...action.data.data};
+                                if (!!time_rejected || time_rejected === null) {
+                                    console.log(time_rejected)
+                                    storeAPI.dispatch(updateTaskTimeRejectedFromSocket({
+                                        taskUUID: action.data.object_uuid,
+                                        payload: {time_rejected, etag}
+                                    }));
+                                }
+                                if (!!time_cancelled || time_cancelled === null) {
+                                    console.log(time_cancelled)
+                                    storeAPI.dispatch(updateTaskTimeCancelledFromSocket({
+                                        taskUUID: action.data.object_uuid,
+                                        payload: {time_cancelled, etag}
+                                    }));
+                                }
+                                if (!_.isEmpty(everythingElse)) {
+                                    storeAPI.dispatch(updateTaskFromSocket({
+                                        taskUUID: action.data.object_uuid,
+                                        payload: {...everythingElse, etag}
+                                    }));
+                                }
                                 break;
                             case "ASSIGN_RIDER_TO_TASK":
                                 const user_uuid = action.data.data.user_uuid
@@ -120,15 +168,61 @@ export const createSubscribeSocketMiddleware = () => {
                     } else
                         console.log("this came from us")
                 }
-        default:
-            return next(action);
+            case SOCKET_REQUEST_RESPONSE_RECEIVED:
+                if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
+                    console.log("ignore")
+                } else {
+                    switch (action.data.type) {
+                        case "TASKS_REFRESH": {
+                            console.log("TASKS REFRESH")
+                            const tasks = JSON.parse(action.data.data);
+                            console.log(tasks)
+                            if (tasks.length !== 0) {
+                                for (const task of tasks) {
+                                    if (task.deleted) {
+                                        storeAPI.dispatch(deleteTaskFromSocket(task.uuid))
+                                    } else {
+                                        storeAPI.dispatch(putTaskFromSocket(task))
+                                        storeAPI.dispatch(resetGroupRelayUUIDs(task.parent_id))
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        case "TASK_ASSIGNMENTS_REFRESH": {
+                            console.log("ASSIGNMENTS REFRESH")
+                            const tasks = action.data.data;
+                            for (const task of tasks) {
+                                const parent = findExistingTaskParentByID(storeAPI.getState().tasks.tasks, task.parent_id);
+                                if (parent.taskGroup) {
+                                    const findCheck = parent.taskGroup.find(t => t.uuid === task.uuid)
+                                    if (findCheck) {
+                                        storeAPI.dispatch(putTaskFromSocket(task))
+                                    } else {
+                                        storeAPI.dispatch(addTaskRelayFromSocket(task))
+                                    }
+                                    storeAPI.dispatch(resetGroupRelayUUIDs(task.parent_id))
+                                } else {
+                                    storeAPI.dispatch(addTaskFromSocket(task))
+                                }
+                            }
+                            console.log(tasks)
+                            break;
+                        }
+
+                        default:
+                            break;
+                    }
+                }
+            default:
+                return next(action);
         }
     }
 }
 export const createSubscribeCommentsSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
-        switch(action.type) {
+        switch (action.type) {
             case SOCKET_CONNECT_COMMENTS: {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
@@ -189,7 +283,7 @@ export const createSubscribeCommentsSocketMiddleware = () => {
 export const createSubscribeAssignmentsSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
-        switch(action.type) {
+        switch (action.type) {
             case SOCKET_CONNECT_ASSIGNMENTS: {
                 socket = io.connect(action.url);
                 socket.on("subscribed_response", (message) => {
@@ -201,24 +295,36 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                 });
                 break;
             }
-            case SOCKET_SUBSCRIBE_ASSIGNMENTS: {
+            case SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS: {
                 if (socket)
-                    socket.emit('subscribe', action.uuid);
+                    socket.emit('subscribe_coordinator', action.uuid);
 
                 break;
             }
-            case SOCKET_UNSUBSCRIBE_ASSIGNMENTS: {
+            case SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS: {
                 if (socket)
-                    socket.emit('unsubscribe', action.uuid);
+                    socket.emit('unsubscribe_coordinator', action.uuid);
                 break;
             }
-            case SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED:
+            case SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS: {
+                if (socket)
+                    socket.emit('subscribe_rider', action.uuid);
+
+                break;
+            }
+            case SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS: {
+                if (socket)
+                    socket.emit('unsubscribe_rider', action.uuid);
+                break;
+            }
+            case SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED: {
                 if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
                     console.log("ignore")
                 } else {
                     if (action.data.tab_id != null && getTabIdentifier() !== action.data.tab_id) {
                         switch (action.data.type) {
-                            case "ASSIGN_COORDINATOR_TO_TASK": {
+                            case "ASSIGN_COORDINATOR_TO_TASK":
+                            case "ASSIGN_RIDER_TO_TASK": {
                                 const task = findExistingTask(storeAPI.getState().tasks.tasks, action.data.uuid)
                                 if (task)
                                     break;
@@ -236,13 +342,28 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                                 storeAPI.dispatch(subscribeToUUID(action.data.data.uuid))
                                 break;
                             }
+                            case "REMOVE_ASSIGNED_COORDINATOR_FROM_TASK":
+                            case "REMOVE_ASSIGNED_RIDER_FROM_TASK": {
+                                const task = findExistingTask(storeAPI.getState().tasks.tasks, action.data.data.uuid)
+                                if (task) {
+                                    storeAPI.dispatch(deleteTaskFromSocket(task.uuid))
+                                    storeAPI.dispatch(unsubscribeFromUUID(task.uuid))
+                                } else {
+                                    break;
+                                }
 
+                                break;
+
+                            }
+                            default:
+                                break;
                         }
                     }
                 }
+            }
             default:
                 return next(action);
         }
-        }
     }
+}
 

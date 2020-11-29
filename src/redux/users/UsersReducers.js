@@ -3,7 +3,7 @@ import {
     GET_USER_SUCCESS,
     ADD_USER_SUCCESS,
     RESTORE_USER_SUCCESS,
-    DELETE_USER_SUCCESS, UPDATE_USER_SUCCESS, GET_USERS_FAILURE, GET_USER_FAILURE
+    DELETE_USER_SUCCESS, UPDATE_USER_SUCCESS, GET_USERS_FAILURE, GET_USER_FAILURE, GET_USER_NOTFOUND
 } from "./UsersActions";
 import update from "immutability-helper";
 
@@ -88,6 +88,7 @@ export function user(state = initialUserState, action) {
         case GET_USER_SUCCESS:
             return {user: action.data, error: null};
         case GET_USER_FAILURE:
+        case GET_USER_NOTFOUND:
             return {...initialUserState, error: action.error};
         case UPDATE_USER_SUCCESS:
             return {user: Object.assign(state.user, action.data.payload), error: null};

@@ -52,7 +52,7 @@ export default function VehicleDetail(props) {
             <FormSkeleton/>
         )
     } else if (notFound) {
-        return <NotFound><Typography>Vehicle {vehicleUUID} could not be found.</Typography></NotFound>
+        return <NotFound>Vehicle {vehicleUUID} could not be found.</NotFound>
     } else {
         return (
             <Grid container spacing={3} direction={"column"}>

@@ -111,11 +111,7 @@ export function PaddedPaper(props) {
                 padding: padding
             }
         }>
-            <Grid container direction={"row"} alignItems={"flex-start"} justify={"center"}>
-                <Grid item>
                     {props.children}
-                </Grid>
-            </Grid>
         </Paper>
     )
 }

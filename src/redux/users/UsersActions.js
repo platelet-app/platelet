@@ -1,5 +1,3 @@
-import {GET_VEHICLE_NOTFOUND} from "../vehicles/VehiclesActions";
-
 export const GET_USERS_REQUEST = 'GET_USERS_REQUEST';
 export const GET_USERS_SUCCESS = 'GET_USERS_SUCCESS';
 export const GET_USERS_FAILURE = 'GET_USERS_FAILURE';
@@ -60,8 +58,8 @@ export function getUserSuccess(data) {
 export function getUserFailure(error) {
     return { type: GET_USER_FAILURE, error }
 }
-export function getUserNotFound() {
-    return { type: GET_USER_NOTFOUND }
+export function getUserNotFound(error) {
+    return { type: GET_USER_NOTFOUND, error }
 }
 
 export function deleteUserRequest(data) {

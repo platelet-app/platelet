@@ -4,10 +4,11 @@ import 'typeface-roboto'
 import Paper from "@material-ui/core/Paper";
 import {
     clearCurrentTask,
-    getAllTasksRequest,
+    getAllTasksRequest, setRoleViewAndGetTasks, startRefreshTasksLoopFromSocket,
 } from '../../redux/tasks/TasksActions'
 import {
     setNewTaskAddedView,
+    setRoleView
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import {useDispatch, useSelector} from "react-redux"
@@ -16,10 +17,16 @@ import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
-    subscribeToAssignments,
+    refreshTaskAssignmentsSocket,
+    refreshTasksDataSocket,
+    subscribeToCoordinatorAssignments,
+    subscribeToRiderAssignments,
     subscribeToUUIDs,
+    unsubscribeFromCoordinatorAssignments,
+    unsubscribeFromRiderAssignments,
+    unsubscribeFromUUIDs,
 } from "../../redux/sockets/SocketActions";
-import {getTaskUUIDs} from "./utilities";
+import {getTaskUUIDEtags} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
@@ -40,42 +47,55 @@ function Dashboard(props) {
     const mobileView = useSelector(state => state.mobileView);
     const firstUpdateNewTask = useRef(true);
     const firstTaskSubscribeCompleted = useRef(false);
+    const currentlySubscribedUUIDs = useRef([]);
     const whoami = useSelector(state => state.whoami.user);
     const [postPermission, setPostPermission] = useState(true);
     const [viewMode, setViewMode] = useState(0);
+    const roleView = useSelector(state => state.roleView);
+
 
     function componentDidMount() {
         dispatch(clearCurrentTask());
     }
-
     useEffect(componentDidMount, []);
 
-    function getTasks() {
-        if (whoami.uuid) {
-            if (tasks === initialTasksState.tasks)
-                dispatch(getAllTasksRequest(whoami.uuid, "", "coordinator"));
+    function setInitialRoleView() {
+        if (whoami.uuid && tasks === initialTasksState.tasks) {
+            if (whoami.roles.includes("coordinator"))
+                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"));
+            else
+                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"));
         }
     }
+    useEffect(setInitialRoleView, [whoami])
 
-    useEffect(getTasks, [whoami])
 
-
-    function subscribeTasks() {
-        const taskUUIDs = getTaskUUIDs(tasks);
-        if (taskUUIDs.length !== 0 && !firstTaskSubscribeCompleted.current) {
+    function refreshTasks() {
+        if (!isFetching && tasks) {
+            console.log("refreshing tasks")
+            const uuidEtags = getTaskUUIDEtags(tasks);
+            const uuids = Object.keys(uuidEtags);
+            //dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
+            dispatch(refreshTasksDataSocket(uuidEtags));
+            if (firstTaskSubscribeCompleted.current) {
+                dispatch(unsubscribeFromUUIDs(currentlySubscribedUUIDs.current))
+            }
+            dispatch(subscribeToUUIDs(uuids))
+            currentlySubscribedUUIDs.current = uuids;
             firstTaskSubscribeCompleted.current = true;
-            dispatch(subscribeToUUIDs(taskUUIDs))
+            if (roleView === "rider") {
+                dispatch(unsubscribeFromCoordinatorAssignments(whoami.uuid))
+                dispatch(subscribeToRiderAssignments(whoami.uuid))
+            } else {
+                dispatch(unsubscribeFromRiderAssignments(whoami.uuid))
+                dispatch(subscribeToCoordinatorAssignments(whoami.uuid))
+            }
+            dispatch(startRefreshTasksLoopFromSocket(whoami.uuid))
+
         }
     }
+    useEffect(refreshTasks, [isFetching])
 
-    useEffect(subscribeTasks, [tasks]);
-
-    function subscribeAssignmentsToMe() {
-        if (whoami.uuid)
-            dispatch(subscribeToAssignments(whoami.uuid))
-    }
-
-    useEffect(subscribeAssignmentsToMe, [whoami]);
 
     function onAddNewTask() {
         return
@@ -88,12 +108,9 @@ function Dashboard(props) {
 
     useEffect(onAddNewTask, [isPostingNewTask])
 
-    if (isFetching || viewMode === null) {
-        return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
         // TODO: do the redirect to task thing here
         //} else if (newTaskAddedView()) {
         //    return <Redirect to={`/task/${encodeUUID("")}`}/>
-    } else {
         return (
             <Paper className={classes.dashboard} elevation={3}>
                 <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => setViewMode(newValue)}>
@@ -101,14 +118,14 @@ function Dashboard(props) {
                         <TasksGrid tasks={tasks}
                                    fullScreenModal={mobileView}
                                    modalView={"edit"}
+                                   hideRelayIcons={(roleView === "rider")}
                                    hideAddButton={!postPermission}
-                                   excludeColumnList={viewMode === 1 ? ["tasksNew", "tasksActive", "tasksPickedUp"] : ["tasksDelivered", "tasksCancelled", "tasksRejected"]}
+                                   excludeColumnList={viewMode === 1 ? ["tasksNew", "tasksActive", "tasksPickedUp"] : [roleView === "rider" ? "tasksNew" : "", "tasksDelivered", "tasksCancelled", "tasksRejected"]}
                         />
                     </TabPanel>
                 </DashboardDetailTabs>
             </Paper>
         )
-    }
 }
 
 export default Dashboard;

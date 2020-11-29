@@ -7,11 +7,17 @@ export const SOCKET_SUBSCRIBE_UUID = "SOCKET_SUBSCRIBE_UUID";
 export const SOCKET_UNSUBSCRIBE_UUID = "SOCKET_UNSUBSCRIBE_UUID";
 export const SOCKET_SUBSCRIBE_UUID_MANY = "SOCKET_SUBSCRIBE_UUID_MANY";
 export const SOCKET_UNSUBSCRIBE_UUID_MANY = "SOCKET_UNSUBSCRIBE_UUID_MANY";
+export const SOCKET_REFRESH_TASKS_DATA = "SOCKET_REFRESH_TASKS_DATA";
+export const SOCKET_REFRESH_TASKS_ASSIGNMENTS = "SOCKET_REFRESH_TASKS_ASSIGNMENTS";
+
+export const SOCKET_REQUEST_RESPONSE_RECEIVED = "SOCKET_REQUEST_RESPONSE_RECEIVED";
 
 export const SOCKET_CONNECT_ASSIGNMENTS = "SOCKET_CONNECT_ASSIGNMENTS";
 export const SOCKET_DISCONNECT_ASSIGNMENTS = "SOCKET_DISCONNECT_ASSIGNMENTS";
-export const SOCKET_SUBSCRIBE_ASSIGNMENTS = "SOCKET_SUBSCRIBE_ASSIGNMENTS";
-export const SOCKET_UNSUBSCRIBE_ASSIGNMENTS = "SOCKET_UNSUBSCRIBE_ASSIGNMENTS";
+export const SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS = "SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS";
+export const SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS = "SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS";
+export const SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS = "SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS";
+export const SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS = "SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS";
 export const SOCKET_ASSIGNMENTS_CONNECTED = "SOCKET_ASSIGNMENTS_CONNECTED";
 export const SOCKET_ASSIGNMENTS_DISCONNECTED = "SOCKET_ASSIGNMENTS_DISCONNECTED";
 export const SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED = "SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED";
@@ -24,6 +30,14 @@ export const SOCKET_COMMENTS_CONNECTED = "SOCKET_COMMENTS_CONNECTED";
 export const SOCKET_COMMENTS_DISCONNECTED = "SOCKET_COMMENTS_DISCONNECTED";
 export const SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED = "SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED";
 export const SOCKET_DISCONNECT_COMMENTS = "SOCKET_DISCONNECT_COMMENTS";
+
+export function refreshTasksDataSocket( uuids_etags ) {
+    return { type: SOCKET_REFRESH_TASKS_DATA, uuids_etags };
+}
+
+export function refreshTaskAssignmentsSocket( userUUID, taskUUIDs, role ) {
+    return { type: SOCKET_REFRESH_TASKS_ASSIGNMENTS, userUUID, taskUUIDs, role };
+}
 
 export function connectSocket( url ) {
     return { type: SOCKET_CONNECT, url };
@@ -81,6 +95,10 @@ export function subscribedResponseReceived(data) {
     return { type: SOCKET_SUBSCRIBE_RESPONSE_RECEIVED, data };
 }
 
+export function requestResponseReceived(data) {
+    return { type: SOCKET_REQUEST_RESPONSE_RECEIVED, data };
+}
+
 export function subscribedCommentsResponseReceived(data) {
     return { type: SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED, data };
 }
@@ -112,10 +130,18 @@ export function subscribeToComments(uuid) {
 export function unsubscribeFromComments(uuid) {
     return { type: SOCKET_UNSUBSCRIBE_COMMENTS, uuid };
 }
-export function subscribeToAssignments(uuid) {
-    return { type: SOCKET_SUBSCRIBE_ASSIGNMENTS, uuid };
+export function subscribeToCoordinatorAssignments(uuid) {
+    return { type: SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS, uuid };
 }
 
-export function unsubscribeFromAssigments(uuid) {
-    return { type: SOCKET_UNSUBSCRIBE_ASSIGNMENTS, uuid };
+export function unsubscribeFromCoordinatorAssignments(uuid) {
+    return { type: SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS, uuid };
+}
+
+export function subscribeToRiderAssignments(uuid) {
+    return { type: SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS, uuid };
+}
+
+export function unsubscribeFromRiderAssignments(uuid) {
+    return { type: SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS, uuid };
 }
