@@ -101,3 +101,9 @@ export const SET_ROLE_VIEW = "SET_ROLE_VIEW";
 export function setRoleView(data) {
     return { type: SET_ROLE_VIEW, data }
 }
+
+export const SET_IDLE_STATUS = "SET_IDLE_STATUS";
+
+export function setIdleStatus(data) {
+    return { type: SET_IDLE_STATUS, data }
+}

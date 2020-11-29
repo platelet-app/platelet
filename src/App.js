@@ -6,9 +6,10 @@ import './App.css';
 import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
+import { useIdleTimer } from 'react-idle-timer'
 import {
     clearWhoami,
-    getWhoamiRequest, setMobileView
+    getWhoamiRequest, setIdleStatus, setMobileView
 } from "./redux/Actions";
 import {logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
 import {getAvailableDeliverablesRequest} from "./redux/deliverables/DeliverablesActions";
@@ -75,6 +76,25 @@ function App(props) {
     }
 
     useEffect(checkEnvApirURL, [])
+
+    const handleOnIdle = event => {
+        dispatch(setIdleStatus(true));
+        console.log('user is idle', event)
+        console.log('last active', getLastActiveTime())
+    }
+
+    const handleOnActive = event => {
+        dispatch(setIdleStatus(false));
+        console.log('user is active', event)
+        console.log('time remaining', getRemainingTime())
+    }
+
+    const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+        timeout: 1000 * 60 * 5,
+        onIdle: handleOnIdle,
+        onActive: handleOnActive,
+        debounce: 500
+    })
 
     const snackDismissAction = (key) => (
         <React.Fragment>

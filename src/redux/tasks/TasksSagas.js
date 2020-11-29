@@ -203,7 +203,8 @@ function* updateTask(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskSuccess({...action.data, etag: result.etag}))
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskSuccess(data))
     } catch (error) {
         yield put(updateTaskFailure(error))
     }
@@ -212,8 +213,9 @@ function* updateTask(action) {
 function* updateTaskRequesterContact(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskRequesterContactSuccess(action.data))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskRequesterContactSuccess(data))
     } catch (error) {
         yield put(updateTaskRequesterContactFailure(error))
     }
@@ -222,8 +224,9 @@ function* updateTaskRequesterContact(action) {
 function* updateTaskPickupAddress(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskPickupAddressSuccess(action.data))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskPickupAddressSuccess(data))
     } catch (error) {
         yield put(updateTaskPickupAddressFailure(error))
     }
@@ -234,8 +237,9 @@ function* updateTaskPickupAddressFromSaved(action) {
         const api = yield select(getApiControl);
         const presetDetails = yield call([api, api.locations.getLocation], action.data.payload);
         const pickup_address = presetDetails.address;
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, { pickup_address });
-        yield put(updateTaskPickupAddressSuccess({taskUUID: action.data.taskUUID, payload: {pickup_address}}))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, { pickup_address });
+        const data = {payload: {pickup_address, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskPickupAddressSuccess(data))
     } catch (error) {
         yield put(updateTaskPickupAddressFailure(error))
     }
@@ -244,8 +248,9 @@ function* updateTaskPickupAddressFromSaved(action) {
 function* updateTaskDropoffAddress(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskDropoffAddressSuccess(action.data))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskDropoffAddressSuccess(data))
     } catch (error) {
         yield put(updateTaskDropoffAddressFailure(error))
     }
@@ -256,8 +261,9 @@ function* updateTaskDropoffAddressFromSaved(action) {
         const api = yield select(getApiControl);
         const presetDetails = yield call([api, api.locations.getLocation], action.data.payload);
         const dropoff_address = presetDetails.address;
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, { dropoff_address });
-        yield put(updateTaskDropoffAddressSuccess({taskUUID: action.data.taskUUID, payload: {dropoff_address}}))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, { dropoff_address });
+        const data = {payload: {dropoff_address, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskDropoffAddressSuccess(data))
     } catch (error) {
         yield put(updateTaskDropoffAddressFailure(error))
     }
@@ -273,8 +279,9 @@ function* updateTaskPickupTime(action) {
             payload: {time_picked_up: null}
         });
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskPickupTimeSuccess(action.data))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskPickupTimeSuccess(data))
         if (currentValue === null)
             // only notify if marking rejected for the first time
             yield put(displayInfoNotification("Task marked picked up", restoreAction))
@@ -293,8 +300,9 @@ function* updateTaskDropoffTime(action) {
             payload: {time_dropped_off: null}
         });
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskDropoffTimeSuccess(action.data))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskDropoffTimeSuccess(data))
         if (currentValue === null)
             // only notify if marking rejected for the first time
             yield put(displayInfoNotification("Task marked dropped off", restoreAction))
@@ -317,8 +325,9 @@ function* updateTaskPriority(action) {
 function* updateTaskPatch(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        yield put(updateTaskPatchSuccess(action.data))
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskPatchSuccess(data))
     } catch (error) {
         yield put(updateTaskPatchFailure(error))
     }
@@ -350,9 +359,10 @@ function* updateTaskCancelledTime(action) {
             payload: {time_cancelled: null}
         });
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         // set the relays all to null to prevent visual indication on the grid
-        yield put(updateTaskCancelledTimeSuccess({taskUUID: action.data.taskUUID, payload: {...action.data.payload, relay_previous_uuid: null, relay_next: null, relay_previous: null}}))
+        const data = {payload: {...action.data.payload, etag: result.etag, relay_previous_uuid: null, relay_next: null, relay_previous: null}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskCancelledTimeSuccess(data))
         yield put(resetGroupRelayUUIDs(task.parent_id))
         if (currentValue === null)
             // only notify if marking rejected for the first time
@@ -373,9 +383,10 @@ function* updateTaskRejectedTime(action) {
             payload: {time_rejected: null}
         });
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         // set the relays all to null to prevent visual indication on the grid
-        yield put(updateTaskRejectedTimeSuccess({taskUUID: action.data.taskUUID, payload: {...action.data.payload, relay_previous_uuid: null, relay_next: null, relay_previous: null}}))
+        const data = {payload: {...action.data.payload, etag: result.etag, relay_previous_uuid: null, relay_next: null, relay_previous: null}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskRejectedTimeSuccess(data))
         // then recalculate it
         yield put(groupRelaysTogether())
         yield put(resetGroupRelayUUIDs(task.parent_id))
@@ -494,14 +505,16 @@ export function* watchGetTasks() {
 }
 
 export function* refreshTasksFromSocket(action) {
+    //TODO: figure out why this always refreshes the task even when it doesn't need to
     while (true) {
         const loadingSelector = yield createLoadingSelector(['GET_TASKS']);
         const isFetching = yield select(state => loadingSelector(state));
         const isPostingNewTaskSelector = yield createPostingSelector(["UPDATE_TASK_PRIORITY"]);
         const isPosting = yield select(state => isPostingNewTaskSelector(state));
-        if (isPosting || isFetching) {
+        const isIdle = yield select((state) => state.idleStatus);
+        if (isPosting || isFetching || isIdle) {
             console.log("waiting")
-            yield delay(30 * 1000);
+            yield delay(3 * 1000);
         } else {
             const currentTasks = yield select((state) => state.tasks.tasks);
             const currentRole = yield select((state) => state.roleView);
