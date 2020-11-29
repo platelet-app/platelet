@@ -10,10 +10,17 @@ export default function TasksGridSkeleton(props) {
               direction={"row"}
               justify={"flex-start"}
               alignItems={"center"}
+              style={{paddingLeft: "15px"}}
         >
-            {[...Array(props.count ? props.count : 4)].map((x, i) =>
-                <Grid item xs sm md lg key={i}>
-                    <Skeleton variant="rect" width={350} height={1024}/>
+            {[...Array(props.count ? props.count : 3)].map((x, i) =>
+                <Grid item key={i}>
+                    <Grid container direction={"column"} spacing={3} justify={"center"} alignItems={"flex-start"}>
+                        {[...Array( 10)].map((y, z) =>
+                            <Grid item>
+                                {z === 0 ? <Skeleton variant="rect" width={400} height={100}/> : <Skeleton variant="rect" width={400} height={250}/>}
+                            </Grid>
+                        )}
+                    </Grid>
                 </Grid>)}
         </Grid>
     )

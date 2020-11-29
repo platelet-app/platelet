@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {AddCircleButton, AddCircleButtonSmall} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createLoadingSelector, createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
 import Button from "@material-ui/core/Button";
@@ -19,6 +19,7 @@ import {filterTasks} from "../utilities/functions";
 import {showHide} from "../../../styles/common";
 import {Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
+import TasksGridSkeleton from "./TasksGridSkeleton";
 
 
 const getColumnTitle = key => {
@@ -207,6 +208,8 @@ export default function TasksGrid(props) {
     const classes = useStyles();
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
+    const loadingSelector = createLoadingSelector(['GET_TASKS']);
+    const isFetching = useSelector(state => loadingSelector(state));
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
     const tasks = useSelector(state => state.tasks.tasks);
     const dispatch = useDispatch();
@@ -247,44 +250,51 @@ export default function TasksGrid(props) {
 
     useEffect(doSearch, [dashboardFilter])
 
-    return (
-        <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
-            <Grid item key={"tasks"}>
-                <Grid container
-                      spacing={0}
-                      direction={"row"}
-                      justify={"flex-start"}
-                      alignItems={"stretch"}
-                      wrap={"nowrap"}
-                >
-                    {Object.keys(tasks).map(taskKey => {
-                        const title = getColumnTitle(taskKey);
-                        return (
-                            <React.Fragment key={taskKey}>
-                                <Grid item xs sm md lg>
-                                    <GridColumn title={title}
-                                                classes={classes}
-                                                hidden={props.excludeColumnList && props.excludeColumnList.includes(taskKey)}
-                                                onAddTaskClick={addEmptyTask}
-                                                onAddRelayClick={addRelay}
-                                                disableAddButton={isPosting}
-                                                hideRelayIcons={props.hideRelayIcons}
-                                                taskKey={taskKey}
-                                                showTasks={filteredTasksUUIDs}
-                                                key={title}/>
-                                    <Waypoint
-                                        onEnter={() => {
-                                            console.log("YAY ENTER")
-                                        }
-                                        }
-                                        onLeave={() => console.log("YAY LEAVE")}
-                                    />
-                                </Grid>
-                            </React.Fragment>
-                        )
-                    })}
+    if (isFetching) {
+        return <TasksGridSkeleton count={3}/>
+    }
+        else
+        {
+
+            return (
+                <Grid container spacing={3} direction={"column"} alignItems={"flex-start"} justify={"flex-start"}>
+                    <Grid item key={"tasks"}>
+                        <Grid container
+                              spacing={0}
+                              direction={"row"}
+                              justify={"flex-start"}
+                              alignItems={"stretch"}
+                              wrap={"nowrap"}
+                        >
+                            {Object.keys(tasks).map(taskKey => {
+                                const title = getColumnTitle(taskKey);
+                                return (
+                                    <React.Fragment key={taskKey}>
+                                        <Grid item xs sm md lg>
+                                            <GridColumn title={title}
+                                                        classes={classes}
+                                                        hidden={props.excludeColumnList && props.excludeColumnList.includes(taskKey)}
+                                                        onAddTaskClick={addEmptyTask}
+                                                        onAddRelayClick={addRelay}
+                                                        disableAddButton={isPosting}
+                                                        hideRelayIcons={props.hideRelayIcons}
+                                                        taskKey={taskKey}
+                                                        showTasks={filteredTasksUUIDs}
+                                                        key={title}/>
+                                            <Waypoint
+                                                onEnter={() => {
+                                                    console.log("YAY ENTER")
+                                                }
+                                                }
+                                                onLeave={() => console.log("YAY LEAVE")}
+                                            />
+                                        </Grid>
+                                    </React.Fragment>
+                                )
+                            })}
+                        </Grid>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Grid>
-    )
+            )
+        }
 }

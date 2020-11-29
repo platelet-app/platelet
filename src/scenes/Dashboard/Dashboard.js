@@ -117,12 +117,9 @@ function Dashboard(props) {
 
     useEffect(onAddNewTask, [isPostingNewTask])
 
-    if (isFetching || viewMode === null) {
-        return viewMode === "stats" || props.statsView ? <StatsSkeleton/> : <TasksGridSkeleton count={4}/>
         // TODO: do the redirect to task thing here
         //} else if (newTaskAddedView()) {
         //    return <Redirect to={`/task/${encodeUUID("")}`}/>
-    } else {
         return (
             <Paper className={classes.dashboard} elevation={3}>
                 <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => setViewMode(newValue)}>
@@ -138,7 +135,6 @@ function Dashboard(props) {
                 </DashboardDetailTabs>
             </Paper>
         )
-    }
 }
 
 export default Dashboard;
