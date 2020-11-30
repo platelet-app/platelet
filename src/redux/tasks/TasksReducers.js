@@ -199,7 +199,9 @@ export function tasks(state = initialTasksState, action) {
             let newGroupRestore;
             let newTasksRestore;
             if (parent.taskGroup) {
-                newGroupRestore = [...parent.taskGroup, action.data].sort(taskGroupSort)
+                // do a filter just in case the task is already there for some reason
+                const filtered = parent.taskGroup.filter(t => t.uuid !== action.data.uuid)
+                newGroupRestore = [...filtered, action.data].sort(taskGroupSort)
                 newTasksRestore = removeParentFromTasks(state.tasks, parent.listType, action.data.parent_id)
             } else {
                 newGroupRestore = [action.data]

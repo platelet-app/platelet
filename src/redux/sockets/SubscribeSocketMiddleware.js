@@ -1,5 +1,6 @@
 import * as io from 'socket.io-client'
 import _ from "lodash"
+import {encodeUUID} from "../../utilities";
 import {
     requestResponseReceived,
     SOCKET_CONNECT,
@@ -41,6 +42,35 @@ import {
     deleteCommentFromSocket,
     restoreCommentFromSocket, updateCommentFromSocket
 } from "../comments/CommentsActions";
+import {displayInfoNotification} from "../notifications/NotificationsActions";
+
+function getTaskUpdatedMessages(data) {
+    const {
+        patch_id,
+        patch,
+        etag,
+        time_picked_up,
+        time_dropped_off,
+        time_cancelled,
+        time_rejected,
+        ...everythingElse
+    } = {...data}
+
+    let result = [];
+    if (time_picked_up)
+        result.push("marked a task picked up.")
+    if (time_dropped_off)
+        result.push("marked a task delivered.")
+    if (time_cancelled)
+        result.push("marked a task cancelled.")
+    if (time_rejected)
+        result.push("marked a task rejected.")
+    if (!_.isEmpty(everythingElse))
+        result.push("updated a task.")
+
+    return result;
+
+}
 
 export const createSubscribeSocketMiddleware = () => {
     let socket;
@@ -120,6 +150,15 @@ export const createSubscribeSocketMiddleware = () => {
                                         taskUUID: action.data.object_uuid,
                                         payload: {...everythingElse, etag}
                                     }));
+                                }
+                                const whoami = storeAPI.getState().whoami.user
+                                if (action.data.calling_user_uuid !== whoami.uuid) {
+                                    const link = `/task/${encodeUUID(action.data.object_uuid)}`
+                                    for (const message of getTaskUpdatedMessages(action.data.data)) {
+                                        const finalMessage = `${action.data.calling_user_display_name} ${message}`
+                                        storeAPI.dispatch(displayInfoNotification(finalMessage, undefined, link))
+
+                                    }
                                 }
                                 break;
                             case "ASSIGN_RIDER_TO_TASK":
@@ -340,6 +379,13 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                                     }))
                                 }
                                 storeAPI.dispatch(subscribeToUUID(action.data.data.uuid))
+                                const whoami = storeAPI.getState().whoami.user
+                                if (action.data.calling_user_uuid !== whoami.uuid) {
+                                    const coordRide = action.data.type === "ASSIGN_COORDINATOR_TO_TASK" ? "coordinate" : "deliver";
+                                    const message = `${action.data.calling_user_display_name} assigned you to ${coordRide} a task.`
+                                    const link = `/task/${encodeUUID(action.data.data.uuid)}`
+                                    storeAPI.dispatch(displayInfoNotification(message, undefined, link))
+                                }
                                 break;
                             }
                             case "REMOVE_ASSIGNED_COORDINATOR_FROM_TASK":

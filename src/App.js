@@ -147,7 +147,7 @@ function App(props) {
             options.action = key => (
                 <React.Fragment>
                     <Button
-                        className={restoreActions ? show : hide}
+                        className={restoreActions && restoreActions().length !== 0 ? show : hide}
                         color="secondary"
                         size="small" onClick={() => {
                         props.closeSnackbar(key);
@@ -161,7 +161,7 @@ function App(props) {
                         className={viewLink ? show : hide}
                         color="secondary"
                         size="small"
-                        component={Link} to={viewLink}>
+                        component={Link} to={viewLink || "/"}>
                         VIEW
                     </Button>
                     <DismissButton onClick={() => props.closeSnackbar(key)}/>

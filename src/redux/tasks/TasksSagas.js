@@ -210,6 +210,9 @@ function* deleteTask(action) {
         yield call([api, api.tasks.deleteTask], action.data);
         const {taskGroup} = yield findExistingTaskParent(currentTasks, action.data)
         const beforeDelete = yield taskGroup.find(t => t.uuid === action.data)
+        // TODO: figure out why the address is magically reappearing on a middle deleted relay
+        // figure out if UNDO button can be disabled after one click
+        // make sure when restore is done, add it to tasks state only if it doesn't exist otherwise put it instead
 
         yield put(deleteTaskSuccess(action.data))
         let relayPrevious;
