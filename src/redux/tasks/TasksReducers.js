@@ -125,7 +125,10 @@ function sortAndConcat(tasks, data) {
         if (["tasksNew", "tasksDelivered", "tasksRejected", "tasksCancelled"].includes(key)) {
             sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
         } else {
-            sorted[key] = sorted[key].sort((a, b) => a[0].parent_id - b[0].parent_id);
+            if (key === "nope")
+                sorted[key] = sorted[key].sort((a, b) => a.time_picked_up > b.time_picked_up ? 1 : a.time_picked_up < b.time_picked_up ? -1 : 0).reverse();
+            else
+                sorted[key] = sorted[key].sort((a, b) => a[0].parent_id - b[0].parent_id);
         }
     }
     return {...tasks, ...sorted};

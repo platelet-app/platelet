@@ -143,15 +143,17 @@ function App(props) {
 
     function showNotification() {
         if (incomingNotification) {
-            const {message, options, restoreAction, viewLink} = incomingNotification;
+            const {message, options, restoreActions, viewLink} = incomingNotification;
             options.action = key => (
                 <React.Fragment>
                     <Button
-                        className={restoreAction ? show : hide}
+                        className={restoreActions ? show : hide}
                         color="secondary"
                         size="small" onClick={() => {
                         props.closeSnackbar(key);
-                        dispatch(restoreAction());
+                        for (const dispatchAction of restoreActions()) {
+                            dispatch(dispatchAction);
+                        }
                     }}>
                         UNDO
                     </Button>

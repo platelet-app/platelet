@@ -38,23 +38,12 @@ export default function TaskContextMenu(props) {
     const isPosting = useSelector(state => postingSelector(state));
 
     const {
-        dropoffAddress,
-        timeOfCall,
-        priority,
-        taskUUID,
-        requesterContact,
-        priorityID,
         relayNext,
-        parentID
     } = props
 
-    const addRelay = React.useCallback((data) => {
+    const addRelay = React.useCallback(() => {
         handleClose();
-        dispatch(addTaskRelayRequest(data));
-        dispatch(updateTaskDropoffAddressRequest({
-            taskUUID: data.relay_previous_uuid,
-            payload: {dropoff_address: null}
-        }));
+        dispatch(addTaskRelayRequest(props.taskUUID));
 
     }, [])
 
@@ -129,16 +118,6 @@ export default function TaskContextMenu(props) {
                     disabled={!!relayNext}
                     onClick={() => {
                         addRelay({
-                            time_of_call: timeOfCall,
-                            requester_contact: requesterContact ? requesterContact : {
-                                name: "",
-                                telephone_number: ""
-                            },
-                            priority,
-                            priority_id: priorityID,
-                            dropoff_address: dropoffAddress,
-                            parent_id: parentID,
-                            relay_previous_uuid: taskUUID
                         })
                     }}>
                     Add relay
