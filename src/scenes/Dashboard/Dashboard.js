@@ -29,6 +29,7 @@ import {
 import {getTaskUUIDEtags} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import {getDashboardRoleMode, saveDashboardRoleMode} from "../../utilities";
 
 const useStyles = makeStyles({
     dashboard: {
@@ -61,10 +62,18 @@ function Dashboard(props) {
 
     function setInitialRoleView() {
         if (whoami.uuid && tasks === initialTasksState.tasks) {
-            if (whoami.roles.includes("coordinator"))
+            const savedRoleMode = getDashboardRoleMode();
+            if (whoami.roles.includes(savedRoleMode))
+                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", savedRoleMode));
+            else if (whoami.roles.includes("coordinator")) {
                 dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"));
-            else
+                saveDashboardRoleMode("coordinator");
+            }
+        else if (whoami.roles.includes("rider")) {
                 dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"));
+                saveDashboardRoleMode("rider");
+            }
+
         }
     }
     useEffect(setInitialRoleView, [whoami])

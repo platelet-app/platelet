@@ -17,13 +17,20 @@ export function convertDate(timestamp) {
     return "";
 }
 
+export function saveDashboardRoleMode(mode) {
+    localStorage.setItem("dashboardRoleMode", mode);
+}
+
+export function getDashboardRoleMode() {
+    return localStorage.getItem("dashboardRoleMode") || "coordinator";
+}
+
 export function saveLogin(apiBearer) {
     localStorage.setItem("apiBearer", apiBearer);
 }
 
 export function getLogin() {
-    const result = localStorage.getItem("apiBearer");
-    return result ? result : "";
+    return localStorage.getItem("apiBearer") || "";
 }
 
 export function createTabIdentifier() {

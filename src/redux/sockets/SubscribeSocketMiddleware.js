@@ -35,7 +35,9 @@ import {
     restoreTaskFromSocket,
     updateTaskAssignedRiderFromSocket,
     updateTaskFromSocket,
-    updateTaskRemoveAssignedRiderFromSocket, updateTaskTimeCancelledFromSocket, updateTaskTimeRejectedFromSocket
+    updateTaskRemoveAssignedRiderFromSocket,
+    updateTaskTimeCancelledFromSocket,
+    updateTaskTimeRejectedFromSocket
 } from "../tasks/TasksActions";
 import {
     addCommentFromSocket,
@@ -46,14 +48,10 @@ import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function getTaskUpdatedMessages(data) {
     const {
-        patch_id,
-        patch,
-        etag,
         time_picked_up,
         time_dropped_off,
         time_cancelled,
-        time_rejected,
-        ...everythingElse
+        time_rejected
     } = {...data}
 
     let result = [];
@@ -65,8 +63,6 @@ function getTaskUpdatedMessages(data) {
         result.push("marked a task cancelled.")
     if (time_rejected)
         result.push("marked a task rejected.")
-    if (!_.isEmpty(everythingElse))
-        result.push("updated a task.")
 
     return result;
 

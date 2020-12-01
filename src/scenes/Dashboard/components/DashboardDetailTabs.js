@@ -26,7 +26,7 @@ import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import {Link} from "react-router-dom";
-import {encodeUUID} from "../../../utilities";
+import {encodeUUID, saveDashboardRoleMode} from "../../../utilities";
 import Typography from "@material-ui/core/Typography";
 import {showHide} from "../../../styles/common";
 import {setRoleViewAndGetTasks} from "../../../redux/tasks/TasksActions";
@@ -195,13 +195,19 @@ export function DashboardDetailTabs(props) {
                                     >
                                         <MenuItem onClick={() => {
                                             setAnchorElRoleMenu(null);
-                                            dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"))
+                                            if (roleView !== "coordinator") {
+                                                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"))
+                                                saveDashboardRoleMode("coordinator");
+                                            }
                                         }}>
                                             Coordinator
                                         </MenuItem>
                                         <MenuItem onClick={() => {
                                             setAnchorElRoleMenu(null);
-                                            dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"))
+                                            if (roleView !== "rider") {
+                                                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"))
+                                                saveDashboardRoleMode("rider");
+                                            }
                                         }}>
                                             Rider
                                         </MenuItem>

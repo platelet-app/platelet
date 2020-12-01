@@ -47,6 +47,7 @@ import {
 const initialState = {
     task: {
         uuid: null,
+        reference: "",
         etag: "",
         author: null,
         author_uuid: null,
