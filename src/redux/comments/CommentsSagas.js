@@ -112,11 +112,11 @@ export function* postNewSidebarComment(action) {
 
 function* deleteComment(action) {
     try {
-        const restoreAction = () => restoreCommentRequest(action.data);
+        const restoreActions = () => [restoreCommentRequest(action.data)];
         const api = yield select(getApiControl);
         yield call([api, api.comments.deleteComment], action.data);
         yield put(deleteCommentSuccess(action.data))
-        yield put(displayInfoNotification("Comment deleted", restoreAction))
+        yield put(displayInfoNotification("Comment deleted", restoreActions))
     } catch (error) {
         yield put(deleteCommentFailure(error));
     }
@@ -183,11 +183,11 @@ export function* watchGetSidebarComments() {
 }
 function* deleteSidebarComment(action) {
     try {
-        const restoreAction = () => restoreSidebarCommentRequest(action.data);
+        const restoreActions = () => [restoreSidebarCommentRequest(action.data)];
         const api = yield select(getApiControl);
         yield call([api, api.comments.deleteComment], action.data);
         yield put(deleteSidebarCommentSuccess(action.data))
-        yield put(displayInfoNotification("Comment deleted", restoreAction))
+        yield put(displayInfoNotification("Comment deleted", restoreActions))
     } catch (error) {
         yield put(deleteSidebarCommentFailure(error));
     }

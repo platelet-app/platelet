@@ -11,6 +11,8 @@ const subscriptionInitialState = {
     tab_id: null,
     object_uuid: null,
     data: null,
+    calling_user_uuid: null,
+    calling_user_display_name: null
 }
 
 export function subscription(state = {}, action) {

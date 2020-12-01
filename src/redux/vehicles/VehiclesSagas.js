@@ -116,11 +116,11 @@ export function* watchVehicle() {
 
 function* deleteVehicle(action) {
     try {
-        const restoreAction = () => restoreVehicleRequest(action.data);
+        const restoreActions = () => [restoreVehicleRequest(action.data)];
         const api = yield select(getApiControl);
         yield call([api, api.vehicles.deleteVehicle], action.data);
         yield put(deleteVehicleSuccess(action.data))
-        yield put(displayInfoNotification("Vehicle deleted", restoreAction))
+        yield put(displayInfoNotification("Vehicle deleted", restoreActions))
     } catch (error) {
         yield put(deleteVehicleFailure(error))
     }

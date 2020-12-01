@@ -4,6 +4,7 @@ export function generateMessage(record, fields) {
         case "DELETE":
             return `${getActionString(record.http_request_type)} this ${record.parent_type}.`
         case "PUT":
+        case "PATCH":
             return `${getActionString(record.http_request_type)} ${getFields(fields)}.`
         default:
             return "Unknown action"
@@ -15,6 +16,7 @@ function getActionString(HTTPType) {
         case "POST":
             return "created"
         case "PUT":
+        case "PATCH":
             return "updated"
         case "DELETE":
             return "deleted"

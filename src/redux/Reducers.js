@@ -10,7 +10,12 @@ import {
     SET_MENU_INDEX,
     SET_COMMENTS_OBJECT_UUID,
     CLEAR_WHOAMI,
-    GET_WHOAMI_FAILURE, SET_TASK_CONTEXT_MENU_SNACK, CLEAR_TASK_CONTEXT_MENU_SNACK, SET_DASHBOARD_FILTER, SET_ROLE_VIEW,
+    GET_WHOAMI_FAILURE,
+    SET_TASK_CONTEXT_MENU_SNACK,
+    CLEAR_TASK_CONTEXT_MENU_SNACK,
+    SET_DASHBOARD_FILTER,
+    SET_ROLE_VIEW,
+    SET_IDLE_STATUS,
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
@@ -130,6 +135,15 @@ function whoami(state = whoamiInitialState, action) {
             return whoamiInitialState;
         case CLEAR_FORCE_RESET_PASSWORD_STATUS:
             return {user: {...state.user, password_reset_on_login: false}, error: null}
+        default:
+            return state
+    }
+}
+
+function idleStatus(state = false, action) {
+    switch (action.type) {
+        case SET_IDLE_STATUS:
+            return action.data;
         default:
             return state
     }
@@ -261,7 +275,8 @@ const rootReducer = combineReducers({
     infoNotifications,
     dashboardFilter,
     actionsRecord,
-    tasksActionsRecord
+    tasksActionsRecord,
+    idleStatus
 });
 
 export default rootReducer

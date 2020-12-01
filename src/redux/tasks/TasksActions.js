@@ -155,8 +155,8 @@ export function addTaskFailure(error) {
     return { type: ADD_TASK_FAILURE, error }
 }
 
-export function addTaskRelayRequest(data) {
-    return { type: ADD_TASK_RELAY_REQUEST, data }
+export function addTaskRelayRequest(relayPrevious) {
+    return { type: ADD_TASK_RELAY_REQUEST, relayPrevious }
 }
 
 export function addTaskRelaySuccess(data) {

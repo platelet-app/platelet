@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import {AddCircleButton, AddCircleButtonSmall} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
 import {createLoadingSelector, createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
@@ -66,6 +65,7 @@ const useStyles = makeStyles(theme => ({
 const TaskGroup = props => {
     const postingSelector = createPostingSelector([
         "ADD_TASK_RELAY"]);
+    const dispatch = useDispatch();
     const isPosting = useSelector(state => postingSelector(state));
     const classes = props.classes;
     const {show, hide} = showHide();
@@ -83,8 +83,6 @@ const TaskGroup = props => {
             patch,
             uuid,
             assigned_riders,
-            requester_contact,
-            priority_id,
             parent_id,
             relay_next,
         } = task;
@@ -127,18 +125,7 @@ const TaskGroup = props => {
                                         disabled={isPosting}
                                         className={"hidden-button"}
                                         onClick={() => {
-                                            props.onAddRelayClick({
-                                                time_of_call,
-                                                requester_contact: requester_contact ? requester_contact : {
-                                                    name: "",
-                                                    telephone_number: ""
-                                                },
-                                                priority,
-                                                priority_id,
-                                                dropoff_address,
-                                                parent_id,
-                                                relay_previous_uuid: task.uuid
-                                            })
+                                            dispatch(addTaskRelayRequest(uuid))
                                         }}
                                     >
                                         <ArrowDownwardIcon/>

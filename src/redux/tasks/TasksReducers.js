@@ -47,6 +47,7 @@ import {
 const initialState = {
     task: {
         uuid: null,
+        reference: "",
         etag: "",
         author: null,
         author_uuid: null,
@@ -125,7 +126,10 @@ function sortAndConcat(tasks, data) {
         if (["tasksNew", "tasksDelivered", "tasksRejected", "tasksCancelled"].includes(key)) {
             sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
         } else {
-            sorted[key] = sorted[key].sort((a, b) => a[0].parent_id - b[0].parent_id);
+            if (key === "nope")
+                sorted[key] = sorted[key].sort((a, b) => a.time_picked_up > b.time_picked_up ? 1 : a.time_picked_up < b.time_picked_up ? -1 : 0).reverse();
+            else
+                sorted[key] = sorted[key].sort((a, b) => a[0].parent_id - b[0].parent_id);
         }
     }
     return {...tasks, ...sorted};
@@ -196,7 +200,9 @@ export function tasks(state = initialTasksState, action) {
             let newGroupRestore;
             let newTasksRestore;
             if (parent.taskGroup) {
-                newGroupRestore = [...parent.taskGroup, action.data].sort(taskGroupSort)
+                // do a filter just in case the task is already there for some reason
+                const filtered = parent.taskGroup.filter(t => t.uuid !== action.data.uuid)
+                newGroupRestore = [...filtered, action.data].sort(taskGroupSort)
                 newTasksRestore = removeParentFromTasks(state.tasks, parent.listType, action.data.parent_id)
             } else {
                 newGroupRestore = [action.data]

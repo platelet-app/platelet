@@ -6,9 +6,10 @@ import './App.css';
 import 'typeface-roboto'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
+import {useIdleTimer} from 'react-idle-timer'
 import {
     clearWhoami,
-    getWhoamiRequest, setMobileView
+    getWhoamiRequest, setIdleStatus, setMobileView
 } from "./redux/Actions";
 import {logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
 import {getAvailableDeliverablesRequest} from "./redux/deliverables/DeliverablesActions";
@@ -33,7 +34,8 @@ import {
     connectCommentsSocket,
     connectSocket,
 } from "./redux/sockets/SocketActions";
-import {DismissButton} from "./styles/common";
+import {DismissButton, showHide} from "./styles/common";
+import {Link} from "react-router-dom";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 
@@ -82,6 +84,7 @@ function App(props) {
     const error = useSelector(state => state.error);
     const dispatch = useDispatch();
     const classes = useStyles();
+    const {show, hide} = showHide();
     const [confirmLogin, setConfirmLogin] = useState(false);
     const [headerSettings, setHeaderSettings] = useState({
         title: "Bloodbike Dispatch",
@@ -97,6 +100,25 @@ function App(props) {
 
     useEffect(checkEnvApirURL, [])
 
+    const handleOnIdle = event => {
+        dispatch(setIdleStatus(true));
+        console.log('user is idle', event)
+        console.log('last active', getLastActiveTime())
+    }
+
+    const handleOnActive = event => {
+        dispatch(setIdleStatus(false));
+        console.log('user is active', event)
+        console.log('time remaining', getRemainingTime())
+    }
+
+    const {getRemainingTime, getLastActiveTime} = useIdleTimer({
+        timeout: 1000 * 60 * 5,
+        onIdle: handleOnIdle,
+        onActive: handleOnActive,
+        debounce: 500
+    })
+
     const snackDismissAction = (key) => (
         <React.Fragment>
             <DismissButton onClick={() => props.closeSnackbar(key)}/>
@@ -109,7 +131,7 @@ function App(props) {
     }
 
     function handleError() {
-                // any saga that returns with an error object that is not null will be handled here
+        // any saga that returns with an error object that is not null will be handled here
         if (error) {
             if (error.name === "HttpError") {
                 if (error.message)
@@ -141,20 +163,30 @@ function App(props) {
 
     function showNotification() {
         if (incomingNotification) {
-            const {message, options, restoreAction} = incomingNotification;
-                options.action = key => (
-                    <React.Fragment>
-                        {restoreAction ?
-                            <Button color="secondary" size="small" onClick={() => {
-                                props.closeSnackbar(key);
-                                dispatch(restoreAction());
-                            }}>
-                                UNDO
-                            </Button>
-                         : <></>}
-                         <DismissButton onClick={() => props.closeSnackbar(key)}/>
-                    </React.Fragment>
-                );
+            const {message, options, restoreActions, viewLink} = incomingNotification;
+            options.action = key => (
+                <React.Fragment>
+                    <Button
+                        className={restoreActions && restoreActions().length !== 0 ? show : hide}
+                        color="secondary"
+                        size="small" onClick={() => {
+                        props.closeSnackbar(key);
+                        for (const dispatchAction of restoreActions()) {
+                            dispatch(dispatchAction);
+                        }
+                    }}>
+                        UNDO
+                    </Button>
+                    <Button
+                        className={viewLink ? show : hide}
+                        color="secondary"
+                        size="small"
+                        component={Link} to={viewLink || "/"}>
+                        VIEW
+                    </Button>
+                    <DismissButton onClick={() => props.closeSnackbar(key)}/>
+                </React.Fragment>
+            );
             props.enqueueSnackbar(message, options)
         }
     }

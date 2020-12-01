@@ -106,11 +106,11 @@ export function* watchUploadUserProfilePicture() {
 
 function* deleteUser(action) {
     try {
-        const restoreAction = () => restoreUserRequest(action.data);
+        const restoreActions = () => [restoreUserRequest(action.data)];
         const api = yield select(getApiControl);
         yield call([api, api.users.deleteUser], action.data);
         yield put(deleteUserSuccess(action.data))
-        yield put(displayInfoNotification("User deleted", restoreAction))
+        yield put(displayInfoNotification("User deleted", restoreActions))
     } catch (error) {
         yield put(deleteUserFailure(error))
     }

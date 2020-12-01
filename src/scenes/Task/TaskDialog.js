@@ -357,6 +357,9 @@ export default function TaskDialog(props) {
                           justify={"flex-start"}
                           alignItems={"flex-start"}>
                         <Grid item>
+                            <Typography>{task.reference}</Typography>
+                        </Grid>
+                        <Grid item>
                             {isFetchingPriorities ? <Skeleton variant="text" width={500} height={250}/> : layerOne}
                         </Grid>
                         <Grid item>

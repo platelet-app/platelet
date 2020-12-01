@@ -4,20 +4,17 @@ import 'typeface-roboto'
 import Paper from "@material-ui/core/Paper";
 import {
     clearCurrentTask,
-    getAllTasksRequest, setRoleViewAndGetTasks, startRefreshTasksLoopFromSocket,
+    setRoleViewAndGetTasks,
+    startRefreshTasksLoopFromSocket,
 } from '../../redux/tasks/TasksActions'
 import {
     setNewTaskAddedView,
-    setRoleView
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
-import TasksGridSkeleton from "./components/TasksGridSkeleton";
-import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
-    refreshTaskAssignmentsSocket,
     refreshTasksDataSocket,
     subscribeToCoordinatorAssignments,
     subscribeToRiderAssignments,
@@ -29,6 +26,7 @@ import {
 import {getTaskUUIDEtags} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import {getDashboardRoleMode, saveDashboardRoleMode} from "../../utilities";
 
 const useStyles = makeStyles({
     dashboard: {
@@ -61,10 +59,18 @@ function Dashboard(props) {
 
     function setInitialRoleView() {
         if (whoami.uuid && tasks === initialTasksState.tasks) {
-            if (whoami.roles.includes("coordinator"))
+            const savedRoleMode = getDashboardRoleMode();
+            if (whoami.roles.includes(savedRoleMode))
+                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", savedRoleMode));
+            else if (whoami.roles.includes("coordinator")) {
                 dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"));
-            else
+                saveDashboardRoleMode("coordinator");
+            }
+        else if (whoami.roles.includes("rider")) {
                 dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"));
+                saveDashboardRoleMode("rider");
+            }
+
         }
     }
     useEffect(setInitialRoleView, [whoami])
