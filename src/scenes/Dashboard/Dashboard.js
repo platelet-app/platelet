@@ -4,20 +4,17 @@ import 'typeface-roboto'
 import Paper from "@material-ui/core/Paper";
 import {
     clearCurrentTask,
-    getAllTasksRequest, setRoleViewAndGetTasks, startRefreshTasksLoopFromSocket,
+    setRoleViewAndGetTasks,
+    startRefreshTasksLoopFromSocket,
 } from '../../redux/tasks/TasksActions'
 import {
     setNewTaskAddedView,
-    setRoleView
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
-import TasksGridSkeleton from "./components/TasksGridSkeleton";
-import StatsSkeleton from "./components/StatsSkeleton";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
-    refreshTaskAssignmentsSocket,
     refreshTasksDataSocket,
     subscribeToCoordinatorAssignments,
     subscribeToRiderAssignments,

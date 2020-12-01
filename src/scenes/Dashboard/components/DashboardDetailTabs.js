@@ -7,7 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {useDispatch, useSelector} from "react-redux";
 import {createPostingSelector} from "../../../redux/selectors";
-import {clearTaskContextMenuSnack, setDashboardFilter, setRoleView} from "../../../redux/Actions";
+import {clearTaskContextMenuSnack, setDashboardFilter} from "../../../redux/Actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import TimelineIcon from '@material-ui/icons/Timeline';
@@ -25,8 +25,7 @@ import {
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import {Link} from "react-router-dom";
-import {encodeUUID, saveDashboardRoleMode} from "../../../utilities";
+import {saveDashboardRoleMode} from "../../../utilities";
 import Typography from "@material-ui/core/Typography";
 import {showHide} from "../../../styles/common";
 import {setRoleViewAndGetTasks} from "../../../redux/tasks/TasksActions";

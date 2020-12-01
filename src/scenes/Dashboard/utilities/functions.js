@@ -16,6 +16,8 @@ export function filterTasks(tasks, search) {
                             return true
                         } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {
                             return true;
+                        } else if (task.reference ? task.reference.toLowerCase().includes(searchTerm) : false) {
+                            return true;
                         } else if (task.priority ? task.priority.toLowerCase().includes(searchTerm) : false) {
                             return true;
                         } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import {AddCircleButton, AddCircleButtonSmall} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
 import {createLoadingSelector, createPostingSelector} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
