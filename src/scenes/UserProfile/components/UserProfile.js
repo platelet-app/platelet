@@ -1,13 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
 import {useDispatch, useSelector} from "react-redux";
 import Divider from "@material-ui/core/Divider";
-import Tooltip from "@material-ui/core/Tooltip";
-import Image from "material-ui-image"
-import Button from "@material-ui/core/Button";
-import {CardMedia} from "@material-ui/core";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import {updateUserRequest} from "../../../redux/users/UsersActions";
 import {TextFieldUncontrolled} from "../../../components/TextFields";

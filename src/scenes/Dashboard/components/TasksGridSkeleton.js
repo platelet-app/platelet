@@ -17,7 +17,7 @@ export default function TasksGridSkeleton(props) {
                     <Grid container direction={"column"} spacing={3} justify={"center"} alignItems={"flex-start"}>
                         {[...Array( 10)].map((y, z) =>
                             <Grid item>
-                                {z === 0 ? <Skeleton variant="rect" width={400} height={100}/> : <Skeleton variant="rect" width={400} height={250}/>}
+                                {z === 0 ? <Skeleton variant="rect" width={370} height={100}/> : <Skeleton variant="rect" width={370} height={250}/>}
                             </Grid>
                         )}
                     </Grid>

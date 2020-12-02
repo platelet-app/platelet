@@ -2,9 +2,9 @@ import {styled} from "@material-ui/styles";
 import {StyledColumn} from "../../../styles/common"
 
 export const TasksKanbanColumn = styled(StyledColumn)({
-    width: "400px",
+    padding: "10px",
     backgroundColor: "rgba(180, 180, 180, 0.1)",
-    borderRadius: 5,
+    borderRadius: 5
 });
 
 export const TasksSheetColumn = styled(StyledColumn)({

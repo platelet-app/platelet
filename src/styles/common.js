@@ -60,6 +60,8 @@ export const StyledColumn = styled(Box)({
     border: 0,
     boxShadow: '0 2px 3px 1px rgba(100, 100, 100, .3)',
     height: "100%",
+    minHeight: "100%",
+    width: "383px",
     background: "rgba(255, 255, 255, 0.8)",
 });
 
@@ -70,8 +72,8 @@ export const StyledCard = styled(Card)({
     borderRadius: 2,
     boxShadow: '0 1px 2px 1px #7a7a7a',
     color: 'black',
-    width: "auto",
-    padding: '10px'
+    width: "350px",
+    height: "200px",
 });
 
 export const StyledSharpCard = styled(Card)({

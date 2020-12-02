@@ -17,7 +17,7 @@ import {
     updateTaskAssignedRiderSuccess,
     updateTaskPatchRequest, updateTaskPatchFromServer,
     updateTaskRemoveAssignedRiderSuccess,
-    updateTaskSuccess, updateTaskAssignedCoordinatorSuccess, updateTaskRemoveAssignedCoordinatorSuccess
+    updateTaskAssignedCoordinatorSuccess, updateTaskRemoveAssignedCoordinatorSuccess
 } from "../tasks/TasksActions";
 
 function* addTaskAssignedRider(action) {
@@ -31,11 +31,12 @@ function* addTaskAssignedRider(action) {
             }));
             delete action.data.payload.patch_id;
         }
-        if (action.data.payload.user_uuid)
+        if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.addTaskAssignedRider], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
-        yield put(addTaskAssignedRiderSuccess(action.data))
-        yield put(updateTaskAssignedRiderSuccess(action.data))
-        yield put(updateTaskPatchFromServer(action.data))
+            yield put(addTaskAssignedRiderSuccess(action.data))
+            yield put(updateTaskAssignedRiderSuccess(action.data))
+            yield put(updateTaskPatchFromServer(action.data))
+        }
     } catch (error) {
         yield put(addTaskAssignedRiderFailure(error))
     }
@@ -49,11 +50,12 @@ function* updateTaskRemoveRider(action) {
     try {
         yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
-        if (action.data.payload.user_uuid)
+        if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.removeTaskAssignedRider], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
-        yield put(removeTaskAssignedRiderSuccess(action.data));
-        yield put(updateTaskRemoveAssignedRiderSuccess(action.data));
-        yield put(updateTaskPatchFromServer(action.data))
+            yield put(removeTaskAssignedRiderSuccess(action.data));
+            yield put(updateTaskRemoveAssignedRiderSuccess(action.data));
+            yield put(updateTaskPatchFromServer(action.data))
+        }
     } catch (error) {
         yield put(removeTaskAssignedRiderFailure(error));
     }
@@ -66,10 +68,11 @@ export function* watchUpdateTaskRemoveRider() {
 function* addTaskAssignedCoordinator(action) {
     try {
         const api = yield select(getApiControl);
-        if (action.data.payload.user_uuid)
+        if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.addTaskAssignedCoordinator], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
-        yield put(addTaskAssignedCoordinatorSuccess(action.data))
-        yield put(updateTaskAssignedCoordinatorSuccess(action.data))
+            yield put(addTaskAssignedCoordinatorSuccess(action.data))
+            yield put(updateTaskAssignedCoordinatorSuccess(action.data))
+        }
     } catch (error) {
         yield put(addTaskAssignedCoordinatorFailure(error))
     }
@@ -82,10 +85,11 @@ export function* watchUpdateTaskAddAssignedCoordinator() {
 function* updateTaskRemoveCoordinator(action) {
     try {
         const api = yield select(getApiControl);
-        if (action.data.payload.user_uuid)
+        if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.removeTaskAssignedCoordinator], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
-        yield put(removeTaskAssignedCoordinatorSuccess(action.data));
-        yield put(updateTaskRemoveAssignedCoordinatorSuccess(action.data));
+            yield put(removeTaskAssignedCoordinatorSuccess(action.data));
+            yield put(updateTaskRemoveAssignedCoordinatorSuccess(action.data));
+        }
     } catch (error) {
         yield put(removeTaskAssignedCoordinatorFailure(error));
     }

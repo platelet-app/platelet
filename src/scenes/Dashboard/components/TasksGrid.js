@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     },
     hoverDiv: {
         width: "100%",
-        height: "45px",
+        height: "35px",
         "& .hidden-button": {
             display: "none"
         },
@@ -65,8 +65,6 @@ const useStyles = makeStyles(theme => ({
 const TaskGroup = props => {
     const postingSelector = createPostingSelector([
         "ADD_TASK_RELAY"]);
-    const dispatch = useDispatch();
-    const isPosting = useSelector(state => postingSelector(state));
     const classes = props.classes;
     const {show, hide} = showHide();
     return !props.group ? <></> : props.group.map((task, i, arr) => {
@@ -85,6 +83,8 @@ const TaskGroup = props => {
             assigned_riders,
             parent_id,
             relay_next,
+            assigned_coordinators,
+            assigned_coordinators_display_string
         } = task;
 
         return (
@@ -94,6 +94,9 @@ const TaskGroup = props => {
                     <Grid item>
                         <TaskItem
                             pickupAddress={pickup_address}
+                            assignedRiders={assigned_riders}
+                            assignedCoordinators={assigned_coordinators}
+                            assignedCoordinatorsDisplayString={assigned_coordinators_display_string}
                             assignedRidersDisplayString={assigned_riders_display_string}
                             dropoffAddress={dropoff_address}
                             timePickedUp={time_picked_up}
@@ -103,7 +106,6 @@ const TaskGroup = props => {
                             timeOfCall={time_of_call}
                             priority={priority}
                             patch={patch}
-                            assignedRiders={assigned_riders}
                             relayNext={relay_next}
                             taskUUID={uuid}
                             parentID={parent_id}
@@ -114,10 +116,10 @@ const TaskGroup = props => {
                                 className={(!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide}
                                 item>
                                 <Tooltip title="Relay">
-                                    <ArrowDownwardIcon style={{height: "45px"}}/>
+                                    <ArrowDownwardIcon style={{height: "35px"}}/>
                                 </Tooltip>
                             </Grid>
-                            <Grid
+                            {/*<Grid
                                 className={(!!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide}
                                 item>
                                 <Tooltip title={"Add Relay"}>
@@ -128,10 +130,10 @@ const TaskGroup = props => {
                                             dispatch(addTaskRelayRequest(uuid))
                                         }}
                                     >
-                                        <ArrowDownwardIcon/>
+                                        <ArrowDownwardIcon style={{height: "35px"}}/>
                                     </IconButton>
                                 </Tooltip>
-                            </Grid>
+                            </Grid>*/}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -250,11 +252,10 @@ export default function TasksGrid(props) {
     } else {
         return (
             <Grid container
-                  spacing={3}
+                  spacing={2}
                   direction={"row"}
-                  justify={"center"}
+                  justify={"flex-start"}
                   alignItems={"stretch"}
-                  wrap={"nowrap"}
             >
                 {Object.keys(tasks).map(taskKey => {
                     const title = getColumnTitle(taskKey);

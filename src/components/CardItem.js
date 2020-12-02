@@ -7,7 +7,7 @@ import {showHide} from "../styles/common";
 
 const useStyles = makeStyles({
     titleText: {
-        fontSize: "13px",
+        fontSize: "14px",
         width: "20px"
     },
     cardText: {
@@ -25,10 +25,10 @@ export default function CardItem(props) {
                     <Typography className={classes.titleText}>{props.label}:</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography style={{width: props.width ? props.width : "193px"}} align={"right"} noWrap={true} className={classes.cardText}>{props.children}</Typography>
+                    <Typography style={{width: props.width ? props.width : "260px"}} align={"right"} noWrap={true} className={classes.cardText}>{props.children}</Typography>
                 </Grid>
             </Grid>
-            <Grid item><Divider orientation="horizontal" flexItem/></Grid>
+            <Grid item><Divider width={"100px"} orientation="horizontal" flexItem/></Grid>
         </Grid>
     )
 }

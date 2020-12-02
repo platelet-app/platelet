@@ -7,6 +7,7 @@ import {
     setRoleViewAndGetTasks,
     startRefreshTasksLoopFromSocket,
 } from '../../redux/tasks/TasksActions'
+import Grid from "@material-ui/core/Grid";
 import {
     setNewTaskAddedView,
 } from "../../redux/Actions";
@@ -118,7 +119,7 @@ function Dashboard(props) {
         //} else if (newTaskAddedView()) {
         //    return <Redirect to={`/task/${encodeUUID("")}`}/>
         return (
-            <Paper className={classes.dashboard} elevation={3}>
+            <Paper elevation={3}>
                 <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => setViewMode(newValue)}>
                     <TabPanel value={0} index={0}>
                         <TasksGrid tasks={tasks}
