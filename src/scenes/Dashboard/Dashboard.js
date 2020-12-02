@@ -35,9 +35,8 @@ const useStyles = makeStyles({
     }
 })
 
-function Dashboard(props) {
+function Dashboard() {
     const dispatch = useDispatch();
-    const classes = useStyles();
     const loadingSelector = createLoadingSelector(['GET_TASKS']);
     const isFetching = useSelector(state => loadingSelector(state));
     const isPostingNewTaskSelector = createPostingSelector(["ADD_TASK"]);

@@ -35,6 +35,7 @@ const useStyles = makeStyles({
 
 const TaskCard = React.memo((props) => {
     const whoami = useSelector(state => state.whoami.user);
+    // TODO: if the users change every card will be rerendered. Try and fix etag with profile picture urls on the backend
     const users = useSelector(state => state.users.users);
     const classes = useStyles();
     const roleView = useSelector(state => state.roleView);

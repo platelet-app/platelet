@@ -4,6 +4,7 @@ import {Typography} from "@material-ui/core";
 import React from "react";
 import Divider from "@material-ui/core/Divider";
 import {showHide} from "../styles/common";
+import PropTypes from "prop-types"
 
 const useStyles = makeStyles({
     titleText: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles({
     }
 });
 
-export default function CardItem(props) {
+function CardItem(props) {
     const classes = useStyles();
     const {show, hide} = showHide();
     return (
@@ -32,3 +33,13 @@ export default function CardItem(props) {
         </Grid>
     )
 }
+
+CardItem.defaultProps = {
+    width: "260px"
+}
+
+CardItem.propTypes = {
+    label: PropTypes.string,
+}
+
+export default CardItem

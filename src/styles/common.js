@@ -11,12 +11,11 @@ import Box from "@material-ui/core/Box";
 import {Link} from "react-router-dom"
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
-import Grid from "@material-ui/core/Grid";
 
 export const showHide = makeStyles({
     hide: {display: "none"},
     show: {display: "inherit"},
-})
+});
 
 export function DismissButton(props) {
     return (

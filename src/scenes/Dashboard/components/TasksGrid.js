@@ -13,12 +13,13 @@ import {
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import IconButton from "@material-ui/core/IconButton";
 import {filterTasks} from "../utilities/functions";
-import {showHide} from "../../../styles/common";
 import {Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import TasksGridSkeleton from "./TasksGridSkeleton";
+import PropTypes from 'prop-types'
+import {initialTasksState} from "../../../redux/tasks/TasksReducers";
+import {showHide} from "../../../styles/common";
 
 
 const getColumnTitle = key => {
@@ -142,6 +143,7 @@ const TaskGroup = props => {
     })
 }
 
+
 const GridColumn = (props) => {
     const useStyles = makeStyles({
         header: {
@@ -165,7 +167,7 @@ const GridColumn = (props) => {
             <Typography className={classes.header}>{props.title}</Typography>
 
     return (
-        <TasksKanbanColumn className={props.hidden ? hide : show}>
+        <TasksKanbanColumn>
             <Grid container direction={"column"} spacing={2} alignItems={"center"} justify={"flex-start"}>
                 <Grid item>
                     {header}
@@ -196,8 +198,19 @@ const GridColumn = (props) => {
     )
 }
 
+GridColumn.propTypes = {
 
-export default function TasksGrid(props) {
+    title: PropTypes.string,
+    classes: PropTypes.object,
+    onAddTaskClick: PropTypes.func,
+    onAddRelayClick: PropTypes.func,
+    disableAddButton: PropTypes.bool,
+    taskKey: PropTypes.string,
+    showTasks: PropTypes.arrayOf(PropTypes.string),
+}
+
+
+function TasksGrid(props) {
     const classes = useStyles();
     const postingSelector = createPostingSelector(["ADD_TASK"]);
     const isPosting = useSelector(state => postingSelector(state));
@@ -207,6 +220,7 @@ export default function TasksGrid(props) {
     const tasks = useSelector(state => state.tasks.tasks);
     const dispatch = useDispatch();
     const dashboardFilter = useSelector(state => state.dashboardFilter);
+    const {show, hide} = showHide();
 
 
     const emptyTask = {
@@ -261,10 +275,9 @@ export default function TasksGrid(props) {
                     const title = getColumnTitle(taskKey);
                     return (
                         <React.Fragment key={taskKey}>
-                            <Grid item>
+                            <Grid item className={props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show}>
                                 <GridColumn title={title}
                                             classes={classes}
-                                            hidden={props.excludeColumnList && props.excludeColumnList.includes(taskKey)}
                                             onAddTaskClick={addEmptyTask}
                                             onAddRelayClick={addRelay}
                                             disableAddButton={isPosting}
@@ -286,3 +299,17 @@ export default function TasksGrid(props) {
         )
     }
 }
+
+TasksGrid.defaultProps = {
+    tasks: {initialTasksState}
+}
+TasksGrid.propTypes = {
+    tasks: PropTypes.object,
+    fullScreenModal: PropTypes.bool,
+    modalView: PropTypes.string,
+    hideRelayIcons: PropTypes.bool,
+    hideAddButton: PropTypes.bool,
+    excludeColumnList: PropTypes.arrayOf(PropTypes.string)
+}
+
+export default TasksGrid;
