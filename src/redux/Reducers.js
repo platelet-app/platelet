@@ -18,6 +18,7 @@ import {
     SET_IDLE_STATUS,
 } from './Actions'
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
+import {userStatistics} from "./statistics/statisticsReducers";
 import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
 import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
@@ -113,7 +114,7 @@ const whoamiInitialState = {
             email: null,
             dob: null,
             patch: null,
-            roles: "",
+            roles: [],
             comments: null,
             links: null,
             display_name: null,
@@ -276,7 +277,8 @@ const rootReducer = combineReducers({
     dashboardFilter,
     actionsRecord,
     tasksActionsRecord,
-    idleStatus
+    idleStatus,
+    userStatistics
 });
 
 export default rootReducer

@@ -212,33 +212,19 @@ function RiderStats(props) {
 }
 
 export default function TasksStatistics(props) {
-    const loadingSelector = createLoadingSelector(["GET_SESSION_STATISTICS", "GET_PRIORITIES"]);
-    const isFetching = useSelector(state => loadingSelector(state));
-    const stats = useSelector(state => state.sessionStatistics.statistics);
-    const dispatch = useDispatch();
-
-    function componentDidMount() {
-        dispatch(getSessionStatisticsRequest(props.sessionUUID))
-    }
-
-    useEffect(componentDidMount, []);
-
-    if (isFetching) {
-        return <StatsSkeleton/>
-    } else {
 
         return (
             <Grid container direction={"column"} spacing={3}>
                 <Grid item>
-                    <CommonStats stats={stats}/>
+                    <CommonStats stats={props.stats}/>
                 </Grid>
                 <Grid item>
-                    <RiderStats stats={stats}/>
+                    <RiderStats stats={props.stats}/>
                 </Grid>
                 <Grid item>
-                    <PatchStats stats={stats}/>
+                    <PatchStats stats={props.stats}/>
                 </Grid>
             </Grid>
         )
-    }
+
 }

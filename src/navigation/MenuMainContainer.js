@@ -112,6 +112,11 @@ export function MenuMainContainer() {
                 }} component={Link} to={"/locations"}>
                     Locations
                 </MenuItem>
+                <MenuItem onClick={() => {
+                    setAnchorElDashMenu(null);
+                }} component={Link} to={"/statistics"}>
+                    Statistics
+                </MenuItem>
                 {adminLink}
             </List>
         );

@@ -75,6 +75,7 @@ import {
     watchGetActionsRecord,
     watchGetTasksActionsRecord,
 } from "./actionsRecord/ActionsRecordSagas";
+import {watchGetUserStatistics} from "./statistics/statisticsSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -149,6 +150,7 @@ export default function* rootSaga() {
         call(watchGetActionsRecord),
         call(watchGetTasksActionsRecord),
         call(watchSetRoleViewAndGetTasks),
-        call(watchRefreshTasksFromSocket)
+        call(watchRefreshTasksFromSocket),
+        call(watchGetUserStatistics)
     ])
 }

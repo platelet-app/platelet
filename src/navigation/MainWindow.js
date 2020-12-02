@@ -14,6 +14,7 @@ import {AdminControl} from "../scenes/AdminControl/AdminControl";
 import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
 import LocationDetail from "../scenes/Location/LocationDetail";
+import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 
 export default function MainWindow(_props) {
     let location = useLocation();
@@ -48,6 +49,9 @@ export default function MainWindow(_props) {
                     />
                     <Route exact path='/user/:user_uuid_b62'
                            render={(props) => <UserDetail {...props}/>}
+                    />
+                    <Route exact path='/statistics'
+                           render={(props) => <StatisticsDashboard {...props}/>}
                     />
                     <Route exact path="/task/:task_uuid_b62"
                            render={(props) => {

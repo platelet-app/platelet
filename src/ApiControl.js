@@ -388,6 +388,22 @@ class User {
     }
 }
 
+class Statistics {
+    constructor(bearer, api_url){
+        this.bearer = bearer;
+        this.users = [];
+        this.api_url = api_url;
+    }
+
+    async getUserStatistics(userUUID, startDateTime, endDateTime, role="coordinator") {
+        return makeAxios(
+            this.api_url,
+            `statistics/${userUUID}?role=${role}&start_date_time=${startDateTime}&end_date_time=${endDateTime}`,
+            "GET",
+            this.bearer);
+    }
+}
+
 class Control {
     constructor(api_url = "", bearer = "") {
         this.login = this.login.bind(this);
@@ -573,6 +589,8 @@ class Control {
         this.priorities = undefined;
         this.patches = undefined;
         this.initialised = false;
+        this.log = false;
+        this.statistics = false;
     }
 
     initialiseClasses(token) {
@@ -587,6 +605,7 @@ class Control {
         this.priorities = new Priority(this.bearer, this.api_url);
         this.patches = new Patch(this.bearer, this.api_url);
         this.log = new Log(this.bearer, this.api_url);
+        this.statistics = new Statistics(this.bearer, this.api_url);
         this.initialised = true;
         const self = this;
         //TODO: This doesn't work if the token has expired fully fixxxxx

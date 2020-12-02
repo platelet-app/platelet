@@ -1,4 +1,4 @@
-import {throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
+import {call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {
     ADD_COMMENT_REQUEST,
     addCommentSuccess,
@@ -36,14 +36,6 @@ import {
 } from "./CommentsActions"
 
 import {getApiControl} from "../Api";
-import {
-    DELETE_SESSION_REQUEST,
-    deleteSessionFailure,
-    deleteSessionSuccess, RESTORE_SESSION_REQUEST,
-    restoreSessionSuccess
-} from "../sessions/SessionsActions";
-import {deleteTaskSuccess, restoreTaskRequest} from "../tasks/TasksActions";
-import {unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 export function* postNewComment(action) {

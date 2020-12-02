@@ -59,13 +59,18 @@ const useStyles = makeStyles(theme => ({
         "&:hover .hidden-button": {
             display: "inline"
         }
+    },
+    header: {
+        fontWeight: "bold",
+        padding: "6px"
+    },
+    divider: {
+        width: "300px"
     }
 }));
 
 
 const TaskGroup = props => {
-    const postingSelector = createPostingSelector([
-        "ADD_TASK_RELAY"]);
     const classes = props.classes;
     const {show, hide} = showHide();
     return !props.group ? <></> : props.group.map((task, i, arr) => {
@@ -120,21 +125,11 @@ const TaskGroup = props => {
                                     <ArrowDownwardIcon style={{height: "35px"}}/>
                                 </Tooltip>
                             </Grid>
-                            {/*<Grid
+                            <Grid item
                                 className={(!!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide}
-                                item>
-                                <Tooltip title={"Add Relay"}>
-                                    <IconButton
-                                        disabled={isPosting}
-                                        className={"hidden-button"}
-                                        onClick={() => {
-                                            dispatch(addTaskRelayRequest(uuid))
-                                        }}
-                                    >
-                                        <ArrowDownwardIcon style={{height: "35px"}}/>
-                                    </IconButton>
-                                </Tooltip>
-                            </Grid>*/}
+                            >
+                                <Divider className={hide}/>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -145,15 +140,6 @@ const TaskGroup = props => {
 
 
 const GridColumn = (props) => {
-    const useStyles = makeStyles({
-        header: {
-            fontWeight: "bold",
-            padding: "6px"
-        },
-        divider: {
-            width: "300px"
-        }
-    });
     const classes = useStyles();
     const {show, hide} = showHide();
     const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
