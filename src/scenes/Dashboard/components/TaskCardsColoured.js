@@ -69,8 +69,8 @@ const TaskCard = React.memo((props) => {
         className = classes.delivered
     }
 
-    const coordAvatars = roleView === "coordinator" ? props.assignedCoordinators.filter(u => u.uuid !== whoami.uuid) : props.assignedCoordinators;
-    const riderAvatars = roleView === "rider" ? props.assignedRiders.filter(u => u.uuid !== whoami.uuid) : props.assignedRiders;
+    const coordAvatars = props.assignedCoordinators ? roleView === "coordinator" ? props.assignedCoordinators.filter(u => u.uuid !== whoami.uuid) : props.assignedCoordinators : [];
+    const riderAvatars = props.assignedRiders ? roleView === "rider" ? props.assignedRiders.filter(u => u.uuid !== whoami.uuid) : props.assignedRiders : [];
     const cardInnerContent =
             <CardContent style={{paddingTop: "5px"}}>
                 <Grid container spacing={0} alignItems={"flex-start"} justify={"flex-start"} direction={"column"}>
