@@ -35,6 +35,7 @@ const useStyles = makeStyles({
 
 const TaskCard = React.memo((props) => {
     const whoami = useSelector(state => state.whoami.user);
+    const users = useSelector(state => state.users.users);
     const classes = useStyles();
     const roleView = useSelector(state => state.roleView);
     let pickupTitle = "";
@@ -69,8 +70,16 @@ const TaskCard = React.memo((props) => {
         className = classes.delivered
     }
 
-    const coordAvatars = props.assignedCoordinators ? roleView === "coordinator" ? props.assignedCoordinators.filter(u => u.uuid !== whoami.uuid) : props.assignedCoordinators : [];
-    const riderAvatars = props.assignedRiders ? roleView === "rider" ? props.assignedRiders.filter(u => u.uuid !== whoami.uuid) : props.assignedRiders : [];
+    const coordUsers = props.assignedCoordinators ? roleView === "coordinator" ? props.assignedCoordinators.filter(u => u.uuid !== whoami.uuid) : props.assignedCoordinators : [];
+    const riderUsers = props.assignedRiders ? roleView === "rider" ? props.assignedRiders.filter(u => u.uuid !== whoami.uuid) : props.assignedRiders : [];
+    const coordAvatars = coordUsers.map(u => {
+        const {uuid, display_name, profile_picture_thumbnail_url} = users.find(a => a.uuid === u.uuid);
+        return {uuid, display_name, profile_picture_thumbnail_url};
+    })
+    const riderAvatars = riderUsers.map(u => {
+        const {uuid, display_name, profile_picture_thumbnail_url} = users.find(a => a.uuid === u.uuid);
+        return {uuid, display_name, profile_picture_thumbnail_url};
+    })
     const cardInnerContent =
             <CardContent style={{paddingTop: "5px"}}>
                 <Grid container spacing={0} alignItems={"flex-start"} justify={"flex-start"} direction={"column"}>
