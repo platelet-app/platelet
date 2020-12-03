@@ -71,16 +71,8 @@ const TaskCard = React.memo((props) => {
         className = classes.delivered
     }
 
-    const coordUsers = props.assignedCoordinators ? roleView === "coordinator" ? props.assignedCoordinators.filter(u => u.uuid !== whoami.uuid) : props.assignedCoordinators : [];
-    const riderUsers = props.assignedRiders ? roleView === "rider" ? props.assignedRiders.filter(u => u.uuid !== whoami.uuid) : props.assignedRiders : [];
-    const coordAvatars = coordUsers.map(u => {
-        const {uuid, display_name, profile_picture_thumbnail_url} = users.find(a => a.uuid === u.uuid);
-        return {uuid, display_name, profile_picture_thumbnail_url};
-    })
-    const riderAvatars = riderUsers.map(u => {
-        const {uuid, display_name, profile_picture_thumbnail_url} = users.find(a => a.uuid === u.uuid);
-        return {uuid, display_name, profile_picture_thumbnail_url};
-    })
+    const coordAvatars = props.assignedCoordinators ? roleView === "coordinator" ? props.assignedCoordinators.filter(u => u.uuid !== whoami.uuid) : props.assignedCoordinators : [];
+    const riderAvatars = props.assignedRiders ? roleView === "rider" ? props.assignedRiders.filter(u => u.uuid !== whoami.uuid) : props.assignedRiders : [];
     const cardInnerContent =
             <CardContent style={{paddingTop: "5px"}}>
                 <Grid container spacing={0} alignItems={"flex-start"} justify={"flex-start"} direction={"column"}>
