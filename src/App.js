@@ -36,19 +36,16 @@ import {
 } from "./redux/sockets/SocketActions";
 import {DismissButton, showHide} from "./styles/common";
 import {Link} from "react-router-dom";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-
+import {MuiThemeProvider, createMuiTheme} from "@material-ui/core/styles";
 
 
 const useStyles = makeStyles(theme => ({
     centeredDiv: {
-        height: "100vh",
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
         textAlign: 'center',
-        background: "rgb(230, 230, 230)",
     }
 }));
 
@@ -133,7 +130,10 @@ function App(props) {
     function handleError() {
         // any saga that returns with an error object that is not null will be handled here
         if (error) {
-            if (error.name === "HttpError") {
+            if (error.status === 404) {
+                // do nothing
+            }
+            else if (error.name === "HttpError") {
                 if (error.message)
                     props.enqueueSnackbar(`${error.message}`,
                         {
@@ -154,6 +154,7 @@ function App(props) {
                     dispatch(logoutUser())
                 }
             } else {
+                // TODO: sort this out with logging for production
                 throw error;
             }
         }
@@ -253,51 +254,58 @@ function App(props) {
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up('sm'))));
 
+    let appContents;
+
     if (!apiURL) {
-        return (
-                        <ApiConfig onSelect={(result) => {
-                            dispatch(setApiURL(result))
-                        }}/>
-        )
+        appContents =
+            <ApiConfig onSelect={(result) => {
+                dispatch(setApiURL(result))
+            }}/>
+
     } else if (forceResetPassword || (serverSettings && !isInitialised)) {
-        return (
-                <Grid container direction={"column"} alignItems={"center"} spacing={3}>
-                    <Grid item>
-                        <Login apiUrl={apiURL}/>
-                    </Grid>
-                    {process.env.REACT_APP_API_URL ? <></> :
-                        // No need for change organisation button if the api url is hard coded
-                        <Grid item>
-                            <Button variant="contained" color="primary" onClick={() => {
-                                dispatch(removeApiURL());
-                                dispatch(clearServerSettings());
-                            }}>
-                                Change Organisation
-                            </Button>
-                        </Grid>
-                    }
+        appContents =
+            <Grid container direction={"column"} alignItems={"center"} spacing={3}>
+                <Grid item>
+                    <Login apiUrl={apiURL}/>
                 </Grid>
-        )
+                {process.env.REACT_APP_API_URL ? <></> :
+                    // No need for change organisation button if the api url is hard coded
+                    <Grid item>
+                        <Button variant="contained" color="primary" onClick={() => {
+                            dispatch(removeApiURL());
+                            dispatch(clearServerSettings());
+                        }}>
+                            Change Organisation
+                        </Button>
+                    </Grid>
+                }
+            </Grid>
+
     } else if (isInitialised) {
-        return (
-                <MuiThemeProvider theme={themeLight}>
-                    <CssBaseline/>
-                        <Helmet>
-                            <title>{serverSettings.organisation_name}</title>
-                            <link rel="icon" type="image/png" sizes="16x16" href={
-                                serverSettings.favicon ? "data:image/png;base64," + serverSettings.favicon : "favicon.ico"
-                            }/>
-                        </Helmet>
-                        <MenuMainContainer/>
-                </MuiThemeProvider>
-        );
+        appContents = <React.Fragment>
+            <Helmet>
+                <title>{serverSettings.organisation_name}</title>
+                <link rel="icon" type="image/png" sizes="16x16" href={
+                    serverSettings.favicon ? "data:image/png;base64," + serverSettings.favicon : "favicon.ico"
+                }/>
+            </Helmet>
+            <MenuMainContainer/>
+        </React.Fragment>
+        ;
     } else {
-        return (
+        appContents =
             <div className={classes.centeredDiv}>
                 <LoginSkeleton/>
             </div>
-        )
+
     }
+    return (
+        <MuiThemeProvider theme={themeLight}>
+            <CssBaseline/>
+            {appContents}
+        </MuiThemeProvider>
+
+    )
 
 }
 
