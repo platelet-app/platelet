@@ -7,7 +7,6 @@ import {
     setRoleViewAndGetTasks,
     startRefreshTasksLoopFromSocket,
 } from '../../redux/tasks/TasksActions'
-import Grid from "@material-ui/core/Grid";
 import {
     setNewTaskAddedView,
 } from "../../redux/Actions";

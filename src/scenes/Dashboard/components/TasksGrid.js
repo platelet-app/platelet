@@ -1,43 +1,53 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import TaskItem from "./TaskItem";
-import {createLoadingSelector, createPostingSelector} from "../../../redux/selectors";
+import {
+    createLoadingSelector,
+    createNotFoundSelector,
+    createPostingSelector,
+    createSimpleLoadingSelector
+} from "../../../redux/selectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
 import Button from "@material-ui/core/Button";
 import {Waypoint} from "react-waypoint";
 import {
-    addTaskRelayRequest, addTaskRequest,
+    addTaskRelayRequest, addTaskRequest, appendTaskRequest,
     updateTaskDropoffAddressRequest
 } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {filterTasks} from "../utilities/functions";
-import {Typography} from "@material-ui/core";
+import {CircularProgress, LinearProgress, Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import TasksGridSkeleton from "./TasksGridSkeleton";
 import PropTypes from 'prop-types'
 import {initialTasksState} from "../../../redux/tasks/TasksReducers";
 import {showHide} from "../../../styles/common";
+import {
+    appendTasksCancelledRequest,
+    appendTasksDeliveredRequest,
+    appendTasksRejectedRequest
+} from "../../../redux/tasks/TasksWaypointActions";
 
 
 const getColumnTitle = key => {
     switch (key) {
         case "tasksNew":
-            return "New";
+            return "New".toUpperCase();
         case "tasksActive":
-            return "Active";
+            return "Active".toUpperCase();
         case "tasksPickedUp":
-            return "Picked Up";
+            return "Picked Up".toUpperCase();
         case "tasksDelivered":
-            return "Delivered";
+            return "Delivered".toUpperCase();
         case "tasksRejected":
-            return "Rejected";
+            return "Rejected".toUpperCase();
         case "tasksCancelled":
-            return "Cancelled";
+            return "Cancelled".toUpperCase();
         case "tasksRejectedCancelled":
-            return "Rejected/Cancelled";
+            return "Rejected/Cancelled".toUpperCase();
         default:
             return ""
     }
@@ -126,7 +136,7 @@ const TaskGroup = props => {
                                 </Tooltip>
                             </Grid>
                             <Grid item
-                                className={(!!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide}
+                                  className={(!!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide}
                             >
                                 <Divider className={hide}/>
                             </Grid>
@@ -138,11 +148,47 @@ const TaskGroup = props => {
     })
 }
 
+const loaderStyles = makeStyles((theme) => ({
+    linear: {
+        width: '100%',
+        '& > * + *': {
+            marginTop: theme.spacing(2),
+        },
+    },
+    circular: {
+        display: 'flex',
+        '& > * + *': {
+            marginLeft: theme.spacing(2),
+        },
+    },
+}));
 
 const GridColumn = (props) => {
     const classes = useStyles();
+    const loaderClass = loaderStyles();
     const {show, hide} = showHide();
+    const dispatch = useDispatch();
     const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
+    const whoami = useSelector(state => state.whoami.user);
+    let selectorsString = "";
+    if (props.taskKey === "tasksDelivered")
+        selectorsString = "APPEND_TASKS_DELIVERED"
+    else if (props.taskKey === "tasksCancelled")
+        selectorsString = "APPEND_TASKS_CANCELLED"
+    else if (props.taskKey === "tasksRejected")
+        selectorsString = "APPEND_TASKS_REJECTED"
+    const notFoundSelector = createNotFoundSelector([selectorsString]);
+    const endlessLoadEnd = useSelector(state => notFoundSelector(state));
+    const isFetchingSelector = createSimpleLoadingSelector([selectorsString]);
+    const endlessLoadIsFetching = useSelector(state => isFetchingSelector(state));
+    const dispatchAppendFunctions = {
+        tasksCancelled: (endlessLoadEnd || endlessLoadIsFetching) ? () => ({type: "IGNORE"}) : appendTasksCancelledRequest,
+        tasksDelivered: (endlessLoadEnd || endlessLoadIsFetching) ? () => ({type: "IGNORE"}) : appendTasksDeliveredRequest,
+        tasksRejected: (endlessLoadEnd || endlessLoadIsFetching) ? () => ({type: "IGNORE"}) : appendTasksRejectedRequest
+    };
+    let appendFunction = () => {
+    };
+    appendFunction = dispatchAppendFunctions[props.taskKey];
     const header =
         (props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ?
             <Button variant="contained" color="primary"
@@ -173,9 +219,39 @@ const GridColumn = (props) => {
 
                         {tasks.map(taskList => {
                             return (
-                                <TaskGroup {...props} group={taskList} key={taskList[0].parent_id}/>
+                                <Grid item key={taskList[0].parent_id}>
+                                    <TaskGroup {...props} group={taskList}/>
+                                </Grid>
                             )
                         })}
+                        {(["tasksDelivered", "tasksRejected", "tasksCancelled"].includes(props.taskKey)) ?
+                            <React.Fragment>
+                                <Waypoint
+                                    onEnter={() => {
+                                        console.log(props.taskKey)
+                                        const lastGroup = tasks[tasks.length - 1]
+                                        let afterDateTime;
+                                        if (lastGroup)
+                                            afterDateTime = lastGroup[lastGroup.length - 1].time_created
+                                        dispatch(appendFunction(
+                                            whoami.uuid,
+                                            1,
+                                            "coordinator",
+                                            props.taskKey,
+                                            afterDateTime
+                                        ))
+                                        console.log("YAY ENTER")
+                                    }
+                                    }
+                                />
+                                {endlessLoadIsFetching ?
+                                    <div className={loaderClass.root}>
+                                        <CircularProgress color="secondary"/>
+
+                                    </div> : <></>}
+                            </React.Fragment>
+
+                            : <></>}
 
                     </Grid>
                 </Grid>
@@ -247,6 +323,7 @@ function TasksGrid(props) {
 
     useEffect(doSearch, [dashboardFilter])
 
+
     if (isFetching) {
         return <TasksGridSkeleton count={3}/>
     } else {
@@ -261,7 +338,8 @@ function TasksGrid(props) {
                     const title = getColumnTitle(taskKey);
                     return (
                         <React.Fragment key={taskKey}>
-                            <Grid item className={props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show}>
+                            <Grid item
+                                  className={props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show}>
                                 <GridColumn title={title}
                                             classes={classes}
                                             onAddTaskClick={addEmptyTask}
@@ -270,13 +348,7 @@ function TasksGrid(props) {
                                             taskKey={taskKey}
                                             showTasks={filteredTasksUUIDs}
                                             key={title}/>
-                                <Waypoint
-                                    onEnter={() => {
-                                        console.log("YAY ENTER")
-                                    }
-                                    }
-                                    onLeave={() => console.log("YAY LEAVE")}
-                                />
+
                             </Grid>
                         </React.Fragment>
                     )

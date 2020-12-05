@@ -23,7 +23,8 @@ import {
     groupRelaysTogether,
     getAllTasksRequest,
     SET_ROLE_VIEW_AND_GET_TASKS,
-    START_REFRESH_TASKS_LOOP_FROM_SOCKET, updateTaskDropoffAddressRequest
+    START_REFRESH_TASKS_LOOP_FROM_SOCKET,
+    updateTaskDropoffAddressRequest,
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -81,9 +82,9 @@ import {
     updateTaskPatchFailure,
     updateTaskCancelledTimeFailure,
     updateTaskRejectedTimeFailure,
-    getTaskFailure
+    getTaskFailure,
+    updateTaskPatchRequest
 } from "./TasksActions"
-import {updateTaskPatchRequest as updateTaskPatchAction} from "./TasksActions"
 
 
 import {getApiControl, getWhoami} from "../Api"
@@ -93,14 +94,12 @@ import {
     subscribeToUUID,
     unsubscribeFromUUID
 } from "../sockets/SocketActions";
-import React from "react";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {encodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
 import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
-import {SET_ROLE_VIEW, setRoleView} from "../Actions";
+import { setRoleView } from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
 import {createLoadingSelector, createPostingSelector} from "../selectors";
-import {useSelector} from "react-redux";
 
 
 const emptyTask = {
@@ -418,7 +417,7 @@ function* updateTaskPatchFromServer(action) {
             patch: "",
             patch_id: null
         };
-        yield put(updateTaskPatchAction({taskUUID: action.data.taskUUID, payload}))
+        yield put(updateTaskPatchRequest({taskUUID: action.data.taskUUID, payload}))
     } catch (error) {
         yield put(updateTaskPatchFailure(error))
     }
@@ -578,12 +577,12 @@ function* getTasks(action) {
     try {
         const api = yield select(getApiControl);
         // get all the different tasks for different status and combine them
-        const tasksNew = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "new");
-        const tasksActive = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "active");
-        const tasksPickedUp = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "picked_up");
-        const tasksDelivered = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "delivered");
-        const tasksCancelled = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "cancelled");
-        const tasksRejected = yield call([api, api.tasks.getTasks], action.data, action.page, action.role, "rejected");
+        const tasksNew = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "new", "", "descending");
+        const tasksActive = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "active", "", "ascending");
+        const tasksPickedUp = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "picked_up", "", "ascending");
+        const tasksDelivered = yield call([api, api.tasks.getTasks], action.data, 1, action.role, "delivered", "", "descending");
+        const tasksCancelled = yield call([api, api.tasks.getTasks], action.data, 1, action.role, "cancelled", "", "descending");
+        const tasksRejected = yield call([api, api.tasks.getTasks], action.data, 1, action.role, "rejected", "", "descending");
         yield put(getAllTasksSuccess({
             tasksNew,
             tasksActive,
@@ -597,14 +596,16 @@ function* getTasks(action) {
             if (error.response.status === 404) {
                 yield put(getAllTasksNotFound(error))
             }
+        } else {
+            yield put(getAllTasksFailure(error))
         }
-        yield put(getAllTasksFailure(error))
     }
 }
 
 export function* watchGetTasks() {
     yield takeLatest(GET_TASKS_REQUEST, getTasks)
 }
+
 
 export function* refreshTasksFromSocket(action) {
     //TODO: figure out why this always refreshes the task even when it doesn't need to

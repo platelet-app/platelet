@@ -76,6 +76,11 @@ import {
     watchGetTasksActionsRecord,
 } from "./actionsRecord/ActionsRecordSagas";
 import {watchGetUserStatistics} from "./statistics/statisticsSagas";
+import {
+    watchAppendTasksCancelled,
+    watchAppendTasksDelivered,
+    watchAppendTasksRejected
+} from "./tasks/TaskWaypointSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -151,6 +156,9 @@ export default function* rootSaga() {
         call(watchGetTasksActionsRecord),
         call(watchSetRoleViewAndGetTasks),
         call(watchRefreshTasksFromSocket),
-        call(watchGetUserStatistics)
+        call(watchGetUserStatistics),
+        call(watchAppendTasksCancelled),
+        call(watchAppendTasksRejected),
+        call(watchAppendTasksDelivered),
     ])
 }

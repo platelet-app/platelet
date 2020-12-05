@@ -38,7 +38,7 @@ import {
     UPDATE_TASK_ASSIGNED_COORDINATOR_SUCCESS,
     UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET,
     UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_SUCCESS,
-    UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET
+    UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET, APPEND_TASKS_SUCCESS
 
 } from "./TasksActions";
 import update from "immutability-helper";
@@ -47,6 +47,11 @@ import {
     findExistingTaskParent,
     findExistingTaskParentByID,
 } from "../../utilities";
+import {
+    APPEND_TASKS_CANCELLED_SUCCESS,
+    APPEND_TASKS_DELIVERED_SUCCESS,
+    APPEND_TASKS_REJECTED_SUCCESS
+} from "./TasksWaypointActions";
 
 const initialState = {
     task: {
@@ -127,33 +132,38 @@ function sortAndConcat(tasks, data) {
     const sorted = determineTaskType(data);
     for (const [key, value] of Object.entries(sorted)) {
         sorted[key] = [...tasks[key], value]
-        if (["tasksNew", "tasksDelivered", "tasksRejected", "tasksCancelled"].includes(key)) {
-            sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
-        } else {
-            if (key === "nope")
-                sorted[key] = sorted[key].sort((a, b) => a.time_picked_up > b.time_picked_up ? 1 : a.time_picked_up < b.time_picked_up ? -1 : 0).reverse();
-            else
-                sorted[key] = sorted[key].sort((a, b) => a[0].parent_id - b[0].parent_id);
-        }
+        // if (["tasksNew", "tasksDelivered", "tasksRejected", "tasksCancelled"].includes(key)) {
+        //     sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
+        // } else {
+        // if (key === "nope")
+        //     sorted[key] = sorted[key].sort((a, b) => a.time_picked_up > b.time_picked_up ? 1 : a.time_picked_up < b.time_picked_up ? -1 : 0).reverse();
+        //sorted[key] = sorted[key].sort((a, b) => a[0].parent_id - b[0].parent_id);
+        sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
     }
     return {...tasks, ...sorted};
 }
 
 
+function convertToRelays(group) {
+    let result = [];
+    let currentParentId = -1;
+    let currentIndex = -1;
+    for (const t of group) {
+        if (currentParentId !== t.parent_id) {
+            currentParentId = t.parent_id;
+            currentIndex += 1;
+            result[currentIndex] = [];
+        }
+        result[currentIndex].push(t);
+    }
+    return result;
+
+}
+
 function groupRelaysTogether(tasks) {
     let groupedTasks = {};
     for (const [key, value] of Object.entries(tasks)) {
-        groupedTasks[key] = [];
-        let currentParentId = -1;
-        let currentIndex = -1;
-        for (const t of value) {
-            if (currentParentId !== t.parent_id) {
-                currentParentId = t.parent_id;
-                currentIndex += 1;
-                groupedTasks[key][currentIndex] = [];
-            }
-            groupedTasks[key][currentIndex].push(t);
-        }
+        groupedTasks[key] = convertToRelays(value);
     }
     //  for (const [key, value] of Object.entries(groupedTasks)) {
     //      groupedTasks[key] = value.sort((a, b) => a.order_in_relay < b.order_in_relay);
@@ -261,6 +271,18 @@ export function tasks(state = initialTasksState, action) {
             } else {
                 return state;
             }
+        }
+        case APPEND_TASKS_DELIVERED_SUCCESS:
+        case APPEND_TASKS_REJECTED_SUCCESS:
+        case APPEND_TASKS_CANCELLED_SUCCESS: {
+            let result;
+            for (const [key, value] of Object.entries(action.data)) {
+                const newList = [...state.tasks[key], ...convertToRelays(value)]
+                result = update(state.tasks, {[key]: {$set: newList}})
+                //const updatedGroup = update(parent.taskGroup, {[taskIndex]: {$set: updatedItem}})
+            }
+            return {tasks: result, error: null}
+
         }
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_REQUESTER_CONTACT_SUCCESS:

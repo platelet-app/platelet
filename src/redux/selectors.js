@@ -8,6 +8,11 @@ export const createErrorMessageSelector = (actions) => (state) => {
         .compact()
         .first() || '';
 };
+
+export const createSimpleLoadingSelector = actions => state => {
+    return actions.some(action => state.loadingReducer[action]);
+}
+
 export const createLoadingSelector = actions => state => {
     if (Object.entries(_.get(state, 'loadingReducer')).length === 0) {
         return true;
