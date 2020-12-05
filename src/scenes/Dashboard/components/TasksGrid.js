@@ -247,7 +247,6 @@ const GridColumn = (props) => {
                                 {endlessLoadIsFetching ?
                                     <div className={loaderClass.root}>
                                         <CircularProgress color="secondary"/>
-
                                     </div> : <></>}
                             </React.Fragment>
 

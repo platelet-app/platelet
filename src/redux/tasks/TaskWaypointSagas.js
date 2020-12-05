@@ -17,6 +17,7 @@ import {
 } from "./TasksWaypointActions";
 import {createLoadingSelector} from "../selectors";
 import {useSelector} from "react-redux";
+import {subscribeToUUIDs} from "../sockets/SocketActions";
 
 function* appendTasks(action) {
     try {
@@ -65,6 +66,7 @@ function * appendDelivered(action) {
     try {
         const tasks = yield call([api, api.tasks.getTasks], action.userUUID, action.page, action.role, "delivered", action.afterDateTime);
         yield put(appendTasksDeliveredSuccess({tasksDelivered: tasks}))
+        yield put(subscribeToUUIDs(tasks.map(t => t.uuid)))
     } catch (error) {
         if (error.name === "HttpError") {
             if (error.response.status === 404) {
@@ -85,6 +87,7 @@ function * appendRejected(action) {
     try {
         const tasks = yield call([api, api.tasks.getTasks], action.userUUID, action.page, action.role, "rejected", action.afterDateTime);
         yield put(appendTasksRejectedSuccess({tasksRejected: tasks}))
+        yield put(subscribeToUUIDs(tasks.map(t => t.uuid)))
     } catch (error) {
         if (error.name === "HttpError") {
             if (error.response.status === 404) {
@@ -105,6 +108,7 @@ function * appendCancelled(action) {
     try {
         const tasks = yield call([api, api.tasks.getTasks], action.userUUID, action.page, action.role, "cancelled", action.afterDateTime);
         yield put(appendTasksCancelledSuccess({tasksCancelled: tasks}))
+        yield put(subscribeToUUIDs(tasks.map(t => t.uuid)))
     } catch (error) {
         if (error.name === "HttpError") {
             if (error.response.status === 404) {
