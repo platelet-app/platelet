@@ -138,6 +138,17 @@ export function* watchPostNewTask() {
     yield takeEvery(ADD_TASK_REQUEST, postNewTask)
 }
 
+const emptyAddress = {
+    ward: null,
+    line1: null,
+    line2: null,
+    town: null,
+    county: null,
+    country: null,
+    postcode: null,
+    what3words: null
+}
+
 function* postNewTaskRelay(action) {
     try {
         const timeNow = new Date().toISOString();
@@ -174,7 +185,6 @@ function* postNewTaskRelay(action) {
         const whoami = yield select(getWhoami);
         const result = yield call([api, api.tasks.createTask], {
             ...emptyTask, ...prevTaskData,
-            time_created: timeNow
         });
         const orderInRelay = result.order_in_relay ? parseInt(result.order_in_relay) : 0;
         const task = {
@@ -188,8 +198,13 @@ function* postNewTaskRelay(action) {
             payload: {task_uuid: task.uuid, user_uuid: task.author_uuid, user: whoami}
         }))
         yield put(updateTaskSuccess({
+                taskUUID: action.relayPrevious,
+                payload: {relay_next: task}
+            }
+        ))
+        yield put(updateTaskDropoffAddressRequest({
             taskUUID: action.relayPrevious,
-            payload: {dropoff_address: null, relay_next: task}
+            payload: {dropoff_address: emptyAddress, relay_next: task}
         }))
         yield put(addTaskRelaySuccess(task));
         yield put(subscribeToUUID(task.uuid))
@@ -216,16 +231,16 @@ function* deleteTask(action) {
         yield put(deleteTaskSuccess(action.data))
         let relayPrevious;
         if (beforeDelete) {
-            if (beforeDelete.relay_previous_uuid && taskGroup[taskGroup.length - 1].uuid === beforeDelete.uuid) {
-                relayPrevious = yield findExistingTask(currentTasks, beforeDelete.relay_previous_uuid)
+            if (beforeDelete.dropoff_address && beforeDelete.relay_previous_uuid && taskGroup[taskGroup.length - 1].uuid === beforeDelete.uuid) {
+                relayPrevious = yield findExistingTask(currentTasks, beforeDelete.relay_previous_uuid);
                 yield put(updateTaskDropoffAddressRequest({
                     taskUUID: beforeDelete.relay_previous_uuid,
                     payload: {dropoff_address: beforeDelete.dropoff_address}
-                }))
+                }));
             }
-            yield put(resetGroupRelayUUIDs(beforeDelete.parent_id))
+            yield put(resetGroupRelayUUIDs(beforeDelete.parent_id));
         }
-        yield put(unsubscribeFromUUID(action.data))
+        yield put(unsubscribeFromUUID(action.data));
         let restoreActions;
         if (relayPrevious) {
             restoreActions = () => [
@@ -239,9 +254,9 @@ function* deleteTask(action) {
             restoreActions = () => [
                 restoreTaskRequest(action.data)]
         }
-        yield put(displayInfoNotification("Task deleted", restoreActions))
+        yield put(displayInfoNotification("Task deleted", restoreActions));
     } catch (error) {
-        yield put(deleteTaskFailure(error))
+        yield put(deleteTaskFailure(error));
     }
 }
 
