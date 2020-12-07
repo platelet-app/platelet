@@ -154,8 +154,10 @@ function App(props) {
                     dispatch(logoutUser())
                 }
             } else {
-                // TODO: sort this out with logging for production
-                throw error;
+                if (process.env.REACT_APP_THROW_ERRORS === "true")
+                    throw error;
+                else
+                    console.error(error)
             }
         }
     }
