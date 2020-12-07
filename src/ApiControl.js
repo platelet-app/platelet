@@ -195,9 +195,9 @@ class Task {
         this.api_url = api_url;
     }
 
-    async getTasks(user_id, page, role, status, after, order="descending") {
-        const afterEncoded = encodeURIComponent(after);
-        return makeAxios(this.api_url,`tasks/${user_id}?page=${(page || "0")}&role=${role || ""}&status=${status || ""}&after=${(afterEncoded || "")}&order=${order}`, "GET", this.bearer)
+    async getTasks(user_id, page, role, status, before_parent, order="descending") {
+        //const afterEncoded = encodeURIComponent(after);
+        return makeAxios(this.api_url,`tasks/${user_id}?page=${(page || "0")}&role=${role || ""}&status=${status || ""}&before_parent=${(before_parent || "")}&order=${order}`, "GET", this.bearer)
     }
 
     async getTask(task_id) {

@@ -15,16 +15,16 @@ export const APPEND_TASKS_DELIVERED_NOTFOUND = "APPEND_TASKS_DELIVERED_NOTFOUND"
 export const APPEND_TASKS_REJECTED_NOTFOUND = "APPEND_TASKS_REJECTED_NOTFOUND";
 export const APPEND_TASKS_CANCELLED_NOTFOUND = "APPEND_TASKS_CANCELLED_NOTFOUND";
 
-export function appendTasksDeliveredRequest(userUUID, page, role, taskStatus, afterDateTime) {
-    return {type: APPEND_TASKS_DELIVERED_REQUEST, userUUID, page, role, taskStatus, afterDateTime}
+export function appendTasksDeliveredRequest(userUUID, page, role, taskStatus, beforeParent) {
+    return {type: APPEND_TASKS_DELIVERED_REQUEST, userUUID, page, role, taskStatus, beforeParent}
 }
 
-export function appendTasksCancelledRequest(userUUID, page, role, taskStatus, afterDateTime) {
-    return {type: APPEND_TASKS_CANCELLED_REQUEST, userUUID, page, role, taskStatus, afterDateTime}
+export function appendTasksCancelledRequest(userUUID, page, role, taskStatus, beforeParent) {
+    return {type: APPEND_TASKS_CANCELLED_REQUEST, userUUID, page, role, taskStatus, beforeParent}
 }
 
-export function appendTasksRejectedRequest(userUUID, page, role, taskStatus, afterDateTime) {
-    return {type: APPEND_TASKS_REJECTED_REQUEST, userUUID, page, role, taskStatus, afterDateTime}
+export function appendTasksRejectedRequest(userUUID, page, role, taskStatus, beforeParent) {
+    return {type: APPEND_TASKS_REJECTED_REQUEST, userUUID, page, role, taskStatus, beforeParent}
 }
 
 export function appendTasksDeliveredSuccess(data) {

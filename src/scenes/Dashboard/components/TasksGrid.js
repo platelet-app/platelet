@@ -230,15 +230,15 @@ const GridColumn = (props) => {
                                     onEnter={() => {
                                         console.log(props.taskKey)
                                         const lastGroup = tasks[tasks.length - 1]
-                                        let afterDateTime;
+                                        let beforeParent;
                                         if (lastGroup)
-                                            afterDateTime = lastGroup[lastGroup.length - 1].time_created
+                                            beforeParent = lastGroup[lastGroup.length - 1].parent_id
                                         dispatch(appendFunction(
                                             whoami.uuid,
                                             1,
                                             "coordinator",
                                             props.taskKey,
-                                            afterDateTime
+                                            beforeParent
                                         ))
                                         console.log("YAY ENTER")
                                     }
