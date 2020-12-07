@@ -28,6 +28,7 @@ import {withSnackbar} from "notistack";
 import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
+import 'moment/locale/en-gb'
 import {getApiURL} from "./utilities";
 import {
     connectAssignmentsSocket,
