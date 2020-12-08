@@ -31,7 +31,7 @@ import {vehicle, vehicles} from "./vehicles/VehiclesReducers";
 import {comments} from "./comments/CommentsReducers";
 import {serverSettings} from "./ServerSettings/ServerSettingsReducers";
 import {subscription, commentsSubscription, socketCommentsConnectionStatus, socketConnectionStatus} from "./sockets/SocketReducers";
-import {infoNotifications} from "./notifications/NotificationsReducers";
+import {notification} from "./notifications/NotificationsReducers";
 import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
 import {actionsRecord, tasksActionsRecord} from "./actionsRecord/ActionsRecordReducers";
 
@@ -273,7 +273,7 @@ const rootReducer = combineReducers({
     commentsSubscription,
     socketConnectionStatus,
     socketCommentsConnectionStatus,
-    infoNotifications,
+    notification,
     dashboardFilter,
     actionsRecord,
     tasksActionsRecord,
