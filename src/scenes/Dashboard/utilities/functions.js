@@ -20,9 +20,9 @@ export function filterTasks(tasks, search) {
                             return true;
                         } else if (task.priority ? task.priority.toLowerCase().includes(searchTerm) : false) {
                             return true;
-                        } else if (task.dropoff_address ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {
+                        } else if (task.dropoff_address && task.dropoff_address.line1 ? task.dropoff_address.line1.toLowerCase().includes(searchTerm) : false) {
                             return true;
-                        } else if (task.pickup_address ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
+                        } else if (task.pickup_address && task.pickup_address.line1 ? task.pickup_address.line1.toLowerCase().includes(searchTerm) : false) {
                             return true;
                         } else if (task.pickup_address && task.pickup_address.ward ? task.pickup_address.ward.toLowerCase().includes(searchTerm) : false) {
                             return true;

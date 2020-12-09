@@ -57,7 +57,7 @@ function StatisticsDashboard() {
         </> :
         <div>
             <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                <InputLabel id="demo-simple-select-label">Days</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
@@ -68,6 +68,8 @@ function StatisticsDashboard() {
                     <MenuItem value={3}>3</MenuItem>
                     <MenuItem value={5}>5</MenuItem>
                     <MenuItem value={7}>7</MenuItem>
+                    <MenuItem value={7}>14</MenuItem>
+                    <MenuItem value={7}>30</MenuItem>
                 </Select>
             </FormControl>
         </div>

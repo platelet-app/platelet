@@ -195,7 +195,9 @@ const GridColumn = (props) => {
                     disabled={props.disableAddButton}
                     onClick={props.onAddTaskClick}
                     className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
-            >Create New</Button> :
+            >
+                Create New
+            </Button> :
             <Typography className={classes.header}>{props.title}</Typography>
 
     return (
@@ -228,7 +230,8 @@ const GridColumn = (props) => {
                             <React.Fragment>
                                 <Waypoint
                                     onEnter={() => {
-                                        console.log(props.taskKey)
+                                        if (props.showTasks)
+                                            return;
                                         const lastGroup = tasks[tasks.length - 1]
                                         let beforeParent;
                                         if (lastGroup)
@@ -260,7 +263,6 @@ const GridColumn = (props) => {
 }
 
 GridColumn.propTypes = {
-
     title: PropTypes.string,
     classes: PropTypes.object,
     onAddTaskClick: PropTypes.func,
