@@ -76,7 +76,7 @@ function App(props) {
     const forceResetPassword = useSelector(state => state.whoami.user.password_reset_on_login);
 
     const isInitialised = useSelector(state => state.apiControl.initialised);
-    const incomingNotification = useSelector(state => state.infoNotifications);
+    const incomingNotification = useSelector(state => state.notification);
     const apiURL = useSelector(state => state.apiControl.api_url);
     const serverSettings = useSelector(state => state.serverSettings);
     const error = useSelector(state => state.error);
