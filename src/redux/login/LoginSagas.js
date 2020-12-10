@@ -3,15 +3,17 @@ import {
     LOGIN_REQUEST,
     loginUserSuccess,
     loginIncorrectPassword,
-    loginAuthorised, logoutUser, loginFailure
+    loginAuthorised, logoutUser, loginFailure, LOGOUT, logoutUserSuccess
 } from "./LoginActions"
 
 import {getApiControl} from "../Api";
+import {deleteLogin, saveLogin} from "../../utilities";
 
 function* login(action) {
     const api = yield select(getApiControl);
     try {
-        const result = yield call([api, api.login], action.data.username, action.data.password);
+        const result = yield call([api, api.login], action.username, action.password);
+        yield saveLogin(result.access_token);
         yield put(loginUserSuccess(result))
         yield put(loginAuthorised())
     } catch (error) {
@@ -22,6 +24,19 @@ function* login(action) {
             throw error;
         }
     }
+}
+
+export function* watchLogin() {
+    yield takeLatest(LOGIN_REQUEST, login)
+}
+
+function* logout() {
+    yield deleteLogin();
+    yield put(logoutUserSuccess());
+}
+
+export function* watchLogout() {
+    yield takeLatest(LOGOUT, logout)
 }
 
 function* refreshToken(action) {
@@ -39,6 +54,4 @@ function* refreshToken(action) {
     }
 }
 
-export function* watchLogin() {
-    yield takeLatest(LOGIN_REQUEST, login)
-}
+

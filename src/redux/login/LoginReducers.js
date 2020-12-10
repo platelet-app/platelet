@@ -2,32 +2,22 @@ import Control from "../../ApiControl"
 import {
     LOGIN_INCORRECT_PASSWORD,
     LOGIN_SUCCESS,
-    LOGOUT, REMOVE_API_URL, SET_API_URL
+    LOGOUT_SUCCESS, REMOVE_API_URL, SET_API_URL
 } from './LoginActions'
-import {deleteLogin, getApiURL, saveApiURL, getLogin, saveLogin, deleteApiURL} from "../../utilities";
+import {getApiURL, getLogin} from "../../utilities";
 
 const initialState = new Control(getApiURL(), getLogin())
 
 export function apiControl(state = initialState, action) {
     switch (action.type) {
         case LOGIN_SUCCESS:
-            state.initialiseClasses(action.data.access_token);
-            saveLogin(action.data.access_token);
-            return state;
-        case LOGOUT:
-            state.logout();
-            deleteLogin();
-            return state;
+            return new Control(getApiURL(), action.token)
+        case LOGOUT_SUCCESS:
+            return new Control(getApiURL())
         case SET_API_URL:
-            state.setApiURL(action.data);
-            saveApiURL(action.data);
-            return state;
+            return new Control(action.data, getLogin())
         case REMOVE_API_URL:
-            state.deleteApiURL();
-            deleteLogin();
-            deleteApiURL();
-            return state;
-
+            return new Control(getApiURL(), getLogin())
         default:
             return state;
     }
