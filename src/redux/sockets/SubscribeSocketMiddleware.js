@@ -267,7 +267,7 @@ export const createSubscribeCommentsSocketMiddleware = () => {
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT_COMMENTS: {
-                socket = io.connect(`${process.env.REACT_APP_API_URL}subscribe_comments`);
+                socket = io.connect(`${apiURL}subscribe_comments`);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedCommentsResponseReceived(message));
@@ -328,7 +328,7 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT_ASSIGNMENTS: {
-                socket = io.connect(`${process.env.REACT_APP_API_URL}subscribe_assignments`);
+                socket = io.connect(`${apiURL}subscribe_assignments`);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedAssignmentsResponseReceived(message));

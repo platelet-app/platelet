@@ -51,7 +51,6 @@ import {getApiURL, getDashboardRoleMode} from "../../utilities";
 function* initialiseApp() {
     yield all([
         put(getWhoamiRequest()),
-        put(getServerSettingsRequest()),
         put(connectSocket()),
         put(connectCommentsSocket()),
         put(connectAssignmentsSocket()),

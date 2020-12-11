@@ -10,11 +10,10 @@ import {useIdleTimer} from 'react-idle-timer'
 import {
     setIdleStatus, setMobileView
 } from "./redux/Actions";
-import {logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
+import {logoutUser, removeApiURL} from "./redux/login/LoginActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Moment from "react-moment"
-import ApiConfig from "./scenes/ApiConfig";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {clearServerSettings, getServerSettingsRequest} from "./redux/ServerSettings/ServerSettingsActions";
@@ -23,11 +22,11 @@ import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
 import 'moment/locale/en-gb'
-import {getApiURL} from "./utilities";
 import {DismissButton, showHide} from "./styles/common";
 import {Link} from "react-router-dom";
 import {MuiThemeProvider, createMuiTheme} from "@material-ui/core/styles";
 import {initialiseApp} from "./redux/initialise/initialiseActions";
+import {put} from "redux-saga/effects";
 
 
 const useStyles = makeStyles(theme => ({
@@ -61,8 +60,6 @@ const themeDark = createMuiTheme({
 
 
 function App(props) {
-    const apiControl = useSelector(state => state.apiControl);
-    const whoami = useSelector(state => state.whoami.user);
     const forceResetPassword = useSelector(state => state.whoami.user.password_reset_on_login);
 
     const isInitialised = useSelector(state => state.apiControl.initialised);
@@ -73,16 +70,19 @@ function App(props) {
     const dispatch = useDispatch();
     const classes = useStyles();
     const {show, hide} = showHide();
-    const [confirmLogin, setConfirmLogin] = useState(false);
     const [headerSettings, setHeaderSettings] = useState({
         title: "Bloodbike Dispatch",
         favicon: ""
     })
 
-    function componentDidMount() {
-        dispatch(initialiseApp(""))
+    useEffect(() => dispatch(getServerSettingsRequest()), [])
+
+    function initialise() {
+        // this gets priorities, deliverable types, users, patches from the api and connects sockets
+        if (isInitialised)
+            dispatch(initialiseApp())
     }
-    useEffect(componentDidMount, [])
+    useEffect(initialise, [isInitialised])
 
     const handleOnIdle = event => {
         dispatch(setIdleStatus(true));
@@ -202,13 +202,8 @@ function App(props) {
 
     let appContents;
 
-    if (!apiURL) {
-        appContents =
-            <ApiConfig onSelect={(result) => {
-                dispatch(setApiURL(result))
-            }}/>
 
-    } else if (forceResetPassword || (serverSettings && !isInitialised)) {
+    if (forceResetPassword || (serverSettings && !isInitialised)) {
         appContents =
             <Grid container direction={"column"} alignItems={"center"} spacing={3}>
                 <Grid item>
