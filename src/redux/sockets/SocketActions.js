@@ -39,16 +39,16 @@ export function refreshTaskAssignmentsSocket( userUUID, taskUUIDs, role ) {
     return { type: SOCKET_REFRESH_TASKS_ASSIGNMENTS, userUUID, taskUUIDs, role };
 }
 
-export function connectSocket( url ) {
-    return { type: SOCKET_CONNECT, url };
+export function connectSocket() {
+    return { type: SOCKET_CONNECT,};
 }
 
-export function connectCommentsSocket( url ) {
-    return { type: SOCKET_CONNECT_COMMENTS, url };
+export function connectCommentsSocket() {
+    return { type: SOCKET_CONNECT_COMMENTS,};
 }
 
-export function connectAssignmentsSocket( url ) {
-    return { type: SOCKET_CONNECT_ASSIGNMENTS, url };
+export function connectAssignmentsSocket() {
+    return { type: SOCKET_CONNECT_ASSIGNMENTS,};
 }
 
 export function disconnectSocket() {

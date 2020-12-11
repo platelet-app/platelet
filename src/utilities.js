@@ -49,8 +49,8 @@ export function saveApiURL(apiURL) {
 }
 
 export function getApiURL() {
-    const result = localStorage.getItem("apiURL");
-    return result ? result : "";
+    console.log(process.env.REACT_APP_API_URL)
+    return process.env.REACT_APP_API_URL;
 }
 
 export function deleteLogin() {

@@ -1,6 +1,6 @@
 import * as io from 'socket.io-client'
 import _ from "lodash"
-import {encodeUUID} from "../../utilities";
+import {encodeUUID, getApiURL} from "../../utilities";
 import {
     requestResponseReceived,
     SOCKET_CONNECT,
@@ -68,12 +68,16 @@ function getTaskUpdatedMessages(data) {
 
 }
 
+const apiURL = getApiURL();
+
 export const createSubscribeSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT: {
-                socket = io.connect(action.url);
+                console.log("CONNECTIONG")
+                console.log(apiURL)
+                socket = io.connect(`${apiURL}subscribe`);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedResponseReceived(message));
@@ -97,8 +101,12 @@ export const createSubscribeSocketMiddleware = () => {
                 break;
             }
             case SOCKET_SUBSCRIBE_UUID_MANY: {
-                if (socket)
+                if (socket) {
+                    console.log("SOCKET DEFINED")
                     socket.emit('subscribe_many', action.uuids);
+                } else {
+                    console.log("SOCKET NOT DEFINED")
+                }
                 break;
             }
             case SOCKET_UNSUBSCRIBE_UUID_MANY: {
@@ -259,7 +267,7 @@ export const createSubscribeCommentsSocketMiddleware = () => {
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT_COMMENTS: {
-                socket = io.connect(action.url);
+                socket = io.connect(`${process.env.REACT_APP_API_URL}subscribe_comments`);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedCommentsResponseReceived(message));
@@ -320,7 +328,7 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT_ASSIGNMENTS: {
-                socket = io.connect(action.url);
+                socket = io.connect(`${process.env.REACT_APP_API_URL}subscribe_assignments`);
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedAssignmentsResponseReceived(message));

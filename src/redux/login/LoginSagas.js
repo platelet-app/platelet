@@ -3,25 +3,26 @@ import {
     LOGIN_REQUEST,
     loginUserSuccess,
     loginIncorrectPassword,
-    loginAuthorised, logoutUser, loginFailure, LOGOUT, logoutUserSuccess
+    loginAuthorised, logoutUser, loginFailure, LOGOUT, logoutUserSuccess, loginSuccess
 } from "./LoginActions"
 
-import {getApiControl} from "../Api";
+import {createApiControl, getApiControl} from "../Api";
 import {deleteLogin, saveLogin} from "../../utilities";
+import {displayWarningNotification} from "../notifications/NotificationsActions";
+
 
 function* login(action) {
     const api = yield select(getApiControl);
     try {
         const result = yield call([api, api.login], action.username, action.password);
         yield saveLogin(result.access_token);
-        yield put(loginUserSuccess(result))
-        yield put(loginAuthorised())
+        yield put(loginUserSuccess(result.access_token))
     } catch (error) {
         if (error.status_code === 401) {
-            yield put(loginIncorrectPassword());
-            yield put(loginFailure());
+            yield put(displayWarningNotification("Login failed, please check your details."))
+            yield put(loginFailure(error));
         } else {
-            throw error;
+            yield put(loginFailure(error));
         }
     }
 }

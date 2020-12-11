@@ -6,6 +6,7 @@ import {
     takeLatest,
     delay,
     select,
+    all
 } from 'redux-saga/effects'
 import {
     restoreTaskRequest,
@@ -592,12 +593,14 @@ function* getTasks(action) {
     try {
         const api = yield select(getApiControl);
         // get all the different tasks for different status and combine them
-        const tasksNew = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "new", "", "descending");
-        const tasksActive = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "active", "", "ascending");
-        const tasksPickedUp = yield call([api, api.tasks.getTasks], action.data, 0, action.role, "picked_up", "", "ascending");
-        const tasksDelivered = yield call([api, api.tasks.getTasks], action.data, 1, action.role, "delivered", "", "descending");
-        const tasksCancelled = yield call([api, api.tasks.getTasks], action.data, 1, action.role, "cancelled", "", "descending");
-        const tasksRejected = yield call([api, api.tasks.getTasks], action.data, 1, action.role, "rejected", "", "descending");
+        const [tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksCancelled, tasksRejected] = yield all([
+        call([api, api.tasks.getTasks], action.data, 0, action.role, "new", "", "descending"),
+        call([api, api.tasks.getTasks], action.data, 0, action.role, "active", "", "ascending"),
+        call([api, api.tasks.getTasks], action.data, 0, action.role, "picked_up", "", "ascending"),
+        call([api, api.tasks.getTasks], action.data, 1, action.role, "delivered", "", "descending"),
+        call([api, api.tasks.getTasks], action.data, 1, action.role, "cancelled", "", "descending"),
+        call([api, api.tasks.getTasks], action.data, 1, action.role, "rejected", "", "descending"),
+        ])
         yield put(getAllTasksSuccess({
             tasksNew,
             tasksActive,
@@ -652,8 +655,8 @@ export function* watchRefreshTasksFromSocket() {
 
 
 function* setRoleViewAndGetTasks(action) {
-    yield put(getAllTasksRequest(action.userUUID, action.page, action.role))
     yield put(setRoleView(action.role))
+    yield put(getAllTasksRequest(action.userUUID, action.page, action.role))
 }
 
 export function* watchSetRoleViewAndGetTasks() {

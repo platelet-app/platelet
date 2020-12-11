@@ -8,15 +8,9 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {useIdleTimer} from 'react-idle-timer'
 import {
-    clearWhoami,
-    getWhoamiRequest, setIdleStatus, setMobileView
+    setIdleStatus, setMobileView
 } from "./redux/Actions";
 import {logoutUser, removeApiURL, setApiURL} from "./redux/login/LoginActions";
-import {getAvailableDeliverablesRequest} from "./redux/deliverables/DeliverablesActions";
-import {getAvailableLocationsRequest} from "./redux/locations/LocationsActions";
-import {getAvailablePatchesRequest} from "./redux/patches/PatchesActions";
-import {getAvailablePrioritiesRequest} from "./redux/priorities/PrioritiesActions";
-import {getUsersRequest} from "./redux/users/UsersActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import Moment from "react-moment"
@@ -30,14 +24,10 @@ import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
 import 'moment/locale/en-gb'
 import {getApiURL} from "./utilities";
-import {
-    connectAssignmentsSocket,
-    connectCommentsSocket,
-    connectSocket,
-} from "./redux/sockets/SocketActions";
 import {DismissButton, showHide} from "./styles/common";
 import {Link} from "react-router-dom";
 import {MuiThemeProvider, createMuiTheme} from "@material-ui/core/styles";
+import {initialiseApp} from "./redux/initialise/initialiseActions";
 
 
 const useStyles = makeStyles(theme => ({
@@ -89,14 +79,10 @@ function App(props) {
         favicon: ""
     })
 
-    function checkEnvApirURL() {
-        if (process.env.REACT_APP_API_URL) {
-            if (getApiURL() !== process.env.REACT_APP_API_URL)
-                dispatch(setApiURL(process.env.REACT_APP_API_URL))
-        }
+    function componentDidMount() {
+        dispatch(initialiseApp(""))
     }
-
-    useEffect(checkEnvApirURL, [])
+    useEffect(componentDidMount, [])
 
     const handleOnIdle = event => {
         dispatch(setIdleStatus(true));
@@ -197,16 +183,6 @@ function App(props) {
 
     useEffect(showNotification, [incomingNotification])
 
-    function requestServerSettings() {
-        if (apiURL) {
-            dispatch(getServerSettingsRequest())
-            dispatch(connectSocket(apiURL + "subscribe"))
-            dispatch(connectCommentsSocket(apiURL + "subscribe_comments"))
-            dispatch(connectAssignmentsSocket(apiURL + "subscribe_assignments"))
-        }
-    }
-
-    useEffect(requestServerSettings, [apiURL])
 
     let helmet =
         <Helmet>
@@ -220,39 +196,6 @@ function App(props) {
 
     useEffect(checkServerSettings, [serverSettings]);
 
-    function loginCheck() {
-        if (whoami && whoami.login_expiry) {
-            // if the login is going to expire in 3 days, log out the user
-            if (whoami.login_expiry < moment().add("days", 3).unix()) {
-                dispatch(logoutUser());
-            } else {
-                setConfirmLogin(true);
-            }
-        }
-    }
-
-    useEffect(loginCheck, [whoami])
-
-    function firstWhoami() {
-        if (isInitialised)
-            dispatch(getWhoamiRequest());
-        else
-            dispatch(clearWhoami())
-    }
-
-    useEffect(firstWhoami, [isInitialised])
-
-    function getStaticData() {
-        if (isInitialised) {
-            dispatch(getAvailablePrioritiesRequest());
-            dispatch(getAvailableDeliverablesRequest());
-            dispatch(getAvailableLocationsRequest());
-            dispatch(getUsersRequest());
-            dispatch(getAvailablePatchesRequest())
-        }
-    }
-
-    useEffect(getStaticData, [confirmLogin]);
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up('sm'))));

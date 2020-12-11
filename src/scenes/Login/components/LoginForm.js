@@ -17,7 +17,7 @@ export default function LoginForm(props) {
 
     function handleLogin() {
         if (username && password)
-            dispatch(loginRequest({username, password}));
+            dispatch(loginRequest(username, password));
     }
 
     return (

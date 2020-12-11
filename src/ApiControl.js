@@ -465,7 +465,7 @@ class Control {
     setApiURL(url) {
         if (!url)
             return url;
-        url = url.endsWith("/") ? url + "api/v0.1/" : url + "/api/v0.1/";
+        //url = url.endsWith("/") ? url + "api/v0.1/" : url + "/api/v0.1/";
         if (!url.startsWith("https://")) {
             if (url.startsWith("http://")) {
                 const cut = url.substring("http://".length)

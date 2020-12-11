@@ -2,7 +2,7 @@ import Control from "../../ApiControl"
 import {
     LOGIN_INCORRECT_PASSWORD,
     LOGIN_SUCCESS,
-    LOGOUT_SUCCESS, REMOVE_API_URL, SET_API_URL
+    LOGOUT_SUCCESS
 } from './LoginActions'
 import {getApiURL, getLogin} from "../../utilities";
 
@@ -14,10 +14,6 @@ export function apiControl(state = initialState, action) {
             return new Control(getApiURL(), action.token)
         case LOGOUT_SUCCESS:
             return new Control(getApiURL())
-        case SET_API_URL:
-            return new Control(action.data, getLogin())
-        case REMOVE_API_URL:
-            return new Control(getApiURL(), getLogin())
         default:
             return state;
     }
