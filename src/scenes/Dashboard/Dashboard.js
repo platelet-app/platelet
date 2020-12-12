@@ -81,7 +81,7 @@ function Dashboard() {
             console.log("refreshing tasks")
             const uuidEtags = getTaskUUIDEtags(tasks);
             const uuids = Object.keys(uuidEtags);
-            dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, "coordinator"))
+            dispatch(refreshTaskAssignmentsSocket(whoami.uuid, uuids, roleView))
             dispatch(refreshTasksDataSocket(uuidEtags));
             if (firstTaskSubscribeCompleted.current) {
                 dispatch(unsubscribeFromUUIDs(currentlySubscribedUUIDs.current))
