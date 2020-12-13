@@ -83,7 +83,9 @@ const useStyles = makeStyles(theme => ({
 const TaskGroup = props => {
     const classes = props.classes;
     const {show, hide} = showHide();
-    return !props.group ? <></> : props.group.map((task, i, arr) => {
+    const taskArr = Object.entries(props.group).map(([key, value]) => value)
+    taskArr.sort((a, b) => a.order_in_relay - b.order_in_relay)
+    return taskArr.length === 0 ? <></> : taskArr.map((task, i, arr) => {
         const {
             pickup_address,
             dropoff_address,
@@ -200,6 +202,7 @@ const GridColumn = (props) => {
             </Button> :
             <Typography className={classes.header}>{props.title}</Typography>
 
+
     return (
         <TasksKanbanColumn>
             <Grid container direction={"column"} spacing={2} alignItems={"center"} justify={"flex-start"}>
@@ -219,10 +222,10 @@ const GridColumn = (props) => {
                           key={props.title + "column"}
                     >
 
-                        {tasks.map(taskList => {
+                        {Object.entries(tasks).map(([key, jobs]) => {
                             return (
-                                <Grid item key={taskList[0].parent_id}>
-                                    <TaskGroup {...props} group={taskList}/>
+                                <Grid item key={key}>
+                                    <TaskGroup {...props} group={jobs}/>
                                 </Grid>
                             )
                         })}

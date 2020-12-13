@@ -77,6 +77,7 @@ function Dashboard() {
 
 
     function refreshTasks() {
+        return
         if (!isFetching && tasks) {
             console.log("refreshing tasks")
             const uuidEtags = getTaskUUIDEtags(tasks);

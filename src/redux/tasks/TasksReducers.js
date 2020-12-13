@@ -43,7 +43,7 @@ import {
 } from "./TasksActions";
 import update from "immutability-helper";
 import {
-    determineTaskType, findExistingTask,
+    determineTaskType,
     findExistingTaskParent,
     findExistingTaskParentByID,
 } from "../../utilities";
@@ -145,16 +145,16 @@ function sortAndConcat(tasks, data) {
 
 
 function convertToRelays(group) {
-    let result = [];
+    let result = {};
     let currentParentId = -1;
     let currentIndex = -1;
     for (const t of group) {
         if (currentParentId !== t.parent_id) {
             currentParentId = t.parent_id;
             currentIndex += 1;
-            result[currentIndex] = [];
+            result[currentParentId] = {};
         }
-        result[currentIndex].push(t);
+        result[currentParentId][t.uuid] = t;
     }
     return result;
 
@@ -275,6 +275,7 @@ export function tasks(state = initialTasksState, action) {
         case APPEND_TASKS_DELIVERED_SUCCESS:
         case APPEND_TASKS_REJECTED_SUCCESS:
         case APPEND_TASKS_CANCELLED_SUCCESS: {
+            return state;
             let result;
             for (const [key, value] of Object.entries(action.data)) {
                 const newList = [...state.tasks[key], ...convertToRelays(value)]
