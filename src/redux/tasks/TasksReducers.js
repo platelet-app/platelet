@@ -131,14 +131,8 @@ export const initialTasksState = {
 function sortAndConcat(tasks, data) {
     const sorted = determineTaskType(data);
     for (const [key, value] of Object.entries(sorted)) {
-        sorted[key] = [...tasks[key], value]
-        // if (["tasksNew", "tasksDelivered", "tasksRejected", "tasksCancelled"].includes(key)) {
-        //     sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
-        // } else {
-        // if (key === "nope")
-        //     sorted[key] = sorted[key].sort((a, b) => a.time_picked_up > b.time_picked_up ? 1 : a.time_picked_up < b.time_picked_up ? -1 : 0).reverse();
-        //sorted[key] = sorted[key].sort((a, b) => a[0].parent_id - b[0].parent_id);
-        sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
+        sorted[key] = {...tasks[key], ...value}
+        //sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
     }
     return {...tasks, ...sorted};
 }
@@ -229,7 +223,8 @@ export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
         case ADD_TASK_FROM_SOCKET:
-            return {tasks: sortAndConcat(state.tasks, [action.data]), error: null}
+            const data = {[action.data.parent_id]: action.data}
+            return {tasks: sortAndConcat(state.tasks, data), error: null}
         case RESTORE_TASK_SUCCESS:
         case RESTORE_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
@@ -390,19 +385,21 @@ export function tasks(state = initialTasksState, action) {
             // Get the parent group first
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
             if (parent.taskGroup) {
-                // remove it from the list
-                const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
-                const task = parent.taskGroup.find(t => t.uuid === action.data.taskUUID);
+                const task = parent.taskGroup[action.data.taskUUID]
                 const updatedItem = {
                     ...task,
                     ...addAssigneeToList(task,
                         action.data.payload.user, "coordinator")
                 }
-                const taskIndex = parent.taskGroup.indexOf(task);
-                const updatedGroup = update(parent.taskGroup, {[taskIndex]: {$set: updatedItem}})
+                const updatedGroup = update(parent.taskGroup, {[action.data.taskUUID]: {$set: updatedItem}})
+                const parentUpdated = {[action.data.parentID]: updatedGroup}
+                const newList = {[parent.listType]: {...state.tasks[parent.listType], [action.data.parentID]: parentUpdated}}
+                const tasksUpdated = {...state.tasks, ...newList}
+                return {tasks: tasksUpdated, error: null}
+
 
                 // sort the item and merge it
-                return {tasks: sortAndConcat(newTasks, updatedGroup), error: null}
+                //return {tasks: sortAndConcat(newTasks, updatedGroup), error: null}
             } else {
                 return state;
             }

@@ -203,6 +203,7 @@ const GridColumn = (props) => {
             <Typography className={classes.header}>{props.title}</Typography>
 
 
+
     return (
         <TasksKanbanColumn>
             <Grid container direction={"column"} spacing={2} alignItems={"center"} justify={"flex-start"}>
@@ -222,7 +223,7 @@ const GridColumn = (props) => {
                           key={props.title + "column"}
                     >
 
-                        {Object.entries(tasks).map(([key, jobs]) => {
+                        {Object.entries(tasks).sort().reverse().map(([key, jobs]) => {
                             return (
                                 <Grid item key={key}>
                                     <TaskGroup {...props} group={jobs}/>
