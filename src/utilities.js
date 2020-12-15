@@ -181,6 +181,7 @@ export function determineTaskType(taskGroup) {
     for (const [key, value] of Object.entries(result)) {
         result[key] = convertTaskGroupToObject(value);
     }
+    console.log(filteredCancelledRejected[0].assigned_riders)
     if (filteredCancelledRejected.length === 0) {
         return result;
         // if it has no assigned riders, it goes in new
@@ -210,41 +211,38 @@ function recursiveRelaySearch(uuidToFind, task) {
     }
 }
 
-export function findExistingTaskParentByID(tasks, ID) {
+export function findExistingTaskParentByID(tasks, parentID) {
     // this returns the task parent by it's integer id
     let listType = undefined;
-    let index = undefined;
     let taskGroup = undefined;
-    for (const [type, value] of Object.entries(tasks)) {
-        if (type === "tasksCancelled" || type === "tasksRejected") {
+    for (const [listType, value] of Object.entries(tasks)) {
+        if (listType === "tasksCancelled" || listType === "tasksRejected") {
             continue;
         }
-        taskGroup = value.find((t) => t[0].parent_id === ID);
+        taskGroup = value[parentID]
         if (taskGroup) {
-            index = value.indexOf(taskGroup);
-            listType = type;
-            return { listType, index, taskGroup };
+            return { listType, parentID, taskGroup };
         }
     }
-    return { listType, index, taskGroup };
+    return { listType, parentID, taskGroup };
 }
 
 export function findExistingTaskParent(tasks, uuid) {
     // this returns the PARENT list if given the UUID of any task
     let listType = undefined;
     let taskGroup = undefined;
+    let parentID = undefined;
 
 
-    for (const [type, value] of Object.entries(tasks)) {
-        for (const taskGroup of Object.values(value)) {
+    for (const [listType, value] of Object.entries(tasks)) {
+        for (const [parentID, taskGroup] of Object.entries(value)) {
             const result = taskGroup[uuid]
             if (result) {
-                listType = type;
-                return {listType, value};
+                return {listType, taskGroup, parentID};
             }
         }
     }
-    return { listType, taskGroup };
+    return { listType, taskGroup, parentID };
 }
 
 export function recursiveFindTaskChild(task, uuid) {
@@ -258,7 +256,7 @@ export function recursiveFindTaskChild(task, uuid) {
 export function findExistingTask(tasks, uuid) {
     const taskParent = findExistingTaskParent(tasks, uuid);
     if (taskParent.taskGroup)
-        return taskParent.taskGroup.find(t => t.uuid === uuid) || undefined
+        return taskParent.taskGroup[uuid]
     return undefined;
 }
 

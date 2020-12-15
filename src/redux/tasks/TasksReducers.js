@@ -52,6 +52,7 @@ import {
     APPEND_TASKS_DELIVERED_SUCCESS,
     APPEND_TASKS_REJECTED_SUCCESS
 } from "./TasksWaypointActions";
+import _ from "lodash"
 
 const initialState = {
     task: {
@@ -228,18 +229,13 @@ export function tasks(state = initialTasksState, action) {
         case RESTORE_TASK_SUCCESS:
         case RESTORE_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
-            let newGroupRestore;
-            let newTasksRestore;
+            let newGroup;
             if (parent.taskGroup) {
-                // do a filter just in case the task is already there for some reason
-                const filtered = parent.taskGroup.filter(t => t.uuid !== action.data.uuid)
-                newGroupRestore = [...filtered, action.data].sort(taskGroupSort)
-                newTasksRestore = removeParentFromTasks(state.tasks, parent.listType, action.data.parent_id)
+                newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
             } else {
-                newGroupRestore = [action.data]
-                newTasksRestore = state.tasks;
+                newGroup = {[action.data.uuid]: action.data}
             }
-            return {tasks: sortAndConcat(newTasksRestore, newGroupRestore), error: null}
+            return {tasks: sortAndConcat(state.tasks, newGroup), error: null}
         }
         case ADD_TASK_RELAY_SUCCESS:
         case ADD_TASK_RELAY_FROM_SOCKET: {
@@ -431,18 +427,20 @@ export function tasks(state = initialTasksState, action) {
         case DELETE_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParent(state.tasks, action.data)
             if (parent.taskGroup) {
-                const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
-                const filteredGroup = parent.taskGroup.filter(t => t.uuid !== action.data);
-                if (filteredGroup.length === 0) {
-                    return {tasks: newTasks, error: null}
+                const {[action.data]: deleted, ...filteredGroup} = parent.taskGroup;
+                if (_.isEmpty(filteredGroup)) {
+                    const {[parent.parentID]: removedParent, ...newTasksList} = state.tasks[parent.listType]
+                    return {tasks: {...state.tasks, [parent.listType]: newTasksList}, error: null}
                 } else {
-                    return {tasks: sortAndConcat(newTasks, filteredGroup), error: null};
+                    return {tasks: sortAndConcat(state.tasks, filteredGroup), error: null};
                 }
+
             } else {
                 return state;
             }
         }
         case RESET_GROUP_RELAY_UUIDS: {
+            return state;
             const parent = findExistingTaskParentByID(state.tasks, action.data)
             if (!parent.taskGroup)
                 return state;
