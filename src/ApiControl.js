@@ -595,6 +595,7 @@ class Control {
     }
 
     initialiseClasses(token) {
+        this.token = token;
         this.bearer = "Bearer " + token;
         axios.defaults.headers.common['Authorization'] = this.bearer
         this.users = new User(this.bearer, this.api_url);
