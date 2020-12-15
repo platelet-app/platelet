@@ -644,6 +644,7 @@ class Control {
 
                                     // 2) Change Authorization header
                                     self.bearer = "Bearer " + res.data.access_token;
+                                    self.token = res.data.access_token;
 
                                     // 3) return originalRequest object with Axios.
                                     return axios(originalRequest);
