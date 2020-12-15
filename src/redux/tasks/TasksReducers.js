@@ -224,7 +224,7 @@ export function tasks(state = initialTasksState, action) {
     switch (action.type) {
         case ADD_TASK_SUCCESS:
         case ADD_TASK_FROM_SOCKET:
-            const data = {[action.data.parent_id]: action.data}
+            const data = {[action.data.uuid]: action.data}
             return {tasks: sortAndConcat(state.tasks, data), error: null}
         case RESTORE_TASK_SUCCESS:
         case RESTORE_TASK_FROM_SOCKET: {
@@ -388,8 +388,7 @@ export function tasks(state = initialTasksState, action) {
                         action.data.payload.user, "coordinator")
                 }
                 const updatedGroup = update(parent.taskGroup, {[action.data.taskUUID]: {$set: updatedItem}})
-                const parentUpdated = {[action.data.parentID]: updatedGroup}
-                const newList = {[parent.listType]: {...state.tasks[parent.listType], [action.data.parentID]: parentUpdated}}
+                const newList = {[parent.listType]: {...state.tasks[parent.listType], [parent.parentID]: updatedGroup}}
                 const tasksUpdated = {...state.tasks, ...newList}
                 return {tasks: tasksUpdated, error: null}
 
