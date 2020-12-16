@@ -101,6 +101,8 @@ import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesA
 import { setRoleView } from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
 import {createLoadingSelector, createPostingSelector} from "../selectors";
+import {taskGroupSort} from "./task_redux_utilities";
+import {task} from "./TasksReducers";
 
 
 const emptyTask = {
@@ -230,7 +232,8 @@ function* deleteTask(action) {
         yield put(deleteTaskSuccess(action.data))
         let relayPrevious;
         if (beforeDelete) {
-            if (beforeDelete.dropoff_address && beforeDelete.relay_previous_uuid && taskGroup[taskGroup.length - 1].uuid === beforeDelete.uuid) {
+            const groupSorted = Object.values(taskGroup).sort(taskGroupSort)
+            if (beforeDelete.dropoff_address && beforeDelete.relay_previous_uuid && groupSorted[groupSorted.length - 1].uuid === beforeDelete.uuid) {
                 relayPrevious = yield findExistingTask(currentTasks, beforeDelete.relay_previous_uuid);
                 yield put(updateTaskDropoffAddressRequest({
                     taskUUID: beforeDelete.relay_previous_uuid,

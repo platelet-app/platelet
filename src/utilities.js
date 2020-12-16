@@ -161,8 +161,12 @@ function determineTaskFinishedState(task) {
 }
 
 
-function convertTaskGroupToObject(group) {
-    return group.reduce((acc, { uuid, parent_id, ...task }) => ({ ...acc, [parent_id]: {[uuid]: {uuid: uuid, parent_id: parent_id, ...task}}}), {})
+export function convertTaskGroupToObject(group) {
+    let newGroup = {};
+    for (const task of group) {
+        newGroup[task.uuid] = task;
+    }
+    return {[group[0].parent_id]: newGroup};
 }
 
 export function determineTaskType(taskGroup) {
@@ -181,7 +185,6 @@ export function determineTaskType(taskGroup) {
     for (const [key, value] of Object.entries(result)) {
         result[key] = convertTaskGroupToObject(value);
     }
-    console.log(filteredCancelledRejected[0].assigned_riders)
     if (filteredCancelledRejected.length === 0) {
         return result;
         // if it has no assigned riders, it goes in new

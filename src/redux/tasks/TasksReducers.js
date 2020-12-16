@@ -41,8 +41,10 @@ import {
     UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET, APPEND_TASKS_SUCCESS
 
 } from "./TasksActions";
+import {taskGroupSort} from "./task_redux_utilities";
 import update from "immutability-helper";
 import {
+    convertTaskGroupToObject,
     determineTaskType,
     findExistingTaskParent,
     findExistingTaskParentByID,
@@ -131,11 +133,12 @@ export const initialTasksState = {
 
 function sortAndConcat(tasks, data) {
     const sorted = determineTaskType(data);
+    const result = {};
     for (const [key, value] of Object.entries(sorted)) {
-        sorted[key] = {...tasks[key], ...value}
+        result[key] = {...tasks[key], ...value}
         //sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
     }
-    return {...tasks, ...sorted};
+    return {...tasks, ...result};
 }
 
 
@@ -210,10 +213,6 @@ const removeAssigneeFromList = (task, userUUID, role="rider") => {
     }
 }
 
-function taskGroupSort(a, b) {
-    return a.order_in_relay - b.order_in_relay;
-}
-
 function removeParentFromTasks(tasks, listType, parent_id) {
     return update(tasks,
         {[listType]: {$set: tasks[listType].filter(t => parent_id !== t[0].parent_id)}}
@@ -240,16 +239,8 @@ export function tasks(state = initialTasksState, action) {
         case ADD_TASK_RELAY_SUCCESS:
         case ADD_TASK_RELAY_FROM_SOCKET: {
             const parent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
-            const findCheck = parent.taskGroup.find(t => t.uuid === action.data.uuid)
-            let newGroup;
-            if (findCheck) {
-                const filtered = parent.taskGroup.filter(t => t.uuid !== action.data.uuid);
-                newGroup = [...filtered, action.data].sort(taskGroupSort)
-            } else {
-                newGroup = [...parent.taskGroup, action.data]
-            }
-            const newTasks = removeParentFromTasks(state.tasks, parent.listType, action.data.parent_id)
-            return {tasks: sortAndConcat(newTasks, newGroup), error: null}
+            const newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
+            return {tasks: sortAndConcat(state.tasks, newGroup), error: null}
         }
         case PUT_TASK_SUCCESS:
         case PUT_TASK_FROM_SOCKET: {
@@ -287,12 +278,10 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
             if (parent.taskGroup) {
-                const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
-                const taskToUpdate = parent.taskGroup.find(t => t.uuid === action.data.taskUUID);
-                const taskIndex = parent.taskGroup.indexOf(taskToUpdate);
+                const taskToUpdate = parent.taskGroup[action.data.taskUUID]
                 const updatedItem = {...taskToUpdate, ...action.data.payload};
-                const updatedGroup = update(parent.taskGroup, {[taskIndex]: {$set: updatedItem}})
-                return {tasks: sortAndConcat(newTasks, updatedGroup), error: null};
+                const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
+                return {tasks: sortAndConcat(state.tasks, updatedGroup), error: null};
             } else {
                 return state;
             }
@@ -336,19 +325,16 @@ export function tasks(state = initialTasksState, action) {
             // Get the parent group first
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
             if (parent.taskGroup) {
-                // remove it from the list
-                const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
-                const taskToUpdateAssignedRider = parent.taskGroup.find(t => t.uuid === action.data.taskUUID);
+                const task = parent.taskGroup[action.data.taskUUID]
                 const updatedItem = {
-                    ...taskToUpdateAssignedRider,
-                    ...addAssigneeToList(taskToUpdateAssignedRider,
+                    ...task,
+                    ...addAssigneeToList(task,
                         action.data.payload.rider, "rider")
                 }
-                const taskIndex = parent.taskGroup.indexOf(taskToUpdateAssignedRider);
-                const updatedGroup = update(parent.taskGroup, {[taskIndex]: {$set: updatedItem}})
-
-                // sort the item and merge it
-                return {tasks: sortAndConcat(newTasks, updatedGroup), error: null}
+                const updatedGroup = update(parent.taskGroup, {[action.data.taskUUID]: {$set: updatedItem}})
+                const newList = {[parent.listType]: {...state.tasks[parent.listType], [parent.parentID]: updatedGroup}}
+                const tasksUpdated = {...state.tasks, ...newList}
+                return {tasks: tasksUpdated, error: null}
             } else {
                 return state;
             }
@@ -391,10 +377,6 @@ export function tasks(state = initialTasksState, action) {
                 const newList = {[parent.listType]: {...state.tasks[parent.listType], [parent.parentID]: updatedGroup}}
                 const tasksUpdated = {...state.tasks, ...newList}
                 return {tasks: tasksUpdated, error: null}
-
-
-                // sort the item and merge it
-                //return {tasks: sortAndConcat(newTasks, updatedGroup), error: null}
             } else {
                 return state;
             }
@@ -403,21 +385,17 @@ export function tasks(state = initialTasksState, action) {
         case UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET: {
             // Get the parent group first
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
-            // remove it from the list
-            const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
-
             if (parent.taskGroup) {
-                const task = parent.taskGroup.find(t => t.uuid === action.data.taskUUID);
+                const task = parent.taskGroup[action.data.taskUUID]
                 const updatedItem = {
                     ...task,
                     ...removeAssigneeFromList(task,
                         action.data.payload.user_uuid, "coordinator")
                 }
-                const taskIndex = parent.taskGroup.indexOf(task);
-                const updatedGroup = update(parent.taskGroup, {[taskIndex]: {$set: updatedItem}})
-
-                // sort the item and merge it
-                return {tasks: sortAndConcat(newTasks, updatedGroup), error: null}
+                const updatedGroup = update(parent.taskGroup, {[action.data.taskUUID]: {$set: updatedItem}})
+                const newList = {[parent.listType]: {...state.tasks[parent.listType], [parent.parentID]: updatedGroup}}
+                const tasksUpdated = {...state.tasks, ...newList}
+                return {tasks: tasksUpdated, error: null}
             } else {
                 return state;
             }
@@ -439,16 +417,14 @@ export function tasks(state = initialTasksState, action) {
             }
         }
         case RESET_GROUP_RELAY_UUIDS: {
-            return state;
             const parent = findExistingTaskParentByID(state.tasks, action.data)
             if (!parent.taskGroup)
                 return state;
-            // remove it from current state
-            const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.taskGroup[0].parent_id)
             let count = 0;
             let newTask;
             const newGroupRelayFixed = [];
-            for (const t of parent.taskGroup) {
+            const sortedGroup = Object.values(parent.taskGroup).sort(taskGroupSort);
+            for (const t of sortedGroup) {
                 // first one in the group and so has no previous relays
                 if (count === 0) {
                     newTask = {
@@ -461,13 +437,13 @@ export function tasks(state = initialTasksState, action) {
                 } else {
                     newTask = {
                         ...t,
-                        relay_previous_uuid: parent.taskGroup[count - 1].uuid,
-                        relay_previous: parent.taskGroup[count - 1]
+                        relay_previous_uuid: sortedGroup[count - 1].uuid,
+                        relay_previous: sortedGroup[count - 1]
                     }
                 }
                 // not on the final task, so set relay_next to the next one
                 if (parent.taskGroup.length !== count + 1) {
-                    newTask = {...newTask, relay_next: parent.taskGroup[count + 1]}
+                    newTask = {...newTask, relay_next: sortedGroup[count + 1]}
                     // if we're on the final task, then there is no relay_next
                 } else {
                     newTask = {...newTask, relay_next: null}
@@ -476,8 +452,10 @@ export function tasks(state = initialTasksState, action) {
                 newGroupRelayFixed.push(newTask)
                 count++;
             }
+            const result = convertTaskGroupToObject(newGroupRelayFixed);
+            // TODO: make this better
 
-            return {tasks: sortAndConcat(newTasks, newGroupRelayFixed), error: null};
+            return {tasks: sortAndConcat(state.tasks, result[sortedGroup[0].parent_id]), error: null};
         }
         case GET_TASKS_SUCCESS:
             return {tasks: groupRelaysTogether(action.data), error: null};
