@@ -255,7 +255,7 @@ export function tasks(state = initialTasksState, action) {
         case PUT_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParent(state.tasks, action.data.uuid);
             if (parent.taskGroup) {
-                const newGroup = {...parent.taskGroup, [action.data.uuid]: action.data.payload}
+                const newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
                 const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.parentID)
                 return {tasks: sortAndConcat(newTasks, newGroup), error: null};
             } else {
