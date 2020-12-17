@@ -203,6 +203,8 @@ const GridColumn = (props) => {
             <Typography className={classes.header}>{props.title}</Typography>
 
 
+    const tasksList = Object.entries(tasks).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).reverse();
+    const lastParent = tasksList.length === 0 ? 0 : tasksList[tasksList.length - 1][0]
 
     return (
         <TasksKanbanColumn>
@@ -223,31 +225,31 @@ const GridColumn = (props) => {
                           key={props.title + "column"}
                     >
 
-                        {Object.entries(tasks).sort().reverse().map(([key, jobs]) => {
+                        {tasksList.map(([key, jobs]) => {
                             return (
                                 <Grid item key={key}>
+                                    {key}
                                     <TaskGroup {...props} group={jobs}/>
                                 </Grid>
                             )
-                        })}
+                        })
+                        }
                         {(["tasksDelivered", "tasksRejected", "tasksCancelled"].includes(props.taskKey)) ?
                             <React.Fragment>
                                 <Waypoint
                                     onEnter={() => {
                                         if (props.showTasks)
                                             return;
-                                        const lastGroup = tasks[tasks.length - 1]
-                                        let beforeParent;
-                                        if (lastGroup)
-                                            beforeParent = lastGroup[lastGroup.length - 1].parent_id
-                                        dispatch(appendFunction(
-                                            whoami.uuid,
-                                            1,
-                                            "coordinator",
-                                            props.taskKey,
-                                            beforeParent
-                                        ))
-                                        console.log("YAY ENTER")
+                                        if (lastParent) {
+                                            dispatch(appendFunction(
+                                                whoami.uuid,
+                                                1,
+                                                "coordinator",
+                                                props.taskKey,
+                                                lastParent
+                                            ))
+                                            console.log("YAY ENTER")
+                                        }
                                     }
                                     }
                                 />
