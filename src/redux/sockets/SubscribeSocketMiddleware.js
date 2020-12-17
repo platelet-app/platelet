@@ -23,7 +23,7 @@ import {
     subscribedAssignmentsResponseReceived,
     subscribedCommentsResponseReceived,
     subscribedResponseReceived,
-    subscribeToUUID, unsubscribeFromUUID
+    subscribeToUUID, unsubscribeFromUUID, SOCKET_AUTHENTICATE
 } from "./SocketActions";
 import {findExistingTask, findExistingTaskParentByID, getTabIdentifier} from "../../utilities";
 import {
@@ -75,9 +75,9 @@ export const createSubscribeSocketMiddleware = () => {
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT: {
-                console.log("CONNECTIONG")
-                console.log(apiURL)
                 socket = io.connect(`${apiURL}subscribe`);
+                const token = storeAPI.getState().apiControl.token
+                socket.emit('authenticate', token)
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedResponseReceived(message));
@@ -88,38 +88,68 @@ export const createSubscribeSocketMiddleware = () => {
                 socket.on("response", (message) => {
                     console.log(message.data);
                 });
+                socket.on("auth_response", (message) => {
+                    if (message.auth_status) {
+                        socket.authenticated = true;
+                    } else {
+                        socket.authenticated = false;
+                    }
+                    console.log(message.data);
+                });
                 break;
             }
             case SOCKET_SUBSCRIBE_UUID: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('subscribe', action.uuid);
                 break;
             }
             case SOCKET_UNSUBSCRIBE_UUID: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('unsubscribe', action.uuid);
                 break;
             }
             case SOCKET_SUBSCRIBE_UUID_MANY: {
                 if (socket) {
-                    console.log("SOCKET DEFINED")
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
+
                     socket.emit('subscribe_many', action.uuids);
-                } else {
-                    console.log("SOCKET NOT DEFINED")
                 }
                 break;
             }
             case SOCKET_UNSUBSCRIBE_UUID_MANY: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('unsubscribe_many', action.uuids);
                 break;
             }
             case SOCKET_REFRESH_TASKS_DATA:
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit("refresh_task_data", action.uuids_etags)
                 break;
             case SOCKET_REFRESH_TASKS_ASSIGNMENTS:
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit("refresh_task_assignments", action.userUUID, action.taskUUIDs, action.role)
                 break;
             case SOCKET_SUBSCRIBE_RESPONSE_RECEIVED:
@@ -267,7 +297,9 @@ export const createSubscribeCommentsSocketMiddleware = () => {
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT_COMMENTS: {
+                const token = storeAPI.getState().apiControl.token
                 socket = io.connect(`${apiURL}subscribe_comments`);
+                socket.emit('authenticate', token)
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedCommentsResponseReceived(message));
@@ -279,12 +311,20 @@ export const createSubscribeCommentsSocketMiddleware = () => {
             }
             case SOCKET_SUBSCRIBE_COMMENTS: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('subscribe', action.uuid);
 
                 break;
             }
             case SOCKET_UNSUBSCRIBE_COMMENTS: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('unsubscribe', action.uuid);
                 break;
             }
@@ -329,6 +369,8 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
         switch (action.type) {
             case SOCKET_CONNECT_ASSIGNMENTS: {
                 socket = io.connect(`${apiURL}subscribe_assignments`);
+                const token = storeAPI.getState().apiControl.token
+                socket.emit('authenticate', token)
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedAssignmentsResponseReceived(message));
@@ -340,23 +382,39 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
             }
             case SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('subscribe_coordinator', action.uuid);
 
                 break;
             }
             case SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('unsubscribe_coordinator', action.uuid);
                 break;
             }
             case SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('subscribe_rider', action.uuid);
 
                 break;
             }
             case SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS: {
                 if (socket)
+                    if (!socket.authenticated) {
+                        const token = storeAPI.getState().apiControl.token
+                        socket.emit('authenticate', token)
+                    }
                     socket.emit('unsubscribe_rider', action.uuid);
                 break;
             }
