@@ -268,7 +268,7 @@ export const createSubscribeSocketMiddleware = () => {
                             for (const task of tasks) {
                                 const parent = findExistingTaskParentByID(storeAPI.getState().tasks.tasks, task.parent_id);
                                 if (parent.taskGroup) {
-                                    const findCheck = parent.taskGroup.find(t => t.uuid === task.uuid)
+                                    const findCheck = parent.taskGroup[task.uuid]
                                     if (findCheck) {
                                         storeAPI.dispatch(putTaskFromSocket(task))
                                     } else {

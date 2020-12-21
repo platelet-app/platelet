@@ -12,14 +12,14 @@ import {TasksKanbanColumn} from "../styles/TaskColumns";
 import Button from "@material-ui/core/Button";
 import {Waypoint} from "react-waypoint";
 import {
-    addTaskRelayRequest, addTaskRequest, appendTaskRequest,
+    addTaskRelayRequest, addTaskRequest,
     updateTaskDropoffAddressRequest
 } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {filterTasks} from "../utilities/functions";
-import {CircularProgress, LinearProgress, Typography} from "@material-ui/core";
+import {CircularProgress, Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import TasksGridSkeleton from "./TasksGridSkeleton";
 import PropTypes from 'prop-types'
@@ -228,7 +228,6 @@ const GridColumn = (props) => {
                         {tasksList.map(([key, jobs]) => {
                             return (
                                 <Grid item key={key}>
-                                    {key}
                                     <TaskGroup {...props} group={jobs}/>
                                 </Grid>
                             )
@@ -315,10 +314,10 @@ function TasksGrid(props) {
 
     const addRelay = React.useCallback((data) => {
         dispatch(addTaskRelayRequest(data));
-        dispatch(updateTaskDropoffAddressRequest({
-            taskUUID: data.relay_previous_uuid,
-            payload: {dropoff_address: null}
-        }));
+        dispatch(updateTaskDropoffAddressRequest(
+            data.relay_previous_uuid,
+            {dropoff_address: null}
+        ));
 
     }, [])
 

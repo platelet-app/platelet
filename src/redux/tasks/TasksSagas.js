@@ -123,9 +123,9 @@ function* postNewTask(action) {
     try {
         const api = yield select(getApiControl);
         const whoami = yield select(getWhoami);
-        const result = yield call([api, api.tasks.createTask], action.data);
+        const result = yield call([api, api.tasks.createTask], action.data.payload);
         const parentID = result.parent_id ? parseInt(result.parent_id) : 0
-        const task = {...action.data, "uuid": result.uuid, parent_id: parentID, order_in_relay: 1};
+        const task = {...action.data.payload, "uuid": result.uuid, parent_id: parentID, order_in_relay: 1};
         yield put(addTaskAssignedCoordinatorRequest({
             taskUUID: task.uuid,
             payload: {task_uuid: task.uuid, user_uuid: result.author_uuid, user: whoami}
@@ -156,7 +156,7 @@ function* postNewTaskRelay(action) {
     try {
         const timeNow = new Date().toISOString();
         const currentTasks = yield select((state) => state.tasks.tasks);
-        const previousTask = yield findExistingTask(currentTasks, action.relayPrevious)
+        const previousTask = yield findExistingTask(currentTasks, action.data.relayPrevious)
         let prevTaskData = {};
         if (previousTask) {
             const {
@@ -201,14 +201,14 @@ function* postNewTaskRelay(action) {
             payload: {task_uuid: task.uuid, user_uuid: task.author_uuid, user: whoami}
         }))
         yield put(updateTaskSuccess({
-                taskUUID: action.relayPrevious,
+                taskUUID: action.data.relayPrevious,
                 payload: {relay_next: task}
             }
         ))
-        yield put(updateTaskDropoffAddressRequest({
-            taskUUID: action.relayPrevious,
-            payload: {dropoff_address: emptyAddress, relay_next: task}
-        }))
+        yield put(updateTaskDropoffAddressRequest(
+            action.data.relayPrevious,
+            {dropoff_address: emptyAddress, relay_next: task}
+        ))
         yield put(addTaskRelaySuccess(task));
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {
@@ -225,36 +225,36 @@ function* deleteTask(action) {
     try {
         const api = yield select(getApiControl);
         const currentTasks = yield select((state) => state.tasks.tasks);
-        yield call([api, api.tasks.deleteTask], action.data);
-        const {taskGroup} = yield findExistingTaskParent(currentTasks, action.data)
-        const beforeDelete = yield taskGroup[action.data]
+        yield call([api, api.tasks.deleteTask], action.data.taskUUID);
+        const {taskGroup} = yield findExistingTaskParent(currentTasks, action.data.taskUUID)
+        const beforeDelete = yield taskGroup[action.data.taskUUID]
 
-        yield put(deleteTaskSuccess(action.data))
+        yield put(deleteTaskSuccess(action.data.taskUUID))
         let relayPrevious;
         if (beforeDelete) {
             const groupSorted = Object.values(taskGroup).sort(taskGroupSort)
             if (beforeDelete.dropoff_address && beforeDelete.relay_previous_uuid && groupSorted[groupSorted.length - 1].uuid === beforeDelete.uuid) {
                 relayPrevious = yield findExistingTask(currentTasks, beforeDelete.relay_previous_uuid);
-                yield put(updateTaskDropoffAddressRequest({
-                    taskUUID: beforeDelete.relay_previous_uuid,
-                    payload: {dropoff_address: beforeDelete.dropoff_address}
-                }));
+                yield put(updateTaskDropoffAddressRequest(
+                    beforeDelete.relay_previous_uuid,
+                    {dropoff_address: beforeDelete.dropoff_address}
+                ));
             }
             yield put(resetGroupRelayUUIDs(beforeDelete.parent_id));
         }
-        yield put(unsubscribeFromUUID(action.data));
+        yield put(unsubscribeFromUUID(action.data.taskUUID));
         let restoreActions;
         if (relayPrevious) {
             restoreActions = () => [
-                restoreTaskRequest(action.data),
-                updateTaskDropoffAddressRequest({
-                    taskUUID: beforeDelete.relay_previous_uuid,
-                    payload: {dropoff_address: relayPrevious.dropoff_address}
-                })
+                restoreTaskRequest(action.data.taskUUID),
+                updateTaskDropoffAddressRequest(
+                    beforeDelete.relay_previous_uuid,
+                    {dropoff_address: relayPrevious.dropoff_address}
+                )
             ];
         } else {
             restoreActions = () => [
-                restoreTaskRequest(action.data)]
+                restoreTaskRequest(action.data.taskUUID)]
         }
         yield put(displayInfoNotification("Task deleted", restoreActions));
     } catch (error) {
@@ -269,11 +269,11 @@ export function* watchDeleteTask() {
 function* restoreTask(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.tasks.restoreTask], action.data);
-        const result = yield call([api, api.tasks.getTask], action.data);
+        yield call([api, api.tasks.restoreTask], action.data.taskUUID);
+        const result = yield call([api, api.tasks.getTask], action.data.taskUUID);
         yield put(restoreTaskSuccess(result))
         const currentTasks = yield select((state) => state.tasks.tasks);
-        const afterRestore = yield findExistingTask(currentTasks, action.data)
+        const afterRestore = yield findExistingTask(currentTasks, action.data.taskUUID)
         if (afterRestore) {
             yield put(resetGroupRelayUUIDs(afterRestore.parent_id))
         }
@@ -323,7 +323,7 @@ function* updateTaskPickupAddress(action) {
 function* updateTaskPickupAddressFromSaved(action) {
     try {
         const api = yield select(getApiControl);
-        const presetDetails = yield call([api, api.locations.getLocation], action.data.payload);
+        const presetDetails = yield call([api, api.locations.getLocation], action.data.locationUUID);
         const pickup_address = presetDetails.address;
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, {pickup_address});
         const data = {payload: {pickup_address, etag: result.etag}, taskUUID: action.data.taskUUID}
@@ -347,7 +347,7 @@ function* updateTaskDropoffAddress(action) {
 function* updateTaskDropoffAddressFromSaved(action) {
     try {
         const api = yield select(getApiControl);
-        const presetDetails = yield call([api, api.locations.getLocation], action.data.payload);
+        const presetDetails = yield call([api, api.locations.getLocation], action.data.locationUUID);
         const dropoff_address = presetDetails.address;
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, {dropoff_address});
         const data = {payload: {dropoff_address, etag: result.etag}, taskUUID: action.data.taskUUID}
@@ -368,10 +368,10 @@ function* updateTaskPickupTime(action) {
         yield put(updateTaskPickupTimeSuccess(data))
         if (currentValue === null) {
             // only notify if marking rejected for the first time
-            const restoreActions = () => [updateTaskPickupTimeRequest({
-                taskUUID: action.data.taskUUID,
-                payload: {time_picked_up: null}
-            })];
+            const restoreActions = () => [updateTaskPickupTimeRequest(
+                action.data.taskUUID,
+                {time_picked_up: null}
+            )];
             const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
             yield put(displayInfoNotification("Task marked picked up", restoreActions, viewLink))
         }
@@ -391,10 +391,10 @@ function* updateTaskDropoffTime(action) {
         yield put(updateTaskDropoffTimeSuccess(data))
         if (currentValue === null) {
             // only notify if marking rejected for the first time
-            const restoreActions = () => [updateTaskDropoffTimeRequest({
-                taskUUID: action.data.taskUUID,
-                payload: {time_dropped_off: null}
-            })];
+            const restoreActions = () => [updateTaskDropoffTimeRequest(
+                action.data.taskUUID,
+                {time_dropped_off: null}
+            )];
             const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
             yield put(displayInfoNotification("Task marked dropped off", restoreActions, viewLink))
         }
@@ -434,7 +434,7 @@ function* updateTaskPatchFromServer(action) {
             patch: "",
             patch_id: null
         };
-        yield put(updateTaskPatchRequest({taskUUID: action.data.taskUUID, payload}))
+        yield put(updateTaskPatchRequest(action.data.taskUUID, payload))
     } catch (error) {
         yield put(updateTaskPatchFailure(error))
     }
@@ -462,10 +462,10 @@ function* updateTaskCancelledTime(action) {
         yield put(resetGroupRelayUUIDs(task.parent_id))
         if (currentValue === null) {
             // only notify if marking rejected for the first time
-            const restoreActions = () => [updateTaskCancelledTimeRequest({
-                taskUUID: action.data.taskUUID,
-                payload: {time_cancelled: null}
-            })];
+            const restoreActions = () => [updateTaskCancelledTimeRequest(
+                action.data.taskUUID,
+                {time_cancelled: null}
+            )];
             const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
             yield put(displayInfoNotification("Task marked cancelled", restoreActions, viewLink))
         }
@@ -499,10 +499,10 @@ function* updateTaskRejectedTime(action) {
 
         if (currentValue === null) {
             // only notify if marking rejected for the first time
-            const restoreActions = () => [updateTaskRejectedTimeRequest({
-                taskUUID: action.data.taskUUID,
-                payload: {time_rejected: null}
-            })];
+            const restoreActions = () => [updateTaskRejectedTimeRequest(
+                action.data.taskUUID,
+                {time_rejected: null}
+            )];
             const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
             yield put(displayInfoNotification("Task marked rejected", restoreActions, viewLink))
         }
@@ -566,14 +566,14 @@ export function* watchUpdateTaskRejectedTime() {
 function* getTask(action) {
     try {
         const currentTasks = yield select((state) => state.tasks.tasks);
-        let task = findExistingTask(currentTasks, action.data)
+        let task = findExistingTask(currentTasks, action.data.taskUUID)
         if (task) {
             // if it's already in the list of tasks, no need to get it
             yield put(getTaskSuccess(task))
         } else {
             // not in the list so call the api
             const api = yield select(getApiControl);
-            const result = yield call([api, api.tasks.getTask], action.data);
+            const result = yield call([api, api.tasks.getTask], action.data.taskUUID);
             yield put(getTaskSuccess(result))
         }
     } catch (error) {
@@ -595,12 +595,12 @@ function* getTasks(action) {
         const api = yield select(getApiControl);
         // get all the different tasks for different status and combine them
         const [tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksCancelled, tasksRejected] = yield all([
-        call([api, api.tasks.getTasks], action.data, 0, action.role, "new", "", "descending"),
-        call([api, api.tasks.getTasks], action.data, 0, action.role, "active", "", "ascending"),
-        call([api, api.tasks.getTasks], action.data, 0, action.role, "picked_up", "", "ascending"),
-        call([api, api.tasks.getTasks], action.data, 1, action.role, "delivered", "", "descending"),
-        call([api, api.tasks.getTasks], action.data, 1, action.role, "cancelled", "", "descending"),
-        call([api, api.tasks.getTasks], action.data, 1, action.role, "rejected", "", "descending"),
+        call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "new", "", "descending"),
+        call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "active", "", "ascending"),
+        call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "picked_up", "", "ascending"),
+        call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "delivered", "", "descending"),
+        call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "cancelled", "", "descending"),
+        call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "rejected", "", "descending"),
         ])
         yield put(getAllTasksSuccess({
             tasksNew,
@@ -656,8 +656,8 @@ export function* watchRefreshTasksFromSocket() {
 
 
 function* setRoleViewAndGetTasks(action) {
-    yield put(setRoleView(action.role))
-    yield put(getAllTasksRequest(action.userUUID, action.page, action.role))
+    yield put(setRoleView(action.data.role))
+    yield put(getAllTasksRequest(action.data.userUUID, action.data.page, action.data.role))
 }
 
 export function* watchSetRoleViewAndGetTasks() {

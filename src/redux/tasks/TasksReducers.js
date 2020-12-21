@@ -291,7 +291,8 @@ export function tasks(state = initialTasksState, action) {
                 const taskToUpdate = parent.taskGroup[action.data.taskUUID]
                 const updatedItem = {...taskToUpdate, ...action.data.payload};
                 const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
-                return {tasks: sortAndConcat(state.tasks, updatedGroup), error: null};
+                const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.parentID)
+                return {tasks: sortAndConcat(newTasks, updatedGroup), error: null};
             } else {
                 return state;
             }
@@ -424,7 +425,7 @@ export function tasks(state = initialTasksState, action) {
             }
         }
         case RESET_GROUP_RELAY_UUIDS: {
-            const parent = findExistingTaskParentByID(state.tasks, action.data)
+            const parent = findExistingTaskParentByID(state.tasks, action.parentID)
             if (!parent.taskGroup)
                 return state;
             let count = 0;

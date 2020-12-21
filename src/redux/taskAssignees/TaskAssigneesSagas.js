@@ -24,15 +24,14 @@ import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function* addTaskAssignedRider(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         const currentTasks = yield select((state) => state.tasks.tasks);
         const currentTask = yield findExistingTask(currentTasks, action.data.taskUUID);
         if (action.data.payload.patch_id) {
-            yield put(updateTaskPatchRequest({
-                taskUUID: action.data.taskUUID,
-                payload: {patch_id: action.data.payload.patch_id}
-            }));
+            yield put(updateTaskPatchRequest(
+                action.data.taskUUID,
+                {patch_id: action.data.payload.patch_id}
+            ));
             delete action.data.payload.patch_id;
         }
         if (currentTask.assigned_riders.length === 0) {
@@ -42,7 +41,7 @@ function* addTaskAssignedRider(action) {
             yield call([api, api.tasks.addTaskAssignedRider], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
             yield put(addTaskAssignedRiderSuccess(action.data))
             yield put(updateTaskAssignedRiderSuccess(action.data))
-            yield put(updateTaskPatchFromServer(action.data))
+            yield put(updateTaskPatchFromServer(action.data.taskUUID))
         }
     } catch (error) {
         yield put(addTaskAssignedRiderFailure(error))
@@ -61,7 +60,7 @@ function* updateTaskRemoveRider(action) {
             yield call([api, api.tasks.removeTaskAssignedRider], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
             yield put(removeTaskAssignedRiderSuccess(action.data));
             yield put(updateTaskRemoveAssignedRiderSuccess(action.data));
-            yield put(updateTaskPatchFromServer(action.data))
+            yield put(updateTaskPatchFromServer(action.data.taskUUID))
         }
     } catch (error) {
         yield put(removeTaskAssignedRiderFailure(error));

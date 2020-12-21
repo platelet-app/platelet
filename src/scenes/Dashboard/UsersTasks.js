@@ -1,17 +1,16 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import '../../App.css';
 import 'typeface-roboto'
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {getAllMyTasksRequest, refreshAllMyTasksRequest, refreshAllTasksRequest, updateTaskFromSocket} from '../../redux/tasks/TasksActions'
+import {getAllMyTasksRequest, updateTaskFromSocket} from '../../redux/tasks/TasksActions'
 import {useDispatch, useSelector} from "react-redux"
 import TasksGrid from "./components/TasksGrid";
 import {
     useLocation,
 } from "react-router-dom";
-import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
+import {createLoadingSelector} from "../../redux/selectors";
 import TasksGridSkeleton from "./components/TasksGridSkeleton"
-import {getWhoamiRequest, refreshWhoamiRequest} from "../../redux/Actions";
 import {subscribeToUUID, unsubscribeFromUUID} from "../../redux/sockets/SocketActions";
 import {concatTasks} from "./utilities";
 import {getTabIdentifier} from "../../utilities";

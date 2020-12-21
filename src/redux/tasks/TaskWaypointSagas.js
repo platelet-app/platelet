@@ -1,6 +1,6 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
 import {getApiControl} from "../Api";
-import {APPEND_TASKS_REQUEST, appendTaskFailure, appendTaskSuccess} from "./TasksActions";
+import {APPEND_TASKS_REQUEST, appendTasksFailure, appendTasksSuccess} from "./TasksActions";
 import {
     APPEND_TASKS_CANCELLED_REQUEST,
     APPEND_TASKS_DELIVERED_REQUEST,
@@ -24,34 +24,34 @@ function* appendTasks(action) {
         switch (action.data.taskStatus) {
             case "tasksNew":
                 tasks = yield call([api, api.tasks.getTasks], action.data.data, action.data.page, action.data.role, "new", action.data.beforeParent);
-                yield put(appendTaskSuccess({tasksNew: tasks}))
+                yield put(appendTasksSuccess({tasksNew: tasks}))
                 break;
             case "tasksActive":
                 tasks = yield call([api, api.tasks.getTasks], action.data.data, action.data.page, action.data.role, "active", action.data.beforeParent);
-                yield put(appendTaskSuccess({tasksActive: tasks}))
+                yield put(appendTasksSuccess({tasksActive: tasks}))
                 break;
             case "tasksPickedUp":
                 tasks = yield call([api, api.tasks.getTasks], action.data.data, action.data.page, action.data.role, "picked_up", action.data.beforeParent);
-                yield put(appendTaskSuccess({tasksPickedUp: tasks}))
+                yield put(appendTasksSuccess({tasksPickedUp: tasks}))
                 break;
             case "tasksDelivered":
                 tasks = yield call([api, api.tasks.getTasks], action.data.data, action.data.page, action.data.role, "delivered", action.data.beforeParent);
-                yield put(appendTaskSuccess({tasksDelivered: tasks}))
+                yield put(appendTasksSuccess({tasksDelivered: tasks}))
                 break;
             case "tasksCancelled":
                 tasks = yield call([api, api.tasks.getTasks], action.data.data, action.data.page, action.data.role, "cancelled", action.data.beforeParent);
-                yield put(appendTaskSuccess({tasksCancelled: tasks}))
+                yield put(appendTasksSuccess({tasksCancelled: tasks}))
                 break;
             case "tasksRejected":
                 tasks = yield call([api, api.tasks.getTasks], action.data.data, action.data.page, action.data.role, "rejected", action.data.beforeParent);
-                yield put(appendTaskSuccess({tasksRejected: tasks}))
+                yield put(appendTasksSuccess({tasksRejected: tasks}))
                 break;
             default:
                 tasks = [];
                 break;
         }
     } catch (error) {
-        yield put(appendTaskFailure(error))
+        yield put(appendTasksFailure(error))
     }
 }
 
