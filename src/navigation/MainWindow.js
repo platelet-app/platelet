@@ -3,7 +3,6 @@ import 'typeface-roboto'
 import '../index.css';
 import {Route, Switch, useLocation} from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
-import UsersTasks from "../scenes/Dashboard/UsersTasks";
 import TaskDialog from "../scenes/Task/TaskDialog";
 import VehicleList from "../scenes/VehiclesList";
 import {MainWindowContainer} from "../styles/common";
@@ -38,9 +37,6 @@ export default function MainWindow(_props) {
                     <Route exact path='/location/:location_uuid_b62'
                            render={(props) => <LocationDetail {...props}/>}
                     />
-                    <Route exact path='/mytasks'
-                           render={(props) => <UsersTasks {...props}/>}
-                    />
                     <Route exact path='/users'
                            render={(props) => <UsersList {...props}/>}
                     />
@@ -63,16 +59,6 @@ export default function MainWindow(_props) {
                            )
                            }}
                        />
-                    <Route exact path="/mytasks/task/:task_uuid_b62"
-                           render={(props) => {
-                               return (
-                                   <>
-                                       <UsersTasks {...props} />
-                                       <TaskDialog {...props} modal={true}/>
-                                   </>
-                               )
-                           }}
-                    />
                     <Route component={NotFound}/>
                 </Switch>
             </main>

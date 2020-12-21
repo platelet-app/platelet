@@ -15,10 +15,6 @@ export const RESTORE_TASK_REQUEST = "RESTORE_TASK_REQUEST";
 export const RESTORE_TASK_SUCCESS = "RESTORE_TASK_SUCCESS";
 export const RESTORE_TASK_FAILURE = "RESTORE_TASK_FAILURE";
 
-export const APPEND_TASKS_REQUEST = "APPEND_TASKS_REQUEST";
-export const APPEND_TASKS_SUCCESS = "APPEND_TASKS_SUCCESS";
-export const APPEND_TASKS_FAILURE = "APPEND_TASKS_FAILURE";
-
 export const PUT_TASK_SUCCESS = "PUT_TASK_SUCCESS";
 export const PUT_TASK_FROM_SOCKET = "PUT_TASK_FROM_SOCKET";
 
@@ -103,18 +99,6 @@ export const RESET_GROUP_RELAY_UUIDS = "RESET_GROUP_RELAY_UUIDS";
 export const GROUP_RELAYS_TOGETHER = "GROUP_RELAYS_TOGETHER";
 
 
-export function appendTasksRequest(afterParentID) {
-    return { type: APPEND_TASKS_REQUEST, afterParentID }
-}
-
-export function appendTasksSuccess(data) {
-    return { type: APPEND_TASKS_SUCCESS, data }
-}
-
-export function appendTasksFailure(error) {
-    return { type: APPEND_TASKS_FAILURE, error }
-}
-
 export function restoreTaskRequest(taskUUID) {
     return { type: RESTORE_TASK_REQUEST, data: {taskUUID }}
 }
@@ -137,14 +121,6 @@ export function putTaskFromSocket(data) {
 
 export function getTaskRequest(taskUUID) {
     return { type: GET_TASK_REQUEST, data: {taskUUID} }
-}
-
-export function setCurrentTask(data) {
-    return { type: SET_CURRENT_TASK, data }
-}
-
-export function clearCurrentTask() {
-    return { type: CLEAR_CURRENT_TASK }
 }
 
 export function getTaskSuccess(data) {

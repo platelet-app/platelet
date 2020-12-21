@@ -19,7 +19,6 @@ import {
     updateTaskDropoffTimeRequest,
     updateTaskPickupAddressRequest,
     updateTaskCancelledTimeRequest,
-    clearCurrentTask,
     getTaskRequest,
     updateTaskPickupAddressFromSavedRequest,
     updateTaskDropoffAddressFromSavedRequest, updateTaskRequesterContactRequest, updateTaskRejectedTimeRequest
@@ -158,7 +157,6 @@ export default function TaskDialog(props) {
         else
             history.push("/");
 
-        dispatch(clearCurrentTask());
     };
 
     const usersSelect = editMode ?

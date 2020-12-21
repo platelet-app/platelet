@@ -183,6 +183,7 @@ const GridColumn = (props) => {
     const endlessLoadEnd = useSelector(state => notFoundSelector(state));
     const isFetchingSelector = createSimpleLoadingSelector([selectorsString]);
     const endlessLoadIsFetching = useSelector(state => isFetchingSelector(state));
+    const roleView = useSelector(state => state.roleView);
     const dispatchAppendFunctions = {
         tasksCancelled: (endlessLoadEnd || endlessLoadIsFetching) ? () => ({type: "IGNORE"}) : appendTasksCancelledRequest,
         tasksDelivered: (endlessLoadEnd || endlessLoadIsFetching) ? () => ({type: "IGNORE"}) : appendTasksDeliveredRequest,
@@ -243,11 +244,10 @@ const GridColumn = (props) => {
                                             dispatch(appendFunction(
                                                 whoami.uuid,
                                                 1,
-                                                "coordinator",
+                                                roleView,
                                                 props.taskKey,
                                                 lastParent
                                             ))
-                                            console.log("YAY ENTER")
                                         }
                                     }
                                     }
