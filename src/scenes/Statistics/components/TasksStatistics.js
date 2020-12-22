@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {PaddedPaper} from "../../../styles/common";
 import Grid from "@material-ui/core/Grid";
-import {useDispatch, useSelector} from "react-redux";
-import {getSessionStatisticsRequest} from "../../../redux/sessions/SessionsActions";
+import {useSelector} from "react-redux";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import {createLoadingSelector} from "../../../redux/selectors";
-import StatsSkeleton from "./StatsSkeleton";
 
 function getTitle(key) {
     switch (key) {

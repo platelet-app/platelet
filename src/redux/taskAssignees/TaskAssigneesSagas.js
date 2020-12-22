@@ -1,5 +1,4 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
-import {setCurrentSessionTimeActiveToNow} from "../sessions/SessionsActions";
 import {getApiControl} from "../Api";
 import {
     ADD_TASK_ASSIGNED_COORDINATOR_REQUEST,
@@ -54,7 +53,6 @@ export function* watchUpdateTaskAddAssignedRider() {
 
 function* updateTaskRemoveRider(action) {
     try {
-        yield put(setCurrentSessionTimeActiveToNow())
         const api = yield select(getApiControl);
         if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.removeTaskAssignedRider], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});

@@ -1,7 +1,6 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover';
-import Typography from '@material-ui/core/Typography';
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
@@ -9,7 +8,6 @@ import Grid from "@material-ui/core/Grid";
 import UserCard from "../../../components/UserCard";
 import UsersSelect from "../../../components/UsersSelect";
 import {useDispatch} from "react-redux";
-import {addSessionCollaboratorRequest} from "../../../redux/sessions/SessionsActions";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -42,7 +40,6 @@ export default function CollaboratorPickerPopover(props) {
     const handleSelectUser = (user) => {
         if (user) {
             const payload = {user_uuid: user.uuid, user}
-            dispatch(addSessionCollaboratorRequest({sessionUUID: props.sessionUUID, payload}))
             handleClose();
         }
     }

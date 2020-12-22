@@ -20,7 +20,6 @@ import {
 import {task, tasks, currentTask} from "./tasks/TasksReducers"
 import {userStatistics} from "./statistics/statisticsReducers";
 import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
-import {session, sessions, sessionStatistics, currentSession} from "./sessions/SessionsReducers"
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
 import {availableLocations, location} from "./locations/LocationsReducers"
 import {apiControl, authStatus} from "./login/LoginReducers";
@@ -238,10 +237,6 @@ const rootReducer = combineReducers({
     tasks,
     currentTask,
     taskAssignees,
-    sessions,
-    session,
-    sessionStatistics,
-    currentSession,
     deliverables,
     availableDeliverables,
     availablePriorities,
