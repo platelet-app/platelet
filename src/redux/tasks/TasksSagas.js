@@ -96,12 +96,12 @@ import {
     unsubscribeFromUUID
 } from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
-import {encodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
+import {convertTaskGroupToObject, encodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
 import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
 import { setRoleView } from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
 import {createLoadingSelector, createPostingSelector} from "../selectors";
-import {taskGroupSort} from "./task_redux_utilities";
+import {convertTaskListsToObjects, taskGroupSort} from "./task_redux_utilities";
 import {task} from "./TasksReducers";
 
 
@@ -602,14 +602,16 @@ function* getTasks(action) {
         call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "cancelled", "", "descending"),
         call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "rejected", "", "descending"),
         ])
-        yield put(getAllTasksSuccess({
-            tasksNew,
+        const result = convertTaskListsToObjects(
+    {
+        tasksNew,
             tasksActive,
             tasksPickedUp,
             tasksDelivered,
             tasksCancelled,
             tasksRejected
-        }))
+    });
+    yield put(getAllTasksSuccess(result))
     } catch (error) {
         if (error.name === "HttpError") {
             if (error.response.status === 404) {

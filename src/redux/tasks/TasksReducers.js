@@ -38,14 +38,20 @@ import {
     UPDATE_TASK_ASSIGNED_COORDINATOR_SUCCESS,
     UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET,
     UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_SUCCESS,
-    UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET, APPEND_TASKS_SUCCESS
+    UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET
 
 } from "./TasksActions";
-import {taskGroupSort} from "./task_redux_utilities";
+import {
+    convertToRelays,
+    taskGroupSort,
+    removeParentFromTasks,
+    addAssigneeToList,
+    removeAssigneeFromList,
+    sortAndConcat
+} from "./task_redux_utilities";
 import update from "immutability-helper";
 import {
     convertTaskGroupToObject,
-    determineTaskType,
     findExistingTaskParent,
     findExistingTaskParentByID,
 } from "../../utilities";
@@ -131,94 +137,6 @@ export const initialTasksState = {
     error: null
 }
 
-function sortAndConcat(tasks, data) {
-    const sorted = determineTaskType(data);
-    const result = {};
-    for (const [key, value] of Object.entries(sorted)) {
-        result[key] = {...tasks[key], ...value}
-        //sorted[key] = sorted[key].sort((a, b) => b[0].parent_id - a[0].parent_id);
-    }
-    return {...tasks, ...result};
-}
-
-
-function convertToRelays(group) {
-    let result = {};
-    let currentParentId = -1;
-    let currentIndex = -1;
-    for (const t of group) {
-        if (currentParentId !== t.parent_id) {
-            currentParentId = t.parent_id;
-            currentIndex += 1;
-            result[currentParentId] = {};
-        }
-        result[currentParentId][t.uuid] = t;
-    }
-    return result;
-
-}
-
-function groupRelaysTogether(tasks) {
-    let groupedTasks = {};
-    for (const [key, value] of Object.entries(tasks)) {
-        groupedTasks[key] = convertToRelays(value);
-    }
-    //  for (const [key, value] of Object.entries(groupedTasks)) {
-    //      groupedTasks[key] = value.sort((a, b) => a.order_in_relay < b.order_in_relay);
-    //  }
-    return groupedTasks;
-}
-
-const addAssigneeToList = (task, user, role = "rider") => {
-    if (role === "rider") {
-        // add the assignee to the list
-        const assigneesList = [...task.assigned_riders, user]
-        return {
-            assigned_riders: assigneesList,
-            assigned_riders_display_string: assigneesList.map(
-                (user) => user.display_name
-            ).join(", ")
-        }
-    } else if (role === "coordinator") {
-        // add the assignee to the list
-        const assigneesList = [...task.assigned_coordinators, user]
-        return {
-            assigned_coordinators: assigneesList,
-            assigned_coordinators_display_string: assigneesList.map(
-                (user) => user.display_name
-            ).join(", ")
-        }
-    }
-}
-
-const removeAssigneeFromList = (task, userUUID, role = "rider") => {
-    if (role === "rider") {
-        // remove the assignee from the list
-        const assigneesList = task.assigned_riders.filter(u => u.uuid !== userUUID)
-        return {
-            assigned_riders: assigneesList,
-            assigned_riders_display_string: assigneesList.map(
-                (user) => user.display_name
-            ).join(", ")
-        }
-    } else if (role === "coordinator") {
-        // remove the assignee from the list
-        const assigneesList = task.assigned_coordinators.filter(u => u.uuid !== userUUID)
-        return {
-            assigned_coordinators: assigneesList,
-            assigned_coordinators_display_string: assigneesList.map(
-                (user) => user.display_name
-            ).join(", ")
-        }
-    }
-}
-
-function removeParentFromTasks(tasks, listType, parent_id) {
-    const newList = _.omit(tasks[listType], parent_id)
-    return update(tasks,
-        {[listType]: {$set: newList}}
-    );
-}
 
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
@@ -275,7 +193,6 @@ export function tasks(state = initialTasksState, action) {
                 result = update(state.tasks, {[key]: {$set: newList}})
             }
             return {tasks: result, error: null}
-
         }
         case UPDATE_TASK_SUCCESS:
         case UPDATE_TASK_REQUESTER_CONTACT_SUCCESS:
@@ -466,10 +383,10 @@ export function tasks(state = initialTasksState, action) {
             return {tasks: sortAndConcat(state.tasks, result[sortedGroup[0].parent_id]), error: null};
         }
         case GET_TASKS_SUCCESS:
-            return {tasks: groupRelaysTogether(action.data), error: null};
+            return {tasks: action.data, error: null};
         case GROUP_RELAYS_TOGETHER:
             return state;
-            return {tasks: groupRelaysTogether(state.tasks), error: null}
+        // return {tasks: groupRelaysTogether(state.tasks), error: null}
         case GET_TASKS_FAILURE:
             return {...initialTasksState, error: action.error};
         case GET_MY_TASKS_SUCCESS:
