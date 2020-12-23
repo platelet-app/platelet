@@ -1,19 +1,15 @@
-import {call, put, takeLatest, all, take, select} from "redux-saga/effects";
+import {call, put, takeLatest, all, select} from "redux-saga/effects";
 import {INITIALISE_APP} from "./initialiseActions";
-import moment from "moment-timezone";
-import {logoutUser} from "../login/LoginActions";
-import {useEffect} from "react";
-import {clearWhoami, GET_WHOAMI_SUCCESS, getWhoamiRequest, getWhoamiSuccess} from "../Actions";
+import {startTokenRefreshLoop} from "../login/LoginActions";
+import _ from "lodash"
+import {getWhoamiRequest, getWhoamiSuccess} from "../Actions";
 import {getAvailablePrioritiesRequest} from "../priorities/PrioritiesActions";
 import {getAvailableDeliverablesRequest} from "../deliverables/DeliverablesActions";
 import {getAvailableLocationsRequest} from "../locations/LocationsActions";
 import {getUsersRequest} from "../users/UsersActions";
 import {getAvailablePatchesRequest} from "../patches/PatchesActions";
-import {getAllTasksRequest, setRoleViewAndGetTasks} from "../tasks/TasksActions";
-import {getRoleView, getWhoami} from "../Api";
-import {getServerSettingsRequest} from "../ServerSettings/ServerSettingsActions";
+import {getApiControl} from "../Api";
 import {connectAssignmentsSocket, connectCommentsSocket, connectSocket} from "../sockets/SocketActions";
-import {getApiURL, getDashboardRoleMode} from "../../utilities";
 // function loginCheck() {
 //     if (whoami && whoami.login_expiry) {
 //         // if the login is going to expire in 3 days, log out the user
@@ -49,6 +45,10 @@ import {getApiURL, getDashboardRoleMode} from "../../utilities";
 // useEffect(getStaticData, [confirmLogin]);
 
 function* initialiseApp() {
+    //const api = yield select(getApiControl);
+    //const whoami = yield call([api, api.users.whoami]);
+    //yield put(getWhoamiSuccess(_.omit(whoami, "login_expiry")))
+    //yield put(startTokenRefreshLoop(whoami.refresh_expiry))
     yield all([
         put(getWhoamiRequest()),
         put(connectSocket()),

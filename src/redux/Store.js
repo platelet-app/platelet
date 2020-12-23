@@ -1,4 +1,4 @@
-import {applyMiddleware, createStore} from "redux";
+import {applyMiddleware, createStore, compose} from "redux";
 import rootReducer from "./Reducers";
 import rootSaga from "./RootSagas";
 import createSagaMiddleware from "redux-saga"
@@ -23,9 +23,11 @@ const subscribeSocketMiddleware = createSubscribeSocketMiddleware();
 const subscribeCommentsSocketMiddleware = createSubscribeCommentsSocketMiddleware();
 const subscribeAssignmentsSocketMiddleware = createSubscribeAssignmentsSocketMiddleware();
 
-const store = createStore(
-    rootReducer,
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(rootReducer, /* preloadedState, */ composeEnhancers(
+
     applyMiddleware(sagaMiddleWare, subscribeSocketMiddleware, subscribeCommentsSocketMiddleware, subscribeAssignmentsSocketMiddleware)
+    )
 );
 
 sagaMiddleWare.run(rootSaga);

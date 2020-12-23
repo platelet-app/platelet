@@ -63,7 +63,7 @@ import {
     watchUpdateUser, watchUpdateUserPassword, watchUploadUserProfilePicture
 } from "./users/UsersSagas";
 import {watchGetWhoami, watchRefreshWhoami} from "./WhoamiSaga";
-import {watchLogin, watchLogout} from "./login/LoginSagas"
+import {watchLogin, watchLogout, watchRefreshTokenLoop} from "./login/LoginSagas"
 import {watchGetAvailablePatches} from "./patches/PatchesSagas";
 import {watchGetServerSettings} from "./ServerSettings/ServerSettingsSagas";
 import {
@@ -162,6 +162,7 @@ export default function* rootSaga() {
         call(watchAppendTasksCancelled),
         call(watchAppendTasksRejected),
         call(watchAppendTasksDelivered),
-        call(watchInitialiseApp)
+        call(watchInitialiseApp),
+        call(watchRefreshTokenLoop)
     ])
 }
