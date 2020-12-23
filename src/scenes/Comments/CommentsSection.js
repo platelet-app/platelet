@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    addCommentFromSocket,
     clearComments,
     getCommentsRequest
 } from "../../redux/comments/CommentsActions";
@@ -43,7 +42,7 @@ export default function CommentsSection(props) {
     } else {
         return (
             <div style={{paddingTop: "30px"}}>
-                <CommentsMain parentUUID={props.parentUUID} comments={comments}/>
+                <CommentsMain parentUUID={props.parentUUID} comments={Object.values(comments)}/>
             </div>
         )
     }

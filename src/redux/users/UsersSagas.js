@@ -26,13 +26,13 @@ import {
 } from "./UsersActions";
 import {getApiControl} from "../Api"
 import {displayInfoNotification} from "../notifications/NotificationsActions";
-import {convertUsersListToObjects} from "./user_redux_utilities";
+import {convertListDataToObjects} from "../redux_utilities";
 
 function* getUsers() {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.users.getUsers]);
-        const converted = yield convertUsersListToObjects(result)
+        const converted = yield convertListDataToObjects(result)
         yield put(getUsersSuccess(converted))
     } catch (error) {
         yield put(getUsersFailure(error))

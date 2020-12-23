@@ -37,6 +37,7 @@ import {
 
 import {getApiControl} from "../Api";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
+import {convertListDataToObjects} from "../redux_utilities";
 
 export function* postNewComment(action) {
     try {
@@ -71,7 +72,8 @@ export function* getComments(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.comments.getComments], action.data);
-        yield put(getCommentsSuccess(result))
+        const converted = convertListDataToObjects(result)
+        yield put(getCommentsSuccess(converted))
     } catch (error) {
         if (error.name === "HttpError") {
             if (error.response.status === 404) {
