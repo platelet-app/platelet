@@ -1,6 +1,7 @@
 import { store } from 'react-notifications-component';
 import axios from 'axios'
-import {saveLogin, deleteApiURL, getTabIdentifier, createTabIdentifier} from "./utilities";
+import {saveLogin, deleteApiURL, getTabIdentifier, createTabIdentifier, getApiURL} from "./utilities";
+
 
 
 function status(response) {
@@ -34,7 +35,7 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
         .then(status)
         .then(json)
         .then((data) => {
-            console.log('Request succeeded with JSON response', data);
+            //console.log('Request succeeded with JSON response', data);
             return data;
         }).catch(function (error) {
             console.log('Request failed', error);
@@ -81,7 +82,7 @@ function makeAxios(api_url, url, type, auth, content_type = undefined, data = {}
     }
     return axios(config)
         .then((response) => {
-            console.log('Request succeeded with JSON response', response);
+            //console.log('Request succeeded with JSON response', response);
             if (response)
                 return response.data;
         }).catch(function (error) {
@@ -407,6 +408,10 @@ class Statistics {
 
 class Control {
     constructor(api_url = "", bearer = "") {
+        this.isAlreadyFetchingAccessToken = false;
+
+        // This is the list of waiting requests that will retry after the JWT refresh complete
+        this.subscribers = [];
         this.login = this.login.bind(this);
         this.initialiseClasses = this.initialiseClasses.bind(this);
         this.logout = this.logout.bind(this);
@@ -446,7 +451,7 @@ class Control {
     .then(status)
             .then(json)
             .then((data) => {
-                console.log('Request succeeded with JSON response', data);
+                //console.log('Request succeeded with JSON response', data);
                 return data;
             }).catch(function (error) {
                 throw error;
@@ -458,7 +463,7 @@ class Control {
         this.logout();
     }
 
-    refreshToken() {
+    async refreshToken() {
         return makeAxios(this.api_url, "login/refresh_token", "GET", this.bearer, "application/json")
     }
 
@@ -486,7 +491,7 @@ class Control {
         } else {
             return axios.get(this.api_url + "server_settings")
                 .then((data) => {
-                    console.log('Request succeeded with JSON response', data);
+                    //console.log('Request succeeded with JSON response', data);
                     if (data)
                         return data;
                 }).catch(function (error) {
@@ -611,54 +616,83 @@ class Control {
         this.initialised = true;
         const self = this;
         //TODO: This doesn't work if the token has expired fully fixxxxx
-        axios.interceptors.request.use(
-            config => {
-                const token = self.bearer
-                if (token) {
-                    config.headers['Authorization'] = self.bearer;
-                }
-                // config.headers['Content-Type'] = 'application/json';
-                return config;
-            },
-            error => {
-                Promise.reject(error)
-            });
-        axios.interceptors.response.use((response) => {
+        axios.interceptors.response.use(
+            function(response) {
+                // If the request succeeds, we don't have to do anything and just return the response
                 return response
             },
-            function (error) {
-                const originalRequest = error.config;
-                if (error.response) {
-                    if (error.response.status === 401 && !originalRequest._retry) {
-                        if (error.response.status === 401 &&
-                            originalRequest.url === self.api_url + "login/refresh_token") {
-                            return Promise.reject(error);
-                        }
-
-                        originalRequest._retry = true;
-                        return axios.get(self.api_url + "login/refresh_token")
-                            .then(res => {
-                                if (res.status === 200) {
-                                    // 1) put token to LocalStorage
-                                    saveLogin(res.data.access_token)
-
-                                    // 2) Change Authorization header
-                                    self.bearer = "Bearer " + res.data.access_token;
-                                    self.token = res.data.access_token;
-
-                                    // 3) return originalRequest object with Axios.
-                                    return axios(originalRequest);
-                                }
-                            })
-                    }
+            function(error) {
+                const errorResponse = error.response
+                if (isTokenExpiredError(errorResponse)) {
+                    return self.resetTokenAndReattemptRequest(error)
                 }
-
-                // return Error object with Promise
-                return Promise.reject(error);
-            });
+                // If the error is due to other reasons, we just throw it back to axios
+                return Promise.reject(error)
+            }
+        )
+        function isTokenExpiredError(errorResponse) {
+            throw errorResponse
+            // Your own logic to determine if the error is due to JWT token expired returns a boolean value
+        }
 
         //setInterval(this.ping, 4000);
     }
+
+
+    async resetTokenAndReattemptRequest(error) {
+        try {
+            const { response: errorResponse } = error;
+            const resetToken = await this.refreshToken(); // Your own mechanism to get the refresh token to refresh the JWT token
+            if (!resetToken) {
+                // We can't refresh, throw the error anyway
+                return Promise.reject(error);
+            }
+            /* Proceed to the token refresh procedure
+            We create a new Promise that will retry the request,
+            clone all the request configuration from the failed
+            request in the error object. */
+            const retryOriginalRequest = new Promise(resolve => {
+                /* We need to add the request retry to the queue
+                since there another request that already attempt to
+                refresh the token */
+                this.addSubscriber(access_token => {
+                    errorResponse.config.headers.Authorization = 'Bearer ' + access_token;
+                    resolve(axios(errorResponse.config));
+                });
+            });
+            if (!this.isAlreadyFetchingAccessToken) {
+                this.isAlreadyFetchingAccessToken = true;
+                const response = await axios({
+                    method: 'post',
+                    url: `<YOUR TOKEN REFREH ENDPOINT>`,
+                    data: {
+                        token: resetToken // Just an example, your case may vary
+                    }
+                });
+                if (!response.data) {
+                    return Promise.reject(error);
+                }
+                const newToken = response.data.token;
+                saveLogin(newToken); // save the newly refreshed token for other requests to use
+                this.isAlreadyFetchingAccessToken = false;
+                this.onAccessTokenFetched(newToken);
+            }
+            return retryOriginalRequest;
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+
+    onAccessTokenFetched(access_token) {
+        // When the refresh is successful, we start retrying the requests one by one and empty the queue
+        this.subscribers.forEach(callback => callback(access_token));
+        this.subscribers = [];
+    }
+
+    addSubscriber(callback) {
+        this.subscribers.push(callback);
+    }
 }
+
 
 export default Control;
