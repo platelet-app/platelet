@@ -1,4 +1,4 @@
-import {throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
+import { call, put, takeLatest, select} from 'redux-saga/effects'
 import {
     GET_USERS_REQUEST,
     GET_USER_REQUEST,
@@ -16,7 +16,6 @@ import {
     updateUserFailure,
     deleteUserFailure,
     restoreUserFailure,
-    addUserFailure,
     UPDATE_USER_PASSWORD_REQUEST,
     clearForceResetPasswordStatus,
     restoreUserRequest,
@@ -26,14 +25,15 @@ import {
     getUserNotFound,
 } from "./UsersActions";
 import {getApiControl} from "../Api"
-import {getVehicleFailure, restoreVehicleRequest, getVehicleNotFound} from "../vehicles/VehiclesActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
+import {convertUsersListToObjects} from "./user_redux_utilities";
 
 function* getUsers() {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.users.getUsers]);
-        yield put(getUsersSuccess(result))
+        const converted = yield convertUsersListToObjects(result)
+        yield put(getUsersSuccess(converted))
     } catch (error) {
         yield put(getUsersFailure(error))
     }

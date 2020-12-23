@@ -124,12 +124,12 @@ function UsersSelect(props) {
         let reorderedUsers;
         // put vehicle assigned users at the top
         if (props.vehicleAssignedUsersFirst) {
-            const vehicleUsers = userSuggestions.filter(item => item.assigned_vehicles.length !== 0)
-            const noVehicleUsers = userSuggestions.filter(item => item.assigned_vehicles.length === 0);
+            const vehicleUsers = Object.values(userSuggestions).filter(item => item.assigned_vehicles.length !== 0)
+            const noVehicleUsers = Object.values(userSuggestions).filter(item => item.assigned_vehicles.length === 0);
             reorderedUsers = vehicleUsers.concat(noVehicleUsers);
         }
         else {
-            reorderedUsers = userSuggestions
+            reorderedUsers = Object.values(userSuggestions)
         }
         // if specific roles are requested, filter out the other roles
         const filterRoles = props.roles ? reorderedUsers.filter(user => props.roles.some(r => user.roles.includes(r))) : reorderedUsers
@@ -145,7 +145,7 @@ function UsersSelect(props) {
     }, [userSuggestions]);
 
     function onSelect(selectedItem) {
-        let result = userSuggestions.filter(rider => rider.display_name === selectedItem);
+        let result = Object.values(userSuggestions).filter(rider => rider.display_name === selectedItem);
         if (result.length === 1) {
             let rider = {
                 name: result[0]['name'],
