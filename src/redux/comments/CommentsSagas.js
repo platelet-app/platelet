@@ -72,7 +72,7 @@ export function* getComments(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.comments.getComments], action.data);
-        const converted = convertListDataToObjects(result)
+        const converted = yield convertListDataToObjects(result)
         yield put(getCommentsSuccess(converted))
     } catch (error) {
         if (error.name === "HttpError") {

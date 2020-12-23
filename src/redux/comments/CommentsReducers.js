@@ -11,7 +11,7 @@ import {
 import _ from "lodash"
 
 const initialState = {
-    comments: [],
+    comments: {},
     error: null
 }
 

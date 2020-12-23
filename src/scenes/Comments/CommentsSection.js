@@ -17,7 +17,6 @@ export default function CommentsSection(props) {
     const notFoundSelector = createNotFoundSelector(["GET_COMMENTS"]);
     const notFound = useSelector(state => notFoundSelector(state));
     const comments = useSelector(state => state.comments.comments);
-    console.log(props.parentUUID)
     function updateComments() {
         if (props.parentUUID) {
             dispatch(getCommentsRequest(props.parentUUID));

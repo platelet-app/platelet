@@ -25,8 +25,8 @@ import {
 import {getWhoamiSuccess} from "../Actions"
 import {getUsersSuccess} from "../users/UsersActions"
 import {getApiControl, getWhoami} from "../Api";
-import {restoreTaskRequest} from "../tasks/TasksActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
+import {convertListDataToObjects} from "../redux_utilities";
 
 function* postNewVehicle(action) {
     const api = yield select(getApiControl);
@@ -86,7 +86,8 @@ function* getVehicles() {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.vehicles.getVehicles]);
-        yield put(getAllVehiclesSuccess(result))
+        const converted = convertListDataToObjects(result);
+        yield put(getAllVehiclesSuccess(converted))
     } catch (error) {
         yield put(getAllVehiclesFailure(error))
     }

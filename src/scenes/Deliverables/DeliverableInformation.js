@@ -22,7 +22,7 @@ export default function DeliverableInformation(props) {
               justify={"flex-start"}
               alignItems={"center"}
         >
-            {deliverables.map(deliverable => {
+            {Object.values(deliverables).map(deliverable => {
                 return <><Grid item>
                     <DialogContentText>
                         {deliverable.type ? deliverable.type : "Unknown deliverable type."}

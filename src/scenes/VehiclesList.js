@@ -56,7 +56,7 @@ function VehicleList() {
                                       justify={"flex-start"}
                                       alignItems={"center"}
                                 >
-                                    {vehicles.map((vehicle) => (
+                                    {Object.values(vehicles).map((vehicle) => (
                                         <Grid item key={vehicle.uuid}>
                                             <div style={{cursor: 'context-menu', position: "relative"}}>
                                                 <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)}

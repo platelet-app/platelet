@@ -5,11 +5,10 @@ import {
     RESTORE_USER_SUCCESS,
     DELETE_USER_SUCCESS, UPDATE_USER_SUCCESS, GET_USERS_FAILURE, GET_USER_FAILURE, GET_USER_NOTFOUND
 } from "./UsersActions";
-import update from "immutability-helper";
 import _ from "lodash"
 
 const initialState = {
-    users: [],
+    users: {},
     error: null
 }
 

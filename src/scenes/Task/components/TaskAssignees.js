@@ -55,7 +55,7 @@ export default function TaskAssignees(props) {
                      roles={['rider']}
                      vehicleAssignedUsersFirst={true}
                      onSelect={onSelectRider}
-                     excludeList={assignees.map((u) => u.uuid)}/>
+                     excludeList={Object.values(assignees).map((u) => u.uuid)}/>
 
                      :
         <></>
@@ -68,7 +68,7 @@ export default function TaskAssignees(props) {
                 <Grid item>
                     {noAssigneeMessage}
                 </Grid>
-                {assignees ? assignees.map((user) => {
+                {Object.values(assignees).map((user) => {
                     return (
                         <Grid item key={user.uuid}>
                             <UserCard
@@ -80,7 +80,7 @@ export default function TaskAssignees(props) {
                             />
                         </Grid>
                     )
-                }) : <></>}
+                })}
                 <Grid item>
                     {userSelect}
                 </Grid>

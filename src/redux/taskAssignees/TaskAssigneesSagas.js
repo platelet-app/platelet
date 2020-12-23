@@ -20,6 +20,7 @@ import {
 } from "../tasks/TasksActions";
 import {findExistingTask} from "../../utilities";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
+import {convertListDataToObjects} from "../redux_utilities";
 
 function* addTaskAssignedRider(action) {
     try {
@@ -107,7 +108,8 @@ function* getTaskAssignedRiders(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.getTaskAssignedRiders], action.data);
-        yield put(getTaskAssignedRidersSuccess(result))
+        const converted = convertListDataToObjects(result);
+        yield put(getTaskAssignedRidersSuccess(converted))
     } catch (error) {
         yield put(getTaskAssignedRidersFailure(error))
     }
