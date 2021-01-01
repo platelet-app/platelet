@@ -53,6 +53,8 @@ export default function TaskDialog(props) {
     const isFetchingPriorities = useSelector(state => loadingSelectorPriorities(state));
     const isFetchingUsers = useSelector(state => loadingSelectorUsers(state));
 
+    const savedLocations = useSelector(state => state.availableLocations.locations);
+
     const isPostingPickupSelector = createPostingSelector([
         "UPDATE_TASK_PICKUP_TIME"
     ]);
@@ -69,6 +71,9 @@ export default function TaskDialog(props) {
     const whoamiUUID = useSelector(state => state.whoami.user.uuid);
     const whoamiRoles = useSelector(state => state.whoami.user.roles);
     const actionsRecord = useSelector(state => state.actionsRecord.actionsRecord);
+
+    const [pickUpSaved, setPickUpSaved] = useState("")
+    const [dropOffSaved, setDropOffSaved] = useState("")
 
     let history = useHistory();
     let taskUUID = null;
@@ -117,6 +122,11 @@ export default function TaskDialog(props) {
     }
 
     function onSelectPickupFromSaved(payload) {
+        if (payload && savedLocations) {
+            const result = savedLocations.find(loc => loc.uuid === payload);
+            if (result)
+                setPickUpSaved(result.name)
+        }
         if (payload) {
             dispatch(updateTaskPickupAddressFromSavedRequest({taskUUID, payload}));
         }
@@ -130,6 +140,11 @@ export default function TaskDialog(props) {
     }
 
     function onSelectDropoffFromSaved(payload) {
+        if (payload && savedLocations) {
+            const result = savedLocations.find(loc => loc.uuid === payload);
+            if (result)
+                setDropOffSaved(result.name)
+        }
         if (payload) {
             dispatch(updateTaskDropoffAddressFromSavedRequest({taskUUID, payload}));
         }
@@ -260,6 +275,7 @@ export default function TaskDialog(props) {
                 <PaddedPaper width={"400px"}>
 
                     <Typography variant={"h5"}>From:</Typography>
+                    <Typography>{pickUpSaved}</Typography>
                     <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectPickup}
                                                onSelectPreset={onSelectPickupFromSaved}
@@ -272,6 +288,7 @@ export default function TaskDialog(props) {
                 <PaddedPaper width={"400px"}>
 
                     <Typography variant={"h5"}>To:</Typography>
+                    <Typography>{dropOffSaved}</Typography>
                     <AddressDetailsCollapsible label={""}
                                                onSelect={onSelectDropoff}
                                                onSelectPreset={onSelectDropoffFromSaved}
