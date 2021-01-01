@@ -7,14 +7,24 @@ export const SET_API_URL = "SET_API_URL";
 export const REMOVE_API_URL = "REMOVE_API_URL";
 export const LOGIN_INCORRECT_PASSWORD = "LOGIN_INCORRECT_PASSWORD";
 export const LOGIN_AUTHORISED = "LOGIN_AUTHORISED";
-export const REFRESH_TOKEN = "REFRESH_TOKEN";
+export const REFRESH_TOKEN_REQUEST = "REFRESH_TOKEN_REQUEST";
+export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_REQUEST";
+export const REFRESH_TOKEN_FAILURE = "REFRESH_TOKEN_REQUEST";
 
 export function loginRequest(username, password) {
     return { type: LOGIN_REQUEST, username, password }
 }
 
-export function refreshToken() {
-    return { type: REFRESH_TOKEN }
+export function refreshTokenRequest() {
+    return { type: REFRESH_TOKEN_REQUEST }
+}
+
+export function refreshTokenSuccess(token) {
+    return { type: REFRESH_TOKEN_SUCCESS, token }
+}
+
+export function refreshTokenFailure(error) {
+    return { type: REFRESH_TOKEN_FAILURE, error }
 }
 
 export function loginUserSuccess(token) {

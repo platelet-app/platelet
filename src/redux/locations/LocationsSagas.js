@@ -26,9 +26,10 @@ export function* getLocation(action) {
         const result = yield call([api, api.locations.getLocation], action.data);
         yield put(getLocationSuccess(result))
     } catch(error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404)
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(getLocationNotFound(error))
+            }
         }
         yield put(getLocationFailure(error))
     }

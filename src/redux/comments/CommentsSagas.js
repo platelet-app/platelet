@@ -73,11 +73,11 @@ export function* getComments(action) {
         const result = yield call([api, api.comments.getComments], action.data);
         yield put(getCommentsSuccess(result))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(commentsNotFound())
             }
-        } else if (error.response.status === 403) {
+        } else if (error.status_code === 403) {
             yield put(getCommentsForbidden(error))
         } else {
             yield put(getCommentsFailure(error))
@@ -157,15 +157,15 @@ export function* getSidebarComments(action) {
         const result = yield call([api, api.comments.getComments], action.data);
         yield put(getSidebarCommentsSuccess(result))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(sidebarCommentsNotFound())
-            }
-        } else if (error.response.status === 403) {
-            yield put(getSidebarCommentsForbidden(error))
-        } else {
-            yield put(getSidebarCommentsFailure(error))
+            } else if (error.status_code === 403) {
+                yield put(getSidebarCommentsForbidden(error))
+            } else {
+                yield put(getSidebarCommentsFailure(error))
 
+            }
         }
     }
 }
