@@ -98,7 +98,6 @@ export function DashboardDetailTabs(props) {
     const dispatch = useDispatch();
     const [rightSideBarOpen, setRightSideBarOpen] = useState(false);
     const snack = useSelector(state => state.taskContextMenuSnack);
-    const currentSession = useSelector(state => state.session.session);
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(state => state.whoami.user);
     const roleView = useSelector(state => state.roleView);
@@ -216,10 +215,7 @@ export function DashboardDetailTabs(props) {
                                 </Grid>
                                 <Grid item>
                                     <CollaboratorsSection
-                                        allowAdd={(whoami.uuid === currentSession.coordinator_uuid || whoami.roles.includes("admin"))}
-                                        collaborators={currentSession.collaborators}
-                                        sessionUUID={currentSession.uuid}
-                                        coordinatorUUID={currentSession.coordinator_uuid}
+                                        allowAdd={true}
                                     />
                                 </Grid>
                                 <Grid item>

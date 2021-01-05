@@ -3,7 +3,6 @@ import '../../App.css';
 import 'typeface-roboto'
 import Paper from "@material-ui/core/Paper";
 import {
-    clearCurrentTask,
     setRoleViewAndGetTasks,
     startRefreshTasksLoopFromSocket,
 } from '../../redux/tasks/TasksActions'
@@ -51,11 +50,6 @@ function Dashboard() {
     const [viewMode, setViewMode] = useState(0);
     const roleView = useSelector(state => state.roleView);
 
-
-    function componentDidMount() {
-        dispatch(clearCurrentTask());
-    }
-    useEffect(componentDidMount, []);
 
     function setInitialRoleView() {
         if (whoami.uuid && tasks === initialTasksState.tasks) {

@@ -77,7 +77,6 @@ export const createSubscribeSocketMiddleware = () => {
             case SOCKET_CONNECT: {
                 socket = io.connect(`${apiURL}subscribe`);
                 const token = storeAPI.getState().apiControl.token
-                socket.emit('authenticate', token)
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
                     storeAPI.dispatch(subscribedResponseReceived(message));
@@ -96,6 +95,7 @@ export const createSubscribeSocketMiddleware = () => {
                     }
                     console.log(message.data);
                 });
+                socket.emit('authenticate', token)
                 break;
             }
             case SOCKET_SUBSCRIBE_UUID: {
@@ -268,7 +268,7 @@ export const createSubscribeSocketMiddleware = () => {
                             for (const task of tasks) {
                                 const parent = findExistingTaskParentByID(storeAPI.getState().tasks.tasks, task.parent_id);
                                 if (parent.taskGroup) {
-                                    const findCheck = parent.taskGroup.find(t => t.uuid === task.uuid)
+                                    const findCheck = parent.taskGroup[task.uuid]
                                     if (findCheck) {
                                         storeAPI.dispatch(putTaskFromSocket(task))
                                     } else {

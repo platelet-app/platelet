@@ -10,8 +10,8 @@ export function filterTasks(tasks, search) {
         for (const searchTerm of searchTerms) {
             let filteredResult = [];
             for (const groupList of Object.values(tasks)) {
-                for (const taskGroup of groupList) {
-                    const filtered = taskGroup.filter(task => {
+                for (const taskGroup of Object.values(groupList)) {
+                    const filtered = Object.values(taskGroup).filter(task => {
                         if (task.assigned_riders_display_string ? task.assigned_riders_display_string.toLowerCase().includes(searchTerm) : false) {
                             return true
                         } else if (task.patch ? task.patch.toLowerCase().includes(searchTerm) : false) {

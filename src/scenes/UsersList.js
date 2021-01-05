@@ -31,12 +31,11 @@ export default function UsersList(props) {
     const contextClass = contextDots();
     const dispatch = useDispatch();
     const users = useSelector(state => state.users.users);
-    const [filteredUsers, setFilteredUsers] = useState(users);
     const postingSelector = createPostingSelector(["ADD_USER"]);
     const deletingSelector = createPostingSelector(["DELETE_USER"]);
     const isPosting = useSelector(state => postingSelector(state));
     const isDeleting = useSelector(state => deletingSelector(state));
-    useEffect(() => setFilteredUsers(users), [users]);
+    //useEffect(() => setFilteredUsers(users), [users]);
     const [snack, setSnack] = React.useState(initialSnack)
 
     function dispatchSnack() {
@@ -63,11 +62,12 @@ export default function UsersList(props) {
                         <Grid item>
                             <TextFieldControlled
                                 label={"Search users"}
-                                onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}/>
+                                //onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}
+                            />
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2}>
-                                {filteredUsers.map((user) => (
+                                {Object.values(users).map((user) => (
                                     <Grid key={user.uuid} item>
                                         <div style={{cursor: 'context-menu', position: "relative"}}>
                                             <UserCard key={user.uuid} user={user}/>

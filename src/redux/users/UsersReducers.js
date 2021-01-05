@@ -5,10 +5,10 @@ import {
     RESTORE_USER_SUCCESS,
     DELETE_USER_SUCCESS, UPDATE_USER_SUCCESS, GET_USERS_FAILURE, GET_USER_FAILURE, GET_USER_NOTFOUND
 } from "./UsersActions";
-import update from "immutability-helper";
+import _ from "lodash"
 
 const initialState = {
-    users: [],
+    users: {},
     error: null
 }
 
@@ -19,40 +19,20 @@ export function users(state = initialState, action) {
         case GET_USERS_FAILURE:
             return {...initialState, error: action.error};
         case ADD_USER_SUCCESS:
-            return {
-                users: [
-                    {
-                        ...action.data
-                    },
-                    ...state.users
-                ], error: null
-            };
+            return {users: {...state.users, [action.data.uuid]: action.data}, error: null}
         case UPDATE_USER_SUCCESS:
-            let result = state.users.find(user => user.uuid === action.data.userUUID);
-            if (result) {
-                const updated_item = {...result, ...action.data.payload};
-                const index = state.users.indexOf(result);
-                return {users: update(state.users, {[index]: {$set: updated_item}}), error: null};
+            const user = state.users[action.data.userUUID]
+            if (user) {
+                const updated_item = {...user, ...action.data.payload};
+                return {users: {...state.users, [action.data.userUUID]: updated_item}, error: null}
             } else {
                 return state;
             }
         case RESTORE_USER_SUCCESS:
-            return {
-                users: [
-                    ...state.users,
-                    {
-                        ...action.data
-                    }
-                ], error: null
-            };
-        case DELETE_USER_SUCCESS:
-            let result_delete = state.users.find(user => user.uuid === action.data);
-            if (result_delete) {
-                const index = state.users.indexOf(result_delete);
-                return {users: update(state.users, {$splice: [[index, 1]]}), error: null};
-            } else {
-                return state;
-            }
+            return {users: {...state.users, [action.data.uuid]: action.data}, error: null}
+        case DELETE_USER_SUCCESS: {
+            return {users: _.omit(state.users, action.data), error: null}
+        }
         default:
             return state
     }

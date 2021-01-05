@@ -19,10 +19,9 @@ import {
     updateTaskDropoffTimeRequest,
     updateTaskPickupAddressRequest,
     updateTaskCancelledTimeRequest,
-    clearCurrentTask,
     getTaskRequest,
     updateTaskPickupAddressFromSavedRequest,
-    updateTaskDropoffAddressFromSavedRequest, updateTaskRequesterContactRequest
+    updateTaskDropoffAddressFromSavedRequest, updateTaskRequesterContactRequest, updateTaskRejectedTimeRequest
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux"
 import {PaddedPaper} from "../../styles/common";
@@ -110,20 +109,20 @@ export default function TaskDialog(props) {
 
     function onSelectRequesterContact(value) {
         const payload = {requester_contact: value};
-        dispatch(updateTaskRequesterContactRequest({taskUUID, payload}));
+        dispatch(updateTaskRequesterContactRequest(taskUUID, payload));
 
     }
 
     function onSelectPickup(pickupAddress) {
         if (pickupAddress) {
             const payload = {pickup_address: pickupAddress};
-            dispatch(updateTaskPickupAddressRequest({taskUUID, payload}));
+            dispatch(updateTaskPickupAddressRequest(taskUUID, payload));
         }
     }
 
     function onSelectPickupFromSaved(payload) {
         if (payload && savedLocations) {
-            const result = savedLocations.find(loc => loc.uuid === payload);
+            const result = savedLocations[payload];
             if (result)
                 setPickUpSaved(result.name)
         }
@@ -141,7 +140,7 @@ export default function TaskDialog(props) {
 
     function onSelectDropoffFromSaved(payload) {
         if (payload && savedLocations) {
-            const result = savedLocations.find(loc => loc.uuid === payload);
+            const result = savedLocations[payload];
             if (result)
                 setDropOffSaved(result.name)
         }
@@ -153,17 +152,17 @@ export default function TaskDialog(props) {
 
     function onSelectPriority(priority_id, priority) {
         const payload = {priority_id, priority};
-        dispatch(updateTaskPriorityRequest({taskUUID, payload}));
+        dispatch(updateTaskPriorityRequest(taskUUID, payload));
     }
 
     function onSelectPickedUp(dateTime) {
         const payload = {time_picked_up: dateTime};
-        dispatch(updateTaskPickupTimeRequest({taskUUID, payload}));
+        dispatch(updateTaskPickupTimeRequest(taskUUID, payload));
     }
 
     function onSelectDroppedOff(dateTime) {
         const payload = {time_dropped_off: dateTime};
-        dispatch(updateTaskDropoffTimeRequest({taskUUID, payload}));
+        dispatch(updateTaskDropoffTimeRequest(taskUUID, payload));
     }
 
     let handleClose = e => {
@@ -173,7 +172,6 @@ export default function TaskDialog(props) {
         else
             history.push("/");
 
-        dispatch(clearCurrentTask());
     };
 
     const usersSelect = editMode ?
@@ -206,7 +204,7 @@ export default function TaskDialog(props) {
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_cancelled}
                                  onSelect={() => {
                                      const payload = {time_cancelled: null};
-                                     dispatch(updateTaskCancelledTimeRequest({taskUUID, payload}));
+                                     dispatch(updateTaskCancelledTimeRequest(taskUUID, payload));
                                  }
                                  }/>
             </PaddedPaper>
@@ -221,7 +219,7 @@ export default function TaskDialog(props) {
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_rejected}
                                  onSelect={() => {
                                      const payload = {time_rejected: null};
-                                     dispatch(updateTaskCancelledTimeRequest({taskUUID, payload}));
+                                     dispatch(updateTaskRejectedTimeRequest(taskUUID, payload));
                                  }
                                  }/>
             </PaddedPaper>

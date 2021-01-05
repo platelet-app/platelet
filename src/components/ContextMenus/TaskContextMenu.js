@@ -57,24 +57,24 @@ export default function TaskContextMenu(props) {
     function onSelectPickedUp() {
         handleClose();
         const payload = {time_picked_up: new Date().toISOString()};
-        dispatch(updateTaskPickupTimeRequest({ taskUUID: props.taskUUID, payload }));
+        dispatch(updateTaskPickupTimeRequest( props.taskUUID, payload ));
     }
 
     function onSelectDroppedOff() {
         handleClose();
         const payload = {time_dropped_off: new Date().toISOString()};
-        dispatch(updateTaskDropoffTimeRequest({ taskUUID: props.taskUUID, payload }));
+        dispatch(updateTaskDropoffTimeRequest(props.taskUUID, payload ));
     }
     function onSelectCancelled() {
         handleClose();
         const payload = {time_cancelled: new Date().toISOString()};
-        dispatch(updateTaskCancelledTimeRequest({ taskUUID: props.taskUUID, payload }));
+        dispatch(updateTaskCancelledTimeRequest(props.taskUUID, payload ));
     }
 
     function onSelectRejected() {
         handleClose();
         const payload = {time_rejected: new Date().toISOString()};
-        dispatch(updateTaskRejectedTimeRequest({ taskUUID: props.taskUUID, payload }));
+        dispatch(updateTaskRejectedTimeRequest(props.taskUUID, payload ));
     }
 
     function onDelete(result) {

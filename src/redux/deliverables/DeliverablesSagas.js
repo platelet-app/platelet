@@ -15,6 +15,7 @@ import {
 } from "./DeliverablesActions"
 
 import {getApiControl} from "../Api";
+import {convertListDataToObjects} from "../redux_utilities";
 
 export function* postNewDeliverable(action) {
     try {
@@ -34,7 +35,7 @@ export function* watchPostNewDeliverable() {
 export function* deleteDeliverable(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.deliverables.deleteDeliverable], action.data);
+        yield call([api, api.deliverables.deleteDeliverable], action.data);
         yield put(deleteDeliverableSuccess(action.data))
     } catch (error) {
         yield put(deleteDeliverableFailure(error))
@@ -63,7 +64,8 @@ export function* getDeliverables(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.deliverables.getDeliverables], action.data);
-        yield put(getDeliverablesSuccess(result))
+        const converted = yield convertListDataToObjects(result);
+        yield put(getDeliverablesSuccess(converted))
     } catch (error) {
         yield put(getDeliverablesFailure(error))
     }

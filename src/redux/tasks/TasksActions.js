@@ -15,10 +15,6 @@ export const RESTORE_TASK_REQUEST = "RESTORE_TASK_REQUEST";
 export const RESTORE_TASK_SUCCESS = "RESTORE_TASK_SUCCESS";
 export const RESTORE_TASK_FAILURE = "RESTORE_TASK_FAILURE";
 
-export const APPEND_TASKS_REQUEST = "APPEND_TASKS_REQUEST";
-export const APPEND_TASKS_SUCCESS = "APPEND_TASKS_SUCCESS";
-export const APPEND_TASKS_FAILURE = "APPEND_TASKS_FAILURE";
-
 export const PUT_TASK_SUCCESS = "PUT_TASK_SUCCESS";
 export const PUT_TASK_FROM_SOCKET = "PUT_TASK_FROM_SOCKET";
 
@@ -103,21 +99,8 @@ export const RESET_GROUP_RELAY_UUIDS = "RESET_GROUP_RELAY_UUIDS";
 export const GROUP_RELAYS_TOGETHER = "GROUP_RELAYS_TOGETHER";
 
 
-export function appendTaskRequest(data) {
-    return { type: APPEND_TASKS_REQUEST, data }
-}
-
-export function appendTaskSuccess(data) {
-    return { type: APPEND_TASKS_SUCCESS, data }
-}
-
-export function appendTaskFailure(error) {
-    return { type: APPEND_TASKS_FAILURE, error }
-}
-
-
-export function restoreTaskRequest(data) {
-    return { type: RESTORE_TASK_REQUEST, data }
+export function restoreTaskRequest(taskUUID) {
+    return { type: RESTORE_TASK_REQUEST, data: {taskUUID }}
 }
 
 export function restoreTaskSuccess(data) {
@@ -136,16 +119,8 @@ export function putTaskFromSocket(data) {
     return { type: PUT_TASK_FROM_SOCKET, data }
 }
 
-export function getTaskRequest(data) {
-    return { type: GET_TASK_REQUEST, data }
-}
-
-export function setCurrentTask(data) {
-    return { type: SET_CURRENT_TASK, data }
-}
-
-export function clearCurrentTask() {
-    return { type: CLEAR_CURRENT_TASK }
+export function getTaskRequest(taskUUID) {
+    return { type: GET_TASK_REQUEST, data: {taskUUID} }
 }
 
 export function getTaskSuccess(data) {
@@ -160,8 +135,8 @@ export function getTaskNotFound(error) {
     return { type: GET_TASK_NOTFOUND, error }
 }
 
-export function addTaskRequest(data) {
-    return { type: ADD_TASK_REQUEST, data }
+export function addTaskRequest(payload) {
+    return { type: ADD_TASK_REQUEST, data: {payload }}
 }
 
 export function addTaskSuccess(data) {
@@ -173,7 +148,7 @@ export function addTaskFailure(error) {
 }
 
 export function addTaskRelayRequest(relayPrevious) {
-    return { type: ADD_TASK_RELAY_REQUEST, relayPrevious }
+    return { type: ADD_TASK_RELAY_REQUEST, data: {relayPrevious }}
 }
 
 export function addTaskRelaySuccess(data) {
@@ -184,8 +159,8 @@ export function addTaskRelayFailure(error) {
     return { type: ADD_TASK_RELAY_FAILURE, error }
 }
 
-export function deleteTaskRequest(data) {
-    return { type: DELETE_TASK_REQUEST, data }
+export function deleteTaskRequest(taskUUID) {
+    return { type: DELETE_TASK_REQUEST, data: {taskUUID }}
 }
 
 export function deleteTaskSuccess(data) {
@@ -196,8 +171,8 @@ export function deleteTaskFailure(error) {
     return { type: DELETE_TASK_FAILURE, error }
 }
 
-export function updateTaskRequest(data) {
-    return { type: UPDATE_TASK_REQUEST, data }
+export function updateTaskRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_REQUEST, data: {taskUUID, payload} }
 }
 
 export function addTaskFromSocket(data) {
@@ -240,32 +215,32 @@ export function startRefreshTasksLoopFromSocket(userUUID) {
     return {type: START_REFRESH_TASKS_LOOP_FROM_SOCKET, userUUID}
 }
 
-export function updateTaskRequesterContactRequest(data) {
-    return { type: UPDATE_TASK_REQUESTER_CONTACT_REQUEST, data }
+export function updateTaskRequesterContactRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_REQUESTER_CONTACT_REQUEST, data: {taskUUID, payload }}
 }
-export function updateTaskPickupAddressRequest(data) {
-    return { type: UPDATE_TASK_PICKUP_ADDRESS_REQUEST, data }
+export function updateTaskPickupAddressRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_PICKUP_ADDRESS_REQUEST, data: {taskUUID, payload }}
 }
-export function updateTaskPickupAddressFromSavedRequest(data) {
-    return { type: UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST, data }
+export function updateTaskPickupAddressFromSavedRequest(taskUUID, locationUUID) {
+    return { type: UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST, data: {taskUUID, locationUUID }}
 }
-export function updateTaskDropoffAddressFromSavedRequest(data) {
-    return { type: UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST, data }
+export function updateTaskDropoffAddressFromSavedRequest(taskUUID, locationUUID) {
+    return { type: UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST, data: { taskUUID, locationUUID }}
 }
-export function updateTaskDropoffAddressRequest(data) {
-    return { type: UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, data }
+export function updateTaskDropoffAddressRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, data: {taskUUID, payload} }
 }
-export function updateTaskPickupTimeRequest(data) {
-    return { type: UPDATE_TASK_PICKUP_TIME_REQUEST, data }
+export function updateTaskPickupTimeRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_PICKUP_TIME_REQUEST, data: {taskUUID, payload} }
 }
-export function updateTaskDropoffTimeRequest(data) {
-    return { type: UPDATE_TASK_DROPOFF_TIME_REQUEST, data }
+export function updateTaskDropoffTimeRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_DROPOFF_TIME_REQUEST, data: {taskUUID, payload} }
 }
-export function updateTaskCancelledTimeRequest(data) {
-    return { type: UPDATE_TASK_CANCELLED_TIME_REQUEST, data }
+export function updateTaskCancelledTimeRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_CANCELLED_TIME_REQUEST, data: {taskUUID, payload} }
 }
-export function updateTaskRejectedTimeRequest(data) {
-    return { type: UPDATE_TASK_REJECTED_TIME_REQUEST, data }
+export function updateTaskRejectedTimeRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_REJECTED_TIME_REQUEST, data: {taskUUID, payload} }
 }
 export function updateTaskAssignedRiderRequest(data) {
     return { type: UPDATE_TASK_ASSIGNED_RIDER_REQUEST, data }
@@ -275,16 +250,16 @@ export function updateTaskAssignedCoordinatorRequest(data) {
     return { type: UPDATE_TASK_ASSIGNED_COORDINATOR_REQUEST, data }
 }
 
-export function updateTaskPriorityRequest(data) {
-    return { type: UPDATE_TASK_PRIORITY_REQUEST, data }
+export function updateTaskPriorityRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_PRIORITY_REQUEST, data: {taskUUID, payload} }
 }
 
-export function updateTaskPatchRequest(data) {
-    return { type: UPDATE_TASK_PATCH_REQUEST, data }
+export function updateTaskPatchRequest(taskUUID, payload) {
+    return { type: UPDATE_TASK_PATCH_REQUEST, data: {taskUUID, payload} }
 }
 
-export function updateTaskPatchFromServer(data) {
-    return { type: UPDATE_TASK_PATCH_FROM_SERVER, data }
+export function updateTaskPatchFromServer(taskUUID) {
+    return { type: UPDATE_TASK_PATCH_FROM_SERVER, data: {taskUUID} }
 }
 
 export function updateTaskRequesterContactSuccess(data) {
@@ -377,20 +352,20 @@ export function updateTaskPatchFailure(error) {
     return { type: UPDATE_TASK_PATCH_FAILURE, error }
 }
 
-export function getAllTasksRequest(data, page, role) {
-    return { type: GET_TASKS_REQUEST, data, page, role }
+export function getAllTasksRequest(userUUID, page, role) {
+    return { type: GET_TASKS_REQUEST, data: {userUUID, page, role} }
 }
 
 export function setRoleViewAndGetTasks(userUUID, page, role) {
-    return { type: SET_ROLE_VIEW_AND_GET_TASKS, userUUID, page, role }
+    return { type: SET_ROLE_VIEW_AND_GET_TASKS, data: {userUUID, page, role} }
 }
 
 export function getAllTasksSuccess(data) {
     return { type: GET_TASKS_SUCCESS, data }
 }
 
-export function refreshAllTasksRequest(data) {
-    return { type: REFRESH_TASKS_REQUEST, data }
+export function refreshAllTasksRequest(userUUID) {
+    return { type: REFRESH_TASKS_REQUEST, userUUID }
 }
 
 export function refreshAllTasksSuccess(data) {
@@ -437,8 +412,8 @@ export function refreshAllMyTasksNotFound(error) {
     return { type: REFRESH_MY_TASKS_NOTFOUND, error }
 }
 
-export function resetGroupRelayUUIDs(data) {
-    return { type: RESET_GROUP_RELAY_UUIDS, data }
+export function resetGroupRelayUUIDs(parentID) {
+    return { type: RESET_GROUP_RELAY_UUIDS, parentID }
 }
 
 export function groupRelaysTogether() {

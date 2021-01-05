@@ -4,7 +4,6 @@ import {
     addDeliverableRequest,
     deleteDeliverableRequest,
     getDeliverablesRequest,
-    updateDeliverableRequest
 } from "../../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
@@ -72,7 +71,7 @@ export default function DeliverableGridSelect(props) {
                   justify={"flex-start"}
                   alignItems={"flex-start"}
             >
-                {deliverables.map(deliverable => {
+                {Object.values(deliverables).map(deliverable => {
                     return (
                         <Grid item key={deliverable.uuid}>
                             <DeliverableCard

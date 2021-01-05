@@ -12,14 +12,14 @@ import {TasksKanbanColumn} from "../styles/TaskColumns";
 import Button from "@material-ui/core/Button";
 import {Waypoint} from "react-waypoint";
 import {
-    addTaskRelayRequest, addTaskRequest, appendTaskRequest,
+    addTaskRelayRequest, addTaskRequest,
     updateTaskDropoffAddressRequest
 } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {filterTasks} from "../utilities/functions";
-import {CircularProgress, LinearProgress, Typography} from "@material-ui/core";
+import {CircularProgress, Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import TasksGridSkeleton from "./TasksGridSkeleton";
 import PropTypes from 'prop-types'
@@ -83,7 +83,9 @@ const useStyles = makeStyles(theme => ({
 const TaskGroup = props => {
     const classes = props.classes;
     const {show, hide} = showHide();
-    return !props.group ? <></> : props.group.map((task, i, arr) => {
+    const taskArr = Object.entries(props.group).map(([key, value]) => value)
+    taskArr.sort((a, b) => a.order_in_relay - b.order_in_relay)
+    return taskArr.length === 0 ? <></> : taskArr.map((task, i, arr) => {
         const {
             pickup_address,
             dropoff_address,
@@ -181,6 +183,7 @@ const GridColumn = (props) => {
     const endlessLoadEnd = useSelector(state => notFoundSelector(state));
     const isFetchingSelector = createSimpleLoadingSelector([selectorsString]);
     const endlessLoadIsFetching = useSelector(state => isFetchingSelector(state));
+    const roleView = useSelector(state => state.roleView);
     const dispatchAppendFunctions = {
         tasksCancelled: (endlessLoadEnd || endlessLoadIsFetching) ? () => ({type: "IGNORE"}) : appendTasksCancelledRequest,
         tasksDelivered: (endlessLoadEnd || endlessLoadIsFetching) ? () => ({type: "IGNORE"}) : appendTasksDeliveredRequest,
@@ -199,6 +202,10 @@ const GridColumn = (props) => {
                 Create New
             </Button> :
             <Typography className={classes.header}>{props.title}</Typography>
+
+
+    const tasksList = Object.entries(tasks).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).reverse();
+    const lastParent = tasksList.length === 0 ? 0 : tasksList[tasksList.length - 1][0]
 
     return (
         <TasksKanbanColumn>
@@ -219,31 +226,29 @@ const GridColumn = (props) => {
                           key={props.title + "column"}
                     >
 
-                        {tasks.map(taskList => {
+                        {tasksList.map(([key, jobs]) => {
                             return (
-                                <Grid item key={taskList[0].parent_id}>
-                                    <TaskGroup {...props} group={taskList}/>
+                                <Grid item key={key}>
+                                    <TaskGroup {...props} group={jobs}/>
                                 </Grid>
                             )
-                        })}
+                        })
+                        }
                         {(["tasksDelivered", "tasksRejected", "tasksCancelled"].includes(props.taskKey)) ?
                             <React.Fragment>
                                 <Waypoint
                                     onEnter={() => {
                                         if (props.showTasks)
                                             return;
-                                        const lastGroup = tasks[tasks.length - 1]
-                                        let beforeParent;
-                                        if (lastGroup)
-                                            beforeParent = lastGroup[lastGroup.length - 1].parent_id
-                                        dispatch(appendFunction(
-                                            whoami.uuid,
-                                            1,
-                                            "coordinator",
-                                            props.taskKey,
-                                            beforeParent
-                                        ))
-                                        console.log("YAY ENTER")
+                                        if (lastParent) {
+                                            dispatch(appendFunction(
+                                                whoami.uuid,
+                                                1,
+                                                roleView,
+                                                props.taskKey,
+                                                lastParent
+                                            ))
+                                        }
                                     }
                                     }
                                 />
@@ -309,10 +314,10 @@ function TasksGrid(props) {
 
     const addRelay = React.useCallback((data) => {
         dispatch(addTaskRelayRequest(data));
-        dispatch(updateTaskDropoffAddressRequest({
-            taskUUID: data.relay_previous_uuid,
-            payload: {dropoff_address: null}
-        }));
+        dispatch(updateTaskDropoffAddressRequest(
+            data.relay_previous_uuid,
+            {dropoff_address: null}
+        ));
 
     }, [])
 
