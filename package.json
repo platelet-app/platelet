@@ -17,6 +17,7 @@
     "immutability-helper": "^3.1.1",
     "libphonenumber-js": "^1.8.7",
     "lodash": "^4.17.20",
+    "match-sorter": "^6.1.0",
     "material-table": "^1.69.1",
     "material-ui-image": "^3.3.0",
     "material-ui-popup-state": "^1.7.0",

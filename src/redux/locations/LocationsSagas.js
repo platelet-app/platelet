@@ -5,12 +5,13 @@ import {
 } from "./LocationsActions"
 
 import { getApiControl } from "../Api";
+import {convertListDataToObjects} from "../redux_utilities";
 
 export function* getAvailableLocations() {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.locations.getAvailableLocations]);
-        yield put(getAvailableLocationsSuccess(result))
+        yield put(getAvailableLocationsSuccess(convertListDataToObjects(result)))
     } catch(error) {
         yield put(getAvailableLocationsFailure(error))
     }

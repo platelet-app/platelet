@@ -5,7 +5,7 @@ import {
 } from "./LocationsActions";
 
 const initialState = {
-    locations: [],
+    locations: {},
     error: null
 }
 

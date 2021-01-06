@@ -127,14 +127,14 @@ export default function TaskDialog(props) {
                 setPickUpSaved(result.name)
         }
         if (payload) {
-            dispatch(updateTaskPickupAddressFromSavedRequest({taskUUID, payload}));
+            dispatch(updateTaskPickupAddressFromSavedRequest(taskUUID, payload));
         }
     }
 
     function onSelectDropoff(dropoffAddress) {
         if (dropoffAddress) {
             const payload = {dropoff_address: dropoffAddress};
-            dispatch(updateTaskDropoffAddressRequest({taskUUID, payload}));
+            dispatch(updateTaskDropoffAddressRequest(taskUUID, payload));
         }
     }
 
@@ -145,7 +145,7 @@ export default function TaskDialog(props) {
                 setDropOffSaved(result.name)
         }
         if (payload) {
-            dispatch(updateTaskDropoffAddressFromSavedRequest({taskUUID, payload}));
+            dispatch(updateTaskDropoffAddressFromSavedRequest(taskUUID, payload));
         }
     }
 
@@ -274,7 +274,7 @@ export default function TaskDialog(props) {
 
                     <Typography variant={"h5"}>From:</Typography>
                     <Typography>{pickUpSaved}</Typography>
-                    <AddressDetailsCollapsible label={""}
+                    <AddressDetailsCollapsible label={"Pickup Locations"}
                                                onSelect={onSelectPickup}
                                                onSelectPreset={onSelectPickupFromSaved}
                                                address={task.pickup_address}
@@ -287,7 +287,7 @@ export default function TaskDialog(props) {
 
                     <Typography variant={"h5"}>To:</Typography>
                     <Typography>{dropOffSaved}</Typography>
-                    <AddressDetailsCollapsible label={""}
+                    <AddressDetailsCollapsible label={"Delivery Locations"}
                                                onSelect={onSelectDropoff}
                                                onSelectPreset={onSelectDropoffFromSaved}
                                                address={task.dropoff_address}

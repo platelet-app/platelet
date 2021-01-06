@@ -53,6 +53,7 @@ export default function AddressDetailsCollapsible(props){
             presetSelect = presetMode ?
                 <FavouriteLocationsSelect id="addressSelect" suggestions={props.suggestions}
                                           onSelect={onSelectPreset}
+                                          label={props.label}
                                           disabled={props.disabled}/> : <></>;
         }
 
