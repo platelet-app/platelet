@@ -25,7 +25,8 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
         headers: new Headers({
             'Authorization': auth,
             'Content-type': content_type ? content_type :  "text/html",
-            "Access-Control-Allow-Credentials": true
+            "Access-Control-Allow-Credentials": true,
+            "Tab-Identification": getTabIdentifier()
         }),
         body: data ? JSON.stringify(data) : undefined
     }
@@ -38,20 +39,6 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
             return data;
         }).catch(function (error) {
             console.log('Request failed', error);
-            store.addNotification({
-                title: "An error has occurred.",
-                //TODO: proper error messages from the api
-                message: "For some reason.",
-                type: "danger",
-                insert: "top",
-                container: "top-right",
-                animationIn: ["animated", "fadeIn"],
-                animationOut: ["animated", "fadeOut"],
-                dismiss: {
-                    duration: 10000,
-                    onScreen: true
-                }
-            });
             throw error;
         });
 
@@ -86,9 +73,6 @@ function makeAxios(api_url, url, type, auth, content_type = undefined, data = {}
                 return response.data;
         }).catch(function (error) {
             console.log('Request failed', error.response);
-            if (error.response) {
-                throw new HttpError("An HTTP exception has occurred.", error.response)
-            }
             throw error;
         });
 
@@ -102,31 +86,31 @@ class Vehicle {
     }
 
     async getVehicles(user_id) {
-        return makeAxios(this.api_url, "vehicles", "GET", this.bearer)
+        return makeFetch(this.api_url, "vehicles", "GET", this.bearer)
     }
 
     async getVehicle(vehicle_id) {
-        return makeAxios(this.api_url, "vehicle/" + vehicle_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "GET", this.bearer)
     }
 
     async createVehicle(input_data) {
-        return makeAxios(this.api_url,  "vehicles", "POST", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url,  "vehicles", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateVehicle(vehicle_id, input_data) {
-        return makeAxios(this.api_url, "vehicle/" + vehicle_id, "PATCH", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "PATCH", this.bearer, "application/json", input_data)
     }
 
     async putVehicle(vehicle_id, input_data) {
-        return makeAxios(this.api_url, "vehicle/" + vehicle_id, "PUT", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteVehicle(vehicle_id) {
-        return makeAxios(this.api_url, "vehicle/" + vehicle_id, "DELETE", this.bearer, "application/json")
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id, "DELETE", this.bearer, "application/json")
     }
 
     async restoreVehicle(vehicle_id) {
-        return makeAxios(this.api_url, "vehicle/" + vehicle_id + "/restore", "PUT", this.bearer, "application/json")
+        return makeFetch(this.api_url, "vehicle/" + vehicle_id + "/restore", "PUT", this.bearer, "application/json")
     }
 }
 
@@ -135,22 +119,22 @@ class Location {
         this.bearer = bearer;
         this.api_url = api_url;
         this.availableLocations = [];
-        /*makeAxios(this.api_url, "locations", "GET", this.bearer)
+        /*makeFetch(this.api_url, "locations", "GET", this.bearer)
             .then((data) => {
                 this.availableLocations = data;
             });*/
     }
 
     async getAvailableLocations() {
-        return makeAxios(this.api_url, "locations", "GET", this.bearer);
+        return makeFetch(this.api_url, "locations", "GET", this.bearer);
     }
 
     async getLocation(location_id) {
-        return makeAxios(this.api_url, "location/" + location_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "location/" + location_id, "GET", this.bearer)
     }
 
     async createLocation(input_data) {
-        return makeAxios(this.api_url, "locations", "POST", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "locations", "POST", this.bearer, "application/json", input_data)
     }
 }
 
@@ -161,31 +145,31 @@ class Comment {
     }
 
     async getComments(item_id) {
-        return makeAxios(this.api_url, "comments/" + item_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "comments/" + item_id, "GET", this.bearer)
     }
 
     async getComment(comment_id) {
-        return makeAxios(this.api_url, "comment/" + comment_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "comment/" + comment_id, "GET", this.bearer)
     }
 
     async createComment(input_data) {
-        return makeAxios(this.api_url, "comments", "POST", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "comments", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateComment(comment_id, input_data) {
-        return makeAxios(this.api_url, "comment/" + comment_id, "PATCH", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "comment/" + comment_id, "PATCH", this.bearer, "application/json", input_data)
     }
 
     async putComment(comment_id, input_data) {
-        return makeAxios(this.api_url, "comment/" + comment_id, "PUT", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "comment/" + comment_id, "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteComment(comment_id) {
-        return makeAxios(this.api_url, "comment/" + comment_id, "DELETE", this.bearer, "application/json")
+        return makeFetch(this.api_url, "comment/" + comment_id, "DELETE", this.bearer, "application/json")
     }
 
     async restoreComment(comment_id) {
-        return makeAxios(this.api_url, "comment/" + comment_id + "/restore", "PUT", this.bearer, "application/json")
+        return makeFetch(this.api_url, "comment/" + comment_id + "/restore", "PUT", this.bearer, "application/json")
     }
 }
 
@@ -197,59 +181,59 @@ class Task {
 
     async getTasks(user_id, page, role, status, before_parent, order="descending") {
         //const afterEncoded = encodeURIComponent(after);
-        return makeAxios(this.api_url,`tasks/${user_id}?page=${(page || "0")}&role=${role || ""}&status=${status || ""}&before_parent=${(before_parent || "")}&order=${order}`, "GET", this.bearer)
+        return makeFetch(this.api_url,`tasks/${user_id}?page=${(page || "0")}&role=${role || ""}&status=${status || ""}&before_parent=${(before_parent || "")}&order=${order}`, "GET", this.bearer)
     }
 
     async getTask(task_id) {
-        return makeAxios(this.api_url, "task/" + task_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "task/" + task_id, "GET", this.bearer)
     }
 
     async createTask(input_data) {
-        return makeAxios(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateTask(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id, "PATCH", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "task/" + task_id, "PATCH", this.bearer, "application/json", input_data)
     }
 
     async putTask(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id, "PUT", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "task/" + task_id, "PUT", this.bearer, "application/json", input_data)
     }
 
     async getTaskAssignees(task_id) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users", "GET", this.bearer, "application/json")
+        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users", "GET", this.bearer, "application/json")
     }
 
     async getTaskAssignedRiders(task_id) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "GET", this.bearer, "application/json")
+        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "GET", this.bearer, "application/json")
     }
 
     async getTaskAssignedCoordinators(task_id) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "GET", this.bearer, "application/json")
+        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "GET", this.bearer, "application/json")
     }
 
     async addTaskAssignedRider(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "PUT", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "PUT", this.bearer, "application/json", input_data)
     }
 
     async addTaskAssignedCoordinator(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "PUT", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "PUT", this.bearer, "application/json", input_data)
     }
 
     async removeTaskAssignedRider(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "DELETE", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users?role=rider", "DELETE", this.bearer, "application/json", input_data)
     }
 
     async removeTaskAssignedCoordinator(task_id, input_data) {
-        return makeAxios(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "DELETE", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "DELETE", this.bearer, "application/json", input_data)
     }
 
     async deleteTask(task_id) {
-        return makeAxios(this.api_url, "task/" + task_id, "DELETE", this.bearer, "application/json")
+        return makeFetch(this.api_url, "task/" + task_id, "DELETE", this.bearer, "application/json")
     }
 
     async restoreTask(task_id) {
-        return makeAxios(this.api_url, "task/" + task_id + "/restore", "PUT", this.bearer, "application/json")
+        return makeFetch(this.api_url, "task/" + task_id + "/restore", "PUT", this.bearer, "application/json")
     }
 }
 
@@ -260,37 +244,37 @@ class Deliverable {
     }
 
     async getDeliverables(task_id) {
-        return makeAxios(this.api_url, "deliverables/" + task_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "deliverables/" + task_id, "GET", this.bearer)
     }
 
     async getDeliverable(deliverable_id) {
-        return makeAxios(this.api_url, "deliverable/" + deliverable_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "deliverable/" + deliverable_id, "GET", this.bearer)
     }
 
     async createDeliverable(input_data) {
-        return makeAxios(this.api_url, "deliverables", "POST", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "deliverables", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateDeliverable(deliverable_id, input_data) {
-        return makeAxios(this.api_url, "deliverable/" + deliverable_id, "PATCH", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "deliverable/" + deliverable_id, "PATCH", this.bearer, "application/json", input_data)
     }
 
     async putDeliverable(deliverable_id, input_data) {
-        return makeAxios(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "deliverable/" + deliverable_id, "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteDeliverable(deliverable_id) {
-        return makeAxios(this.api_url, "deliverable/" + deliverable_id, "DELETE", this.bearer, "application/json")
+        return makeFetch(this.api_url, "deliverable/" + deliverable_id, "DELETE", this.bearer, "application/json")
     }
 
     async restoreDeliverable(deliverable_id) {
         //not implemented yet
         return;
-        return makeAxios(this.api_url, "deliverable/" + deliverable_id + "/restore", "PUT", this.bearer, "application/json")
+        return makeFetch(this.api_url, "deliverable/" + deliverable_id + "/restore", "PUT", this.bearer, "application/json")
     }
 
     async getAvailableDeliverables() {
-        return makeAxios(this.api_url, "deliverables/available", "GET", this.bearer, "application/json");
+        return makeFetch(this.api_url, "deliverables/available", "GET", this.bearer, "application/json");
     }
 }
 
@@ -302,7 +286,7 @@ class Priority {
     }
 
     async getAvailablePriorities() {
-        return makeAxios(this.api_url, "priorities", "GET", this.bearer);
+        return makeFetch(this.api_url, "priorities", "GET", this.bearer);
     }
 }
 
@@ -313,7 +297,7 @@ class Patch {
     }
 
     async getAvailablePatches() {
-        return makeAxios(this.api_url, "patches", "GET", this.bearer);
+        return makeFetch(this.api_url, "patches", "GET", this.bearer);
     }
 }
 
@@ -325,11 +309,11 @@ class Log {
     }
 
     async getRecords(object_id, order="newest") {
-        return makeAxios(this.api_url, "logs/" + object_id + "?order=" + order, "GET", this.bearer);
+        return makeFetch(this.api_url, "logs/" + object_id + "?order=" + order, "GET", this.bearer);
     }
 
     async getTasksRecords(user_uuid, order="newest") {
-        return makeAxios(this.api_url, "logs/" + user_uuid + "/user_tasks_log_record?order=" + order + "&return=others_only", "GET", this.bearer);
+        return makeFetch(this.api_url, "logs/" + user_uuid + "/user_tasks_log_record?order=" + order + "&return=others_only", "GET", this.bearer);
     }
 }
 
@@ -342,50 +326,50 @@ class User {
     }
 
     async getUsers() {
-        return makeAxios(this.api_url, "users", "GET", this.bearer);
+        return makeFetch(this.api_url, "users", "GET", this.bearer);
     }
 
     async getUser(user_id) {
-        return makeAxios(this.api_url, "user/" + user_id, "GET", this.bearer)
+        return makeFetch(this.api_url, "user/" + user_id, "GET", this.bearer)
 
     }
 
     async createUser(input_data) {
-        return makeAxios(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "users", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateUser(user_id, input_data) {
-        return makeAxios(this.api_url, "user/" + user_id, "PATCH", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "user/" + user_id, "PATCH", this.bearer, "application/json", input_data)
     }
 
     async putUser(user_id, input_data) {
-        return makeAxios(this.api_url, "user/" + user_id, "PUT", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "user/" + user_id, "PUT", this.bearer, "application/json", input_data)
     }
 
     //async uploadProfilePicture(user_id, image_data, crop_dimensions) {
     //    let bodyFormData = new FormData();
     //    bodyFormData.append('file', image_data)
     //    bodyFormData.append('crop_dimensions', crop_dimensions)
-    //    return makeAxios(this.api_url, "user/" + user_id + "profile_picture", "POST", this.bearer, "multipart/form-data", bodyFormData)
+    //    return makeFetch(this.api_url, "user/" + user_id + "profile_picture", "POST", this.bearer, "multipart/form-data", bodyFormData)
     //}
     async uploadProfilePicture(user_id, input_data) {
-        return makeAxios(this.api_url, "user/" + user_id + "/profile_picture", "PUT", this.bearer, "application/json", input_data)
+        return makeFetch(this.api_url, "user/" + user_id + "/profile_picture", "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteUser(user_id) {
-        return makeAxios(this.api_url, "user/" + user_id, "DELETE", this.bearer, "application/json")
+        return makeFetch(this.api_url, "user/" + user_id, "DELETE", this.bearer, "application/json")
     }
 
     async restoreUser(user_id) {
-        return makeAxios(this.api_url, "user/" + user_id + "/restore", "PUT", this.bearer, "application/json")
+        return makeFetch(this.api_url, "user/" + user_id + "/restore", "PUT", this.bearer, "application/json")
     }
 
     async getAssignedTasks(user_id) {
-        return makeAxios(this.api_url, "user/" + user_id + '/tasks', "GET", this.bearer)
+        return makeFetch(this.api_url, "user/" + user_id + '/tasks', "GET", this.bearer)
     }
 
     async whoami() {
-        return makeAxios(this.api_url, 'whoami', "GET", this.bearer)
+        return makeFetch(this.api_url, 'whoami', "GET", this.bearer)
     }
 }
 
@@ -397,7 +381,7 @@ class Statistics {
     }
 
     async getUserStatistics(userUUID, startDateTime, endDateTime, role="coordinator") {
-        return makeAxios(
+        return makeFetch(
             this.api_url,
             `statistics/${userUUID}?role=${role}&start_date_time=${startDateTime}&end_date_time=${endDateTime}`,
             "GET",
@@ -459,7 +443,7 @@ class Control {
     }
 
     refreshToken() {
-        return makeAxios(this.api_url, "login/refresh_token", "GET", this.bearer, "application/json")
+        return makeFetch(this.api_url, "login/refresh_token", "GET", this.bearer, "application/json")
     }
 
     setApiURL(url) {
@@ -609,54 +593,6 @@ class Control {
         this.log = new Log(this.bearer, this.api_url);
         this.statistics = new Statistics(this.bearer, this.api_url);
         this.initialised = true;
-        const self = this;
-        //TODO: This doesn't work if the token has expired fully fixxxxx
-        axios.interceptors.request.use(
-            config => {
-                const token = self.bearer
-                if (token) {
-                    config.headers['Authorization'] = self.bearer;
-                }
-                // config.headers['Content-Type'] = 'application/json';
-                return config;
-            },
-            error => {
-                Promise.reject(error)
-            });
-        axios.interceptors.response.use((response) => {
-                return response
-            },
-            function (error) {
-                const originalRequest = error.config;
-                if (error.response) {
-                    if (error.response.status === 401 && !originalRequest._retry) {
-                        if (error.response.status === 401 &&
-                            originalRequest.url === self.api_url + "login/refresh_token") {
-                            return Promise.reject(error);
-                        }
-
-                        originalRequest._retry = true;
-                        return axios.get(self.api_url + "login/refresh_token")
-                            .then(res => {
-                                if (res.status === 200) {
-                                    // 1) put token to LocalStorage
-                                    saveLogin(res.data.access_token)
-
-                                    // 2) Change Authorization header
-                                    self.bearer = "Bearer " + res.data.access_token;
-                                    self.token = res.data.access_token;
-
-                                    // 3) return originalRequest object with Axios.
-                                    return axios(originalRequest);
-                                }
-                            })
-                    }
-                }
-
-                // return Error object with Promise
-                return Promise.reject(error);
-            });
-
         //setInterval(this.ping, 4000);
     }
 }

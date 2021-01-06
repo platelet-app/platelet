@@ -117,10 +117,10 @@ function App(props) {
     function handleError() {
         // any saga that returns with an error object that is not null will be handled here
         if (error) {
-            if (error.status === 404) {
+            if (error.status_code === 404 || error.status_code === 401) {
                 // do nothing
             }
-            else if (error.name === "HttpError") {
+            else if (error.status_code) {
                 if (error.message)
                     props.enqueueSnackbar(`${error.message}`,
                         {
@@ -132,14 +132,6 @@ function App(props) {
                         ...snackOptions,
                         variant: "error",
                     });
-                // if all else fails with authentication, log out the user
-                if (error.status === 401) {
-                    props.enqueueSnackbar("Access has expired. Please log in again.", {
-                        ...snackOptions,
-                        variant: "warning",
-                    });
-                    dispatch(logoutUser())
-                }
             } else {
                 if (process.env.REACT_APP_THROW_ERRORS === "true")
                     throw error;

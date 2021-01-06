@@ -45,9 +45,10 @@ function* getUser(action) {
         const result = yield call([api, api.users.getUser], action.data);
         yield put(getUserSuccess(result))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404)
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(getUserNotFound(error))
+            }
         }
         yield put(getUserFailure(error))
     }

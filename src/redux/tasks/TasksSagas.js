@@ -577,8 +577,8 @@ function* getTask(action) {
             yield put(getTaskSuccess(result))
         }
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(getTaskNotFound(error))
             }
         }
@@ -613,8 +613,8 @@ function* getTasks(action) {
     });
     yield put(getAllTasksSuccess(result))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(getAllTasksNotFound(error))
             }
         } else {
@@ -629,7 +629,6 @@ export function* watchGetTasks() {
 
 
 export function* refreshTasksFromSocket(action) {
-    //TODO: figure out why this always refreshes the task even when it doesn't need to
     while (true) {
         const loadingSelector = yield createLoadingSelector(['GET_TASKS']);
         const isFetching = yield select(state => loadingSelector(state));
@@ -672,8 +671,8 @@ function* refreshTasks(action) {
         let result = yield call([api, api.tasks.getTasks], action.data);
         yield put(getAllTasksSuccess(result))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(getAllTasksNotFound(error))
             }
         }
@@ -692,8 +691,8 @@ function* getMyTasks() {
         const result = yield call([api, api.users.getAssignedTasks], whoami.uuid);
         yield put(getAllMyTasksSuccess(result))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(getAllMyTasksNotFound(error))
             }
         }

@@ -24,8 +24,8 @@ function * appendDelivered(action) {
         yield put(appendTasksDeliveredSuccess({tasksDelivered: tasks}))
         yield put(subscribeToUUIDs(tasks.map(t => t.uuid)))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(appendTasksDeliveredNotFound(error))
             }
         } else {
@@ -45,8 +45,8 @@ function *appendRejected(action) {
         yield put(appendTasksRejectedSuccess({tasksRejected: tasks}))
         yield put(subscribeToUUIDs(tasks.map(t => t.uuid)))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(appendTasksRejectedNotFound(error))
             }
         } else {
@@ -66,8 +66,8 @@ function * appendCancelled(action) {
         yield put(appendTasksCancelledSuccess({tasksCancelled: tasks}))
         yield put(subscribeToUUIDs(tasks.map(t => t.uuid)))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(appendTasksCancelledNotFound(error))
             }
         } else {

@@ -18,11 +18,11 @@ function* getActionsRecord(action) {
         const result = yield call([api, api.log.getRecords], action.data, "newest");
         yield put(getActionsRecordSuccess(result))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(actionRecordsNotFound())
             }
-        } else if (error.response.status === 403) {
+        } else if (error.status_code === 403) {
             yield put(getActionsRecordForbidden(error))
         } else {
             yield put(getActionsRecordFailure(error))
@@ -41,11 +41,11 @@ function* getTasksActionsRecord(action) {
         const result = yield call([api, api.log.getTasksRecords], action.data, "newest");
         yield put(getTasksActionsRecordSuccess(result))
     } catch (error) {
-        if (error.name === "HttpError") {
-            if (error.response.status === 404) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
                 yield put(tasksActionsRecordsNotFound())
             }
-        } else if (error.response.status === 403) {
+        } else if (error.status_code === 403) {
             yield put(getTasksActionsRecordForbidden(error))
         } else {
             yield put(getTasksActionsRecordFailure(error))

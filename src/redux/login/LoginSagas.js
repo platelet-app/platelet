@@ -3,7 +3,14 @@ import {
     LOGIN_REQUEST,
     loginUserSuccess,
     loginIncorrectPassword,
-    loginAuthorised, logoutUser, loginFailure, LOGOUT, logoutUserSuccess, loginSuccess
+    loginAuthorised,
+    logoutUser,
+    loginFailure,
+    LOGOUT,
+    logoutUserSuccess,
+    loginSuccess,
+    REFRESH_TOKEN_REQUEST,
+    refreshTokenFailure, refreshTokenSuccess
 } from "./LoginActions"
 
 import {createApiControl, getApiControl} from "../Api";
@@ -43,16 +50,14 @@ export function* watchLogout() {
 function* refreshToken(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.refreshToken], action.data.username, action.data.password);
-        yield put(loginUserSuccess(result))
-        yield put(loginAuthorised())
+        const result = yield call([api, api.refreshToken]);
+        yield saveLogin(result.access_token);
+        yield put(refreshTokenSuccess(result.access_token))
     } catch (error) {
-        if (error.status_code === 401) {
-            yield put(logoutUser());
-        } else {
-            throw error;
-        }
+        yield put(refreshTokenFailure(error))
     }
 }
 
-
+export function* watchRefreshToken() {
+    yield takeLatest(REFRESH_TOKEN_REQUEST, refreshToken)
+}
