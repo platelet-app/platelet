@@ -3,7 +3,7 @@ import {
     refreshTokenRequest,
     refreshTokenFailure,
     refreshTokenSuccess,
-    logoutUser
+    logoutUser, REFRESH_TOKEN_SUCCESS, REFRESH_TOKEN_FAILURE
 } from './LoginActions'
 import {createLoadingSelector, createSimpleLoadingSelector} from "../selectors";
 
@@ -28,32 +28,30 @@ function getFailType(action) {
 
 function* monitor(monitoredAction) {
     console.log('started monitoring', monitoredAction.type)
-    yield delay(1000)
-    while (true) {
-        const loadingSelector = yield createSimpleLoadingSelector(['REFRESH_TOKEN']);
-        const isFetching = yield select(state => loadingSelector(state));
-        if (isFetching)
-            yield delay(1 * 1000)
-        else
-            break;
-    }
     const {fail} = yield race({
         success: take(getSuccessType(monitoredAction)),
         fail: take(getFailType(monitoredAction)),
     })
+    let retries = 0;
+    if (monitoredAction.meta && monitoredAction.meta.retries)
+        retries = monitoredAction.meta.retries;
+    if (fail && monitoredAction.meta && monitoredAction.meta.retries > 2) {
+        console.log("FAIL")
+        return
+    }
     console.log(fail)
     if (fail && fail.error && fail.error.status_code === 401) {
         console.log('detected 401, refreshing token')
         yield put(refreshTokenRequest())
 
         const {success} = yield race({
-            success: take(refreshTokenSuccess().type),
-            fail: take(refreshTokenFailure().type),
+            success: take(REFRESH_TOKEN_SUCCESS),
+            fail: take(REFRESH_TOKEN_FAILURE),
         })
 
         if (success) {
             console.log('token refreshed, retrying', monitoredAction.type)
-            yield put(monitoredAction)
+            yield put({...monitoredAction, meta: {retries: retries++}})
         } else {
             console.log('token refresh failed, logging out user')
             yield put(logoutUser())

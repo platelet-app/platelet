@@ -117,7 +117,7 @@ function App(props) {
     function handleError() {
         // any saga that returns with an error object that is not null will be handled here
         if (error) {
-            if (error.status_code === 404) {
+            if (error.status_code === 404 || error.status_code === 401) {
                 // do nothing
             }
             else if (error.status_code) {
@@ -132,12 +132,6 @@ function App(props) {
                         ...snackOptions,
                         variant: "error",
                     });
-                if (error.status_code === 401) {
-                    props.enqueueSnackbar("Access has expired. Please log in again.", {
-                        ...snackOptions,
-                        variant: "warning",
-                    });
-                }
             } else {
                 if (process.env.REACT_APP_THROW_ERRORS === "true")
                     throw error;

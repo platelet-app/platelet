@@ -8,8 +8,8 @@ export const REMOVE_API_URL = "REMOVE_API_URL";
 export const LOGIN_INCORRECT_PASSWORD = "LOGIN_INCORRECT_PASSWORD";
 export const LOGIN_AUTHORISED = "LOGIN_AUTHORISED";
 export const REFRESH_TOKEN_REQUEST = "REFRESH_TOKEN_REQUEST";
-export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_REQUEST";
-export const REFRESH_TOKEN_FAILURE = "REFRESH_TOKEN_REQUEST";
+export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_SUCCESS";
+export const REFRESH_TOKEN_FAILURE = "REFRESH_TOKEN_FAILURE";
 
 export function loginRequest(username, password) {
     return { type: LOGIN_REQUEST, username, password }

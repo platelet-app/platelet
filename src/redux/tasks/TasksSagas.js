@@ -626,7 +626,6 @@ export function* watchGetTasks() {
 
 
 export function* refreshTasksFromSocket(action) {
-    //TODO: figure out why this always refreshes the task even when it doesn't need to
     while (true) {
         const loadingSelector = yield createLoadingSelector(['GET_TASKS']);
         const isFetching = yield select(state => loadingSelector(state));
