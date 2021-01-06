@@ -6,8 +6,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import {matchSorter} from "match-sorter"
 
 const filterOptions = (options, { inputValue }) => {
-    console.log(options, inputValue)
-    matchSorter(options, inputValue);
+    return matchSorter(options, inputValue, {keys: ['name']});
 }
 
 
