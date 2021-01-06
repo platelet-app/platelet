@@ -197,7 +197,7 @@ export const createSubscribeSocketMiddleware = () => {
                                 break;
                             case "ASSIGN_RIDER_TO_TASK":
                                 const user_uuid = action.data.data.user_uuid
-                                const assignedUser = storeAPI.getState().users.users.find(u => user_uuid === u.uuid)
+                                const assignedUser = storeAPI.getState().users.users[user_uuid]
                                 if (assignedUser) {
                                     const rider = assignedUser
                                     storeAPI.dispatch(updateTaskAssignedRiderFromSocket({
