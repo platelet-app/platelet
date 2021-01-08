@@ -37,6 +37,7 @@ import NotFound from "../../ErrorComponents/NotFound";
 import {Skeleton} from "@material-ui/lab";
 import ActionsRecord from "../ActionsRecord/ActionsRecord";
 import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
+import StatusBar from "./components/StatusBar"
 
 export default function TaskDialog(props) {
     const dispatch = useDispatch();
@@ -173,6 +174,7 @@ export default function TaskDialog(props) {
             history.push("/");
 
     };
+
 
     const usersSelect = editMode ?
         <Grid container direction={"column"}>
@@ -372,6 +374,8 @@ export default function TaskDialog(props) {
                           justify={"flex-start"}
                           alignItems={"flex-start"}>
                         <Grid item>
+                        </Grid>
+                        <Grid item>
                             <Typography>{task.reference}</Typography>
                         </Grid>
                         <Grid item>
@@ -411,7 +415,7 @@ export default function TaskDialog(props) {
         <>
             <Dialog
                 fullScreen={mobileView}
-                maxWidth={"md"}
+                maxWidth={"lg"}
                 fullWidth={true}
                 open={true}
                 onClose={handleClose}
@@ -422,12 +426,15 @@ export default function TaskDialog(props) {
                     },
                 }}
                 aria-labelledby="form-dialog-title">
-                <DialogActions>
-                    <Button onClick={handleClose}
-                            color="primary">
-                        Close
-                    </Button>
-                </DialogActions>
+                <StatusBar
+                    relayNext={task.relay_next ? task.relay_next.uuid : null}
+                    relayPrevious={task.relay_previous ? task.relay_previous.uuid : null}
+                    handleClose={handleClose}
+                    assignedRiders={task.assigned_riders}
+                    assignedCoordinators={task.assigned_coordinators}
+                    assignedCoordinatorsDisplayString={task.assigned_coordinators_display_string}
+                    assignedRidersDisplayString={task.assigned_riders_display_string}
+                />
                 {modalContents}
             </Dialog>
         </>

@@ -8,20 +8,12 @@ import Grid from "@material-ui/core/Grid";
 import UserCard from "../../../components/UserCard";
 import UsersSelect from "../../../components/UsersSelect";
 import {useDispatch} from "react-redux";
+import {SmallCirclePlusButton} from "../../../components/Buttons";
 
 const useStyles = makeStyles((theme) => ({
     root: {
         padding: theme.spacing(2),
-    },
-    collaboratorButton: {
-        color: "white",
-        width: theme.spacing(4),
-        height: theme.spacing(4)
-    },
-    iconButton: {
-        width: theme.spacing(4),
-        height: theme.spacing(4)
-    },
+    }
 }));
 
 export default function CollaboratorPickerPopover(props) {
@@ -50,17 +42,7 @@ export default function CollaboratorPickerPopover(props) {
 
     return (
         <div>
-            <Tooltip title={"View/Add a collaborator"}>
-                <IconButton className={classes.iconButton}
-                            aria-label="more"
-                            aria-controls="long-menu"
-                            aria-haspopup="true"
-                            onClick={handleClick}
-                            disabled={props.disabled}
-                >
-                    <AddCircleOutline className={classes.collaboratorButton}/>
-                </IconButton>
-            </Tooltip>
+            <SmallCirclePlusButton tooltip={"Video/Add a collaborator"} colour={"white"} onClick={handleClick} disabled={props.disabled}/>
             <Popover
                 id={id}
                 open={open}
