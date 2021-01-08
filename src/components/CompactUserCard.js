@@ -46,7 +46,7 @@ CompactUserCard.propTypes = {
 
 CompactUserCard.defaultProps = {
     displayName: "Unknown User",
-    patch: "Unknown Patch",
+    patch: "",
     vehicleName: ""
 }
 

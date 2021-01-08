@@ -10,8 +10,7 @@ import {Tooltip} from "@material-ui/core";
 import {ArrowButton, SmallCirclePlusButton} from "../../../components/Buttons";
 import {showHide} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
-import RiderPicker from "../../../components/RiderPicker";
-import AssignRiderPopover from "./AssignRiderPopover";
+import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
 
 
 function StatusBar(props) {
@@ -36,7 +35,7 @@ function StatusBar(props) {
                             </Tooltip>
                         </Grid>
                         <Grid item>
-                            <SmallCirclePlusButton tooltip={"Assign a coordinator"} colour={"black"}/>
+                            <AssignRiderCoordinatorPopover exclude={props.assignedCoordinators.map(u => u.uuid)} role={"coordinator"} taskUUID={props.taskUUID}/>
                         </Grid>
                         <Grid item>
                             <Typography>Status: {props.status}</Typography>
@@ -59,7 +58,7 @@ function StatusBar(props) {
                             </Tooltip>
                         </Grid>
                         <Grid item>
-                            <AssignRiderPopover/>
+                            <AssignRiderCoordinatorPopover exclude={props.assignedRiders.map(u => u.uuid)} role={"rider"} taskUUID={props.taskUUID}/>
                         </Grid>
                         <Grid item>
                             <ArrowButton linkTo={encodeUUID(props.relayPrevious)} direction={"back"} tooltip={"Previous relay"} className={props.relayPrevious ? show : hide}/>
@@ -86,7 +85,8 @@ StatusBar.propTypes = {
     handleClose: PropTypes.func,
     status: PropTypes.string,
     relayNext: PropTypes.string,
-    relayPrevious: PropTypes.string
+    relayPrevious: PropTypes.string,
+    taskUUID: PropTypes.string
 }
 
 StatusBar.defaultProps = {

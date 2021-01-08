@@ -434,6 +434,7 @@ export default function TaskDialog(props) {
                     assignedCoordinators={task.assigned_coordinators}
                     assignedCoordinatorsDisplayString={task.assigned_coordinators_display_string}
                     assignedRidersDisplayString={task.assigned_riders_display_string}
+                    taskUUID={taskUUID}
                 />
                 {modalContents}
             </Dialog>
