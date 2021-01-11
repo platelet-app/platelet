@@ -53,7 +53,7 @@ export function removeTaskAssignedRiderSuccess(data) {
     return { type: REMOVE_TASK_ASSIGNED_RIDER_SUCCESS, data }
 }
 
-export function addTaskAssignedCoordinatorRequest(taskUUID, userUUID,) {
+export function addTaskAssignedCoordinatorRequest(taskUUID, userUUID) {
     return { type: ADD_TASK_ASSIGNED_COORDINATOR_REQUEST, data: {taskUUID, payload: {user_uuid: userUUID }}}
 }
 export function addTaskAssignedCoordinatorSuccess(data) {

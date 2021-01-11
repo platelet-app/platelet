@@ -1,5 +1,5 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
-import {getApiControl} from "../Api";
+import {getApiControl, getUsersSelector} from "../Api";
 import {
     ADD_TASK_ASSIGNED_COORDINATOR_REQUEST,
     ADD_TASK_ASSIGNED_RIDER_REQUEST, addTaskAssignedCoordinatorFailure, addTaskAssignedCoordinatorSuccess,
@@ -27,6 +27,7 @@ function* addTaskAssignedRider(action) {
         const api = yield select(getApiControl);
         const currentTasks = yield select((state) => state.tasks.tasks);
         const currentTask = yield findExistingTask(currentTasks, action.data.taskUUID);
+        const users = yield select(getUsersSelector);
         if (action.data.payload.patch_id) {
             yield put(updateTaskPatchRequest(
                 action.data.taskUUID,
@@ -38,9 +39,10 @@ function* addTaskAssignedRider(action) {
             yield put(displayInfoNotification("Task marked as ACTIVE."))
         }
         if (action.data.payload.user_uuid) {
+            const newData = {...action.data, payload: {...action.data.payload, rider: users[action.data.payload.user_uuid]}}
             yield call([api, api.tasks.addTaskAssignedRider], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
-            yield put(addTaskAssignedRiderSuccess(action.data))
-            yield put(updateTaskAssignedRiderSuccess(action.data))
+            yield put(addTaskAssignedRiderSuccess(newData))
+            yield put(updateTaskAssignedRiderSuccess(newData))
             yield put(updateTaskPatchFromServer(action.data.taskUUID))
         }
     } catch (error) {
@@ -73,10 +75,11 @@ export function* watchUpdateTaskRemoveRider() {
 function* addTaskAssignedCoordinator(action) {
     try {
         const api = yield select(getApiControl);
+        const users = yield select(getUsersSelector);
         if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.addTaskAssignedCoordinator], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
-            yield put(addTaskAssignedCoordinatorSuccess(action.data))
-            yield put(updateTaskAssignedCoordinatorSuccess(action.data))
+            yield put(addTaskAssignedCoordinatorSuccess({...action.data, payload: {...action.data.payload, user: users[action.data.payload.user_uuid]}}))
+            yield put(updateTaskAssignedCoordinatorSuccess({...action.data, payload: {...action.data.payload, user: users[action.data.payload.user_uuid]}}))
         }
     } catch (error) {
         yield put(addTaskAssignedCoordinatorFailure(error))
