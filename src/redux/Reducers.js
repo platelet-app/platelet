@@ -33,6 +33,7 @@ import {subscription, commentsSubscription, socketCommentsConnectionStatus, sock
 import {notification} from "./notifications/NotificationsReducers";
 import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
 import {actionsRecord, tasksActionsRecord} from "./actionsRecord/ActionsRecordReducers";
+import {LOGOUT} from "./login/LoginActions";
 
 function dashboardFilter(state = "", action) {
     switch (action.type) {
@@ -232,7 +233,7 @@ export function error(state =  null, action){
     return error || state;
 }
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
     task,
     tasks,
     currentTask,
@@ -275,5 +276,13 @@ const rootReducer = combineReducers({
     idleStatus,
     userStatistics
 });
+
+const rootReducer = (state, action) => {
+    if (action.type === LOGOUT) {
+        const { serverSettings } = state;
+        state = { serverSettings }
+    }
+    return appReducer(state, action)
+}
 
 export default rootReducer
