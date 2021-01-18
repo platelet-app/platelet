@@ -8,6 +8,7 @@ import {addUserRequest} from "../redux/users/UsersActions";
 import UserContextMenu from "../components/ContextMenus/UserContextMenu";
 import {contextDots, PaddedPaper} from "../styles/common";
 import {createPostingSelector} from "../redux/selectors";
+import {sortByCreatedTime} from "../utilities";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -67,7 +68,7 @@ export default function UsersList(props) {
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2}>
-                                {Object.values(users).map((user) => (
+                                {sortByCreatedTime(Object.values(users)).map((user) => (
                                     <Grid key={user.uuid} item>
                                         <div style={{cursor: 'context-menu', position: "relative"}}>
                                             <UserCard key={user.uuid} user={user}/>
