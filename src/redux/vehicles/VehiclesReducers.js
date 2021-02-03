@@ -6,7 +6,7 @@ import {
     RESTORE_VEHICLE_SUCCESS,
     DELETE_VEHICLE_SUCCESS, GET_VEHICLE_FAILURE, GET_VEHICLES_FAILURE
 } from "./VehiclesActions";
-import update from "immutability-helper";
+import _ from "lodash";
 
 const initialState = {
     vehicles: [],
@@ -20,31 +20,11 @@ export function vehicles(state = initialState, action) {
         case GET_VEHICLES_FAILURE:
             return {...initialState, error: action.error};
         case ADD_VEHICLE_SUCCESS:
-            return {
-                vehicles: [
-                    {
-                        ...action.data
-                    },
-                    ...state.vehicles
-                ], error: null
-            };
+            return {vehicles: {...state.vehicles, [action.data.uuid]: action.data}, error: null}
         case RESTORE_VEHICLE_SUCCESS:
-            return {
-                vehicles: [
-                    {
-                        ...action.data
-                    },
-                    ...state.vehicles
-                ], error: null
-            };
+            return {vehicles: {...state.vehicles, [action.data.uuid]: action.data}, error: null}
         case DELETE_VEHICLE_SUCCESS:
-            let result_delete = state.vehicles.find(vehicle => vehicle.uuid === action.data);
-            if (result_delete) {
-                const index = state.vehicles.indexOf(result_delete);
-                return {vehicles: update(state.vehicles, {$splice: [[index, 1]]}), error: null};
-            } else {
-                return state;
-            }
+            return {vehicles: _.omit(state.vehicles, action.data), error: null}
         default:
             return state
     }

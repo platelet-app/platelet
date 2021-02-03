@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
 import {addVehicleRequest, getAllVehiclesRequest} from "../redux/vehicles/VehiclesActions";
-import {encodeUUID} from "../utilities";
+import {encodeUUID, sortByCreatedTime} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
@@ -56,7 +56,7 @@ function VehicleList() {
                                       justify={"flex-start"}
                                       alignItems={"center"}
                                 >
-                                    {Object.values(vehicles).map((vehicle) => (
+                                    {sortByCreatedTime(Object.values(vehicles), "newest").map((vehicle) => (
                                         <Grid item key={vehicle.uuid}>
                                             <div style={{cursor: 'context-menu', position: "relative"}}>
                                                 <Link to={"/vehicle/" + encodeUUID(vehicle.uuid)}

@@ -24,7 +24,7 @@ export default function LocationsList(props) {
             <PaddedPaper>
                 <Grid container direction={"row"} spacing={3}>
                     {
-                        locations.map(loc => {
+                        Object.values(locations).map(loc => {
                             return (
                                 <Grid item key={loc.uuid}>
                                     <LocationCard uuid={loc.uuid} name={loc.name}/>

@@ -31,7 +31,7 @@ import {convertListDataToObjects} from "../redux_utilities";
 function* postNewVehicle(action) {
     const api = yield select(getApiControl);
     const result = yield call([api, api.vehicles.createVehicle], action.data);
-    const vehicle = {...action.data, "uuid": result.uuid};
+    const vehicle = {...action.data, "uuid": result.uuid, time_created: result.time_created || new Date()};
     yield put(addVehicleSuccess(vehicle))
 }
 

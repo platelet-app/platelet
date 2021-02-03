@@ -2,6 +2,17 @@ import React from 'react';
 import uuidBase62 from 'uuid-base62';
 import { v4 as uuidv4 } from 'uuid';
 
+export function sortByCreatedTime(items, order="newest") {
+    if (order !== "newest")
+        return items.sort((a, b) => {
+          return new Date(a.time_created) - new Date(b.time_created);
+        })
+    else
+        return items.sort((a, b) => {
+            return new Date(b.time_created) - new Date(a.time_created);
+        })
+}
+
 export function encodeUUID(uuid) {
     return uuid ? uuidBase62.encode(uuid) : "";
 }
