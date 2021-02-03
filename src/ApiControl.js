@@ -180,7 +180,6 @@ class Task {
     }
 
     async getTasks(user_id, page, role, status, before_parent, order="descending") {
-        //const afterEncoded = encodeURIComponent(after);
         return makeFetch(this.api_url,`tasks/${user_id}?page=${(page || "0")}&role=${role || ""}&status=${status || ""}&before_parent=${(before_parent || "")}&order=${order}`, "GET", this.bearer)
     }
 
@@ -201,7 +200,7 @@ class Task {
     }
 
     async getTaskAssignees(task_id) {
-        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users", "GET", this.bearer, "application/json")
+        return makeFetch(this.api_url, "task/" + task_id + "/assigned_users", "GET", this.bearer)
     }
 
     async getTaskAssignedRiders(task_id) {
@@ -226,6 +225,18 @@ class Task {
 
     async removeTaskAssignedCoordinator(task_id, input_data) {
         return makeFetch(this.api_url, "task/" + task_id + "/assigned_users?role=coordinator", "DELETE", this.bearer, "application/json", input_data)
+    }
+
+    async getTaskDestinations(task_id) {
+        return makeFetch(this.api_url, "task/" + task_id + "/destinations", "GET", this.bearer)
+    }
+
+    async putTaskPickupDestination(task_id, input_data) {
+        return makeFetch(this.api_url, "task/" + task_id + "/destinations?destination=pickup", "PUT", this.bearer, "application/json", input_data)
+    }
+
+    async putTaskDropoffDestination(task_id, input_data) {
+        return makeFetch(this.api_url, "task/" + task_id + "/destinations?destination=delivery", "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteTask(task_id) {

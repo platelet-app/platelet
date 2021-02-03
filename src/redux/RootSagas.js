@@ -25,6 +25,10 @@ import {
     watchRefreshTasksFromSocket
 } from "./tasks/TasksSagas"
 import {
+    watchSetTaskDropoffDestination,
+    watchSetTaskPickupDestination
+} from "./taskDestinations/TaskDestinationsSagas"
+import {
     watchDeleteDeliverable,
     watchGetAvailableDeliverables,
     watchGetDeliverables,
@@ -83,6 +87,7 @@ import {
 } from "./tasks/TaskWaypointSagas";
 import {watchInitialiseApp} from "./initialise/initialiseSagas";
 import authenticationMonitor from "./login/AuthenticationMonitor";
+import {taskDestinations} from "./taskDestinations/TaskDestinationsReducers";
 
 export default function* rootSaga() {
     yield all([
@@ -165,6 +170,8 @@ export default function* rootSaga() {
         call(watchAppendTasksDelivered),
         call(watchInitialiseApp),
         call(authenticationMonitor),
-        call(watchRefreshToken)
+        call(watchRefreshToken),
+        call(watchSetTaskPickupDestination),
+        call(watchSetTaskDropoffDestination)
     ])
 }

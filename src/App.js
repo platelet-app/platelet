@@ -120,6 +120,7 @@ function App(props) {
             if (error.status_code === 404 || error.status_code === 401) {
                 // do nothing
             }
+            // TODO: fix error messages not showing up here
             else if (error.status_code) {
                 if (error.message)
                     props.enqueueSnackbar(`${error.message}`,

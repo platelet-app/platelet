@@ -38,6 +38,10 @@ import {Skeleton} from "@material-ui/lab";
 import ActionsRecord from "../ActionsRecord/ActionsRecord";
 import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
 import StatusBar from "./components/StatusBar"
+import {
+    setTaskDropoffDestinationRequest,
+    setTaskPickupDestinationRequest
+} from "../../redux/taskDestinations/TaskDestinationsActions";
 
 export default function TaskDialog(props) {
     const dispatch = useDispatch();
@@ -121,14 +125,15 @@ export default function TaskDialog(props) {
         }
     }
 
-    function onSelectPickupFromSaved(payload) {
-        if (payload && savedLocations) {
-            const result = savedLocations[payload];
+    function onSelectPickupFromSaved(locationUUID) {
+        if (locationUUID && savedLocations) {
+            const result = savedLocations[locationUUID];
             if (result)
                 setPickUpSaved(result.name)
         }
-        if (payload) {
-            dispatch(updateTaskPickupAddressFromSavedRequest(taskUUID, payload));
+        if (locationUUID) {
+            dispatch(setTaskPickupDestinationRequest(taskUUID, locationUUID))
+            //dispatch(updateTaskPickupAddressFromSavedRequest(taskUUID, payload));
         }
     }
 
@@ -139,14 +144,15 @@ export default function TaskDialog(props) {
         }
     }
 
-    function onSelectDropoffFromSaved(payload) {
-        if (payload && savedLocations) {
-            const result = savedLocations[payload];
+    function onSelectDropoffFromSaved(locationUUID) {
+        if (locationUUID && savedLocations) {
+            const result = savedLocations[locationUUID];
             if (result)
                 setDropOffSaved(result.name)
         }
-        if (payload) {
-            dispatch(updateTaskDropoffAddressFromSavedRequest(taskUUID, payload));
+        if (locationUUID) {
+            dispatch(setTaskDropoffDestinationRequest(taskUUID, locationUUID))
+            //dispatch(updateTaskDropoffAddressFromSavedRequest(taskUUID, payload));
         }
     }
 
