@@ -14,6 +14,7 @@ import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
 import LocationDetail from "../scenes/Location/LocationDetail";
 import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
+import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 
 export default function MainWindow(_props) {
     let location = useLocation();
@@ -54,7 +55,7 @@ export default function MainWindow(_props) {
                                return (
                                    <>
                                <Dashboard {...props} />
-                               <TaskDialog {...props} modal={true}/>
+                               <TaskDialogCompact {...props} modal={true}/>
                                </>
                            )
                            }}

@@ -1,13 +1,15 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import LocationDetailAndSelector from "./components/LocationDetailAndSelector";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import {useHistory, useLocation} from "react-router";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {decodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import resolvePath from "object-resolve-path";
+import {getTaskRequest} from "../../redux/tasks/TasksActions";
+import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
 
 function useQuery() {
     return new URLSearchParams(useLocation().search);
@@ -19,12 +21,25 @@ function TaskDialogCompact(props) {
     const listType = useRef(undefined)
     const parentID = useRef(undefined)
     const history = useHistory();
+    const dispatch = useDispatch();
+    const task = useSelector(state => state.task.task);
 
     let taskUUID = null;
 
     if (props.match) {
         taskUUID = decodeUUID(props.match.params.task_uuid_b62) // everything before the query string
     }
+
+    if (props.match) {
+        taskUUID = decodeUUID(props.match.params.task_uuid_b62)
+    } else {
+        taskUUID = task.uuid;
+    }
+
+    function componentDidMount() {
+        dispatch(getTaskRequest(taskUUID))
+    }
+    useEffect(componentDidMount, [props.location.key]);
 
     function findTask() {
         const {lt, pid} = findExistingTaskParent(taskUUID)
@@ -46,19 +61,19 @@ function TaskDialogCompact(props) {
             history.push("/");
 
     };
-    const statusBar = !tasks[listType.current][parentID.current] ? <></> :
+    const statusBar = !task ? <></> :
         <StatusBar
-            relayNext={tasks[listType.current][parentID.current].relay_next ? tasks[listType.current][parentID.current].relay_next.uuid : null}
-            relayPrevious={tasks[listType.current][parentID.current].relay_previous ? tasks[listType.current][parentID.current].relay_previous.uuid : null}
+            relayNext={task.relay_next ? task.relay_next.uuid : null}
+            relayPrevious={task.relay_previous ? task.relay_previous.uuid : null}
             handleClose={handleClose}
-            assignedRiders={tasks[listType.current][parentID.current].assigned_riders}
-            assignedCoordinators={tasks[listType.current][parentID.current].assigned_coordinators}
-            assignedCoordinatorsDisplayString={tasks[listType.current][parentID.current].assigned_coordinators_display_string}
-            assignedRidersDisplayString={tasks[listType.current][parentID.current].assigned_riders_display_string}
+            assignedRiders={task.assigned_riders}
+            assignedCoordinators={task.assigned_coordinators}
+            assignedCoordinatorsDisplayString={task.assigned_coordinators_display_string}
+            assignedRidersDisplayString={task.assigned_riders_display_string}
             taskUUID={taskUUID}
         />
 
-        if (tasks[listType.current][parentID.current]){
+        if (!task){
             return <Dialog open={true}><FormSkeleton/></Dialog>
         } else {
             return (
@@ -75,10 +90,10 @@ function TaskDialogCompact(props) {
                         },
                     }}
                     aria-labelledby="form-dialog-title">
+                    {statusBar}
                     <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
                         <Grid item>
-                            <LocationDetailAndSelector label={"Pick up"}/>
-
+                            <LocationDetailAndSelector location={task.pickup_location} label={"Pick up"}/>
                         </Grid>
                     </Grid>
                 </Dialog>
