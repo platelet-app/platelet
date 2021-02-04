@@ -42,6 +42,7 @@ import {
     setTaskDropoffDestinationRequest,
     setTaskPickupDestinationRequest
 } from "../../redux/taskDestinations/TaskDestinationsActions";
+import {updateLocationRequest} from "../../redux/locations/LocationsActions";
 
 export default function TaskDialog(props) {
     const dispatch = useDispatch();
@@ -56,6 +57,7 @@ export default function TaskDialog(props) {
     const isFetchingLocations = useSelector(state => loadingSelectorLocations(state));
     const isFetchingPriorities = useSelector(state => loadingSelectorPriorities(state));
     const isFetchingUsers = useSelector(state => loadingSelectorUsers(state));
+    const [locationUUID, setLocationUUID] = useState();
 
     const savedLocations = useSelector(state => state.availableLocations.locations);
 
@@ -120,16 +122,19 @@ export default function TaskDialog(props) {
 
     function onSelectPickup(pickupAddress) {
         if (pickupAddress) {
-            const payload = {pickup_address: pickupAddress};
-            dispatch(updateTaskPickupAddressRequest(taskUUID, payload));
+            const payload = {address: pickupAddress};
+            if (task.pickup_location && task.pickup_location.uuid)
+                dispatch(updateLocationRequest(task.pickup_location.uuid, payload));
         }
     }
 
     function onSelectPickupFromSaved(locationUUID) {
         if (locationUUID && savedLocations) {
             const result = savedLocations[locationUUID];
-            if (result)
+            setLocationUUID(locationUUID);
+            if (result) {
                 setPickUpSaved(result.name)
+            }
         }
         if (locationUUID) {
             dispatch(setTaskPickupDestinationRequest(taskUUID, locationUUID))
@@ -285,7 +290,7 @@ export default function TaskDialog(props) {
                     <AddressDetailsCollapsible label={"Pickup Locations"}
                                                onSelect={onSelectPickup}
                                                onSelectPreset={onSelectPickupFromSaved}
-                                               address={task.pickup_address}
+                                               address={task.pickup_location ? task.pickup_location.address : null}
                                                disabled={!editMode}
                     />
                 </PaddedPaper>
@@ -298,7 +303,7 @@ export default function TaskDialog(props) {
                     <AddressDetailsCollapsible label={"Delivery Locations"}
                                                onSelect={onSelectDropoff}
                                                onSelectPreset={onSelectDropoffFromSaved}
-                                               address={task.dropoff_address}
+                                               address={task.dropoff_location ? task.dropoff_location.address : null}
                                                disabled={!editMode}/>
                 </PaddedPaper>
             </Grid>

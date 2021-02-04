@@ -87,8 +87,6 @@ const TaskGroup = props => {
     taskArr.sort((a, b) => a.order_in_relay - b.order_in_relay)
     return taskArr.length === 0 ? <></> : taskArr.map((task, i, arr) => {
         const {
-            pickup_address,
-            dropoff_address,
             assigned_riders_display_string,
             time_picked_up,
             time_dropped_off,
@@ -104,6 +102,8 @@ const TaskGroup = props => {
             assigned_coordinators,
             assigned_coordinators_display_string
         } = task;
+        const dropoff_address = task.dropoff_location ? task.dropoff_location.address : null;
+        const pickup_address = task.pickup_location ? task.pickup_location.address : null;
 
         return (
             <div className={(props.showTasks === null || props.showTasks.includes(uuid)) ? show : hide}

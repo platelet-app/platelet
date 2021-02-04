@@ -43,8 +43,7 @@ export default function TaskAssignees(props) {
     function onSelectRider(rider) {
         console.log(rider)
         if (rider) {
-            const riderPayload = {user_uuid: rider.uuid, rider};
-            dispatch(addTaskAssignedRiderRequest({taskUUID, payload: riderPayload}))
+            dispatch(addTaskAssignedRiderRequest(taskUUID, rider.uuid, rider.patch_id))
         }
         setAddMode(false);
     }

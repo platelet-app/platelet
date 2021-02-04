@@ -136,6 +136,14 @@ class Location {
     async createLocation(input_data) {
         return makeFetch(this.api_url, "locations", "POST", this.bearer, "application/json", input_data)
     }
+
+    async updateLocation(location_id, input_data) {
+        return makeFetch(this.api_url, "location/" + location_id, "PATCH", this.bearer, "application/json", input_data)
+    }
+
+    async putLocation(input_data) {
+        return makeFetch(this.api_url, "locations", "PUT", this.bearer, "application/json", input_data)
+    }
 }
 
 class Comment {

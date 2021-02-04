@@ -34,3 +34,41 @@ export function getLocationFailure(error) {
 export function getLocationNotFound(error) {
     return { type: GET_LOCATION_NOTFOUND, error }
 }
+
+export const UPDATE_LOCATION_REQUEST = 'UPDATE_LOCATION_REQUEST';
+export const UPDATE_LOCATION_SUCCESS = 'UPDATE_LOCATION_SUCCESS';
+export const UPDATE_LOCATION_FAILURE = 'UPDATE_LOCATION_FAILURE';
+export const UPDATE_LOCATION_NOTFOUND = 'UPDATE_LOCATION_NOTFOUND';
+
+export function updateLocationRequest(locationUUID, payload) {
+    return { type: UPDATE_LOCATION_REQUEST, data: {locationUUID, payload} }
+}
+
+export function updateLocationSuccess(data) {
+    return { type: UPDATE_LOCATION_SUCCESS, data }
+}
+
+export function updateLocationFailure(error) {
+    return { type: UPDATE_LOCATION_FAILURE, error }
+}
+
+export function updateLocationNotFound(error) {
+    return { type: UPDATE_LOCATION_NOTFOUND, error }
+}
+
+export const ADD_LOCATION_REQUEST = 'ADD_LOCATION_REQUEST';
+export const ADD_LOCATION_SUCCESS = 'ADD_LOCATION_SUCCESS';
+export const ADD_LOCATION_FAILURE = 'ADD_LOCATION_FAILURE';
+
+export function addLocationRequest(data) {
+    return { type: ADD_LOCATION_REQUEST, data }
+}
+
+export function addLocationSuccess(data) {
+    return { type: ADD_LOCATION_SUCCESS, data }
+}
+
+export function addLocationFailure(error) {
+    return { type: ADD_LOCATION_FAILURE, error }
+}
+

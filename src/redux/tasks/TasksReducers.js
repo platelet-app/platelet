@@ -62,6 +62,11 @@ import {
 } from "./TasksWaypointActions";
 import _ from "lodash"
 
+const initialLocationState = {
+    address: null,
+    contact: {name: null, telephone_number: null}
+}
+
 const initialState = {
     task: {
         uuid: null,
@@ -69,8 +74,8 @@ const initialState = {
         etag: "",
         author: null,
         author_uuid: null,
-        pickup_address: null,
-        dropoff_address: null,
+        pickup_location: initialLocationState,
+        dropoff_location: initialLocationState,
         patch: null,
         patch_id: null,
         requester_contact: {

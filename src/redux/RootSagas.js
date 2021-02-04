@@ -57,7 +57,7 @@ import {
 
 import { all, call } from 'redux-saga/effects'
 import {watchGetAvailablePriorities} from "./priorities/PrioritiesSagas";
-import {watchGetAvailableLocations, watchGetLocation} from "./locations/LocationsSagas";
+import {watchGetAvailableLocations, watchGetLocation, watchUpdateLocation, watchAddNewLocation} from "./locations/LocationsSagas";
 import {
     watchGetUsers,
     watchGetUser,
@@ -87,7 +87,6 @@ import {
 } from "./tasks/TaskWaypointSagas";
 import {watchInitialiseApp} from "./initialise/initialiseSagas";
 import authenticationMonitor from "./login/AuthenticationMonitor";
-import {taskDestinations} from "./taskDestinations/TaskDestinationsReducers";
 
 export default function* rootSaga() {
     yield all([
@@ -122,7 +121,9 @@ export default function* rootSaga() {
         call(watchGetAvailableDeliverables),
         call(watchGetAvailablePriorities),
         call(watchGetAvailableLocations),
+        call(watchAddNewLocation),
         call(watchGetLocation),
+        call(watchUpdateLocation),
         call(watchPostNewDeliverable),
         call(watchUpdateDeliverable),
         call(watchGetVehicles),
