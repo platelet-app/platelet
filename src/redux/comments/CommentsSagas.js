@@ -78,13 +78,13 @@ export function* getComments(action) {
         if (error.status_code) {
             if (error.status_code === 404) {
                 yield put(commentsNotFound())
+            } else if (error.status_code === 403) {
+                yield put(getCommentsForbidden(error))
             }
-        } else if (error.status_code === 403) {
-            yield put(getCommentsForbidden(error))
-        } else {
-            yield put(getCommentsFailure(error))
-
         }
+
+        yield put(getCommentsFailure(error))
+
     }
 }
 
@@ -175,6 +175,7 @@ export function* getSidebarComments(action) {
 export function* watchGetSidebarComments() {
     yield takeLatest(GET_SIDEBAR_COMMENTS_REQUEST, getSidebarComments)
 }
+
 function* deleteSidebarComment(action) {
     try {
         const restoreActions = () => [restoreSidebarCommentRequest(action.data)];

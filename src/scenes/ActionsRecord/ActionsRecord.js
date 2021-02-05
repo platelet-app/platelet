@@ -13,6 +13,10 @@ import {Link as RouterLink} from "react-router-dom";
 import {encodeUUID} from "../../utilities";
 import {generateMessage} from "./utilities/functions";
 import _ from "lodash"
+import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
+import {useDispatch, useSelector} from "react-redux";
+import PropTypes from "prop-types";
+
 
 const displayFields = [
     "pickup_address",
@@ -27,42 +31,51 @@ const displayFields = [
     "time_rejected",
 ]
 
-export default function ActionsRecord(props) {
+function ActionsRecord(props) {
+    const dispatch = useDispatch();
+    const actions = useSelector(state => state.actionsRecord.actionsRecord);
+
+    function componentDidMount() {
+        dispatch(getActionsRecordRequest(props.parentUUID))
+    }
+
+    useEffect(componentDidMount, [])
     return (
         <Timeline>
-            {props.actions.map((record, index, arr) => {
+            {actions.map((record, index, arr) => {
                 if (!record.data_fields)
                     return <React.Fragment key={record.uuid}/>
                 const fields = _.intersection(record.data_fields.split(","), displayFields);
                 if (fields.length > 0) {
                     return (
                         <React.Fragment key={record.uuid}>
-                        <TimelineItem>
-                            <TimelineOppositeContent>
-                                <Typography color="textSecondary">{moment(record.time_created).calendar()}</Typography>
-                            </TimelineOppositeContent>
-                            <TimelineSeparator>
-                                <TimelineDot color={record.http_request_type === "PUT" ? "primary" : "secondary"}/>
-                                {arr.length - 1 === index ? <></> : <TimelineConnector/>}
-                            </TimelineSeparator>
-                            <TimelineContent>
-                                <React.Fragment>
-                                    <Link component={RouterLink}
-                                          to={"/user/" + encodeUUID(record.calling_user.uuid)}>
-                                        <Typography
-                                            style={{fontWeight: "bold"}}>{record.calling_user.display_name}</Typography>
-                                    </Link>
-                                    <Typography>{generateMessage(record, fields)}</Typography>
-                                    {props.taskLinks ?
+                            <TimelineItem>
+                                <TimelineOppositeContent>
+                                    <Typography
+                                        color="textSecondary">{moment(record.time_created).calendar()}</Typography>
+                                </TimelineOppositeContent>
+                                <TimelineSeparator>
+                                    <TimelineDot color={record.http_request_type === "PUT" ? "primary" : "secondary"}/>
+                                    {arr.length - 1 === index ? <></> : <TimelineConnector/>}
+                                </TimelineSeparator>
+                                <TimelineContent>
+                                    <React.Fragment>
                                         <Link component={RouterLink}
-                                              to={"/task/" + encodeUUID(record.parent_uuid)}>
+                                              to={"/user/" + encodeUUID(record.calling_user.uuid)}>
                                             <Typography
-                                                style={{fontWeight: "bold"}}>View Task</Typography>
-                                        </Link> : <></>
-                                    }
-                                </React.Fragment>
-                            </TimelineContent>
-                        </TimelineItem>
+                                                style={{fontWeight: "bold"}}>{record.calling_user.display_name}</Typography>
+                                        </Link>
+                                        <Typography>{generateMessage(record, fields)}</Typography>
+                                        {props.taskLinks ?
+                                            <Link component={RouterLink}
+                                                  to={"/task/" + encodeUUID(record.parent_uuid)}>
+                                                <Typography
+                                                    style={{fontWeight: "bold"}}>View Task</Typography>
+                                            </Link> : <></>
+                                        }
+                                    </React.Fragment>
+                                </TimelineContent>
+                            </TimelineItem>
                         </React.Fragment>
                     )
                 } else {
@@ -72,3 +85,14 @@ export default function ActionsRecord(props) {
         </Timeline>
     );
 }
+
+ActionsRecord.propTypes = {
+    parentUUID: PropTypes.string,
+    taskLinks: PropTypes.bool
+}
+
+ActionsRecord.defaultProps = {
+    taskLinks: false
+}
+
+export default ActionsRecord;

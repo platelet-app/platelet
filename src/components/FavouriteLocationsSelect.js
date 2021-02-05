@@ -63,5 +63,8 @@ FavouriteLocationsSelect.propTypes = {
     onSelect: PropTypes.func,
     label: PropTypes.string
 }
+FavouriteLocationsSelect.defaultProps = {
+    onSelect: () => {}
+}
 
 export default FavouriteLocationsSelect;

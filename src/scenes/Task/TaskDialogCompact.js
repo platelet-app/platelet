@@ -7,22 +7,35 @@ import {useHistory, useLocation} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
 import {decodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
-import resolvePath from "object-resolve-path";
 import {getTaskRequest} from "../../redux/tasks/TasksActions";
 import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import {
+    setTaskDropoffDestinationRequest,
+    setTaskPickupDestinationRequest
+} from "../../redux/taskDestinations/TaskDestinationsActions";
+import TaskDetailsPanel from "./components/TaskDetailsPanel";
+import CommentsSection from "../Comments/CommentsSection";
+import {PaddedPaper} from "../../styles/common";
+import TaskModalTimePicker from "./components/TaskModalTimePicker";
+import LabelItemPair from "../../components/LabelItemPair";
+import ActivityPopover from "./components/ActivityPopover";
 
-function useQuery() {
-    return new URLSearchParams(useLocation().search);
-}
+const useStyles = makeStyles({
+    root: {
+        padding: "20px",
+    }
+})
 
 function TaskDialogCompact(props) {
     const mobileView = useSelector(state => state.mobileView);
-    const tasks = useSelector(state => state.tasks.tasks);
-    const listType = useRef(undefined)
-    const parentID = useRef(undefined)
     const history = useHistory();
     const dispatch = useDispatch();
     const task = useSelector(state => state.task.task);
+    const savedLocations = useSelector(state => state.availableLocations.locations);
+    const [pickupPresetName, setPickupPresetName] = useState("");
+    const [dropoffPresetName, setDropoffPresetName] = useState("");
+    const classes = useStyles();
 
     let taskUUID = null;
 
@@ -39,18 +52,35 @@ function TaskDialogCompact(props) {
     function componentDidMount() {
         dispatch(getTaskRequest(taskUUID))
     }
+
     useEffect(componentDidMount, [props.location.key]);
 
-    function findTask() {
-        const {lt, pid} = findExistingTaskParent(taskUUID)
-        listType.current = lt
-        parentID.current = pid
 
+    function onSelectPickupFromSaved(location) {
+        const locationUUID = location.uuid;
+        if (locationUUID && savedLocations) {
+            const result = savedLocations[locationUUID];
+            if (result) {
+                setPickupPresetName(result.name)
+            }
+        }
+        if (locationUUID) {
+            dispatch(setTaskPickupDestinationRequest(taskUUID, locationUUID))
+        }
     }
-    useEffect(findTask, [tasks])
 
-    //if (taskParent && listType && taskUUID)
-    //    task = tasks[listType][taskParent][taskUUID]
+    function onSelectDropoffFromSaved(location) {
+        const locationUUID = location.uuid;
+        if (locationUUID && savedLocations) {
+            const result = savedLocations[locationUUID];
+            if (result) {
+                setDropoffPresetName(result.name)
+            }
+        }
+        if (locationUUID) {
+            dispatch(setTaskDropoffDestinationRequest(taskUUID, locationUUID))
+        }
+    }
 
 
     let handleClose = e => {
@@ -73,32 +103,78 @@ function TaskDialogCompact(props) {
             taskUUID={taskUUID}
         />
 
-        if (!task){
-            return <Dialog open={true}><FormSkeleton/></Dialog>
-        } else {
-            return (
-                <Dialog
-                    fullScreen={mobileView}
-                    maxWidth={"lg"}
-                    fullWidth={true}
-                    open={true}
-                    onClose={handleClose}
-                    PaperProps={{
-                        style: {
-                            backgroundColor: "rgb(240, 240, 240)",
-                            boxShadow: 'none',
-                        },
-                    }}
-                    aria-labelledby="form-dialog-title">
-                    {statusBar}
-                    <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+    if (!task) {
+        return <Dialog open={true}><FormSkeleton/></Dialog>
+    } else {
+        return (
+            <Dialog
+                fullScreen={mobileView}
+                maxWidth={"lg"}
+                fullWidth={true}
+                open={true}
+                onClose={handleClose}
+                PaperProps={{
+                    style: {
+                        backgroundColor: "rgb(240, 240, 240)",
+                        boxShadow: 'none',
+                    },
+                }}
+                aria-labelledby="form-dialog-title">
+                {statusBar}
+                <div className={classes.root}>
+                    <Grid container direction={"column"} alignItems={"space-between"}>
                         <Grid item>
-                            <LocationDetailAndSelector location={task.pickup_location} label={"Pick up"}/>
+                            <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+                                <Grid item>
+                                    <PaddedPaper>
+                                    <Grid container direction={"column"} spacing={3}>
+                                        <Grid item>
+                                            <LocationDetailAndSelector onSelectPreset={onSelectPickupFromSaved}
+                                                                       location={task.pickup_location}
+                                                                       label={"Pick up"}/>
+                                        </Grid>
+                                        <LabelItemPair label={"Time picked up"}>
+                                            <TaskModalTimePicker disabled={false} label={"Mark Picked Up"}
+                                                             time={task.time_picked_up}
+                                                             onChange={() => {
+                                                             }}/>
+                                        </LabelItemPair>
+                                    </Grid>
+                                    </PaddedPaper>
+                                </Grid>
+                                <Grid item>
+                                    <PaddedPaper>
+                                    <Grid container direction={"column"} spacing={3}>
+                                        <Grid item>
+                                            <LocationDetailAndSelector onSelectPreset={onSelectDropoffFromSaved}
+                                                                       location={task.dropoff_location}
+                                                                       label={"Delivery"}/>
+                                        </Grid>
+                                        <LabelItemPair label={"Time delivered"}>
+                                        <TaskModalTimePicker disabled={false} label={"Mark Delivered"}
+                                                             time={task.time_dropped_off}
+                                                             onChange={() => {
+                                                             }}/>
+                                        </LabelItemPair>
+                                    </Grid>
+                                    </PaddedPaper>
+                                </Grid>
+                                    <Grid item>
+                                        <PaddedPaper>
+                                    <TaskDetailsPanel task={task}/>
+                                    <ActivityPopover parentUUID={task.uuid}/>
+                                        </PaddedPaper>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <CommentsSection parentUUID={taskUUID}/>
                         </Grid>
                     </Grid>
-                </Dialog>
-            )
-        }
+                </div>
+            </Dialog>
+        )
+    }
 
 }
 
