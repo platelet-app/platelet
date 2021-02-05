@@ -1,11 +1,10 @@
 import { call, put, takeLatest, select} from 'redux-saga/effects'
 import {
-    GET_AVAILABLE_PRIORITIES_REQUEST,
+    GET_AVAILABLE_PRIORITIES_REQUEST, getAvailablePrioritiesFailure,
     getAvailablePrioritiesSuccess,
 } from "./PrioritiesActions"
 
 import { getApiControl } from "../Api";
-import {getAvailableLocationsFailure} from "../locations/LocationsActions";
 
 export function* getAvailablePriorities() {
     try {
@@ -13,7 +12,7 @@ export function* getAvailablePriorities() {
         const result = yield call([api, api.priorities.getAvailablePriorities]);
         yield put(getAvailablePrioritiesSuccess(result))
     } catch (error) {
-        yield put(getAvailableLocationsFailure(error))
+        yield put(getAvailablePrioritiesFailure(error))
     }
 }
 
