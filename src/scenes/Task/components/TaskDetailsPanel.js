@@ -4,6 +4,7 @@ import Moment from "react-moment";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PropTypes from "prop-types"
 import Grid from "@material-ui/core/Grid";
+import PrioritySelect from "./PrioritySelect";
 
 function TaskDetailsPanel(props) {
     const {
@@ -11,6 +12,7 @@ function TaskDetailsPanel(props) {
         time_of_call,
         contact,
         priority,
+        priority_id,
         patch,
         assigned_riders_display_string
     } = props.task;
@@ -27,7 +29,7 @@ function TaskDetailsPanel(props) {
                 <Typography>{name}</Typography>
                 <Typography>{telephone_number}</Typography>
                 <LabelItemPair label={"Priority"}>
-                    <Typography>{priority}</Typography>
+                    <PrioritySelect priorityID={priority_id}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Patch"}>
                     <Typography>{patch}</Typography>

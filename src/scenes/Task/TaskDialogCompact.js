@@ -5,7 +5,7 @@ import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import {useHistory, useLocation} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
-import {decodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
+import {decodeUUID, determineTaskType, findExistingTask, findExistingTaskParent} from "../../utilities";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import {getTaskRequest} from "../../redux/tasks/TasksActions";
 import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
@@ -36,6 +36,7 @@ function TaskDialogCompact(props) {
     const [pickupPresetName, setPickupPresetName] = useState("");
     const [dropoffPresetName, setDropoffPresetName] = useState("");
     const classes = useStyles();
+    const [taskStatus, setTaskStatus] = useState("No status")
 
     let taskUUID = null;
 
@@ -54,6 +55,23 @@ function TaskDialogCompact(props) {
     }
 
     useEffect(componentDidMount, [props.location.key]);
+
+    function setStatus() {
+        const result = Object.keys(determineTaskType({task}))
+        if (result) {
+            if (result.includes("tasksNew")) {
+                setTaskStatus("New")
+            } else if (result.includes("tasksActive")) {
+                setTaskStatus("Active")
+            } else if (result.includes("tasksPickedUp")) {
+                setTaskStatus("Picked up")
+            } else if (result.includes("tasksDelivered")) {
+                setTaskStatus("Delivered")
+            }
+        }
+    }
+
+    useEffect(setStatus, [task])
 
 
     function onSelectPickupFromSaved(location) {
@@ -101,6 +119,7 @@ function TaskDialogCompact(props) {
             assignedCoordinatorsDisplayString={task.assigned_coordinators_display_string}
             assignedRidersDisplayString={task.assigned_riders_display_string}
             taskUUID={taskUUID}
+            status={taskStatus}
         />
 
     if (!task) {
@@ -109,7 +128,7 @@ function TaskDialogCompact(props) {
         return (
             <Dialog
                 fullScreen={mobileView}
-                maxWidth={"lg"}
+                maxWidth={"xl"}
                 fullWidth={true}
                 open={true}
                 onClose={handleClose}
@@ -122,48 +141,49 @@ function TaskDialogCompact(props) {
                 aria-labelledby="form-dialog-title">
                 {statusBar}
                 <div className={classes.root}>
-                    <Grid container direction={"column"} alignItems={"space-between"}>
+                    <Grid container direction={"column"} justify={"space-between"}>
                         <Grid item>
-                            <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+                            <Grid container direction={"row"} alignItems={"flex-start"} justify={"space-between"}
+                                  spacing={3}>
                                 <Grid item>
                                     <PaddedPaper>
-                                    <Grid container direction={"column"} spacing={3}>
-                                        <Grid item>
-                                            <LocationDetailAndSelector onSelectPreset={onSelectPickupFromSaved}
-                                                                       location={task.pickup_location}
-                                                                       label={"Pick up"}/>
+                                        <Grid container direction={"column"} spacing={3}>
+                                            <Grid item>
+                                                <LocationDetailAndSelector onSelectPreset={onSelectPickupFromSaved}
+                                                                           location={task.pickup_location}
+                                                                           label={"Pick up"}/>
+                                            </Grid>
+                                            <LabelItemPair label={"Time picked up"}>
+                                                <TaskModalTimePicker disabled={false} label={"Mark Picked Up"}
+                                                                     time={task.time_picked_up}
+                                                                     onChange={() => {
+                                                                     }}/>
+                                            </LabelItemPair>
                                         </Grid>
-                                        <LabelItemPair label={"Time picked up"}>
-                                            <TaskModalTimePicker disabled={false} label={"Mark Picked Up"}
-                                                             time={task.time_picked_up}
-                                                             onChange={() => {
-                                                             }}/>
-                                        </LabelItemPair>
-                                    </Grid>
                                     </PaddedPaper>
                                 </Grid>
                                 <Grid item>
                                     <PaddedPaper>
-                                    <Grid container direction={"column"} spacing={3}>
-                                        <Grid item>
-                                            <LocationDetailAndSelector onSelectPreset={onSelectDropoffFromSaved}
-                                                                       location={task.dropoff_location}
-                                                                       label={"Delivery"}/>
+                                        <Grid container direction={"column"} spacing={3}>
+                                            <Grid item>
+                                                <LocationDetailAndSelector onSelectPreset={onSelectDropoffFromSaved}
+                                                                           location={task.dropoff_location}
+                                                                           label={"Delivery"}/>
+                                            </Grid>
+                                            <LabelItemPair label={"Time delivered"}>
+                                                <TaskModalTimePicker disabled={false} label={"Mark Delivered"}
+                                                                     time={task.time_dropped_off}
+                                                                     onChange={() => {
+                                                                     }}/>
+                                            </LabelItemPair>
                                         </Grid>
-                                        <LabelItemPair label={"Time delivered"}>
-                                        <TaskModalTimePicker disabled={false} label={"Mark Delivered"}
-                                                             time={task.time_dropped_off}
-                                                             onChange={() => {
-                                                             }}/>
-                                        </LabelItemPair>
-                                    </Grid>
                                     </PaddedPaper>
                                 </Grid>
-                                    <Grid item>
-                                        <PaddedPaper>
-                                    <TaskDetailsPanel task={task}/>
-                                    <ActivityPopover parentUUID={task.uuid}/>
-                                        </PaddedPaper>
+                                <Grid item>
+                                    <PaddedPaper>
+                                        <TaskDetailsPanel task={task}/>
+                                        <ActivityPopover parentUUID={task.uuid}/>
+                                    </PaddedPaper>
                                 </Grid>
                             </Grid>
                         </Grid>

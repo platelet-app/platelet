@@ -7,7 +7,7 @@ import {dialogComponent} from "../styles/TaskDialogCSS"
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {Tooltip} from "@material-ui/core";
-import {ArrowButton, SmallCirclePlusButton} from "../../../components/Buttons";
+import {ArrowButton} from "../../../components/Buttons";
 import {showHide} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";

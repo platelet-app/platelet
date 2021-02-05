@@ -5,9 +5,10 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio"
 import {useSelector} from "react-redux";
 import {useEffect} from 'react'
+import PropTypes from "prop-types"
 
-export default function PrioritySelect(props) {
-    const [value, setValue] = React.useState(props.priority || null);
+function PrioritySelect(props) {
+    const [value, setValue] = React.useState(props.priorityID || null);
     const availablePriorities = useSelector(state => state.availablePriorities.priorities);
 
     const handleChange = event => {
@@ -18,39 +19,28 @@ export default function PrioritySelect(props) {
         }
     };
     useEffect(() => {
-        if (props.priority)
-                setValue(parseInt(props.priority))
-    }, [props.priority])
+        if (props.priorityID)
+                setValue(parseInt(props.priorityID))
+    }, [props.priorityID])
 
     return (
         <FormControl component="fieldset">
-            <RadioGroup aria-label="priority" name="priority" value={value} onChange={handleChange}>
+            <RadioGroup row aria-label="priority" name="priority" value={value} onChange={handleChange}>
                 {availablePriorities.map((priority) =>
                     (<FormControlLabel key={priority.id} value={priority.id} control={<Radio/>} label={priority.label}/>)
                 )}
             </RadioGroup>
         </FormControl>
         )
-
-        //<form className={classes.root} autoComplete="off">
-        //    <FormControl variant="outlined" className={classes.formControl}>
-        //        <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
-        //            Priority
-        //        </InputLabel>
-        //        <Select
-        //            value={value || ""}
-        //            onChange={handleChange}
-        //            labelWidth={labelWidth}
-        //            inputProps={{
-        //                name: 'priority',
-        //                id: 'outlined-priority',
-        //            }}
-        //        >
-        //            <MenuItem value="">
-        //                <em>None</em>
-        //            </MenuItem>
-        //            {menuItems}
-        //        </Select>
-        //    </FormControl>
-        //</form>
 }
+
+PrioritySelect.propTypes = {
+    priorityID: PropTypes.number,
+    onSelect: PropTypes.func
+};
+
+PrioritySelect.defaultProps = {
+    onSelect: () => {}
+};
+
+export default PrioritySelect;
