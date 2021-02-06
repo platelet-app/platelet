@@ -32,13 +32,13 @@ function* monitor(monitoredAction) {
         success: take(getSuccessType(monitoredAction)),
         fail: take(getFailType(monitoredAction)),
     })
-   // let retries = 0;
-   // if (monitoredAction.meta && monitoredAction.meta.retries)
-   //     retries = monitoredAction.meta.retries;
-   // if (fail && monitoredAction.meta && monitoredAction.meta.retries > 2) {
-   //     console.log("FAIL")
-   //     return
-   // }
+   let retries = 0;
+   if (monitoredAction.meta && monitoredAction.meta.retries)
+       retries = monitoredAction.meta.retries;
+   if (fail && monitoredAction.meta && monitoredAction.meta.retries > 2) {
+       console.log("FAIL")
+       return
+   }
     console.log(fail)
     if (fail && fail.error && fail.error.status_code === 401) {
         console.log('detected 401, refreshing token')
@@ -51,8 +51,7 @@ function* monitor(monitoredAction) {
 
         if (success) {
             console.log('token refreshed, retrying', monitoredAction.type)
-            //yield put({...monitoredAction, meta: {retries: retries++}})
-            yield put(monitoredAction)
+            yield put({...monitoredAction, meta: {retries: retries++}})
         } else {
             console.log('token refresh failed, logging out user')
             yield put(logoutUser())
