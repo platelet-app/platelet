@@ -595,31 +595,30 @@ function* getTasks(action) {
         const api = yield select(getApiControl);
         // get all the different tasks for different status and combine them
         const [tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksCancelled, tasksRejected] = yield all([
-        call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "new", "", "descending"),
-        call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "active", "", "ascending"),
-        call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "picked_up", "", "ascending"),
-        call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "delivered", "", "descending"),
-        call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "cancelled", "", "descending"),
-        call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "rejected", "", "descending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "new", "", "descending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "active", "", "ascending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "picked_up", "", "ascending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "delivered", "", "descending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "cancelled", "", "descending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "rejected", "", "descending"),
         ])
         const result = convertTaskListsToObjects(
-    {
-        tasksNew,
-            tasksActive,
-            tasksPickedUp,
-            tasksDelivered,
-            tasksCancelled,
-            tasksRejected
-    });
-    yield put(getAllTasksSuccess(result))
+            {
+                tasksNew,
+                tasksActive,
+                tasksPickedUp,
+                tasksDelivered,
+                tasksCancelled,
+                tasksRejected
+            });
+        yield put(getAllTasksSuccess(result))
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
                 yield put(getAllTasksNotFound(error))
             }
-        } else {
-            yield put(getAllTasksFailure(error))
         }
+        yield put(getAllTasksFailure(error))
     }
 }
 

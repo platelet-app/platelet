@@ -372,8 +372,8 @@ export function refreshAllTasksSuccess(data) {
     return { type: REFRESH_TASKS_SUCCESS, data }
 }
 
-export function getAllTasksFailure(data) {
-    return { type: GET_TASKS_FAILURE, data }
+export function getAllTasksFailure(error) {
+    return { type: GET_TASKS_FAILURE, error }
 }
 
 export function getAllTasksNotFound(data) {
