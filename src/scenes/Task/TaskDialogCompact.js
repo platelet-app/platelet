@@ -7,7 +7,7 @@ import {useHistory, useLocation} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
 import {decodeUUID, determineTaskType, findExistingTask, findExistingTaskParent} from "../../utilities";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
-import {getTaskRequest} from "../../redux/tasks/TasksActions";
+import {getTaskRequest, updateTaskPriorityRequest} from "../../redux/tasks/TasksActions";
 import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
@@ -100,7 +100,6 @@ function TaskDialogCompact(props) {
         }
     }
 
-
     let handleClose = e => {
         e.stopPropagation();
         if (props.location.state)
@@ -127,6 +126,7 @@ function TaskDialogCompact(props) {
     } else {
         return (
             <Dialog
+                disableEscapeKeyDown
                 fullScreen={mobileView}
                 maxWidth={"xl"}
                 fullWidth={true}

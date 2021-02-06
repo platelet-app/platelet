@@ -3,7 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types"
 import LabelItemPair from "../../../components/LabelItemPair";
-import {ClickableTextField} from "../../../components/ClickableTextField";
+import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 
 
@@ -43,26 +43,26 @@ function LocationDetailAndSelector(props) {
                 </Grid>
             </Grid>
             <Grid item>
-                <LabelItemPair label={"what3words"}>
-                    <ClickableTextField disabled={protectedLocation} value={what3words}/>
+                <LabelItemPair label={"w3w"}>
+                    <ClickableTextField label={"w3w"} disabled={protectedLocation} value={what3words}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Ward"}>
-                    <ClickableTextField disabled={protectedLocation} value={ward}/>
+                    <ClickableTextField label="ward" disabled={protectedLocation} value={ward}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Line1"}>
-                    <ClickableTextField disabled={protectedLocation} value={line1}/>
+                    <ClickableTextField label={"line1"} disabled={protectedLocation} value={line1}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Line2"}>
-                    <ClickableTextField disabled={protectedLocation} value={line2}/>
+                    <ClickableTextField label={"line2"} disabled={protectedLocation} value={line2}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Town"}>
-                    <ClickableTextField disabled={protectedLocation} value={town}/>
+                    <ClickableTextField label={"town"} disabled={protectedLocation} value={town}/>
                 </LabelItemPair>
                 <LabelItemPair label={"County"}>
-                    <ClickableTextField disabled={protectedLocation} value={county}/>
+                    <ClickableTextField label={"county"} disabled={protectedLocation} value={county}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Postcode"}>
-                    <ClickableTextField disabled={protectedLocation} value={postcode}/>
+                    <ClickableTextField label={"postcode"} disabled={protectedLocation} value={postcode}/>
                 </LabelItemPair>
 
 

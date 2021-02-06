@@ -6,6 +6,7 @@ import {
     logoutUser, REFRESH_TOKEN_SUCCESS, REFRESH_TOKEN_FAILURE
 } from './LoginActions'
 import {createLoadingSelector, createSimpleLoadingSelector} from "../selectors";
+import {displayErrorNotification} from "../notifications/NotificationsActions";
 
 const ignoreActionTypes = ["REFRESH_TOKEN", "SERVER_SETTINGS"]
 
@@ -32,13 +33,13 @@ function* monitor(monitoredAction) {
         success: take(getSuccessType(monitoredAction)),
         fail: take(getFailType(monitoredAction)),
     })
-   let retries = 0;
-   if (monitoredAction.meta && monitoredAction.meta.retries)
-       retries = monitoredAction.meta.retries;
-   if (fail && monitoredAction.meta && monitoredAction.meta.retries > 2) {
-       console.log("FAIL")
-       return
-   }
+    let retries = 0;
+    if (monitoredAction.meta && monitoredAction.meta.retries)
+        retries = monitoredAction.meta.retries;
+    if (fail && monitoredAction.meta && monitoredAction.meta.retries > 2) {
+        yield put(displayErrorNotification("Failed multiple times to refresh authentication. Data may not be saved!"))
+        return
+    }
     console.log(fail)
     if (fail && fail.error && fail.error.status_code === 401) {
         console.log('detected 401, refreshing token')
