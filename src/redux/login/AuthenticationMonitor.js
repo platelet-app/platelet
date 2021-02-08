@@ -1,11 +1,8 @@
 import {takeEvery, race, take, put, select, delay} from 'redux-saga/effects'
 import {
     refreshTokenRequest,
-    refreshTokenFailure,
-    refreshTokenSuccess,
     logoutUser, REFRESH_TOKEN_SUCCESS, REFRESH_TOKEN_FAILURE
 } from './LoginActions'
-import {createLoadingSelector, createSimpleLoadingSelector} from "../selectors";
 import {displayErrorNotification} from "../notifications/NotificationsActions";
 
 const ignoreActionTypes = ["REFRESH_TOKEN", "SERVER_SETTINGS"]

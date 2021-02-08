@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types"
@@ -7,62 +7,98 @@ import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 
 
-
 function LocationDetailAndSelector(props) {
-    const {
-        what3words,
-        ward,
-        line1,
-        line2,
-        town,
-        county,
-        postcode
-    } = props.location && props.location.address ? props.location.address : {
-        what3words: null,
-        ward: null,
-        line1: null,
-        line2: null,
-        town: null,
-        county: null,
-        postcode: null
-    };
-
-    const protectedLocation = props.location ? props.location.protected : false;
+    const [state, setState] = useState({
+        what3words: "",
+        ward: "",
+        line1: "",
+        line2: "",
+        town: "",
+        county: "",
+        postcode: ""
+    })
+    const [protectedLocation, setProtectedLocation] = useState(false)
+    function updateStateFromProps() {
+        if (props.location) {
+            if (props.location.address) {
+                const {
+                    what3words,
+                    ward,
+                    line1,
+                    line2,
+                    town,
+                    county,
+                    postcode
+                } = props.location.address
+                setState({what3words, ward, line1, line2, town, county, postcode})
+            }
+            setProtectedLocation(props.location ? props.location.protected : false);
+        }
+    }
+    useEffect(updateStateFromProps, [props.location])
 
     return (
 
-        <Grid container direction={"column"}>
+        <Grid container className={props.className} direction={"column"}>
             <Grid item>
                 <Grid container direction={"row"} justify={"space-between"}>
                     <Grid item>
                         <Typography>{props.label}</Typography>
                     </Grid>
                     <Grid item>
-                        <FavouriteLocationsSelect label={props.label} onSelect={props.onSelectPreset}/>
+                        {props.displayPresets ? <FavouriteLocationsSelect label={props.label} onSelect={props.onSelectPreset}/> : <></>}
                     </Grid>
                 </Grid>
             </Grid>
             <Grid item>
                 <LabelItemPair label={"w3w"}>
-                    <ClickableTextField label={"w3w"} disabled={protectedLocation} value={what3words}/>
+                    <ClickableTextField
+                        label={"w3w"}
+                        disabled={protectedLocation}
+                        onChange={v => setState({...state, what3words: v})}
+                        value={state.what3words}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Ward"}>
-                    <ClickableTextField label="ward" disabled={protectedLocation} value={ward}/>
+                    <ClickableTextField
+                        label="ward"
+                        disabled={protectedLocation}
+                        onChange={v => setState({...state, ward: v})}
+                        value={state.ward}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Line1"}>
-                    <ClickableTextField label={"line1"} disabled={protectedLocation} value={line1}/>
+                    <ClickableTextField
+                        label={"line1"}
+                        disabled={protectedLocation}
+                        onChange={v => setState({...state, line1: v})}
+                        value={state.line1}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Line2"}>
-                    <ClickableTextField label={"line2"} disabled={protectedLocation} value={line2}/>
+                    <ClickableTextField
+                        label={"line2"}
+                        disabled={protectedLocation}
+                        onChange={v => setState({...state, line2: v})}
+                        value={state.line2}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Town"}>
-                    <ClickableTextField label={"town"} disabled={protectedLocation} value={town}/>
+                    <ClickableTextField
+                        label={"town"}
+                        disabled={protectedLocation}
+                        onChange={v => setState({...state, town: v})}
+                        value={state.town}/>
                 </LabelItemPair>
                 <LabelItemPair label={"County"}>
-                    <ClickableTextField label={"county"} disabled={protectedLocation} value={county}/>
+                    <ClickableTextField
+                        label={"county"}
+                        disabled={protectedLocation}
+                        onChange={v => setState({...state, county: v})}
+                        value={state.county}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Postcode"}>
-                    <ClickableTextField label={"postcode"} disabled={protectedLocation} value={postcode}/>
+                    <ClickableTextField
+                        label={"postcode"}
+                        disabled={protectedLocation}
+                        onChange={v => setState({...state, postcode: v})}
+                        value={state.postcode}/>
                 </LabelItemPair>
 
 
@@ -75,11 +111,14 @@ function LocationDetailAndSelector(props) {
 LocationDetailAndSelector.propTypes = {
     label: PropTypes.string,
     location: PropTypes.object,
-    onSelectPreset: PropTypes.func
+    onSelectPreset: PropTypes.func,
+    className: PropTypes.string,
+    displayPresets: PropTypes.bool
 }
 
 LocationDetailAndSelector.propDefaults = {
     label: "",
+    displayPresets: true,
     location: {
         address: {
             what3words: null,

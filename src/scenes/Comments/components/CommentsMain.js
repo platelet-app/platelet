@@ -12,7 +12,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 
 function CommentCollection(props) {
     const classes = contextDots();
-    console.log(props.body)
     const [editMode, setEditMode] = useState(false);
     return (
         <div style={{position: "relative"}}>

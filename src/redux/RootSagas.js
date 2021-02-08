@@ -87,6 +87,7 @@ import {
 } from "./tasks/TaskWaypointSagas";
 import {watchInitialiseApp} from "./initialise/initialiseSagas";
 import authenticationMonitor from "./login/AuthenticationMonitor";
+import updateActiveTaskMonitor from "./tasks/TaskMonitors";
 
 export default function* rootSaga() {
     yield all([
@@ -173,6 +174,7 @@ export default function* rootSaga() {
         call(authenticationMonitor),
         call(watchRefreshToken),
         call(watchSetTaskPickupDestination),
-        call(watchSetTaskDropoffDestination)
+        call(watchSetTaskDropoffDestination),
+        call(updateActiveTaskMonitor)
     ])
 }

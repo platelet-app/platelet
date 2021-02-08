@@ -38,7 +38,7 @@ import {
     UPDATE_TASK_ASSIGNED_COORDINATOR_SUCCESS,
     UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET,
     UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_SUCCESS,
-    UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET
+    UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET, UPDATE_ACTIVE_TASK
 
 } from "./TasksActions";
 import {
@@ -64,7 +64,9 @@ import _ from "lodash"
 
 const initialLocationState = {
     address: null,
-    contact: {name: null, telephone_number: null}
+    contact: {name: null, telephone_number: null},
+    protected: true,
+    listed: true
 }
 
 const initialState = {
@@ -114,6 +116,8 @@ export function task(state = initialState, action) {
     switch (action.type) {
         case GET_TASK_SUCCESS:
             return {task: action.data, error: null};
+        case UPDATE_ACTIVE_TASK:
+            return {task: {...state.task, ...action.data.payload}, error: null}
         default:
             return state;
     }

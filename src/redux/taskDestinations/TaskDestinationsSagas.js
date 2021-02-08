@@ -15,7 +15,7 @@ function* setTaskPickupDestination(action) {
         const locationData = yield call([api, api.locations.getLocation], action.data.payload.location_uuid);
         yield put(setTaskPickupDestinationSuccess(result))
         if (locationData)
-            yield put(updateTaskPickupAddressSuccess({taskUUID: action.data.taskUUID, payload: {etag: result.etag, pickup_address: locationData.address}}))
+            yield put(updateTaskPickupAddressSuccess({taskUUID: action.data.taskUUID, payload: {etag: result.etag, pickup_location: locationData}}))
     } catch(error) {
         yield put(setTaskPickupDestinationFailure(error))
     }
@@ -32,7 +32,7 @@ function* setTaskDropoffDestination(action) {
         const locationData = yield call([api, api.locations.getLocation], action.data.payload.location_uuid);
         yield put(setTaskPickupDestinationSuccess(result))
         if (locationData)
-            yield put(updateTaskDropoffAddressSuccess({taskUUID: action.data.taskUUID, payload: {etag: result.etag, dropoff_address: locationData.address}}))
+            yield put(updateTaskDropoffAddressSuccess({taskUUID: action.data.taskUUID, payload: {etag: result.etag, dropoff_location: locationData}}))
     } catch(error) {
         yield put(setTaskPickupDestinationFailure(error))
     }

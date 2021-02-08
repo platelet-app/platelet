@@ -1,3 +1,4 @@
+export const UPDATE_ACTIVE_TASK = "UPDATE_ACTIVE_TASK";
 export const GET_TASK_REQUEST = "GET_TASK_REQUEST";
 export const GET_TASK_SUCCESS = "GET_TASK_SUCCESS";
 export const GET_TASK_FAILURE = "GET_TASK_FAILURE";
@@ -98,6 +99,9 @@ export const REFRESH_MY_TASKS_NOTFOUND = "REFRESH_MY_TASKS_NOTFOUND";
 export const RESET_GROUP_RELAY_UUIDS = "RESET_GROUP_RELAY_UUIDS";
 export const GROUP_RELAYS_TOGETHER = "GROUP_RELAYS_TOGETHER";
 
+export function updateActiveTask(taskUUID, payload) {
+    return {type: UPDATE_ACTIVE_TASK, data: {taskUUID, payload}}
+}
 
 export function restoreTaskRequest(taskUUID) {
     return { type: RESTORE_TASK_REQUEST, data: {taskUUID }}

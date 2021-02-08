@@ -26,7 +26,6 @@ const useStyles = makeStyles({
 });
 
 function ClickableTextField(props) {
-    const [value, setValue] = useState(props.value);
     const [editMode, setEditMode] = useState(false);
     const firstValue = useRef(props.value)
 
@@ -34,7 +33,6 @@ function ClickableTextField(props) {
 
     function onChange(e) {
         const result = e.target.value
-        setValue(result);
         props.onChange(result);
     }
 
@@ -45,12 +43,11 @@ function ClickableTextField(props) {
     }
 
     const stuff = props.disabled ?
-        value ?
-            <Typography onClick={toggleEditMode}>{value}</Typography> :
+        props.value ?
+            <Typography onClick={toggleEditMode}>{props.value}</Typography> :
             <Typography onClick={toggleEditMode}>{props.label}</Typography> :
-
-        value ?
-            <Typography className={classes.hoverHighlight} onClick={toggleEditMode}>{value}</Typography> :
+        props.value ?
+            <Typography className={classes.hoverHighlight} onClick={toggleEditMode}>{props.value}</Typography> :
             <Typography onClick={toggleEditMode} className={classes.label}>{props.label}</Typography>
 
     if (editMode) {
@@ -66,7 +63,6 @@ function ClickableTextField(props) {
                                 break;
                             }
                             case "Escape": {
-                                setValue(firstValue.current);
                                 props.onChange({target: {value: firstValue.current}});
                                 setEditMode(false);
                                 ev.preventDefault();
@@ -79,7 +75,7 @@ function ClickableTextField(props) {
                     className={classes.root}
                     autoFocus={true}
                     onBlur={toggleEditMode}
-                    value={value}
+                    value={props.value}
                     InputProps={{ disableUnderline: true }}
                     onChange={onChange}/>
 
@@ -96,7 +92,6 @@ function ClickableTextField(props) {
                                 break;
                             }
                             case "Escape": {
-                                setValue(firstValue.current);
                                 props.onChange({target: {value: firstValue.current}});
                                 setEditMode(false);
                                 ev.preventDefault();
@@ -109,7 +104,7 @@ function ClickableTextField(props) {
                     className={classes.textfield}
                     autoFocus={true}
                     onBlur={toggleEditMode}
-                    value={value}
+                    value={props.value}
                     InputProps={{disableUnderline: true}}
                     onChange={onChange}/>
             )
