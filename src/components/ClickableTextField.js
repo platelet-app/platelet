@@ -20,7 +20,7 @@ const useStyles = makeStyles({
         background: "white",
         color: "black",
         "&:hover": {
-            background: "grey"
+            background: "rgb(242, 242, 242)"
         }
     }
 });
@@ -44,9 +44,14 @@ function ClickableTextField(props) {
         }
     }
 
-    const stuff = value ?
-        <Typography className={classes.hoverHighlight} onClick={toggleEditMode}>{value}</Typography> :
-        <Typography onClick={toggleEditMode} className={classes.label}>{props.label}</Typography>
+    const stuff = props.disabled ?
+        value ?
+            <Typography onClick={toggleEditMode}>{value}</Typography> :
+            <Typography onClick={toggleEditMode}>{props.label}</Typography> :
+
+        value ?
+            <Typography className={classes.hoverHighlight} onClick={toggleEditMode}>{value}</Typography> :
+            <Typography onClick={toggleEditMode} className={classes.label}>{props.label}</Typography>
 
     if (editMode) {
         if (props.telephone) {

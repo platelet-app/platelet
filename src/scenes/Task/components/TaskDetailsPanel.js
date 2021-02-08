@@ -22,8 +22,6 @@ function TaskDetailsPanel(props) {
     const {
         reference,
         time_of_call,
-        contact,
-        priority,
         priority_id,
         patch,
         assigned_riders_display_string,
