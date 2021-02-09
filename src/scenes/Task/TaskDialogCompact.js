@@ -20,8 +20,10 @@ import {PaddedPaper, showHide} from "../../styles/common";
 import TaskModalTimePicker from "./components/TaskModalTimePicker";
 import LabelItemPair from "../../components/LabelItemPair";
 import ActivityPopover from "./components/ActivityPopover";
-import ToggleButton from "@material-ui/lab/ToggleButton";
 import {Switch} from "@material-ui/core";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const useStyles = makeStyles({
     root: {
@@ -58,6 +60,7 @@ function TaskDialogCompact(props) {
     function componentDidMount() {
         dispatch(getTaskRequest(taskUUID))
     }
+
     useEffect(componentDidMount, [props.location.key]);
 
     function togglePickupLocationType(e) {
@@ -67,6 +70,7 @@ function TaskDialogCompact(props) {
             setPickupLocationType("preset")
         }
     }
+
     function toggleDropoffLocationType(e) {
         if (e.target.checked) {
             setDropoffLocationType("custom")
@@ -89,6 +93,7 @@ function TaskDialogCompact(props) {
             }
         }
     }
+
     useEffect(setStatus, [task])
 
     function setPresets() {
@@ -99,6 +104,7 @@ function TaskDialogCompact(props) {
             setDropoffLocationType(task.dropoff_location.listed ? "preset" : "custom")
         }
     }
+
     useEffect(setPresets, [task])
 
     function onSelectPickupCustom() {
@@ -177,59 +183,69 @@ function TaskDialogCompact(props) {
                             <Grid container direction={"row"} alignItems={"flex-start"} justify={"space-between"}
                                   spacing={3}>
                                 <Grid item>
-                                    <PaddedPaper>
-                                        <Grid container direction={"column"} spacing={3}>
-                                            <Grid item>
-                                                <Switch onChange={togglePickupLocationType}/>
-                                                <LocationDetailAndSelector onSelectPreset={onSelectPickupFromSaved}
-                                                                           className={pickupLocationType === "preset" ? show : hide}
-                                                                           location={task.pickup_location}
-                                                                           displayPresets={true}
-                                                                           label={"Pick up preset"}/>
-                                                <LocationDetailAndSelector onSelectPreset={onSelectPickupCustom}
-                                                                           className={pickupLocationType === "custom" ? show : hide}
-                                                                           location={task.pickup_location}
-                                                                           displayPresets={false}
-                                                                           label={"Pick up custom"}/>
-                                            </Grid>
-                                            <LabelItemPair label={"Time picked up"}>
-                                                <TaskModalTimePicker disabled={false} label={"Mark Picked Up"}
-                                                                     time={task.time_picked_up}
-                                                                     onChange={() => {
-                                                                     }}/>
-                                            </LabelItemPair>
+                                    <Grid container direction={"row"} alignItems={"center"} spacing={1} justify={"flex-start"}>
+                                        <Grid item>
+                                            <PaddedPaper>
+                                                <Grid container direction={"column"} spacing={3}>
+                                                    <Grid item>
+                                                        <Switch onChange={togglePickupLocationType}/>
+                                                        <LocationDetailAndSelector
+                                                            onSelectPreset={onSelectPickupFromSaved}
+                                                            className={pickupLocationType === "preset" ? show : hide}
+                                                            location={task.pickup_location}
+                                                            displayPresets={true}
+                                                            label={"Pick up preset"}/>
+                                                        <LocationDetailAndSelector onSelectPreset={onSelectPickupCustom}
+                                                                                   className={pickupLocationType === "custom" ? show : hide}
+                                                                                   location={task.pickup_location}
+                                                                                   displayPresets={false}
+                                                                                   label={"Pick up custom"}/>
+                                                    </Grid>
+                                                    <LabelItemPair label={"Time picked up"}>
+                                                        <TaskModalTimePicker disabled={false} label={"Mark Picked Up"}
+                                                                             time={task.time_picked_up}
+                                                                             onChange={() => {
+                                                                             }}/>
+                                                    </LabelItemPair>
+                                                </Grid>
+                                            </PaddedPaper>
                                         </Grid>
-                                    </PaddedPaper>
+                                        <Grid item>
+                                            <ArrowForwardIcon className={mobileView ? hide : show}/>
+                                            <ArrowDownwardIcon className={mobileView ? show : hide}/>
+                                        </Grid>
+                                        <Grid item>
+                                            <PaddedPaper>
+                                                <Grid container direction={"column"} spacing={3}>
+                                                    <Grid item>
+                                                        <Switch onChange={toggleDropoffLocationType}/>
+                                                        <LocationDetailAndSelector
+                                                            onSelectPreset={onSelectDropoffFromSaved}
+                                                            className={dropoffLocationType === "preset" ? show : hide}
+                                                            location={task.dropoff_location}
+                                                            displayPresets={true}
+                                                            label={"Delivery preset"}/>
+                                                        <LocationDetailAndSelector
+                                                            onSelectPreset={onSelectDropoffFromSaved}
+                                                            className={dropoffLocationType === "custom" ? show : hide}
+                                                            location={task.dropoff_location}
+                                                            displayPresets={false}
+                                                            label={"Delivery custom"}/>
+                                                    </Grid>
+                                                    <LabelItemPair label={"Time delivered"}>
+                                                        <TaskModalTimePicker disabled={false} label={"Mark Delivered"}
+                                                                             time={task.time_dropped_off}
+                                                                             onChange={() => {
+                                                                             }}/>
+                                                    </LabelItemPair>
+                                                </Grid>
+                                            </PaddedPaper>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                                 <Grid item>
                                     <PaddedPaper>
-                                        <Grid container direction={"column"} spacing={3}>
-                                            <Grid item>
-                                                <Switch onChange={toggleDropoffLocationType}/>
-                                                <LocationDetailAndSelector onSelectPreset={onSelectDropoffFromSaved}
-                                                                           className={dropoffLocationType === "preset" ? show : hide}
-                                                                           location={task.dropoff_location}
-                                                                           displayPresets={true}
-                                                                           label={"Delivery preset"}/>
-                                                <LocationDetailAndSelector onSelectPreset={onSelectDropoffFromSaved}
-                                                                           className={dropoffLocationType === "custom" ? show : hide}
-                                                                           location={task.dropoff_location}
-                                                                           displayPresets={false}
-                                                                           label={"Delivery custom"}/>
-                                            </Grid>
-                                            <LabelItemPair label={"Time delivered"}>
-                                                <TaskModalTimePicker disabled={false} label={"Mark Delivered"}
-                                                                     time={task.time_dropped_off}
-                                                                     onChange={() => {
-                                                                     }}/>
-                                            </LabelItemPair>
-                                        </Grid>
-                                    </PaddedPaper>
-                                </Grid>
-                                <Grid item>
-                                    <PaddedPaper>
-                                        <TaskDetailsPanel task={task}/>
-                                        <ActivityPopover parentUUID={task.uuid}/>
+                                        <TaskDetailsPanel/>
                                     </PaddedPaper>
                                 </Grid>
                             </Grid>

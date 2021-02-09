@@ -33,8 +33,8 @@ import {
     putTaskFromSocket,
     resetGroupRelayUUIDs,
     restoreTaskFromSocket,
-    updateTaskAssignedRiderFromSocket,
-    updateTaskFromSocket,
+    updateTaskAssignedRiderFromSocket, updateTaskDropoffLocationFromSocket,
+    updateTaskFromSocket, updateTaskPickupLocationFromSocket,
     updateTaskRemoveAssignedRiderFromSocket,
     updateTaskTimeCancelledFromSocket,
     updateTaskTimeRejectedFromSocket
@@ -73,6 +73,9 @@ const apiURL = getApiURL();
 export const createSubscribeSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
+        console.log(socket)
+        if (socket)
+            console.log(socket.authenticated)
         switch (action.type) {
             case SOCKET_CONNECT: {
                 socket = io.connect(`${apiURL}subscribe`);
@@ -99,21 +102,23 @@ export const createSubscribeSocketMiddleware = () => {
                 break;
             }
             case SOCKET_SUBSCRIBE_UUID: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('subscribe', action.uuid);
+                }
                 break;
             }
             case SOCKET_UNSUBSCRIBE_UUID: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('unsubscribe', action.uuid);
+                }
                 break;
             }
             case SOCKET_SUBSCRIBE_UUID_MANY: {
@@ -128,29 +133,32 @@ export const createSubscribeSocketMiddleware = () => {
                 break;
             }
             case SOCKET_UNSUBSCRIBE_UUID_MANY: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('unsubscribe_many', action.uuids);
+                }
                 break;
             }
             case SOCKET_REFRESH_TASKS_DATA:
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit("refresh_task_data", action.uuids_etags)
+                }
                 break;
             case SOCKET_REFRESH_TASKS_ASSIGNMENTS:
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit("refresh_task_assignments", action.userUUID, action.taskUUIDs, action.role)
+                }
                 break;
             case SOCKET_SUBSCRIBE_RESPONSE_RECEIVED:
                 if (Object.keys(action.data).length === 0 && action.data.constructor === Object) {
@@ -195,6 +203,20 @@ export const createSubscribeSocketMiddleware = () => {
                                     }
                                 }
                                 break;
+                            case "UPDATE_TASK_PICKUP_LOCATION": {
+                                const data = {
+                                    taskUUID: action.data.object_uuid,
+                                    payload: action.data.data
+                                }
+                                storeAPI.dispatch(updateTaskPickupLocationFromSocket(data));
+                            }
+                            case "UPDATE_TASK_DROPOFF_LOCATION": {
+                                const data = {
+                                    taskUUID: action.data.object_uuid,
+                                    payload: action.data.data
+                                }
+                                storeAPI.dispatch(updateTaskDropoffLocationFromSocket(data));
+                            }
                             case "ASSIGN_RIDER_TO_TASK":
                                 const user_uuid = action.data.data.user_uuid
                                 const assignedUser = storeAPI.getState().users.users[user_uuid]
@@ -310,22 +332,24 @@ export const createSubscribeCommentsSocketMiddleware = () => {
                 break;
             }
             case SOCKET_SUBSCRIBE_COMMENTS: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('subscribe', action.uuid);
+                }
 
                 break;
             }
             case SOCKET_UNSUBSCRIBE_COMMENTS: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('unsubscribe', action.uuid);
+                }
                 break;
             }
             case SOCKET_SUBSCRIBE_COMMENTS_RESPONSE_RECEIVED:
@@ -381,41 +405,45 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                 break;
             }
             case SOCKET_SUBSCRIBE_COORDINATOR_ASSIGNMENTS: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('subscribe_coordinator', action.uuid);
+                }
 
                 break;
             }
             case SOCKET_UNSUBSCRIBE_COORDINATOR_ASSIGNMENTS: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('unsubscribe_coordinator', action.uuid);
+                }
                 break;
             }
             case SOCKET_SUBSCRIBE_RIDER_ASSIGNMENTS: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('subscribe_rider', action.uuid);
+                }
 
                 break;
             }
             case SOCKET_UNSUBSCRIBE_RIDER_ASSIGNMENTS: {
-                if (socket)
+                if (socket) {
                     if (!socket.authenticated) {
                         const token = storeAPI.getState().apiControl.token
                         socket.emit('authenticate', token)
                     }
                     socket.emit('unsubscribe_rider', action.uuid);
+                }
                 break;
             }
             case SOCKET_SUBSCRIBE_ASSIGNMENTS_RESPONSE_RECEIVED: {

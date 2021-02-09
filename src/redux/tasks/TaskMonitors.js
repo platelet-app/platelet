@@ -5,7 +5,7 @@ import {updateActiveTask} from "./TasksActions";
 const ignoreActionTypes = []
 
 function monitorableAction(action) {
-    return action.type.startsWith("UPDATE_TASK") && action.type.includes("SUCCESS") &&
+    return action.type.startsWith("UPDATE_TASK") && (action.type.includes("SUCCESS") || action.type.includes("FROM_SOCKET")) &&
         ignoreActionTypes.every(fragment => !action.type.includes(fragment))
 }
 

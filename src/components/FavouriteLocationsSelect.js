@@ -31,7 +31,6 @@ function FavouriteLocationsSelect(props) {
     return (
         <div>
             <Autocomplete
-                id="combo-box-locations"
                 filterOptions={filterOptions}
                 options={filteredLocationSuggestions}
                 getOptionLabel={(option) => option.name}

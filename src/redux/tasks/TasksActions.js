@@ -49,6 +49,8 @@ export const ADD_TASK_FROM_SOCKET = "ADD_TASK_FROM_SOCKET"
 export const DELETE_TASK_FROM_SOCKET = "DELETE_TASK_FROM_SOCKET"
 export const RESTORE_TASK_FROM_SOCKET = "RESTORE_TASK_FROM_SOCKET"
 export const START_REFRESH_TASKS_LOOP_FROM_SOCKET = "START_REFRESH_TASKS_LOOP_FROM_SOCKET";
+export const UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET = "UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET"
+export const UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET = "UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET"
 
 export const UPDATE_TASK_REQUESTER_CONTACT_SUCCESS = "UPDATE_TASK_REQUESTER_CONTACT_SUCCESS";
 export const UPDATE_TASK_PICKUP_ADDRESS_SUCCESS = "UPDATE_TASK_PICKUP_ADDRESS_SUCCESS";
@@ -197,6 +199,14 @@ export function restoreTaskFromSocket(data) {
 
 export function updateTaskFromSocket(data) {
     return { type: UPDATE_TASK_FROM_SOCKET, data }
+}
+
+export function updateTaskPickupLocationFromSocket(data) {
+    return { type: UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET, data}
+}
+
+export function updateTaskDropoffLocationFromSocket(data) {
+    return { type: UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, data}
 }
 
 export function updateTaskTimeRejectedFromSocket(data) {

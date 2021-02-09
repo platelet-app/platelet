@@ -124,12 +124,8 @@ function* postNewTask(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.createTask], action.data.payload);
         const parentID = result.parent_id ? parseInt(result.parent_id) : 0
-        const task = {...action.data.payload, "uuid": result.uuid, parent_id: parentID, order_in_relay: 1};
+        const task = {...action.data.payload, "uuid": result.uuid, parent_id: parentID, order_in_relay: 1, reference: result.reference};
         yield put(addTaskAssignedCoordinatorRequest(task.uuid, result.author_uuid))
-        //yield put(addTaskAssignedCoordinatorRequest({
-        //    taskUUID: task.uuid,
-        //    payload: {task_uuid: task.uuid, user_uuid: result.author_uuid, user: whoami}
-        //}))
         yield put(addTaskSuccess(task));
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {
@@ -194,7 +190,8 @@ function* postNewTaskRelay(action) {
             ...emptyTask, ...prevTaskData,
             author_uuid: whoami.uuid,
             uuid: result.uuid,
-            order_in_relay: orderInRelay
+            order_in_relay: orderInRelay,
+            reference: result.reference
         };
         yield put(addTaskAssignedCoordinatorRequest({
             taskUUID: task.uuid,

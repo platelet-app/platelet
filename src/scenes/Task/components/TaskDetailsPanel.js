@@ -6,9 +6,11 @@ import PropTypes from "prop-types"
 import Grid from "@material-ui/core/Grid";
 import PrioritySelect from "./PrioritySelect";
 import {updateTaskPriorityRequest, updateTaskRequesterContactRequest} from "../../../redux/tasks/TasksActions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
+import ActivityPopover from "./ActivityPopover";
+import {PaddedPaper} from "../../../styles/common";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -17,18 +19,25 @@ const useStyles = makeStyles({
 })
 
 function TaskDetailsPanel(props) {
+    const task = useSelector(state => state.task.task);
     const dispatch = useDispatch();
     const classes = useStyles();
     const {
         reference,
         time_of_call,
-        priority_id,
         patch,
         assigned_riders_display_string,
         uuid
-    } = props.task;
-    const {name, telephone_number} = props.task.requester_contact ? props.task.requester_contact : {name: "", telephone_number: ""}
+    } = task;
+    const {name, telephone_number} = task.requester_contact ? task.requester_contact : {name: "", telephone_number: ""}
     const [requesterContactValue, setRequesterContactValue] = useState({name, telephone_number})
+
+    let priority_id;
+    try {
+        priority_id = parseInt(task.priority_id)
+    } catch {
+        priority_id = null;
+    }
 
     function onSelectPriority(priority_id, priority) {
         const payload = {priority_id, priority};
@@ -62,7 +71,7 @@ function TaskDetailsPanel(props) {
                     </LabelItemPair>
                 </div>
                 <LabelItemPair label={"Priority"}>
-                    <PrioritySelect onSelect={onSelectPriority} priorityID={priority_id}/>
+                    <PrioritySelect onSelect={onSelectPriority} priorityID={parseInt(priority_id)}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Patch"}>
                     <Typography>{patch}</Typography>
@@ -70,6 +79,7 @@ function TaskDetailsPanel(props) {
                 <LabelItemPair label={"Assigned rider"}>
                     <Typography>{assigned_riders_display_string}</Typography>
                 </LabelItemPair>
+                <ActivityPopover parentUUID={task.uuid}/>
             </Grid>
             <Grid item>
 
@@ -77,9 +87,5 @@ function TaskDetailsPanel(props) {
         </Grid>
     )
 }
-
-TaskDetailsPanel.propTypes = {
-    task: PropTypes.object
-};
 
 export default TaskDetailsPanel;
