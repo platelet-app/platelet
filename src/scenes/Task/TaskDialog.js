@@ -19,10 +19,10 @@ import {
     updateTaskDropoffTimeRequest,
     updateTaskPickupAddressRequest,
     updateTaskCancelledTimeRequest,
-    getTaskRequest,
     updateTaskPickupAddressFromSavedRequest,
     updateTaskDropoffAddressFromSavedRequest, updateTaskRequesterContactRequest, updateTaskRejectedTimeRequest
 } from "../../redux/tasks/TasksActions";
+import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions";
 import {useDispatch, useSelector} from "react-redux"
 import {PaddedPaper} from "../../styles/common";
 import {decodeUUID, encodeUUID} from "../../utilities";

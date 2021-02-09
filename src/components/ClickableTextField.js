@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Typography from "@material-ui/core/Typography";
 import {TextField} from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -36,6 +36,12 @@ function ClickableTextField(props) {
         props.onChange(result);
     }
 
+    function onFinishedEntry() {
+        setEditMode(false);
+        props.onFinished();
+        firstValue.current = props.value;
+    }
+
     function toggleEditMode() {
         if (!props.disabled) {
             setEditMode(!editMode)
@@ -58,12 +64,12 @@ function ClickableTextField(props) {
                     onKeyUp={(ev) => {
                         switch(ev.key) {
                             case "Enter": {
-                                setEditMode(false);
+                                onFinishedEntry()
                                 ev.preventDefault();
                                 break;
                             }
                             case "Escape": {
-                                props.onChange({target: {value: firstValue.current}});
+                                onChange({target: {value: firstValue.current}});
                                 setEditMode(false);
                                 ev.preventDefault();
                                 break;
@@ -74,7 +80,7 @@ function ClickableTextField(props) {
                     }}
                     className={classes.root}
                     autoFocus={true}
-                    onBlur={toggleEditMode}
+                    onBlur={onFinishedEntry}
                     value={props.value}
                     InputProps={{ disableUnderline: true }}
                     onChange={onChange}/>
@@ -87,12 +93,13 @@ function ClickableTextField(props) {
                     onKeyUp={(ev) => {
                         switch (ev.key) {
                             case "Enter": {
+                                onFinishedEntry()
                                 setEditMode(false);
                                 ev.preventDefault();
                                 break;
                             }
                             case "Escape": {
-                                props.onChange({target: {value: firstValue.current}});
+                                onChange({target: {value: firstValue.current}});
                                 setEditMode(false);
                                 ev.preventDefault();
                                 break;
@@ -103,7 +110,7 @@ function ClickableTextField(props) {
                     }}
                     className={classes.textfield}
                     autoFocus={true}
-                    onBlur={toggleEditMode}
+                    onBlur={onFinishedEntry}
                     value={props.value}
                     InputProps={{disableUnderline: true}}
                     onChange={onChange}/>
@@ -124,7 +131,8 @@ ClickableTextField.propTypes = {
     disabled: PropTypes.bool,
     label: PropTypes.string,
     onChange: PropTypes.func,
-    telephone: PropTypes.bool
+    telephone: PropTypes.bool,
+    onFinished: PropTypes.func
 
 }
 
@@ -133,6 +141,7 @@ ClickableTextField.defaultProps = {
     disabled: false,
     label: "Click to edit",
     onChange: () => {},
+    onFinished: () => {},
     telephone: false
 }
 

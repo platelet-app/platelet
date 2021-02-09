@@ -1,14 +1,13 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import LocationDetailAndSelector from "./components/LocationDetailAndSelector";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
-import {useHistory, useLocation} from "react-router";
+import {useHistory} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
-import {decodeUUID, determineTaskType, findExistingTask, findExistingTaskParent} from "../../utilities";
+import {decodeUUID, determineTaskType} from "../../utilities";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
-import {getTaskRequest, updateTaskPriorityRequest} from "../../redux/tasks/TasksActions";
-import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
+import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions"
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
     setTaskDropoffDestinationRequest,
@@ -19,11 +18,9 @@ import CommentsSection from "../Comments/CommentsSection";
 import {PaddedPaper, showHide} from "../../styles/common";
 import TaskModalTimePicker from "./components/TaskModalTimePicker";
 import LabelItemPair from "../../components/LabelItemPair";
-import ActivityPopover from "./components/ActivityPopover";
 import {Switch} from "@material-ui/core";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const useStyles = makeStyles({
     root: {
