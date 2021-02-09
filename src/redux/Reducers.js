@@ -1,7 +1,5 @@
 import {combineReducers} from 'redux'
 import {
-    GET_ACTIVE_TASK_UUID,
-    SET_ACTIVE_TASK_UUID,
     CLEAR_LOADING,
     GET_WHOAMI_SUCCESS,
     SET_VIEW_MODE,
@@ -17,7 +15,8 @@ import {
     SET_ROLE_VIEW,
     SET_IDLE_STATUS,
 } from './Actions'
-import {task, tasks, currentTask} from "./tasks/TasksReducers"
+import {tasks} from "./tasks/TasksReducers"
+import {task} from "./activeTask/ActiveTaskReducer"
 import {userStatistics} from "./statistics/statisticsReducers";
 import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
@@ -236,7 +235,6 @@ export function error(state =  null, action){
 const appReducer = combineReducers({
     task,
     tasks,
-    currentTask,
     taskAssignees,
     deliverables,
     availableDeliverables,

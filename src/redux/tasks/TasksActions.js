@@ -1,8 +1,3 @@
-export const UPDATE_ACTIVE_TASK = "UPDATE_ACTIVE_TASK";
-export const GET_TASK_REQUEST = "GET_TASK_REQUEST";
-export const GET_TASK_SUCCESS = "GET_TASK_SUCCESS";
-export const GET_TASK_FAILURE = "GET_TASK_FAILURE";
-export const GET_TASK_NOTFOUND = "GET_TASK_NOTFOUND";
 export const ADD_TASK_REQUEST = "ADD_TASK_REQUEST";
 export const ADD_TASK_SUCCESS = "ADD_TASK_SUCCESS";
 export const ADD_TASK_FAILURE = "ADD_TASK_FAILURE";
@@ -101,10 +96,6 @@ export const REFRESH_MY_TASKS_NOTFOUND = "REFRESH_MY_TASKS_NOTFOUND";
 export const RESET_GROUP_RELAY_UUIDS = "RESET_GROUP_RELAY_UUIDS";
 export const GROUP_RELAYS_TOGETHER = "GROUP_RELAYS_TOGETHER";
 
-export function updateActiveTask(taskUUID, payload) {
-    return {type: UPDATE_ACTIVE_TASK, data: {taskUUID, payload}}
-}
-
 export function restoreTaskRequest(taskUUID) {
     return { type: RESTORE_TASK_REQUEST, data: {taskUUID }}
 }
@@ -123,22 +114,6 @@ export function putTaskSuccess(data) {
 
 export function putTaskFromSocket(data) {
     return { type: PUT_TASK_FROM_SOCKET, data }
-}
-
-export function getTaskRequest(taskUUID) {
-    return { type: GET_TASK_REQUEST, data: {taskUUID} }
-}
-
-export function getTaskSuccess(data) {
-    return { type: GET_TASK_SUCCESS, data }
-}
-
-export function getTaskFailure(error) {
-    return { type: GET_TASK_FAILURE, error }
-}
-
-export function getTaskNotFound(error) {
-    return { type: GET_TASK_NOTFOUND, error }
 }
 
 export function addTaskRequest(payload) {

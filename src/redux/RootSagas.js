@@ -4,7 +4,6 @@ import {
     watchGetTasks,
     watchUpdateTask,
     watchGetMyTasks,
-    watchGetTask,
     watchDeleteTask,
     watchRestoreTask,
     watchUpdateTaskDropoffAddress,
@@ -87,7 +86,8 @@ import {
 } from "./tasks/TaskWaypointSagas";
 import {watchInitialiseApp} from "./initialise/initialiseSagas";
 import authenticationMonitor from "./login/AuthenticationMonitor";
-import updateActiveTaskMonitor from "./tasks/TaskMonitors";
+import updateActiveTaskMonitor from "./activeTask/ActiveTaskMonitors"
+import {watchGetTask} from "./activeTask/ActiveTaskSagas"
 
 export default function* rootSaga() {
     yield all([

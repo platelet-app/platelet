@@ -16,7 +16,6 @@ import {
     updateTaskPickupTimeRequest,
     UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST,
     UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST,
-    getTaskNotFound,
     ADD_TASK_RELAY_REQUEST,
     addTaskRelaySuccess,
     addTaskRelayFailure,
@@ -40,8 +39,6 @@ import {
     getAllTasksSuccess,
     GET_MY_TASKS_REQUEST,
     getAllMyTasksSuccess,
-    GET_TASK_REQUEST,
-    getTaskSuccess,
     updateTaskRequesterContactSuccess,
     updateTaskPickupAddressSuccess,
     updateTaskDropoffAddressSuccess,
@@ -83,7 +80,6 @@ import {
     updateTaskPatchFailure,
     updateTaskCancelledTimeFailure,
     updateTaskRejectedTimeFailure,
-    getTaskFailure,
     updateTaskPatchRequest
 } from "./TasksActions"
 
@@ -96,13 +92,12 @@ import {
     unsubscribeFromUUID
 } from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
-import {convertTaskGroupToObject, encodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
+import {encodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
 import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
 import { setRoleView } from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
 import {createLoadingSelector, createPostingSelector} from "../selectors";
 import {convertTaskListsToObjects, taskGroupSort} from "./task_redux_utilities";
-import {task} from "./TasksReducers";
 
 
 const emptyTask = {
@@ -558,33 +553,6 @@ export function* watchUpdateTaskCancelledTime() {
 
 export function* watchUpdateTaskRejectedTime() {
     yield debounce(300, UPDATE_TASK_REJECTED_TIME_REQUEST, updateTaskRejectedTime)
-}
-
-function* getTask(action) {
-    try {
-        const currentTasks = yield select((state) => state.tasks.tasks);
-        let task = findExistingTask(currentTasks, action.data.taskUUID)
-        if (task) {
-            // if it's already in the list of tasks, no need to get it
-            yield put(getTaskSuccess(task))
-        } else {
-            // not in the list so call the api
-            const api = yield select(getApiControl);
-            const result = yield call([api, api.tasks.getTask], action.data.taskUUID);
-            yield put(getTaskSuccess(result))
-        }
-    } catch (error) {
-        if (error.status_code) {
-            if (error.status_code === 404) {
-                yield put(getTaskNotFound(error))
-            }
-        }
-        yield put(getTaskFailure(error))
-    }
-}
-
-export function* watchGetTask() {
-    yield takeLatest(GET_TASK_REQUEST, getTask)
 }
 
 function* getTasks(action) {
