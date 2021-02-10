@@ -29,7 +29,7 @@ function StatusBar(props) {
                                             size={5}
                                             userUUID={u.uuid}
                                             displayName={u.display_name}
-                                            avatarURL={u.avatar_url}/>)
+                                            avatarURL={u.profile_picture_thumbnail_url}/>)
                                     }
                                 </AvatarGroup>
                             </Tooltip>
@@ -52,7 +52,7 @@ function StatusBar(props) {
                                             size={5}
                                             userUUID={u.uuid}
                                             displayName={u.display_name}
-                                            avatarURL={u.avatar_url}/>)
+                                            avatarURL={u.profile_picture_thumbnail_url}/>)
                                     }
                                 </AvatarGroup>
                             </Tooltip>

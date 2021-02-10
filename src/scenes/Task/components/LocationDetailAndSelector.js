@@ -37,6 +37,10 @@ function LocationDetailAndSelector(props) {
     }
     useEffect(updateStateFromProps, [props.location])
 
+    function onFieldFinished() {
+        props.onChange(state);
+    }
+
     return (
 
         <Grid container className={props.className} direction={"column"}>
@@ -56,6 +60,7 @@ function LocationDetailAndSelector(props) {
                         label={"w3w"}
                         disabled={protectedLocation}
                         onChange={v => setState({...state, what3words: v})}
+                        onFinished={onFieldFinished}
                         value={state.what3words}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Ward"}>
@@ -63,6 +68,7 @@ function LocationDetailAndSelector(props) {
                         label="ward"
                         disabled={protectedLocation}
                         onChange={v => setState({...state, ward: v})}
+                        onFinished={onFieldFinished}
                         value={state.ward}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Line1"}>
@@ -70,6 +76,7 @@ function LocationDetailAndSelector(props) {
                         label={"line1"}
                         disabled={protectedLocation}
                         onChange={v => setState({...state, line1: v})}
+                        onFinished={onFieldFinished}
                         value={state.line1}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Line2"}>
@@ -77,6 +84,7 @@ function LocationDetailAndSelector(props) {
                         label={"line2"}
                         disabled={protectedLocation}
                         onChange={v => setState({...state, line2: v})}
+                        onFinished={onFieldFinished}
                         value={state.line2}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Town"}>
@@ -84,6 +92,7 @@ function LocationDetailAndSelector(props) {
                         label={"town"}
                         disabled={protectedLocation}
                         onChange={v => setState({...state, town: v})}
+                        onFinished={onFieldFinished}
                         value={state.town}/>
                 </LabelItemPair>
                 <LabelItemPair label={"County"}>
@@ -91,6 +100,7 @@ function LocationDetailAndSelector(props) {
                         label={"county"}
                         disabled={protectedLocation}
                         onChange={v => setState({...state, county: v})}
+                        onFinished={onFieldFinished}
                         value={state.county}/>
                 </LabelItemPair>
                 <LabelItemPair label={"Postcode"}>
@@ -98,6 +108,7 @@ function LocationDetailAndSelector(props) {
                         label={"postcode"}
                         disabled={protectedLocation}
                         onChange={v => setState({...state, postcode: v})}
+                        onFinished={onFieldFinished}
                         value={state.postcode}/>
                 </LabelItemPair>
 
@@ -113,7 +124,8 @@ LocationDetailAndSelector.propTypes = {
     location: PropTypes.object,
     onSelectPreset: PropTypes.func,
     className: PropTypes.string,
-    displayPresets: PropTypes.bool
+    displayPresets: PropTypes.bool,
+    onChange: PropTypes.func
 }
 
 LocationDetailAndSelector.propDefaults = {
@@ -130,8 +142,8 @@ LocationDetailAndSelector.propDefaults = {
             postcode: null
         }
     },
-    onSelectPreset: () => {
-    }
+    onSelectPreset: () => {},
+    onChange: () => {}
 }
 
 export default LocationDetailAndSelector;

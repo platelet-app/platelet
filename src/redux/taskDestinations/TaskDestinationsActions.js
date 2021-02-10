@@ -23,6 +23,11 @@ export const UNSET_TASK_DROPOFF_DESTINATION_FAILURE = "UNSET_TASK_DROPOFF_DESTIN
 export const GET_TASK_PICKUP_DESTINATION_FAILURE = "GET_TASK_PICKUP_DESTINATION_FAILURE";
 export const GET_TASK_DROPOFF_DESTINATION_FAILURE = "GET_TASK_DROPOFF_DESTINATION_FAILURE";
 
+export const ADD_NEW_PICKUP_LOCATION_AND_SET_TASK = "ADD_NEW_PICKUP_LOCATION_AND_SET_TASK";
+export const ADD_NEW_DROPOFF_LOCATION_AND_SET_TASK = "ADD_NEW_DROPOFF_LOCATION_AND_SET_TASK";
+export const UPDATE_TASK_PICKUP_LOCATION_AND_UPDATE_TASK = "UPDATE_TASK_PICKUP_LOCATION_AND_UPDATE_TASK";
+export const UPDATE_TASK_DROPOFF_LOCATION_AND_UPDATE_TASK = "UPDATE_TASK_DROPOFF_LOCATION_AND_UPDATE_TASK";
+
 export function getTaskDestinationRequest(locationUUID) {
     return { type: GET_TASK_DROPOFF_DESTINATION_REQUEST, data: {location_uuid: locationUUID} }
 }
@@ -81,4 +86,16 @@ export function unsetTaskPickupDestinationFailure(error) {
 
 export function unsetTaskPickupDestinationSuccess(data) {
     return { type: UNSET_TASK_PICKUP_DESTINATION_SUCCESS, data }
+}
+
+export function addNewPickupLocationAndSetTask(taskUUID, payload) {
+    return {type: ADD_NEW_PICKUP_LOCATION_AND_SET_TASK, data: {taskUUID, payload}}
+}
+
+export function addNewDropoffLocationAndSetTask(taskUUID, payload) {
+    return {type: ADD_NEW_DROPOFF_LOCATION_AND_SET_TASK, data: {taskUUID, payload}}
+}
+
+export function updateTaskPickupLocationAndUpdateTask(taskUUID, payload) {
+    return {type: UPDATE_TASK_PICKUP_LOCATION_AND_UPDATE_TASK, data: {taskUUID, payload}}
 }

@@ -10,8 +10,9 @@ import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions"
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
+    addNewPickupLocationAndSetTask,
     setTaskDropoffDestinationRequest,
-    setTaskPickupDestinationRequest
+    setTaskPickupDestinationRequest, updateTaskPickupLocationAndUpdateTask
 } from "../../redux/taskDestinations/TaskDestinationsActions";
 import TaskDetailsPanel from "./components/TaskDetailsPanel";
 import CommentsSection from "../Comments/CommentsSection";
@@ -21,6 +22,7 @@ import LabelItemPair from "../../components/LabelItemPair";
 import {Switch} from "@material-ui/core";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import {updateLocationRequest} from "../../redux/locations/LocationsActions";
 
 const useStyles = makeStyles({
     root: {
@@ -104,8 +106,12 @@ function TaskDialogCompact(props) {
 
     useEffect(setPresets, [task])
 
-    function onSelectPickupCustom() {
-
+    function onChangePickupLocation(value) {
+        if (task.pickup_location) {
+            dispatch(updateTaskPickupLocationAndUpdateTask(task.uuid, {address: value}))
+        } else {
+            dispatch(addNewPickupLocationAndSetTask(task.uuid, {address: value}))
+        }
     }
 
     function onSelectPickupFromSaved(location) {
@@ -188,15 +194,10 @@ function TaskDialogCompact(props) {
                                                         <Switch onChange={togglePickupLocationType}/>
                                                         <LocationDetailAndSelector
                                                             onSelectPreset={onSelectPickupFromSaved}
-                                                            className={pickupLocationType === "preset" ? show : hide}
+                                                            onChange={onChangePickupLocation}
                                                             location={task.pickup_location}
                                                             displayPresets={true}
                                                             label={"Pick up preset"}/>
-                                                        <LocationDetailAndSelector onSelectPreset={onSelectPickupCustom}
-                                                                                   className={pickupLocationType === "custom" ? show : hide}
-                                                                                   location={task.pickup_location}
-                                                                                   displayPresets={false}
-                                                                                   label={"Pick up custom"}/>
                                                     </Grid>
                                                     <LabelItemPair label={"Time picked up"}>
                                                         <TaskModalTimePicker disabled={false} label={"Mark Picked Up"}
@@ -218,16 +219,9 @@ function TaskDialogCompact(props) {
                                                         <Switch onChange={toggleDropoffLocationType}/>
                                                         <LocationDetailAndSelector
                                                             onSelectPreset={onSelectDropoffFromSaved}
-                                                            className={dropoffLocationType === "preset" ? show : hide}
                                                             location={task.dropoff_location}
                                                             displayPresets={true}
                                                             label={"Delivery preset"}/>
-                                                        <LocationDetailAndSelector
-                                                            onSelectPreset={onSelectDropoffFromSaved}
-                                                            className={dropoffLocationType === "custom" ? show : hide}
-                                                            location={task.dropoff_location}
-                                                            displayPresets={false}
-                                                            label={"Delivery custom"}/>
                                                     </Grid>
                                                     <LabelItemPair label={"Time delivered"}>
                                                         <TaskModalTimePicker disabled={false} label={"Mark Delivered"}

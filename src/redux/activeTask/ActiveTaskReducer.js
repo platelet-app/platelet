@@ -9,8 +9,8 @@ import {addAssigneeToList} from "../tasks/task_redux_utilities";
 const initialLocationState = {
     address: null,
     contact: {name: null, telephone_number: null},
-    protected: true,
-    listed: true
+    protected: false,
+    listed: false
 }
 
 const initialState = {
