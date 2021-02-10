@@ -200,6 +200,14 @@ export function updateTaskRemoveAssignedRiderFromSocket(data) {
     return { type: UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET, data }
 }
 
+export function updateTaskAssignedCoordinatorFromSocket(data) {
+    return { type: UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET, data }
+}
+
+export function updateTaskRemoveAssignedCoordinatorFromSocket(data) {
+    return { type: UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET, data }
+}
+
 export function startRefreshTasksLoopFromSocket(userUUID) {
     return {type: START_REFRESH_TASKS_LOOP_FROM_SOCKET, userUUID}
 }

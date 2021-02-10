@@ -32,9 +32,9 @@ import {
     deleteTaskFromSocket,
     putTaskFromSocket,
     resetGroupRelayUUIDs,
-    restoreTaskFromSocket,
+    restoreTaskFromSocket, updateTaskAssignedCoordinatorFromSocket,
     updateTaskAssignedRiderFromSocket, updateTaskDropoffLocationFromSocket,
-    updateTaskFromSocket, updateTaskPickupLocationFromSocket,
+    updateTaskFromSocket, updateTaskPickupLocationFromSocket, updateTaskRemoveAssignedCoordinatorFromSocket,
     updateTaskRemoveAssignedRiderFromSocket,
     updateTaskTimeCancelledFromSocket,
     updateTaskTimeRejectedFromSocket
@@ -210,6 +210,7 @@ export const createSubscribeSocketMiddleware = () => {
                                 }
                                 storeAPI.dispatch(updateTaskPickupLocationFromSocket(data));
                             }
+                            break;
                             case "UPDATE_TASK_DROPOFF_LOCATION": {
                                 const data = {
                                     taskUUID: action.data.object_uuid,
@@ -217,7 +218,8 @@ export const createSubscribeSocketMiddleware = () => {
                                 }
                                 storeAPI.dispatch(updateTaskDropoffLocationFromSocket(data));
                             }
-                            case "ASSIGN_RIDER_TO_TASK":
+                            break;
+                            case "ASSIGN_RIDER_TO_TASK": {
                                 const user_uuid = action.data.data.user_uuid
                                 const assignedUser = storeAPI.getState().users.users[user_uuid]
                                 if (assignedUser) {
@@ -226,14 +228,32 @@ export const createSubscribeSocketMiddleware = () => {
                                         taskUUID: action.data.object_uuid,
                                         payload: {rider, user_uuid}
                                     }))
-                                }
+                                } }
                                 break;
-                            case "REMOVE_ASSIGNED_RIDER_FROM_TASK":
+                            case "REMOVE_ASSIGNED_RIDER_FROM_TASK": {
                                 const user_uuid_remove = action.data.data.user_uuid
                                 storeAPI.dispatch(updateTaskRemoveAssignedRiderFromSocket({
                                     taskUUID: action.data.object_uuid,
                                     payload: {user_uuid: user_uuid_remove}
-                                }))
+                                }))}
+                                break;
+                            case "ASSIGN_COORDINATOR_TO_TASK": {
+                                const user_uuid = action.data.data.user_uuid
+                                const assignedUser = storeAPI.getState().users.users[user_uuid]
+                                if (assignedUser) {
+                                    const user = assignedUser
+                                    storeAPI.dispatch(updateTaskAssignedCoordinatorFromSocket({
+                                        taskUUID: action.data.object_uuid,
+                                        payload: {user, user_uuid}
+                                    }))
+                                } }
+                                break;
+                            case "REMOVE_ASSIGNED_COORDINATOR_FROM_TASK": {
+                                const user_uuid_remove = action.data.data.user_uuid
+                                storeAPI.dispatch(updateTaskRemoveAssignedCoordinatorFromSocket({
+                                    taskUUID: action.data.object_uuid,
+                                    payload: {user_uuid: user_uuid_remove}
+                                }))}
                                 break;
                             case "DELETE_TASK":
                                 const curTasks = storeAPI.getState().tasks.tasks;

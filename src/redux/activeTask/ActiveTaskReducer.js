@@ -1,4 +1,10 @@
-import {GET_TASK_SUCCESS, UPDATE_ACTIVE_TASK} from "../activeTask/ActiveTaskActions";
+import {
+    GET_TASK_SUCCESS,
+    UPDATE_ACTIVE_TASK,
+    UPDATE_ACTIVE_TASK_ASSIGNED_COORDINATOR,
+    UPDATE_ACTIVE_TASK_ASSIGNED_RIDER
+} from "../activeTask/ActiveTaskActions";
+import {addAssigneeToList} from "../tasks/task_redux_utilities";
 
 const initialLocationState = {
     address: null,
@@ -56,6 +62,20 @@ export function task(state = initialState, action) {
             return {task: action.data, error: null};
         case UPDATE_ACTIVE_TASK:
             return {task: {...state.task, ...action.data.payload}, error: null}
+        case UPDATE_ACTIVE_TASK_ASSIGNED_RIDER: {
+            return { task: {
+                ...state.task,
+                ...addAssigneeToList(state.task,
+                    action.data.payload.rider, "rider")
+            }, error: null}
+        }
+        case UPDATE_ACTIVE_TASK_ASSIGNED_COORDINATOR: {
+            return { task: {
+                ...state.task,
+                ...addAssigneeToList(state.task,
+                    action.data.payload.user, "coordinator")
+            }, error: null}
+        }
         default:
             return state;
     }
