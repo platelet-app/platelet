@@ -25,7 +25,7 @@ import {
 } from "./tasks/TasksSagas"
 import {
     watchSetTaskDropoffDestination,
-    watchSetTaskPickupDestination
+    watchSetTaskPickupDestination, watchUnsetTaskDropoffDestination, watchUnsetTaskPickupDestination
 } from "./taskDestinations/TaskDestinationsSagas"
 import {
     watchDeleteDeliverable,
@@ -175,6 +175,8 @@ export default function* rootSaga() {
         call(watchRefreshToken),
         call(watchSetTaskPickupDestination),
         call(watchSetTaskDropoffDestination),
+        call(watchUnsetTaskDropoffDestination),
+        call(watchUnsetTaskPickupDestination),
         call(updateActiveTaskMonitor)
     ])
 }

@@ -24,7 +24,7 @@ import {
     getAllTasksRequest,
     SET_ROLE_VIEW_AND_GET_TASKS,
     START_REFRESH_TASKS_LOOP_FROM_SOCKET,
-    updateTaskDropoffAddressRequest,
+    updateTaskDropoffAddressRequest, updateTaskDropoffAddressFromSavedRequest,
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -98,6 +98,10 @@ import { setRoleView } from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
 import {createLoadingSelector, createPostingSelector} from "../selectors";
 import {convertTaskListsToObjects, taskGroupSort} from "./task_redux_utilities";
+import {
+    setTaskDropoffDestinationRequest,
+    unsetTaskDropoffDestinationRequest
+} from "../taskDestinations/TaskDestinationsActions";
 
 
 const emptyTask = {
@@ -159,7 +163,6 @@ function* postNewTaskRelay(action) {
 
                 priority = null,
                 priority_id = null,
-                dropoff_address = null,
                 parent_id,
                 uuid = null,
             } = {...previousTask};
@@ -168,7 +171,6 @@ function* postNewTaskRelay(action) {
                 requester_contact,
                 priority,
                 priority_id,
-                dropoff_address,
             }
             if (parent_id && uuid)
                 prevTaskData = {parent_id, relay_previous_uuid: uuid, ...prevTaskData}
@@ -188,19 +190,18 @@ function* postNewTaskRelay(action) {
             order_in_relay: orderInRelay,
             reference: result.reference
         };
-        yield put(addTaskAssignedCoordinatorRequest({
-            taskUUID: task.uuid,
-            payload: {task_uuid: task.uuid, user_uuid: task.author_uuid, user: whoami}
-        }))
+        yield put(addTaskAssignedCoordinatorRequest(
+            task.uuid, whoami.uuid
+            ))
         yield put(updateTaskSuccess({
                 taskUUID: action.data.relayPrevious,
                 payload: {relay_next: task}
             }
         ))
-        yield put(updateTaskDropoffAddressRequest(
-            action.data.relayPrevious,
-            {dropoff_address: emptyAddress, relay_next: task}
-        ))
+        if (previousTask.dropoff_location && previousTask.dropoff_location.uuid) {
+            yield put(setTaskDropoffDestinationRequest(task.uuid, previousTask.dropoff_location.uuid))
+            yield put(unsetTaskDropoffDestinationRequest(previousTask.uuid))
+        }
         yield put(addTaskRelaySuccess(task));
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {
@@ -225,11 +226,11 @@ function* deleteTask(action) {
         let relayPrevious;
         if (beforeDelete) {
             const groupSorted = Object.values(taskGroup).sort(taskGroupSort)
-            if (beforeDelete.dropoff_address && beforeDelete.relay_previous_uuid && groupSorted[groupSorted.length - 1].uuid === beforeDelete.uuid) {
+            if (beforeDelete.dropoff_location && beforeDelete.relay_previous_uuid && groupSorted[groupSorted.length - 1].uuid === beforeDelete.uuid) {
                 relayPrevious = yield findExistingTask(currentTasks, beforeDelete.relay_previous_uuid);
-                yield put(updateTaskDropoffAddressRequest(
+                yield put(setTaskDropoffDestinationRequest(
                     beforeDelete.relay_previous_uuid,
-                    {dropoff_address: beforeDelete.dropoff_address}
+                    beforeDelete.dropoff_location.uuid
                 ));
             }
             yield put(resetGroupRelayUUIDs(beforeDelete.parent_id));
@@ -239,10 +240,9 @@ function* deleteTask(action) {
         if (relayPrevious) {
             restoreActions = () => [
                 restoreTaskRequest(action.data.taskUUID),
-                updateTaskDropoffAddressRequest(
-                    beforeDelete.relay_previous_uuid,
-                    {dropoff_address: relayPrevious.dropoff_address}
-                )
+                unsetTaskDropoffDestinationRequest(
+                    beforeDelete.relay_previous_uuid
+                ),
             ];
         } else {
             restoreActions = () => [

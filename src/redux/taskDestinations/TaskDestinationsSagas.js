@@ -3,8 +3,16 @@ import {getApiControl, getPresetLocations} from "../Api";
 import {
     SET_TASK_DROPOFF_DESTINATION_REQUEST,
     SET_TASK_PICKUP_DESTINATION_REQUEST,
+    setTaskDropoffDestinationFailure,
+    setTaskDropoffDestinationSuccess,
     setTaskPickupDestinationFailure,
-    setTaskPickupDestinationSuccess
+    setTaskPickupDestinationSuccess,
+    UNSET_TASK_DROPOFF_DESTINATION_REQUEST,
+    UNSET_TASK_PICKUP_DESTINATION_REQUEST,
+    unsetTaskDropoffDestinationFailure,
+    unsetTaskDropoffDestinationSuccess,
+    unsetTaskPickupDestinationFailure,
+    unsetTaskPickupDestinationSuccess
 } from "./TaskDestinationsActions";
 import {updateTaskDropoffAddressSuccess, updateTaskPickupAddressSuccess} from "../tasks/TasksActions";
 
@@ -45,17 +53,54 @@ function* setTaskDropoffDestination(action) {
         } else {
             locationData = yield call([api, api.locations.getLocation], action.data.payload.location_uuid);
         }
-        yield put(setTaskPickupDestinationSuccess(result))
-        if (locationData)
+        yield put(setTaskDropoffDestinationSuccess(result))
+        if (locationData) {
             yield put(updateTaskDropoffAddressSuccess({
                 taskUUID: action.data.taskUUID,
                 payload: {etag: result.etag, dropoff_location: locationData}
             }))
+        }
     } catch (error) {
-        yield put(setTaskPickupDestinationFailure(error))
+        yield put(setTaskDropoffDestinationFailure(error))
     }
 }
 
 export function* watchSetTaskDropoffDestination() {
     yield takeEvery(SET_TASK_DROPOFF_DESTINATION_REQUEST, setTaskDropoffDestination)
+}
+
+function* unsetTaskDropoffDestination(action) {
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.tasks.deleteTaskDropoffDestination], action.data.taskUUID);
+        yield put(unsetTaskDropoffDestinationSuccess(result))
+        yield put(updateTaskDropoffAddressSuccess({
+            taskUUID: action.data.taskUUID,
+            payload: {etag: result.etag, dropoff_location: null}
+        }))
+    } catch (error) {
+        yield put(unsetTaskDropoffDestinationFailure(error))
+    }
+}
+
+export function* watchUnsetTaskDropoffDestination(action) {
+    yield takeEvery(UNSET_TASK_DROPOFF_DESTINATION_REQUEST, unsetTaskDropoffDestination)
+}
+
+function* unsetTaskPickupDestination(action) {
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.tasks.deleteTaskPickupDestination], action.data.taskUUID);
+        yield put(unsetTaskPickupDestinationSuccess(result))
+        yield put(updateTaskPickupAddressSuccess({
+            taskUUID: action.data.taskUUID,
+            payload: {etag: result.etag, pickup_location: null}
+        }))
+    } catch (error) {
+        yield put(unsetTaskPickupDestinationFailure(error))
+    }
+}
+
+export function* watchUnsetTaskPickupDestination(action) {
+    yield takeEvery(UNSET_TASK_PICKUP_DESTINATION_REQUEST, unsetTaskPickupDestination)
 }
