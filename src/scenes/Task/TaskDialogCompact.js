@@ -10,9 +10,11 @@ import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions"
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
-    addNewPickupLocationAndSetTask,
+    addNewPickupLocationAndSetTaskRequest,
     setTaskDropoffDestinationRequest,
-    setTaskPickupDestinationRequest, updateTaskPickupLocationAndUpdateTask
+    setTaskPickupDestinationRequest,
+    updatePickupLocationAndUpdateTaskRequest,
+    updateTaskPickupLocationAndUpdateTaskRequest,
 } from "../../redux/taskDestinations/TaskDestinationsActions";
 import TaskDetailsPanel from "./components/TaskDetailsPanel";
 import CommentsSection from "../Comments/CommentsSection";
@@ -22,7 +24,6 @@ import LabelItemPair from "../../components/LabelItemPair";
 import {Switch} from "@material-ui/core";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import {updateLocationRequest} from "../../redux/locations/LocationsActions";
 
 const useStyles = makeStyles({
     root: {
@@ -108,9 +109,9 @@ function TaskDialogCompact(props) {
 
     function onChangePickupLocation(value) {
         if (task.pickup_location) {
-            dispatch(updateTaskPickupLocationAndUpdateTask(task.uuid, {address: value}))
+            dispatch(updatePickupLocationAndUpdateTaskRequest(task.uuid, {address: value}))
         } else {
-            dispatch(addNewPickupLocationAndSetTask(task.uuid, {address: value}))
+            dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
         }
     }
 

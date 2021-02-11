@@ -36,7 +36,8 @@ function ActionsRecord(props) {
     const actions = useSelector(state => state.actionsRecord.actionsRecord);
 
     function componentDidMount() {
-        dispatch(getActionsRecordRequest(props.parentUUID))
+        if (props.parentUUID)
+            dispatch(getActionsRecordRequest(props.parentUUID))
     }
 
     useEffect(componentDidMount, [])

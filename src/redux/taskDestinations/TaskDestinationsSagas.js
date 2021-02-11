@@ -1,24 +1,27 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
 import {getApiControl, getPresetLocations, getTasksSelector} from "../Api";
 import {
-    ADD_NEW_PICKUP_LOCATION_AND_SET_TASK,
-    SET_TASK_DROPOFF_DESTINATION_REQUEST,
-    SET_TASK_PICKUP_DESTINATION_REQUEST,
+    addNewPickupLocationAndSetTaskActions, addNewPickupLocationAndSetTaskFailure, addNewPickupLocationAndSetTaskSuccess,
+    setTaskDropoffDestinationActions,
     setTaskDropoffDestinationFailure,
     setTaskDropoffDestinationSuccess,
-    setTaskPickupDestinationFailure, setTaskPickupDestinationRequest,
+    setTaskPickupDestinationActions,
+    setTaskPickupDestinationFailure,
+    setTaskPickupDestinationRequest,
     setTaskPickupDestinationSuccess,
-    UNSET_TASK_DROPOFF_DESTINATION_REQUEST,
-    UNSET_TASK_PICKUP_DESTINATION_REQUEST,
+    unsetTaskDropoffDestinationActions,
     unsetTaskDropoffDestinationFailure,
     unsetTaskDropoffDestinationSuccess,
+    unsetTaskPickupDestinationActions,
     unsetTaskPickupDestinationFailure,
-    unsetTaskPickupDestinationSuccess, UPDATE_TASK_PICKUP_LOCATION_AND_UPDATE_TASK
+    unsetTaskPickupDestinationSuccess,
+    updatePickupLocationAndUpdateTaskActions,
+    updatePickupLocationAndUpdateTaskFailure,
+    updateTaskPickupLocationAndUpdateTaskFailure,
 } from "./TaskDestinationsActions";
 import {updateTaskDropoffAddressSuccess, updateTaskPickupAddressSuccess} from "../tasks/TasksActions";
 import {updateLocationRequest} from "../locations/LocationsActions";
 import {findExistingTask} from "../../utilities";
-import {getTaskRequest} from "../activeTask/ActiveTaskActions";
 
 function* setTaskPickupDestination(action) {
     try {
@@ -43,7 +46,7 @@ function* setTaskPickupDestination(action) {
 }
 
 export function* watchSetTaskPickupDestination() {
-    yield takeEvery(SET_TASK_PICKUP_DESTINATION_REQUEST, setTaskPickupDestination)
+    yield takeEvery(setTaskPickupDestinationActions.request, setTaskPickupDestination)
 }
 
 function* setTaskDropoffDestination(action) {
@@ -70,7 +73,7 @@ function* setTaskDropoffDestination(action) {
 }
 
 export function* watchSetTaskDropoffDestination() {
-    yield takeEvery(SET_TASK_DROPOFF_DESTINATION_REQUEST, setTaskDropoffDestination)
+    yield takeEvery(setTaskDropoffDestinationActions.request, setTaskDropoffDestination)
 }
 
 function* unsetTaskDropoffDestination(action) {
@@ -88,7 +91,7 @@ function* unsetTaskDropoffDestination(action) {
 }
 
 export function* watchUnsetTaskDropoffDestination() {
-    yield takeEvery(UNSET_TASK_DROPOFF_DESTINATION_REQUEST, unsetTaskDropoffDestination)
+    yield takeEvery(unsetTaskDropoffDestinationActions.request, unsetTaskDropoffDestination)
 }
 
 function* unsetTaskPickupDestination(action) {
@@ -106,21 +109,22 @@ function* unsetTaskPickupDestination(action) {
 }
 
 export function* watchUnsetTaskPickupDestination() {
-    yield takeEvery(UNSET_TASK_PICKUP_DESTINATION_REQUEST, unsetTaskPickupDestination)
+    yield takeEvery(unsetTaskPickupDestinationActions.request, unsetTaskPickupDestination)
 }
 
-function* createNewPickupLocationAndSetTask(action) {
+function* addNewPickupLocationAndSetTask(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.locations.createLocation], action.data.payload);
-        yield put(setTaskPickupDestinationRequest(action.data.taskUUID, result.uuid))
+        yield put(setTaskPickupDestinationRequest(action.data.taskUUID, result.uuid));
+        yield put(addNewPickupLocationAndSetTaskSuccess());
     } catch (error) {
-        //TODO catch error
+        yield put(addNewPickupLocationAndSetTaskFailure(error));
     }
 }
 
-export function* watchCreateNewPickupLocationAndSetTask() {
-    yield takeEvery(ADD_NEW_PICKUP_LOCATION_AND_SET_TASK, createNewPickupLocationAndSetTask)
+export function* watchAddNewPickupLocationAndSetTask() {
+    yield takeEvery(addNewPickupLocationAndSetTaskActions.request, addNewPickupLocationAndSetTask);
 }
 
 function* updatePickupLocationAndUpdateTask(action) {
@@ -140,12 +144,11 @@ function* updatePickupLocationAndUpdateTask(action) {
             }));
         }
     } catch (error) {
-        throw error
-        //TODO catch error
+        yield put(updatePickupLocationAndUpdateTaskFailure(error))
     }
 }
 
 export function* watchUpdatePickupLocationAndUpdateTask() {
-    yield takeEvery(UPDATE_TASK_PICKUP_LOCATION_AND_UPDATE_TASK, updatePickupLocationAndUpdateTask)
+    yield takeEvery(updatePickupLocationAndUpdateTaskActions.request, updatePickupLocationAndUpdateTask)
 }
 
