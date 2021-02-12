@@ -73,9 +73,6 @@ const apiURL = getApiURL();
 export const createSubscribeSocketMiddleware = () => {
     let socket;
     return storeAPI => next => action => {
-        console.log(socket)
-        if (socket)
-            console.log(socket.authenticated)
         switch (action.type) {
             case SOCKET_CONNECT: {
                 socket = io.connect(`${apiURL}subscribe`);

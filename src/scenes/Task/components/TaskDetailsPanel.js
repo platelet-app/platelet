@@ -5,12 +5,21 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import PropTypes from "prop-types"
 import Grid from "@material-ui/core/Grid";
 import PrioritySelect from "./PrioritySelect";
-import {updateTaskPriorityRequest, updateTaskRequesterContactRequest} from "../../../redux/tasks/TasksActions";
+import {
+    updateTaskPriorityRequest, updateTaskRejectedTimeRequest,
+    updateTaskRequesterContactRequest,
+    updateTaskTimeCancelledPrefix,
+    updateTaskTimeCancelledRequest,
+    updateTaskTimeOfCallPrefix,
+    updateTaskTimeOfCallRequest
+} from "../../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
 import ActivityPopover from "./ActivityPopover";
 import {PaddedPaper} from "../../../styles/common";
+import TimePicker from "./TimePicker";
+import {createPostingSelector} from "../../../redux/selectors";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -18,8 +27,15 @@ const useStyles = makeStyles({
     }
 })
 
+const tocPostingSelector = createPostingSelector([updateTaskTimeOfCallPrefix]);
+const cancelledPostingSelector = createPostingSelector([updateTaskTimeCancelledPrefix]);
+const rejectedPostingSelector = createPostingSelector(["UPDATE_TASK_TIME_REJECTED"]);
+
 function TaskDetailsPanel(props) {
     const task = useSelector(state => state.task.task);
+    const tocPosting = useSelector(state => tocPostingSelector(state));
+    const isPostingCancelTime = useSelector(state => cancelledPostingSelector(state));
+    const isPostingRejectedTime = useSelector(state => rejectedPostingSelector(state));
     const [state, setState] = useState({
         reference: null,
         time_of_call: null,
@@ -54,6 +70,18 @@ function TaskDetailsPanel(props) {
         priority_id = null;
     }
 
+    function onChangeTimeOfCall(value) {
+        const payload = {time_of_call: value}
+        dispatch(updateTaskTimeOfCallRequest(state.uuid, payload))
+    }
+    function onChangeTimeCancelled(value) {
+        if (value || value === null)
+            dispatch(updateTaskTimeCancelledRequest(task.uuid, {time_cancelled: value}))
+    }
+    function onChangeTimeRejected(value) {
+        if (value || value === null)
+            dispatch(updateTaskRejectedTimeRequest(task.uuid, {time_rejected: value}))
+    }
     function onSelectPriority(priority_id, priority) {
         const payload = {priority_id, priority};
         dispatch(updateTaskPriorityRequest(state.uuid, payload));
@@ -70,13 +98,18 @@ function TaskDetailsPanel(props) {
     }
 
     return (
-        <Grid container spacing={3}>
+        <Grid container direction={"column"} spacing={3}>
             <Grid item>
                 <LabelItemPair label={"Reference"}>
                     <Typography>{state.reference}</Typography>
                 </LabelItemPair>
                 <LabelItemPair label={"TOC"}>
-                    <Typography><Moment local calendar>{state.time_of_call}</Moment></Typography>
+                    <TimePicker
+                        onChange={onChangeTimeOfCall}
+                        disableClear={true}
+                        disabled={tocPosting}
+                        label={"TOC"}
+                        time={state.time_of_call}/>
                 </LabelItemPair>
                 <Typography>Requester contact:</Typography>
                 <div className={classes.requesterContact}>
@@ -99,6 +132,24 @@ function TaskDetailsPanel(props) {
                 <ActivityPopover parentUUID={task.uuid}/>
             </Grid>
             <Grid item>
+                <Grid item>
+                    <LabelItemPair label={"Time cancelled"}>
+                        <TimePicker
+                            onChange={onChangeTimeCancelled}
+                            disabled={isPostingCancelTime || !!task.time_dropped_off || !!task.time_rejected}
+                            label={"Mark cancelled"}
+                            time={task.time_cancelled}/>
+                    </LabelItemPair>
+                </Grid>
+                <Grid item>
+                    <LabelItemPair label={"Time rejected"}>
+                        <TimePicker
+                            onChange={onChangeTimeRejected}
+                            disabled={isPostingRejectedTime || !!task.time_dropped_off || !!task.time_cancelled}
+                            label={"Mark rejected"}
+                            time={task.time_rejected}/>
+                    </LabelItemPair>
+                </Grid>
 
             </Grid>
         </Grid>

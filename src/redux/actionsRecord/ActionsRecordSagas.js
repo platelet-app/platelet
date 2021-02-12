@@ -11,12 +11,14 @@ import {
     getTasksActionsRecordSuccess,
     tasksActionsRecordsNotFound
 } from "./ActionsRecordActions";
+import {sortByCreatedTime} from "../../utilities";
 
 function* getActionsRecord(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.log.getRecords], action.data, "newest");
-        yield put(getActionsRecordSuccess(result))
+        const sorted = sortByCreatedTime(result);
+        yield put(getActionsRecordSuccess(sorted))
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {

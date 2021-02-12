@@ -1,3 +1,5 @@
+import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
+
 export const ADD_TASK_REQUEST = "ADD_TASK_REQUEST";
 export const ADD_TASK_SUCCESS = "ADD_TASK_SUCCESS";
 export const ADD_TASK_FAILURE = "ADD_TASK_FAILURE";
@@ -95,6 +97,19 @@ export const REFRESH_MY_TASKS_NOTFOUND = "REFRESH_MY_TASKS_NOTFOUND";
 
 export const RESET_GROUP_RELAY_UUIDS = "RESET_GROUP_RELAY_UUIDS";
 export const GROUP_RELAYS_TOGETHER = "GROUP_RELAYS_TOGETHER";
+
+
+export const updateTaskTimeOfCallPrefix = "UPDATE_TASK_TIME_OF_CALL";
+export const updateTaskTimeOfCallActions = createRequestActions(updateTaskTimeOfCallPrefix);
+export const { updateTaskTimeOfCallFailure, updateTaskTimeOfCallSuccess } = createRequestFunctions(updateTaskTimeOfCallActions)
+
+export const updateTaskTimeCancelledPrefix = "UPDATE_TASK_TIME_CANCELLED";
+export const updateTaskTimeCancelledActions = createRequestActions(updateTaskTimeCancelledPrefix)
+export const {updateTaskTimeCancelledFailure, updateTaskTimeCancelledSuccess} = createRequestFunctions(updateTaskTimeCancelledActions)
+
+export function updateTaskTimeOfCallRequest(taskUUID, payload) {
+    return { type: updateTaskTimeOfCallActions.request, data: {taskUUID, payload} }
+}
 
 export function restoreTaskRequest(taskUUID) {
     return { type: RESTORE_TASK_REQUEST, data: {taskUUID }}
@@ -233,8 +248,8 @@ export function updateTaskPickupTimeRequest(taskUUID, payload) {
 export function updateTaskDropoffTimeRequest(taskUUID, payload) {
     return { type: UPDATE_TASK_DROPOFF_TIME_REQUEST, data: {taskUUID, payload} }
 }
-export function updateTaskCancelledTimeRequest(taskUUID, payload) {
-    return { type: UPDATE_TASK_CANCELLED_TIME_REQUEST, data: {taskUUID, payload} }
+export function updateTaskTimeCancelledRequest(taskUUID, payload) {
+    return { type: updateTaskTimeCancelledActions.request, data: {taskUUID, payload} }
 }
 export function updateTaskRejectedTimeRequest(taskUUID, payload) {
     return { type: UPDATE_TASK_REJECTED_TIME_REQUEST, data: {taskUUID, payload} }
@@ -273,9 +288,6 @@ export function updateTaskPickupTimeSuccess(data) {
 }
 export function updateTaskDropoffTimeSuccess(data) {
     return { type: UPDATE_TASK_DROPOFF_TIME_SUCCESS, data }
-}
-export function updateTaskCancelledTimeSuccess(data) {
-    return { type: UPDATE_TASK_CANCELLED_TIME_SUCCESS, data }
 }
 export function updateTaskRejectedTimeSuccess(data) {
     return { type: UPDATE_TASK_REJECTED_TIME_SUCCESS, data }
@@ -327,9 +339,7 @@ export function updateTaskPickupTimeFailure(error) {
 export function updateTaskDropoffTimeFailure(error) {
     return { type: UPDATE_TASK_DROPOFF_TIME_FAILURE, error }
 }
-export function updateTaskCancelledTimeFailure(error) {
-    return { type: UPDATE_TASK_CANCELLED_TIME_FAILURE, error }
-}
+
 export function updateTaskRejectedTimeFailure(error) {
     return { type: UPDATE_TASK_REJECTED_TIME_FAILURE, error }
 }

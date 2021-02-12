@@ -11,7 +11,6 @@ import {
 import {
     restoreTaskRequest,
     updateTaskRejectedTimeRequest,
-    updateTaskCancelledTimeRequest,
     updateTaskDropoffTimeRequest,
     updateTaskPickupTimeRequest,
     UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST,
@@ -24,7 +23,11 @@ import {
     getAllTasksRequest,
     SET_ROLE_VIEW_AND_GET_TASKS,
     START_REFRESH_TASKS_LOOP_FROM_SOCKET,
-    updateTaskDropoffAddressRequest, updateTaskDropoffAddressFromSavedRequest,
+    updateTaskTimeOfCallFailure,
+    updateTaskTimeOfCallSuccess,
+    updateTaskTimeOfCallActions,
+    updateTaskTimeCancelledActions,
+    updateTaskTimeCancelledSuccess, updateTaskTimeCancelledFailure, updateTaskTimeCancelledRequest,
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -45,7 +48,6 @@ import {
     updateTaskPickupTimeSuccess,
     updateTaskDropoffTimeSuccess,
     updateTaskPrioritySuccess,
-    updateTaskCancelledTimeSuccess,
     updateTaskRejectedTimeSuccess,
     getAllTasksNotFound,
     getAllTasksFailure,
@@ -58,7 +60,6 @@ import {
     UPDATE_TASK_PICKUP_ADDRESS_REQUEST,
     UPDATE_TASK_PICKUP_TIME_REQUEST,
     UPDATE_TASK_DROPOFF_TIME_REQUEST,
-    UPDATE_TASK_CANCELLED_TIME_REQUEST,
     UPDATE_TASK_REJECTED_TIME_REQUEST,
     UPDATE_TASK_PRIORITY_REQUEST,
 
@@ -78,7 +79,6 @@ import {
     updateTaskDropoffTimeFailure,
     updateTaskPriorityFailure,
     updateTaskPatchFailure,
-    updateTaskCancelledTimeFailure,
     updateTaskRejectedTimeFailure,
     updateTaskPatchRequest
 } from "./TasksActions"
@@ -372,6 +372,17 @@ function* updateTaskPickupTime(action) {
     }
 }
 
+function* updateTaskTimeOfCall(action) {
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskTimeOfCallSuccess(data))
+    } catch (error) {
+        yield put(updateTaskTimeOfCallFailure(error))
+    }
+}
+
 function* updateTaskDropoffTime(action) {
     try {
         const currentTasks = yield select((state) => state.tasks.tasks);
@@ -432,7 +443,7 @@ function* updateTaskPatchFromServer(action) {
     }
 }
 
-function* updateTaskCancelledTime(action) {
+function* updateTaskTimeCancelled(action) {
     try {
         // get the current task rejected_time value to make sure it isn't already marked
         const currentTasks = yield select((state) => state.tasks.tasks);
@@ -450,11 +461,11 @@ function* updateTaskCancelledTime(action) {
                 relay_previous: null
             }, taskUUID: action.data.taskUUID
         }
-        yield put(updateTaskCancelledTimeSuccess(data))
+        yield put(updateTaskTimeCancelledSuccess(data))
         yield put(resetGroupRelayUUIDs(task.parent_id))
         if (currentValue === null) {
             // only notify if marking rejected for the first time
-            const restoreActions = () => [updateTaskCancelledTimeRequest(
+            const restoreActions = () => [updateTaskTimeCancelledRequest(
                 action.data.taskUUID,
                 {time_cancelled: null}
             )];
@@ -462,7 +473,7 @@ function* updateTaskCancelledTime(action) {
             yield put(displayInfoNotification("Task marked cancelled", restoreActions, viewLink))
         }
     } catch (error) {
-        yield put(updateTaskCancelledTimeFailure(error))
+        yield put(updateTaskTimeCancelledFailure(error))
     }
 }
 
@@ -535,6 +546,10 @@ export function* watchUpdateTaskDropoffTime() {
     yield debounce(300, UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
 }
 
+export function* watchUpdateTaskTimeOfCall() {
+    yield debounce(300, updateTaskTimeOfCallActions.request, updateTaskTimeOfCall)
+}
+
 export function* watchUpdateTaskPriority() {
     yield debounce(500, UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
 }
@@ -547,8 +562,8 @@ export function* watchUpdateTaskPatchFromServer() {
     yield debounce(300, UPDATE_TASK_PATCH_FROM_SERVER, updateTaskPatchFromServer)
 }
 
-export function* watchUpdateTaskCancelledTime() {
-    yield debounce(300, UPDATE_TASK_CANCELLED_TIME_REQUEST, updateTaskCancelledTime)
+export function* watchUpdateTaskTimeCancelled() {
+    yield debounce(300, updateTaskTimeCancelledActions.request, updateTaskTimeCancelled)
 }
 
 export function* watchUpdateTaskRejectedTime() {

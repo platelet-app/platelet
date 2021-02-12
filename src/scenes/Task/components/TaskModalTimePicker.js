@@ -8,26 +8,26 @@ export default function TaskModalTimePicker(props) {
     return (
         <Grid container spacing={2} direction={"column"} alignItems={"flex-start"} justify={"center"}>
             <Grid item>
-            <ToggleTimeStamp label={props.label} status={dateTime !== null}
-                             onSelect={() => {
-                                 if (dateTime === null) {
-                                     const time = new Date();
-                                     setDateTime(time)
-                                     props.onChange(time);
-                                 } else {
-                                     setDateTime(null)
-                                     props.onChange(null);
+                <ToggleTimeStamp label={props.label} status={dateTime !== null}
+                                 onSelect={() => {
+                                     if (dateTime === null) {
+                                         const time = new Date();
+                                         setDateTime(time)
+                                         props.onChange(time);
+                                     } else {
+                                         setDateTime(null)
+                                         props.onChange(null);
+                                     }
                                  }
-                             }
-                             } disabled={props.disabled}/>
+                                 } disabled={props.disabled}/>
             </Grid>
             <Grid item>
-            <DateAndTimePicker visible={!!dateTime} value={dateTime} label={props.label}
-                               onChange={(value) => {
-                                   props.onChange(value);
-                                   setDateTime(value);
-                               }} disabled={props.disabled}/>
+                <DateAndTimePicker visible={!!dateTime} value={dateTime} label={props.label}
+                                   onChange={(value) => {
+                                       props.onChange(value);
+                                       setDateTime(value);
+                                   }} disabled={props.disabled}/>
             </Grid>
-    </Grid>
+        </Grid>
     )
 }

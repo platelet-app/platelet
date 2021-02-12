@@ -41,7 +41,7 @@ import {
     UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET,
     UPDATE_ACTIVE_TASK,
     UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET,
-    UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET
+    UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, updateTaskTimeCancelledActions
 
 } from "./TasksActions";
 import {
@@ -157,7 +157,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         }
-        case UPDATE_TASK_CANCELLED_TIME_SUCCESS:
+        case updateTaskTimeCancelledActions.success:
         case UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET:
         case UPDATE_TASK_TIME_REJECTED_FROM_SOCKET:
         case UPDATE_TASK_REJECTED_TIME_SUCCESS: {

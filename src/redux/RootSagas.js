@@ -12,7 +12,6 @@ import {
     watchUpdateTaskPickupAddress,
     watchUpdateTaskPickupAddressFromSaved,
     watchUpdateTaskPriority,
-    watchUpdateTaskCancelledTime,
     watchUpdateTaskRejectedTime,
     watchUpdateTaskPatch,
     watchRefreshTasks,
@@ -21,14 +20,15 @@ import {
     watchUpdateTaskDropoffAddressFromSaved,
     watchUpdateTaskRequesterContact,
     watchSetRoleViewAndGetTasks,
-    watchRefreshTasksFromSocket
+    watchRefreshTasksFromSocket, watchUpdateTaskTimeOfCall, watchUpdateTaskTimeCancelled
 } from "./tasks/TasksSagas"
 import {
+    watchAddNewDropoffLocationAndSetTask,
     watchAddNewPickupLocationAndSetTask,
     watchSetTaskDropoffDestination,
     watchSetTaskPickupDestination,
     watchUnsetTaskDropoffDestination,
-    watchUnsetTaskPickupDestination,
+    watchUnsetTaskPickupDestination, watchUpdateDropoffLocationAndUpdateTask,
     watchUpdatePickupLocationAndUpdateTask
 } from "./taskDestinations/TaskDestinationsSagas"
 import {
@@ -118,8 +118,9 @@ export default function* rootSaga() {
         call(watchUpdateTaskPriority),
         call(watchUpdateTaskPatch),
         call(watchUpdateTaskPatchFromServer),
-        call(watchUpdateTaskCancelledTime),
+        call(watchUpdateTaskTimeCancelled),
         call(watchUpdateTaskRejectedTime),
+        call(watchUpdateTaskTimeOfCall),
         call(watchGetMyTasks),
         call(watchDeleteDeliverable),
         call(watchGetDeliverables),
@@ -183,6 +184,8 @@ export default function* rootSaga() {
         call(watchUnsetTaskPickupDestination),
         call(watchAddNewPickupLocationAndSetTask),
         call(watchUpdatePickupLocationAndUpdateTask),
+        call(watchUpdateDropoffLocationAndUpdateTask),
+        call(watchAddNewDropoffLocationAndSetTask),
         call(updateActiveTaskMonitor),
 
     ])

@@ -10,26 +10,42 @@ import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions"
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
+    addNewDropoffLocationAndSetTaskRequest,
     addNewPickupLocationAndSetTaskRequest,
     setTaskDropoffDestinationRequest,
     setTaskPickupDestinationRequest,
+    unsetTaskDropoffDestinationRequest,
+    unsetTaskPickupDestinationRequest,
+    updateDropoffLocationAndUpdateTaskRequest,
     updatePickupLocationAndUpdateTaskRequest,
-    updateTaskPickupLocationAndUpdateTaskRequest,
 } from "../../redux/taskDestinations/TaskDestinationsActions";
 import TaskDetailsPanel from "./components/TaskDetailsPanel";
 import CommentsSection from "../Comments/CommentsSection";
 import {PaddedPaper, showHide} from "../../styles/common";
 import TaskModalTimePicker from "./components/TaskModalTimePicker";
 import LabelItemPair from "../../components/LabelItemPair";
-import {Switch} from "@material-ui/core";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import TimePicker from "./components/TimePicker";
+import {
+    updateTaskDropoffTimeRequest,
+    updateTaskPickupTimeRequest, updateTaskRejectedTimeRequest, updateTaskTimeCancelledPrefix,
+    updateTaskTimeCancelledRequest
+} from "../../redux/tasks/TasksActions";
+import {createPostingSelector} from "../../redux/selectors";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles({
     root: {
         padding: "20px",
+    },
+    statusBar: {
+        paddingBottom: 8
     }
 })
+
+const pickupPostingSelector = createPostingSelector(["UPDATE_TASK_PICKUP_TIME"]);
+const dropoffPostingSelector = createPostingSelector(["UPDATE_TASK_DROPOFF_TIME"]);
 
 function TaskDialogCompact(props) {
     const mobileView = useSelector(state => state.mobileView);
@@ -42,8 +58,9 @@ function TaskDialogCompact(props) {
     const [dropoffPresetName, setDropoffPresetName] = useState("");
     const classes = useStyles();
     const [taskStatus, setTaskStatus] = useState("No status")
-    const [pickupLocationType, setPickupLocationType] = useState("preset")
-    const [dropoffLocationType, setDropoffLocationType] = useState("preset")
+
+    const isPostingPickupTime = useSelector(state => pickupPostingSelector(state));
+    const isPostingDropoffTime = useSelector(state => dropoffPostingSelector(state));
 
     let taskUUID = null;
 
@@ -63,22 +80,6 @@ function TaskDialogCompact(props) {
 
     useEffect(componentDidMount, [props.location.key]);
 
-    function togglePickupLocationType(e) {
-        if (e.target.checked) {
-            setPickupLocationType("custom")
-        } else {
-            setPickupLocationType("preset")
-        }
-    }
-
-    function toggleDropoffLocationType(e) {
-        if (e.target.checked) {
-            setDropoffLocationType("custom")
-        } else {
-            setDropoffLocationType("preset")
-        }
-    }
-
     function setStatus() {
         const result = Object.keys(determineTaskType({task}))
         if (result) {
@@ -96,22 +97,49 @@ function TaskDialogCompact(props) {
 
     useEffect(setStatus, [task])
 
-    function setPresets() {
+    function onChangeTimePickedUp(value) {
+        if (value || value === null)
+            dispatch(updateTaskPickupTimeRequest(task.uuid, {time_picked_up: value}))
+    }
+
+    function onChangeTimeDropoff(value) {
+        if (value || value === null)
+            dispatch(updateTaskDropoffTimeRequest(task.uuid, {time_dropped_off: value}))
+    }
+
+    function onChangePickupLocation(value, makeNew = false) {
         if (task.pickup_location) {
-            setPickupLocationType(task.pickup_location.listed ? "preset" : "custom")
-        }
-        if (task.dropoff_location) {
-            setDropoffLocationType(task.dropoff_location.listed ? "preset" : "custom")
+            if (makeNew) {
+                dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
+            } else {
+                dispatch(updatePickupLocationAndUpdateTaskRequest(task.uuid, {address: value}))
+            }
+        } else {
+            dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
         }
     }
 
-    useEffect(setPresets, [task])
-
-    function onChangePickupLocation(value) {
+    function onClearPickupLocation() {
         if (task.pickup_location) {
-            dispatch(updatePickupLocationAndUpdateTaskRequest(task.uuid, {address: value}))
+            dispatch(unsetTaskPickupDestinationRequest(task.uuid))
+        }
+    }
+
+    function onChangeDropoffLocation(value, makeNew = false) {
+        if (task.dropoff_location) {
+            if (makeNew) {
+                dispatch(addNewDropoffLocationAndSetTaskRequest(task.uuid, {address: value}))
+            } else {
+                dispatch(updateDropoffLocationAndUpdateTaskRequest(task.uuid, {address: value}))
+            }
         } else {
-            dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
+            dispatch(addNewDropoffLocationAndSetTaskRequest(task.uuid, {address: value}))
+        }
+    }
+
+    function onClearDropoffLocation() {
+        if (task.dropoff_location) {
+            dispatch(unsetTaskDropoffDestinationRequest(task.uuid))
         }
     }
 
@@ -180,31 +208,41 @@ function TaskDialogCompact(props) {
                     },
                 }}
                 aria-labelledby="form-dialog-title">
-                {statusBar}
+                <Grid container spacing={0} direction={"column"}>
+                    <Grid item className={classes.statusBar}>
+                        {statusBar}
+                    </Grid>
+                    <Grid item>
+                        <Divider/>
+                    </Grid>
+                </Grid>
                 <div className={classes.root}>
-                    <Grid container direction={"column"} justify={"space-between"}>
+                    <Grid container direction={"column"} alignItems={"flex-start"} justify={"space-between"}>
                         <Grid item>
                             <Grid container direction={"row"} alignItems={"flex-start"} justify={"space-between"}
                                   spacing={3}>
                                 <Grid item>
-                                    <Grid container direction={"row"} alignItems={"center"} spacing={1} justify={"flex-start"}>
+                                    <Grid container direction={"row"} alignItems={"center"} spacing={1}
+                                          justify={"flex-start"}>
                                         <Grid item>
                                             <PaddedPaper>
                                                 <Grid container direction={"column"} spacing={3}>
                                                     <Grid item>
-                                                        <Switch onChange={togglePickupLocationType}/>
                                                         <LocationDetailAndSelector
                                                             onSelectPreset={onSelectPickupFromSaved}
                                                             onChange={onChangePickupLocation}
+                                                            onEditPreset={(value) => onChangePickupLocation(value, true)}
+                                                            onClear={onClearPickupLocation}
                                                             location={task.pickup_location}
                                                             displayPresets={true}
-                                                            label={"Pick up preset"}/>
+                                                            label={"Pick up"}/>
                                                     </Grid>
                                                     <LabelItemPair label={"Time picked up"}>
-                                                        <TaskModalTimePicker disabled={false} label={"Mark Picked Up"}
-                                                                             time={task.time_picked_up}
-                                                                             onChange={() => {
-                                                                             }}/>
+                                                        <TimePicker
+                                                            onChange={onChangeTimePickedUp}
+                                                            disabled={isPostingPickupTime}
+                                                            label={"Mark picked up"}
+                                                            time={task.time_picked_up}/>
                                                     </LabelItemPair>
                                                 </Grid>
                                             </PaddedPaper>
@@ -217,18 +255,21 @@ function TaskDialogCompact(props) {
                                             <PaddedPaper>
                                                 <Grid container direction={"column"} spacing={3}>
                                                     <Grid item>
-                                                        <Switch onChange={toggleDropoffLocationType}/>
                                                         <LocationDetailAndSelector
                                                             onSelectPreset={onSelectDropoffFromSaved}
+                                                            onChange={onChangeDropoffLocation}
+                                                            onClear={onClearDropoffLocation}
+                                                            onEditPreset={(value) => onChangeDropoffLocation(value, true)}
                                                             location={task.dropoff_location}
                                                             displayPresets={true}
-                                                            label={"Delivery preset"}/>
+                                                            label={"Deliver"}/>
                                                     </Grid>
                                                     <LabelItemPair label={"Time delivered"}>
-                                                        <TaskModalTimePicker disabled={false} label={"Mark Delivered"}
-                                                                             time={task.time_dropped_off}
-                                                                             onChange={() => {
-                                                                             }}/>
+                                                        <TimePicker
+                                                            onChange={onChangeTimeDropoff}
+                                                            disabled={isPostingDropoffTime || !!!task.time_picked_up}
+                                                            label={"Mark dropped off"}
+                                                            time={task.time_dropped_off}/>
                                                     </LabelItemPair>
                                                 </Grid>
                                             </PaddedPaper>
@@ -237,7 +278,11 @@ function TaskDialogCompact(props) {
                                 </Grid>
                                 <Grid item>
                                     <PaddedPaper>
-                                        <TaskDetailsPanel/>
+                                        <Grid container direction={"column"}>
+                                            <Grid item>
+                                                <TaskDetailsPanel/>
+                                            </Grid>
+                                        </Grid>
                                     </PaddedPaper>
                                 </Grid>
                             </Grid>

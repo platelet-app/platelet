@@ -7,7 +7,7 @@ import {matchSorter} from "match-sorter"
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 
-const filterOptions = (options, { inputValue }) => {
+const filterOptions = (options, {inputValue}) => {
     return matchSorter(options, inputValue, {keys: ['name']});
 }
 
@@ -34,19 +34,19 @@ function FavouriteLocationsSelect(props) {
                 filterOptions={filterOptions}
                 options={filteredLocationSuggestions}
                 getOptionLabel={(option) => option.name}
-                style={{ width: 300 }}
+                style={{width: 220}}
                 renderInput={(params) => (
-                    <TextField {...params} label={props.label || "Select"} variant="outlined" margin="normal" />
+                    <TextField {...params} label={props.label || "Select"} variant="outlined" margin="normal"/>
                 )}
                 onChange={onSelect}
-                renderOption={(option, { inputValue }) => {
+                renderOption={(option, {inputValue}) => {
                     const matches = match(option.name, inputValue);
                     const parts = parse(option.name, matches);
 
                     return (
                         <div>
                             {parts.map((part, index) => (
-                                <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
+                                <span key={index} style={{fontWeight: part.highlight ? 700 : 400}}>
                 {part.text}
               </span>
                             ))}
@@ -63,7 +63,8 @@ FavouriteLocationsSelect.propTypes = {
     label: PropTypes.string
 }
 FavouriteLocationsSelect.defaultProps = {
-    onSelect: () => {}
+    onSelect: () => {
+    }
 }
 
 export default FavouriteLocationsSelect;

@@ -5,19 +5,45 @@ import PropTypes from "prop-types"
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
+import Button from "@material-ui/core/Button";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Divider from "@material-ui/core/Divider";
+import {Tooltip, withMobileDialog} from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+import CancelIcon from "@material-ui/icons/Cancel";
+import {showHide} from "../../../styles/common";
+import {createPostingSelector} from "../../../redux/selectors";
+import {useSelector} from "react-redux";
+import {addNewDropoffLocationAndSetTaskRequest} from "../../../redux/taskDestinations/TaskDestinationsActions";
 
+
+const useStyles = makeStyles({
+    root: {
+        minWidth: "350px",
+    },
+    button: {
+        height: 9,
+    },
+})
+
+const initialState = {
+    what3words: "",
+    ward: "",
+    line1: "",
+    line2: "",
+    town: "",
+    county: "",
+    postcode: ""
+}
 
 function LocationDetailAndSelector(props) {
-    const [state, setState] = useState({
-        what3words: "",
-        ward: "",
-        line1: "",
-        line2: "",
-        town: "",
-        county: "",
-        postcode: ""
-    })
+    const classes = useStyles();
+    const [state, setState] = useState(initialState);
     const [protectedLocation, setProtectedLocation] = useState(false)
+    const [presetMode, setPresetMode] = useState(false);
+    const {show, hide} = showHide();
+
     function updateStateFromProps() {
         if (props.location) {
             if (props.location.address) {
@@ -33,88 +59,161 @@ function LocationDetailAndSelector(props) {
                 setState({what3words, ward, line1, line2, town, county, postcode})
             }
             setProtectedLocation(props.location ? props.location.protected : false);
+        } else {
+            setState(initialState);
+            setProtectedLocation(false);
+
         }
     }
+
     useEffect(updateStateFromProps, [props.location])
 
     function onFieldFinished() {
         props.onChange(state);
     }
+    function onSelectPreset(value) {
+        props.onSelectPreset(value);
+        setPresetMode(false);
+    }
 
-    return (
+    function onClickEditButton() {
+        props.onEditPreset(state);
+    }
+    function onClickClearButton() {
+        props.onClear();
+    }
 
-        <Grid container className={props.className} direction={"column"}>
-            <Grid item>
-                <Grid container direction={"row"} justify={"space-between"}>
-                    <Grid item>
-                        <Typography>{props.label}</Typography>
-                    </Grid>
-                    <Grid item>
-                        {props.displayPresets ? <FavouriteLocationsSelect label={props.label} onSelect={props.onSelectPreset}/> : <></>}
+    const presetName = (props.location && props.location.name) ? props.location.name : ""
+
+    const presetSelect = props.displayPresets ?
+        <Grid item>
+            <Grid container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
+                <Grid item>
+                    {presetMode ? <FavouriteLocationsSelect
+                        label={props.label}
+                        onSelect={onSelectPreset}
+                    /> : <Typography noWrap={true}>{presetName}</Typography>}
+                </Grid>
+                <Grid item>
+                    <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
+                        <Grid className={(props.location && props.location.listed) ? show : hide} item>
+                            <Tooltip title={"Edit"}>
+                                <IconButton
+                                    className={classes.button}
+                                    edge={"end"}
+                                    disabled={props.disabled}
+                                    onClick={onClickEditButton}>
+                                    <EditIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                        <Grid  className={(props.location && !props.disableClear) ? show : hide} item>
+                            <Tooltip title={"Clear"}>
+                                <IconButton
+                                    className={classes.button}
+                                    edge={"end"}
+                                    disabled={props.disabled}
+                                    onClick={onClickClearButton}>
+                                    <CancelIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
-            <Grid item>
-                <LabelItemPair label={"w3w"}>
-                    <ClickableTextField
-                        label={"w3w"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, what3words: v})}
-                        onFinished={onFieldFinished}
-                        value={state.what3words}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Ward"}>
-                    <ClickableTextField
-                        label="ward"
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, ward: v})}
-                        onFinished={onFieldFinished}
-                        value={state.ward}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Line1"}>
-                    <ClickableTextField
-                        label={"line1"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, line1: v})}
-                        onFinished={onFieldFinished}
-                        value={state.line1}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Line2"}>
-                    <ClickableTextField
-                        label={"line2"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, line2: v})}
-                        onFinished={onFieldFinished}
-                        value={state.line2}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Town"}>
-                    <ClickableTextField
-                        label={"town"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, town: v})}
-                        onFinished={onFieldFinished}
-                        value={state.town}/>
-                </LabelItemPair>
-                <LabelItemPair label={"County"}>
-                    <ClickableTextField
-                        label={"county"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, county: v})}
-                        onFinished={onFieldFinished}
-                        value={state.county}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Postcode"}>
-                    <ClickableTextField
-                        label={"postcode"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, postcode: v})}
-                        onFinished={onFieldFinished}
-                        value={state.postcode}/>
-                </LabelItemPair>
-
+                <Grid className={!!!props.location ? show : hide} item>
+                    <Button
+                            onClick={() => {
+                                setPresetMode(!presetMode)
+                            }}
+                            variant={"contained"}
+                            color={"primary"}
+                    >
+                        {presetMode ? "Cancel" : "Search"}
+                    </Button>
+                </Grid>
 
             </Grid>
         </Grid>
+        : <></>
+
+    return (
+
+        <div className={classes.root}>
+            <Grid container spacing={2} className={props.className} direction={"column"}>
+                <Grid item>
+                    <Grid container direction={"row"} justify={"space-between"}>
+                        <Grid item>
+                            <Typography variant={"h6"}>{props.label}</Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item>
+                    <Divider/>
+                </Grid>
+                {presetSelect}
+
+                <Grid item>
+                    <LabelItemPair label={"w3w"}>
+                        <ClickableTextField
+                            label={"w3w"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, what3words: v})}
+                            onFinished={onFieldFinished}
+                            value={state.what3words}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Ward"}>
+                        <ClickableTextField
+                            label="ward"
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, ward: v})}
+                            onFinished={onFieldFinished}
+                            value={state.ward}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Line1"}>
+                        <ClickableTextField
+                            label={"line1"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, line1: v})}
+                            onFinished={onFieldFinished}
+                            value={state.line1}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Line2"}>
+                        <ClickableTextField
+                            label={"line2"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, line2: v})}
+                            onFinished={onFieldFinished}
+                            value={state.line2}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Town"}>
+                        <ClickableTextField
+                            label={"town"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, town: v})}
+                            onFinished={onFieldFinished}
+                            value={state.town}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"County"}>
+                        <ClickableTextField
+                            label={"county"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, county: v})}
+                            onFinished={onFieldFinished}
+                            value={state.county}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Postcode"}>
+                        <ClickableTextField
+                            label={"postcode"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, postcode: v})}
+                            onFinished={onFieldFinished}
+                            value={state.postcode}/>
+                    </LabelItemPair>
+
+
+                </Grid>
+            </Grid>
+        </div>
     )
 
 }
@@ -125,12 +224,16 @@ LocationDetailAndSelector.propTypes = {
     onSelectPreset: PropTypes.func,
     className: PropTypes.string,
     displayPresets: PropTypes.bool,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    disableClear: PropTypes.bool,
+    onClear: PropTypes.func,
+    onEditPreset: PropTypes.func
 }
 
 LocationDetailAndSelector.propDefaults = {
     label: "",
     displayPresets: true,
+    disableClear: false,
     location: {
         address: {
             what3words: null,
@@ -142,8 +245,14 @@ LocationDetailAndSelector.propDefaults = {
             postcode: null
         }
     },
-    onSelectPreset: () => {},
-    onChange: () => {}
+    onSelectPreset: () => {
+    },
+    onChange: () => {
+    },
+    onClear: () => {
+    },
+    onEditPreset: () => {
+    }
 }
 
 export default LocationDetailAndSelector;

@@ -45,10 +45,8 @@ function getFields(values) {
 
 function fieldToHumanReadable(field) {
     switch (field) {
-        case "pickup_address":
-            return "pickup address";
-        case "dropoff_address":
-            return "delivery address";
+        case "location_uuid":
+            return "location";
         case "patch_id":
             return "patch";
         case "requester_contact":
