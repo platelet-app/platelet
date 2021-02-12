@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Typography from "@material-ui/core/Typography";
-import Moment from "react-moment";
 import LabelItemPair from "../../../components/LabelItemPair";
-import PropTypes from "prop-types"
 import Grid from "@material-ui/core/Grid";
 import PrioritySelect from "./PrioritySelect";
 import {
@@ -17,12 +15,14 @@ import {useDispatch, useSelector} from "react-redux";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
 import ActivityPopover from "./ActivityPopover";
-import {PaddedPaper} from "../../../styles/common";
 import TimePicker from "./TimePicker";
 import {createPostingSelector} from "../../../redux/selectors";
 
 const useStyles = makeStyles({
     requesterContact: {
+        paddingLeft: "20px"
+    },
+    priority: {
         paddingLeft: "20px"
     }
 })
@@ -120,9 +120,10 @@ function TaskDetailsPanel(props) {
                         <ClickableTextField onFinished={sendRequesterContactData} telephone={true} onChange={v => onChangeRequesterContact({telephone_number: v})} value={state.requester_contact.telephone_number}/>
                     </LabelItemPair>
                 </div>
-                <LabelItemPair label={"Priority"}>
+                <Typography>Priority:</Typography>
+                <div className={classes.priority}>
                     <PrioritySelect onSelect={onSelectPriority} priorityID={parseInt(priority_id)}/>
-                </LabelItemPair>
+                </div>
                 <LabelItemPair label={"Patch"}>
                     <Typography>{state.patch}</Typography>
                 </LabelItemPair>

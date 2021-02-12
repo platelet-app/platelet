@@ -96,7 +96,7 @@ function LocationDetailAndSelector(props) {
                 </Grid>
                 <Grid item>
                     <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
-                        <Grid className={(props.location && props.location.listed) ? show : hide} item>
+                        <Grid className={(props.location && props.location.protected) ? show : hide} item>
                             <Tooltip title={"Edit"}>
                                 <IconButton
                                     className={classes.button}
