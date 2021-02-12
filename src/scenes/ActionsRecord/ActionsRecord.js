@@ -19,8 +19,8 @@ import PropTypes from "prop-types";
 
 
 const displayFields = [
-    "pickup_address",
-    "dropoff_address",
+    "location_uuid",
+    "location_uuid",
     "patch_id",
     "requester_contact",
     "priority_id",
