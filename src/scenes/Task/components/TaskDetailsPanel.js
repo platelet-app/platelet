@@ -5,12 +5,17 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import PropTypes from "prop-types"
 import Grid from "@material-ui/core/Grid";
 import PrioritySelect from "./PrioritySelect";
-import {updateTaskPriorityRequest, updateTaskRequesterContactRequest} from "../../../redux/tasks/TasksActions";
+import {
+    updateTaskPriorityRequest,
+    updateTaskRequesterContactRequest,
+    updateTaskTimeOfCallRequest
+} from "../../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
 import ActivityPopover from "./ActivityPopover";
 import {PaddedPaper} from "../../../styles/common";
+import TimePicker from "./TimePicker";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -54,6 +59,10 @@ function TaskDetailsPanel(props) {
         priority_id = null;
     }
 
+    function onChangeTimeOfCall(value) {
+        const payload = {time_of_call: value}
+        dispatch(updateTaskTimeOfCallRequest(state.uuid, payload))
+    }
     function onSelectPriority(priority_id, priority) {
         const payload = {priority_id, priority};
         dispatch(updateTaskPriorityRequest(state.uuid, payload));
@@ -76,7 +85,12 @@ function TaskDetailsPanel(props) {
                     <Typography>{state.reference}</Typography>
                 </LabelItemPair>
                 <LabelItemPair label={"TOC"}>
-                    <Typography><Moment local calendar>{state.time_of_call}</Moment></Typography>
+                    <TimePicker
+                        onChange={onChangeTimeOfCall}
+                        disableClear={true}
+                        disabled={false}
+                        label={"TOC"}
+                        time={state.time_of_call}/>
                 </LabelItemPair>
                 <Typography>Requester contact:</Typography>
                 <div className={classes.requesterContact}>

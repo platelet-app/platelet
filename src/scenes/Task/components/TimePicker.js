@@ -10,24 +10,22 @@ import IconButton from "@material-ui/core/IconButton";
 import {Tooltip} from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import {DateTimePicker} from "@material-ui/pickers";
+import {showHide} from "../../../styles/common";
 
 function TimePicker(props) {
     const [editMode, setEditMode] = useState(false);
-
+    const {show, hide} = showHide();
 
     function onButtonClick() {
         const timeNow = new Date().toISOString();
         props.onChange(timeNow);
     }
-
     function onClear() {
         props.onChange(null);
     }
-
     function toggleEditMode() {
         setEditMode(!editMode);
     }
-
     function onChange(value) {
         props.onChange(value.toISOString());
         setEditMode(false);
@@ -39,7 +37,6 @@ function TimePicker(props) {
                 <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
                     <Grid item>
                 <DateTimePicker
-                    clearable
                     value={props.time}
                     onChange={onChange}
                     helperText="Set the date and time"
@@ -47,9 +44,8 @@ function TimePicker(props) {
                 <Grid item>
                     <Tooltip title={"Cancel"}>
                         <IconButton
-                            iconStyle={{fontSize: "4px"}}
                             disabled={props.disabled} onClick={toggleEditMode}>
-                            <CancelIcon className="fa fa-filter"/>
+                            <CancelIcon/>
                         </IconButton>
                     </Tooltip>
                 </Grid>
@@ -66,14 +62,20 @@ function TimePicker(props) {
                     </Grid>
                     <Grid item>
                         <Tooltip title={"Edit"}>
-                            <IconButton disabled={props.disabled} onClick={toggleEditMode}>
+                            <IconButton
+                                edge={"end"}
+                                disabled={props.disabled}
+                                onClick={toggleEditMode}>
                                 <EditIcon/>
                             </IconButton>
                         </Tooltip>
                     </Grid>
-                    <Grid item>
+                    <Grid className={props.disableClear ? hide : show} item>
                         <Tooltip title={"Clear"}>
-                            <IconButton disabled={props.disabled} onClick={onClear}>
+                            <IconButton
+                                edge={"end"}
+                                disabled={props.disabled}
+                                onClick={onClear}>
                                 <CancelIcon/>
                             </IconButton>
                         </Tooltip>
@@ -94,14 +96,16 @@ TimePicker.propTypes = {
     time: PropTypes.string,
     onChange: PropTypes.func,
     label: PropTypes.string,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    disableClear: PropTypes.bool
 };
 TimePicker.defaultProps = {
     time: "",
     onChange: () => {
     },
     label: "Set time",
-    disabled: false
+    disabled: false,
+    disableClear: false
 };
 
 export default TimePicker;

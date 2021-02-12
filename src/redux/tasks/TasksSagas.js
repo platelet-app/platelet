@@ -24,7 +24,10 @@ import {
     getAllTasksRequest,
     SET_ROLE_VIEW_AND_GET_TASKS,
     START_REFRESH_TASKS_LOOP_FROM_SOCKET,
-    updateTaskDropoffAddressRequest, updateTaskDropoffAddressFromSavedRequest,
+    updateTaskDropoffAddressRequest,
+    updateTaskDropoffAddressFromSavedRequest,
+    updateTaskTimeOfCallFailure,
+    updateTaskTimeOfCallSuccess, updateTaskTimeOfCallActions,
 } from "./TasksActions"
 import {
     ADD_TASK_REQUEST,
@@ -372,6 +375,17 @@ function* updateTaskPickupTime(action) {
     }
 }
 
+function* updateTaskTimeOfCall(action) {
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
+        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
+        yield put(updateTaskTimeOfCallSuccess(data))
+    } catch (error) {
+        yield put(updateTaskTimeOfCallFailure(error))
+    }
+}
+
 function* updateTaskDropoffTime(action) {
     try {
         const currentTasks = yield select((state) => state.tasks.tasks);
@@ -533,6 +547,10 @@ export function* watchUpdateTaskPickupTime() {
 
 export function* watchUpdateTaskDropoffTime() {
     yield debounce(300, UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
+}
+
+export function* watchUpdateTaskTimeOfCall() {
+    yield debounce(300, updateTaskTimeOfCallActions.request, updateTaskTimeOfCall)
 }
 
 export function* watchUpdateTaskPriority() {

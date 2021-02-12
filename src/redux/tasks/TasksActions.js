@@ -1,3 +1,5 @@
+import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
+
 export const ADD_TASK_REQUEST = "ADD_TASK_REQUEST";
 export const ADD_TASK_SUCCESS = "ADD_TASK_SUCCESS";
 export const ADD_TASK_FAILURE = "ADD_TASK_FAILURE";
@@ -95,6 +97,13 @@ export const REFRESH_MY_TASKS_NOTFOUND = "REFRESH_MY_TASKS_NOTFOUND";
 
 export const RESET_GROUP_RELAY_UUIDS = "RESET_GROUP_RELAY_UUIDS";
 export const GROUP_RELAYS_TOGETHER = "GROUP_RELAYS_TOGETHER";
+
+export const updateTaskTimeOfCallActions = createRequestActions("UPDATE_TASK_TIME_OF_CALL");
+export const { updateTaskTimeOfCallFailure, updateTaskTimeOfCallSuccess } = createRequestFunctions(updateTaskTimeOfCallActions)
+
+export function updateTaskTimeOfCallRequest(taskUUID, payload) {
+    return { type: updateTaskTimeOfCallActions.request, data: {taskUUID, payload} }
+}
 
 export function restoreTaskRequest(taskUUID) {
     return { type: RESTORE_TASK_REQUEST, data: {taskUUID }}
