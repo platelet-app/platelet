@@ -8,27 +8,41 @@ import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSele
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Divider from "@material-ui/core/Divider";
+import {Tooltip, withMobileDialog} from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+import CancelIcon from "@material-ui/icons/Cancel";
+import {showHide} from "../../../styles/common";
+import {createPostingSelector} from "../../../redux/selectors";
+import {useSelector} from "react-redux";
+import {addNewDropoffLocationAndSetTaskRequest} from "../../../redux/taskDestinations/TaskDestinationsActions";
 
 
 const useStyles = makeStyles({
     root: {
         minWidth: "350px",
-    }
+    },
+    button: {
+        height: 9,
+    },
 })
+
+const initialState = {
+    what3words: "",
+    ward: "",
+    line1: "",
+    line2: "",
+    town: "",
+    county: "",
+    postcode: ""
+}
 
 function LocationDetailAndSelector(props) {
     const classes = useStyles();
-    const [state, setState] = useState({
-        what3words: "",
-        ward: "",
-        line1: "",
-        line2: "",
-        town: "",
-        county: "",
-        postcode: ""
-    })
+    const [state, setState] = useState(initialState);
     const [protectedLocation, setProtectedLocation] = useState(false)
     const [presetMode, setPresetMode] = useState(false);
+    const {show, hide} = showHide();
 
     function updateStateFromProps() {
         if (props.location) {
@@ -45,6 +59,10 @@ function LocationDetailAndSelector(props) {
                 setState({what3words, ward, line1, line2, town, county, postcode})
             }
             setProtectedLocation(props.location ? props.location.protected : false);
+        } else {
+            setState(initialState);
+            setProtectedLocation(false);
+
         }
     }
 
@@ -53,11 +71,18 @@ function LocationDetailAndSelector(props) {
     function onFieldFinished() {
         props.onChange(state);
     }
-
     function onSelectPreset(value) {
         props.onSelectPreset(value);
         setPresetMode(false);
     }
+
+    function onClickEditButton() {
+        props.onEditPreset(state);
+    }
+    function onClickClearButton() {
+        props.onClear();
+    }
+
     const presetName = (props.location && props.location.name) ? props.location.name : ""
 
     const presetSelect = props.displayPresets ?
@@ -70,17 +95,43 @@ function LocationDetailAndSelector(props) {
                     /> : <Typography noWrap={true}>{presetName}</Typography>}
                 </Grid>
                 <Grid item>
+                    <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
+                        <Grid className={(props.location && props.location.listed) ? show : hide} item>
+                            <Tooltip title={"Edit"}>
+                                <IconButton
+                                    className={classes.button}
+                                    edge={"end"}
+                                    disabled={props.disabled}
+                                    onClick={onClickEditButton}>
+                                    <EditIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                        <Grid  className={(props.location && !props.disableClear) ? show : hide} item>
+                            <Tooltip title={"Clear"}>
+                                <IconButton
+                                    className={classes.button}
+                                    edge={"end"}
+                                    disabled={props.disabled}
+                                    onClick={onClickClearButton}>
+                                    <CancelIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid className={!!!props.location ? show : hide} item>
                     <Button
-                        onClick={() => {
-                            setPresetMode(!presetMode)
-                        }}
-                        variant={"contained"}
-                        color={"primary"}
+                            onClick={() => {
+                                setPresetMode(!presetMode)
+                            }}
+                            variant={"contained"}
+                            color={"primary"}
                     >
                         {presetMode ? "Cancel" : "Search"}
                     </Button>
-
                 </Grid>
+
             </Grid>
         </Grid>
         : <></>
@@ -96,10 +147,10 @@ function LocationDetailAndSelector(props) {
                         </Grid>
                     </Grid>
                 </Grid>
-                    <Grid item>
-                        <Divider/>
-                    </Grid>
-                    {presetSelect}
+                <Grid item>
+                    <Divider/>
+                </Grid>
+                {presetSelect}
 
                 <Grid item>
                     <LabelItemPair label={"w3w"}>
@@ -173,12 +224,16 @@ LocationDetailAndSelector.propTypes = {
     onSelectPreset: PropTypes.func,
     className: PropTypes.string,
     displayPresets: PropTypes.bool,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    disableClear: PropTypes.bool,
+    onClear: PropTypes.func,
+    onEditPreset: PropTypes.func
 }
 
 LocationDetailAndSelector.propDefaults = {
     label: "",
     displayPresets: true,
+    disableClear: false,
     location: {
         address: {
             what3words: null,
@@ -193,6 +248,10 @@ LocationDetailAndSelector.propDefaults = {
     onSelectPreset: () => {
     },
     onChange: () => {
+    },
+    onClear: () => {
+    },
+    onEditPreset: () => {
     }
 }
 

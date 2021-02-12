@@ -17,8 +17,6 @@ const useStyles = makeStyles({
         }
     },
     hoverHighlight: {
-        background: "white",
-        color: "black",
         "&:hover": {
             background: "rgb(242, 242, 242)"
         }
@@ -47,6 +45,8 @@ function ClickableTextField(props) {
             setEditMode(!editMode)
         }
     }
+
+    useEffect(() => firstValue.current = props.value, [props.value])
 
     const stuff = props.disabled ?
         props.value ?

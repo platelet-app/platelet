@@ -13,7 +13,10 @@ import {
     addNewDropoffLocationAndSetTaskRequest,
     addNewPickupLocationAndSetTaskRequest,
     setTaskDropoffDestinationRequest,
-    setTaskPickupDestinationRequest, updateDropoffLocationAndUpdateTaskRequest,
+    setTaskPickupDestinationRequest,
+    unsetTaskDropoffDestinationRequest,
+    unsetTaskPickupDestinationRequest,
+    updateDropoffLocationAndUpdateTaskRequest,
     updatePickupLocationAndUpdateTaskRequest,
 } from "../../redux/taskDestinations/TaskDestinationsActions";
 import TaskDetailsPanel from "./components/TaskDetailsPanel";
@@ -24,7 +27,11 @@ import LabelItemPair from "../../components/LabelItemPair";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import TimePicker from "./components/TimePicker";
-import {updateTaskDropoffTimeRequest, updateTaskPickupTimeRequest} from "../../redux/tasks/TasksActions";
+import {
+    updateTaskDropoffTimeRequest,
+    updateTaskPickupTimeRequest, updateTaskRejectedTimeRequest, updateTaskTimeCancelledPrefix,
+    updateTaskTimeCancelledRequest
+} from "../../redux/tasks/TasksActions";
 import {createPostingSelector} from "../../redux/selectors";
 import Divider from "@material-ui/core/Divider";
 
@@ -36,6 +43,9 @@ const useStyles = makeStyles({
         paddingBottom: 8
     }
 })
+
+const pickupPostingSelector = createPostingSelector(["UPDATE_TASK_PICKUP_TIME"]);
+const dropoffPostingSelector = createPostingSelector(["UPDATE_TASK_DROPOFF_TIME"]);
 
 function TaskDialogCompact(props) {
     const mobileView = useSelector(state => state.mobileView);
@@ -49,9 +59,7 @@ function TaskDialogCompact(props) {
     const classes = useStyles();
     const [taskStatus, setTaskStatus] = useState("No status")
 
-    const pickupPostingSelector = createPostingSelector(["UPDATE_TASK_PICKUP_TIME"]);
     const isPostingPickupTime = useSelector(state => pickupPostingSelector(state));
-    const dropoffPostingSelector = createPostingSelector(["UPDATE_TASK_DROPOFF_TIME"]);
     const isPostingDropoffTime = useSelector(state => dropoffPostingSelector(state));
 
     let taskUUID = null;
@@ -93,24 +101,45 @@ function TaskDialogCompact(props) {
         if (value || value === null)
             dispatch(updateTaskPickupTimeRequest(task.uuid, {time_picked_up: value}))
     }
+
     function onChangeTimeDropoff(value) {
         if (value || value === null)
             dispatch(updateTaskDropoffTimeRequest(task.uuid, {time_dropped_off: value}))
     }
 
-    function onChangePickupLocation(value) {
+    function onChangePickupLocation(value, makeNew = false) {
         if (task.pickup_location) {
-            dispatch(updatePickupLocationAndUpdateTaskRequest(task.uuid, {address: value}))
+            if (makeNew) {
+                dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
+            } else {
+                dispatch(updatePickupLocationAndUpdateTaskRequest(task.uuid, {address: value}))
+            }
         } else {
             dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
         }
     }
 
-    function onChangeDropoffLocation(value) {
+    function onClearPickupLocation() {
+        if (task.pickup_location) {
+            dispatch(unsetTaskPickupDestinationRequest(task.uuid))
+        }
+    }
+
+    function onChangeDropoffLocation(value, makeNew = false) {
         if (task.dropoff_location) {
-            dispatch(updateDropoffLocationAndUpdateTaskRequest(task.uuid, {address: value}))
+            if (makeNew) {
+                dispatch(addNewDropoffLocationAndSetTaskRequest(task.uuid, {address: value}))
+            } else {
+                dispatch(updateDropoffLocationAndUpdateTaskRequest(task.uuid, {address: value}))
+            }
         } else {
             dispatch(addNewDropoffLocationAndSetTaskRequest(task.uuid, {address: value}))
+        }
+    }
+
+    function onClearDropoffLocation() {
+        if (task.dropoff_location) {
+            dispatch(unsetTaskDropoffDestinationRequest(task.uuid))
         }
     }
 
@@ -181,10 +210,10 @@ function TaskDialogCompact(props) {
                 aria-labelledby="form-dialog-title">
                 <Grid container spacing={0} direction={"column"}>
                     <Grid item className={classes.statusBar}>
-                {statusBar}
+                        {statusBar}
                     </Grid>
                     <Grid item>
-                <Divider/>
+                        <Divider/>
                     </Grid>
                 </Grid>
                 <div className={classes.root}>
@@ -193,7 +222,8 @@ function TaskDialogCompact(props) {
                             <Grid container direction={"row"} alignItems={"flex-start"} justify={"space-between"}
                                   spacing={3}>
                                 <Grid item>
-                                    <Grid container direction={"row"} alignItems={"center"} spacing={1} justify={"flex-start"}>
+                                    <Grid container direction={"row"} alignItems={"center"} spacing={1}
+                                          justify={"flex-start"}>
                                         <Grid item>
                                             <PaddedPaper>
                                                 <Grid container direction={"column"} spacing={3}>
@@ -201,6 +231,8 @@ function TaskDialogCompact(props) {
                                                         <LocationDetailAndSelector
                                                             onSelectPreset={onSelectPickupFromSaved}
                                                             onChange={onChangePickupLocation}
+                                                            onEditPreset={(value) => onChangePickupLocation(value, true)}
+                                                            onClear={onClearPickupLocation}
                                                             location={task.pickup_location}
                                                             displayPresets={true}
                                                             label={"Pick up"}/>
@@ -226,14 +258,16 @@ function TaskDialogCompact(props) {
                                                         <LocationDetailAndSelector
                                                             onSelectPreset={onSelectDropoffFromSaved}
                                                             onChange={onChangeDropoffLocation}
+                                                            onClear={onClearDropoffLocation}
+                                                            onEditPreset={(value) => onChangeDropoffLocation(value, true)}
                                                             location={task.dropoff_location}
                                                             displayPresets={true}
-                                                            label={"Delivery"}/>
+                                                            label={"Deliver"}/>
                                                     </Grid>
                                                     <LabelItemPair label={"Time delivered"}>
                                                         <TimePicker
                                                             onChange={onChangeTimeDropoff}
-                                                            disabled={isPostingDropoffTime}
+                                                            disabled={isPostingDropoffTime || !!!task.time_picked_up}
                                                             label={"Mark dropped off"}
                                                             time={task.time_dropped_off}/>
                                                     </LabelItemPair>
@@ -244,7 +278,11 @@ function TaskDialogCompact(props) {
                                 </Grid>
                                 <Grid item>
                                     <PaddedPaper>
-                                        <TaskDetailsPanel/>
+                                        <Grid container direction={"column"}>
+                                            <Grid item>
+                                                <TaskDetailsPanel/>
+                                            </Grid>
+                                        </Grid>
                                     </PaddedPaper>
                                 </Grid>
                             </Grid>

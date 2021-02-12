@@ -18,9 +18,11 @@ import {
     updateTaskDropoffAddressRequest,
     updateTaskDropoffTimeRequest,
     updateTaskPickupAddressRequest,
-    updateTaskCancelledTimeRequest,
     updateTaskPickupAddressFromSavedRequest,
-    updateTaskDropoffAddressFromSavedRequest, updateTaskRequesterContactRequest, updateTaskRejectedTimeRequest
+    updateTaskDropoffAddressFromSavedRequest,
+    updateTaskRequesterContactRequest,
+    updateTaskRejectedTimeRequest,
+    updateTaskTimeCancelledRequest
 } from "../../redux/tasks/TasksActions";
 import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions";
 import {useDispatch, useSelector} from "react-redux"
@@ -217,7 +219,7 @@ export default function TaskDialog(props) {
                 <ToggleTimeStamp label={"UNDO"} status={!!task.time_cancelled}
                                  onSelect={() => {
                                      const payload = {time_cancelled: null};
-                                     dispatch(updateTaskCancelledTimeRequest(taskUUID, payload));
+                                     dispatch(updateTaskTimeCancelledRequest(taskUUID, payload));
                                  }
                                  }/>
             </PaddedPaper>

@@ -12,7 +12,6 @@ import {
     watchUpdateTaskPickupAddress,
     watchUpdateTaskPickupAddressFromSaved,
     watchUpdateTaskPriority,
-    watchUpdateTaskCancelledTime,
     watchUpdateTaskRejectedTime,
     watchUpdateTaskPatch,
     watchRefreshTasks,
@@ -21,7 +20,7 @@ import {
     watchUpdateTaskDropoffAddressFromSaved,
     watchUpdateTaskRequesterContact,
     watchSetRoleViewAndGetTasks,
-    watchRefreshTasksFromSocket, watchUpdateTaskTimeOfCall
+    watchRefreshTasksFromSocket, watchUpdateTaskTimeOfCall, watchUpdateTaskTimeCancelled
 } from "./tasks/TasksSagas"
 import {
     watchAddNewDropoffLocationAndSetTask,
@@ -119,7 +118,7 @@ export default function* rootSaga() {
         call(watchUpdateTaskPriority),
         call(watchUpdateTaskPatch),
         call(watchUpdateTaskPatchFromServer),
-        call(watchUpdateTaskCancelledTime),
+        call(watchUpdateTaskTimeCancelled),
         call(watchUpdateTaskRejectedTime),
         call(watchUpdateTaskTimeOfCall),
         call(watchGetMyTasks),
