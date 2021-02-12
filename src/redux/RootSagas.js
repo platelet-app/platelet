@@ -24,11 +24,12 @@ import {
     watchRefreshTasksFromSocket
 } from "./tasks/TasksSagas"
 import {
+    watchAddNewDropoffLocationAndSetTask,
     watchAddNewPickupLocationAndSetTask,
     watchSetTaskDropoffDestination,
     watchSetTaskPickupDestination,
     watchUnsetTaskDropoffDestination,
-    watchUnsetTaskPickupDestination,
+    watchUnsetTaskPickupDestination, watchUpdateDropoffLocationAndUpdateTask,
     watchUpdatePickupLocationAndUpdateTask
 } from "./taskDestinations/TaskDestinationsSagas"
 import {
@@ -183,6 +184,8 @@ export default function* rootSaga() {
         call(watchUnsetTaskPickupDestination),
         call(watchAddNewPickupLocationAndSetTask),
         call(watchUpdatePickupLocationAndUpdateTask),
+        call(watchUpdateDropoffLocationAndUpdateTask),
+        call(watchAddNewDropoffLocationAndSetTask),
         call(updateActiveTaskMonitor),
 
     ])

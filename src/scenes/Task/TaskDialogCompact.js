@@ -10,9 +10,10 @@ import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions"
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {
+    addNewDropoffLocationAndSetTaskRequest,
     addNewPickupLocationAndSetTaskRequest,
     setTaskDropoffDestinationRequest,
-    setTaskPickupDestinationRequest,
+    setTaskPickupDestinationRequest, updateDropoffLocationAndUpdateTaskRequest,
     updatePickupLocationAndUpdateTaskRequest,
     updateTaskPickupLocationAndUpdateTaskRequest,
 } from "../../redux/taskDestinations/TaskDestinationsActions";
@@ -42,8 +43,6 @@ function TaskDialogCompact(props) {
     const [dropoffPresetName, setDropoffPresetName] = useState("");
     const classes = useStyles();
     const [taskStatus, setTaskStatus] = useState("No status")
-    const [pickupLocationType, setPickupLocationType] = useState("preset")
-    const [dropoffLocationType, setDropoffLocationType] = useState("preset")
 
     let taskUUID = null;
 
@@ -63,22 +62,6 @@ function TaskDialogCompact(props) {
 
     useEffect(componentDidMount, [props.location.key]);
 
-    function togglePickupLocationType(e) {
-        if (e.target.checked) {
-            setPickupLocationType("custom")
-        } else {
-            setPickupLocationType("preset")
-        }
-    }
-
-    function toggleDropoffLocationType(e) {
-        if (e.target.checked) {
-            setDropoffLocationType("custom")
-        } else {
-            setDropoffLocationType("preset")
-        }
-    }
-
     function setStatus() {
         const result = Object.keys(determineTaskType({task}))
         if (result) {
@@ -96,22 +79,19 @@ function TaskDialogCompact(props) {
 
     useEffect(setStatus, [task])
 
-    function setPresets() {
-        if (task.pickup_location) {
-            setPickupLocationType(task.pickup_location.listed ? "preset" : "custom")
-        }
-        if (task.dropoff_location) {
-            setDropoffLocationType(task.dropoff_location.listed ? "preset" : "custom")
-        }
-    }
-
-    useEffect(setPresets, [task])
-
     function onChangePickupLocation(value) {
         if (task.pickup_location) {
             dispatch(updatePickupLocationAndUpdateTaskRequest(task.uuid, {address: value}))
         } else {
             dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
+        }
+    }
+
+    function onChangeDropoffLocation(value) {
+        if (task.dropoff_location) {
+            dispatch(updateDropoffLocationAndUpdateTaskRequest(task.uuid, {address: value}))
+        } else {
+            dispatch(addNewDropoffLocationAndSetTaskRequest(task.uuid, {address: value}))
         }
     }
 
@@ -192,7 +172,6 @@ function TaskDialogCompact(props) {
                                             <PaddedPaper>
                                                 <Grid container direction={"column"} spacing={3}>
                                                     <Grid item>
-                                                        <Switch onChange={togglePickupLocationType}/>
                                                         <LocationDetailAndSelector
                                                             onSelectPreset={onSelectPickupFromSaved}
                                                             onChange={onChangePickupLocation}
@@ -217,9 +196,9 @@ function TaskDialogCompact(props) {
                                             <PaddedPaper>
                                                 <Grid container direction={"column"} spacing={3}>
                                                     <Grid item>
-                                                        <Switch onChange={toggleDropoffLocationType}/>
                                                         <LocationDetailAndSelector
                                                             onSelectPreset={onSelectDropoffFromSaved}
+                                                            onChange={onChangeDropoffLocation}
                                                             location={task.dropoff_location}
                                                             displayPresets={true}
                                                             label={"Delivery preset"}/>

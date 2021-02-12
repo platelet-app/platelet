@@ -25,7 +25,7 @@ function getFailType(action) {
 }
 
 function* monitor(monitoredAction) {
-    console.log('started monitoring', monitoredAction.type)
+    //console.log('started monitoring', monitoredAction.type)
     const {fail} = yield race({
         success: take(getSuccessType(monitoredAction)),
         fail: take(getFailType(monitoredAction)),
@@ -37,7 +37,6 @@ function* monitor(monitoredAction) {
         yield put(displayErrorNotification("Failed multiple times to refresh authentication. Data may not be saved!"))
         return
     }
-    console.log(fail)
     if (fail && fail.error && fail.error.status_code === 401) {
         console.log('detected 401, refreshing token')
         yield put(refreshTokenRequest())
@@ -56,7 +55,7 @@ function* monitor(monitoredAction) {
         }
     }
 
-    console.log('monitoring', monitoredAction.type, 'finished')
+    //console.log('monitoring', monitoredAction.type, 'finished')
 }
 
 export default function* authenticationMonitor() {
