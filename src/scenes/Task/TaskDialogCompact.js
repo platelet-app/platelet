@@ -15,16 +15,17 @@ import {
     setTaskDropoffDestinationRequest,
     setTaskPickupDestinationRequest, updateDropoffLocationAndUpdateTaskRequest,
     updatePickupLocationAndUpdateTaskRequest,
-    updateTaskPickupLocationAndUpdateTaskRequest,
 } from "../../redux/taskDestinations/TaskDestinationsActions";
 import TaskDetailsPanel from "./components/TaskDetailsPanel";
 import CommentsSection from "../Comments/CommentsSection";
 import {PaddedPaper, showHide} from "../../styles/common";
 import TaskModalTimePicker from "./components/TaskModalTimePicker";
 import LabelItemPair from "../../components/LabelItemPair";
-import {Switch} from "@material-ui/core";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import TimePicker from "./components/TimePicker";
+import {updateTaskDropoffTimeRequest, updateTaskPickupTimeRequest} from "../../redux/tasks/TasksActions";
+import {createPostingSelector} from "../../redux/selectors";
 
 const useStyles = makeStyles({
     root: {
@@ -43,6 +44,11 @@ function TaskDialogCompact(props) {
     const [dropoffPresetName, setDropoffPresetName] = useState("");
     const classes = useStyles();
     const [taskStatus, setTaskStatus] = useState("No status")
+
+    const pickupPostingSelector = createPostingSelector(["UPDATE_TASK_PICKUP_TIME"]);
+    const isPostingPickupTime = useSelector(state => pickupPostingSelector(state));
+    const dropoffPostingSelector = createPostingSelector(["UPDATE_TASK_DROPOFF_TIME"]);
+    const isPostingDropoffTime = useSelector(state => dropoffPostingSelector(state));
 
     let taskUUID = null;
 
@@ -78,6 +84,15 @@ function TaskDialogCompact(props) {
     }
 
     useEffect(setStatus, [task])
+
+    function onChangeTimePickedUp(value) {
+        if (value || value === null)
+            dispatch(updateTaskPickupTimeRequest(task.uuid, {time_picked_up: value}))
+    }
+    function onChangeTimeDropoff(value) {
+        if (value || value === null)
+            dispatch(updateTaskDropoffTimeRequest(task.uuid, {time_dropped_off: value}))
+    }
 
     function onChangePickupLocation(value) {
         if (task.pickup_location) {
@@ -162,7 +177,7 @@ function TaskDialogCompact(props) {
                 aria-labelledby="form-dialog-title">
                 {statusBar}
                 <div className={classes.root}>
-                    <Grid container direction={"column"} justify={"space-between"}>
+                    <Grid container direction={"column"} alignItems={"flex-start"} justify={"space-between"}>
                         <Grid item>
                             <Grid container direction={"row"} alignItems={"flex-start"} justify={"space-between"}
                                   spacing={3}>
@@ -177,13 +192,14 @@ function TaskDialogCompact(props) {
                                                             onChange={onChangePickupLocation}
                                                             location={task.pickup_location}
                                                             displayPresets={true}
-                                                            label={"Pick up preset"}/>
+                                                            label={"Pick up"}/>
                                                     </Grid>
                                                     <LabelItemPair label={"Time picked up"}>
-                                                        <TaskModalTimePicker disabled={false} label={"Mark Picked Up"}
-                                                                             time={task.time_picked_up}
-                                                                             onChange={() => {
-                                                                             }}/>
+                                                        <TimePicker
+                                                            onChange={onChangeTimePickedUp}
+                                                            disabled={isPostingPickupTime}
+                                                            label={"Mark picked up"}
+                                                            time={task.time_picked_up}/>
                                                     </LabelItemPair>
                                                 </Grid>
                                             </PaddedPaper>
@@ -201,13 +217,14 @@ function TaskDialogCompact(props) {
                                                             onChange={onChangeDropoffLocation}
                                                             location={task.dropoff_location}
                                                             displayPresets={true}
-                                                            label={"Delivery preset"}/>
+                                                            label={"Delivery"}/>
                                                     </Grid>
                                                     <LabelItemPair label={"Time delivered"}>
-                                                        <TaskModalTimePicker disabled={false} label={"Mark Delivered"}
-                                                                             time={task.time_dropped_off}
-                                                                             onChange={() => {
-                                                                             }}/>
+                                                        <TimePicker
+                                                            onChange={onChangeTimeDropoff}
+                                                            disabled={isPostingDropoffTime}
+                                                            label={"Mark dropped off"}
+                                                            time={task.time_dropped_off}/>
                                                     </LabelItemPair>
                                                 </Grid>
                                             </PaddedPaper>

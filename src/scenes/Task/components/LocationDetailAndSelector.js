@@ -5,9 +5,19 @@ import PropTypes from "prop-types"
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
+import Button from "@material-ui/core/Button";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Divider from "@material-ui/core/Divider";
 
+
+const useStyles = makeStyles({
+    root: {
+        minWidth: "350px"
+    }
+})
 
 function LocationDetailAndSelector(props) {
+    const classes = useStyles();
     const [state, setState] = useState({
         what3words: "",
         ward: "",
@@ -18,6 +28,8 @@ function LocationDetailAndSelector(props) {
         postcode: ""
     })
     const [protectedLocation, setProtectedLocation] = useState(false)
+    const [presetMode, setPresetMode] = useState(false);
+
     function updateStateFromProps() {
         if (props.location) {
             if (props.location.address) {
@@ -35,86 +47,122 @@ function LocationDetailAndSelector(props) {
             setProtectedLocation(props.location ? props.location.protected : false);
         }
     }
+
     useEffect(updateStateFromProps, [props.location])
 
     function onFieldFinished() {
         props.onChange(state);
     }
 
-    return (
+    function onSelectPreset(value) {
+        props.onSelectPreset(value);
+        setPresetMode(false);
+    }
+    const presetName = (props.location && props.location.name) ? props.location.name : ""
 
-        <Grid container className={props.className} direction={"column"}>
-            <Grid item>
-                <Grid container direction={"row"} justify={"space-between"}>
-                    <Grid item>
-                        <Typography>{props.label}</Typography>
-                    </Grid>
-                    <Grid item>
-                        {props.displayPresets ? <FavouriteLocationsSelect label={props.label} onSelect={props.onSelectPreset}/> : <></>}
-                    </Grid>
+    const presetSelect = props.displayPresets ?
+        <Grid item>
+            <Grid container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
+                <Grid item>
+                    {presetMode ? <FavouriteLocationsSelect
+                        label={props.label}
+                        onSelect={onSelectPreset}
+                    /> : <Typography noWrap={true}>{presetName}</Typography>}
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setPresetMode(!presetMode)
+                        }}
+                        variant={"contained"}
+                        color={"primary"}
+                    >
+                        {presetMode ? "Cancel" : "Search"}
+                    </Button>
+
                 </Grid>
             </Grid>
-            <Grid item>
-                <LabelItemPair label={"w3w"}>
-                    <ClickableTextField
-                        label={"w3w"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, what3words: v})}
-                        onFinished={onFieldFinished}
-                        value={state.what3words}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Ward"}>
-                    <ClickableTextField
-                        label="ward"
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, ward: v})}
-                        onFinished={onFieldFinished}
-                        value={state.ward}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Line1"}>
-                    <ClickableTextField
-                        label={"line1"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, line1: v})}
-                        onFinished={onFieldFinished}
-                        value={state.line1}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Line2"}>
-                    <ClickableTextField
-                        label={"line2"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, line2: v})}
-                        onFinished={onFieldFinished}
-                        value={state.line2}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Town"}>
-                    <ClickableTextField
-                        label={"town"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, town: v})}
-                        onFinished={onFieldFinished}
-                        value={state.town}/>
-                </LabelItemPair>
-                <LabelItemPair label={"County"}>
-                    <ClickableTextField
-                        label={"county"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, county: v})}
-                        onFinished={onFieldFinished}
-                        value={state.county}/>
-                </LabelItemPair>
-                <LabelItemPair label={"Postcode"}>
-                    <ClickableTextField
-                        label={"postcode"}
-                        disabled={protectedLocation}
-                        onChange={v => setState({...state, postcode: v})}
-                        onFinished={onFieldFinished}
-                        value={state.postcode}/>
-                </LabelItemPair>
-
-
-            </Grid>
         </Grid>
+        : <></>
+
+    return (
+
+        <div className={classes.root}>
+            <Grid container spacing={2} className={props.className} direction={"column"}>
+                <Grid item>
+                    <Grid container direction={"row"} justify={"space-between"}>
+                        <Grid item>
+                            <Typography variant={"h6"}>{props.label}</Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                    <Grid item>
+                        <Divider/>
+                    </Grid>
+                    {presetSelect}
+
+                <Grid item>
+                    <LabelItemPair label={"w3w"}>
+                        <ClickableTextField
+                            label={"w3w"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, what3words: v})}
+                            onFinished={onFieldFinished}
+                            value={state.what3words}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Ward"}>
+                        <ClickableTextField
+                            label="ward"
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, ward: v})}
+                            onFinished={onFieldFinished}
+                            value={state.ward}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Line1"}>
+                        <ClickableTextField
+                            label={"line1"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, line1: v})}
+                            onFinished={onFieldFinished}
+                            value={state.line1}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Line2"}>
+                        <ClickableTextField
+                            label={"line2"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, line2: v})}
+                            onFinished={onFieldFinished}
+                            value={state.line2}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Town"}>
+                        <ClickableTextField
+                            label={"town"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, town: v})}
+                            onFinished={onFieldFinished}
+                            value={state.town}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"County"}>
+                        <ClickableTextField
+                            label={"county"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, county: v})}
+                            onFinished={onFieldFinished}
+                            value={state.county}/>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Postcode"}>
+                        <ClickableTextField
+                            label={"postcode"}
+                            disabled={protectedLocation}
+                            onChange={v => setState({...state, postcode: v})}
+                            onFinished={onFieldFinished}
+                            value={state.postcode}/>
+                    </LabelItemPair>
+
+
+                </Grid>
+            </Grid>
+        </div>
     )
 
 }
@@ -142,8 +190,10 @@ LocationDetailAndSelector.propDefaults = {
             postcode: null
         }
     },
-    onSelectPreset: () => {},
-    onChange: () => {}
+    onSelectPreset: () => {
+    },
+    onChange: () => {
+    }
 }
 
 export default LocationDetailAndSelector;

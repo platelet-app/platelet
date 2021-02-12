@@ -6,10 +6,8 @@ export function DateAndTimePicker(props) {
     function handleDateChange(value) {
         props.onChange(value)
     }
-    if (props.visible) {
 
         return (
-            <>
                 <KeyboardDateTimePicker
                     disabled={props.disabled}
                     variant="inline"
@@ -20,12 +18,7 @@ export function DateAndTimePicker(props) {
                     onError={console.log}
                     format="yyyy/MM/dd HH:mm"
                 />
-            </>
         );
-    }
-    else {
-        return <></>
-    }
 }
 
 
