@@ -10,7 +10,7 @@ export default function CommentsSkeleton(props) {
                   alignItems={"center"}
                   justify={"flex-start"}
             >
-                {[...Array(props.count ? props.count : 10)].map((x, i) =>
+                {[...Array(props.count ? props.count : 1)].map((x, i) =>
                     <Grid item key={i}>
                         <Skeleton variant="text" width={280} height={200}/>
                     </Grid>)}

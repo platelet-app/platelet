@@ -12,7 +12,7 @@ import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles({
     root: {
-        minWidth: "350px"
+        minWidth: "350px",
     }
 })
 

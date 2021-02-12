@@ -26,10 +26,14 @@ import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import TimePicker from "./components/TimePicker";
 import {updateTaskDropoffTimeRequest, updateTaskPickupTimeRequest} from "../../redux/tasks/TasksActions";
 import {createPostingSelector} from "../../redux/selectors";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles({
     root: {
         padding: "20px",
+    },
+    statusBar: {
+        paddingBottom: 8
     }
 })
 
@@ -175,7 +179,14 @@ function TaskDialogCompact(props) {
                     },
                 }}
                 aria-labelledby="form-dialog-title">
+                <Grid container spacing={0} direction={"column"}>
+                    <Grid item className={classes.statusBar}>
                 {statusBar}
+                    </Grid>
+                    <Grid item>
+                <Divider/>
+                    </Grid>
+                </Grid>
                 <div className={classes.root}>
                     <Grid container direction={"column"} alignItems={"flex-start"} justify={"space-between"}>
                         <Grid item>

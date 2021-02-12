@@ -11,21 +11,32 @@ import {Tooltip} from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import {DateTimePicker} from "@material-ui/pickers";
 import {showHide} from "../../../styles/common";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
+const useStyles = makeStyles({
+    button: {
+        height: 9,
+    },
+})
 
 function TimePicker(props) {
     const [editMode, setEditMode] = useState(false);
+    const classes = useStyles();
     const {show, hide} = showHide();
 
     function onButtonClick() {
         const timeNow = new Date().toISOString();
         props.onChange(timeNow);
     }
+
     function onClear() {
         props.onChange(null);
     }
+
     function toggleEditMode() {
         setEditMode(!editMode);
     }
+
     function onChange(value) {
         props.onChange(value.toISOString());
         setEditMode(false);
@@ -34,60 +45,70 @@ function TimePicker(props) {
     if (props.time) {
         if (editMode) {
             return (
-                <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
-                    <Grid item>
-                <DateTimePicker
-                    value={props.time}
-                    onChange={onChange}
-                    helperText="Set the date and time"
-                />
-                <Grid item>
-                    <Tooltip title={"Cancel"}>
-                        <IconButton
-                            disabled={props.disabled} onClick={toggleEditMode}>
-                            <CancelIcon/>
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
+                <div className={classes.root}>
+                    <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
+                        <Grid item>
+                            <DateTimePicker
+                                value={props.time}
+                                onChange={onChange}
+                                helperText="Set the date and time"
+                            />
+                            <Grid item>
+                                <Tooltip title={"Cancel"}>
+                                    <IconButton
+                                        className={classes.button}
+                                        disabled={props.disabled}
+                                        onClick={toggleEditMode}>
+                                        <CancelIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                        </Grid>
                     </Grid>
-                </Grid>
+                </div>
             )
         } else {
             return (
-                <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
-                    <Grid item>
-                        <Typography>
-                            <Moment calendar>{props.time}</Moment>
-                        </Typography>
+                <div className={classes.root}>
+                    <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
+                        <Grid item>
+                            <Typography>
+                                <Moment calendar>{props.time}</Moment>
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Tooltip title={"Edit"}>
+                                <IconButton
+                                    className={classes.button}
+                                    edge={"end"}
+                                    disabled={props.disabled}
+                                    onClick={toggleEditMode}>
+                                    <EditIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                        <Grid className={props.disableClear ? hide : show} item>
+                            <Tooltip title={"Clear"}>
+                                <IconButton
+                                    className={classes.button}
+                                    edge={"end"}
+                                    disabled={props.disabled}
+                                    onClick={onClear}>
+                                    <CancelIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <Tooltip title={"Edit"}>
-                            <IconButton
-                                edge={"end"}
-                                disabled={props.disabled}
-                                onClick={toggleEditMode}>
-                                <EditIcon/>
-                            </IconButton>
-                        </Tooltip>
-                    </Grid>
-                    <Grid className={props.disableClear ? hide : show} item>
-                        <Tooltip title={"Clear"}>
-                            <IconButton
-                                edge={"end"}
-                                disabled={props.disabled}
-                                onClick={onClear}>
-                                <CancelIcon/>
-                            </IconButton>
-                        </Tooltip>
-                    </Grid>
-                </Grid>
+                </div>
             )
         }
     } else {
         return (
-            <Button disabled={props.disabled} onClick={onButtonClick}>
-                {props.label}
-            </Button>
+            <div className={classes.root}>
+                <Button disabled={props.disabled} onClick={onButtonClick}>
+                    {props.label}
+                </Button>
+            </div>
         )
     }
 }
