@@ -11,11 +11,11 @@ import {
     GET_WHOAMI_FAILURE,
     SET_TASK_CONTEXT_MENU_SNACK,
     CLEAR_TASK_CONTEXT_MENU_SNACK,
-    SET_DASHBOARD_FILTER,
     SET_ROLE_VIEW,
     SET_IDLE_STATUS,
     SET_DARK_MODE
 } from './Actions'
+import {dashboardFilter} from "./dashboardFilter/DashboardFilterReducers";
 import {tasks} from "./tasks/TasksReducers"
 import {task} from "./activeTask/ActiveTaskReducer"
 import {userStatistics} from "./statistics/statisticsReducers";
@@ -47,14 +47,6 @@ function darkMode(state = darkModeInitialState, action) {
     }
 }
 
-function dashboardFilter(state = "", action) {
-    switch (action.type) {
-        case SET_DASHBOARD_FILTER:
-            return action.data;
-        default:
-            return state;
-    }
-}
 
 const taskContextMenuSnackInitialState = {snack: () => {}, uuid: ""}
 

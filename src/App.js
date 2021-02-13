@@ -231,11 +231,24 @@ const AppMain = withSnackbar(AppContents);
 
 function App(props) {
     const darkMode = useSelector(state => state.darkMode);
-    const theme = createMuiTheme({
-        palette: {
-            type: darkMode ? "dark" : "light"
-        },
-    });
+    let theme;
+    if (darkMode) {
+        theme = createMuiTheme({
+            palette: {
+                type: "dark",
+            },
+        });
+    } else {
+        theme = createMuiTheme({
+            palette: {
+                type: "light",
+                background: {
+                    default: "rgb(235, 235, 235)"
+                }
+            }
+
+        })
+    }
 
     const useStylesNotistack = makeStyles({
         contentRoot: {

@@ -7,7 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {useDispatch, useSelector} from "react-redux";
 import {createPostingSelector} from "../../../redux/selectors";
-import {clearTaskContextMenuSnack, setDashboardFilter} from "../../../redux/Actions";
+import {clearTaskContextMenuSnack} from "../../../redux/Actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import TimelineIcon from '@material-ui/icons/Timeline';
@@ -15,8 +15,7 @@ import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
 import CollaboratorsSection from "./CollaboratorsSection";
 import Toolbar from "@material-ui/core/Toolbar";
-import {TextFieldControlled} from "../../../components/TextFields";
-import _ from "lodash";
+import {TextFieldControlled, TextFieldUncontrolled} from "../../../components/TextFields";
 import {InputAdornment} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
 import {
@@ -29,6 +28,7 @@ import {saveDashboardRoleMode} from "../../../utilities";
 import Typography from "@material-ui/core/Typography";
 import {showHide} from "../../../styles/common";
 import {setRoleViewAndGetTasks} from "../../../redux/tasks/TasksActions";
+import {clearDashboardFilter, debounceDashboardFilter} from "../../../redux/dashboardFilter/DashboardFilterActions";
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -110,9 +110,11 @@ export function DashboardDetailTabs(props) {
     const snack = useSelector(state => state.taskContextMenuSnack);
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(state => state.whoami.user);
+    const dashboardFilterValue = useSelector(state => state.dashboardFilter);
     const roleView = useSelector(state => state.roleView);
     const classes = useStyles();
     const {show, hide} = showHide();
+    const [filterText, setFilterText] = useState("");
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -135,11 +137,10 @@ export function DashboardDetailTabs(props) {
     const handleChange = (event, newValue) => {
         props.onChange(event, newValue);
     };
-
-    const debouncedSearch = _.debounce(e => {
-        dispatch(setDashboardFilter(e.target.value))
-    }, 500);
-
+    function onChangeFilterText(e) {
+        setFilterText(e.target.value)
+        dispatch(debounceDashboardFilter(e.target.value));
+    }
 
     return (
         <React.Fragment>
@@ -159,8 +160,9 @@ export function DashboardDetailTabs(props) {
                                 <Grid item key={"search"}>
                                     <TextFieldControlled
                                         variant={"outlined"}
-                                        value={""}
-                                        onChange={debouncedSearch}
+                                        value={dashboardFilterValue}
+                                        onChange={onChangeFilterText}
+                                        onPressEscape={() => dispatch(clearDashboardFilter())}
                                         color={"secondary"}
                                         className={classes.root}
                                         InputProps={{

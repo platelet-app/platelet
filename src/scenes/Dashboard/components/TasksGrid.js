@@ -30,6 +30,8 @@ import {
     appendTasksDeliveredRequest,
     appendTasksRejectedRequest
 } from "../../../redux/tasks/TasksWaypointActions";
+import {setDashboardFilter} from "../../../redux/Actions";
+import {clearDashboardFilter} from "../../../redux/dashboardFilter/DashboardFilterActions";
 
 
 const getColumnTitle = key => {
@@ -194,13 +196,24 @@ const GridColumn = (props) => {
     appendFunction = dispatchAppendFunctions[props.taskKey];
     const header =
         (props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ?
+            <React.Fragment>
+
             <Button variant="contained" color="primary"
                     disabled={props.disableAddButton}
                     onClick={props.onAddTaskClick}
                     className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
             >
                 Create New
-            </Button> :
+            </Button>
+            </React.Fragment>
+                :
+            (props.showTasks !== null && props.taskKey === "tasksNew") ?
+                <Button variant="contained" color="primary"
+                        disabled={props.disableAddButton}
+                        onClick={() => dispatch(clearDashboardFilter())}
+                >
+                    Clear Search
+                </Button> :
             <Typography className={classes.header}>{props.title}</Typography>
 
 

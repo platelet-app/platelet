@@ -6,6 +6,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 export function TextFieldControlled(props) {
     const [currentValue, setCurrentValue] = useState(props.forceUppercase && props.value ? props.value.toUpperCase() : props.value);
     const {forceUppercase, onChange, ...newProps} = props;
+    useEffect(() => setCurrentValue(props.value), [props.value])
     return (
         <TextField
             {...newProps}
@@ -81,11 +82,22 @@ export function TextFieldUncontrolled(props) {
             {...props}
             multiline
             onKeyPress={(ev) => {
-                if (ev.key === 'Enter') {
-                    if (props.onPressEnter) {
-                        props.onPressEnter();
-                        ev.preventDefault();
+                switch (ev.key) {
+                    case ev.key === "Enter": {
+                        if (props.onPressEnter) {
+                            props.onPressEnter();
+                            ev.preventDefault();
+                        }
+                        break;
                     }
+                    case ev.key === "Escape":
+                        if (props.onPressEscape) {
+                            props.onPressEscape()
+                            ev.preventDefault();
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }}
             margin="dense"

@@ -92,6 +92,7 @@ import {watchInitialiseApp} from "./initialise/initialiseSagas";
 import authenticationMonitor from "./login/AuthenticationMonitor";
 import updateActiveTaskMonitor from "./activeTask/ActiveTaskMonitors"
 import {watchGetTask} from "./activeTask/ActiveTaskSagas"
+import {watchClearDashboardFilter, watchDebounceDashboardFilter} from "./dashboardFilter/DashboardFilterSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -187,6 +188,6 @@ export default function* rootSaga() {
         call(watchUpdateDropoffLocationAndUpdateTask),
         call(watchAddNewDropoffLocationAndSetTask),
         call(updateActiveTaskMonitor),
-
+        call(watchDebounceDashboardFilter)
     ])
 }
