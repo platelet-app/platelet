@@ -45,7 +45,7 @@ function AssignRiderCoordinatorPopover(props) {
 
     return (
         <div>
-            <SmallCirclePlusButton tooltip={`Assign a ${props.role}`} onClick={handleClick} colour={"black"}/>
+            <SmallCirclePlusButton tooltip={`Assign a ${props.role}`} onClick={handleClick}/>
             <Popover
                 id={id}
                 open={open}

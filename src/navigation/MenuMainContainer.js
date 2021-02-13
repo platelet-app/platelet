@@ -22,6 +22,10 @@ import {encodeUUID} from "../utilities";
 import {logoutUser, removeApiURL} from "../redux/login/LoginActions";
 import {clearServerSettings} from "../redux/ServerSettings/ServerSettingsActions";
 import UserAvatar from "../components/UserAvatar";
+import {setDarkMode} from "../redux/Actions";
+import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
+import Brightness4Icon from '@material-ui/icons/Brightness4';
+import {Tooltip} from "@material-ui/core";
 
 const drawerWidth = 240;
 
@@ -76,6 +80,7 @@ export function MenuMainContainer() {
     const isFetching = useSelector(state => loadingSelector(state));
     const whoami = useSelector(state => state.whoami.user);
     const serverSettings = useSelector(state => state.serverSettings);
+    const darkMode = useSelector(state => state.darkMode)
     const classes = useStyles();
     //const rightBarClasses = rightSideBarUseStyles()
     const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
@@ -202,6 +207,7 @@ export function MenuMainContainer() {
                                     }}>
                                         Logout
                                     </MenuItem>
+
                                     {process.env.REACT_APP_API_URL ? "" :
                                         // No need for change organisation entry if the api url is hard coded
                                         <MenuItem onClick={() => {
@@ -218,9 +224,20 @@ export function MenuMainContainer() {
                         </Grid>
                         <Grid item>
                             <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"} spacing={1}>
+
+                                <Grid item>
+                                    <Tooltip title={"Toggle dark/light mode"}>
+                                        <IconButton onClick={() => {
+                                            dispatch(setDarkMode(!darkMode))
+                                        }}>
+                                            {darkMode ? <BrightnessHighIcon/> : <Brightness4Icon/>}
+
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
                                 <Grid item>
                                     <Link to={`/user/${encodeUUID(whoami.uuid)}`}
-                                          style={{textDecoration: 'none', color:"white"}}>
+                                          style={{textDecoration: 'none', color: "white"}}>
                                         <Typography variant="h6" noWrap>
                                             {whoami.display_name}
                                         </Typography>
@@ -229,8 +246,8 @@ export function MenuMainContainer() {
                                 <Grid item>
                                     <Link to={`/user/${encodeUUID(whoami.uuid)}`}
                                           style={{textDecoration: 'none'}}>
-                                    <UserAvatar userUUID={whoami.uuid} displayName={whoami.display_name}
-                                                avatarURL={whoami.profile_picture_thumbnail_url}/>
+                                        <UserAvatar userUUID={whoami.uuid} displayName={whoami.display_name}
+                                                    avatarURL={whoami.profile_picture_thumbnail_url}/>
                                     </Link>
                                 </Grid>
                             </Grid>

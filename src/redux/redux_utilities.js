@@ -5,3 +5,12 @@ export function convertListDataToObjects(list) {
     }
     return result;
 }
+
+export function setDarkModePreference(preference = false) {
+    localStorage.setItem("darkModePreference", preference ? "true" : "false");
+}
+
+export function getDarkModePreference() {
+    const preference = localStorage.getItem("darkModePreference") || "false";
+    return preference === "true";
+}

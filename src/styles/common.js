@@ -46,14 +46,6 @@ export function MainWindowContainer(props) {
     )
 }
 
-export const StyledTextLink = styled(Link)({
-    a: {
-        "&:hover": {
-            background: "red"
-        }
-    },
-    textDecoration: "none"
-});
 
 export const StyledColumn = styled(Box)({
     border: 0,
@@ -61,32 +53,25 @@ export const StyledColumn = styled(Box)({
     height: "100%",
     minHeight: "100%",
     width: "383px",
-    background: "rgba(255, 255, 255, 0.8)",
 });
 
 
 export const StyledCard = styled(Card)({
-    background: "rgb(252, 252, 252)",
     border: 0,
     borderRadius: 2,
     boxShadow: '0 1px 2px 1px #7a7a7a',
-    color: 'black',
     width: "350px",
     height: "200px",
 });
 
 export const StyledSharpCard = styled(Card)({
-    background: "rgb(252, 252, 252)",
     border: 0,
     borderRadius: 2,
     boxShadow: '0 3px 5px 2px #7a7a7a',
-    color: 'black',
     padding: '20px',
 });
 
 export const StyledStrip = styled(Card)({
-    background: "rgb(250, 248, 248)",
-    color: 'black',
     borderRadius: 0,
     padding: '0px',
     height: '50px',

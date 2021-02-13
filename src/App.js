@@ -8,6 +8,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import {useDispatch, useSelector} from "react-redux";
 import {useIdleTimer} from 'react-idle-timer'
 import {
+    setDarkMode,
     setIdleStatus, setMobileView
 } from "./redux/Actions";
 import {logoutUser, removeApiURL} from "./redux/login/LoginActions";
@@ -17,7 +18,7 @@ import Moment from "react-moment"
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {clearServerSettings, getServerSettingsRequest} from "./redux/ServerSettings/ServerSettingsActions";
-import {withSnackbar} from "notistack";
+import {SnackbarProvider, withSnackbar} from "notistack";
 import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import {Helmet} from "react-helmet"
 import moment from 'moment-timezone';
@@ -26,7 +27,8 @@ import {DismissButton, showHide} from "./styles/common";
 import {Link} from "react-router-dom";
 import {MuiThemeProvider, createMuiTheme} from "@material-ui/core/styles";
 import {initialiseApp} from "./redux/initialise/initialiseActions";
-import {put} from "redux-saga/effects";
+import {MuiPickersUtilsProvider} from "@material-ui/pickers";
+import {getDarkModePreference} from "./redux/redux_utilities";
 
 
 const useStyles = makeStyles(theme => ({
@@ -39,29 +41,9 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const themeLight = createMuiTheme({
-    palette: {
-        background: {
-            default: "rgb(230, 230, 230)"
-        }
-    }
-});
 
-const themeDark = createMuiTheme({
-    palette: {
-        background: {
-            default: "#222222"
-        },
-        text: {
-            primary: "#ffffff"
-        }
-    }
-});
-
-
-function App(props) {
+function AppContents(props) {
     const forceResetPassword = useSelector(state => state.whoami.user.password_reset_on_login);
-
     const isInitialised = useSelector(state => state.apiControl.initialised);
     const incomingNotification = useSelector(state => state.notification);
     const apiURL = useSelector(state => state.apiControl.api_url);
@@ -70,6 +52,8 @@ function App(props) {
     const dispatch = useDispatch();
     const classes = useStyles();
     const {show, hide} = showHide();
+
+
     const [headerSettings, setHeaderSettings] = useState({
         title: "Bloodbike Dispatch",
         favicon: ""
@@ -82,6 +66,7 @@ function App(props) {
         if (isInitialised)
             dispatch(initialiseApp())
     }
+
     useEffect(initialise, [isInitialised])
 
     const handleOnIdle = event => {
@@ -234,13 +219,56 @@ function App(props) {
 
     }
     return (
-        <MuiThemeProvider theme={themeLight}>
-            <CssBaseline/>
+        <React.Fragment>
             {appContents}
-        </MuiThemeProvider>
+        </React.Fragment>
 
     )
 
 }
 
-export default withSnackbar(App);
+const AppMain = withSnackbar(AppContents);
+
+function App(props) {
+    const darkMode = useSelector(state => state.darkMode);
+    const theme = createMuiTheme({
+        palette: {
+            type: darkMode ? "dark" : "light"
+        },
+    });
+
+    const useStylesNotistack = makeStyles({
+        contentRoot: {
+            backgroundColor: theme.palette.background.default,
+        },
+        variantSuccess: {
+            backgroundColor: theme.palette.success.main,
+        },
+        variantError: {
+            backgroundColor: theme.palette.error.main,
+        },
+        variantInfo: {
+            backgroundColor: theme.palette.info.main,
+        },
+        variantWarning: {
+            backgroundColor: theme.palette.warning.main,
+        },
+    });
+
+    const classes = useStylesNotistack();
+
+    return (
+        <MuiThemeProvider theme={theme}>
+            <CssBaseline/>
+            <SnackbarProvider classes={classes} maxSnack={1}>
+                <AppMain {...props}/>
+            </SnackbarProvider>
+        </MuiThemeProvider>
+
+
+    )
+}
+
+export default App;
+
+

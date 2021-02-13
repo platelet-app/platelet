@@ -1,4 +1,12 @@
 import {saveLocalStorageViewMode} from "../utilities";
+import {setDarkModePreference} from "./redux_utilities";
+
+export const SET_DARK_MODE = "SET_DARK_MODE";
+
+export function setDarkMode(data) {
+    setDarkModePreference(data);
+    return {type: SET_DARK_MODE, data};
+}
 
 export const SET_NEW_TASK_ADDED_VIEW = 'SET_NEW_TASK_ADDED_VIEW'
 

@@ -7,7 +7,6 @@ import CommentContextMenu from "../../../components/ContextMenus/CommentContextM
 import {contextDots} from "../../../styles/common"
 import CommentCardEditMode from "./CommentCardEditMode";
 import Linkify from "react-linkify"
-import makeStyles from "@material-ui/core/styles/makeStyles";
 
 
 function CommentCollection(props) {

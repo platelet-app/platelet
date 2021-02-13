@@ -75,7 +75,6 @@ function SmallCirclePlusButton(props) {
 }
 
 SmallCirclePlusButton.defaultProps = {
-    colour: "black",
     tooltip: "",
     onClick: () => {
     },

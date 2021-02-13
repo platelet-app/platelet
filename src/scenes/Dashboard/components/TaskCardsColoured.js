@@ -14,24 +14,25 @@ import {StyledCard} from "../../../styles/common";
 
 const colourBarPercent = "90%"
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => (
+    {
     new: {
-        background: `linear-gradient(0deg, rgba(250, 250, 250,1) ${colourBarPercent}, rgba(255,255,255,1) 90%, rgba(252, 231, 121, 1) 90%, rgba(252, 231, 121, 1) 100%)`,
+        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} 90%, rgba(252, 231, 121, 1) 90%, rgba(252, 231, 121, 1) 100%)`,
         cursor: "pointer"
     },
     active: {
-        background: `linear-gradient(0deg, rgba(250, 250, 250,1) ${colourBarPercent}, rgba(255,255,255,1) 90%, cornflowerblue 90%, cornflowerblue 100%)`,
+        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} 90%, cornflowerblue 90%, cornflowerblue 100%)`,
         cursor: "pointer"
     },
     pickedUp: {
-        background: `linear-gradient(0deg, rgba(250, 250, 250,1) ${colourBarPercent}, rgba(255,255,255,1) 90%, orange 90%, orange 100%)`,
+        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} 90%, orange 90%, orange 100%)`,
         cursor: "pointer"
     },
     delivered: {
-        background: `linear-gradient(0deg, rgba(250, 250, 250,1) ${colourBarPercent}, rgba(255,255,255,1) 90%, lightgreen 90%, lightgreen 100%)`,
+        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} 90%, lightgreen 90%, lightgreen 100%)`,
         cursor: "pointer"
     }
-})
+}))
 
 const TaskCard = React.memo((props) => {
     const whoami = useSelector(state => state.whoami.user);

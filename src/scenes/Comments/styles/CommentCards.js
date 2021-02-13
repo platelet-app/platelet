@@ -8,9 +8,9 @@ const CommentCard = styled(Card)({
 
 });
 export const PublicCommentCard = styled(CommentCard)( {
-    backgroundColor: "rgb(252, 252, 252)"
+    //backgroundColor: "rgba(252, 252, 252, 0.1)"
     });
 
 export const PrivateCommentCard = styled(CommentCard)( {
-    backgroundColor: "rgb(242, 242, 242)"
+    //backgroundColor: "rgba(242, 242, 242, 0.1)"
 });

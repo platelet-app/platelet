@@ -6,9 +6,6 @@ import PropTypes from "prop-types"
 import {TelephoneTextFieldControlled} from "./TextFields";
 
 const useStyles = makeStyles({
-    textfield: {
-        background: "white"
-    },
     label: {
         fontStyle: "italic",
         color: "gray",
@@ -108,7 +105,6 @@ function ClickableTextField(props) {
                                 break;
                         }
                     }}
-                    className={classes.textfield}
                     autoFocus={true}
                     onBlur={onFinishedEntry}
                     value={props.value}

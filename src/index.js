@@ -18,9 +18,7 @@ ReactDOM.render((
             <BrowserRouter>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <ReactNotification/>
-                    <SnackbarProvider maxSnack={1}>
-                        <App/>
-                    </SnackbarProvider>
+                    <App/>
                 </MuiPickersUtilsProvider>
             </BrowserRouter>
         </Provider>),

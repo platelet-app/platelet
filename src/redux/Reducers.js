@@ -14,6 +14,7 @@ import {
     SET_DASHBOARD_FILTER,
     SET_ROLE_VIEW,
     SET_IDLE_STATUS,
+    SET_DARK_MODE
 } from './Actions'
 import {tasks} from "./tasks/TasksReducers"
 import {task} from "./activeTask/ActiveTaskReducer"
@@ -33,6 +34,18 @@ import {notification} from "./notifications/NotificationsReducers";
 import {CLEAR_FORCE_RESET_PASSWORD_STATUS} from "./users/UsersActions";
 import {actionsRecord, tasksActionsRecord} from "./actionsRecord/ActionsRecordReducers";
 import {LOGOUT} from "./login/LoginActions";
+import {getDarkModePreference} from "./redux_utilities";
+
+const darkModeInitialState = getDarkModePreference();
+
+function darkMode(state = darkModeInitialState, action) {
+    switch (action.type) {
+        case SET_DARK_MODE:
+            return action.data;
+        default:
+            return state;
+    }
+}
 
 function dashboardFilter(state = "", action) {
     switch (action.type) {
@@ -72,7 +85,6 @@ function roleView(state = "coordinator", action) {
         default:
             return state;
     }
-
 }
 
 function newTaskAddedView(state = false, action) {
@@ -272,7 +284,8 @@ const appReducer = combineReducers({
     actionsRecord,
     tasksActionsRecord,
     idleStatus,
-    userStatistics
+    userStatistics,
+    darkMode
 });
 
 const rootReducer = (state, action) => {

@@ -34,6 +34,7 @@ import {
 } from "../../redux/tasks/TasksActions";
 import {createPostingSelector} from "../../redux/selectors";
 import Divider from "@material-ui/core/Divider";
+import {useTheme} from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
     root: {
@@ -48,6 +49,7 @@ const pickupPostingSelector = createPostingSelector(["UPDATE_TASK_PICKUP_TIME"])
 const dropoffPostingSelector = createPostingSelector(["UPDATE_TASK_DROPOFF_TIME"]);
 
 function TaskDialogCompact(props) {
+    const theme = useTheme();
     const mobileView = useSelector(state => state.mobileView);
     const history = useHistory();
     const dispatch = useDispatch();
@@ -203,8 +205,8 @@ function TaskDialogCompact(props) {
                 onClose={handleClose}
                 PaperProps={{
                     style: {
-                        backgroundColor: "rgb(240, 240, 240)",
                         boxShadow: 'none',
+                        background: theme.palette.background.default,
                     },
                 }}
                 aria-labelledby="form-dialog-title">
