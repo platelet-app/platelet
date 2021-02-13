@@ -73,26 +73,36 @@ const theme = createMuiTheme({
 });
 
 
-const useStyles = makeStyles({
-    root: {
-        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-            borderColor: "white",
+const useStyles = makeStyles(theme => {
+    const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
+    return {
+        root: {
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white",
+            },
+            "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white"
+            },
+            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white",
+            },
+            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+                color: "white"
+            },
+            "& .MuiInputLabel-outlined.Mui-focused": {
+                color: "white"
+            }
         },
-        "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-            borderColor: "white"
+        searchIcon: {color: "white"},
+        appBar: {
+            [theme.breakpoints.up('sm')]: {
+                width: "100%",
+            },
+            background: appBarBack
         },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "white",
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-            color: "white"
-        },
-        "& .MuiInputLabel-outlined.Mui-focused": {
-            color: "white"
-        }
-    },
-    searchIcon: {color: "white"},
+    }
 });
+
 
 export function DashboardDetailTabs(props) {
     const dispatch = useDispatch();
@@ -133,7 +143,7 @@ export function DashboardDetailTabs(props) {
 
     return (
         <React.Fragment>
-            <AppBar position="static">
+            <AppBar className={classes.appBar} position="static">
                 <Toolbar variant="dense">
                     <Grid container spacing={1} wrap={"nowrap"} direction={"row"} justify={"space-between"}
                           alignItems={"center"}>

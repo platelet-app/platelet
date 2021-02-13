@@ -46,7 +46,9 @@ const rightSideBarUseStyles = makeStyles(theme => ({
     },
 }));
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => {
+    const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
+    return ({
     root: {
         display: 'flex',
     },
@@ -64,6 +66,7 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.up('sm')]: {
             width: "100%",
         },
+        background: appBarBack
     },
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
@@ -73,7 +76,7 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
         padding: theme.spacing(3),
     },
-}));
+})})
 
 export function MenuMainContainer() {
     const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
