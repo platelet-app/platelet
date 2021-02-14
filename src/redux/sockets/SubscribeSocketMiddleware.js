@@ -63,9 +63,7 @@ function getTaskUpdatedMessages(data) {
         result.push("marked a task cancelled.")
     if (time_rejected)
         result.push("marked a task rejected.")
-
     return result;
-
 }
 
 const apiURL = getApiURL();

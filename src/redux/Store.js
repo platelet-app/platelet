@@ -23,10 +23,20 @@ const subscribeSocketMiddleware = createSubscribeSocketMiddleware();
 const subscribeCommentsSocketMiddleware = createSubscribeCommentsSocketMiddleware();
 const subscribeAssignmentsSocketMiddleware = createSubscribeAssignmentsSocketMiddleware();
 
-const store = createStore(
-    rootReducer,
-    applyMiddleware(sagaMiddleWare, subscribeSocketMiddleware, subscribeCommentsSocketMiddleware, subscribeAssignmentsSocketMiddleware)
-);
+let store;
+
+if (process.env.REACT_APP_DISABLE_SOCKETS === "true") {
+    store = createStore(
+        rootReducer,
+        applyMiddleware(sagaMiddleWare)
+    );
+
+} else {
+    store = createStore(
+        rootReducer,
+        applyMiddleware(sagaMiddleWare, subscribeSocketMiddleware, subscribeCommentsSocketMiddleware, subscribeAssignmentsSocketMiddleware)
+    );
+}
 
 sagaMiddleWare.run(rootSaga);
 export default store;
