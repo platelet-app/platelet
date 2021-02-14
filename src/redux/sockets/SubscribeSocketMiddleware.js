@@ -73,7 +73,7 @@ export const createSubscribeSocketMiddleware = () => {
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT: {
-                socket = io.connect(`${apiURL}subscribe`);
+                socket = io(`${apiURL}subscribe`);
                 const token = storeAPI.getState().apiControl.token
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
@@ -335,7 +335,7 @@ export const createSubscribeCommentsSocketMiddleware = () => {
         switch (action.type) {
             case SOCKET_CONNECT_COMMENTS: {
                 const token = storeAPI.getState().apiControl.token
-                socket = io.connect(`${apiURL}subscribe_comments`);
+                socket = io(`${apiURL}subscribe_comments`);
                 socket.emit('authenticate', token)
                 socket.on("subscribed_response", (message) => {
                     console.log(message)
@@ -407,7 +407,7 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
     return storeAPI => next => action => {
         switch (action.type) {
             case SOCKET_CONNECT_ASSIGNMENTS: {
-                socket = io.connect(`${apiURL}subscribe_assignments`);
+                socket = io(`${apiURL}subscribe_assignments`);
                 const token = storeAPI.getState().apiControl.token
                 socket.emit('authenticate', token)
                 socket.on("subscribed_response", (message) => {
