@@ -86,11 +86,7 @@ export const createSubscribeSocketMiddleware = () => {
                     console.log(message.data);
                 });
                 socket.on("auth_response", (message) => {
-                    if (message.auth_status) {
-                        socket.authenticated = true;
-                    } else {
-                        socket.authenticated = false;
-                    }
+                    socket.authenticated = message.auth_status
                     console.log(message.data);
                 });
                 socket.emit('authenticate', token)

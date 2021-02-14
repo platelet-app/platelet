@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import {dialogComponent} from "../styles/TaskDialogCSS"
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {Tooltip} from "@material-ui/core";
+import {AppBar, Tooltip} from "@material-ui/core";
 import {ArrowButton} from "../../../components/Buttons";
 import {showHide} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
@@ -17,11 +17,11 @@ function StatusBar(props) {
     const classes = dialogComponent();
     const {show, hide} = showHide();
     return (
-        <div key={"statusbar"} className={classes.statusBar}>
-            <Grid container key={"grid"} direction={"row"} justify={"space-between"}>
-                <Grid item key={1}>
+        <AppBar position={"static"} className={classes.statusBar}>
+            <Grid container direction={"row"} justify={"space-between"}>
+                <Grid item>
                     <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
-                        <Grid item key={"coords"}>
+                        <Grid item>
                             <Tooltip title={props.assignedCoordinatorsDisplayString}>
                                 <AvatarGroup>
                                     {props.assignedCoordinators.map((u) =>
@@ -35,17 +35,17 @@ function StatusBar(props) {
                                 </AvatarGroup>
                             </Tooltip>
                         </Grid>
-                        <Grid item key={"coordsPicker"}>
+                        <Grid item>
                             <AssignRiderCoordinatorPopover exclude={props.assignedCoordinators.map(u => u.uuid)} role={"coordinator"} taskUUID={props.taskUUID}/>
                         </Grid>
-                        <Grid item key={"status"}>
+                        <Grid item>
                             <Typography>Status: {props.status}</Typography>
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item key={2}>
+                <Grid item>
                     <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
-                        <Grid item key={"riders"}>
+                        <Grid item >
                             <Tooltip title={props.assignedRidersDisplayString}>
                                 <AvatarGroup>
                                     {props.assignedRiders.map((u) =>
@@ -59,16 +59,16 @@ function StatusBar(props) {
                                 </AvatarGroup>
                             </Tooltip>
                         </Grid>
-                        <Grid item key={"ridersPicker"}>
+                        <Grid item>
                             <AssignRiderCoordinatorPopover exclude={props.assignedRiders.map(u => u.uuid)} role={"rider"} taskUUID={props.taskUUID}/>
                         </Grid>
-                        <Grid item key={"prev"}>
+                        <Grid item>
                             <ArrowButton linkTo={encodeUUID(props.relayPrevious)} direction={"back"} tooltip={"Previous relay"} className={props.relayPrevious ? show : hide}/>
                         </Grid>
-                        <Grid item key={"next"}>
+                        <Grid item >
                             <ArrowButton linkTo={encodeUUID(props.relayNext)} direction={"forward"} tooltip={"Next relay"} className={props.relayNext ? show : hide}/>
                         </Grid>
-                        <Grid item key={"close"}>
+                        <Grid item>
                             <Button onClick={props.handleClose}
                                     color="primary">
                                 Close
@@ -77,7 +77,7 @@ function StatusBar(props) {
                     </Grid>
                 </Grid>
             </Grid>
-        </div>
+            </AppBar>
     )
 }
 

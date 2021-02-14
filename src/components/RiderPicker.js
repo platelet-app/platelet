@@ -31,14 +31,13 @@ function RiderPicker(props) {
                 id="combo-box-riders"
                 options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.display_name}
+                className={props.className}
                 style={{width: 350}}
                 renderInput={(params) => (
-                    <TextField {...params} label={props.label} variant="outlined" margin="normal"/>
+                    <TextField autoFocus {...params} label={props.label} variant="outlined" margin="normal"/>
                 )}
                 onChange={onSelect}
                 renderOption={(option, {inputValue}) => {
-                    // const matches = match(option.display_name, inputValue);
-                    //  const parts = parse(option.display_name, matches);
                     const vehicleName = (option.assigned_vehicles && option.assigned_vehicles.length > 0) ? option.assigned_vehicles[option.assigned_vehicles.length - 1].name : "";
 
                     return (
@@ -62,12 +61,14 @@ function RiderPicker(props) {
 RiderPicker.defaultProps = {
     onSelect: () => {},
     label: "Select",
-    exclude: []
+    exclude: [],
+    className: ""
 }
 RiderPicker.propTypes = {
     onSelect: PropTypes.func,
     label: PropTypes.string,
-    exclude: PropTypes.arrayOf(PropTypes.string)
+    exclude: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string
 }
 
 export default RiderPicker;

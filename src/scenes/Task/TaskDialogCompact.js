@@ -214,9 +214,6 @@ function TaskDialogCompact(props) {
                     <Grid item className={classes.statusBar}>
                         {statusBar}
                     </Grid>
-                    <Grid item>
-                        <Divider/>
-                    </Grid>
                 </Grid>
                 <div className={classes.root}>
                     <Grid container direction={"column"} alignItems={"flex-start"} justify={"space-between"}>

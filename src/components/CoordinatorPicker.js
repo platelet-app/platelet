@@ -28,10 +28,11 @@ function CoordinatorPicker(props) {
             <Autocomplete
                 id="combo-box-coordinators"
                 options={filteredCoordinatorSuggestions}
+                className={props.className}
                 getOptionLabel={(option) => option.display_name}
                 style={{width: 350}}
                 renderInput={(params) => (
-                    <TextField {...params} label={props.label} variant="outlined" margin="normal"/>
+                    <TextField autoFocus {...params} label={props.label} variant="outlined" margin="normal"/>
                 )}
                 onChange={onSelect}
                 renderOption={(option, {inputValue}) => {
@@ -57,12 +58,14 @@ function CoordinatorPicker(props) {
 CoordinatorPicker.defaultProps = {
     onSelect: () => {},
     label: "Select",
-    exclude: []
+    exclude: [],
+    className: ""
 }
 CoordinatorPicker.propTypes = {
     onSelect: PropTypes.func,
     label: PropTypes.string,
-    exclude: PropTypes.arrayOf(PropTypes.string)
+    exclude: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string
 }
 
 export default CoordinatorPicker;

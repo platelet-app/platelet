@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover';
 import RiderPicker from "../../../components/RiderPicker";
 import {SmallCirclePlusButton} from "../../../components/Buttons";
@@ -10,6 +10,11 @@ import {
 } from "../../../redux/taskAssignees/TaskAssigneesActions";
 import PropTypes from "prop-types";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
+import {showHide} from "../../../styles/common";
+import Grid from "@material-ui/core/Grid";
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
     typography: {
@@ -21,55 +26,63 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AssignRiderCoordinatorPopover(props) {
-    const classes = useStyles();
     const dispatch = useDispatch();
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const {show, hide} = showHide();
+    const [open, setOpen] = React.useState(false);
     const onSelect = user => {
-        if (props.role === "rider")
-            dispatch(addTaskAssignedRiderRequest(props.taskUUID, user.uuid, user.patch_id))
-        else if (props.role === "coordinator")
-            dispatch(addTaskAssignedCoordinatorRequest(props.taskUUID, user.uuid))
+        if (user) {
+            if (props.role === "rider")
+                dispatch(addTaskAssignedRiderRequest(props.taskUUID, user.uuid, user.patch_id))
+            else if (props.role === "coordinator")
+                dispatch(addTaskAssignedCoordinatorRequest(props.taskUUID, user.uuid))
+        }
         handleClose();
     }
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    function handleOpen() {
+        setOpen(true);
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    }
 
-    const open = Boolean(anchorEl);
-    const id = open ? 'assign-rider-popover' : undefined;
+    function handleClose() {
+        setOpen(false);
 
-    return (
-        <div>
-            <SmallCirclePlusButton tooltip={`Assign a ${props.role}`} onClick={handleClick}/>
-            <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
-            >
-                <div className={classes.popover}>
-                    {props.role === "coordinator" ?
-                        <CoordinatorPicker exclude={props.exclude} onSelect={onSelect} label={"Select coordinator"}/>
-                        : <RiderPicker exclude={props.exclude} onSelect={onSelect} label={"Select rider"}/>
-                    }
-                </div>
-            </Popover>
-        </div>
-    );
+    }
+
+
+    const buttons =
+        !open ? <SmallCirclePlusButton tooltip={`Assign a ${props.role}`} onClick={handleOpen}/> :
+        <IconButton onClick={handleClose}>
+            <CloseIcon/>
+        </IconButton>
+
+    if (props.role === "coordinator") {
+        return (
+            <Grid container direction={"row"} spacing={2} justify={"flex-start"} alignItems={"center"}>
+                <Grid item>
+                    {buttons}
+                </Grid>
+                <Grid item>
+                        <CoordinatorPicker className={open ? show : hide} exclude={props.exclude} onSelect={onSelect}
+                                           label={"Select coordinator"}/>
+                </Grid>
+            </Grid>
+        );
+    } else if (props.role === "rider") {
+        return (
+            <Grid container direction={"row"} spacing={2} justify={"flex-end"} alignItems={"center"}>
+                <Grid item>
+                    <RiderPicker className={open ? show : hide} exclude={props.exclude} onSelect={onSelect}
+                                   label={"Select rider"}/>
+                </Grid>
+                <Grid item>
+                    {buttons}
+                </Grid>
+            </Grid>
+        );
+    }
 }
+
 
 AssignRiderCoordinatorPopover.propTypes = {
     taskUUID: PropTypes.string,
