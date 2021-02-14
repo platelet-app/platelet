@@ -29,16 +29,14 @@ function CoordinatorPicker(props) {
                 id="combo-box-coordinators"
                 options={filteredCoordinatorSuggestions}
                 className={props.className}
+                size={props.size}
                 getOptionLabel={(option) => option.display_name}
                 style={{width: 350}}
                 renderInput={(params) => (
-                    <TextField autoFocus {...params} label={props.label} variant="outlined" margin="normal"/>
+                    <TextField autoFocus {...params} label={props.label} variant="outlined" margin="none"/>
                 )}
                 onChange={onSelect}
                 renderOption={(option, {inputValue}) => {
-                    // const matches = match(option.display_name, inputValue);
-                    //  const parts = parse(option.display_name, matches);
-
                     return (
                         <div style={{width: "100%"}}>
                             <CompactUserCard userUUID={option.uuid}
@@ -59,13 +57,14 @@ CoordinatorPicker.defaultProps = {
     onSelect: () => {},
     label: "Select",
     exclude: [],
-    className: ""
+    className: "",
 }
 CoordinatorPicker.propTypes = {
     onSelect: PropTypes.func,
     label: PropTypes.string,
     exclude: PropTypes.arrayOf(PropTypes.string),
-    className: PropTypes.string
+    className: PropTypes.string,
+    size: PropTypes.oneOf(["small", "medium"])
 }
 
 export default CoordinatorPicker;

@@ -16,15 +16,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 
-const useStyles = makeStyles((theme) => ({
-    typography: {
-        padding: theme.spacing(2),
-    },
-    popover: {
-        padding: "10px"
-    }
-}));
-
 function AssignRiderCoordinatorPopover(props) {
     const dispatch = useDispatch();
     const {show, hide} = showHide();
@@ -63,7 +54,7 @@ function AssignRiderCoordinatorPopover(props) {
                     {buttons}
                 </Grid>
                 <Grid item>
-                        <CoordinatorPicker className={open ? show : hide} exclude={props.exclude} onSelect={onSelect}
+                        <CoordinatorPicker size={"small"} className={open ? show : hide} exclude={props.exclude} onSelect={onSelect}
                                            label={"Select coordinator"}/>
                 </Grid>
             </Grid>
@@ -72,8 +63,11 @@ function AssignRiderCoordinatorPopover(props) {
         return (
             <Grid container direction={"row"} spacing={2} justify={"flex-end"} alignItems={"center"}>
                 <Grid item>
-                    <RiderPicker className={open ? show : hide} exclude={props.exclude} onSelect={onSelect}
-                                   label={"Select rider"}/>
+                    <RiderPicker className={open ? show : hide}
+                                 exclude={props.exclude}
+                                 onSelect={onSelect}
+                                 size={"small"}
+                                 label={"Select rider"}/>
                 </Grid>
                 <Grid item>
                     {buttons}

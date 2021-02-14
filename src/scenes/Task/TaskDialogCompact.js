@@ -267,7 +267,7 @@ function TaskDialogCompact(props) {
                                                         <TimePicker
                                                             onChange={onChangeTimeDropoff}
                                                             disabled={isPostingDropoffTime || !!!task.time_picked_up}
-                                                            label={"Mark dropped off"}
+                                                            label={"Mark delivered"}
                                                             time={task.time_dropped_off}/>
                                                     </LabelItemPair>
                                                 </Grid>

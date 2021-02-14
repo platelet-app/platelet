@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, {oneOf} from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 import {useSelector} from "react-redux";
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -29,12 +29,13 @@ function RiderPicker(props) {
         <div>
             <Autocomplete
                 id="combo-box-riders"
+                size={props.size}
                 options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.display_name}
                 className={props.className}
                 style={{width: 350}}
                 renderInput={(params) => (
-                    <TextField autoFocus {...params} label={props.label} variant="outlined" margin="normal"/>
+                    <TextField autoFocus {...params} label={props.label} variant="outlined" margin="none"/>
                 )}
                 onChange={onSelect}
                 renderOption={(option, {inputValue}) => {
@@ -62,13 +63,14 @@ RiderPicker.defaultProps = {
     onSelect: () => {},
     label: "Select",
     exclude: [],
-    className: ""
+    className: "",
 }
 RiderPicker.propTypes = {
     onSelect: PropTypes.func,
     label: PropTypes.string,
     exclude: PropTypes.arrayOf(PropTypes.string),
-    className: PropTypes.string
+    className: PropTypes.string,
+    size: PropTypes.oneOf(["small", "medium"])
 }
 
 export default RiderPicker;
