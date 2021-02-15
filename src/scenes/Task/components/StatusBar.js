@@ -11,8 +11,6 @@ import {ArrowButton} from "../../../components/Buttons";
 import {showHide} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
-import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
 import RiderEditPopover from "./RiderEditPopover";
 
 

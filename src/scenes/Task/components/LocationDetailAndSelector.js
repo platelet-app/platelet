@@ -25,6 +25,9 @@ const useStyles = makeStyles({
     button: {
         height: 9,
     },
+    label: {
+        width: "270px"
+    }
 })
 
 const initialState = {
@@ -92,7 +95,7 @@ function LocationDetailAndSelector(props) {
                     {presetMode ? <FavouriteLocationsSelect
                         label={props.label}
                         onSelect={onSelectPreset}
-                    /> : <Typography noWrap={true}>{presetName}</Typography>}
+                    /> : <Typography noWrap className={classes.label}>{presetName}</Typography>}
                 </Grid>
                 <Grid item>
                     <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
