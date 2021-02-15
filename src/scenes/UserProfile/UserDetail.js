@@ -27,6 +27,7 @@ export default function UserDetail(props) {
     function newUserProfile() {
         dispatch(getUserRequest(userUUID));
     }
+
     useEffect(newUserProfile, [props.location.key]);
 
     if (isFetching) {
@@ -37,26 +38,19 @@ export default function UserDetail(props) {
         return <NotFound>User {userUUID} could not be found.</NotFound>
     } else {
         return (
-            <Grid container direction={"column"} justify={"flex-start"} alignItems={"flex-start"} spacing={4}>
-                <Grid container direction={"row"} spacing={4} wrap={"nowrap"}>
-                    <Grid item>
-                        <PaddedPaper width={"600px"}>
-                            <UserProfile user={user}/>
-                        </PaddedPaper>
-                    </Grid>
-                    <Grid item>
-                        <ProfilePicture
-                            pictureURL={user.profile_picture_url}
-                            userUUID={user.uuid}
-                            altText={user.display_name}
-                            editable={user.uuid === whoami.uuid || whoami.roles.includes("admin")}
-                        />
-                    </Grid>
+            <Grid container direction={"row"} spacing={4}>
+                <Grid item>
+                    <PaddedPaper width={"600px"}>
+                        <UserProfile user={user}/>
+                    </PaddedPaper>
                 </Grid>
                 <Grid item>
-                    <PaddedPaper width={"400px"}>
-                        <CommentsSection parentUUID={user.uuid}/>
-                    </PaddedPaper>
+                    <ProfilePicture
+                        pictureURL={user.profile_picture_url}
+                        userUUID={user.uuid}
+                        altText={user.display_name}
+                        editable={user.uuid === whoami.uuid || whoami.roles.includes("admin")}
+                    />
                 </Grid>
             </Grid>
         )
