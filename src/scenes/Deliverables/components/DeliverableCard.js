@@ -14,6 +14,8 @@ import {useDispatch} from "react-redux";
 import IconButton from "@material-ui/core/IconButton"
 import {deleteDeliverableRequest} from "../../../redux/deliverables/DeliverablesActions"
 import PropTypes from "prop-types";
+import Box from "@material-ui/core/Box";
+import styled from "@material-ui/core/styles/styled";
 
 
 function getIcon(typeID) {

@@ -14,12 +14,20 @@ import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import styled from "@material-ui/core/styles/styled";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(({
     root: {
         width: "365px"
     }
 }))
+
+const DeliverableBox = styled(Box) ({
+    backgroundColor: "rgba(180, 180, 180, 0.1)",
+    paddingLeft: 10
+});
+
 
 export default function DeliverableGridSelect(props) {
     const dispatch = useDispatch();
@@ -82,6 +90,7 @@ export default function DeliverableGridSelect(props) {
                 {Object.values(deliverables).map(deliverable => {
                     return (
                         <Grid item key={deliverable.uuid}>
+                            <DeliverableBox>
                             <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
                                 <Grid item>
                             <DeliverableCard
@@ -100,6 +109,7 @@ export default function DeliverableGridSelect(props) {
 
                                 </Grid>
                             </Grid>
+                            </DeliverableBox>
                         </Grid>
                     )
 
@@ -112,6 +122,7 @@ export default function DeliverableGridSelect(props) {
                     {addButton}
                 </Grid>
             </Grid>
+
         )
     }
 
