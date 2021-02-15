@@ -13,7 +13,13 @@ import DeliverablesSelect from "./components/DeliverableSelect";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
+const useStyles = makeStyles(({
+    root: {
+        width: "365px"
+    }
+}))
 
 export default function DeliverableGridSelect(props) {
     const dispatch = useDispatch();
@@ -24,6 +30,7 @@ export default function DeliverableGridSelect(props) {
     const loadingSelector = createLoadingSelector(["GET_DELIVERABLES"]);
     const isFetching = useSelector(state => loadingSelector(state));
     const [addMode, setAddMode] = useState(false);
+    const classes = useStyles();
 
     let emptyDeliverable = {
         task_uuid: props.taskUUID,
@@ -60,7 +67,7 @@ export default function DeliverableGridSelect(props) {
                 dispatch(addDeliverableRequest(newDeliverable))
             }}
         >
-            {addMode ? "Cancel" : "Add a deliverable"}
+            {addMode ? "Cancel" : "Add an item"}
         </Button>
 
     if (isFetching) {
@@ -69,6 +76,7 @@ export default function DeliverableGridSelect(props) {
         return (
             <Grid container
                   spacing={1}
+                  className={classes.root}
                   direction={"column"}
             >
                 {Object.values(deliverables).map(deliverable => {
