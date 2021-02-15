@@ -189,7 +189,7 @@ function TaskDialogCompact(props) {
             <Dialog
                 disableEscapeKeyDown
                 fullScreen={mobileView}
-                maxWidth={"xl"}
+                maxWidth={"md"}
                 fullWidth={true}
                 open={true}
                 onClose={handleClose}
@@ -206,7 +206,8 @@ function TaskDialogCompact(props) {
                     </Grid>
                 </Grid>
                 <div className={classes.root}>
-                    <Grid container direction={"column"} spacing={3} alignItems={"flex-start"} justify={"space-between"}>
+                    <Grid container direction={"column"} spacing={3} alignItems={"flex-start"}
+                          justify={"space-between"}>
                         <Grid item>
                             <Grid container direction={"row"} alignItems={"flex-start"} justify={"space-between"}
                                   spacing={3}>
@@ -265,21 +266,21 @@ function TaskDialogCompact(props) {
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item>
-                                    <PaddedPaper>
-                                        <Grid container direction={"column"}>
-                                            <Grid item>
-                                                <TaskDetailsPanel/>
-                                            </Grid>
-                                        </Grid>
-                                    </PaddedPaper>
-                                </Grid>
                             </Grid>
                         </Grid>
                         <Grid item>
-                            <PaddedPaper>
-                                <DeliverableGridSelect taskUUID={taskUUID}/>
-                            </PaddedPaper>
+                            <Grid container direction={"row"} spacing={4}>
+                                <Grid item>
+                                    <PaddedPaper>
+                                        <TaskDetailsPanel/>
+                                    </PaddedPaper>
+                                </Grid>
+                                <Grid item>
+                                    <PaddedPaper>
+                                        <DeliverableGridSelect taskUUID={taskUUID}/>
+                                    </PaddedPaper>
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item>
                             <CommentsSection parentUUID={taskUUID}/>
