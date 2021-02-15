@@ -12,9 +12,11 @@ import Divider from "@material-ui/core/Divider";
 function RiderPicker(props) {
     const availableUsers = useSelector(state => state.users.users);
     const [filteredRiderSuggestions, setFilteredRiderSuggestions] = useState([]);
+    const [textBoxValue, setTextBoxValue] = useState(null);
     const onSelect = (event, selectedItem) => {
         if (selectedItem)
             props.onSelect(selectedItem);
+        setTextBoxValue(null);
     };
 
     useEffect(() => {
@@ -23,13 +25,14 @@ function RiderPicker(props) {
         const noVehicleUsers = filteredSuggestions.filter(user => user.assigned_vehicles.length === 0);
         const reorderedUsers = vehicleUsers.concat(noVehicleUsers);
         setFilteredRiderSuggestions(reorderedUsers);
-    }, [availableUsers]);
+    }, [availableUsers, props.exclude]);
 
     return (
         <div>
             <Autocomplete
                 id="combo-box-riders"
                 size={props.size}
+                value={textBoxValue}
                 options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.display_name}
                 className={props.className}

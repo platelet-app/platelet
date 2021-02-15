@@ -12,22 +12,25 @@ import AssignRiderCoordinatorPopover from "../scenes/Task/components/AssignRider
 
 function CoordinatorPicker(props) {
     const availableUsers = useSelector(state => state.users.users);
+    const [textBoxValue, setTextBoxValue] = useState(null);
     const [filteredCoordinatorSuggestions, setFilteredCoordinatorSuggestions] = useState([]);
     const onSelect = (event, selectedItem) => {
         if (selectedItem)
             props.onSelect(selectedItem);
+        setTextBoxValue(null);
     };
 
     useEffect(() => {
         const filteredSuggestions = Object.values(availableUsers).filter(u => u.roles.includes("coordinator") && !props.exclude.includes(u.uuid))
         setFilteredCoordinatorSuggestions(filteredSuggestions);
-    }, [availableUsers]);
+    }, [availableUsers, props.exclude]);
 
     return (
         <div>
             <Autocomplete
                 id="combo-box-coordinators"
                 options={filteredCoordinatorSuggestions}
+                value={textBoxValue}
                 className={props.className}
                 size={props.size}
                 getOptionLabel={(option) => option.display_name}

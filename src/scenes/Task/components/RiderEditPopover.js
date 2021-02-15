@@ -1,9 +1,7 @@
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-import Grid from "@material-ui/core/Grid";
 import React from "react";
 import {Popover} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import TaskAssignees from "./TaskAssignees";
 
 function RiderEditPopover(props) {
