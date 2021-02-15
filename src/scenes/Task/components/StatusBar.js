@@ -18,7 +18,7 @@ function StatusBar(props) {
     const classes = dialogComponent();
     const {show, hide} = showHide();
     return (
-        <AppBar position={"static"} className={classes.statusBar}>
+        <AppBar position={"sticky"} className={classes.statusBar}>
             <Grid container direction={"row"} justify={"space-between"}>
                 <Grid item>
                     <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>

@@ -33,13 +33,17 @@ import {
 import {createPostingSelector} from "../../redux/selectors";
 import {useTheme} from "@material-ui/core/styles";
 import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
+import {DialogContent} from "@material-ui/core";
 
 const useStyles = makeStyles({
+    dialogContent: {
+        overflow: ""
+    },
     root: {
         padding: "20px"
     },
     item: {
-        minHeight: "430px"
+        minHeight: "425px"
     },
     statusBar: {
         paddingBottom: 8
@@ -202,14 +206,14 @@ function TaskDialogCompact(props) {
                         background: theme.palette.background.default,
                     },
                 }}
-                aria-labelledby="form-dialog-title">
+                aria-labelledby="task-dialog">
                 {statusBar}
                 <div className={classes.root}>
                     <Grid container direction={"column"} spacing={4} alignItems={"flex-start"} justify={"flex-start"}>
                         <Grid container item direction={"row"} spacing={1} alignItems={"center"}
                               justify={"flex-start"}>
                             <Grid item>
-                                <PaddedPaper minWidth={"435px"} minHeight={"410px"}>
+                                <PaddedPaper minWidth={"425px"} minHeight={"410px"}>
                                     <Grid container direction={"column"} justify={"space-between"} spacing={3}>
                                         <Grid item>
                                             <LocationDetailAndSelector
@@ -238,7 +242,7 @@ function TaskDialogCompact(props) {
                                 <ArrowDownwardIcon className={mobileView ? show : hide}/>
                             </Grid>
                             <Grid item>
-                                <PaddedPaper minWidth={"435px"} minHeight={"410px"}>
+                                <PaddedPaper minWidth={"425px"} minHeight={"410px"}>
                                     <Grid container direction={"column"} justify={"flex-start"} spacing={3}>
                                         <Grid item>
                                             <LocationDetailAndSelector
@@ -266,7 +270,7 @@ function TaskDialogCompact(props) {
                         <Grid container item direction={"row"} spacing={1}
                               justify={"flex-start"}>
                             <Grid item>
-                                <PaddedPaper minWidth={"435px"} minHeight={"410px"}>
+                                <PaddedPaper minWidth={"425px"} minHeight={"410px"}>
                                     <TaskDetailsPanel/>
                                 </PaddedPaper>
                             </Grid>
@@ -275,7 +279,7 @@ function TaskDialogCompact(props) {
                                 <div style={{width: "23px"}}/>
                             </Grid>
                             <Grid item>
-                                <PaddedPaper minWidth={"435px"} minHeight={"410px"}>
+                                <PaddedPaper minWidth={"425px"} minHeight={"410px"}>
                                     <DeliverableGridSelect taskUUID={taskUUID}/>
                                 </PaddedPaper>
                             </Grid>
@@ -286,6 +290,7 @@ function TaskDialogCompact(props) {
                     </Grid>
                 </div>
             </Dialog>
+
         )
     }
 

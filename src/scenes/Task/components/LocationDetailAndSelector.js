@@ -26,7 +26,7 @@ const useStyles = makeStyles({
         height: 9,
     },
     label: {
-        width: "270px"
+        width: "250px"
     }
 })
 
