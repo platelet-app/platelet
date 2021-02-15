@@ -1,13 +1,14 @@
-import Popover from "@material-ui/core/Popover";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+import Grid from "@material-ui/core/Grid";
 import React from "react";
-import {makeStyles} from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import ActionsRecord from "../../ActionsRecord/ActionsRecord";
-import PropTypes from "prop-types"
+import {Popover} from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import TaskAssignees from "./TaskAssignees";
 
-
-function ActivityPopover(props) {
+function RiderEditPopover(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -17,10 +18,13 @@ function ActivityPopover(props) {
     };
 
     const open = Boolean(anchorEl);
-    const id = open ? 'assign-rider-popover' : undefined;
+    const id = open ? 'simple-popover' : undefined;
+
     return (
-        <React.Fragment>
-            <Button onClick={handleClick}>View Activity</Button>
+        <div>
+            <IconButton onClick={handleClick}>
+                <EditIcon/>
+            </IconButton>
             <Popover
                 id={id}
                 open={open}
@@ -35,17 +39,10 @@ function ActivityPopover(props) {
                     horizontal: 'center',
                 }}
             >
-                <ActionsRecord parentUUID={props.parentUUID}/>
-
-
+                <TaskAssignees taskUUID={props.taskUUID}/>
             </Popover>
-        </React.Fragment>
-    )
-
+        </div>
+    );
 }
 
-ActivityPopover.propTypes = {
-    parentUUID: PropTypes.string
-}
-
-export default ActivityPopover;
+export default RiderEditPopover;

@@ -5,7 +5,7 @@ import Card from '@material-ui/core/Card';
 import {styled} from '@material-ui/styles';
 import Container from "@material-ui/core/Container";
 
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, withTheme} from '@material-ui/core/styles';
 import {Paper} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import {Link} from "react-router-dom"
@@ -29,6 +29,11 @@ export function DismissButton(props) {
         </IconButton>
     )
 }
+
+export const ThemedLink = styled(withTheme(Link))(props => ({
+    color: props.theme.palette.text.primary
+    })
+)
 
 
 export function MainWindowContainer(props) {

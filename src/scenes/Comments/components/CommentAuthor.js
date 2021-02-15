@@ -5,6 +5,7 @@ import Link from "@material-ui/core/Link";
 import {Link as RouterLink} from "react-router-dom";
 import {encodeUUID} from "../../../utilities";
 import Typography from "@material-ui/core/Typography";
+import {ThemedLink} from "../../../styles/common";
 
 const CommentAuthor = React.memo((props) => {
     return (
@@ -14,10 +15,10 @@ const CommentAuthor = React.memo((props) => {
                             avatarURL={props.avatarURL}/>
             </Grid>
             <Grid item>
-                <Link component={RouterLink} to={"/user/" + encodeUUID(props.uuid)}>
+                <ThemedLink component={RouterLink} to={"/user/" + encodeUUID(props.uuid)}>
                     <Typography
                         style={{fontWeight: "bold"}}>{props.displayName}</Typography>
-                </Link>
+                </ThemedLink>
             </Grid>
         </Grid>
     )

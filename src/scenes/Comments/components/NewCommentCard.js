@@ -45,9 +45,9 @@ export default function CommentCard(props) {
                                     disabled={isPosting}
                                     onClick={() => {setPublicComment(!publicComment)}}>
                                 {publicComment ? (
-                                    <LockOpenIcon style={{height: "20px", width: "20px"}} color={"primary"}/>
+                                    <LockOpenIcon style={{height: "20px", width: "20px"}}/>
                                 ) : (
-                                    <LockIcon style={{height: "20px", width: "20px"}} color={"primary"}/>
+                                    <LockIcon style={{height: "20px", width: "20px"}}/>
                                 )}
                                 </IconButton>
                             </Tooltip>

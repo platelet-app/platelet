@@ -2,9 +2,9 @@ import {
     GET_TASK_SUCCESS,
     UPDATE_ACTIVE_TASK,
     UPDATE_ACTIVE_TASK_ASSIGNED_COORDINATOR,
-    UPDATE_ACTIVE_TASK_ASSIGNED_RIDER
+    UPDATE_ACTIVE_TASK_ASSIGNED_RIDER, UPDATE_ACTIVE_TASK_REMOVE_ASSIGNED_RIDER
 } from "../activeTask/ActiveTaskActions";
-import {addAssigneeToList} from "../tasks/task_redux_utilities";
+import {addAssigneeToList, removeAssigneeFromList} from "../tasks/task_redux_utilities";
 
 const initialLocationState = {
     address: null,
@@ -75,6 +75,13 @@ export function task(state = initialState, action) {
                 ...addAssigneeToList(state.task,
                     action.data.payload.user, "coordinator")
             }, error: null}
+        }
+        case UPDATE_ACTIVE_TASK_REMOVE_ASSIGNED_RIDER: {
+            return { task: {
+                    ...state.task,
+                    ...removeAssigneeFromList(state.task,
+                        action.data.payload.user_uuid, "rider")
+                }, error: null}
         }
         default:
             return state;

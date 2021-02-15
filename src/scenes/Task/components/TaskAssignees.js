@@ -80,12 +80,6 @@ export default function TaskAssignees(props) {
                         </Grid>
                     )
                 })}
-                <Grid item>
-                    {userSelect}
-                </Grid>
-                <Grid item>
-                    {addButton}
-                </Grid>
             </Grid>
         )
     }

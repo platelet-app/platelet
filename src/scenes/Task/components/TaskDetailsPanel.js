@@ -61,6 +61,7 @@ function TaskDetailsPanel(props) {
         } = task;
         setState({reference, time_of_call, patch, assigned_riders_display_string, uuid, requester_contact})
     }
+
     useEffect(setTaskData, [task])
 
     let priority_id;
@@ -74,14 +75,17 @@ function TaskDetailsPanel(props) {
         const payload = {time_of_call: value}
         dispatch(updateTaskTimeOfCallRequest(state.uuid, payload))
     }
+
     function onChangeTimeCancelled(value) {
         if (value || value === null)
             dispatch(updateTaskTimeCancelledRequest(task.uuid, {time_cancelled: value}))
     }
+
     function onChangeTimeRejected(value) {
         if (value || value === null)
             dispatch(updateTaskRejectedTimeRequest(task.uuid, {time_rejected: value}))
     }
+
     function onSelectPriority(priority_id, priority) {
         const payload = {priority_id, priority};
         dispatch(updateTaskPriorityRequest(state.uuid, payload));
@@ -114,10 +118,14 @@ function TaskDetailsPanel(props) {
                 <Typography>Requester contact:</Typography>
                 <div className={classes.requesterContact}>
                     <LabelItemPair label={"Name"}>
-                        <ClickableTextField onFinished={sendRequesterContactData} onChange={v => onChangeRequesterContact({name: v})} value={state.requester_contact.name}/>
+                        <ClickableTextField onFinished={sendRequesterContactData}
+                                            onChange={v => onChangeRequesterContact({name: v})}
+                                            value={state.requester_contact.name}/>
                     </LabelItemPair>
                     <LabelItemPair label={"Tel"}>
-                        <ClickableTextField onFinished={sendRequesterContactData} telephone={true} onChange={v => onChangeRequesterContact({telephone_number: v})} value={state.requester_contact.telephone_number}/>
+                        <ClickableTextField onFinished={sendRequesterContactData} telephone={true}
+                                            onChange={v => onChangeRequesterContact({telephone_number: v})}
+                                            value={state.requester_contact.telephone_number}/>
                     </LabelItemPair>
                 </div>
                 <Typography>Priority:</Typography>
@@ -130,26 +138,32 @@ function TaskDetailsPanel(props) {
                 <LabelItemPair label={"Assigned rider"}>
                     <Typography>{state.assigned_riders_display_string}</Typography>
                 </LabelItemPair>
-                <ActivityPopover parentUUID={task.uuid}/>
             </Grid>
             <Grid item>
-                <Grid item>
-                    <LabelItemPair label={"Time cancelled"}>
-                        <TimePicker
-                            onChange={onChangeTimeCancelled}
-                            disabled={isPostingCancelTime || !!task.time_dropped_off || !!task.time_rejected}
-                            label={"Mark cancelled"}
-                            time={task.time_cancelled}/>
-                    </LabelItemPair>
-                </Grid>
-                <Grid item>
-                    <LabelItemPair label={"Time rejected"}>
-                        <TimePicker
-                            onChange={onChangeTimeRejected}
-                            disabled={isPostingRejectedTime || !!task.time_dropped_off || !!task.time_cancelled}
-                            label={"Mark rejected"}
-                            time={task.time_rejected}/>
-                    </LabelItemPair>
+                <Grid container direction={"column"}>
+                    <Grid item>
+                        <LabelItemPair label={""}>
+                            <ActivityPopover parentUUID={task.uuid}/>
+                        </LabelItemPair>
+                    </Grid>
+                    <Grid item>
+                        <LabelItemPair label={"Time cancelled"}>
+                            <TimePicker
+                                onChange={onChangeTimeCancelled}
+                                disabled={isPostingCancelTime || !!task.time_dropped_off || !!task.time_rejected}
+                                label={"Mark cancelled"}
+                                time={task.time_cancelled}/>
+                        </LabelItemPair>
+                    </Grid>
+                    <Grid item>
+                        <LabelItemPair label={"Time rejected"}>
+                            <TimePicker
+                                onChange={onChangeTimeRejected}
+                                disabled={isPostingRejectedTime || !!task.time_dropped_off || !!task.time_cancelled}
+                                label={"Mark rejected"}
+                                time={task.time_rejected}/>
+                        </LabelItemPair>
+                    </Grid>
                 </Grid>
 
             </Grid>

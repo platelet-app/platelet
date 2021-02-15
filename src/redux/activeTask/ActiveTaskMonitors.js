@@ -3,13 +3,15 @@ import {getActiveTaskSelector} from "../Api";
 import {
     updateActiveTask,
     updateActiveTaskAssignedCoordinator,
-    updateActiveTaskAssignedRider
+    updateActiveTaskAssignedRider, updateActiveTaskRemoveAssignedRider
 } from "./ActiveTaskActions";
 import {
     UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET,
     UPDATE_TASK_ASSIGNED_COORDINATOR_SUCCESS,
     UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET,
-    UPDATE_TASK_ASSIGNED_RIDER_SUCCESS
+    UPDATE_TASK_ASSIGNED_RIDER_SUCCESS,
+    UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET,
+    UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS
 } from "../tasks/TasksActions";
 
 const ignoreActionTypes = []
@@ -27,6 +29,8 @@ function* monitor(monitoredAction) {
             yield put(updateActiveTaskAssignedRider(task.uuid, monitoredAction.data.payload))
         } else if (monitoredAction.type === UPDATE_TASK_ASSIGNED_COORDINATOR_SUCCESS || monitoredAction.type === UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET) {
             yield put(updateActiveTaskAssignedCoordinator(task.uuid, monitoredAction.data.payload))
+        } else if (monitoredAction.type === UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS || monitoredAction.type === UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET) {
+            yield put(updateActiveTaskRemoveAssignedRider(task.uuid, monitoredAction.data.payload))
         } else {
             yield put(updateActiveTask(task.uuid, monitoredAction.data.payload))
         }

@@ -11,6 +11,9 @@ import {ArrowButton} from "../../../components/Buttons";
 import {showHide} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+import RiderEditPopover from "./RiderEditPopover";
 
 
 function StatusBar(props) {
@@ -36,7 +39,10 @@ function StatusBar(props) {
                             </Tooltip>
                         </Grid>
                         <Grid item>
-                            <AssignRiderCoordinatorPopover exclude={props.assignedCoordinators.map(u => u.uuid)} role={"coordinator"} taskUUID={props.taskUUID}/>
+                            <AssignRiderCoordinatorPopover
+                                exclude={props.assignedCoordinators.map(u => u.uuid)}
+                                role={"coordinator"}
+                                taskUUID={props.taskUUID}/>
                         </Grid>
                         <Grid item>
                             <Typography>Status: {props.status}</Typography>
@@ -45,6 +51,9 @@ function StatusBar(props) {
                 </Grid>
                 <Grid item>
                     <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
+                        <Grid item>
+                            <RiderEditPopover taskUUID={props.taskUUID}/>
+                        </Grid>
                         <Grid item >
                             <Tooltip title={props.assignedRidersDisplayString}>
                                 <AvatarGroup>
@@ -69,8 +78,7 @@ function StatusBar(props) {
                             <ArrowButton linkTo={encodeUUID(props.relayNext)} direction={"forward"} tooltip={"Next relay"} className={props.relayNext ? show : hide}/>
                         </Grid>
                         <Grid item>
-                            <Button onClick={props.handleClose}
-                                    color="primary">
+                            <Button onClick={props.handleClose}>
                                 Close
                             </Button>
                         </Grid>

@@ -22,20 +22,16 @@ import {
 import TaskDetailsPanel from "./components/TaskDetailsPanel";
 import CommentsSection from "../Comments/CommentsSection";
 import {PaddedPaper, showHide} from "../../styles/common";
-import TaskModalTimePicker from "./components/TaskModalTimePicker";
 import LabelItemPair from "../../components/LabelItemPair";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import TimePicker from "./components/TimePicker";
 import {
     updateTaskDropoffTimeRequest,
-    updateTaskPickupTimeRequest, updateTaskRejectedTimeRequest, updateTaskTimeCancelledPrefix,
-    updateTaskTimeCancelledRequest
+    updateTaskPickupTimeRequest
 } from "../../redux/tasks/TasksActions";
 import {createPostingSelector} from "../../redux/selectors";
-import Divider from "@material-ui/core/Divider";
 import {useTheme} from "@material-ui/core/styles";
-import DeliverablesSelect from "../Deliverables/components/DeliverableSelect";
 import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
 
 const useStyles = makeStyles({
@@ -58,8 +54,6 @@ function TaskDialogCompact(props) {
     const {show, hide} = showHide();
     const task = useSelector(state => state.task.task);
     const savedLocations = useSelector(state => state.availableLocations.locations);
-    const [pickupPresetName, setPickupPresetName] = useState("");
-    const [dropoffPresetName, setDropoffPresetName] = useState("");
     const classes = useStyles();
     const [taskStatus, setTaskStatus] = useState("No status")
 
@@ -151,9 +145,6 @@ function TaskDialogCompact(props) {
         const locationUUID = location.uuid;
         if (locationUUID && savedLocations) {
             const result = savedLocations[locationUUID];
-            if (result) {
-                setPickupPresetName(result.name)
-            }
         }
         if (locationUUID) {
             dispatch(setTaskPickupDestinationRequest(taskUUID, locationUUID))
@@ -164,9 +155,6 @@ function TaskDialogCompact(props) {
         const locationUUID = location.uuid;
         if (locationUUID && savedLocations) {
             const result = savedLocations[locationUUID];
-            if (result) {
-                setDropoffPresetName(result.name)
-            }
         }
         if (locationUUID) {
             dispatch(setTaskDropoffDestinationRequest(taskUUID, locationUUID))

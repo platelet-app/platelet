@@ -7,7 +7,7 @@ function LabelItemPair(props) {
     return (
         <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
             <Grid item>
-                <Typography>{props.label}:</Typography>
+                <Typography>{props.label ? `${props.label}:` : ""}</Typography>
             </Grid>
             <Grid item>
                 {props.children}

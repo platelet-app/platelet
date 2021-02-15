@@ -16,6 +16,7 @@ import _ from "lodash"
 import {getActionsRecordRequest} from "../../redux/actionsRecord/ActionsRecordActions";
 import {useDispatch, useSelector} from "react-redux";
 import PropTypes from "prop-types";
+import {ThemedLink} from "../../styles/common";
 
 
 const displayFields = [
@@ -34,6 +35,7 @@ const displayFields = [
 function ActionsRecord(props) {
     const dispatch = useDispatch();
     const actions = useSelector(state => state.actionsRecord.actionsRecord);
+    const whoami = useSelector(state => state.whoami.user)
 
     function componentDidMount() {
         if (props.parentUUID)
@@ -48,6 +50,15 @@ function ActionsRecord(props) {
                     return <React.Fragment key={record.uuid}/>
                 const fields = _.intersection(record.data_fields.split(","), displayFields);
                 if (fields.length > 0) {
+                    const userLink = record.calling_user.uuid === whoami.uuid ?
+                        <Typography
+                            style={{fontWeight: "bold"}}>{"You"}</Typography> :
+                        <Link component={RouterLink}
+                              to={"/user/" + encodeUUID(record.calling_user.uuid)}>
+                            <Typography
+                                style={{fontWeight: "bold"}}>{record.calling_user.display_name}</Typography>
+                        </Link>
+
                     return (
                         <React.Fragment key={record.uuid}>
                             <TimelineItem>
@@ -61,18 +72,14 @@ function ActionsRecord(props) {
                                 </TimelineSeparator>
                                 <TimelineContent>
                                     <React.Fragment>
-                                        <Link component={RouterLink}
-                                              to={"/user/" + encodeUUID(record.calling_user.uuid)}>
-                                            <Typography
-                                                style={{fontWeight: "bold"}}>{record.calling_user.display_name}</Typography>
-                                        </Link>
+                                        {userLink}
                                         <Typography>{generateMessage(record, fields)}</Typography>
                                         {props.taskLinks ?
-                                            <Link component={RouterLink}
+                                            <ThemedLink component={RouterLink}
                                                   to={"/task/" + encodeUUID(record.parent_uuid)}>
                                                 <Typography
                                                     style={{fontWeight: "bold"}}>View Task</Typography>
-                                            </Link> : <></>
+                                            </ThemedLink> : <></>
                                         }
                                     </React.Fragment>
                                 </TimelineContent>
