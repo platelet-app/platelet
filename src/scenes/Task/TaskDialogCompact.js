@@ -36,7 +36,10 @@ import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
 
 const useStyles = makeStyles({
     root: {
-        padding: "20px",
+        padding: "20px"
+    },
+    item: {
+        minHeight: "400px"
     },
     statusBar: {
         paddingBottom: 8
@@ -200,86 +203,81 @@ function TaskDialogCompact(props) {
                     },
                 }}
                 aria-labelledby="form-dialog-title">
-                <Grid container spacing={0} direction={"column"}>
-                    <Grid item className={classes.statusBar}>
-                        {statusBar}
-                    </Grid>
-                </Grid>
+                {statusBar}
                 <div className={classes.root}>
-                    <Grid container direction={"column"} spacing={3} alignItems={"flex-start"}
-                          justify={"space-between"}>
-                        <Grid item>
-                            <Grid container direction={"row"} alignItems={"flex-start"} justify={"space-between"}
-                                  spacing={3}>
-                                <Grid item>
-                                    <Grid container direction={"row"} alignItems={"center"} spacing={1}
-                                          justify={"flex-start"}>
+                    <Grid container direction={"column"} spacing={4} alignItems={"flex-start"} justify={"flex-start"}>
+                        <Grid container item direction={"row"} spacing={1} alignItems={"center"}
+                              justify={"flex-start"}>
+                            <Grid item>
+                                <PaddedPaper minWidth={"415px"} minHeight={"400px"}>
+                                    <Grid container direction={"column"} justify={"space-between"} spacing={3}>
                                         <Grid item>
-                                            <PaddedPaper>
-                                                <Grid container direction={"column"} spacing={3}>
-                                                    <Grid item>
-                                                        <LocationDetailAndSelector
-                                                            onSelectPreset={onSelectPickupFromSaved}
-                                                            onChange={onChangePickupLocation}
-                                                            onEditPreset={(value) => onChangePickupLocation(value, true)}
-                                                            onClear={onClearPickupLocation}
-                                                            location={task.pickup_location}
-                                                            displayPresets={true}
-                                                            label={"Pick up"}/>
-                                                    </Grid>
-                                                    <LabelItemPair label={"Time picked up"}>
-                                                        <TimePicker
-                                                            onChange={onChangeTimePickedUp}
-                                                            disabled={isPostingPickupTime}
-                                                            label={"Mark picked up"}
-                                                            time={task.time_picked_up}/>
-                                                    </LabelItemPair>
-                                                </Grid>
-                                            </PaddedPaper>
+                                            <LocationDetailAndSelector
+                                                onSelectPreset={onSelectPickupFromSaved}
+                                                onChange={onChangePickupLocation}
+                                                onEditPreset={(value) => onChangePickupLocation(value, true)}
+                                                onClear={onClearPickupLocation}
+                                                location={task.pickup_location}
+                                                displayPresets={true}
+                                                label={"Pick up"}/>
                                         </Grid>
                                         <Grid item>
-                                            <ArrowForwardIcon className={mobileView ? hide : show}/>
-                                            <ArrowDownwardIcon className={mobileView ? show : hide}/>
-                                        </Grid>
-                                        <Grid item>
-                                            <PaddedPaper>
-                                                <Grid container direction={"column"} spacing={3}>
-                                                    <Grid item>
-                                                        <LocationDetailAndSelector
-                                                            onSelectPreset={onSelectDropoffFromSaved}
-                                                            onChange={onChangeDropoffLocation}
-                                                            onClear={onClearDropoffLocation}
-                                                            onEditPreset={(value) => onChangeDropoffLocation(value, true)}
-                                                            location={task.dropoff_location}
-                                                            displayPresets={true}
-                                                            label={"Deliver"}/>
-                                                    </Grid>
-                                                    <LabelItemPair label={"Time delivered"}>
-                                                        <TimePicker
-                                                            onChange={onChangeTimeDropoff}
-                                                            disabled={isPostingDropoffTime || !!!task.time_picked_up}
-                                                            label={"Mark delivered"}
-                                                            time={task.time_dropped_off}/>
-                                                    </LabelItemPair>
-                                                </Grid>
-                                            </PaddedPaper>
+                                            <LabelItemPair label={"Time picked up"}>
+                                                <TimePicker
+                                                    onChange={onChangeTimePickedUp}
+                                                    disabled={isPostingPickupTime}
+                                                    label={"Mark picked up"}
+                                                    time={task.time_picked_up}/>
+                                            </LabelItemPair>
                                         </Grid>
                                     </Grid>
-                                </Grid>
+                                </PaddedPaper>
+                            </Grid>
+                            <Grid item>
+                                <ArrowForwardIcon className={mobileView ? hide : show}/>
+                                <ArrowDownwardIcon className={mobileView ? show : hide}/>
+                            </Grid>
+                            <Grid item>
+                                <PaddedPaper minWidth={"415px"} minHeight={"400px"}>
+                                    <Grid container direction={"column"} justify={"flex-start"} spacing={3}>
+                                        <Grid item>
+                                            <LocationDetailAndSelector
+                                                onSelectPreset={onSelectDropoffFromSaved}
+                                                onChange={onChangeDropoffLocation}
+                                                onClear={onClearDropoffLocation}
+                                                onEditPreset={(value) => onChangeDropoffLocation(value, true)}
+                                                location={task.dropoff_location}
+                                                displayPresets={true}
+                                                label={"Deliver"}/>
+                                        </Grid>
+                                        <Grid item>
+                                            <LabelItemPair label={"Time delivered"}>
+                                                <TimePicker
+                                                    onChange={onChangeTimeDropoff}
+                                                    disabled={isPostingDropoffTime || !!!task.time_picked_up}
+                                                    label={"Mark delivered"}
+                                                    time={task.time_dropped_off}/>
+                                            </LabelItemPair>
+                                        </Grid>
+                                    </Grid>
+                                </PaddedPaper>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid container direction={"row"} spacing={4}>
-                                <Grid item>
-                                    <PaddedPaper>
-                                        <TaskDetailsPanel/>
-                                    </PaddedPaper>
-                                </Grid>
-                                <Grid item>
-                                    <PaddedPaper>
-                                        <DeliverableGridSelect taskUUID={taskUUID}/>
-                                    </PaddedPaper>
-                                </Grid>
+                        <Grid container item direction={"row"} spacing={1}
+                              justify={"flex-start"}>
+                            <Grid item>
+                                <PaddedPaper minWidth={"415px"} minHeight={"400px"}>
+                                    <TaskDetailsPanel/>
+                                </PaddedPaper>
+                            </Grid>
+                            <Grid item>
+
+                                <div style={{width: "23px"}}/>
+                            </Grid>
+                            <Grid item>
+                                <PaddedPaper minWidth={"415px"} minHeight={"400px"}>
+                                    <DeliverableGridSelect taskUUID={taskUUID}/>
+                                </PaddedPaper>
                             </Grid>
                         </Grid>
                         <Grid item>

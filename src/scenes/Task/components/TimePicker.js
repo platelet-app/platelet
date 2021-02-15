@@ -70,7 +70,7 @@ function TimePicker(props) {
         } else {
             return (
                 <div className={classes.root}>
-                    <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
+                    <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
                         <Grid item>
                             <Typography>
                                 <Moment calendar>{props.time}</Moment>
