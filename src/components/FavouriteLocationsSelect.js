@@ -34,9 +34,10 @@ function FavouriteLocationsSelect(props) {
                 filterOptions={filterOptions}
                 options={filteredLocationSuggestions}
                 getOptionLabel={(option) => option.name}
-                style={{width: 220}}
+                size={"small"}
+                style={{width: 230}}
                 renderInput={(params) => (
-                    <TextField {...params} label={props.label || "Select"} variant="outlined" margin="normal"/>
+                    <TextField {...params} label={props.label || "Select"} variant="outlined" margin="none"/>
                 )}
                 onChange={onSelect}
                 renderOption={(option, {inputValue}) => {

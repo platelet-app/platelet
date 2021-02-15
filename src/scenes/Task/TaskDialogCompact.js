@@ -39,7 +39,7 @@ const useStyles = makeStyles({
         padding: "20px"
     },
     item: {
-        minHeight: "400px"
+        minHeight: "430px"
     },
     statusBar: {
         paddingBottom: 8
@@ -209,7 +209,7 @@ function TaskDialogCompact(props) {
                         <Grid container item direction={"row"} spacing={1} alignItems={"center"}
                               justify={"flex-start"}>
                             <Grid item>
-                                <PaddedPaper minWidth={"415px"} minHeight={"400px"}>
+                                <PaddedPaper minWidth={"435px"} minHeight={"410px"}>
                                     <Grid container direction={"column"} justify={"space-between"} spacing={3}>
                                         <Grid item>
                                             <LocationDetailAndSelector
@@ -238,7 +238,7 @@ function TaskDialogCompact(props) {
                                 <ArrowDownwardIcon className={mobileView ? show : hide}/>
                             </Grid>
                             <Grid item>
-                                <PaddedPaper minWidth={"415px"} minHeight={"400px"}>
+                                <PaddedPaper minWidth={"435px"} minHeight={"410px"}>
                                     <Grid container direction={"column"} justify={"flex-start"} spacing={3}>
                                         <Grid item>
                                             <LocationDetailAndSelector
@@ -266,7 +266,7 @@ function TaskDialogCompact(props) {
                         <Grid container item direction={"row"} spacing={1}
                               justify={"flex-start"}>
                             <Grid item>
-                                <PaddedPaper minWidth={"415px"} minHeight={"400px"}>
+                                <PaddedPaper minWidth={"435px"} minHeight={"410px"}>
                                     <TaskDetailsPanel/>
                                 </PaddedPaper>
                             </Grid>
@@ -275,7 +275,7 @@ function TaskDialogCompact(props) {
                                 <div style={{width: "23px"}}/>
                             </Grid>
                             <Grid item>
-                                <PaddedPaper minWidth={"415px"} minHeight={"400px"}>
+                                <PaddedPaper minWidth={"435px"} minHeight={"410px"}>
                                     <DeliverableGridSelect taskUUID={taskUUID}/>
                                 </PaddedPaper>
                             </Grid>
