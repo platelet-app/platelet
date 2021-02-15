@@ -48,7 +48,7 @@ function ClickableTextField(props) {
     const stuff = props.disabled ?
         props.value ?
             <Typography onClick={toggleEditMode}>{props.value}</Typography> :
-            <Typography onClick={toggleEditMode}>{props.label}</Typography> :
+            <></> :
         props.value ?
             <Typography className={classes.hoverHighlight} onClick={toggleEditMode}>{props.value}</Typography> :
             <Typography onClick={toggleEditMode} className={classes.label}>{props.label}</Typography>
