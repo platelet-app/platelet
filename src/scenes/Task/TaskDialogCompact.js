@@ -35,6 +35,8 @@ import {
 import {createPostingSelector} from "../../redux/selectors";
 import Divider from "@material-ui/core/Divider";
 import {useTheme} from "@material-ui/core/styles";
+import DeliverablesSelect from "../Deliverables/components/DeliverableSelect";
+import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
 
 const useStyles = makeStyles({
     root: {
@@ -216,7 +218,7 @@ function TaskDialogCompact(props) {
                     </Grid>
                 </Grid>
                 <div className={classes.root}>
-                    <Grid container direction={"column"} alignItems={"flex-start"} justify={"space-between"}>
+                    <Grid container direction={"column"} spacing={3} alignItems={"flex-start"} justify={"space-between"}>
                         <Grid item>
                             <Grid container direction={"row"} alignItems={"flex-start"} justify={"space-between"}
                                   spacing={3}>
@@ -285,6 +287,11 @@ function TaskDialogCompact(props) {
                                     </PaddedPaper>
                                 </Grid>
                             </Grid>
+                        </Grid>
+                        <Grid item>
+                            <PaddedPaper>
+                                <DeliverableGridSelect taskUUID={taskUUID}/>
+                            </PaddedPaper>
                         </Grid>
                         <Grid item>
                             <CommentsSection parentUUID={taskUUID}/>

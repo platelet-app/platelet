@@ -11,6 +11,8 @@ import Button from "@material-ui/core/Button";
 import DeliverableCard from "./components/DeliverableCard";
 import DeliverablesSelect from "./components/DeliverableSelect";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
+import IconButton from "@material-ui/core/IconButton";
+import ClearIcon from "@material-ui/icons/Clear";
 
 
 export default function DeliverableGridSelect(props) {
@@ -28,7 +30,7 @@ export default function DeliverableGridSelect(props) {
     };
 
     const onSelectDeliverable = (deliverable) => {
-        let newDeliverable = {...emptyDeliverable, ...deliverable};
+        let newDeliverable = {...emptyDeliverable, type_id: deliverable.id, type: deliverable.label};
         dispatch(addDeliverableRequest(newDeliverable))
         setAddMode(false);
     };
@@ -66,18 +68,30 @@ export default function DeliverableGridSelect(props) {
     } else {
         return (
             <Grid container
-                  spacing={2}
+                  spacing={1}
                   direction={"column"}
-                  justify={"flex-start"}
-                  alignItems={"flex-start"}
             >
                 {Object.values(deliverables).map(deliverable => {
                     return (
                         <Grid item key={deliverable.uuid}>
+                            <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+                                <Grid item>
                             <DeliverableCard
-                                onDelete={() => dispatch(deleteDeliverableRequest(deliverable.uuid))}
-                                deliverable={deliverable}
+                                size={"compact"}
+                                label={deliverable.type}
+                                typeID={deliverable.type_id}
                             />
+                                </Grid>
+                                <Grid item>
+                                    <IconButton
+                                        color={"inherit"}
+                                        onClick={() => dispatch(deleteDeliverableRequest(deliverable.uuid))}
+                                    >
+                                        <ClearIcon/>
+                                    </IconButton>
+
+                                </Grid>
+                            </Grid>
                         </Grid>
                     )
 

@@ -13,33 +13,8 @@ import ClearIcon from "@material-ui/icons/Clear"
 import {useDispatch} from "react-redux";
 import IconButton from "@material-ui/core/IconButton"
 import {deleteDeliverableRequest} from "../../../redux/deliverables/DeliverablesActions"
+import PropTypes from "prop-types";
 
-const useStyles = makeStyles((theme) => ({
-    sample: {
-        color: theme.palette.getContrastText(red[500]),
-        backgroundColor: red[500],
-        width: theme.spacing(6),
-        height: theme.spacing(6)
-    },
-    milk: {
-        color: theme.palette.getContrastText(pink[500]),
-        backgroundColor: pink[500],
-        width: theme.spacing(6),
-        height: theme.spacing(6)
-    },
-    document: {
-        color: theme.palette.getContrastText(deepPurple[500]),
-        backgroundColor: deepPurple[500],
-        width: theme.spacing(6),
-        height: theme.spacing(6)
-    },
-    other: {
-        color: theme.palette.getContrastText(deepOrange[500]),
-        backgroundColor: lightGreen[500],
-        width: theme.spacing(6),
-        height: theme.spacing(6)
-    }
-}))
 
 function getIcon(typeID) {
     switch (typeID) {
@@ -54,10 +29,37 @@ function getIcon(typeID) {
     }
 }
 
-export default function DeliverableCard(props) {
-    const classes = useStyles();
+function DeliverableCard(props) {
     const dispatch = useDispatch();
+    const spacingValue = props.size === "compact" ? 3 : 6;
+    const useStyles = makeStyles((theme) => ({
+        sample: {
+            color: theme.palette.getContrastText(red[500]),
+            backgroundColor: red[500],
+            width: theme.spacing(spacingValue),
+            height: theme.spacing(spacingValue)
+        },
+        milk: {
+            color: theme.palette.getContrastText(pink[500]),
+            backgroundColor: pink[500],
+            width: theme.spacing(spacingValue),
+            height: theme.spacing(spacingValue)
+        },
+        document: {
+            color: theme.palette.getContrastText(deepPurple[500]),
+            backgroundColor: deepPurple[500],
+            width: theme.spacing(spacingValue),
+            height: theme.spacing(spacingValue)
+        },
+        other: {
+            color: theme.palette.getContrastText(deepOrange[500]),
+            backgroundColor: lightGreen[500],
+            width: theme.spacing(spacingValue),
+            height: theme.spacing(spacingValue)
+        }
+    }))
 
+    const classes = useStyles();
     function getClass(typeID) {
         switch (typeID) {
             case 1:
@@ -71,35 +73,52 @@ export default function DeliverableCard(props) {
         }
     }
 
-    const deleteButton = props.onDelete ?
-        <IconButton
+    const deleteButton = (props.onDelete && props.size === "normal") ?
+        <Grid item>
+            <IconButton
             color={"inherit"}
             onClick={props.onDelete}
         >
             <ClearIcon/>
-        </IconButton> : <></>
+        </IconButton>
+        </Grid>
+
+        : <></>
+
+    const height = props.size === "compact" ? "50px" : "100px"
 
     return (
-        <StyledSharpCard style={{height: "100px"}}>
-            <Grid container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
+            <Grid style={{height}} container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
                 <Grid item>
                     <Grid container spacing={2} justify={"flex-start"} alignItems={"center"} direction={"row"}>
                         <Grid item>
-                            <Avatar className={getClass(props.deliverable.type_id)}>
-                                {getIcon(props.deliverable.type_id)}
+                            <Avatar className={getClass(props.typeID)}>
+                                {getIcon(props.typeID)}
                             </Avatar>
                         </Grid>
                         <Grid item>
                             <Typography>
-                                {props.deliverable.type}
+                                {props.label}
                             </Typography>
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item>
                     {deleteButton}
-                </Grid>
             </Grid>
-        </StyledSharpCard>
     )
 }
+
+DeliverableCard.propTypes = {
+    typeID: PropTypes.number,
+    label: PropTypes.string,
+    onDelete: PropTypes.func,
+    size: PropTypes.oneOf(["normal", "compact"])
+}
+
+DeliverableCard.defaultProps = {
+    onDelete: () => {},
+    size: "normal",
+    label: "Unknown"
+}
+
+export default DeliverableCard;
