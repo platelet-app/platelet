@@ -52,7 +52,7 @@ function StatusBar(props) {
                 <Grid item>
                     <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
                         <Grid item>
-                            <RiderEditPopover taskUUID={props.taskUUID}/>
+                            <RiderEditPopover assignees={props.assignedRiders} className={props.assignedRiders.length > 0 ? show : hide} taskUUID={props.taskUUID}/>
                         </Grid>
                         <Grid item >
                             <Tooltip title={props.assignedRidersDisplayString}>

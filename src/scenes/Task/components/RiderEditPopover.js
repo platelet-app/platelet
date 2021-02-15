@@ -21,8 +21,8 @@ function RiderEditPopover(props) {
     const id = open ? 'simple-popover' : undefined;
 
     return (
-        <div>
-            <IconButton onClick={handleClick}>
+        <div className={props.className}>
+            <IconButton style={{height: 6}} onClick={handleClick}>
                 <EditIcon/>
             </IconButton>
             <Popover
@@ -39,7 +39,7 @@ function RiderEditPopover(props) {
                     horizontal: 'center',
                 }}
             >
-                <TaskAssignees taskUUID={props.taskUUID}/>
+                <TaskAssignees assignees={props.assignees} onRemove={handleClose} taskUUID={props.taskUUID}/>
             </Popover>
         </div>
     );

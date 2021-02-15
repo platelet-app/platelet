@@ -24,8 +24,9 @@ export default function TaskAssignees(props) {
     const assignees = useSelector(state => state.taskAssignees.assignees);
 
     function componentDidMount() {
-        dispatch(getTaskAssignedRidersRequest(taskUUID))
+        //dispatch(getTaskAssignedRidersRequest(taskUUID))
     }
+
     useEffect(componentDidMount, [])
 
     const addButton =
@@ -48,18 +49,28 @@ export default function TaskAssignees(props) {
         setAddMode(false);
     }
 
-    const noAssigneeMessage = assignees ? assignees.length === 0 ? <Typography>No assignee.</Typography> : <></> : <></>
+    const noAssigneeMessage = props.assignees ? props.assignees.length === 0 ? <Typography>No assignee.</Typography> : <></> : <></>
     const userSelect = addMode ?
         <UsersSelect id="userSelect"
                      roles={['rider']}
                      vehicleAssignedUsersFirst={true}
                      onSelect={onSelectRider}
-                     excludeList={Object.values(assignees).map((u) => u.uuid)}/>
+                     excludeList={Object.values(props.assignees).map((u) => u.uuid)}/>
 
-                     :
+        :
         <></>
 
-    if (isFetching) {
+    function onRemoveUser(userUUID) {
+        dispatch(removeTaskAssignedRiderRequest({
+            taskUUID,
+            payload: {user_uuid: userUUID}
+        }));
+        if (props.onRemove)
+            props.onRemove();
+    }
+
+
+    if (false) {
         return <TaskAssigneesSkeleton/>
     } else {
         return (
@@ -67,14 +78,11 @@ export default function TaskAssignees(props) {
                 <Grid item>
                     {noAssigneeMessage}
                 </Grid>
-                {Object.values(assignees).map((user) => {
+                {Object.values(props.assignees).map((user) => {
                     return (
                         <Grid item key={user.uuid}>
                             <UserCard
-                                onDelete={() => dispatch(removeTaskAssignedRiderRequest({
-                                    taskUUID,
-                                    payload: {user_uuid: user.uuid}
-                                }))}
+                                onDelete={() => onRemoveUser(user.uuid)}
                                 user={user}
                             />
                         </Grid>
