@@ -12,10 +12,11 @@ import {Tooltip, withMobileDialog} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import CancelIcon from "@material-ui/icons/Cancel";
-import {showHide} from "../../../styles/common";
+import {showHide, ThemedLink} from "../../../styles/common";
 import {createPostingSelector} from "../../../redux/selectors";
 import {useSelector} from "react-redux";
 import {addNewDropoffLocationAndSetTaskRequest} from "../../../redux/taskDestinations/TaskDestinationsActions";
+import {encodeUUID} from "../../../utilities";
 
 
 const useStyles = makeStyles({
@@ -87,6 +88,7 @@ function LocationDetailAndSelector(props) {
     }
 
     const presetName = (props.location && props.location.name) ? props.location.name : ""
+    const locationLink = props.location && props.location.uuid ? `/location/${encodeUUID(props.location.uuid)}` : "";
 
     const presetSelect = props.displayPresets ?
         <Grid item>
@@ -95,7 +97,7 @@ function LocationDetailAndSelector(props) {
                     {presetMode ? <FavouriteLocationsSelect
                         label={props.label}
                         onSelect={onSelectPreset}
-                    /> : <Typography noWrap className={classes.label}>{presetName}</Typography>}
+                    /> : <ThemedLink to={locationLink}><Typography noWrap className={classes.label}>{presetName}</Typography></ThemedLink>}
                 </Grid>
                 <Grid item>
                     <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
