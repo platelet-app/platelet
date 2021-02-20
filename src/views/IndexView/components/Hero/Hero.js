@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 import { SectionHeader, TypedText } from 'components/molecules';
 import { HeroShaped } from 'components/organisms';
+import dashboard_dark from '../../../../assets/images/dashboard-dark.png'
 
 const useStyles = makeStyles(theme => ({
   fontWeight900: {
@@ -41,30 +42,28 @@ const useStyles = makeStyles(theme => ({
     },
   },
   imageAnimation: {
-    background: `url("https://assets.maccarianagency.com/the-front/web-screens/home/home-hero-bg-light.png")`,
+    background: `url(${dashboard_dark})`,
     backgroundRepeat: 'repeat',
     backgroundAttachment: 'scroll',
     backgroundSize: '400px auto',
-    animation: `$slideshow 50s linear infinite`,
+    //animation: `$slideshow 50s linear infinite`,
     width: '600%',
     height: '600%',
     backgroundColor: theme.palette.alternate.dark,
-    top: '-25%',
-    left: '-100%',
     position: 'absolute',
     [theme.breakpoints.up('sm')]: {
       backgroundSize: '800px auto',
     }
   },
   imageAnimationDark: {
-    background: `url("https://assets.maccarianagency.com/the-front/web-screens/home/home-hero-bg-dark.png")`,
+    background: `url(${dashboard_dark})`,
   },
   '@keyframes slideshow': {
     '0%': {
-      transform: 'rotate(-13deg) translateY(-25%)',
+      transform: 'rotate(0deg) translateY(-25%)',
     },
     '100%': {
-      transform: 'rotate(-13deg) translateY(-80%)',
+      transform: 'rotate(0deg) translateY(-80%)',
     },
   },
 }));
@@ -74,47 +73,28 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
 
   const title = (
     <Typography variant="h2" component="span" className={classes.fontWeight900}>
-      A modern design system for your new
+      A dispatch system designed for emergency volunteer couriers
       <br />
-      <TypedText
-        component="span"
-        variant="h2"
-        color="secondary"
-        className={classes.fontWeight900}
-        typedProps={{
-          strings: [
-            'e-commerce',
-            'expo',
-            'startup',
-            'online course',
-            'coworking space',
-            'job listing',
-            'and many more...',
-          ],
-          typeSpeed: 50,
-          loop: true,
-        }}
-      />
     </Typography>
   );
 
-  const subtitle = 'TheFront will make your product look modern and professional while saving you precious time.';
+  const subtitle = 'Connect from anywhere to coordinate fleets and record deliveries.';
 
-  const docsButton = (
-    <Button size="large" variant="outlined" color="primary" component="a" href="/documentation">
-      Documentation
+  const findOutMore = (
+    <Button size="large" variant="outlined" color="primary" component="a" href="/signup">
+      Find out more
     </Button>
   );
 
-  const buyButton = (
+  const loginButton = (
     <Button
       size="large"
       variant="contained"
       color="primary"
       component="a"
-      href="/home"
+      href="https://web.platelet.app"
     >
-      Get started
+      Open platelet
     </Button>
   );
 
@@ -127,7 +107,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
         variant: 'h2',
         color: 'textPrimary',
       }}
-      ctaGroup={[docsButton, buyButton]}
+      ctaGroup={[findOutMore, loginButton]}
       data-aos="fade-right"
       disableGutter
       className={classes.leftSideContent}

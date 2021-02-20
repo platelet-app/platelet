@@ -131,8 +131,6 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
   };
 
   const landings = pages.landings;
-  const supportedPages = pages.pages;
-  const account = pages.account;
 
   const MenuGroup = props => {
     const { item } = props;
@@ -166,75 +164,20 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
   };
 
   const LandingPages = () => {
-    const { services, apps, web } = landings.children;
+    const { services } = landings.children;
     return (
       <div className={classes.menu}>
         <div className={classes.menuItem}>
           <MenuGroup item={services} />
-          <MenuGroup item={apps} />
-        </div>
-        <div className={classes.menuItem}>
-          <MenuGroup item={web} />
         </div>
       </div>
     );
   };
 
-  const SupportedPages = () => {
-    const {
-      career,
-      helpCenter,
-      company,
-      contact,
-      blog,
-      portfolio,
-    } = supportedPages.children;
-    return (
-      <div className={classes.menu}>
-        <div className={classes.menuItem}>
-          <MenuGroup item={career} />
-          <MenuGroup item={helpCenter} />
-        </div>
-        <div className={classes.menuItem}>
-          <MenuGroup item={company} />
-          <MenuGroup item={contact} />
-        </div>
-        <div className={classes.menuItem}>
-          <MenuGroup item={blog} />
-          <MenuGroup item={portfolio} />
-        </div>
-      </div>
-    );
-  };
-
-  const AccountPages = () => {
-    const { settings, signup, signin, password, error } = account.children;
-    return (
-      <div className={classes.menu}>
-        <div className={classes.menuItem}>
-          <MenuGroup item={settings} />
-        </div>
-        <div className={classes.menuItem}>
-          <MenuGroup item={signup} />
-          <MenuGroup item={signin} />
-        </div>
-        <div className={classes.menuItem}>
-          <MenuGroup item={password} />
-          <MenuGroup item={error} />
-        </div>
-      </div>
-    );
-  };
 
   const renderPages = id => {
     if (id === 'landing-pages') {
       return <LandingPages />;
-    }
-    if (id === 'supported-pages') {
-      return <SupportedPages />;
-    }
-    if (id === 'account') {
-      return <AccountPages />;
     }
   };
 
@@ -253,7 +196,7 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
       <div className={classes.flexGrow} />
       <Hidden smDown>
         <List disablePadding className={classes.navigationContainer}>
-          {[landings, supportedPages, account].map((page, i) => (
+          {[landings].map((page, i) => (
             <div key={page.id}>
               <ListItem
                 aria-describedby={page.id}
@@ -304,23 +247,13 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
           </ListItem>
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
             <Button
-              variant="outlined"
-              component="a"
-              href="/documentation"
-            >
-              Documentation
-            </Button>
-          </ListItem>
-          <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
-            <Button
               variant="contained"
               color="primary"
               component="a"
-              target="blank"
-              href="https://material-ui.com/store/items/the-front-landing-page/"
+              href="https://web.platelet.app"
               className={classes.listItemButton}
             >
-              Buy Now
+              Open platelet
             </Button>
           </ListItem>
         </List>
