@@ -3,7 +3,6 @@ import 'typeface-roboto'
 import '../index.css';
 import {Route, Switch, useLocation} from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
-import TaskDialog from "../scenes/Task/TaskDialog";
 import VehicleList from "../scenes/VehiclesList";
 import {MainWindowContainer} from "../styles/common";
 import UsersList from "../scenes/UsersList";
@@ -23,7 +22,7 @@ export default function MainWindow(_props) {
         <MainWindowContainer>
             <main>
                 <Switch location={location}>
-                    <Route exact path='/'
+                    <Route exact path='/dashboard'
                            render={(props) => <Dashboard {...props}/>}
                     />
                     <Route path='/vehicles'
