@@ -6,6 +6,7 @@ import { Button, Typography } from '@material-ui/core';
 import { SectionHeader, TypedText } from 'components/molecules';
 import { HeroShaped } from 'components/organisms';
 import dashboard_dark from '../../../../assets/images/dashboard-dark.png'
+import dashboard_light from '../../../../assets/images/dashboard-light.png'
 
 const useStyles = makeStyles(theme => ({
   fontWeight900: {
@@ -42,29 +43,22 @@ const useStyles = makeStyles(theme => ({
     },
   },
   imageAnimation: {
-    background: `url(${dashboard_dark})`,
-    backgroundRepeat: 'repeat',
+    background: `url(${dashboard_light})`,
+    backgroundRepeat: 'no-repeat',
     backgroundAttachment: 'scroll',
-    backgroundSize: '400px auto',
-    //animation: `$slideshow 50s linear infinite`,
-    width: '600%',
-    height: '600%',
+    backgroundSize: 'cover',
+    width: '900px',
+    height: '900px',
     backgroundColor: theme.palette.alternate.dark,
-    position: 'absolute',
-    [theme.breakpoints.up('sm')]: {
-      backgroundSize: '800px auto',
-    }
   },
   imageAnimationDark: {
     background: `url(${dashboard_dark})`,
-  },
-  '@keyframes slideshow': {
-    '0%': {
-      transform: 'rotate(0deg) translateY(-25%)',
-    },
-    '100%': {
-      transform: 'rotate(0deg) translateY(-80%)',
-    },
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'scroll',
+    backgroundSize: 'cover',
+    width: '900px',
+    height: '900px',
+    backgroundColor: theme.palette.alternate.dark,
   },
 }));
 
@@ -82,7 +76,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
 
   const findOutMore = (
     <Button size="large" variant="outlined" color="primary" component="a" href="/signup">
-      Find out more
+      Keep informed
     </Button>
   );
 
@@ -92,7 +86,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
       variant="contained"
       color="primary"
       component="a"
-      href="https://web.platelet.app"
+      href="/dashboard"
     >
       Open platelet
     </Button>
@@ -120,10 +114,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
         leftSide={leftSideContent}
         rightSide={(
           <div
-            className={clsx(
-              classes.imageAnimation,
-              themeMode === 'dark' ? classes.imageAnimationDark: '',
-            )}
+            className={themeMode === 'dark' ? classes.imageAnimationDark: classes.imageAnimation}
           />
         )}
       />

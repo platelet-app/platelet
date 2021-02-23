@@ -250,7 +250,7 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
               variant="contained"
               color="primary"
               component="a"
-              href="https://web.platelet.app"
+              href="/dashboard"
               className={classes.listItemButton}
             >
               Open platelet

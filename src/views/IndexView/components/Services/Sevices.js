@@ -1,101 +1,112 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useTheme, makeStyles } from '@material-ui/core/styles';
-import { useMediaQuery, Grid, Typography, colors } from '@material-ui/core';
-import { IconAlternate, SectionHeader } from 'components/molecules';
-import { DescriptionListIcon, Section } from 'components/organisms';
+import {useTheme, makeStyles} from '@material-ui/core/styles';
+import {useMediaQuery, Grid, Typography, colors} from '@material-ui/core';
+import {IconAlternate, SectionHeader} from 'components/molecules';
+import {DescriptionListIcon, Section} from 'components/organisms';
 
 const useStyles = makeStyles(() => ({
-  fontWeight900: {
-    fontWeight: 900,
-  },
-  noPaddingBottom: {
-    paddingBottom: 0,
-  },
-  noPaddingTop: {
-    paddingTop: 0,
-  },
+    fontWeight900: {
+        fontWeight: 900,
+    },
+    noPaddingBottom: {
+        paddingBottom: 0,
+    },
+    noPaddingTop: {
+        paddingTop: 0,
+    },
+    paddingLeft: {
+        paddingTop: 0,
+        paddingLeft: "100px"
+    },
 }));
 
-const data = [
-  {
-    icon: 'fas fa-layer-group',
-    title: 'Built for developers',
-    subtitle:
-      'TheFront is built to make your life easier. Variables, build tooling, documentation, and reusable components.',
-  },
-  {
-    icon: 'fab fa-sketch',
-    title: 'Designed to be modern',
-    subtitle:
-      'Designed with the latest design trends in mind. TheFront feels modern, minimal, and beautiful.',
-  },
-  {
-    icon: 'fas fa-code',
-    title: 'Documentation for everything',
-    subtitle:
-      "We've written extensive documentation for components and tools, so you never have to reverse engineer anything.",
-  },
+const dataRow1 = [
+    {
+        icon: 'fab fa-sketch',
+        title: 'Real time updates',
+        subtitle:
+            'Assign jobs in real time and be notified on pick ups and deliveries.',
+    },
+    {
+        icon: 'fas fa-code',
+        title: 'Locations directory',
+        subtitle:
+            "Quickly select locations from a searchable directory.",
+    },
 ];
-const Services = ({ className, ...rest }) => {
-  const classes = useStyles();
-  const theme = useTheme();
-  const isMd = useMediaQuery(theme.breakpoints.up('md'), {
-    defaultMatches: true,
-  });
-   
-  const title = (
-    <Typography variant="h2" component="span" className={classes.fontWeight900}>
-      Build accessible React apps&nbsp;
-      <Typography component="span" variant="inherit" color="primary">with speed</Typography>
-    </Typography>
-  );
+const dataRow2 = [
+    {
+        icon: 'fab fa-sketch',
+        title: 'Record details',
+        subtitle:
+            'Couriers can use a mobile device to record names on pick up and delivery.',
+    },
+    {
+        icon: 'fas fa-code',
+        title: 'Assign vehicles',
+        subtitle:
+            "Assign users to vehicles that are a part of your fleet.",
+    },
+];
+const Services = ({className, ...rest}) => {
+    const classes = useStyles();
+    const theme = useTheme();
+    const isMd = useMediaQuery(theme.breakpoints.up('md'), {
+        defaultMatches: true,
+    });
 
-  const subtitle = 'Build a beautiful, modern website with flexible, fully customizable, atomic Material UI components.';
-
-  return (
-    <div className={className} {...rest}>
-      <Section narrow className={classes.noPaddingBottom}>
-        <SectionHeader
-          title={title}
-          subtitle={subtitle}
-          align="center"
-          titleProps={{
-            variant: 'h2',
-            color: 'textPrimary',
-          }}
-          data-aos="fade-up"
-        />
-      </Section>
-      <Section className={classes.noPaddingTop}>
-        <Grid container spacing={isMd ? 4 : 2}>
-          {data.map((item, index) => (
-            <Grid key={index} item xs={12} sm={4} data-aos={'fade-up'}>
-              <DescriptionListIcon
-                title={item.title}
-                subtitle={item.subtitle}
-                icon={
-                  <IconAlternate
-                    fontIconClass={item.icon}
-                    size="medium"
-                    color={colors.indigo}
-                  />
-                }
-                align="left"
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Section>
-    </div>
-  );
+    return (
+        <div className={className} {...rest}>
+            <Section className={classes.noPaddingTop}>
+                <Grid direction={"column"} container spacing={2}>
+                    <Grid container item spacing={2}>
+                        {dataRow1.map((item, index) => (
+                            <Grid key={index} item xs={12} sm={4} data-aos={'fade-up'}>
+                                <DescriptionListIcon
+                                    title={item.title}
+                                    subtitle={item.subtitle}
+                                    icon={
+                                        <IconAlternate
+                                            fontIconClass={item.icon}
+                                            size="medium"
+                                            color={colors.indigo}
+                                        />
+                                    }
+                                    align="left"
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                    <Grid container item spacing={2}>
+                        {dataRow2.map((item, index) => (
+                            <Grid key={index} item xs={12} sm={4} data-aos={'fade-up'}>
+                                <DescriptionListIcon
+                                    title={item.title}
+                                    subtitle={item.subtitle}
+                                    icon={
+                                        <IconAlternate
+                                            fontIconClass={item.icon}
+                                            size="medium"
+                                            color={colors.indigo}
+                                        />
+                                    }
+                                    align="left"
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Grid>
+            </Section>
+        </div>
+    );
 };
 
 Services.propTypes = {
-  /**
-   * External classes
-   */
-  className: PropTypes.string,
+    /**
+     * External classes
+     */
+    className: PropTypes.string,
 };
 
 export default Services;
