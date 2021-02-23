@@ -25,14 +25,7 @@ import {
 } from "../../redux/sockets/SocketActions";
 import {getTaskUUIDEtags} from "./utilities";
 import {initialTasksState} from "../../redux/tasks/TasksReducers";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import {getDashboardRoleMode, saveDashboardRoleMode} from "../../utilities";
-
-const useStyles = makeStyles({
-    dashboard: {
-        width: "1280px"
-    }
-})
 
 function Dashboard() {
     const dispatch = useDispatch();

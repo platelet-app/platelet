@@ -184,7 +184,7 @@ export default function TaskDialog(props) {
         if (props.location.state)
             history.goBack();
         else
-            history.push("/");
+            history.push("/dashboard");
 
     };
 
