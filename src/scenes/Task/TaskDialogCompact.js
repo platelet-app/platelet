@@ -173,7 +173,7 @@ function TaskDialogCompact(props) {
         if (props.location.state)
             history.goBack();
         else
-            history.push("/");
+            history.push("/dashboard");
 
     };
     const statusBar = !task ? <></> :

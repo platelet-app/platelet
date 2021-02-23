@@ -206,7 +206,7 @@ export function MenuMainContainer() {
                                     <MenuItem onClick={() => {
                                         setAnchorElProfileMenu(null);
                                         dispatch(logoutUser());
-                                        history.push("/");
+                                        history.push("/dashboard");
                                     }}>
                                         Logout
                                     </MenuItem>
@@ -217,7 +217,7 @@ export function MenuMainContainer() {
                                             setAnchorElProfileMenu(null);
                                             dispatch(removeApiURL());
                                             dispatch(clearServerSettings());
-                                            history.push("/");
+                                            history.push("/dashboard");
                                         }}>
                                             Change Organisation
                                         </MenuItem>
