@@ -149,7 +149,7 @@ export function MenuMainContainer() {
                             <Grid container direction={"row"} spacing={0} justify={"flex-start"} alignItems={"center"}>
                                 <Grid item>
                                     <Typography variant="h6">
-                                        <Link to={"/"} style={{textDecoration: 'none', color: "white"}}>Dashboard</Link>
+                                        <Link to={"/dashboard"} style={{textDecoration: 'none', color: "white"}}>Dashboard</Link>
                                     </Typography>
                                 </Grid>
                                 <Grid item>
