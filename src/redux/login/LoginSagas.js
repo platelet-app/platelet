@@ -1,16 +1,10 @@
 import {throttle, call, put, takeEvery, select, takeLatest} from 'redux-saga/effects'
 import {
-    LOGIN_REQUEST,
     loginUserSuccess,
-    loginIncorrectPassword,
-    loginAuthorised,
-    logoutUser,
-    loginFailure,
+    loginUserFailure,
     LOGOUT,
     logoutUserSuccess,
-    loginSuccess,
-    REFRESH_TOKEN_REQUEST,
-    refreshTokenFailure, refreshTokenSuccess
+    refreshUserTokenFailure, refreshUserTokenSuccess, loginUserActions, refreshUserTokenActions
 } from "./LoginActions"
 
 import {createApiControl, getApiControl} from "../Api";
@@ -27,15 +21,15 @@ function* login(action) {
     } catch (error) {
         if (error.status_code === 401) {
             yield put(displayWarningNotification("Login failed, please check your details."))
-            yield put(loginFailure(error));
+            yield put(loginUserFailure(error));
         } else {
-            yield put(loginFailure(error));
+            yield put(loginUserFailure(error));
         }
     }
 }
 
 export function* watchLogin() {
-    yield takeLatest(LOGIN_REQUEST, login)
+    yield takeLatest(loginUserActions.request, login)
 }
 
 function* logout() {
@@ -52,12 +46,12 @@ function* refreshToken(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.refreshToken]);
         yield saveLogin(result.access_token);
-        yield put(refreshTokenSuccess(result.access_token))
+        yield put(refreshUserTokenSuccess(result.access_token))
     } catch (error) {
-        yield put(refreshTokenFailure(error))
+        yield put(refreshUserTokenFailure(error))
     }
 }
 
 export function* watchRefreshToken() {
-    yield takeLatest(REFRESH_TOKEN_REQUEST, refreshToken)
+    yield takeLatest(refreshUserTokenActions.request, refreshToken)
 }

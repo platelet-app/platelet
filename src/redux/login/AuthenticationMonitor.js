@@ -1,7 +1,7 @@
 import {takeEvery, race, take, put, select, delay} from 'redux-saga/effects'
 import {
     refreshTokenRequest,
-    logoutUser, REFRESH_TOKEN_SUCCESS, REFRESH_TOKEN_FAILURE
+    logoutUser, refreshUserTokenActions
 } from './LoginActions'
 import {displayErrorNotification} from "../notifications/NotificationsActions";
 
@@ -42,8 +42,8 @@ function* monitor(monitoredAction) {
         yield put(refreshTokenRequest())
 
         const {success} = yield race({
-            success: take(REFRESH_TOKEN_SUCCESS),
-            fail: take(REFRESH_TOKEN_FAILURE),
+            success: take(refreshUserTokenActions.success),
+            fail: take(refreshUserTokenActions.failure),
         })
 
         if (success) {
