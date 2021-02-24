@@ -1,4 +1,4 @@
-import {CLEAR_SERVER_SETTINGS, GET_SERVER_SETTINGS_FAILURE, GET_SERVER_SETTINGS_SUCCESS} from "./ServerSettingsActions";
+import {CLEAR_SERVER_SETTINGS, getServerSettingsActions} from "./ServerSettingsActions";
 
 const initialState = {
     organisation_name: null,
@@ -13,9 +13,9 @@ const initialState = {
 
 export function serverSettings(state = initialState, action) {
     switch (action.type) {
-        case GET_SERVER_SETTINGS_SUCCESS:
+        case getServerSettingsActions.success:
             return {...action.data, error: null};
-        case GET_SERVER_SETTINGS_FAILURE:
+        case getServerSettingsActions.failure:
             return {...initialState, error: action.error};
         case CLEAR_SERVER_SETTINGS:
             return initialState;

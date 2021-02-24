@@ -1,6 +1,6 @@
 import {call, put, select, takeLatest} from "redux-saga/effects";
 import {getApiControl} from "../Api";
-import {GET_SERVER_SETTINGS_REQUEST, getServerSettingsFailure, getServerSettingsSuccess} from "./ServerSettingsActions";
+import {getServerSettingsActions, getServerSettingsFailure, getServerSettingsSuccess} from "./ServerSettingsActions";
 
 export function* getServerSettings() {
     try {
@@ -11,11 +11,11 @@ export function* getServerSettings() {
         else
             yield put(getServerSettingsFailure(result.error))
 
-    } catch (e) {
-        yield put(getServerSettingsFailure(e))
+    } catch (error) {
+        yield put(getServerSettingsFailure(error))
     }
 }
 
 export function* watchGetServerSettings() {
-    yield takeLatest(GET_SERVER_SETTINGS_REQUEST, getServerSettings)
+    yield takeLatest(getServerSettingsActions.request, getServerSettings)
 }

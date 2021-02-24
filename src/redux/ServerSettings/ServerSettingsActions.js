@@ -1,20 +1,11 @@
-export const GET_SERVER_SETTINGS_SUCCESS = 'GET_SERVER_SETTINGS_SUCCESS';
-export const GET_SERVER_SETTINGS_REQUEST = 'GET_SERVER_SETTINGS_REQUEST';
-export const GET_SERVER_SETTINGS_FAILURE = 'GET_SERVER_SETTINGS_FAILURE';
-export const CLEAR_SERVER_SETTINGS = 'CLEAR_SERVER_SETTINGS';
+import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
 
-export function getServerSettingsRequest() {
-    return { type: GET_SERVER_SETTINGS_REQUEST }
-}
+export const getServerSettingsPrefix = "GET_SERVER_SETTINGS";
+export const getServerSettingsActions = createRequestActions(getServerSettingsPrefix);
+export const {getServerSettingsRequest, getServerSettingsFailure, getServerSettingsSuccess} = createRequestFunctions(getServerSettingsActions);
+
+export const CLEAR_SERVER_SETTINGS = 'CLEAR_SERVER_SETTINGS';
 
 export function clearServerSettings() {
     return { type: CLEAR_SERVER_SETTINGS }
-}
-
-export function getServerSettingsSuccess(data) {
-    return { type: GET_SERVER_SETTINGS_SUCCESS, data}
-}
-
-export function getServerSettingsFailure(error) {
-    return { type: GET_SERVER_SETTINGS_FAILURE, error }
 }
