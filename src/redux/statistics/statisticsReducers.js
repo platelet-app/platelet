@@ -1,4 +1,4 @@
-import {GET_USER_STATISTICS_SUCCESS} from "./statisticsActions";
+import {getUserStatisticsActions} from "./statisticsActions";
 
 const userStatisticsInitialState = {
     statistics: {
@@ -21,7 +21,7 @@ const userStatisticsInitialState = {
 
 export function userStatistics(state = userStatisticsInitialState, action) {
     switch (action.type) {
-        case GET_USER_STATISTICS_SUCCESS:
+        case getUserStatisticsActions.success:
             return {statistics: action.data, error: null}
         default:
             return state;

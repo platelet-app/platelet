@@ -1,5 +1,5 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
-import {GET_USER_STATISTICS_REQUEST, getUserStatisticsFailure, getUserStatisticsSuccess} from "./statisticsActions";
+import {getUserStatisticsActions, getUserStatisticsFailure, getUserStatisticsSuccess} from "./statisticsActions";
 import {getApiControl} from "../Api";
 
 function* getUserStatistics(action) {
@@ -15,6 +15,5 @@ function* getUserStatistics(action) {
 }
 
 export function* watchGetUserStatistics() {
-    yield takeEvery(GET_USER_STATISTICS_REQUEST, getUserStatistics);
+    yield takeEvery(getUserStatisticsActions.request, getUserStatistics);
 }
-
