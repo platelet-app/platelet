@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
 import Button from "@material-ui/core/Button";
 import {useDispatch, useSelector} from "react-redux";
-import {addCommentRequest, addSidebarCommentRequest} from "../../../redux/comments/CommentsActions";
+import {addCommentRequest} from "../../../redux/comments/CommentsActions";
 import {createPostingSelector} from "../../../redux/selectors";
 import CommentAuthor from "./CommentAuthor";
 
@@ -26,6 +26,7 @@ export default function CommentCard(props) {
             setCommentContents("")
         }
     }
+
     useEffect(clearCommentOnPost, [isPosting])
 
     return (
@@ -43,12 +44,14 @@ export default function CommentCard(props) {
                             <Tooltip title={publicComment ? "Visible to everyone" : "Only visible to you"}>
                                 <IconButton
                                     disabled={isPosting}
-                                    onClick={() => {setPublicComment(!publicComment)}}>
-                                {publicComment ? (
-                                    <LockOpenIcon style={{height: "20px", width: "20px"}}/>
-                                ) : (
-                                    <LockIcon style={{height: "20px", width: "20px"}}/>
-                                )}
+                                    onClick={() => {
+                                        setPublicComment(!publicComment)
+                                    }}>
+                                    {publicComment ? (
+                                        <LockOpenIcon style={{height: "20px", width: "20px"}}/>
+                                    ) : (
+                                        <LockIcon style={{height: "20px", width: "20px"}}/>
+                                    )}
                                 </IconButton>
                             </Tooltip>
                         </Grid>
@@ -73,28 +76,20 @@ export default function CommentCard(props) {
                     <Grid container direction={"row"} justify={"space-between"}>
                         <Grid item>
                             <Button disabled={commentContents.length === 0 || isPosting} onClick={() => {
-                                if (props.sidebar) {
-                                    dispatch(addSidebarCommentRequest({
-                                        author: props.author,
-                                        parent_uuid: props.parentUUID,
-                                        publicly_visible: publicComment,
-                                        body: commentContents
-                                    }));
-                                } else {
-                                    dispatch(addCommentRequest({
-                                        author: props.author,
-                                        parent_uuid: props.parentUUID,
-                                        publicly_visible: publicComment,
-                                        body: commentContents
-                                    }));
-                                }
+                                dispatch(addCommentRequest({
+                                    author: props.author,
+                                    parent_uuid: props.parentUUID,
+                                    publicly_visible: publicComment,
+                                    body: commentContents
+                                }));
                             }
                             }>
                                 Post
                             </Button>
                         </Grid>
                         <Grid item>
-                            <Button disabled={commentContents.length === 0} onClick={() => setCommentContents("")}>Discard</Button>
+                            <Button disabled={commentContents.length === 0}
+                                    onClick={() => setCommentContents("")}>Discard</Button>
                         </Grid>
                     </Grid>
                 </Grid>

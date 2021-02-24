@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    clearComments,
+    clearComments, getCommentsPrefix,
     getCommentsRequest
 } from "../../redux/comments/CommentsActions";
 import CommentsMain from "./components/CommentsMain";
@@ -12,9 +12,9 @@ import {subscribeToComments, unsubscribeFromComments} from "../../redux/sockets/
 
 export default function CommentsSection(props) {
     const dispatch = useDispatch();
-    const loadingSelector = createLoadingSelector(["GET_COMMENTS"]);
+    const loadingSelector = createLoadingSelector([getCommentsPrefix]);
     const isFetching = useSelector(state => loadingSelector(state));
-    const notFoundSelector = createNotFoundSelector(["GET_COMMENTS"]);
+    const notFoundSelector = createNotFoundSelector([getCommentsPrefix]);
     const notFound = useSelector(state => notFoundSelector(state));
     const comments = useSelector(state => state.comments.comments);
     function updateComments() {

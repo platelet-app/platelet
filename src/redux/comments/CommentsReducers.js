@@ -1,12 +1,12 @@
 import {
-    GET_COMMENTS_SUCCESS,
-    ADD_COMMENT_SUCCESS,
-    UPDATE_COMMENT_SUCCESS,
+    addCommentActions,
     CLEAR_COMMENTS,
-    DELETE_COMMENT_SUCCESS,
-    RESTORE_COMMENT_SUCCESS,
     ADD_COMMENT_FROM_SOCKET,
-    DELETE_COMMENT_FROM_SOCKET, RESTORE_COMMENT_FROM_SOCKET, UPDATE_COMMENT_FROM_SOCKET
+    DELETE_COMMENT_FROM_SOCKET,
+    RESTORE_COMMENT_FROM_SOCKET,
+    UPDATE_COMMENT_FROM_SOCKET,
+    updateCommentActions,
+    deleteCommentActions, restoreCommentActions, getCommentsActions
 } from "./CommentsActions";
 import _ from "lodash"
 
@@ -18,12 +18,12 @@ const initialState = {
 export function comments(state = initialState, action) {
     switch (action.type) {
         case ADD_COMMENT_FROM_SOCKET:
-        case ADD_COMMENT_SUCCESS:
+        case addCommentActions.success:
             return {
                 comments: {...state.comments, [action.data.uuid]: action.data},
                 error: null
             };
-        case UPDATE_COMMENT_SUCCESS:
+        case updateCommentActions.success:
         case UPDATE_COMMENT_FROM_SOCKET:
             let result = state.comments[action.data.commentUUID];
             if (result) {
@@ -37,17 +37,17 @@ export function comments(state = initialState, action) {
             } else {
                 return state
             }
+        case deleteCommentActions.success:
         case DELETE_COMMENT_FROM_SOCKET:
-        case DELETE_COMMENT_SUCCESS:
             const newComments = _.omit(state.comments, action.data)
             return {comments: newComments, error: null}
+        case restoreCommentActions.success:
         case RESTORE_COMMENT_FROM_SOCKET:
-        case RESTORE_COMMENT_SUCCESS:
             return {
                 comments: {...state.comments, [action.data.uuid]: action.data},
                 error: null
             };
-        case GET_COMMENTS_SUCCESS:
+        case getCommentsActions.success:
             return {comments: action.data, error: null};
         case CLEAR_COMMENTS:
             return initialState;

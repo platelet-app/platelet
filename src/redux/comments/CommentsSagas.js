@@ -1,38 +1,23 @@
 import {call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {
-    ADD_COMMENT_REQUEST,
+    addCommentActions,
+    updateCommentActions,
     addCommentSuccess,
-    UPDATE_COMMENT_REQUEST,
     updateCommentSuccess,
-    GET_COMMENTS_REQUEST,
     getCommentsSuccess,
-    UPDATE_SIDEBAR_COMMENT_REQUEST,
-    updateSidebarCommentSuccess,
-    ADD_SIDEBAR_COMMENT_REQUEST,
-    addSidebarCommentSuccess,
-    GET_SIDEBAR_COMMENTS_REQUEST,
-    getSidebarCommentsSuccess,
-    commentsNotFound,
     getCommentsFailure,
     getCommentsForbidden,
-    addSidebarCommentFailure,
-    updateSidebarCommentFailure,
-    sidebarCommentsNotFound,
-    getSidebarCommentsForbidden,
-    getSidebarCommentsFailure,
     addCommentFailure,
     updateCommentFailure,
     deleteCommentSuccess,
-    DELETE_COMMENT_REQUEST,
     deleteCommentFailure,
     restoreCommentSuccess,
     restoreCommentFailure,
-    RESTORE_COMMENT_REQUEST,
-    deleteSidebarCommentSuccess,
-    deleteSidebarCommentFailure,
-    restoreSidebarCommentSuccess,
-    restoreSidebarCommentFailure,
-    RESTORE_SIDEBAR_COMMENT_REQUEST, DELETE_SIDEBAR_COMMENT_REQUEST, restoreCommentRequest, restoreSidebarCommentRequest
+    restoreCommentRequest,
+    getCommentsNotFound,
+    getCommentsActions,
+    deleteCommentActions,
+    restoreCommentActions
 } from "./CommentsActions"
 
 import {getApiControl} from "../Api";
@@ -51,7 +36,7 @@ export function* postNewComment(action) {
 }
 
 export function* watchPostNewComment() {
-    yield takeEvery(ADD_COMMENT_REQUEST, postNewComment)
+    yield takeEvery(addCommentActions.request, postNewComment)
 }
 
 export function* updateComment(action) {
@@ -65,7 +50,7 @@ export function* updateComment(action) {
 }
 
 export function* watchUpdateComment() {
-    yield takeEvery(UPDATE_COMMENT_REQUEST, updateComment)
+    yield takeEvery(updateCommentActions.request, updateComment)
 }
 
 export function* getComments(action) {
@@ -77,30 +62,18 @@ export function* getComments(action) {
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
-                yield put(commentsNotFound())
+                yield put(getCommentsNotFound())
             } else if (error.status_code === 403) {
                 yield put(getCommentsForbidden(error))
             }
         }
-
         yield put(getCommentsFailure(error))
 
     }
 }
 
 export function* watchGetComments() {
-    yield takeLatest(GET_COMMENTS_REQUEST, getComments)
-}
-
-export function* postNewSidebarComment(action) {
-    try {
-        const api = yield select(getApiControl);
-        const result = yield call([api, api.comments.createComment], action.data);
-        const comment = {...action.data, "uuid": result.uuid};
-        yield put(addSidebarCommentSuccess(comment))
-    } catch (error) {
-        yield put(addSidebarCommentFailure(error))
-    }
+    yield takeLatest(getCommentsActions.request, getComments)
 }
 
 
@@ -117,7 +90,7 @@ function* deleteComment(action) {
 }
 
 export function* watchDeleteComment() {
-    yield takeEvery(DELETE_COMMENT_REQUEST, deleteComment)
+    yield takeEvery(deleteCommentActions.request, deleteComment)
 }
 
 function* restoreComment(action) {
@@ -132,77 +105,5 @@ function* restoreComment(action) {
 }
 
 export function* watchRestoreComment() {
-    yield takeEvery(RESTORE_COMMENT_REQUEST, restoreComment)
-}
-
-export function* watchPostNewSidebarComment() {
-    yield takeEvery(ADD_SIDEBAR_COMMENT_REQUEST, postNewSidebarComment)
-}
-
-export function* updateSidebarComment(action) {
-    try {
-        const api = yield select(getApiControl);
-        yield call([api, api.comments.updateComment], action.data.commentUUID, action.data.payload);
-        yield put(updateSidebarCommentSuccess(action.data))
-    } catch (error) {
-        yield put(updateSidebarCommentFailure(error))
-    }
-}
-
-export function* watchUpdateSidebarComment() {
-    yield takeEvery(UPDATE_SIDEBAR_COMMENT_REQUEST, updateSidebarComment)
-}
-
-export function* getSidebarComments(action) {
-    try {
-        const api = yield select(getApiControl);
-        const result = yield call([api, api.comments.getComments], action.data);
-        yield put(getSidebarCommentsSuccess(result))
-    } catch (error) {
-        if (error.status_code) {
-            if (error.status_code === 404) {
-                yield put(sidebarCommentsNotFound())
-            } else if (error.status_code === 403) {
-                yield put(getSidebarCommentsForbidden(error))
-            } else {
-                yield put(getSidebarCommentsFailure(error))
-
-            }
-        }
-    }
-}
-
-export function* watchGetSidebarComments() {
-    yield takeLatest(GET_SIDEBAR_COMMENTS_REQUEST, getSidebarComments)
-}
-
-function* deleteSidebarComment(action) {
-    try {
-        const restoreActions = () => [restoreSidebarCommentRequest(action.data)];
-        const api = yield select(getApiControl);
-        yield call([api, api.comments.deleteComment], action.data);
-        yield put(deleteSidebarCommentSuccess(action.data))
-        yield put(displayInfoNotification("Comment deleted", restoreActions))
-    } catch (error) {
-        yield put(deleteSidebarCommentFailure(error));
-    }
-}
-
-export function* watchDeleteSidebarComment() {
-    yield takeEvery(DELETE_SIDEBAR_COMMENT_REQUEST, deleteSidebarComment)
-}
-
-function* restoreSidebarComment(action) {
-    try {
-        const api = yield select(getApiControl);
-        yield call([api, api.comments.restoreComment], action.data);
-        const result = yield call([api, api.comments.getComment], action.data);
-        yield put(restoreSidebarCommentSuccess(result))
-    } catch (error) {
-        yield put(restoreSidebarCommentFailure(error));
-    }
-}
-
-export function* watchRestoreSidebarComment() {
-    yield takeEvery(RESTORE_SIDEBAR_COMMENT_REQUEST, restoreSidebarComment)
+    yield takeEvery(restoreCommentActions.request, restoreComment)
 }
