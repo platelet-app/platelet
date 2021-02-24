@@ -27,8 +27,6 @@ import {DismissButton, showHide} from "./styles/common";
 import {Link} from "react-router-dom";
 import {MuiThemeProvider, createMuiTheme} from "@material-ui/core/styles";
 import {initialiseApp} from "./redux/initialise/initialiseActions";
-import {MuiPickersUtilsProvider} from "@material-ui/pickers";
-import {getDarkModePreference} from "./redux/redux_utilities";
 
 
 const useStyles = makeStyles(theme => ({
