@@ -1,17 +1,5 @@
-export const GET_AVAILABLE_PATCHES_REQUEST = 'GET_AVAILABLE_PATCHES_REQUEST';
-export const GET_AVAILABLE_PATCHES_SUCCESS = 'GET_AVAILABLE_PATCHES_SUCCESS';
-export const GET_AVAILABLE_PATCHES_FAILURE = 'GET_AVAILABLE_PATCHES_FAILURE';
+import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
 
-export function getAvailablePatchesRequest() {
-    return { type: GET_AVAILABLE_PATCHES_REQUEST }
-}
-
-export function getAvailablePatchesFailure(error) {
-    return { type: GET_AVAILABLE_PATCHES_FAILURE, error }
-}
-
-export function getAvailablePatchesSuccess(data) {
-    return { type: GET_AVAILABLE_PATCHES_SUCCESS, data }
-}
-
-
+export const getAvailablePatchesPrefix = "GET_AVAILABLE_PATCHES";
+export const getAvailablePatchesActions = createRequestActions(getAvailablePatchesPrefix);
+export const {getAvailablePatchesRequest, getAvailablePatchesSuccess, getAvailablePatchesFailure} = createRequestFunctions(getAvailablePatchesActions);

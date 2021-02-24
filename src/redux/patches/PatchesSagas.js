@@ -1,6 +1,6 @@
 import {call, put, takeLatest, select} from 'redux-saga/effects'
 import {
-    GET_AVAILABLE_PATCHES_REQUEST,
+    getAvailablePatchesActions,
     getAvailablePatchesSuccess,
 } from "./PatchesActions"
 
@@ -18,5 +18,5 @@ export function* getAvailablePatches() {
 }
 
 export function* watchGetAvailablePatches() {
-    yield takeLatest(GET_AVAILABLE_PATCHES_REQUEST, getAvailablePatches)
+    yield takeLatest(getAvailablePatchesActions.request, getAvailablePatches)
 }
