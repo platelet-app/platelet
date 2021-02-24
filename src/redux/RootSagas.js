@@ -88,7 +88,7 @@ import {
     watchAppendTasksDelivered,
     watchAppendTasksRejected
 } from "./tasks/TaskWaypointSagas";
-import {watchInitialiseApp} from "./initialise/initialiseSagas";
+import {watchInitialiseApp, watchInitialWhoamiCompleted} from "./initialise/initialiseSagas";
 import authenticationMonitor from "./login/AuthenticationMonitor";
 import updateActiveTaskMonitor from "./activeTask/ActiveTaskMonitors"
 import {watchGetTask} from "./activeTask/ActiveTaskSagas"
@@ -172,6 +172,7 @@ export default function* rootSaga() {
         call(watchAppendTasksRejected),
         call(watchAppendTasksDelivered),
         call(watchInitialiseApp),
+        call(watchInitialWhoamiCompleted),
         call(authenticationMonitor),
         call(watchRefreshToken),
         call(watchSetTaskPickupDestination),

@@ -1,4 +1,4 @@
-import {call, put, takeLatest, all, take, select} from "redux-saga/effects";
+import {call, put, takeLatest, all, take, select, delay} from "redux-saga/effects";
 import {INITIALISE_APP} from "./initialiseActions";
 import moment from "moment-timezone";
 import {logoutUser} from "../login/LoginActions";
@@ -49,8 +49,16 @@ import {getApiURL, getDashboardRoleMode} from "../../utilities";
 // useEffect(getStaticData, [confirmLogin]);
 
 function* initialiseApp() {
+    yield put(getWhoamiRequest())
+
+}
+
+export function* watchInitialiseApp() {
+    yield takeLatest(INITIALISE_APP, initialiseApp);
+}
+
+function* getStaticData() {
     yield all([
-        put(getWhoamiRequest()),
         put(connectSocket()),
         put(connectCommentsSocket()),
         put(connectAssignmentsSocket()),
@@ -60,9 +68,9 @@ function* initialiseApp() {
         put(getUsersRequest()),
         put(getAvailablePatchesRequest()),
     ])
-
 }
 
-export function* watchInitialiseApp() {
-    yield takeLatest(INITIALISE_APP, initialiseApp)
+export function* watchInitialWhoamiCompleted() {
+    yield takeLatest(GET_WHOAMI_SUCCESS, getStaticData);
 }
+
