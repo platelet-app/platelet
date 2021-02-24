@@ -1,8 +1,10 @@
-export function createRequestActions(name) {
+export function createRequestActions(prefix) {
     return {
-        request: `${name}_REQUEST`.toUpperCase(),
-        success: `${name}_SUCCESS`.toUpperCase(),
-        failure: `${name}_FAILURE`.toUpperCase(),
+        request: `${prefix}_REQUEST`.toUpperCase(),
+        success: `${prefix}_SUCCESS`.toUpperCase(),
+        failure: `${prefix}_FAILURE`.toUpperCase(),
+        notFound: `${prefix}_NOT_FOUND`.toUpperCase(),
+        forbidden: `${prefix}_FORBIDDEN`.toUpperCase(),
     }
 }
 
@@ -28,7 +30,7 @@ export function createRequestFunctions(actions) {
             result[newKey] = (data) => {
                 return {type: value, data}
             }
-        } else if (key === "failure") {
+        } else if (["failure", "notFound", "forbidden"].includes(key)) {
             const newKey = `${toCamel(lowered)}`
             result[newKey] = (error) => {
                 return {type: value, error}
