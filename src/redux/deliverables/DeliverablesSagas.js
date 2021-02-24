@@ -1,17 +1,20 @@
 import {call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {
-    ADD_DELIVERABLE_REQUEST,
     addDeliverableSuccess,
-    UPDATE_DELIVERABLE_REQUEST,
     updateDeliverableSuccess,
-    GET_DELIVERABLES_REQUEST,
     getDeliverablesSuccess,
-    GET_AVAILABLE_DELIVERABLES_REQUEST,
     getAvailableDeliverablesSuccess,
     addDeliverableFailure,
     updateDeliverableFailure,
     getDeliverablesFailure,
-    getAvailableDeliverablesFailure, deleteDeliverableSuccess, deleteDeliverableFailure, DELETE_DELIVERABLE_REQUEST
+    getAvailableDeliverablesFailure,
+    deleteDeliverableSuccess,
+    deleteDeliverableFailure,
+    addDeliverableActions,
+    deleteDeliverableActions,
+    updateDeliverableActions,
+    getDeliverablesActions,
+    getAvailableDeliverablesActions
 } from "./DeliverablesActions"
 
 import {getApiControl} from "../Api";
@@ -29,7 +32,7 @@ export function* postNewDeliverable(action) {
 }
 
 export function* watchPostNewDeliverable() {
-    yield takeEvery(ADD_DELIVERABLE_REQUEST, postNewDeliverable)
+    yield takeEvery(addDeliverableActions.request, postNewDeliverable)
 }
 
 export function* deleteDeliverable(action) {
@@ -43,7 +46,7 @@ export function* deleteDeliverable(action) {
 }
 
 export function* watchDeleteDeliverable() {
-    yield takeEvery(DELETE_DELIVERABLE_REQUEST, deleteDeliverable)
+    yield takeEvery(deleteDeliverableActions.request, deleteDeliverable)
 }
 
 export function* updateDeliverable(action) {
@@ -57,7 +60,7 @@ export function* updateDeliverable(action) {
 }
 
 export function* watchUpdateDeliverable() {
-    yield takeEvery(UPDATE_DELIVERABLE_REQUEST, updateDeliverable)
+    yield takeEvery(updateDeliverableActions.request, updateDeliverable)
 }
 
 export function* getDeliverables(action) {
@@ -72,7 +75,7 @@ export function* getDeliverables(action) {
 }
 
 export function* watchGetDeliverables() {
-    yield takeLatest(GET_DELIVERABLES_REQUEST, getDeliverables)
+    yield takeLatest(getDeliverablesActions.request, getDeliverables)
 }
 
 export function* getAvailableDeliverables() {
@@ -86,5 +89,5 @@ export function* getAvailableDeliverables() {
 }
 
 export function* watchGetAvailableDeliverables() {
-    yield takeLatest(GET_AVAILABLE_DELIVERABLES_REQUEST, getAvailableDeliverables)
+    yield takeLatest(getAvailableDeliverablesActions.request, getAvailableDeliverables)
 }

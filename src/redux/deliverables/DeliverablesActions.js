@@ -1,75 +1,42 @@
-export const ADD_DELIVERABLE_REQUEST = 'ADD_DELIVERABLE_REQUEST';
-export const ADD_DELIVERABLE_SUCCESS = 'ADD_DELIVERABLE_SUCCESS';
-export const ADD_DELIVERABLE_FAILURE = 'ADD_DELIVERABLE_FAILURE';
-export const DELETE_DELIVERABLE_REQUEST = 'DELETE_DELIVERABLE_REQUEST';
-export const DELETE_DELIVERABLE_SUCCESS = 'DELETE_DELIVERABLE_SUCCESS';
-export const DELETE_DELIVERABLE_FAILURE = 'DELETE_DELIVERABLE_FAILURE';
-export const UPDATE_DELIVERABLE_REQUEST = 'UPDATE_DELIVERABLE_REQUEST';
-export const UPDATE_DELIVERABLE_SUCCESS = 'UPDATE_DELIVERABLE_SUCCESS';
-export const UPDATE_DELIVERABLE_FAILURE = 'UPDATE_DELIVERABLE_FAILURE';
-export const GET_DELIVERABLES_REQUEST = 'GET_DELIVERABLES_REQUEST';
-export const GET_DELIVERABLES_SUCCESS = 'GET_DELIVERABLES_SUCCESS';
-export const GET_DELIVERABLES_FAILURE = 'GET_DELIVERABLES_FAILURE';
-export const GET_AVAILABLE_DELIVERABLES_REQUEST = 'GET_AVAILABLE_DELIVERABLES_REQUEST';
-export const GET_AVAILABLE_DELIVERABLES_SUCCESS = 'GET_AVAILABLE_DELIVERABLES_SUCCESS';
-export const GET_AVAILABLE_DELIVERABLES_FAILURE = 'GET_AVAILABLE_DELIVERABLES_FAILURE';
+import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
+
+export const addDeliverablePrefix = "ADD_DELIVERABLE";
+export const addDeliverableActions = createRequestActions(addDeliverablePrefix);
+export const {addDeliverableSuccess, addDeliverableFailure, addDeliverableForbidden, addDeliverableNotFound} = createRequestFunctions(addDeliverableActions);
+
+export const deleteDeliverablePrefix = "DELETE_DELIVERABLE";
+export const deleteDeliverableActions = createRequestActions(deleteDeliverablePrefix);
+export const {deleteDeliverableSuccess, deleteDeliverableFailure, deleteDeliverableForbidden, deleteDeliverableNotFound} = createRequestFunctions(deleteDeliverableActions);
+
+export const updateDeliverablePrefix = "UPDATE_DELIVERABLE";
+export const updateDeliverableActions = createRequestActions(updateDeliverablePrefix);
+export const {updateDeliverableSuccess, updateDeliverableFailure, updateDeliverableForbidden, updateDeliverableNotFound} = createRequestFunctions(updateDeliverableActions)
+
+export const getDeliverablesPrefix = "GET_DELIVERABLES";
+export const getDeliverablesActions = createRequestActions(getDeliverablesPrefix);
+export const {getDeliverablesSuccess, getDeliverablesFailure, getDeliverablesForbidden, getDeliverablesNotFound} = createRequestFunctions(getDeliverablesActions)
+
+export const getAvailableDeliverablesPrefix = "GET_AVAILABLE_DELIVERABLES";
+export const getAvailableDeliverablesActions = createRequestActions(getAvailableDeliverablesPrefix);
+export const {getAvailableDeliverablesSuccess, getAvailableDeliverablesFailure, getAvailableDeliverablesForbidden} = createRequestFunctions(getAvailableDeliverablesActions)
 
 export function addDeliverableRequest(data) {
-    return { type: ADD_DELIVERABLE_REQUEST, data }
-}
-
-export function addDeliverableSuccess(data) {
-    return { type: ADD_DELIVERABLE_SUCCESS, data }
-}
-
-export function addDeliverableFailure(error) {
-    return { type: ADD_DELIVERABLE_FAILURE, error }
+    return { type: addDeliverableActions.request, data }
 }
 
 export function deleteDeliverableRequest(data) {
-    return { type: DELETE_DELIVERABLE_REQUEST, data }
-}
-
-export function deleteDeliverableSuccess(data) {
-    return { type: DELETE_DELIVERABLE_SUCCESS, data }
-}
-
-export function deleteDeliverableFailure(error) {
-    return { type: DELETE_DELIVERABLE_FAILURE, error }
+    return { type: deleteDeliverableActions.request, data }
 }
 
 export function getDeliverablesRequest(data) {
-    return { type: GET_DELIVERABLES_REQUEST, data }
-}
-
-export function getDeliverablesSuccess(data) {
-    return { type: GET_DELIVERABLES_SUCCESS, data }
-}
-
-export function getDeliverablesFailure(error) {
-    return { type: GET_DELIVERABLES_FAILURE, error }
+    return { type: getDeliverablesActions.request, data }
 }
 
 export function updateDeliverableRequest(data) {
-    return { type: UPDATE_DELIVERABLE_REQUEST, data }
-}
-
-export function updateDeliverableSuccess(data) {
-    return { type: UPDATE_DELIVERABLE_SUCCESS, data }
-}
-
-export function updateDeliverableFailure(error) {
-    return { type: UPDATE_DELIVERABLE_FAILURE, error }
+    return { type: updateDeliverableActions.request, data }
 }
 
 export function getAvailableDeliverablesRequest() {
-    return { type: GET_AVAILABLE_DELIVERABLES_REQUEST }
+    return { type: getAvailableDeliverablesActions.request }
 }
 
-export function getAvailableDeliverablesSuccess(data) {
-    return { type: GET_AVAILABLE_DELIVERABLES_SUCCESS, data }
-}
-
-export function getAvailableDeliverablesFailure(error) {
-    return { type: GET_AVAILABLE_DELIVERABLES_FAILURE, error }
-}
