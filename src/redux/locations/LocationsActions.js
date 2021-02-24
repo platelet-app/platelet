@@ -1,74 +1,33 @@
-export const GET_AVAILABLE_LOCATIONS_REQUEST = 'GET_AVAILABLE_LOCATIONS_REQUEST';
-export const GET_AVAILABLE_LOCATIONS_SUCCESS = 'GET_AVAILABLE_LOCATIONS_SUCCESS';
-export const GET_AVAILABLE_LOCATIONS_FAILURE = 'GET_AVAILABLE_LOCATIONS_FAILURE';
+import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
+
+export const getAvailableLocationsPrefix = "GET_AVAILABLE_LOCATIONS";
+export const getAvailableLocationsActions = createRequestActions(getAvailableLocationsPrefix);
+export const {getAvailableLocationsSuccess, getAvailableLocationsFailure, getAvailableLocationsForbidden} = createRequestFunctions(getAvailableLocationsActions);
 
 export function getAvailableLocationsRequest() {
-    return { type: GET_AVAILABLE_LOCATIONS_REQUEST }
+    return { type: getAvailableLocationsActions.request }
 }
 
-export function getAvailableLocationsSuccess(data) {
-    return { type: GET_AVAILABLE_LOCATIONS_SUCCESS, data }
+export const getLocationPrefix = "GET_LOCATION";
+export const getLocationActions = createRequestActions(getLocationPrefix);
+export const {getLocationSuccess, getLocationFailure, getLocationForbidden, getLocationNotFound} = createRequestFunctions(getLocationActions);
+
+export function getLocationRequest(locationUUID) {
+    return { type: getLocationActions.request, data: {locationUUID} }
 }
 
-export function getAvailableLocationsFailure(error) {
-    return { type: GET_AVAILABLE_LOCATIONS_FAILURE, error }
-}
-
-export const GET_LOCATION_REQUEST = 'GET_LOCATION_REQUEST';
-export const GET_LOCATION_SUCCESS = 'GET_LOCATION_SUCCESS';
-export const GET_LOCATION_FAILURE = 'GET_LOCATION_FAILURE';
-export const GET_LOCATION_NOTFOUND = 'GET_LOCATION_NOTFOUND';
-
-export function getLocationRequest(data) {
-    return { type: GET_LOCATION_REQUEST, data }
-}
-
-export function getLocationSuccess(data) {
-    return { type: GET_LOCATION_SUCCESS, data }
-}
-
-export function getLocationFailure(error) {
-    return { type: GET_LOCATION_FAILURE, error }
-}
-
-export function getLocationNotFound(error) {
-    return { type: GET_LOCATION_NOTFOUND, error }
-}
-
-export const UPDATE_LOCATION_REQUEST = 'UPDATE_LOCATION_REQUEST';
-export const UPDATE_LOCATION_SUCCESS = 'UPDATE_LOCATION_SUCCESS';
-export const UPDATE_LOCATION_FAILURE = 'UPDATE_LOCATION_FAILURE';
-export const UPDATE_LOCATION_NOTFOUND = 'UPDATE_LOCATION_NOTFOUND';
+export const updateLocationPrefix = "UPDATE_LOCATION";
+export const updateLocationActions = createRequestActions(updateLocationPrefix);
+export const {updateLocationSuccess, updateLocationFailure, updateLocationForbidden, updateLocationNotFound} = createRequestFunctions(updateLocationActions);
 
 export function updateLocationRequest(locationUUID, payload) {
-    return { type: UPDATE_LOCATION_REQUEST, data: {locationUUID, payload} }
+    return { type: updateLocationActions.request, data: {locationUUID, payload} }
 }
 
-export function updateLocationSuccess(data) {
-    return { type: UPDATE_LOCATION_SUCCESS, data }
+export const addLocationPrefix = "ADD_LOCATION";
+export const addLocationActions = createRequestActions(addLocationPrefix);
+export const {addLocationSuccess, addLocationFailure, addLocationForbidden} = createRequestFunctions(addLocationActions);
+
+export function addLocationRequest(payload) {
+    return { type: addLocationActions.request, data: {payload} }
 }
-
-export function updateLocationFailure(error) {
-    return { type: UPDATE_LOCATION_FAILURE, error }
-}
-
-export function updateLocationNotFound(error) {
-    return { type: UPDATE_LOCATION_NOTFOUND, error }
-}
-
-export const ADD_LOCATION_REQUEST = 'ADD_LOCATION_REQUEST';
-export const ADD_LOCATION_SUCCESS = 'ADD_LOCATION_SUCCESS';
-export const ADD_LOCATION_FAILURE = 'ADD_LOCATION_FAILURE';
-
-export function addLocationRequest(data) {
-    return { type: ADD_LOCATION_REQUEST, data }
-}
-
-export function addLocationSuccess(data) {
-    return { type: ADD_LOCATION_SUCCESS, data }
-}
-
-export function addLocationFailure(error) {
-    return { type: ADD_LOCATION_FAILURE, error }
-}
-

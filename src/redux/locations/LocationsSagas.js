@@ -1,13 +1,14 @@
-import { throttle, call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
+import { call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
 import {
-    ADD_LOCATION_REQUEST, addLocationFailure, addLocationSuccess,
-    GET_AVAILABLE_LOCATIONS_REQUEST,
-    GET_LOCATION_REQUEST,
+    addLocationActions,
+    addLocationFailure,
+    addLocationSuccess, getAvailableLocationsActions,
     getAvailableLocationsFailure,
-    getAvailableLocationsSuccess,
+    getAvailableLocationsSuccess, getLocationActions,
     getLocationFailure,
     getLocationNotFound,
-    getLocationSuccess, UPDATE_LOCATION_REQUEST, updateLocationFailure,
+    getLocationSuccess, updateLocationActions,
+    updateLocationFailure,
     updateLocationNotFound,
     updateLocationSuccess,
 } from "./LocationsActions"
@@ -26,13 +27,13 @@ function* getAvailableLocations() {
 }
 
 export function* watchGetAvailableLocations() {
-    yield takeLatest(GET_AVAILABLE_LOCATIONS_REQUEST, getAvailableLocations)
+    yield takeLatest(getAvailableLocationsActions.request, getAvailableLocations)
 }
 
 function* getLocation(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.locations.getLocation], action.data);
+        const result = yield call([api, api.locations.getLocation], action.data.locationUUID);
         yield put(getLocationSuccess(result))
     } catch(error) {
         if (error.status_code) {
@@ -45,7 +46,7 @@ function* getLocation(action) {
 }
 
 export function* watchGetLocation() {
-    yield takeLatest(GET_LOCATION_REQUEST, getLocation)
+    yield takeLatest(getLocationActions.request, getLocation)
 }
 
 export function* updateLocation(action) {
@@ -64,13 +65,13 @@ export function* updateLocation(action) {
 }
 
 export function* watchUpdateLocation() {
-    yield takeEvery(UPDATE_LOCATION_REQUEST, updateLocation)
+    yield takeEvery(updateLocationActions.request, updateLocation)
 }
 
 function* addNewLocation(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.locations.createLocation], action.data);
+        const result = yield call([api, api.locations.createLocation], action.data.payload);
         yield put(addLocationSuccess(result))
     } catch (error) {
         yield put(addLocationFailure(error))
@@ -78,5 +79,5 @@ function* addNewLocation(action) {
 }
 
 export function* watchAddNewLocation() {
-    yield takeEvery(ADD_LOCATION_REQUEST, addNewLocation)
+    yield takeEvery(addLocationActions.request, addNewLocation)
 }
