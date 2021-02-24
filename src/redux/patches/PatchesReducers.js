@@ -10,4 +10,3 @@ export function availablePatches(state = initialState, action) {
             return state
     }
 }
-

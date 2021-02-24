@@ -1,16 +1,5 @@
-export const GET_AVAILABLE_PRIORITIES_REQUEST = 'GET_AVAILABLE_PRIORITIES_REQUEST';
-export const GET_AVAILABLE_PRIORITIES_SUCCESS = 'GET_AVAILABLE_PRIORITIES_SUCCESS';
-export const GET_AVAILABLE_PRIORITIES_FAILURE = 'GET_AVAILABLE_PRIORITIES_FAILURE';
+import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
 
-export function getAvailablePrioritiesRequest() {
-    return { type: GET_AVAILABLE_PRIORITIES_REQUEST }
-}
-
-export function getAvailablePrioritiesFailure(error) {
-    return { type: GET_AVAILABLE_PRIORITIES_FAILURE, error }
-}
-
-export function getAvailablePrioritiesSuccess(data) {
-    return { type: GET_AVAILABLE_PRIORITIES_SUCCESS, data }
-}
-
+export const getAvailablePrioritiesPrefix = "GET_AVAILABLE_PRIORITIES";
+export const getAvailablePrioritiesActions = createRequestActions(getAvailablePrioritiesPrefix);
+export const {getAvailablePrioritiesRequest, getAvailablePrioritiesSuccess, getAvailablePrioritiesFailure} = createRequestFunctions(getAvailablePrioritiesActions);

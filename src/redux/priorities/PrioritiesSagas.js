@@ -1,6 +1,7 @@
 import { call, put, takeLatest, select} from 'redux-saga/effects'
 import {
-    GET_AVAILABLE_PRIORITIES_REQUEST, getAvailablePrioritiesFailure,
+    getAvailablePrioritiesActions,
+    getAvailablePrioritiesFailure,
     getAvailablePrioritiesSuccess,
 } from "./PrioritiesActions"
 
@@ -17,5 +18,5 @@ export function* getAvailablePriorities() {
 }
 
 export function* watchGetAvailablePriorities() {
-    yield takeLatest(GET_AVAILABLE_PRIORITIES_REQUEST, getAvailablePriorities)
+    yield takeLatest(getAvailablePrioritiesActions.request, getAvailablePriorities)
 }
