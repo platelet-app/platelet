@@ -76,9 +76,8 @@ export default function CommentCard(props) {
                     <Grid container direction={"row"} justify={"space-between"}>
                         <Grid item>
                             <Button disabled={commentContents.length === 0 || isPosting} onClick={() => {
-                                dispatch(addCommentRequest({
+                                dispatch(addCommentRequest(props.parentUUID, {
                                     author: props.author,
-                                    parent_uuid: props.parentUUID,
                                     publicly_visible: publicComment,
                                     body: commentContents
                                 }));

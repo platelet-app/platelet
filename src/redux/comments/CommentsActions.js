@@ -26,32 +26,32 @@ export const {getCommentsSuccess, getCommentsFailure, getCommentsNotFound, getCo
 
 export const CLEAR_COMMENTS = "CLEAR_COMMENTS";
 
-export function addCommentRequest(data) {
-    return { type: addCommentActions.request, data }
+export function addCommentRequest(parentUUID, payload) {
+    return { type: addCommentActions.request, data: {payload: {parent_uuid: parentUUID, ...payload }} }
 }
 
 export function addCommentFromSocket(data) {
     return { type: ADD_COMMENT_FROM_SOCKET, data }
 }
 
-export function restoreCommentRequest(data) {
-    return { type: restoreCommentActions.request, data }
+export function restoreCommentRequest(commentUUID) {
+    return { type: restoreCommentActions.request, data: {commentUUID} }
 }
 
 export function restoreCommentFromSocket(data) {
     return { type: RESTORE_COMMENT_FROM_SOCKET, data }
 }
 
-export function updateCommentRequest(data) {
-    return { type: updateCommentActions.request, data }
+export function updateCommentRequest(commentUUID, payload) {
+    return { type: updateCommentActions.request, data: {commentUUID, payload} }
 }
 
 export function updateCommentFromSocket(data) {
     return { type: UPDATE_COMMENT_FROM_SOCKET, data }
 }
 
-export function deleteCommentRequest(data) {
-    return { type: deleteCommentActions.request, data }
+export function deleteCommentRequest(commentUUID) {
+    return { type: deleteCommentActions.request, data: {commentUUID}}
 }
 
 export function deleteCommentFromSocket(data) {

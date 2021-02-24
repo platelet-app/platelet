@@ -20,7 +20,7 @@ const TextFieldSaveButtons = props => {
             <SaveCancelButtons
                 onCancel={props.onReset}
                 disabled={props.isPosting || !!!body}
-                onSave={() => dispatch(updateCommentRequest({commentUUID: props.uuid, payload: {body}}))}
+                onSave={() => dispatch(updateCommentRequest(props.uuid, {body}))}
             />
         </React.Fragment>
     )

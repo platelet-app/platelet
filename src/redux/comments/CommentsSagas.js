@@ -1,4 +1,5 @@
 import {call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
+import _ from "lodash"
 import {
     addCommentActions,
     updateCommentActions,
@@ -27,8 +28,8 @@ import {convertListDataToObjects} from "../redux_utilities";
 export function* postNewComment(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.comments.createComment], action.data);
-        const comment = {...action.data, "uuid": result.uuid};
+        const result = yield call([api, api.comments.createComment], _.omit(action.data.payload, "author"));
+        const comment = {...action.data.payload, "uuid": result.uuid};
         yield put(addCommentSuccess(comment))
     } catch (error) {
         yield put(addCommentFailure(error))
@@ -79,10 +80,10 @@ export function* watchGetComments() {
 
 function* deleteComment(action) {
     try {
-        const restoreActions = () => [restoreCommentRequest(action.data)];
+        const restoreActions = () => [restoreCommentRequest(action.data.commentUUID)];
         const api = yield select(getApiControl);
-        yield call([api, api.comments.deleteComment], action.data);
-        yield put(deleteCommentSuccess(action.data))
+        yield call([api, api.comments.deleteComment], action.data.commentUUID);
+        yield put(deleteCommentSuccess(action.data.commentUUID))
         yield put(displayInfoNotification("Comment deleted", restoreActions))
     } catch (error) {
         yield put(deleteCommentFailure(error));
@@ -96,8 +97,8 @@ export function* watchDeleteComment() {
 function* restoreComment(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.comments.restoreComment], action.data);
-        const result = yield call([api, api.comments.getComment], action.data);
+        yield call([api, api.comments.restoreComment], action.data.commentUUID);
+        const result = yield call([api, api.comments.getComment], action.data.commentUUID);
         yield put(restoreCommentSuccess(result))
     } catch (error) {
         yield put(restoreCommentFailure(error));
