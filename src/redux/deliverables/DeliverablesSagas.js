@@ -23,8 +23,8 @@ import {convertListDataToObjects} from "../redux_utilities";
 export function* postNewDeliverable(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.deliverables.createDeliverable], action.data);
-        const deliverable = {...action.data, "uuid": result.uuid};
+        const result = yield call([api, api.deliverables.createDeliverable], action.data.payload);
+        const deliverable = {...action.data.payload, "uuid": result.uuid};
         yield put(addDeliverableSuccess(deliverable))
     } catch (error) {
         yield put(addDeliverableFailure(error))
@@ -38,8 +38,8 @@ export function* watchPostNewDeliverable() {
 export function* deleteDeliverable(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.deliverables.deleteDeliverable], action.data);
-        yield put(deleteDeliverableSuccess(action.data))
+        yield call([api, api.deliverables.deleteDeliverable], action.data.deliverableUUID);
+        yield put(deleteDeliverableSuccess(action.data.deliverableUUID))
     } catch (error) {
         yield put(deleteDeliverableFailure(error))
     }
@@ -66,7 +66,7 @@ export function* watchUpdateDeliverable() {
 export function* getDeliverables(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.deliverables.getDeliverables], action.data);
+        const result = yield call([api, api.deliverables.getDeliverables], action.data.parentUUID);
         const converted = yield convertListDataToObjects(result);
         yield put(getDeliverablesSuccess(converted))
     } catch (error) {
