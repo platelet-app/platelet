@@ -4,9 +4,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {
     addTaskRelayRequest,
     deleteTaskRequest,
-    updateTaskTimeCancelledRequest, updateTaskDropoffAddressRequest,
+    updateTaskDropoffAddressRequest,
     updateTaskDropoffTimeRequest,
-    updateTaskPickupTimeRequest, updateTaskRejectedTimeRequest
+    updateTaskPickupTimeRequest, updateTaskRejectedTimeRequest, updateTaskCancelledTimeRequest
 } from "../../redux/tasks/TasksActions";
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -68,7 +68,7 @@ export default function TaskContextMenu(props) {
     function onSelectCancelled() {
         handleClose();
         const payload = {time_cancelled: new Date().toISOString()};
-        dispatch(updateTaskTimeCancelledRequest(props.taskUUID, payload ));
+        dispatch(updateTaskCancelledTimeRequest(props.taskUUID, payload ));
     }
 
     function onSelectRejected() {

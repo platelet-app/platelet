@@ -1,5 +1,5 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
-import {getApiControl, getUsersSelector} from "../Api";
+import {getApiControl, getTasksSelector, getUsersSelector} from "../Api";
 import {
     addTaskAssignedCoordinatorActions,
     removeTaskAssignedRiderActions,
@@ -17,10 +17,7 @@ import {
     removeTaskAssignedRiderSuccess, getTaskAssignedRidersActions
 } from "./TaskAssigneesActions";
 import {
-    updateTaskAssignedRiderSuccess,
-    updateTaskPatchRequest, updateTaskPatchFromServer,
-    updateTaskRemoveAssignedRiderSuccess,
-    updateTaskAssignedCoordinatorSuccess, updateTaskRemoveAssignedCoordinatorSuccess
+    updateTaskPatchRequest
 } from "../tasks/TasksActions";
 import {findExistingTask} from "../../utilities";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
@@ -46,8 +43,8 @@ function* addTaskAssignedRider(action) {
             const newData = {...action.data, payload: {...action.data.payload, rider: users[action.data.payload.user_uuid]}}
             yield call([api, api.tasks.addTaskAssignedRider], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
             yield put(addTaskAssignedRiderSuccess(newData))
-            yield put(updateTaskAssignedRiderSuccess(newData))
-            yield put(updateTaskPatchFromServer(action.data.taskUUID))
+            const user = users[action.data.payload.user_uuid]
+            yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: user.patch_id, patch: user.patch}))
         }
     } catch (error) {
         yield put(addTaskAssignedRiderFailure(error))
@@ -64,8 +61,14 @@ function* updateTaskRemoveRider(action) {
         if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.removeTaskAssignedRider], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
             yield put(removeTaskAssignedRiderSuccess(action.data));
-            yield put(updateTaskRemoveAssignedRiderSuccess(action.data));
-            yield put(updateTaskPatchFromServer(action.data.taskUUID))
+            const tasks = yield select(getTasksSelector);
+            const task = findExistingTask(tasks, action.data.taskUUID)
+            if (task && task.assigned_riders && task.assigned_riders.length > 0) {
+                const finalUser = task.assigned_riders[task.assigned_riders.length - 1];
+                yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: finalUser.patch_id, patch: finalUser.patch}))
+            } else if (task) {
+                yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: null, patch: null}))
+            }
         }
     } catch (error) {
         yield put(removeTaskAssignedRiderFailure(error));
@@ -83,7 +86,6 @@ function* addTaskAssignedCoordinator(action) {
         if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.addTaskAssignedCoordinator], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
             yield put(addTaskAssignedCoordinatorSuccess({...action.data, payload: {...action.data.payload, user: users[action.data.payload.user_uuid]}}))
-            yield put(updateTaskAssignedCoordinatorSuccess({...action.data, payload: {...action.data.payload, user: users[action.data.payload.user_uuid]}}))
         }
     } catch (error) {
         yield put(addTaskAssignedCoordinatorFailure(error))
@@ -100,7 +102,6 @@ function* updateTaskRemoveCoordinator(action) {
         if (action.data.payload.user_uuid) {
             yield call([api, api.tasks.removeTaskAssignedCoordinator], action.data.taskUUID, {user_uuid: action.data.payload.user_uuid});
             yield put(removeTaskAssignedCoordinatorSuccess(action.data));
-            yield put(updateTaskRemoveAssignedCoordinatorSuccess(action.data));
         }
     } catch (error) {
         yield put(removeTaskAssignedCoordinatorFailure(error));

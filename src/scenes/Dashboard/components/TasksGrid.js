@@ -13,7 +13,6 @@ import Button from "@material-ui/core/Button";
 import {Waypoint} from "react-waypoint";
 import {
     addTaskRelayRequest, addTaskRequest,
-    updateTaskDropoffAddressRequest
 } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
@@ -327,11 +326,6 @@ function TasksGrid(props) {
 
     const addRelay = React.useCallback((data) => {
         dispatch(addTaskRelayRequest(data));
-        dispatch(updateTaskDropoffAddressRequest(
-            data.relay_previous_uuid,
-            {dropoff_address: null}
-        ));
-
     }, [])
 
 

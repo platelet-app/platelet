@@ -4,10 +4,10 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import Grid from "@material-ui/core/Grid";
 import PrioritySelect from "./PrioritySelect";
 import {
+    updateTaskCancelledTimePrefix,
+    updateTaskCancelledTimeRequest,
     updateTaskPriorityRequest, updateTaskRejectedTimeRequest,
     updateTaskRequesterContactRequest,
-    updateTaskTimeCancelledPrefix,
-    updateTaskTimeCancelledRequest,
     updateTaskTimeOfCallPrefix,
     updateTaskTimeOfCallRequest
 } from "../../../redux/tasks/TasksActions";
@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 })
 
 const tocPostingSelector = createPostingSelector([updateTaskTimeOfCallPrefix]);
-const cancelledPostingSelector = createPostingSelector([updateTaskTimeCancelledPrefix]);
+const cancelledPostingSelector = createPostingSelector([updateTaskCancelledTimePrefix]);
 const rejectedPostingSelector = createPostingSelector(["UPDATE_TASK_TIME_REJECTED"]);
 
 function TaskDetailsPanel(props) {
@@ -78,7 +78,7 @@ function TaskDetailsPanel(props) {
 
     function onChangeTimeCancelled(value) {
         if (value || value === null)
-            dispatch(updateTaskTimeCancelledRequest(task.uuid, {time_cancelled: value}))
+            dispatch(updateTaskCancelledTimeRequest(task.uuid, {time_cancelled: value}))
     }
 
     function onChangeTimeRejected(value) {

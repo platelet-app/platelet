@@ -13,9 +13,6 @@ import {
     updateTaskRejectedTimeRequest,
     updateTaskDropoffTimeRequest,
     updateTaskPickupTimeRequest,
-    UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST,
-    UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST,
-    ADD_TASK_RELAY_REQUEST,
     addTaskRelaySuccess,
     addTaskRelayFailure,
     resetGroupRelayUUIDs,
@@ -26,55 +23,42 @@ import {
     updateTaskTimeOfCallFailure,
     updateTaskTimeOfCallSuccess,
     updateTaskTimeOfCallActions,
-    updateTaskTimeCancelledActions,
-    updateTaskTimeCancelledSuccess, updateTaskTimeCancelledFailure, updateTaskTimeCancelledRequest,
+    updateTaskCancelledTimeRequest,
+    addTaskActions,
+    addTaskRelayActions,
+    deleteTaskActions,
+    restoreTaskActions,
+    updateTaskCancelledTimeSuccess,
+    updateTaskCancelledTimeFailure,
+    updateTaskActions,
+    getTasksActions,
+    getTasksSuccess,
+    getTasksNotFound,
+    getTasksFailure,
+    updateTaskRequesterContactActions,
+    updateTaskPickupTimeActions,
+    updateTaskDropoffTimeActions,
+    updateTaskPriorityActions,
+    updateTaskPatchActions,
+    updateTaskCancelledTimeActions,
+    updateTaskRejectedTimeActions,
 } from "./TasksActions"
 import {
-    ADD_TASK_REQUEST,
     addTaskSuccess,
-    UPDATE_TASK_REQUEST,
     updateTaskSuccess,
-    RESTORE_TASK_REQUEST,
     restoreTaskSuccess,
-    DELETE_TASK_REQUEST,
     deleteTaskSuccess,
-    GET_TASKS_REQUEST,
-    getAllTasksSuccess,
-    GET_MY_TASKS_REQUEST,
-    getAllMyTasksSuccess,
     updateTaskRequesterContactSuccess,
-    updateTaskPickupAddressSuccess,
-    updateTaskDropoffAddressSuccess,
     updateTaskPickupTimeSuccess,
     updateTaskDropoffTimeSuccess,
     updateTaskPrioritySuccess,
     updateTaskRejectedTimeSuccess,
-    getAllTasksNotFound,
-    getAllTasksFailure,
-    getAllMyTasksNotFound,
-    getAllMyTasksFailure,
     updateTaskPatchSuccess,
-
-    UPDATE_TASK_REQUESTER_CONTACT_REQUEST,
-    UPDATE_TASK_DROPOFF_ADDRESS_REQUEST,
-    UPDATE_TASK_PICKUP_ADDRESS_REQUEST,
-    UPDATE_TASK_PICKUP_TIME_REQUEST,
-    UPDATE_TASK_DROPOFF_TIME_REQUEST,
-    UPDATE_TASK_REJECTED_TIME_REQUEST,
-    UPDATE_TASK_PRIORITY_REQUEST,
-
-
-    UPDATE_TASK_PATCH_REQUEST,
-    REFRESH_TASKS_REQUEST,
-    REFRESH_MY_TASKS_REQUEST,
-    UPDATE_TASK_PATCH_FROM_SERVER,
     addTaskFailure,
     deleteTaskFailure,
     restoreTaskFailure,
     updateTaskFailure,
     updateTaskRequesterContactFailure,
-    updateTaskPickupAddressFailure,
-    updateTaskDropoffAddressFailure,
     updateTaskPickupTimeFailure,
     updateTaskDropoffTimeFailure,
     updateTaskPriorityFailure,
@@ -133,7 +117,7 @@ function* postNewTask(action) {
 }
 
 export function* watchPostNewTask() {
-    yield takeEvery(ADD_TASK_REQUEST, postNewTask)
+    yield takeEvery(addTaskActions.request, postNewTask)
 }
 
 const emptyAddress = {
@@ -210,7 +194,7 @@ function* postNewTaskRelay(action) {
 }
 
 export function* watchPostNewTaskRelay() {
-    yield takeEvery(ADD_TASK_RELAY_REQUEST, postNewTaskRelay)
+    yield takeEvery(addTaskRelayActions.request, postNewTaskRelay)
 }
 
 
@@ -255,7 +239,7 @@ function* deleteTask(action) {
 }
 
 export function* watchDeleteTask() {
-    yield takeEvery(DELETE_TASK_REQUEST, deleteTask)
+    yield takeEvery(deleteTaskActions.request, deleteTask)
 }
 
 function* restoreTask(action) {
@@ -276,7 +260,7 @@ function* restoreTask(action) {
 }
 
 export function* watchRestoreTask() {
-    yield takeEvery(RESTORE_TASK_REQUEST, restoreTask)
+    yield takeEvery(restoreTaskActions.request, restoreTask)
 }
 
 function* updateTask(action) {
@@ -301,53 +285,6 @@ function* updateTaskRequesterContact(action) {
     }
 }
 
-function* updateTaskPickupAddress(action) {
-    try {
-        const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskPickupAddressSuccess(data))
-    } catch (error) {
-        yield put(updateTaskPickupAddressFailure(error))
-    }
-}
-
-function* updateTaskPickupAddressFromSaved(action) {
-    try {
-        const api = yield select(getApiControl);
-        const presetDetails = yield call([api, api.locations.getLocation], action.data.locationUUID);
-        const pickup_address = presetDetails.address;
-        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, {pickup_address});
-        const data = {payload: {pickup_address, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskPickupAddressSuccess(data))
-    } catch (error) {
-        yield put(updateTaskPickupAddressFailure(error))
-    }
-}
-
-function* updateTaskDropoffAddress(action) {
-    try {
-        const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
-        const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskDropoffAddressSuccess(data))
-    } catch (error) {
-        yield put(updateTaskDropoffAddressFailure(error))
-    }
-}
-
-function* updateTaskDropoffAddressFromSaved(action) {
-    try {
-        const api = yield select(getApiControl);
-        const presetDetails = yield call([api, api.locations.getLocation], action.data.locationUUID);
-        const dropoff_address = presetDetails.address;
-        const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, {dropoff_address});
-        const data = {payload: {dropoff_address, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskDropoffAddressSuccess(data))
-    } catch (error) {
-        yield put(updateTaskDropoffAddressFailure(error))
-    }
-}
 
 function* updateTaskPickupTime(action) {
     try {
@@ -359,7 +296,7 @@ function* updateTaskPickupTime(action) {
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
         yield put(updateTaskPickupTimeSuccess(data))
         if (currentValue === null) {
-            // only notify if marking rejected for the first time
+            // only notify if marking picked up for the first time
             const restoreActions = () => [updateTaskPickupTimeRequest(
                 action.data.taskUUID,
                 {time_picked_up: null}
@@ -393,7 +330,7 @@ function* updateTaskDropoffTime(action) {
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
         yield put(updateTaskDropoffTimeSuccess(data))
         if (currentValue === null) {
-            // only notify if marking rejected for the first time
+            // only notify if marking dropped off for the first time
             const restoreActions = () => [updateTaskDropoffTimeRequest(
                 action.data.taskUUID,
                 {time_dropped_off: null}
@@ -461,11 +398,11 @@ function* updateTaskTimeCancelled(action) {
                 relay_previous: null
             }, taskUUID: action.data.taskUUID
         }
-        yield put(updateTaskTimeCancelledSuccess(data))
+        yield put(updateTaskCancelledTimeSuccess(data))
         yield put(resetGroupRelayUUIDs(task.parent_id))
         if (currentValue === null) {
             // only notify if marking rejected for the first time
-            const restoreActions = () => [updateTaskTimeCancelledRequest(
+            const restoreActions = () => [updateTaskCancelledTimeRequest(
                 action.data.taskUUID,
                 {time_cancelled: null}
             )];
@@ -473,7 +410,7 @@ function* updateTaskTimeCancelled(action) {
             yield put(displayInfoNotification("Task marked cancelled", restoreActions, viewLink))
         }
     } catch (error) {
-        yield put(updateTaskTimeCancelledFailure(error))
+        yield put(updateTaskCancelledTimeFailure(error))
     }
 }
 
@@ -515,35 +452,19 @@ function* updateTaskRejectedTime(action) {
 }
 
 export function* watchUpdateTask() {
-    yield takeEvery(UPDATE_TASK_REQUEST, updateTask)
+    yield takeEvery(updateTaskActions.request, updateTask)
 }
 
 export function* watchUpdateTaskRequesterContact() {
-    yield debounce(500, UPDATE_TASK_REQUESTER_CONTACT_REQUEST, updateTaskRequesterContact)
-}
-
-export function* watchUpdateTaskPickupAddress() {
-    yield debounce(500, UPDATE_TASK_PICKUP_ADDRESS_REQUEST, updateTaskPickupAddress)
-}
-
-export function* watchUpdateTaskPickupAddressFromSaved() {
-    yield takeEvery(UPDATE_TASK_PICKUP_ADDRESS_FROM_SAVED_REQUEST, updateTaskPickupAddressFromSaved)
-}
-
-export function* watchUpdateTaskDropoffAddress() {
-    yield debounce(500, UPDATE_TASK_DROPOFF_ADDRESS_REQUEST, updateTaskDropoffAddress)
-}
-
-export function* watchUpdateTaskDropoffAddressFromSaved() {
-    yield takeEvery(UPDATE_TASK_DROPOFF_ADDRESS_FROM_SAVED_REQUEST, updateTaskDropoffAddressFromSaved)
+    yield debounce(500, updateTaskRequesterContactActions.request, updateTaskRequesterContact)
 }
 
 export function* watchUpdateTaskPickupTime() {
-    yield debounce(300, UPDATE_TASK_PICKUP_TIME_REQUEST, updateTaskPickupTime)
+    yield debounce(300, updateTaskPickupTimeActions.request, updateTaskPickupTime)
 }
 
 export function* watchUpdateTaskDropoffTime() {
-    yield debounce(300, UPDATE_TASK_DROPOFF_TIME_REQUEST, updateTaskDropoffTime)
+    yield debounce(300, updateTaskDropoffTimeActions.request, updateTaskDropoffTime)
 }
 
 export function* watchUpdateTaskTimeOfCall() {
@@ -551,23 +472,20 @@ export function* watchUpdateTaskTimeOfCall() {
 }
 
 export function* watchUpdateTaskPriority() {
-    yield debounce(500, UPDATE_TASK_PRIORITY_REQUEST, updateTaskPriority)
+    yield debounce(500, updateTaskPriorityActions.request, updateTaskPriority)
 }
 
 export function* watchUpdateTaskPatch() {
-    yield debounce(300, UPDATE_TASK_PATCH_REQUEST, updateTaskPatch)
+    yield debounce(300, updateTaskPatchActions.request, updateTaskPatch)
 }
 
-export function* watchUpdateTaskPatchFromServer() {
-    yield debounce(300, UPDATE_TASK_PATCH_FROM_SERVER, updateTaskPatchFromServer)
-}
 
 export function* watchUpdateTaskTimeCancelled() {
-    yield debounce(300, updateTaskTimeCancelledActions.request, updateTaskTimeCancelled)
+    yield debounce(300, updateTaskCancelledTimeActions.request, updateTaskTimeCancelled)
 }
 
 export function* watchUpdateTaskRejectedTime() {
-    yield debounce(300, UPDATE_TASK_REJECTED_TIME_REQUEST, updateTaskRejectedTime)
+    yield debounce(300, updateTaskRejectedTimeActions.request, updateTaskRejectedTime)
 }
 
 function* getTasks(action) {
@@ -591,19 +509,19 @@ function* getTasks(action) {
                 tasksCancelled,
                 tasksRejected
             });
-        yield put(getAllTasksSuccess(result))
+        yield put(getTasksSuccess(result))
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
-                yield put(getAllTasksNotFound(error))
+                yield put(getTasksNotFound(error))
             }
         }
-        yield put(getAllTasksFailure(error))
+        yield put(getTasksFailure(error))
     }
 }
 
 export function* watchGetTasks() {
-    yield takeLatest(GET_TASKS_REQUEST, getTasks)
+    yield takeLatest(getTasksActions.request, getTasks)
 }
 
 
@@ -642,47 +560,4 @@ function* setRoleViewAndGetTasks(action) {
 
 export function* watchSetRoleViewAndGetTasks() {
     yield takeLatest(SET_ROLE_VIEW_AND_GET_TASKS, setRoleViewAndGetTasks)
-}
-
-function* refreshTasks(action) {
-    try {
-        const api = yield select(getApiControl);
-        let result = yield call([api, api.tasks.getTasks], action.data);
-        yield put(getAllTasksSuccess(result))
-    } catch (error) {
-        if (error.status_code) {
-            if (error.status_code === 404) {
-                yield put(getAllTasksNotFound(error))
-            }
-        }
-        yield put(getAllTasksFailure(error))
-    }
-}
-
-export function* watchRefreshTasks() {
-    yield takeLatest(REFRESH_TASKS_REQUEST, refreshTasks)
-}
-
-function* getMyTasks() {
-    try {
-        const api = yield select(getApiControl);
-        const whoami = yield call([api, api.users.whoami]);
-        const result = yield call([api, api.users.getAssignedTasks], whoami.uuid);
-        yield put(getAllMyTasksSuccess(result))
-    } catch (error) {
-        if (error.status_code) {
-            if (error.status_code === 404) {
-                yield put(getAllMyTasksNotFound(error))
-            }
-        }
-        yield put(getAllMyTasksFailure(error))
-    }
-}
-
-export function* watchGetMyTasks() {
-    yield takeLatest(GET_MY_TASKS_REQUEST, getMyTasks)
-}
-
-export function* watchRefreshMyTasks() {
-    yield takeLatest(REFRESH_MY_TASKS_REQUEST, getMyTasks)
 }

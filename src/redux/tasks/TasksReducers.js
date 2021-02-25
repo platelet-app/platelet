@@ -1,26 +1,7 @@
 import {
-    ADD_TASK_SUCCESS,
-    DELETE_TASK_SUCCESS,
-    GET_MY_TASKS_FAILURE,
-    GET_MY_TASKS_SUCCESS,
-    GET_TASKS_FAILURE,
-    GET_TASKS_SUCCESS,
-    RESTORE_TASK_SUCCESS,
     UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET,
-    UPDATE_TASK_ASSIGNED_RIDER_SUCCESS,
-    UPDATE_TASK_REQUESTER_CONTACT_SUCCESS,
-    UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS,
-    UPDATE_TASK_DROPOFF_TIME_SUCCESS,
     UPDATE_TASK_FROM_SOCKET,
-    UPDATE_TASK_PATCH_SUCCESS,
-    UPDATE_TASK_PICKUP_ADDRESS_SUCCESS,
-    UPDATE_TASK_PICKUP_TIME_SUCCESS,
-    UPDATE_TASK_PRIORITY_SUCCESS,
-    UPDATE_TASK_REJECTED_TIME_SUCCESS,
     UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET,
-    UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS,
-    UPDATE_TASK_SUCCESS,
-    ADD_TASK_RELAY_SUCCESS,
     ADD_TASK_FROM_SOCKET,
     DELETE_TASK_FROM_SOCKET,
     RESTORE_TASK_FROM_SOCKET,
@@ -28,15 +9,25 @@ import {
     RESET_GROUP_RELAY_UUIDS,
     GROUP_RELAYS_TOGETHER,
     PUT_TASK_FROM_SOCKET,
-    PUT_TASK_SUCCESS,
     UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET,
     UPDATE_TASK_TIME_REJECTED_FROM_SOCKET,
-    UPDATE_TASK_ASSIGNED_COORDINATOR_SUCCESS,
     UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET,
-    UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_SUCCESS,
     UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET,
     UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET,
-    UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, updateTaskTimeCancelledActions, updateTaskTimeOfCallActions
+    UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET,
+    updateTaskTimeOfCallActions,
+    addTaskActions,
+    restoreTaskActions,
+    addTaskRelayActions,
+    putTaskActions,
+    updateTaskActions,
+    updateTaskRequesterContactActions,
+    updateTaskPriorityActions,
+    updateTaskPatchActions,
+    updateTaskPickupTimeActions,
+    updateTaskDropoffTimeActions,
+    updateTaskCancelledTimeActions,
+    updateTaskRejectedTimeActions, deleteTaskActions, getTasksActions
 
 } from "./TasksActions";
 import {
@@ -59,6 +50,15 @@ import {
     APPEND_TASKS_REJECTED_SUCCESS
 } from "./TasksWaypointActions";
 import _ from "lodash"
+import {
+    addTaskAssignedCoordinatorActions,
+    addTaskAssignedRiderActions, removeTaskAssignedCoordinatorActions,
+    removeTaskAssignedRiderActions
+} from "../taskAssignees/TaskAssigneesActions";
+import {
+    setTaskDropoffDestinationActions,
+    setTaskPickupDestinationActions
+} from "../taskDestinations/TaskDestinationsActions";
 
 
 export const initialTasksState = {
@@ -76,11 +76,11 @@ export const initialTasksState = {
 
 export function tasks(state = initialTasksState, action) {
     switch (action.type) {
-        case ADD_TASK_SUCCESS:
+        case addTaskActions.success:
         case ADD_TASK_FROM_SOCKET:
             const data = {[action.data.uuid]: action.data}
             return {tasks: sortAndConcat(state.tasks, data), error: null}
-        case RESTORE_TASK_SUCCESS:
+        case restoreTaskActions.success:
         case RESTORE_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
             let newGroup;
@@ -94,7 +94,7 @@ export function tasks(state = initialTasksState, action) {
             }
             return {tasks: sortAndConcat(newTasks, newGroup), error: null}
         }
-        case ADD_TASK_RELAY_SUCCESS:
+        case addTaskRelayActions.success:
         case ADD_TASK_RELAY_FROM_SOCKET: {
             const parent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
             if (parent.taskGroup) {
@@ -105,7 +105,7 @@ export function tasks(state = initialTasksState, action) {
             }
         }
 
-        case PUT_TASK_SUCCESS:
+        case putTaskActions.success:
         case PUT_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParent(state.tasks, action.data.uuid);
             if (parent.taskGroup) {
@@ -130,17 +130,17 @@ export function tasks(state = initialTasksState, action) {
             }
             return {tasks: result, error: null}
         }
-        case UPDATE_TASK_SUCCESS:
-        case UPDATE_TASK_REQUESTER_CONTACT_SUCCESS:
-        case UPDATE_TASK_PRIORITY_SUCCESS:
-        case UPDATE_TASK_PATCH_SUCCESS:
-        case UPDATE_TASK_DROPOFF_ADDRESS_SUCCESS:
-        case UPDATE_TASK_PICKUP_ADDRESS_SUCCESS:
-        case UPDATE_TASK_PICKUP_TIME_SUCCESS:
-        case UPDATE_TASK_DROPOFF_TIME_SUCCESS:
+        case updateTaskActions.success:
+        case updateTaskRequesterContactActions.success:
+        case updateTaskPriorityActions.success:
+        case updateTaskPatchActions.success:
+        case updateTaskPickupTimeActions.success:
+        case updateTaskDropoffTimeActions.success:
         case UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET:
         case UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET:
         case updateTaskTimeOfCallActions.success:
+        case setTaskDropoffDestinationActions.success:
+        case setTaskPickupDestinationActions.success:
         case UPDATE_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
             if (parent.taskGroup) {
@@ -153,10 +153,10 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         }
-        case updateTaskTimeCancelledActions.success:
+        case updateTaskCancelledTimeActions.success:
         case UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET:
         case UPDATE_TASK_TIME_REJECTED_FROM_SOCKET:
-        case UPDATE_TASK_REJECTED_TIME_SUCCESS: {
+        case updateTaskRejectedTimeActions.success: {
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
             if (parent.taskGroup) {
                 const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.parentID)
@@ -186,7 +186,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         }
-        case UPDATE_TASK_ASSIGNED_RIDER_SUCCESS:
+        case addTaskAssignedRiderActions.success:
         case UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET: {
             // Get the parent group first
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
@@ -204,7 +204,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         }
-        case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_SUCCESS:
+        case removeTaskAssignedRiderActions.success:
         case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET: {
             // Get the parent group first
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
@@ -225,7 +225,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         }
-        case UPDATE_TASK_ASSIGNED_COORDINATOR_SUCCESS:
+        case addTaskAssignedCoordinatorActions.success:
         case UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET: {
             // Get the parent group first
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
@@ -244,7 +244,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         }
-        case UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_SUCCESS:
+        case removeTaskAssignedCoordinatorActions.success:
         case UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET: {
             // Get the parent group first
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
@@ -263,7 +263,7 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         }
-        case DELETE_TASK_SUCCESS:
+        case deleteTaskActions.success:
         case DELETE_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParent(state.tasks, action.data)
             if (parent.taskGroup) {
@@ -321,16 +321,12 @@ export function tasks(state = initialTasksState, action) {
 
             return {tasks: sortAndConcat(state.tasks, result[sortedGroup[0].parent_id]), error: null};
         }
-        case GET_TASKS_SUCCESS:
+        case getTasksActions.success:
             return {tasks: action.data, error: null};
         case GROUP_RELAYS_TOGETHER:
             return state;
         // return {tasks: groupRelaysTogether(state.tasks), error: null}
-        case GET_TASKS_FAILURE:
-            return {...initialTasksState, error: action.error};
-        case GET_MY_TASKS_SUCCESS:
-            return {tasks: action.data, error: null};
-        case GET_MY_TASKS_FAILURE:
+        case getTasksActions.failure:
             return {...initialTasksState, error: action.error};
         default:
             return state
