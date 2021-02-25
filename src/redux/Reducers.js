@@ -19,7 +19,6 @@ import {dashboardFilter} from "./dashboardFilter/DashboardFilterReducers";
 import {tasks} from "./tasks/TasksReducers"
 import {task} from "./activeTask/ActiveTaskReducer"
 import {userStatistics} from "./statistics/statisticsReducers";
-import {taskAssignees} from "./taskAssignees/TaskAssigneesReducers";
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
 import {availableLocations, location} from "./locations/LocationsReducers"
 import {apiControl, authStatus} from "./login/LoginReducers";
@@ -239,7 +238,6 @@ export function error(state =  null, action){
 const appReducer = combineReducers({
     task,
     tasks,
-    taskAssignees,
     deliverables,
     availableDeliverables,
     availablePriorities,
