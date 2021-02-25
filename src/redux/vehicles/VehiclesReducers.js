@@ -1,12 +1,11 @@
-import {
-    ADD_VEHICLE_SUCCESS,
-    GET_VEHICLE_SUCCESS,
-    GET_VEHICLES_SUCCESS,
-    UPDATE_VEHICLE_SUCCESS,
-    RESTORE_VEHICLE_SUCCESS,
-    DELETE_VEHICLE_SUCCESS, GET_VEHICLE_FAILURE, GET_VEHICLES_FAILURE
-} from "./VehiclesActions";
 import _ from "lodash";
+import {
+    addVehicleActions,
+    deleteVehicleActions,
+    getVehicleActions,
+    getVehiclesActions,
+    restoreVehicleActions, updateVehicleActions
+} from "./VehiclesActions";
 
 const initialState = {
     vehicles: [],
@@ -15,15 +14,15 @@ const initialState = {
 
 export function vehicles(state = initialState, action) {
     switch (action.type) {
-        case GET_VEHICLES_SUCCESS:
+        case getVehiclesActions.success:
             return {vehicles: action.data, error: null};
-        case GET_VEHICLES_FAILURE:
+        case getVehiclesActions.failure:
             return {...initialState, error: action.error};
-        case ADD_VEHICLE_SUCCESS:
+        case addVehicleActions.success:
             return {vehicles: {...state.vehicles, [action.data.uuid]: action.data}, error: null}
-        case RESTORE_VEHICLE_SUCCESS:
+        case restoreVehicleActions.success:
             return {vehicles: {...state.vehicles, [action.data.uuid]: action.data}, error: null}
-        case DELETE_VEHICLE_SUCCESS:
+        case deleteVehicleActions.success:
             return {vehicles: _.omit(state.vehicles, action.data), error: null}
         default:
             return state
@@ -54,12 +53,12 @@ const initialVehicleState = {
 
 export function vehicle(state = initialVehicleState, action) {
     switch (action.type) {
-        case UPDATE_VEHICLE_SUCCESS:
+        case updateVehicleActions.success:
             // TODO: this should be immutable
-            return {vehicle: Object.assign(state, action.data.payload), error: null};
-        case GET_VEHICLE_SUCCESS:
+            return {vehicle: {...state, ...action.data.payload}, error: null}
+        case getVehicleActions.success:
             return {vehicle: action.data, error: null};
-        case GET_VEHICLE_FAILURE:
+        case getVehicleActions.failure:
             return {...initialVehicleState, error: action.error};
         default:
             return state

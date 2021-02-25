@@ -5,7 +5,7 @@ import {contextDots, PaddedPaper} from '../styles/common';
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
-import {addVehicleRequest, getAllVehiclesRequest} from "../redux/vehicles/VehiclesActions";
+import {addVehicleRequest, getVehiclesRequest} from "../redux/vehicles/VehiclesActions";
 import {encodeUUID, sortByCreatedTime} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
@@ -23,7 +23,7 @@ function VehicleList() {
 
     function componentDidMount() {
         if(!vehicles.length)
-            dispatch(getAllVehiclesRequest());
+            dispatch(getVehiclesRequest());
     }
 
     useEffect(componentDidMount, []);

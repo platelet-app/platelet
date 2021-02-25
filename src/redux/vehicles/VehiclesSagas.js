@@ -1,25 +1,25 @@
 import {throttle, call, put, takeEvery, takeLatest, select, debounce} from 'redux-saga/effects'
 import {
-    ADD_VEHICLE_REQUEST,
     addVehicleSuccess,
-    UPDATE_VEHICLE_REQUEST,
     updateVehicleSuccess,
-    GET_VEHICLES_REQUEST,
-    getAllVehiclesSuccess,
-    GET_VEHICLE_REQUEST,
     getVehicleSuccess,
-    RESTORE_VEHICLE_REQUEST,
     restoreVehicleSuccess,
-    DELETE_VEHICLE_REQUEST,
     deleteVehicleSuccess,
-    UPDATE_VEHICLE_NAME_REQUEST,
-    UPDATE_VEHICLE_MODEL_REQUEST,
-    UPDATE_VEHICLE_REGISTRATION_REQUEST,
-    UPDATE_VEHICLE_MANUFACTURER_REQUEST,
-    getVehicleNotFound,
     getVehicleFailure,
     deleteVehicleFailure,
-    restoreVehicleFailure, getAllVehiclesFailure, updateVehicleFailure, restoreVehicleRequest
+    restoreVehicleFailure,
+    updateVehicleFailure,
+    restoreVehicleRequest,
+    addVehicleActions,
+    addVehicleFailure,
+    getVehiclesSuccess,
+    getVehiclesFailure,
+    getVehiclesActions,
+    getVehicleActions,
+    deleteVehicleActions,
+    restoreVehicleActions,
+    getVehicleNotFound,
+    updateVehicleActions
 } from "./VehiclesActions"
 
 import {getWhoamiSuccess} from "../Actions"
@@ -29,14 +29,18 @@ import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {convertListDataToObjects} from "../redux_utilities";
 
 function* postNewVehicle(action) {
-    const api = yield select(getApiControl);
-    const result = yield call([api, api.vehicles.createVehicle], action.data);
-    const vehicle = {...action.data, "uuid": result.uuid, time_created: result.time_created || new Date()};
-    yield put(addVehicleSuccess(vehicle))
+    try {
+        const api = yield select(getApiControl);
+        const result = yield call([api, api.vehicles.createVehicle], action.data.payload);
+        const vehicle = {...action.data, "uuid": result.uuid, time_created: result.time_created || new Date()};
+        yield put(addVehicleSuccess(vehicle));
+    } catch (error) {
+        yield put(addVehicleFailure(error));
+    }
 }
 
 export function* watchPostNewVehicle() {
-    yield takeEvery(ADD_VEHICLE_REQUEST, postNewVehicle)
+    yield takeEvery(addVehicleActions.request, postNewVehicle)
 }
 
 function* updateVehicle(action) {
@@ -63,23 +67,7 @@ function* updateVehicle(action) {
 }
 
 export function* watchUpdateVehicle() {
-    yield throttle(300, UPDATE_VEHICLE_REQUEST, updateVehicle)
-}
-
-export function* watchUpdateVehicleName() {
-    yield debounce(500, UPDATE_VEHICLE_NAME_REQUEST, updateVehicle)
-}
-
-export function* watchUpdateVehicleManufacturer() {
-    yield debounce(500, UPDATE_VEHICLE_MANUFACTURER_REQUEST, updateVehicle)
-}
-
-export function* watchUpdateVehicleModel() {
-    yield debounce(500, UPDATE_VEHICLE_MODEL_REQUEST, updateVehicle)
-}
-
-export function* watchUpdateVehicleRegistration() {
-    yield debounce(500, UPDATE_VEHICLE_REGISTRATION_REQUEST, updateVehicle)
+    yield takeEvery(updateVehicleActions.request, updateVehicle)
 }
 
 function* getVehicles() {
@@ -87,20 +75,20 @@ function* getVehicles() {
         const api = yield select(getApiControl);
         const result = yield call([api, api.vehicles.getVehicles]);
         const converted = convertListDataToObjects(result);
-        yield put(getAllVehiclesSuccess(converted))
+        yield put(getVehiclesSuccess(converted))
     } catch (error) {
-        yield put(getAllVehiclesFailure(error))
+        yield put(getVehiclesFailure(error))
     }
 }
 
 export function* watchGetVehicles() {
-    yield takeLatest(GET_VEHICLES_REQUEST, getVehicles)
+    yield takeLatest(getVehiclesActions.request, getVehicles)
 }
 
 function* getVehicle(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.vehicles.getVehicle], action.data);
+        const result = yield call([api, api.vehicles.getVehicle], action.data.vehicleUUID);
         yield put(getVehicleSuccess(result))
     } catch (error) {
         if (error.status_code) {
@@ -113,7 +101,7 @@ function* getVehicle(action) {
 }
 
 export function* watchVehicle() {
-    yield takeLatest(GET_VEHICLE_REQUEST, getVehicle)
+    yield takeLatest(getVehicleActions.request, getVehicle)
 }
 
 function* deleteVehicle(action) {
@@ -129,14 +117,14 @@ function* deleteVehicle(action) {
 }
 
 export function* watchDeleteVehicle() {
-    yield takeEvery(DELETE_VEHICLE_REQUEST, deleteVehicle)
+    yield takeEvery(deleteVehicleActions.request, deleteVehicle)
 }
 
 function* restoreVehicle(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.vehicles.restoreVehicle], action.data);
-        const result = yield call([api, api.vehicles.getVehicle], action.data);
+        yield call([api, api.vehicles.restoreVehicle], action.data.vehicleUUID);
+        const result = yield call([api, api.vehicles.getVehicle], action.data.vehicleUUID);
         yield put(restoreVehicleSuccess(result))
     } catch (error) {
         yield put(restoreVehicleFailure(error))
@@ -144,5 +132,5 @@ function* restoreVehicle(action) {
 }
 
 export function* watchRestoreVehicle() {
-    yield takeEvery(RESTORE_VEHICLE_REQUEST, restoreVehicle)
+    yield takeEvery(restoreVehicleActions.request, restoreVehicle)
 }
