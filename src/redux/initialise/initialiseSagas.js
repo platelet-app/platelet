@@ -50,7 +50,6 @@ import {getApiURL, getDashboardRoleMode} from "../../utilities";
 
 function* initialiseApp() {
     yield put(getWhoamiRequest())
-
 }
 
 export function* watchInitialiseApp() {

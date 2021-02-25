@@ -26,10 +26,10 @@ function TaskAssignees(props) {
         <Typography>No assignee.</Typography> : <></> : <></>
 
     function onRemoveUser(userUUID) {
-        dispatch(removeTaskAssignedRiderRequest({
+        dispatch(removeTaskAssignedRiderRequest(
             taskUUID,
-            payload: {user_uuid: userUUID}
-        }));
+            userUUID
+        ));
         if (props.onRemove)
             props.onRemove();
     }

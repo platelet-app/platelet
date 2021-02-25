@@ -1,16 +1,20 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
 import {getApiControl, getUsersSelector} from "../Api";
 import {
-    ADD_TASK_ASSIGNED_COORDINATOR_REQUEST,
-    ADD_TASK_ASSIGNED_RIDER_REQUEST, addTaskAssignedCoordinatorFailure, addTaskAssignedCoordinatorSuccess,
+    addTaskAssignedCoordinatorActions,
+    removeTaskAssignedRiderActions,
+    addTaskAssignedRiderActions,
+    removeTaskAssignedCoordinatorActions,
+    addTaskAssignedCoordinatorFailure,
+    addTaskAssignedCoordinatorSuccess,
     addTaskAssignedRiderFailure,
     addTaskAssignedRiderSuccess,
-    GET_TASK_ASSIGNED_RIDERS_REQUEST,
     getTaskAssignedRidersFailure,
-    getTaskAssignedRidersSuccess, REMOVE_TASK_ASSIGNED_COORDINATOR_REQUEST,
-    REMOVE_TASK_ASSIGNED_RIDER_REQUEST, removeTaskAssignedCoordinatorFailure, removeTaskAssignedCoordinatorSuccess,
+    getTaskAssignedRidersSuccess,
+    removeTaskAssignedCoordinatorFailure,
+    removeTaskAssignedCoordinatorSuccess,
     removeTaskAssignedRiderFailure,
-    removeTaskAssignedRiderSuccess
+    removeTaskAssignedRiderSuccess, getTaskAssignedRidersActions
 } from "./TaskAssigneesActions";
 import {
     updateTaskAssignedRiderSuccess,
@@ -51,7 +55,7 @@ function* addTaskAssignedRider(action) {
 }
 
 export function* watchUpdateTaskAddAssignedRider() {
-    yield takeEvery(ADD_TASK_ASSIGNED_RIDER_REQUEST, addTaskAssignedRider)
+    yield takeEvery(addTaskAssignedRiderActions.request, addTaskAssignedRider)
 }
 
 function* updateTaskRemoveRider(action) {
@@ -69,7 +73,7 @@ function* updateTaskRemoveRider(action) {
 }
 
 export function* watchUpdateTaskRemoveRider() {
-    yield takeEvery( REMOVE_TASK_ASSIGNED_RIDER_REQUEST, updateTaskRemoveRider)
+    yield takeEvery( removeTaskAssignedRiderActions.request, updateTaskRemoveRider)
 }
 
 function* addTaskAssignedCoordinator(action) {
@@ -87,7 +91,7 @@ function* addTaskAssignedCoordinator(action) {
 }
 
 export function* watchUpdateTaskAddAssignedCoordinator() {
-    yield takeEvery(ADD_TASK_ASSIGNED_COORDINATOR_REQUEST, addTaskAssignedCoordinator)
+    yield takeEvery(addTaskAssignedCoordinatorActions.request, addTaskAssignedCoordinator)
 }
 
 function* updateTaskRemoveCoordinator(action) {
@@ -104,13 +108,13 @@ function* updateTaskRemoveCoordinator(action) {
 }
 
 export function* watchUpdateTaskRemoveCoordinator() {
-    yield takeEvery( REMOVE_TASK_ASSIGNED_COORDINATOR_REQUEST, updateTaskRemoveCoordinator)
+    yield takeEvery( removeTaskAssignedCoordinatorActions.request, updateTaskRemoveCoordinator)
 }
 
 function* getTaskAssignedRiders(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.getTaskAssignedRiders], action.data);
+        const result = yield call([api, api.tasks.getTaskAssignedRiders], action.data.taskUUID);
         const converted = convertListDataToObjects(result);
         yield put(getTaskAssignedRidersSuccess(converted))
     } catch (error) {
@@ -119,5 +123,5 @@ function* getTaskAssignedRiders(action) {
 }
 
 export function* watchGetTaskAssignedRiders() {
-    yield takeEvery( GET_TASK_ASSIGNED_RIDERS_REQUEST, getTaskAssignedRiders)
+    yield takeEvery( getTaskAssignedRidersActions.request, getTaskAssignedRiders)
 }
