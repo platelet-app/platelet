@@ -1,138 +1,74 @@
-export const GET_USERS_REQUEST = 'GET_USERS_REQUEST';
-export const GET_USERS_SUCCESS = 'GET_USERS_SUCCESS';
-export const GET_USERS_FAILURE = 'GET_USERS_FAILURE';
-export const ADD_USER_REQUEST = 'ADD_USER_REQUEST';
-export const ADD_USER_SUCCESS = 'ADD_USER_SUCCESS';
-export const ADD_USER_FAILURE = 'ADD_USER_FAILURE';
-export const DELETE_USER_REQUEST = 'DELETE_USER_REQUEST';
-export const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS';
-export const DELETE_USER_FAILURE = 'DELETE_USER_FAILURE';
-export const RESTORE_USER_REQUEST = 'RESTORE_USER_REQUEST';
-export const RESTORE_USER_SUCCESS = 'RESTORE_USER_SUCCESS';
-export const RESTORE_USER_FAILURE = 'RESTORE_USER_FAILURE';
-export const GET_USER_REQUEST = 'GET_USER_REQUEST';
-export const GET_USER_SUCCESS = 'GET_USER_SUCCESS';
-export const GET_USER_NOTFOUND = 'GET_USER_NOTFOUND';
-export const GET_USER_FAILURE = 'GET_USER_FAILURE';
-export const UPDATE_USER_REQUEST = 'UPDATE_USER_REQUEST';
-export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
-export const UPDATE_USER_FAILURE = 'UPDATE_USER_FAILURE';
-export const UPDATE_USER_NOTFOUND = 'UPDATE_USER_NOTFOUND';
-export const UPDATE_USER_USERNAME_REQUEST = 'UPDATE_USER_USERNAME_REQUEST';
-export const UPDATE_USER_NAME_REQUEST = 'UPDATE_USER_NAME_REQUEST';
-export const UPDATE_USER_DISPLAY_NAME_REQUEST = 'UPDATE_USER_DISPLAY_NAME_REQUEST';
-export const UPDATE_USER_EMAIL_ADDRESS_REQUEST = 'UPDATE_USER_EMAIL_ADDRESS_REQUEST';
-export const UPDATE_USER_CONTACT_NUMBER_REQUEST = 'UPDATE_USER_CONTACT_NUMBER_REQUEST';
-export const UPDATE_USER_ADDRESS_REQUEST = 'UPDATE_USER_ADDRESS_REQUEST';
-export const UPDATE_USER_ROLES_REQUEST = 'UPDATE_USER_ROLES_REQUEST';
-export const UPDATE_USER_PATCH_REQUEST = 'UPDATE_USER_PATCH_REQUEST';
-export const UPDATE_USER_PASSWORD_REQUEST = 'UPDATE_USER_PASSWORD_REQUEST';
-export const UPDATE_USER_PASSWORD_SUCCESS = 'UPDATE_USER_PASSWORD_SUCCESS';
-export const UPDATE_USER_PASSWORD_FAILURE = 'UPDATE_USER_PASSWORD_FAILURE';
-export const UPLOAD_USER_PROFILE_PICTURE_REQUEST = 'UPLOAD_USER_PROFILE_PICTURE_REQUEST'
-export const UPLOAD_USER_PROFILE_PICTURE_FAILURE = 'UPLOAD_USER_PROFILE_PICTURE_FAILURE'
-export const UPLOAD_USER_PROFILE_PICTURE_SUCCESS = 'UPLOAD_USER_PROFILE_PICTURE_SUCCESS'
+import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
 
-export const CLEAR_FORCE_RESET_PASSWORD_STATUS = 'CLEAR_FORCE_RESET_PASSWORD_STATUS';
+export const getUsersPrefix = "GET_USERS";
+export const getUsersActions = createRequestActions(getUsersPrefix);
+export const {getUsersRequest, getUsersSuccess, getUsersFailure, getUsersForbidden} = createRequestFunctions(getUsersActions);
 
-export function getUsersRequest() {
-    return { type: GET_USERS_REQUEST }
-}
 
-export function getUsersSuccess(data) {
-    return { type: GET_USERS_SUCCESS, data }
-}
-
-export function getUsersFailure(error) {
-    return { type: GET_USERS_FAILURE, error }
-}
-
-export function getUserRequest(data) {
-    return { type: GET_USER_REQUEST, data }
-}
-
-export function getUserSuccess(data) {
-    return { type: GET_USER_SUCCESS, data }
-}
-
-export function getUserFailure(error) {
-    return { type: GET_USER_FAILURE, error }
-}
-export function getUserNotFound(error) {
-    return { type: GET_USER_NOTFOUND, error }
-}
-
-export function deleteUserRequest(data) {
-    return { type: DELETE_USER_REQUEST, data }
-}
-
-export function deleteUserSuccess(data) {
-    return { type: DELETE_USER_SUCCESS, data }
-}
-
-export function deleteUserFailure(error) {
-    return { type: DELETE_USER_FAILURE, error }
-}
+export const addUserPrefix = "ADD_USER";
+export const addUserActions = createRequestActions(addUserPrefix);
+export const {addUserSuccess, addUserFailure, addUserForbidden} = createRequestFunctions(addUserActions);
 
 export function addUserRequest(data) {
-    return { type: ADD_USER_REQUEST, data }
+    return { type: addUserActions.request, data }
 }
 
-export function addUserSuccess(data) {
-    return { type: ADD_USER_SUCCESS, data }
+
+export const deleteUserPrefix = "DELETE_USER";
+export const deleteUserActions = createRequestActions(deleteUserPrefix);
+export const {deleteUserSuccess, deleteUserFailure, deleteUserForbidden, deleteUserNotFound} = createRequestFunctions(deleteUserActions);
+
+export function deleteUserRequest(data) {
+    return { type: deleteUserActions.request, data }
 }
 
-export function addUserFailure(error) {
-    return { type: ADD_USER_FAILURE, error }
-}
+
+export const restoreUserPrefix = "RESTORE_USER";
+export const restoreUserActions = createRequestActions(restoreUserPrefix);
+export const {restoreUserSuccess, restoreUserFailure, restoreUserForbidden, restoreUserNotFound} = createRequestFunctions(restoreUserActions);
 
 export function restoreUserRequest(data) {
-    return { type: RESTORE_USER_REQUEST, data }
+    return { type: restoreUserActions.request, data }
 }
 
-export function restoreUserSuccess(data) {
-    return { type: RESTORE_USER_SUCCESS, data }
+
+export const getUserPrefix = "GET_USER";
+export const getUserActions = createRequestActions(getUserPrefix);
+export const {getUserSuccess, getUserFailure, getUserForbidden, getUserNotFound} = createRequestFunctions(getUserActions);
+
+export function getUserRequest(userUUID) {
+    return { type: getUserActions.request, data: {userUUID} }
 }
 
-export function restoreUserFailure(error) {
-    return { type: RESTORE_USER_FAILURE, error }
-}
+
+export const updateUserPrefix = "UPDATE_USER";
+export const updateUserActions = createRequestActions(updateUserPrefix);
+export const {updateUserSuccess, updateUserFailure, updateUserForbidden, updateUserNotFound} = createRequestFunctions(updateUserActions);
 
 export function updateUserRequest(data) {
-    return { type: UPDATE_USER_REQUEST, data }
+    return { type: updateUserActions.request, data }
 }
 
-export function updateUserSuccess(data) {
-    return { type: UPDATE_USER_SUCCESS, data }
-}
 
-export function updateUserFailure(error) {
-    return { type: UPDATE_USER_FAILURE, error }
-}
+export const updateUserPasswordPrefix = "UPDATE_USER_PASSWORD";
+export const updateUserPasswordActions = createRequestActions(updateUserPasswordPrefix);
+export const {updateUserPasswordSuccess, updateUserPasswordFailure, updateUserPasswordForbidden, updateUserPasswordNotFound} = createRequestFunctions(updateUserPasswordActions);
 
 export function updateUserPasswordRequest(data) {
-    return { type: UPDATE_USER_PASSWORD_REQUEST, data }
+    return { type: updateUserPasswordActions.request, data }
 }
 
-export function updateUserPasswordSuccess(data) {
-    return { type: UPDATE_USER_PASSWORD_SUCCESS, data }
-}
 
-export function updateUserPasswordFailure(error) {
-    return { type: UPDATE_USER_PASSWORD_FAILURE, error }
-}
+export const uploadUserProfilePicturePrefix = "UPLOAD_USER_PROFILE_PICTURE"
+export const uploadUserProfilePictureActions = createRequestActions(uploadUserProfilePicturePrefix);
+export const {uploadUserProfilePictureSuccess, uploadUserProfilePictureFailure, uploadUserProfilePictureForbidden, uploadUserProfilePictureNotFound} = createRequestFunctions(uploadUserProfilePictureActions);
 
 export function uploadUserProfilePictureRequest(data) {
-    return { type: UPLOAD_USER_PROFILE_PICTURE_REQUEST, data }
+    return { type: uploadUserProfilePictureActions.request, data }
 }
 
-export function uploadUserProfilePictureSuccess(data) {
-    return { type: UPLOAD_USER_PROFILE_PICTURE_SUCCESS, data }
-}
 
-export function uploadUserProfilePictureFailure(error) {
-    return { type: UPLOAD_USER_PROFILE_PICTURE_FAILURE, error }
-}
+export const CLEAR_FORCE_RESET_PASSWORD_STATUS = 'CLEAR_FORCE_RESET_PASSWORD_STATUS';
 
 export function clearForceResetPasswordStatus() {
     return { type: CLEAR_FORCE_RESET_PASSWORD_STATUS }

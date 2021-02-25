@@ -3,7 +3,7 @@ import {
     UPDATE_ACTIVE_TASK,
     UPDATE_ACTIVE_TASK_ASSIGNED_COORDINATOR,
     UPDATE_ACTIVE_TASK_ASSIGNED_RIDER, UPDATE_ACTIVE_TASK_REMOVE_ASSIGNED_RIDER
-} from "../activeTask/ActiveTaskActions";
+} from "./ActiveTaskActions";
 import {addAssigneeToList, removeAssigneeFromList} from "../tasks/task_redux_utilities";
 
 const initialLocationState = {

@@ -1,28 +1,25 @@
 import { call, put, takeLatest, select} from 'redux-saga/effects'
 import {
-    GET_USERS_REQUEST,
-    GET_USER_REQUEST,
     getUserSuccess,
     getUsersSuccess,
     updateUserSuccess,
-    ADD_USER_REQUEST,
     deleteUserSuccess,
-    DELETE_USER_REQUEST,
-    UPDATE_USER_REQUEST,
     restoreUserSuccess,
-    RESTORE_USER_REQUEST,
     getUsersFailure,
     getUserFailure,
     updateUserFailure,
     deleteUserFailure,
     restoreUserFailure,
-    UPDATE_USER_PASSWORD_REQUEST,
     clearForceResetPasswordStatus,
     restoreUserRequest,
-    UPLOAD_USER_PROFILE_PICTURE_REQUEST,
     uploadUserProfilePictureSuccess,
     uploadUserProfilePictureFailure,
     getUserNotFound,
+    getUsersActions,
+    getUserActions,
+    updateUserActions,
+    updateUserPasswordActions,
+    uploadUserProfilePictureActions, deleteUserActions, restoreUserActions, addUserActions,
 } from "./UsersActions";
 import {getApiControl} from "../Api"
 import {displayInfoNotification} from "../notifications/NotificationsActions";
@@ -55,11 +52,11 @@ function* getUser(action) {
 }
 
 export function* watchGetUsers() {
-    yield takeLatest(GET_USERS_REQUEST, getUsers)
+    yield takeLatest(getUsersActions.request, getUsers)
 }
 
 export function* watchGetUser() {
-    yield takeLatest(GET_USER_REQUEST, getUser)
+    yield takeLatest(getUserActions.request, getUser)
 }
 
 function* updateUser(action) {
@@ -73,7 +70,7 @@ function* updateUser(action) {
 }
 
 export function* watchUpdateUser() {
-    yield takeLatest(UPDATE_USER_REQUEST, updateUser)
+    yield takeLatest(updateUserActions.request, updateUser)
 }
 
 function* updateUserPassword(action) {
@@ -88,7 +85,7 @@ function* updateUserPassword(action) {
 }
 
 export function* watchUpdateUserPassword() {
-    yield takeLatest(UPDATE_USER_PASSWORD_REQUEST, updateUserPassword)
+    yield takeLatest(updateUserPasswordActions.request, updateUserPassword)
 }
 
 function* uploadUserProfilePicture(action) {
@@ -102,7 +99,7 @@ function* uploadUserProfilePicture(action) {
 }
 
 export function* watchUploadUserProfilePicture() {
-    yield takeLatest(UPLOAD_USER_PROFILE_PICTURE_REQUEST, uploadUserProfilePicture)
+    yield takeLatest(uploadUserProfilePictureActions.request, uploadUserProfilePicture)
 }
 
 function* deleteUser(action) {
@@ -118,7 +115,7 @@ function* deleteUser(action) {
 }
 
 export function* watchDeleteUser() {
-    yield takeLatest(DELETE_USER_REQUEST, deleteUser)
+    yield takeLatest(deleteUserActions.request, deleteUser)
 }
 
 function* restoreUser(action) {
@@ -133,7 +130,7 @@ function* restoreUser(action) {
 }
 
 export function* watchRestoreUser() {
-    yield takeLatest(RESTORE_USER_REQUEST, restoreUser)
+    yield takeLatest(restoreUserActions.request, restoreUser)
 }
 
 function* addUser(action) {
@@ -147,5 +144,5 @@ function* addUser(action) {
 }
 
 export function* watchAddUser() {
-    yield takeLatest(ADD_USER_REQUEST, addUser)
+    yield takeLatest(addUserActions.request, addUser)
 }
