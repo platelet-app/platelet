@@ -456,36 +456,35 @@ export function* watchUpdateTask() {
 }
 
 export function* watchUpdateTaskRequesterContact() {
-    yield debounce(500, updateTaskRequesterContactActions.request, updateTaskRequesterContact)
+    yield takeEvery(updateTaskRequesterContactActions.request, updateTaskRequesterContact)
 }
 
 export function* watchUpdateTaskPickupTime() {
-    yield debounce(300, updateTaskPickupTimeActions.request, updateTaskPickupTime)
+    yield takeEvery(updateTaskPickupTimeActions.request, updateTaskPickupTime)
 }
 
 export function* watchUpdateTaskDropoffTime() {
-    yield debounce(300, updateTaskDropoffTimeActions.request, updateTaskDropoffTime)
+    yield takeEvery(updateTaskDropoffTimeActions.request, updateTaskDropoffTime)
 }
 
 export function* watchUpdateTaskTimeOfCall() {
-    yield debounce(300, updateTaskTimeOfCallActions.request, updateTaskTimeOfCall)
+    yield takeEvery(updateTaskTimeOfCallActions.request, updateTaskTimeOfCall)
 }
 
 export function* watchUpdateTaskPriority() {
-    yield debounce(500, updateTaskPriorityActions.request, updateTaskPriority)
+    yield takeEvery(updateTaskPriorityActions.request, updateTaskPriority)
 }
 
 export function* watchUpdateTaskPatch() {
-    yield debounce(300, updateTaskPatchActions.request, updateTaskPatch)
+    yield takeEvery(updateTaskPatchActions.request, updateTaskPatch)
 }
 
-
 export function* watchUpdateTaskTimeCancelled() {
-    yield debounce(300, updateTaskCancelledTimeActions.request, updateTaskTimeCancelled)
+    yield takeEvery(updateTaskCancelledTimeActions.request, updateTaskTimeCancelled)
 }
 
 export function* watchUpdateTaskRejectedTime() {
-    yield debounce(300, updateTaskRejectedTimeActions.request, updateTaskRejectedTime)
+    yield takeEvery(updateTaskRejectedTimeActions.request, updateTaskRejectedTime)
 }
 
 function* getTasks(action) {
