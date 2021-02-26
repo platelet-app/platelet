@@ -1,4 +1,4 @@
-import {getAvailableLocationsActions} from "./LocationsActions";
+import {getAvailableLocationsActions, getLocationActions} from "./LocationsActions";
 
 const initialState = {
     locations: {},
@@ -30,7 +30,7 @@ const initialLocationState = {
 
 export function location(state = initialLocationState, action) {
     switch (action.type) {
-        case getAvailableLocationsActions.success:
+        case getLocationActions.success:
             return {location: action.data, error: null};
         default:
             return state
