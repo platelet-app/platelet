@@ -34,12 +34,12 @@ function* setTaskPickupDestination(action) {
     try {
         const api = yield select(getApiControl);
         const locations = yield select(getPresetLocations);
-        const result = yield call([api, api.tasks.putTaskPickupDestination], action.data.taskUUID, action.data.payload);
+        const result = yield call([api, api.tasks.putTaskDestination], action.data.taskUUID, action.data.payload);
         let locationData;
-        if (locations[action.data.payload.location_uuid]) {
-            locationData = locations[action.data.payload.location_uuid];
+        if (locations[action.data.payload.pickup_location_uuid]) {
+            locationData = locations[action.data.payload.pickup_location_uuid];
         } else {
-            locationData = yield call([api, api.locations.getLocation], action.data.payload.location_uuid);
+            locationData = yield call([api, api.locations.getLocation], action.data.payload.pickup_location_uuid);
         }
         if (locationData)
             yield put(setTaskPickupDestinationSuccess({
@@ -100,7 +100,7 @@ function* updatePickupLocationAndUpdateTask(action) {
         }
         if (task) {
             yield put(updateLocationRequest(task.pickup_location.uuid, action.data.payload))
-            const result = yield call([api, api.tasks.putTaskPickupDestination], action.data.taskUUID, {location_uuid: task.pickup_location.uuid});
+            const result = yield call([api, api.tasks.putTaskDestination], action.data.taskUUID, {pickup_location_uuid: task.pickup_location.uuid});
             yield put(setTaskPickupDestinationSuccess({
                 taskUUID: action.data.taskUUID,
                 payload: {etag: result.etag, pickup_location: {...task.pickup_location, ...action.data.payload}}
@@ -119,12 +119,12 @@ function* setTaskDropoffDestination(action) {
     try {
         const api = yield select(getApiControl);
         const locations = yield select(getPresetLocations);
-        const result = yield call([api, api.tasks.putTaskDropoffDestination], action.data.taskUUID, action.data.payload);
+        const result = yield call([api, api.tasks.putTaskDestination], action.data.taskUUID, action.data.payload);
         let locationData;
-        if (locations[action.data.payload.location_uuid]) {
-            locationData = locations[action.data.payload.location_uuid];
+        if (locations[action.data.payload.dropoff_location_uuid]) {
+            locationData = locations[action.data.payload.dropoff_location_uuid];
         } else {
-            locationData = yield call([api, api.locations.getLocation], action.data.payload.location_uuid);
+            locationData = yield call([api, api.locations.getLocation], action.data.payload.dropoff_location_uuid);
         }
         if (locationData) {
             yield put(setTaskDropoffDestinationSuccess({
@@ -185,7 +185,7 @@ function* updateDropoffLocationAndUpdateTask(action) {
         }
         if (task) {
             yield put(updateLocationRequest(task.dropoff_location.uuid, action.data.payload))
-            const result = yield call([api, api.tasks.putTaskDropoffDestination], action.data.taskUUID, {location_uuid: task.dropoff_location.uuid});
+            const result = yield call([api, api.tasks.putTaskDestination], action.data.taskUUID, {dropoff_location_uuid: task.dropoff_location.uuid});
             yield put(setTaskDropoffDestinationSuccess({
                 taskUUID: action.data.taskUUID,
                 payload: {etag: result.etag, dropoff_location: {...task.dropoff_location, ...action.data.payload}}

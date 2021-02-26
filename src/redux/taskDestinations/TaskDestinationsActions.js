@@ -13,7 +13,7 @@ export const {
 } = createRequestFunctions(setTaskPickupDestinationActions);
 
 export function setTaskPickupDestinationRequest(taskUUID, locationUUID) {
-    return {type: setTaskPickupDestinationActions.request, data: {taskUUID, payload: {location_uuid: locationUUID}}}
+    return {type: setTaskPickupDestinationActions.request, data: {taskUUID, payload: {pickup_location_uuid: locationUUID}}}
 }
 
 export const setTaskDropoffDestinationPrefix = "SET_TASK_DROPOFF_DESTINATION";
@@ -24,7 +24,7 @@ export const {
 } = createRequestFunctions(setTaskDropoffDestinationActions);
 
 export function setTaskDropoffDestinationRequest(taskUUID, locationUUID) {
-    return {type: setTaskDropoffDestinationActions.request, data: {taskUUID, payload: {location_uuid: locationUUID}}}
+    return {type: setTaskDropoffDestinationActions.request, data: {taskUUID, payload: {dropoff_location_uuid: locationUUID}}}
 }
 
 export const unsetTaskPickupDestinationPrefix = "UNSET_TASK_PICKUP_DESTINATION";

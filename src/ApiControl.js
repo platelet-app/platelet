@@ -239,16 +239,12 @@ class Task {
         return makeFetch(this.api_url, "task/" + task_id + "/destinations", "GET", this.bearer)
     }
 
-    async putTaskPickupDestination(task_id, input_data) {
-        return makeFetch(this.api_url, "task/" + task_id + "/destinations?destination=pickup", "PUT", this.bearer, "application/json", input_data)
+    async putTaskDestination(task_id, input_data) {
+        return makeFetch(this.api_url, "task/" + task_id + "/destinations", "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteTaskPickupDestination(task_id) {
         return makeFetch(this.api_url, "task/" + task_id + "/destinations?destination=pickup", "DELETE", this.bearer)
-    }
-
-    async putTaskDropoffDestination(task_id, input_data) {
-        return makeFetch(this.api_url, "task/" + task_id + "/destinations?destination=delivery", "PUT", this.bearer, "application/json", input_data)
     }
 
     async deleteTaskDropoffDestination(task_id) {
