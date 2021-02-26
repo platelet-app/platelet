@@ -57,7 +57,7 @@ import {
 } from "../taskAssignees/TaskAssigneesActions";
 import {
     setTaskDropoffDestinationActions,
-    setTaskPickupDestinationActions
+    setTaskPickupDestinationActions, unsetTaskDropoffDestinationActions, unsetTaskPickupDestinationActions
 } from "../taskDestinations/TaskDestinationsActions";
 
 
@@ -141,6 +141,8 @@ export function tasks(state = initialTasksState, action) {
         case updateTaskTimeOfCallActions.success:
         case setTaskDropoffDestinationActions.success:
         case setTaskPickupDestinationActions.success:
+        case unsetTaskDropoffDestinationActions.success:
+        case unsetTaskPickupDestinationActions.success:
         case UPDATE_TASK_FROM_SOCKET: {
             const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
             if (parent.taskGroup) {
