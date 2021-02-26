@@ -39,7 +39,7 @@ function* getUsers() {
 function* getUser(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.users.getUser], action.data);
+        const result = yield call([api, api.users.getUser], action.data.userUUID);
         yield put(getUserSuccess(result))
     } catch (error) {
         if (error.status_code) {

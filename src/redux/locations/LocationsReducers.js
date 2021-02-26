@@ -18,14 +18,24 @@ const initialLocationState = {
     location: {
         uuid: "",
         name: "",
-        contact_name: "",
-        contact_number: "",
-        address: {},
-        links: {},
-        time_created: null,
-        time_modified: null
-    }
+        contact: {
+            name: "",
+            telephone_number: "",
+            email_address: "",
+            mobile_number: "",
+            address:
+                {
+                    "ward": null, "line1": null, "line2": null, "town": null,
+                    "county": null, "country": null, "postcode": null,
+                    "what3words": null
+                }
 
+        }
+    },
+    address: {},
+    links: {},
+    time_created: null,
+    time_modified: null
 }
 
 export function location(state = initialLocationState, action) {
