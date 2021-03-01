@@ -37,7 +37,11 @@ function* monitor(monitoredAction) {
         yield put(displayErrorNotification("Failed multiple times to refresh authentication. Data may not be saved!"))
         return
     }
-    if (fail && fail.error && fail.error.status_code === 401) {
+    if (fail && fail.error && fail.error.status_code === 425) {
+        console.log("token is already refreshed, trying action again")
+        yield put({...monitoredAction, meta: {retries: retries++}})
+    }
+    else if (fail && fail.error && fail.error.status_code === 401) {
         console.log('detected 401, refreshing token')
         yield put(refreshTokenRequest())
 
