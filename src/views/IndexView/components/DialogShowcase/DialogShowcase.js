@@ -1,44 +1,67 @@
 import React from "react";
-import {HeroBackground, HeroShaped, HeroSideImage} from "../../../../components/organisms";
-import {Typography} from "@material-ui/core";
-import {makeStyles} from "@material-ui/core/styles";
+import {HeroBackground, HeroShaped, HeroSideImage, Section, SectionAlternate} from "../../../../components/organisms";
+import {Grid, Typography, useMediaQuery} from "@material-ui/core";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
 import dialog_light from "../../../../assets/images/dialog-light.png"
 import dialog_dark from "../../../../assets/images/dialog-dark.png"
 import {Services} from "../index";
-import {HeroSideImageExample} from "../../../../views.default/Documentation/examples";
+import dashboard_dark from "../../../../assets/images/dashboard-dark.png";
 
-const useStyles = makeStyles(theme => ({
-    imageBackgroundLight: {
-        background: `url(${dialog_light})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'scroll',
-        backgroundSize: 'cover',
-        width: '600px',
-        height: '600px',
+const useStyles = makeStyles({
+    root: {
+        height: 600
     },
-    imageBackgroundDark: {
-        background: `url(${dialog_dark})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'scroll',
-        backgroundSize: 'cover',
-        width: '600px',
-        height: '600px',
+    text: {
+        height: 700,
+        width: 400,
+        display: "flex"
     },
-    servicesClass: {
-        height: "80%"
+    item: {
+        width: 500
+    },
+    background: {
+        backgroundImage: `url(${dialog_light})`,
+        height: 700,
+        backgroundRepeat: "no-repeat",
+        width: 550,
+        backgroundSize: 'contain',
+
+    },
+    backgroundDark: {
+        backgroundImage: `url(${dialog_dark})`,
+        height: 700,
+        backgroundRepeat: "no-repeat",
+        width: 550,
+        backgroundSize: 'contain',
+
     }
-}))
+})
+
 
 
 const DialogShowcase = ({themeMode = 'light', ...rest}) => {
     const classes = useStyles();
     const rightSide = <Services className={classes.servicesClass}/>
 
-    const leftSide = <div
+    const image = <div
         className={themeMode === 'dark' ? classes.imageBackgroundDark : classes.imageBackgroundLight}>
     </div>
     return (
-        <HeroSideImage imageSrc={themeMode === 'dark' ? dialog_dark : dialog_light}><Services/></HeroSideImage>
+            <Grid container spacing={5} direction={"row"} justify={"space-between"} alignItems={"center"}>
+                <Grid container item alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.text}>
+                    <Grid item>
+                        <Typography variant={"h4"}>
+                            Easily view, edit and share job details.
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <Typography variant={"h6"}>Select from a directory of hospital locations and items. Share extra details in comments, or make private notes.</Typography>
+                    </Grid>
+                </Grid>
+                <Grid item>
+                    <div className={themeMode === "dark"? classes.backgroundDark : classes.background}/>
+                </Grid>
+            </Grid>
     )
 
 }

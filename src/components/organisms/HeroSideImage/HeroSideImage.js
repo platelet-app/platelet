@@ -1,8 +1,8 @@
 import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import { colors, Grid } from '@material-ui/core';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
+import {colors, Grid, useMediaQuery} from '@material-ui/core';
 import { Image } from 'components/atoms';
 
 const useStyles = makeStyles(theme => ({
@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     objectFit: 'contain',
+    paddingLeft: 150
   },
   cover: {
     background: colors.indigo[900],
@@ -60,6 +61,10 @@ const HeroSideImage = props => {
     className,
     ...rest
   } = props;
+  const theme = useTheme();
+  const isMd = useMediaQuery(theme.breakpoints.up('md'), {
+    defaultMatches: true,
+  });
 
   const classes = useStyles();
 
@@ -75,7 +80,7 @@ const HeroSideImage = props => {
     <Grid
       container
       className={clsx('hero-side-image', classes.root, className)}
-      direction={reverse ? 'row-reverse' : 'row'}
+      direction={!isMd ? 'column' : reverse ? 'row-reverse' : 'row'}
       {...rest}
     >
       <Grid

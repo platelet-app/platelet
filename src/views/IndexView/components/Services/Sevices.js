@@ -30,7 +30,7 @@ const dataRow1 = [
     },
     {
         icon: 'fas fa-code',
-        title: 'Locations directory',
+        title: 'Directory of locations',
         subtitle:
             "Quickly select locations from a searchable directory.",
     },
@@ -57,48 +57,44 @@ const Services = ({className, ...rest}) => {
     });
 
     return (
-        <div className={className} {...rest}>
-            <Section className={classes.noPaddingTop}>
-                <Grid direction={"column"} container spacing={2}>
-                    <Grid container item spacing={2}>
-                        {dataRow1.map((item, index) => (
-                            <Grid key={index} item xs={12} sm={4} data-aos={'fade-up'}>
-                                <DescriptionListIcon
-                                    title={item.title}
-                                    subtitle={item.subtitle}
-                                    icon={
-                                        <IconAlternate
-                                            fontIconClass={item.icon}
-                                            size="medium"
-                                            color={colors.indigo}
-                                        />
-                                    }
-                                    align="left"
+        <Grid className={className} direction={"column"} container spacing={2}>
+            <Grid container direction={"row"} item spacing={2}>
+                {dataRow1.map((item, index) => (
+                    <Grid key={index} item style={{width: 300}} data-aos={'fade-up'}>
+                        <DescriptionListIcon
+                            title={item.title}
+                            subtitle={item.subtitle}
+                            icon={
+                                <IconAlternate
+                                    fontIconClass={item.icon}
+                                    size="medium"
+                                    color={colors.lightBlue}
                                 />
-                            </Grid>
-                        ))}
+                            }
+                            align="left"
+                        />
                     </Grid>
-                    <Grid container item spacing={2}>
-                        {dataRow2.map((item, index) => (
-                            <Grid key={index} item xs={12} sm={4} data-aos={'fade-up'}>
-                                <DescriptionListIcon
-                                    title={item.title}
-                                    subtitle={item.subtitle}
-                                    icon={
-                                        <IconAlternate
-                                            fontIconClass={item.icon}
-                                            size="medium"
-                                            color={colors.indigo}
-                                        />
-                                    }
-                                    align="left"
+                ))}
+            </Grid>
+            <Grid container direction={"row"} item spacing={2}>
+                {dataRow2.map((item, index) => (
+                    <Grid key={index} item style={{width: 300}} data-aos={'fade-up'}>
+                        <DescriptionListIcon
+                            title={item.title}
+                            subtitle={item.subtitle}
+                            icon={
+                                <IconAlternate
+                                    fontIconClass={item.icon}
+                                    size="medium"
+                                    color={colors.lightBlue}
                                 />
-                            </Grid>
-                        ))}
+                            }
+                            align="left"
+                        />
                     </Grid>
-                </Grid>
-            </Section>
-        </div>
+                ))}
+            </Grid>
+        </Grid>
     );
 };
 

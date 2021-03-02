@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import {Button, TextField} from '@material-ui/core';
 import {  SectionHeader } from 'components/molecules';
 
 const useStyles = makeStyles(() => ({
@@ -12,8 +12,8 @@ const useStyles = makeStyles(() => ({
 
 const GetStarted = ({ className, ...rest }) => {
   const classes = useStyles();
-  const title = "Get started with theFront today";
-  const subtitle = 'Build a beautiful, modern website with flexible, fully customizable, atomic Material UI components.';
+  const title = "Sign up to our mailing list to stay up to date.";
+  const subtitle = 'Your email will only be used to let you know when platelet is live.';
   const button = (
     <Button
       size="large"
@@ -22,9 +22,12 @@ const GetStarted = ({ className, ...rest }) => {
       component="a"
       href="/home"
     >
-      Get started
+      Submit
     </Button>
   );
+  const form = (
+      <TextField variant={"outlined"}/>
+  )
   return (
     <div className={className} {...rest}>
       <SectionHeader
@@ -36,7 +39,7 @@ const GetStarted = ({ className, ...rest }) => {
           color: 'textPrimary',
           className: classes.fontWeight900,
         }}
-        ctaGroup={[button]}
+        ctaGroup={[form, button]}
       />
     </div>
   );

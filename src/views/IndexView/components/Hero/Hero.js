@@ -7,6 +7,8 @@ import { SectionHeader, TypedText } from 'components/molecules';
 import { HeroShaped } from 'components/organisms';
 import dashboard_dark from '../../../../assets/images/dashboard-dark.png'
 import dashboard_light from '../../../../assets/images/dashboard-light.png'
+import bike2 from '../../../../assets/images/bike2.jpg'
+import bike1 from '../../../../assets/images/bike1.jpg'
 
 const useStyles = makeStyles(theme => ({
   fontWeight900: {
@@ -43,23 +45,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   imageAnimation: {
-    background: `url(${dashboard_light})`,
+    background: `url(${bike1})`,
     backgroundRepeat: 'no-repeat',
     backgroundAttachment: 'scroll',
     backgroundSize: 'cover',
     width: '900px',
     height: '900px',
     backgroundColor: theme.palette.alternate.dark,
-  },
-  imageAnimationDark: {
-    background: `url(${dashboard_dark})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundAttachment: 'scroll',
-    backgroundSize: 'cover',
-    width: '900px',
-    height: '900px',
-    backgroundColor: theme.palette.alternate.dark,
-  },
+  }
 }));
 
 const Hero = ({ themeMode = 'light', className, ...rest }) => {
@@ -114,7 +107,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
         leftSide={leftSideContent}
         rightSide={(
           <div
-            className={themeMode === 'dark' ? classes.imageAnimationDark: classes.imageAnimation}
+            className={classes.imageAnimation}
           />
         )}
       />

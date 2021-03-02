@@ -1,7 +1,8 @@
 import React from 'react';
-import { makeStyles, Divider } from '@material-ui/core';
+import {makeStyles, Divider, Grid} from '@material-ui/core';
 import { Section, SectionAlternate } from 'components/organisms';
 import { GetStarted, Features, Reviews, QuickStart, Services, Hero, DialogShowcase } from './components';
+import DashboardShowcase from "./components/DashboardShowcase";
 
 const useStyles = makeStyles(() => ({
   sectionAlternateNoPaddingTop: {
@@ -21,19 +22,18 @@ const IndexView = ({ themeMode }) => {
   return (
     <div>
       <Hero themeMode={themeMode} />
-      <DialogShowcase themeMode={themeMode}/>
-      <SectionAlternate className={classes.sectionAlternateNoPaddingTop}>
-        <QuickStart />
-      </SectionAlternate>
       <SectionAlternate>
-        <Features />
+      <DashboardShowcase themeMode={themeMode}/>
       </SectionAlternate>
+        <Section>
+      <DialogShowcase themeMode={themeMode}/>
+        </Section>
       <Section className={classes.dividerSection}>
         <Divider />
       </Section>
-      <Section narrow>
+      <SectionAlternate innerNarrowed>
         <GetStarted />
-      </Section>
+      </SectionAlternate>
     </div>
   );
 };
