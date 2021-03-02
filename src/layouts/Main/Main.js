@@ -19,44 +19,6 @@ const Main = ({ children, themeToggler, themeMode }) => {
     defaultMatches: true,
   });
 
-  const pages = {
-    landings: {
-      title: 'Landings',
-      id: 'landing-pages',
-      children: {
-        services: {
-          groupTitle: 'Services',
-          pages: [
-            {
-              title: 'Coworking',
-              href: '/coworking',
-            },
-            {
-              title: 'Rental',
-              href: '/rental',
-            },
-            {
-              title: 'Job Listing',
-              href: '/job-listing',
-            },
-            {
-              title: 'E-Learning',
-              href: '/e-learning',
-            },
-            {
-              title: 'E-commerce',
-              href: '/e-commerce',
-            },
-            {
-              title: 'Expo',
-              href: '/expo',
-            },
-          ],
-        }
-      }
-    }
-  };
-
   const [openSidebar, setOpenSidebar] = useState(false);
 
   const handleSidebarOpen = () => {
@@ -75,12 +37,12 @@ const Main = ({ children, themeToggler, themeMode }) => {
         [classes.root]: true,
       })}
     >
-      <Topbar onSidebarOpen={handleSidebarOpen} pages={pages} themeMode={themeMode} themeToggler={themeToggler} />
+      <Topbar onSidebarOpen={handleSidebarOpen} pages={{}} themeMode={themeMode} themeToggler={themeToggler} />
       <Sidebar
         onClose={handleSidebarClose}
         open={open}
         variant="temporary"
-        pages={pages}
+        pages={{}}
       />
       <main>
         <Divider />

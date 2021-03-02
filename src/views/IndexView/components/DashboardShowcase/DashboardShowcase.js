@@ -1,5 +1,4 @@
 import React from "react";
-import {Parallax, Section} from "../../../../components/organisms";
 import dashboard_dark from '../../../../assets/images/dashboard-dark.png'
 import dashboard_light from '../../../../assets/images/dashboard-light.png'
 import {Grid, Typography} from "@material-ui/core";
@@ -43,7 +42,7 @@ const DashboardShowcase = ({themeMode = 'light', ...rest}) => {
                 <Grid container data-aos={'fade-right'} item alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.right}>
                     <Grid item>
                     <Typography variant={"h4"}>
-                        Tailored dashboard for coordinators and drivers.
+                        Tailored dashboards for coordinators and drivers.
                     </Typography>
                     </Grid>
                     <Grid item>
