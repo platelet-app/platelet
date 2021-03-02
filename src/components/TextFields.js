@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import TextField from "@material-ui/core/TextField";
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import {parsePhoneNumberFromString} from 'libphonenumber-js'
+import OutlinedInput from "@material-ui/core/OutlinedInput";
 
 
 export function TextFieldControlled(props) {
@@ -12,7 +13,7 @@ export function TextFieldControlled(props) {
             {...newProps}
             margin="dense"
             onKeyUp={(ev) => {
-                switch(ev.key) {
+                switch (ev.key) {
                     case "Enter": {
                         if (props.onPressEnter)
                             props.onPressEnter(ev);
@@ -44,12 +45,13 @@ export function TelephoneTextFieldControlled(props) {
     const [errorState, setErrorState] = useState(false);
 
     function validateNumber() {
-        if (typeof(currentValue) === "string") {
+        if (typeof (currentValue) === "string") {
             const parsedNumber = parsePhoneNumberFromString(currentValue, "GB")
             if (parsedNumber)
                 setErrorState(!parsedNumber.isValid())
         }
     }
+
     useEffect(validateNumber, [currentValue])
     return (
         <TextField
@@ -77,31 +79,45 @@ export function TelephoneTextFieldControlled(props) {
 }
 
 export function TextFieldUncontrolled(props) {
-    return (
-        <TextField
-            {...props}
-            multiline
-            onKeyPress={(ev) => {
-                switch (ev.key) {
-                    case ev.key === "Enter": {
-                        if (props.onPressEnter) {
-                            props.onPressEnter();
-                            ev.preventDefault();
-                        }
-                        break;
-                    }
-                    case ev.key === "Escape":
+    const multiline = props.multiline;
+    if (multiline) {
+        return (
+            <TextField
+                {...props}
+                onKeyPress={(ev) => {
+                    if (ev.key === "Escape") {
+
                         if (props.onPressEscape) {
                             props.onPressEscape()
                             ev.preventDefault();
                         }
-                        break;
-                    default:
-                        break;
-                }
-            }}
-            margin="dense"
-            value={props.value || ''}
-        />
-    )
+                    }
+                }}
+                margin="dense"
+                value={props.value || ''}
+            />
+
+        )
+    } else {
+        return (
+            <TextField
+                {...props}
+                onKeyPress={(ev) => {
+                    if (ev.key === 'Enter') {
+                        if (props.onPressEnter)
+                            props.onPressEnter(ev);
+                        ev.preventDefault();
+                    } else if (ev.key === "Escape") {
+
+                        if (props.onPressEscape) {
+                            props.onPressEscape()
+                            ev.preventDefault();
+                        }
+                    }
+                }}
+                margin="dense"
+                value={props.value || ''}
+            />
+        )
+    }
 }

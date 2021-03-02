@@ -36,6 +36,12 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         flexDirection: 'column',
         textAlign: 'center',
+    },
+    login: {
+        height: "100%",
+        margin: "auto",
+        paddingTop: 70
+
     }
 }));
 
@@ -181,22 +187,9 @@ function AppContents(props) {
 
     if (forceResetPassword || (serverSettings && !isInitialised)) {
         appContents =
-            <Grid container direction={"column"} alignItems={"center"} spacing={3}>
-                <Grid item>
-                    <Login apiUrl={apiURL}/>
-                </Grid>
-                {process.env.REACT_APP_API_URL ? <></> :
-                    // No need for change organisation button if the api url is hard coded
-                    <Grid item>
-                        <Button variant="contained" color="primary" onClick={() => {
-                            dispatch(removeApiURL());
-                            dispatch(clearServerSettings());
-                        }}>
-                            Change Organisation
-                        </Button>
-                    </Grid>
-                }
-            </Grid>
+            <div className={classes.login}>
+                <Login apiUrl={apiURL}/>
+            </div>
 
     } else if (isInitialised) {
         appContents = <React.Fragment>
@@ -211,7 +204,7 @@ function AppContents(props) {
         ;
     } else {
         appContents =
-            <div className={classes.centeredDiv}>
+            <div className={classes.login}>
                 <LoginSkeleton/>
             </div>
 

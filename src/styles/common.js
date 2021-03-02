@@ -90,8 +90,9 @@ export function PaddedPaper(props) {
     const minWidth = props.minWidth ? props.minWidth : "30px";
     const maxHeight = props.maxHeight ? props.maxHeight : "100%";
     const minHeight = props.minHeight ? props.minHeight : "30px";
+    const className = props.className;
     return (
-        <Paper style={
+        <Paper className={className} style={
             {
                 width: props.width ? props.width : "100%",
                 height: props.height ? props.height : "100%",
