@@ -40,7 +40,7 @@ const DashboardShowcase = ({themeMode = 'light', ...rest}) => {
                 <Grid item>
                     <div className={themeMode === "dark"? classes.backgroundDark : classes.background}/>
                 </Grid>
-                <Grid container item alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.right}>
+                <Grid container data-aos={'fade-right'} item alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.right}>
                     <Grid item>
                     <Typography variant={"h4"}>
                         Tailored dashboard for coordinators and drivers.

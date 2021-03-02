@@ -48,7 +48,7 @@ const DialogShowcase = ({themeMode = 'light', ...rest}) => {
     </div>
     return (
             <Grid container spacing={5} direction={"row"} justify={"space-between"} alignItems={"center"}>
-                <Grid container item alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.text}>
+                <Grid container item data-aos={'fade-left'} alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.text}>
                     <Grid item>
                         <Typography variant={"h4"}>
                             Easily view, edit and share job details.
