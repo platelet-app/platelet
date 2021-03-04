@@ -19,8 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {encodeUUID} from "../utilities";
-import {logoutUser, removeApiURL} from "../redux/login/LoginActions";
-import {clearServerSettings} from "../redux/ServerSettings/ServerSettingsActions";
+import {logoutUser} from "../redux/login/LoginActions";
 import UserAvatar from "../components/UserAvatar";
 import {setDarkMode} from "../redux/Actions";
 import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
@@ -28,23 +27,6 @@ import Brightness4Icon from '@material-ui/icons/Brightness4';
 import {Tooltip} from "@material-ui/core";
 
 const drawerWidth = 240;
-
-const rightSideBarUseStyles = makeStyles(theme => ({
-    appBar: {
-        transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-    },
-    appBarShift: {
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-        marginRight: drawerWidth,
-    },
-}));
 
 const useStyles = makeStyles(theme => {
     const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
@@ -210,24 +192,11 @@ export function MenuMainContainer() {
                                     }}>
                                         Logout
                                     </MenuItem>
-
-                                    {process.env.REACT_APP_API_URL ? "" :
-                                        // No need for change organisation entry if the api url is hard coded
-                                        <MenuItem onClick={() => {
-                                            setAnchorElProfileMenu(null);
-                                            dispatch(removeApiURL());
-                                            dispatch(clearServerSettings());
-                                            history.push("/dashboard");
-                                        }}>
-                                            Change Organisation
-                                        </MenuItem>
-                                    }
                                 </Menu>
                             </div>
                         </Grid>
                         <Grid item>
                             <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"} spacing={1}>
-
                                 <Grid item>
                                     <Tooltip title={"Toggle dark/light mode"}>
                                         <IconButton onClick={() => {

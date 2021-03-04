@@ -7,10 +7,10 @@ export function convertListDataToObjects(list) {
 }
 
 export function setDarkModePreference(preference = false) {
-    localStorage.setItem("darkModePreference", preference ? "true" : "false");
+    localStorage.setItem("themeMode", preference ? "dark" : "light");
 }
 
 export function getDarkModePreference() {
-    const preference = localStorage.getItem("darkModePreference") || "false";
-    return preference === "true";
+    const preference = localStorage.getItem("themeMode") || "false";
+    return preference === "dark";
 }
