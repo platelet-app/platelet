@@ -48,7 +48,7 @@ const Features = ({ className, ...rest }) => {
   return (
     <div className={className} {...rest}>
       <SectionHeader
-        title="An experience you'd expect from a design system"
+        title={""}
         fadeUp
         titleProps={{
           variant: 'h3',

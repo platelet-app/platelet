@@ -13,6 +13,7 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import { Image, DarkModeToggler } from 'components/atoms';
 import logo from '../../../../assets/images/platelet.png'
+import DarkModeToggle from "../../../../views/IndexView/components/DarkModeToggle";
 
 const useStyles = makeStyles(theme => ({
   flexGrow: {
@@ -130,7 +131,7 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
       <Hidden smDown>
         <List disablePadding className={classes.navigationContainer}>
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
-            <DarkModeToggler themeMode={themeMode} onClick={() => themeToggler()} />
+            <DarkModeToggle themeMode={themeMode} onClick={() => themeToggler()} />
           </ListItem>
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
             <Button
@@ -144,16 +145,6 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
             </Button>
           </ListItem>
         </List>
-      </Hidden>
-      <Hidden mdUp>
-        <DarkModeToggler themeMode={themeMode} onClick={() => themeToggler()} />
-        <IconButton
-          className={classes.iconButton}
-          onClick={onSidebarOpen}
-          aria-label="Menu"
-        >
-          <MenuIcon />
-        </IconButton>
       </Hidden>
     </Toolbar>
   );

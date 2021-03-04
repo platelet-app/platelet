@@ -9,6 +9,10 @@ const useStyles = makeStyles(theme => ({
         height: 600
     },
     right: {
+        [theme.breakpoints.down('sm')]: {
+            height: 400,
+            width: 250,
+        },
         height: 700,
         width: 400,
         display: "flex"
@@ -17,6 +21,10 @@ const useStyles = makeStyles(theme => ({
         width: 500
     },
     background: {
+        [theme.breakpoints.down('sm')]: {
+            height: 600,
+            width: 450,
+        },
         backgroundImage: `url(${dashboard_light})`,
         height: 700,
         backgroundRepeat: "no-repeat",
@@ -24,6 +32,10 @@ const useStyles = makeStyles(theme => ({
         backgroundSize: 'contain',
     },
     backgroundDark: {
+        [theme.breakpoints.down('sm')]: {
+            height: 600,
+            width: 450,
+        },
         backgroundImage: `url(${dashboard_dark})`,
         height: 700,
         backgroundRepeat: "no-repeat",
@@ -46,7 +58,7 @@ const DashboardShowcase = ({themeMode = 'light', ...rest}) => {
                     </Typography>
                     </Grid>
                     <Grid item>
-                    <Typography variant={"h6"}>Assign jobs to your fleet and look up details from anywhere.</Typography>
+                    <Typography variant={"h6"}>Assign jobs to users and see all your jobs at a glance.</Typography>
                     </Grid>
                 </Grid>
             </Grid>

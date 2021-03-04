@@ -1,13 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 import { SectionHeader, TypedText } from 'components/molecules';
 import { HeroShaped } from 'components/organisms';
-import dashboard_dark from '../../../../assets/images/dashboard-dark.png'
-import dashboard_light from '../../../../assets/images/dashboard-light.png'
-import bike2 from '../../../../assets/images/bike2.jpg'
 import bike1 from '../../../../assets/images/bike1.jpg'
 
 const useStyles = makeStyles(theme => ({

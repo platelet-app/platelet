@@ -1,17 +1,19 @@
 import React from "react";
-import {HeroBackground, HeroShaped, HeroSideImage, Section, SectionAlternate} from "../../../../components/organisms";
 import {Grid, Typography, useMediaQuery} from "@material-ui/core";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import dialog_light from "../../../../assets/images/dialog-light.png"
 import dialog_dark from "../../../../assets/images/dialog-dark.png"
 import {Services} from "../index";
-import dashboard_dark from "../../../../assets/images/dashboard-dark.png";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     root: {
         height: 600
     },
     text: {
+        [theme.breakpoints.down('sm')]: {
+            height: 400,
+            width: 250,
+        },
         height: 700,
         width: 400,
         display: "flex"
@@ -20,6 +22,10 @@ const useStyles = makeStyles({
         width: 500
     },
     background: {
+        [theme.breakpoints.down('sm')]: {
+            height: 600,
+            width: 450,
+        },
         backgroundImage: `url(${dialog_light})`,
         height: 700,
         backgroundRepeat: "no-repeat",
@@ -28,6 +34,10 @@ const useStyles = makeStyles({
 
     },
     backgroundDark: {
+        [theme.breakpoints.down('sm')]: {
+            height: 600,
+            width: 450,
+        },
         backgroundImage: `url(${dialog_dark})`,
         height: 700,
         backgroundRepeat: "no-repeat",
@@ -35,7 +45,7 @@ const useStyles = makeStyles({
         backgroundSize: 'contain',
 
     }
-})
+}))
 
 
 
@@ -46,23 +56,35 @@ const DialogShowcase = ({themeMode = 'light', ...rest}) => {
     const image = <div
         className={themeMode === 'dark' ? classes.imageBackgroundDark : classes.imageBackgroundLight}>
     </div>
-    return (
-            <Grid container spacing={5} direction={"row"} justify={"space-between"} alignItems={"center"}>
-                <Grid container item data-aos={'fade-left'} alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.text}>
-                    <Grid item>
-                        <Typography variant={"h4"}>
-                            Easily view, edit and share job details.
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography variant={"h6"}>Select from a directory of hospital locations and items. Share extra details in comments, or make private notes.</Typography>
-                    </Grid>
-                </Grid>
-                <Grid item>
-                    <div className={themeMode === "dark"? classes.backgroundDark : classes.background}/>
-                </Grid>
+
+    const theme = useTheme();
+    const isMd = useMediaQuery(theme.breakpoints.up('md'), {
+        defaultMatches: true,
+    });
+
+    const item1 =
+        <Grid container item data-aos={'fade-left'} alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.text}>
+            <Grid item>
+                <Typography variant={"h4"}>
+                    Easily view, edit and share job details.
+                </Typography>
             </Grid>
-    )
+            <Grid item>
+                <Typography variant={"h6"}>Select from a directory of hospital locations and items. Share extra details in comments, or make private notes.</Typography>
+            </Grid>
+        </Grid>
+
+    const item2 =
+        <Grid item>
+            <div className={themeMode === "dark"? classes.backgroundDark : classes.background}/>
+        </Grid>
+
+        return (
+            <Grid container spacing={5} direction={isMd ? "row" : "column-reverse"} justify={"space-between"} alignItems={isMd ? "center" : "flex-start"}>
+                {item1}
+                {item2}
+            </Grid>
+        )
 
 }
 
