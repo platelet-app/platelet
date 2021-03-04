@@ -22,8 +22,8 @@ const useStyles = makeStyles(theme => ({
     },
     background: {
         [theme.breakpoints.down('sm')]: {
-            height: 600,
-            width: 450,
+            height: 530,
+            width: 380,
         },
         backgroundImage: `url(${dashboard_light})`,
         height: 700,
@@ -33,8 +33,8 @@ const useStyles = makeStyles(theme => ({
     },
     backgroundDark: {
         [theme.breakpoints.down('sm')]: {
-            height: 600,
-            width: 450,
+            height: 530,
+            width: 380,
         },
         backgroundImage: `url(${dashboard_dark})`,
         height: 700,
@@ -47,14 +47,14 @@ const useStyles = makeStyles(theme => ({
 const DashboardShowcase = ({themeMode = 'light', ...rest}) => {
     const classes = useStyles();
     return (
-            <Grid container spacing={5} direction={"row"} justify={"space-between"} alignItems={"center"}>
+            <Grid container spacing={3} direction={"row"} justify={"space-between"} alignItems={"center"}>
                 <Grid item>
                     <div className={themeMode === "dark"? classes.backgroundDark : classes.background}/>
                 </Grid>
                 <Grid container data-aos={'fade-right'} item alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.right}>
                     <Grid item>
                     <Typography variant={"h4"}>
-                        Tailored dashboards for coordinators and drivers.
+                        Tailored dashboards for coordinators and drivers
                     </Typography>
                     </Grid>
                     <Grid item>

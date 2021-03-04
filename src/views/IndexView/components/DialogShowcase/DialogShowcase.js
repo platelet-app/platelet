@@ -3,7 +3,9 @@ import {Grid, Typography, useMediaQuery} from "@material-ui/core";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
 import dialog_light from "../../../../assets/images/dialog-light.png"
 import dialog_dark from "../../../../assets/images/dialog-dark.png"
-import {Services} from "../index";
+import dashboard_light from "../../../../assets/images/dashboard-light.png";
+import dashboard_dark from "../../../../assets/images/dashboard-dark.png";
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -23,39 +25,30 @@ const useStyles = makeStyles(theme => ({
     },
     background: {
         [theme.breakpoints.down('sm')]: {
-            height: 600,
-            width: 450,
+            height: 530,
+            width: 380,
         },
         backgroundImage: `url(${dialog_light})`,
         height: 700,
         backgroundRepeat: "no-repeat",
         width: 550,
         backgroundSize: 'contain',
-
     },
     backgroundDark: {
         [theme.breakpoints.down('sm')]: {
-            height: 600,
-            width: 450,
+            height: 530,
+            width: 380,
         },
         backgroundImage: `url(${dialog_dark})`,
         height: 700,
         backgroundRepeat: "no-repeat",
         width: 550,
         backgroundSize: 'contain',
-
     }
 }))
 
-
-
 const DialogShowcase = ({themeMode = 'light', ...rest}) => {
     const classes = useStyles();
-    const rightSide = <Services className={classes.servicesClass}/>
-
-    const image = <div
-        className={themeMode === 'dark' ? classes.imageBackgroundDark : classes.imageBackgroundLight}>
-    </div>
 
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.up('md'), {
@@ -66,7 +59,7 @@ const DialogShowcase = ({themeMode = 'light', ...rest}) => {
         <Grid container item data-aos={'fade-left'} alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.text}>
             <Grid item>
                 <Typography variant={"h4"}>
-                    Easily view, edit and share job details.
+                    Easily view, edit and share job details
                 </Typography>
             </Grid>
             <Grid item>
@@ -80,7 +73,7 @@ const DialogShowcase = ({themeMode = 'light', ...rest}) => {
         </Grid>
 
         return (
-            <Grid container spacing={5} direction={isMd ? "row" : "column-reverse"} justify={"space-between"} alignItems={isMd ? "center" : "flex-start"}>
+            <Grid container direction={isMd ? "row" : "column-reverse"} justify={"space-between"} alignItems={isMd ? "center" : "flex-start"}>
                 {item1}
                 {item2}
             </Grid>
@@ -89,4 +82,3 @@ const DialogShowcase = ({themeMode = 'light', ...rest}) => {
 }
 
 export default DialogShowcase;
-

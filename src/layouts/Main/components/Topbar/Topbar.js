@@ -128,11 +128,11 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
         </a>
       </div>
       <div className={classes.flexGrow} />
-      <Hidden smDown>
         <List disablePadding className={classes.navigationContainer}>
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
             <DarkModeToggle themeMode={themeMode} onClick={() => themeToggler()} />
           </ListItem>
+          <Hidden smDown>
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
             <Button
               variant="contained"
@@ -144,8 +144,8 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
               Open platelet
             </Button>
           </ListItem>
+          </Hidden>
         </List>
-      </Hidden>
     </Toolbar>
   );
 };

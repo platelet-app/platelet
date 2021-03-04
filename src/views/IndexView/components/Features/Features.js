@@ -11,35 +11,35 @@ const useStyles = makeStyles(() => ({
 }));
 
 const data = [{
-  icon: 'fas fa-cubes',
+  icon: 'fas fa-file-invoice',
   color: colors.indigo,
-  title: 'Atomic',
-  subtitle: 'theFront follows atomic design methodologies for all components.',
+  title: 'Reporting',
+  subtitle: 'Instantly generate reports and statistical data.',
 }, {
-  icon: 'fas fa-palette',
+  icon: 'fas fa-user-friends',
   color: colors.indigo,
-  title: 'Theamable',
-  subtitle: 'Customize any part of our components to match your design needs.',
+  title: 'Relays',
+  subtitle: 'Coordinate relays with your members and other groups.',
 }, {
-  icon: 'fas fa-code',
+  icon: 'fas fa-mobile-alt',
   color: colors.indigo,
-  title: 'Composable',
-  subtitle: 'Designed with composition in mind. Compose new components with ease.',
+  title: 'Use anywhere',
+  subtitle: 'Developed with standard web technology. Connect from any internet connected device.',
 }, {
   icon: 'fas fa-moon',
   color: colors.indigo,
-  title: 'Light and Dark UI',
-  subtitle: 'Optimized for multiple color modes. Use light or dark, your choice.',
+  title: 'Themeable',
+  subtitle: 'Switch between light and dark mode.',
 }, {
   icon: 'fas fa-rocket',
   color: colors.indigo,
-  title: 'Developer Experience',
-  subtitle: 'Guaranteed to boost your productivity when building your app or website.',
+  title: 'Real time',
+  subtitle: 'Updates and notifications are pushed instantly to your dashboard.',
 }, {
-  icon: 'fas fa-hand-holding-heart',
+  icon: 'fas fa-code',
   color: colors.indigo,
-  title: 'Continuous Updates',
-  subtitle: 'We continually deploy improvements and new updates to theFront.',
+  title: 'As a platform',
+  subtitle: 'Integrate the platelet API into your own scripts and tools.',
 }];
 
 const Features = ({ className, ...rest }) => {
