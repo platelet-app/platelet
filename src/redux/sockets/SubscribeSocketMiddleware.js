@@ -1,6 +1,6 @@
 import * as io from 'socket.io-client'
 import _ from "lodash"
-import {encodeUUID, getApiURL} from "../../utilities";
+import {encodeUUID, getApiURL, getSocketApiURL} from "../../utilities";
 import {
     requestResponseReceived,
     SOCKET_CONNECT,
@@ -23,7 +23,7 @@ import {
     subscribedAssignmentsResponseReceived,
     subscribedCommentsResponseReceived,
     subscribedResponseReceived,
-    subscribeToUUID, unsubscribeFromUUID, SOCKET_AUTHENTICATE
+    subscribeToUUID, unsubscribeFromUUID
 } from "./SocketActions";
 import {findExistingTask, findExistingTaskParentByID, getTabIdentifier} from "../../utilities";
 import {
@@ -66,7 +66,7 @@ function getTaskUpdatedMessages(data) {
     return result;
 }
 
-const apiURL = getApiURL();
+const apiURL = getSocketApiURL();
 
 export const createSubscribeSocketMiddleware = () => {
     let socket;

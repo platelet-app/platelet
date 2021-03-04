@@ -63,6 +63,10 @@ export function getApiURL() {
     return process.env.REACT_APP_API_URL;
 }
 
+export function getSocketApiURL() {
+    return process.env.REACT_APP_SOCKET_API_URL;
+}
+
 export function deleteLogin() {
     localStorage.removeItem("apiBearer")
 }
