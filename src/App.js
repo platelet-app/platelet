@@ -194,10 +194,7 @@ function AppContents(props) {
     } else if (isInitialised) {
         appContents = <React.Fragment>
             <Helmet>
-                <title>{serverSettings.organisation_name}</title>
-                <link rel="icon" type="image/png" sizes="16x16" href={
-                    serverSettings.favicon ? "data:image/png;base64," + serverSettings.favicon : "favicon.ico"
-                }/>
+                <title>platelet</title>
             </Helmet>
             <MenuMainContainer/>
         </React.Fragment>
