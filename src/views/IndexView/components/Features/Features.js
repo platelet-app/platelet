@@ -39,7 +39,7 @@ const data = [{
   icon: 'fas fa-code',
   color: colors.indigo,
   title: 'As a platform',
-  subtitle: 'Integrate the platelet API into your own scripts and tools.',
+  subtitle: 'platelet uses a REST API at its core. Create API keys and make use of the platelet API in your own scripts and tools.',
 }];
 
 const Features = ({ className, ...rest }) => {

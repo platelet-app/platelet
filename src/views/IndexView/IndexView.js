@@ -34,7 +34,7 @@ const IndexView = ({themeMode}) => {
             <SectionAlternate>
                 <Features/>
             </SectionAlternate>
-            <Section narrow>
+            <Section id={"mailing-list"} narrow>
                 <GetStarted/>
             </Section>
         </div>

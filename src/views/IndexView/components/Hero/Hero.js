@@ -64,7 +64,16 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
   const subtitle = 'Connect from anywhere to coordinate fleets and record deliveries.';
 
   const findOutMore = (
-    <Button size="large" variant="outlined" color="primary" component="a" href="/signup">
+    <Button
+        size="large"
+        variant="outlined"
+        color="primary"
+        onClick={() => {
+            const element = document.getElementById("mailing-list");
+            console.log(element)
+            element.scrollIntoView(false);
+        }}
+        >
       Keep informed
     </Button>
   );

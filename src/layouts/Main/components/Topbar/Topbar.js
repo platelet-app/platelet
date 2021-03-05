@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,11 +7,9 @@ import {
   Hidden,
   List,
   ListItem,
-  IconButton,
   Button,
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import { Image, DarkModeToggler } from 'components/atoms';
+import { Image } from 'components/atoms';
 import logo from '../../../../assets/images/platelet.png'
 import DarkModeToggle from "../../../../views/IndexView/components/DarkModeToggle";
 
