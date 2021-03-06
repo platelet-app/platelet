@@ -64,7 +64,8 @@ const GetStarted = ({className, ...rest}) => {
         />
     )
     return (
-        <Grid container spacing={2} direction={"column"} alignItems={"center"} justify={"center"} className={className} {...rest}>
+        <Grid container spacing={2} direction={"column"} alignItems={"center"} justify={"center"}
+              className={className} {...rest}>
             <Grid item>
                 <SectionHeader
                     title={title}
@@ -86,16 +87,19 @@ const GetStarted = ({className, ...rest}) => {
             <Grid item>
                 {message}
             </Grid>
+            <Grid item>
+                <Typography variant={"h6"}>Email info@platelet.app for queries or more information.</Typography>
+            </Grid>
         </Grid>
     );
 };
 
 GetStarted.propTypes =
-{
-    /**
-     * External classes
-     */
-    className: PropTypes.string,
-};
+    {
+        /**
+         * External classes
+         */
+        className: PropTypes.string,
+    };
 
 export default GetStarted;
