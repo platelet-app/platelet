@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       '& .hero-shaped__image': {
         position: 'relative',
+        left: -150
       },
       '& .hero-shaped__wrapper': {
         flexDirection: 'column',
@@ -61,12 +62,12 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
     </Typography>
   );
 
-  const subtitle = 'Connect from anywhere to coordinate fleets and record deliveries.';
+  const subtitle = 'Connect from anywhere to coordinate fleets and record deliveries. Coming later this summer.';
 
   const findOutMore = (
     <Button
         size="large"
-        variant="outlined"
+        variant="contained"
         color="primary"
         onClick={() => {
             const element = document.getElementById("mailing-list");
@@ -80,6 +81,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
 
   const loginButton = (
     <Button
+      style={{display: "none"}}
       size="large"
       variant="contained"
       color="primary"

@@ -134,6 +134,7 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
             <Button
               variant="contained"
+              style={{display: "none"}}
               color="primary"
               component="a"
               href="/dashboard"

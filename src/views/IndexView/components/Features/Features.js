@@ -29,11 +29,11 @@ const data = [{
   icon: 'fas fa-moon',
   color: colors.indigo,
   title: 'Themeable',
-  subtitle: 'Switch between light and dark mode.',
+  subtitle: 'Switch between light and dark mode. Customisable themes for your group.',
 }, {
   icon: 'fas fa-rocket',
   color: colors.indigo,
-  title: 'Real time',
+  title: 'Real time collaboration',
   subtitle: 'Updates and notifications are pushed instantly to your dashboard.',
 }, {
   icon: 'fas fa-code',

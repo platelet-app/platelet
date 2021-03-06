@@ -47,21 +47,23 @@ const useStyles = makeStyles(theme => ({
 const DashboardShowcase = ({themeMode = 'light', ...rest}) => {
     const classes = useStyles();
     return (
-            <Grid container spacing={3} direction={"row"} justify={"space-between"} alignItems={"center"}>
+        <Grid container spacing={3} direction={"row"} justify={"space-between"} alignItems={"center"}>
+            <Grid item>
+                <div className={themeMode === "dark" ? classes.backgroundDark : classes.background}/>
+            </Grid>
+            <Grid container data-aos={'fade-right'} item alignItems={"center"} justify={"center"} spacing={2}
+                  direction={"column"} className={classes.right}>
                 <Grid item>
-                    <div className={themeMode === "dark"? classes.backgroundDark : classes.background}/>
-                </Grid>
-                <Grid container data-aos={'fade-right'} item alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.right}>
-                    <Grid item>
                     <Typography variant={"h4"}>
-                        Tailored dashboards for coordinators and drivers
+                        Tailored dashboards for coordinators and riders
                     </Typography>
-                    </Grid>
-                    <Grid item>
-                    <Typography variant={"h6"}>Assign jobs to users and see all your jobs at a glance.</Typography>
-                    </Grid>
+                </Grid>
+                <Grid item>
+                    <Typography variant={"h6"}>Assign jobs to users and see all your assigned jobs at a
+                        glance.</Typography>
                 </Grid>
             </Grid>
+        </Grid>
     )
 }
 

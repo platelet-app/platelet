@@ -20,7 +20,7 @@ function validateEmail(email) {
 
 const GetStarted = ({className, ...rest}) => {
     const classes = useStyles();
-    const title = "Sign up to our mailing list to stay up to date.";
+    const title = "Sign up to our mailing list to stay up to date";
     const subtitle = 'Your email will only be used to let you know when platelet is live.';
     const [email, setEmail] = useState("");
     const [success, setSuccess] = useState(undefined);
@@ -64,7 +64,7 @@ const GetStarted = ({className, ...rest}) => {
         />
     )
     return (
-        <Grid container direction={"column"} alignItems={"center"} justify={"center"} className={className} {...rest}>
+        <Grid container spacing={2} direction={"column"} alignItems={"center"} justify={"center"} className={className} {...rest}>
             <Grid item>
                 <SectionHeader
                     title={title}
@@ -75,8 +75,13 @@ const GetStarted = ({className, ...rest}) => {
                         color: 'textPrimary',
                         className: classes.fontWeight900,
                     }}
-                    ctaGroup={[form, button]}
                 />
+            </Grid>
+            <Grid item>
+                {form}
+            </Grid>
+            <Grid item>
+                {button}
             </Grid>
             <Grid item>
                 {message}
