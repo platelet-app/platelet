@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { Image } from 'components/atoms';
-import { LearnMoreLink } from 'components/atoms';
 import { SectionHeader } from 'components/molecules';
 import { HeroShaped } from 'components/organisms';
 
@@ -54,12 +53,7 @@ const NotFoundCover = () => {
               title="Uh oh."
               subtitle={
                 <span>
-                  There’s nothing here, but if you feel this is an error please{' '}
-                  <LearnMoreLink
-                    title="let us know"
-                    href="#"
-                    typographyProps={{ variant: 'h6' }}
-                  />
+                  There’s nothing here.
                 </span>
               }
               titleProps={{

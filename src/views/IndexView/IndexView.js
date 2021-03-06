@@ -1,7 +1,7 @@
 import React from 'react';
-import {makeStyles, Divider, Grid} from '@material-ui/core';
+import {makeStyles, Divider} from '@material-ui/core';
 import {Section, SectionAlternate} from 'components/organisms';
-import {GetStarted, Features, Reviews, QuickStart, Services, Hero, DialogShowcase} from './components';
+import {GetStarted, Features, Hero, DialogShowcase} from './components';
 import DashboardShowcase from "./components/DashboardShowcase";
 
 const useStyles = makeStyles(() => ({
@@ -18,7 +18,6 @@ const useStyles = makeStyles(() => ({
 
 const IndexView = ({themeMode}) => {
     const classes = useStyles();
-
     return (
         <div>
             <Hero themeMode={themeMode}/>

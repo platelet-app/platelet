@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Toolbar } from '@material-ui/core';
 import { Image } from 'components/atoms';
+import logo from '../../../../assets/images/platelet.png'
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
@@ -35,11 +36,11 @@ const Topbar = ({ themeMode, className, ...rest }) => {
   return (
     <Toolbar className={clsx(classes.toolbar, className)} {...rest}>
       <div className={classes.logoContainer}>
-        <a href="/" title="thefront">
+        <a href="/" title="platelet">
           <Image
             className={classes.logoImage}
-            src={themeMode === 'light' ? 'https://assets.maccarianagency.com/the-front/logos/logo.svg' : 'https://assets.maccarianagency.com/the-front/logos/logo-negative.svg'}
-            alt="thefront"
+            src={logo}
+            alt="platelet"
             lazy={false}
           />
         </a>
