@@ -17,11 +17,11 @@ const useStyles = makeStyles(theme => ({
     },
   },
   logoContainer: {
-    width: 100,
-    height: 28,
+    width: 90,
+    height: 29,
     [theme.breakpoints.up('md')]: {
-      width: 120,
-      height: 32,
+      width: 180,
+      height: 58,
     },
   },
   logoImage: {
