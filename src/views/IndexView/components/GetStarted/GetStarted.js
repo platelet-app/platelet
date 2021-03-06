@@ -26,9 +26,12 @@ const GetStarted = ({className, ...rest}) => {
     const [success, setSuccess] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const [validated, setValidated] = useState(true);
+    const [message, setMessage] = useState("")
 
-    const message = success === undefined ? <></> :
-        <Typography>{success ? "Submitted. Thank you for your interest!" : "Sorry, something went wrong. Please try again."}</Typography>
+    useEffect(() => {
+        if (success !== undefined)
+            setMessage(success ? "Submitted. Thank you for your interest!" :  "Sorry, something went wrong. Please try again.")
+    }, [success])
 
     useEffect(() => setValidated(validateEmail(email)), [email])
 
@@ -37,8 +40,12 @@ const GetStarted = ({className, ...rest}) => {
             size="large"
             variant="contained"
             color="primary"
-            disabled={loading || !email || !validated}
+            disabled={loading || !validated}
             onClick={() => {
+                if (!email) {
+                    setMessage("Please enter an email.")
+                    return
+                }
                 setLoading(true);
                 setSuccess(undefined);
                 postEmailToMailingList(email).then(response => {
@@ -85,7 +92,7 @@ const GetStarted = ({className, ...rest}) => {
                 {button}
             </Grid>
             <Grid item>
-                {message}
+                <Typography>{message}</Typography>
             </Grid>
             <Grid item>
                 <Typography variant={"h6"}>Email info@platelet.app for queries or more information.</Typography>
