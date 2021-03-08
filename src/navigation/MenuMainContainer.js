@@ -6,7 +6,6 @@ import {makeStyles} from '@material-ui/core/styles';
 
 
 import AppBar from '@material-ui/core/AppBar';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import List from '@material-ui/core/List';
@@ -26,6 +25,7 @@ import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import {Hidden, Tooltip} from "@material-ui/core";
 import MobileNavigationDrawer from "./MobileNavigationDrawer";
+import TaskFilterTextField from "../components/TaskFilterTextfield";
 
 const useStyles = makeStyles(theme => {
     const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
@@ -99,7 +99,7 @@ export function MenuMainContainer() {
 
     return (
         <React.Fragment>
-            <AppBar position="fixed" className={classes.appBar}>
+            <AppBar position="sticky" className={classes.appBar}>
                 <Toolbar className={classes.appBarComponents}>
                     <Grid container direction={"row"} spacing={3} justify={"flex-start"} alignItems={"center"}>
                         <Hidden smDown>
@@ -143,10 +143,15 @@ export function MenuMainContainer() {
                                     </Grid>
                                 </Grid>
                             </Hidden>
-                            <Hidden smUp>
+                            <Hidden mdUp>
                                 <MobileNavigationDrawer/>
                             </Hidden>
                         </Grid>
+                        <Hidden mdUp>
+                            <Grid item>
+                                <TaskFilterTextField/>
+                            </Grid>
+                        </Hidden>
                     </Grid>
                     <Grid container direction={"row-reverse"} justify={"flex-start"} alignItems={"center"}>
                         <Grid item>

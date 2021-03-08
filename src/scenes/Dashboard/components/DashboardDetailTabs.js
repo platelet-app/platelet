@@ -15,12 +15,6 @@ import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
 import CollaboratorsSection from "./CollaboratorsSection";
 import Toolbar from "@material-ui/core/Toolbar";
-import {TextFieldControlled, TextFieldUncontrolled} from "../../../components/TextFields";
-import {InputAdornment} from "@material-ui/core";
-import SearchIcon from '@material-ui/icons/Search';
-import {
-    createMuiTheme
-} from '@material-ui/core/styles';
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -28,7 +22,8 @@ import {saveDashboardRoleMode} from "../../../utilities";
 import Typography from "@material-ui/core/Typography";
 import {showHide} from "../../../styles/common";
 import {setRoleViewAndGetTasks} from "../../../redux/tasks/TasksActions";
-import {clearDashboardFilter, debounceDashboardFilter} from "../../../redux/dashboardFilter/DashboardFilterActions";
+import TaskFilterTextField from "../../../components/TaskFilterTextfield";
+import {Hidden} from "@material-ui/core";
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -64,36 +59,10 @@ function a11yProps(index) {
     };
 }
 
-const theme = createMuiTheme({
-    palette: {
-        primary: {
-            main: '#FFF'
-        }
-    }
-});
-
 
 const useStyles = makeStyles(theme => {
     const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
     return {
-        root: {
-            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white",
-            },
-            "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white"
-            },
-            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white",
-            },
-            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                color: "white"
-            },
-            "& .MuiInputLabel-outlined.Mui-focused": {
-                color: "white"
-            }
-        },
-        searchIcon: {color: "white"},
         appBar: {
             [theme.breakpoints.up('sm')]: {
                 width: "100%",
@@ -110,11 +79,9 @@ export function DashboardDetailTabs(props) {
     const snack = useSelector(state => state.taskContextMenuSnack);
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(state => state.whoami.user);
-    const dashboardFilterValue = useSelector(state => state.dashboardFilter);
     const roleView = useSelector(state => state.roleView);
     const classes = useStyles();
     const {show, hide} = showHide();
-    const [filterText, setFilterText] = useState("");
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "RESTORE_TASK",
@@ -137,11 +104,6 @@ export function DashboardDetailTabs(props) {
     const handleChange = (event, newValue) => {
         props.onChange(event, newValue);
     };
-    function onChangeFilterText(e) {
-        setFilterText(e.target.value)
-        dispatch(debounceDashboardFilter(e.target.value));
-    }
-
     return (
         <React.Fragment>
             <AppBar className={classes.appBar} position="static">
@@ -150,88 +112,75 @@ export function DashboardDetailTabs(props) {
                           alignItems={"center"}>
                         <Grid item>
                             <Grid container spacing={2} direction={"row"} justify={"flex-start"} alignItems={"center"}>
-                                <Grid item key={"tabs"}>
+                                <Grid item>
                                     <Tabs value={parseInt(props.value)} onChange={handleChange}
                                           aria-label={"dashboard-tabs"}>
                                         <Tab label="Active" {...a11yProps(0)} />
                                         <Tab label="Completed" {...a11yProps(1)} />
                                     </Tabs>
                                 </Grid>
-                                <Grid item key={"search"}>
-                                    <TextFieldControlled
-                                        variant={"outlined"}
-                                        value={dashboardFilterValue}
-                                        onChange={onChangeFilterText}
-                                        onPressEscape={() => dispatch(clearDashboardFilter())}
-                                        color={"secondary"}
-                                        className={classes.root}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <SearchIcon className={classes.searchIcon} />
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
-                                </Grid>
+                                <Hidden smDown>
+                                    <Grid item>
+                                        <TaskFilterTextField/>
+                                    </Grid>
+                                </Hidden>
                             </Grid>
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2} direction={"row"} justify={"flex-start"} alignItems={"center"}>
                                 <Grid item>
-                                    <Grid container  direction={"row"} justify={"flex-start"} alignItems={"center"}>
-                                        <Grid className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide} item>
-                                    <Typography>{`${roleView} view`.toUpperCase()}</Typography>
+                                    <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"}>
+                                        <Grid
+                                            className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide}
+                                            item>
+                                            <Hidden smDown>
+                                            <Typography>{`${roleView} view`.toUpperCase()}</Typography>
+                                            </Hidden>
                                         </Grid>
-                                        <Grid className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide} item>
-
-                                    <IconButton
-                                        color="inherit"
-                                        aria-controls="simple-menu"
-                                        aria-haspopup="true"
-                                        onClick={(event) => {
-                                            setAnchorElRoleMenu(event.currentTarget);
-                                        }}>
-                                        <ArrowDropDownIcon/>
-                                    </IconButton>
-                                    <Menu
-                                        id="profile-menu"
-                                        anchorEl={anchorElRoleMenu}
-                                        keepMounted
-                                        open={Boolean(anchorElRoleMenu)}
-                                        onClose={() => {
-                                            setAnchorElRoleMenu(null);
-                                        }}
-                                    >
-                                        <MenuItem onClick={() => {
-                                            setAnchorElRoleMenu(null);
-                                            if (roleView !== "coordinator") {
-                                                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"))
-                                                saveDashboardRoleMode("coordinator");
-                                            }
-                                        }}>
-                                            Coordinator
-                                        </MenuItem>
-                                        <MenuItem onClick={() => {
-                                            setAnchorElRoleMenu(null);
-                                            if (roleView !== "rider") {
-                                                dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"))
-                                                saveDashboardRoleMode("rider");
-                                            }
-                                        }}>
-                                            Rider
-                                        </MenuItem>
-                                    </Menu>
+                                        <Grid
+                                            className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide}
+                                            item>
+                                            <IconButton
+                                                color="inherit"
+                                                aria-controls="simple-menu"
+                                                aria-haspopup="true"
+                                                onClick={(event) => {
+                                                    setAnchorElRoleMenu(event.currentTarget);
+                                                }}>
+                                                <ArrowDropDownIcon/>
+                                            </IconButton>
+                                            <Menu
+                                                id="profile-menu"
+                                                anchorEl={anchorElRoleMenu}
+                                                keepMounted
+                                                open={Boolean(anchorElRoleMenu)}
+                                                onClose={() => {
+                                                    setAnchorElRoleMenu(null);
+                                                }}
+                                            >
+                                                <MenuItem onClick={() => {
+                                                    setAnchorElRoleMenu(null);
+                                                    if (roleView !== "coordinator") {
+                                                        dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"))
+                                                        saveDashboardRoleMode("coordinator");
+                                                    }
+                                                }}>
+                                                    Coordinator
+                                                </MenuItem>
+                                                <MenuItem onClick={() => {
+                                                    setAnchorElRoleMenu(null);
+                                                    if (roleView !== "rider") {
+                                                        dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"))
+                                                        saveDashboardRoleMode("rider");
+                                                    }
+                                                }}>
+                                                    Rider
+                                                </MenuItem>
+                                            </Menu>
                                         </Grid>
                                     </Grid>
                                 </Grid>
                                 <Grid item>
-                                    <CollaboratorsSection
-                                        allowAdd={true}
-                                    />
-                                </Grid>
-                                <Grid item>
-
                                     <Tooltip title="Recent Activity">
                                         <IconButton
                                             color="inherit"

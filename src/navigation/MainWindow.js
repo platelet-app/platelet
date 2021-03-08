@@ -4,7 +4,6 @@ import '../index.css';
 import {Route, Switch, useLocation} from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
 import VehicleList from "../scenes/VehiclesList";
-import {MainWindowContainer} from "../styles/common";
 import UsersList from "../scenes/UsersList";
 import UserDetail from "../scenes/UserProfile/UserDetail";
 import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
@@ -16,6 +15,32 @@ import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import {useDispatch} from "react-redux";
 import {setMenuIndex} from "../redux/Actions";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+
+function MainWindowContainer(props) {
+    const styles = makeStyles(theme => ({
+        root: {
+            paddingTop: 10,
+            paddingBottom: 10,
+            [theme.breakpoints.down('sm')]: {
+                paddingTop: 5,
+            }
+        },
+        toolbar: theme.mixins.toolbar
+    }));
+    const classes = styles();
+    const theme = useTheme();
+    const isMd = useMediaQuery(theme.breakpoints.down("md"))
+    return (
+        <Container disableGutters={isMd} className={classes.root}>
+            {props.children}
+        </Container>
+    )
+}
+
+
 
 export default function MainWindow(_props) {
     let location = useLocation();

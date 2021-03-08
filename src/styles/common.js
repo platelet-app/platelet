@@ -36,22 +36,6 @@ export const ThemedLink = styled(withTheme(Link))(props => ({
 )
 
 
-export function MainWindowContainer(props) {
-    const styles = makeStyles({
-        root: {
-            paddingTop: "100px",
-            paddingBottom: "100px"
-        }
-    });
-    const classes = styles();
-    return (
-        <Container className={classes.root}>
-            {props.children}
-        </Container>
-    )
-}
-
-
 export const StyledColumn = styled(Box)({
     border: 0,
     boxShadow: '0 2px 3px 1px rgba(100, 100, 100, .3)',
