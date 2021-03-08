@@ -102,14 +102,13 @@ export function MenuMainContainer() {
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar className={classes.appBarComponents}>
                     <Grid container direction={"row"} spacing={3} justify={"flex-start"} alignItems={"center"}>
-                        <Grid item>
-                            <Typography variant="h6">
-                                {serverSettings ? serverSettings.organisation_name : ""}
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <Divider orientation={"vertical"}/>
-                        </Grid>
+                        <Hidden smDown>
+                            <Grid item>
+                                <Typography variant="h6">
+                                    {serverSettings ? serverSettings.organisation_name : ""}
+                                </Typography>
+                            </Grid>
+                        </Hidden>
                         <Grid item>
                             <Hidden smDown>
                                 <Grid container direction={"row"} spacing={0} justify={"flex-start"}
@@ -197,6 +196,7 @@ export function MenuMainContainer() {
                                         </IconButton>
                                     </Tooltip>
                                 </Grid>
+                                <Hidden smDown>
                                 <Grid item>
                                     <Link to={`/user/${encodeUUID(whoami.uuid)}`}
                                           style={{textDecoration: 'none', color: "white"}}>
@@ -205,6 +205,7 @@ export function MenuMainContainer() {
                                         </Typography>
                                     </Link>
                                 </Grid>
+                                </Hidden>
                                 <Grid item>
                                     <Link to={`/user/${encodeUUID(whoami.uuid)}`}
                                           style={{textDecoration: 'none'}}>
