@@ -9,6 +9,8 @@ export function availablePriorities(state = initialState, action) {
     switch (action.type) {
         case getAvailablePrioritiesActions.success:
             return {priorities: action.data, error: null};
+        case getAvailablePrioritiesActions.failure:
+            return {...initialState, error: action.error}
         default:
             return state
     }

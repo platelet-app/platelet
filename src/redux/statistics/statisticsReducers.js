@@ -1,6 +1,6 @@
 import {getUserStatisticsActions} from "./statisticsActions";
 
-const userStatisticsInitialState = {
+const initialState = {
     statistics: {
         num_tasks: 0,
         num_all_riders: 0,
@@ -19,10 +19,12 @@ const userStatisticsInitialState = {
     error: null
 }
 
-export function userStatistics(state = userStatisticsInitialState, action) {
+export function userStatistics(state = initialState, action) {
     switch (action.type) {
         case getUserStatisticsActions.success:
             return {statistics: action.data, error: null}
+        case getUserStatisticsActions.failure:
+            return {...initialState, error: action.error}
         default:
             return state;
     }

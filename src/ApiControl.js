@@ -423,6 +423,7 @@ class Control {
         this.ping = this.ping.bind(this);
         //TODO: get this from server settings once implemented (api version)
         this.setApiURL(api_url);
+        this.api_url = api_url;
         this.bearer = "";
         this.connected = true;
         this.connectionReattempts = 0;

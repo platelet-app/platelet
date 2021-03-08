@@ -9,6 +9,8 @@ export function availableLocations(state = initialState, action) {
     switch (action.type) {
         case getAvailableLocationsActions.success:
             return {locations: action.data, error: null};
+        case getAvailableLocationsActions.failure:
+            return {...initialState, error: action.error};
         default:
             return state
     }

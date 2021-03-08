@@ -28,6 +28,8 @@ export function deliverables(state = initialState, action) {
             }
         case getDeliverablesActions.success:
             return {deliverables: action.data, error: null};
+        case getDeliverablesActions.failure:
+            return {...initialState, error: action.error}
         case deleteDeliverableActions.success:
             return {deliverables: _.omit(state.deliverables, action.data), error: null};
         default:
