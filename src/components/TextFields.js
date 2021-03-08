@@ -56,6 +56,7 @@ export function TelephoneTextFieldControlled(props) {
     return (
         <TextField
             {...props}
+            type={"tel"}
             error={errorState}
             helperText={errorState ? "Not a valid telephone number" : ""}
             onChange={e => {

@@ -24,41 +24,25 @@ import UserAvatar from "../components/UserAvatar";
 import {setDarkMode} from "../redux/Actions";
 import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
-import {Tooltip} from "@material-ui/core";
-
-const drawerWidth = 240;
+import {Hidden, Tooltip} from "@material-ui/core";
+import MobileNavigationDrawer from "./MobileNavigationDrawer";
 
 const useStyles = makeStyles(theme => {
     const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
     return ({
-    root: {
-        display: 'flex',
-    },
-    appBarComponents: {
-        margin: "auto",
-        width: "1280px"
-    },
-    drawer: {
-        [theme.breakpoints.up('sm')]: {
-            width: drawerWidth,
-            flexShrink: 0,
-        },
-    },
-    appBar: {
-        [theme.breakpoints.up('sm')]: {
+        appBarComponents: {
+            margin: "auto",
             width: "100%",
+            maxWidth: "1280px"
         },
-        background: appBarBack
-    },
-    toolbar: theme.mixins.toolbar,
-    drawerPaper: {
-        width: drawerWidth,
-    },
-    content: {
-        flexGrow: 1,
-        padding: theme.spacing(3),
-    },
-})})
+        appBar: {
+            [theme.breakpoints.up('sm')]: {
+                width: "100%",
+            },
+            background: appBarBack
+        },
+    })
+})
 
 export function MenuMainContainer() {
     const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
@@ -67,7 +51,6 @@ export function MenuMainContainer() {
     const serverSettings = useSelector(state => state.serverSettings);
     const darkMode = useSelector(state => state.darkMode)
     const classes = useStyles();
-    //const rightBarClasses = rightSideBarUseStyles()
     const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
     const [anchorElDashMenu, setAnchorElDashMenu] = React.useState(null);
 
@@ -128,35 +111,42 @@ export function MenuMainContainer() {
                             <Divider orientation={"vertical"}/>
                         </Grid>
                         <Grid item>
-                            <Grid container direction={"row"} spacing={0} justify={"flex-start"} alignItems={"center"}>
-                                <Grid item>
-                                    <Typography variant="h6">
-                                        <Link to={"/dashboard"} style={{textDecoration: 'none', color: "white"}}>Dashboard</Link>
-                                    </Typography>
+                            <Hidden smDown>
+                                <Grid container direction={"row"} spacing={0} justify={"flex-start"}
+                                      alignItems={"center"}>
+                                    <Grid item>
+                                        <Typography variant="h6">
+                                            <Link to={"/dashboard"}
+                                                  style={{textDecoration: 'none', color: "white"}}>Dashboard</Link>
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item>
+                                        <IconButton
+                                            color="inherit"
+                                            aria-controls="simple-menu"
+                                            aria-haspopup="true"
+                                            onClick={(event) => {
+                                                setAnchorElDashMenu(event.currentTarget);
+                                            }}>
+                                            <ArrowDropDownIcon/>
+                                        </IconButton>
+                                        <Menu
+                                            id="dasboard-menu"
+                                            anchorEl={anchorElDashMenu}
+                                            keepMounted
+                                            open={Boolean(anchorElDashMenu)}
+                                            onClose={() => {
+                                                setAnchorElDashMenu(null);
+                                            }}
+                                        >
+                                            {dashboardMenu}
+                                        </Menu>
+                                    </Grid>
                                 </Grid>
-                                <Grid item>
-                                    <IconButton
-                                        color="inherit"
-                                        aria-controls="simple-menu"
-                                        aria-haspopup="true"
-                                        onClick={(event) => {
-                                            setAnchorElDashMenu(event.currentTarget);
-                                        }}>
-                                        <ArrowDropDownIcon/>
-                                    </IconButton>
-                                    <Menu
-                                        id="dasboard-menu"
-                                        anchorEl={anchorElDashMenu}
-                                        keepMounted
-                                        open={Boolean(anchorElDashMenu)}
-                                        onClose={() => {
-                                            setAnchorElDashMenu(null);
-                                        }}
-                                    >
-                                        {dashboardMenu}
-                                    </Menu>
-                                </Grid>
-                            </Grid>
+                            </Hidden>
+                            <Hidden smUp>
+                                <MobileNavigationDrawer/>
+                            </Hidden>
                         </Grid>
                     </Grid>
                     <Grid container direction={"row-reverse"} justify={"flex-start"} alignItems={"center"}>

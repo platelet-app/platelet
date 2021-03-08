@@ -87,7 +87,7 @@ function newTaskAddedView(state = false, action) {
     }
 }
 
-function menuIndex(state = 1, action) {
+function menuIndex(state = "dashboard", action) {
     switch (action.type) {
         case SET_MENU_INDEX:
             return action.data;

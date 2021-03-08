@@ -14,43 +14,75 @@ import LocationsList from "../scenes/LocationsList";
 import LocationDetail from "../scenes/Location/LocationDetail";
 import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
+import {useDispatch} from "react-redux";
+import {setMenuIndex} from "../redux/Actions";
 
 export default function MainWindow(_props) {
     let location = useLocation();
+    const dispatch = useDispatch();
 
+    // whenever returning an item, set the MenuIndex to update the mobile view drawer menu
     return (
         <MainWindowContainer>
             <main>
                 <Switch location={location}>
                     <Route exact path='/dashboard'
-                           render={(props) => <Dashboard {...props}/>}
+                           render={(props) => {
+                               dispatch(setMenuIndex("dashboard"));
+                               return <Dashboard {...props}/>
+                           }}
                     />
                     <Route path='/vehicles'
-                           render={(props) => <VehicleList {...props}/>}
+                           render={(props) => {
+                               dispatch(setMenuIndex("vehicles"));
+                               return <VehicleList {...props}/>
+                           }}
                     />
                     <Route exact path='/vehicle/:vehicle_uuid_b62'
-                           render={(props) => <VehicleDetail {...props}/>}
+                           render={(props) => {
+                               dispatch(setMenuIndex("vehicles"));
+                               return <VehicleDetail {...props}/>
+                           }}
                     />
                     <Route path='/locations'
-                           render={(props) => <LocationsList {...props} />}
+                           render={(props) => {
+                               dispatch(setMenuIndex("locations"));
+                               return <LocationsList {...props} />
+                           }}
                     />
                     <Route exact path='/location/:location_uuid_b62'
-                           render={(props) => <LocationDetail {...props}/>}
+                           render={(props) => {
+                               dispatch(setMenuIndex("locations"));
+                               return <LocationDetail {...props}/>
+                           }}
                     />
                     <Route exact path='/users'
-                           render={(props) => <UsersList {...props}/>}
+                           render={(props) => {
+                               dispatch(setMenuIndex("users"));
+                               return <UsersList {...props}/>
+                           }}
                     />
                     <Route exact path='/admin'
-                           render={(props) => <AdminControl {...props}/>}
+                           render={(props) => {
+                               dispatch(setMenuIndex("admin"));
+                               return <AdminControl {...props}/>
+                           }}
                     />
                     <Route exact path='/user/:user_uuid_b62'
-                           render={(props) => <UserDetail {...props}/>}
+                           render={(props) => {
+                               dispatch(setMenuIndex("users"));
+                               return <UserDetail {...props}/>
+                           }}
                     />
                     <Route exact path='/statistics'
-                           render={(props) => <StatisticsDashboard {...props}/>}
+                           render={(props) => {
+                               dispatch(setMenuIndex("statistics"));
+                               return <StatisticsDashboard {...props}/>
+                           }}
                     />
                     <Route exact path="/task/:task_uuid_b62"
                            render={(props) => {
+                               dispatch(setMenuIndex("dashboard"));
                                return (
                                    <>
                                <Dashboard {...props} />
