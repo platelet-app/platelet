@@ -13,7 +13,6 @@ import IconButton from "@material-ui/core/IconButton";
 import TimelineIcon from '@material-ui/icons/Timeline';
 import Grid from "@material-ui/core/Grid";
 import PersistentDrawerRight from "./SideInfoSection";
-import CollaboratorsSection from "./CollaboratorsSection";
 import Toolbar from "@material-ui/core/Toolbar";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";

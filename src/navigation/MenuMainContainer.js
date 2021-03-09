@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import 'typeface-roboto'
 import {Link, useHistory} from "react-router-dom";
 import '../index.css'
@@ -23,9 +23,16 @@ import UserAvatar from "../components/UserAvatar";
 import {setDarkMode} from "../redux/Actions";
 import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
-import {Hidden, Tooltip} from "@material-ui/core";
+import {Hidden, TextField, Tooltip} from "@material-ui/core";
 import MobileNavigationDrawer from "./MobileNavigationDrawer";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
+import ExpandableTaskFilter from "./Components/ExpandableTaskFilter";
+import NavMenuSearch from "./Components/NavMenuSearch";
+import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
+import SearchIcon from "@material-ui/icons/Search";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import {showHide} from "../styles/common";
+import {clearDashboardFilter} from "../redux/dashboardFilter/DashboardFilterActions";
 
 const useStyles = makeStyles(theme => {
     const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
@@ -45,180 +52,43 @@ const useStyles = makeStyles(theme => {
 })
 
 export function MenuMainContainer() {
-    const loadingSelector = createLoadingSelector(['GET_WHOAMI']);
-    const isFetching = useSelector(state => loadingSelector(state));
-    const whoami = useSelector(state => state.whoami.user);
-    const serverSettings = useSelector(state => state.serverSettings);
-    const darkMode = useSelector(state => state.darkMode)
     const classes = useStyles();
-    const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
-    const [anchorElDashMenu, setAnchorElDashMenu] = React.useState(null);
-
-    let adminLink = <></>;
-    let dashboardMenu = <List/>;
-
-    if (!isFetching) {
-        if (whoami.roles) {
-            if (whoami.roles.includes("admin")) {
-                adminLink =
-                    <MenuItem onClick={() => {
-                        setAnchorElDashMenu(null);
-                    }} component={Link} to={"/admin"}>
-                        Admin
-                    </MenuItem>
-            }
-        }
-        dashboardMenu = (
-            <List component="nav">
-                <MenuItem onClick={() => {
-                    setAnchorElDashMenu(null);
-                }} component={Link} to={"/users"}>
-                    Users
-                </MenuItem>
-                <MenuItem onClick={() => {
-                    setAnchorElDashMenu(null);
-                }} component={Link} to={"/vehicles"}>
-                    Vehicles
-                </MenuItem>
-                <MenuItem onClick={() => {
-                    setAnchorElDashMenu(null);
-                }} component={Link} to={"/locations"}>
-                    Locations
-                </MenuItem>
-                <MenuItem onClick={() => {
-                    setAnchorElDashMenu(null);
-                }} component={Link} to={"/statistics"}>
-                    Statistics
-                </MenuItem>
-                {adminLink}
-            </List>
-        );
-    }
+    const [searchMode, setSearchMode] = useState(false);
+    const navMenuSearch = searchMode ? <></> : <NavMenuSearch/>;
+    const lightToggleProfileMenu = searchMode ? <></> : <LightToggleProfileMenu/>;
+    const toggleIcon = searchMode ? <ArrowBackIcon/> : <SearchIcon/>;
     const dispatch = useDispatch();
-    const history = useHistory();
+
+    const toggleSearchMode = () => {
+        if (searchMode)
+            dispatch(clearDashboardFilter())
+        setSearchMode(!searchMode);
+    }
 
     return (
         <React.Fragment>
             <AppBar position="sticky" className={classes.appBar}>
                 <Toolbar className={classes.appBarComponents}>
-                    <Grid container direction={"row"} spacing={3} justify={"flex-start"} alignItems={"center"}>
-                        <Hidden smDown>
-                            <Grid item>
-                                <Typography variant="h6">
-                                    {serverSettings ? serverSettings.organisation_name : ""}
-                                </Typography>
-                            </Grid>
-                        </Hidden>
+                    <Grid container justify={"space-between"}>
                         <Grid item>
-                            <Hidden smDown>
-                                <Grid container direction={"row"} spacing={0} justify={"flex-start"}
-                                      alignItems={"center"}>
-                                    <Grid item>
-                                        <Typography variant="h6">
-                                            <Link to={"/dashboard"}
-                                                  style={{textDecoration: 'none', color: "white"}}>Dashboard</Link>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <IconButton
-                                            color="inherit"
-                                            aria-controls="simple-menu"
-                                            aria-haspopup="true"
-                                            onClick={(event) => {
-                                                setAnchorElDashMenu(event.currentTarget);
-                                            }}>
-                                            <ArrowDropDownIcon/>
-                                        </IconButton>
-                                        <Menu
-                                            id="dasboard-menu"
-                                            anchorEl={anchorElDashMenu}
-                                            keepMounted
-                                            open={Boolean(anchorElDashMenu)}
-                                            onClose={() => {
-                                                setAnchorElDashMenu(null);
-                                            }}
-                                        >
-                                            {dashboardMenu}
-                                        </Menu>
-                                    </Grid>
-                                </Grid>
-                            </Hidden>
+                            {navMenuSearch}
+                        </Grid>
+                        <Grid item>
                             <Hidden mdUp>
-                                <MobileNavigationDrawer/>
+                                <Grid container item alignItems={"center"} direction={"row"}>
+                                    <Grid item>
+                                <IconButton onClick={toggleSearchMode}>
+                                    {toggleIcon}
+                                </IconButton>
+                                    </Grid>
+                                    <Grid item>
+                                {searchMode ? <TaskFilterTextField/> : <></>}
+                                    </Grid>
+                                </Grid>
                             </Hidden>
                         </Grid>
-                        <Hidden mdUp>
-                            <Grid item>
-                                <TaskFilterTextField/>
-                            </Grid>
-                        </Hidden>
-                    </Grid>
-                    <Grid container direction={"row-reverse"} justify={"flex-start"} alignItems={"center"}>
                         <Grid item>
-                            <div>
-                                <IconButton
-                                    color="inherit"
-                                    aria-controls="simple-menu"
-                                    aria-haspopup="true"
-                                    onClick={(event) => {
-                                        setAnchorElProfileMenu(event.currentTarget);
-                                    }}>
-                                    <ArrowDropDownIcon/>
-                                </IconButton>
-                                <Menu
-                                    id="profile-menu"
-                                    anchorEl={anchorElProfileMenu}
-                                    keepMounted
-                                    open={Boolean(anchorElProfileMenu)}
-                                    onClose={() => {
-                                        setAnchorElProfileMenu(null);
-                                    }}
-                                >
-                                    <MenuItem onClick={() => {
-                                        setAnchorElProfileMenu(null);
-                                    }} component={Link} to={`/user/${encodeUUID(whoami.uuid)}`}>
-                                        Profile
-                                    </MenuItem>
-                                    <MenuItem onClick={() => {
-                                        setAnchorElProfileMenu(null);
-                                        dispatch(logoutUser());
-                                        history.push("/dashboard");
-                                    }}>
-                                        Logout
-                                    </MenuItem>
-                                </Menu>
-                            </div>
-                        </Grid>
-                        <Grid item>
-                            <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"} spacing={1}>
-                                <Grid item>
-                                    <Tooltip title={"Toggle dark/light mode"}>
-                                        <IconButton onClick={() => {
-                                            dispatch(setDarkMode(!darkMode))
-                                        }}>
-                                            {darkMode ? <BrightnessHighIcon/> : <Brightness4Icon/>}
-
-                                        </IconButton>
-                                    </Tooltip>
-                                </Grid>
-                                <Hidden smDown>
-                                <Grid item>
-                                    <Link to={`/user/${encodeUUID(whoami.uuid)}`}
-                                          style={{textDecoration: 'none', color: "white"}}>
-                                        <Typography variant="h6" noWrap>
-                                            {whoami.display_name}
-                                        </Typography>
-                                    </Link>
-                                </Grid>
-                                </Hidden>
-                                <Grid item>
-                                    <Link to={`/user/${encodeUUID(whoami.uuid)}`}
-                                          style={{textDecoration: 'none'}}>
-                                        <UserAvatar userUUID={whoami.uuid} displayName={whoami.display_name}
-                                                    avatarURL={whoami.profile_picture_thumbnail_url}/>
-                                    </Link>
-                                </Grid>
-                            </Grid>
+                            {lightToggleProfileMenu}
                         </Grid>
                     </Grid>
                 </Toolbar>

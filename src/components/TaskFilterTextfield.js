@@ -5,6 +5,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {makeStyles} from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => {
     return {
@@ -25,38 +26,51 @@ const useStyles = makeStyles(theme => {
                 color: "white"
             },
             [theme.breakpoints.down("sm")]: {
-                width: 110
+                width: "100%"
             }
         },
-        searchIcon: {color: "white"},
+        searchIcon: {
+            color: "white",
+            [theme.breakpoints.down("sm")]: {
+                display: "none"
+            }
+        },
     }
 });
 
 
-export default function TaskFilterTextField(props) {
+function TaskFilterTextField(props) {
     const dispatch = useDispatch();
     const dashboardFilterValue = useSelector(state => state.dashboardFilter);
     const classes = useStyles();
+
     function onChangeFilterText(e) {
         dispatch(debounceDashboardFilter(e.target.value));
     }
 
     return (
-    <TextFieldControlled
-        variant={"outlined"}
-        value={dashboardFilterValue}
-        onChange={onChangeFilterText}
-        onPressEscape={() => dispatch(clearDashboardFilter())}
-        color={"secondary"}
-        className={classes.root}
-        InputProps={{
-            startAdornment: (
-                <InputAdornment position="start">
-                    <SearchIcon className={classes.searchIcon}/>
-                </InputAdornment>
-            ),
-        }}
-    />
+        <div className={props.className}>
+            <TextFieldControlled
+                variant={"outlined"}
+                value={dashboardFilterValue}
+                onChange={onChangeFilterText}
+                onPressEscape={() => dispatch(clearDashboardFilter())}
+                color={"secondary"}
+                className={classes.root}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon className={classes.searchIcon}/>
+                        </InputAdornment>
+                    ),
+                }}
+            />
+        </div>
     )
 }
 
+TaskFilterTextField.propTypes = {
+    className: PropTypes.string
+}
+
+export default TaskFilterTextField;
