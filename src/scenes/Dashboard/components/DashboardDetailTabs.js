@@ -23,6 +23,8 @@ import {showHide} from "../../../styles/common";
 import {setRoleViewAndGetTasks} from "../../../redux/tasks/TasksActions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import {Hidden} from "@material-ui/core";
+import MotorcycleIcon from "@material-ui/icons/Motorcycle";
+import CallIcon from '@material-ui/icons/Call';
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -133,7 +135,10 @@ export function DashboardDetailTabs(props) {
                                             className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide}
                                             item>
                                             <Hidden smDown>
-                                            <Typography>{`${roleView} view`.toUpperCase()}</Typography>
+                                                <Typography>{`${roleView} view`.toUpperCase()}</Typography>
+                                            </Hidden>
+                                            <Hidden mdUp>
+                                                {roleView === "rider" ? <MotorcycleIcon/> : <CallIcon/>}
                                             </Hidden>
                                         </Grid>
                                         <Grid
