@@ -298,6 +298,8 @@ function TasksGrid(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
     const tasks = useSelector(state => state.tasks.tasks);
+    const roleView = useSelector(state => state.roleView);
+    const whoami = useSelector(state => state.whoami.user);
     const dispatch = useDispatch();
     const dashboardFilter = useSelector(state => state.dashboardFilter);
     const {show, hide} = showHide();
@@ -316,13 +318,13 @@ function TasksGrid(props) {
         time_cancelled: null
     };
 
-    const addEmptyTask = React.useCallback(() => {
+    const addEmptyTask = () => {
         dispatch(addTaskRequest({
             ...emptyTask,
             time_of_call: new Date().toISOString(),
             time_created: new Date().toISOString()
-        }))
-    }, [])
+        }, roleView, whoami.uuid))
+    };
 
     const addRelay = React.useCallback((data) => {
         dispatch(addTaskRelayRequest(data));

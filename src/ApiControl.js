@@ -195,8 +195,11 @@ class Task {
         return makeFetch(this.api_url, "task/" + task_id, "GET", this.bearer)
     }
 
-    async createTask(input_data) {
-        return makeFetch(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
+    async createTask(input_data, autoAssign) {
+        if (["rider", "coordinator"].includes(autoAssign.role))
+            return makeFetch(this.api_url, `tasks?auto_assign_role=${autoAssign.role}&user_uuid=${autoAssign.uuid}`, "POST", this.bearer, "application/json", input_data)
+        else
+            return makeFetch(this.api_url, "tasks", "POST", this.bearer, "application/json", input_data)
     }
 
     async updateTask(task_id, input_data) {

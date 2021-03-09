@@ -68,7 +68,7 @@ import {
 } from "./TasksActions"
 
 
-import {getApiControl, getWhoami} from "../Api"
+import {getApiControl, getUsersSelector, getWhoami} from "../Api"
 import {
     refreshTaskAssignmentsSocket,
     refreshTasksDataSocket,
@@ -77,7 +77,11 @@ import {
 } from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {encodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
-import {addTaskAssignedCoordinatorRequest} from "../taskAssignees/TaskAssigneesActions";
+import {
+    addTaskAssignedCoordinatorRequest,
+    addTaskAssignedCoordinatorSuccess,
+    addTaskAssignedRiderSuccess
+} from "../taskAssignees/TaskAssigneesActions";
 import { setRoleView } from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
 import {createLoadingSelector, createPostingSelector} from "../selectors";
@@ -105,10 +109,14 @@ const emptyTask = {
 function* postNewTask(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.createTask], action.data.payload);
+        const users = yield select(getUsersSelector);
+        const result = yield call([api, api.tasks.createTask], action.data.payload, action.data.autoAssign);
         const parentID = result.parent_id ? parseInt(result.parent_id) : 0
         const task = {...action.data.payload, "uuid": result.uuid, parent_id: parentID, order_in_relay: 1, reference: result.reference};
-        yield put(addTaskAssignedCoordinatorRequest(task.uuid, result.author_uuid))
+        if (action.data.autoAssignRole === "coordinator")
+            if (action.data.payload.user_uuid) {
+                yield put(addTaskAssignedCoordinatorSuccess({...action.data, payload: {payload: {user_uuid: action.data.user_uuid}, user: users[action.data.payload.user_uuid]}}))
+            }
         yield put(addTaskSuccess(task));
         yield put(subscribeToUUID(task.uuid))
     } catch (error) {
@@ -118,17 +126,6 @@ function* postNewTask(action) {
 
 export function* watchPostNewTask() {
     yield takeEvery(addTaskActions.request, postNewTask)
-}
-
-const emptyAddress = {
-    ward: null,
-    line1: null,
-    line2: null,
-    town: null,
-    county: null,
-    country: null,
-    postcode: null,
-    what3words: null
 }
 
 function* postNewTaskRelay(action) {

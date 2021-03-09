@@ -28,10 +28,9 @@ export const addTaskPrefix = "ADD_TASK";
 export const addTaskActions = createRequestActions(addTaskPrefix);
 export const {addTaskSuccess, addTaskFailure, addTaskForbidden} = createRequestFunctions(addTaskActions);
 
-export function addTaskRequest(payload) {
-    return { type: addTaskActions.request, data: {payload }}
+export function addTaskRequest(payload, autoAssignRole = "", autoAssignUserUUID = "") {
+    return { type: addTaskActions.request, data: {payload, autoAssign: {role: autoAssignRole, uuid: autoAssignUserUUID}}}
 }
-
 
 export const addTaskRelayPrefix = "ADD_TASK_RELAY";
 export const addTaskRelayActions = createRequestActions(addTaskRelayPrefix);
