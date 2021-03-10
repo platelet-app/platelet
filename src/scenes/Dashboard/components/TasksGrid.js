@@ -30,6 +30,8 @@ import {
     appendTasksRejectedRequest
 } from "../../../redux/tasks/TasksWaypointActions";
 import {clearDashboardFilter} from "../../../redux/dashboardFilter/DashboardFilterActions";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import {useTheme} from "@material-ui/core/styles";
 
 
 const getColumnTitle = key => {
@@ -313,6 +315,8 @@ function TasksGrid(props) {
     const dispatch = useDispatch();
     const dashboardFilter = useSelector(state => state.dashboardFilter);
     const {show, hide} = showHide();
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"))
 
     useEffect(() => {
         animate.current = !isFetching
@@ -357,7 +361,7 @@ function TasksGrid(props) {
             <Grid container
                   spacing={2}
                   direction={"row"}
-                  justify={"center"}
+                  justify={isSm ? "center" : "flex-start"}
                   alignItems={"stretch"}
             >
                 {Object.keys(tasks).map(taskKey => {
