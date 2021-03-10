@@ -81,7 +81,7 @@ import {watchInitialiseApp, watchInitialWhoamiCompleted} from "./initialise/init
 import authenticationMonitor from "./login/AuthenticationMonitor";
 import updateActiveTaskMonitor from "./activeTask/ActiveTaskMonitors"
 import {watchGetTask} from "./activeTask/ActiveTaskSagas"
-import {watchClearDashboardFilter, watchDebounceDashboardFilter} from "./dashboardFilter/DashboardFilterSagas";
+import {watchDebounceDashboardFilter} from "./dashboardFilter/DashboardFilterSagas";
 
 export default function* rootSaga() {
     yield all([

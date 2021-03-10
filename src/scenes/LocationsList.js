@@ -3,9 +3,6 @@ import {useSelector} from "react-redux";
 import {createLoadingSelector} from "../redux/selectors";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
 import Grid from "@material-ui/core/Grid";
-import {Typography} from "@material-ui/core";
-import {encodeUUID} from "../utilities";
-import {Link} from "react-router-dom";
 import LocationCard from "../components/LocationCard";
 import {PaddedPaper} from "../styles/common";
 

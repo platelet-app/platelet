@@ -3,7 +3,6 @@ import {Link} from "react-router-dom";
 import TaskCard from "./TaskCardsColoured"
 import {encodeUUID} from "../../../utilities";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
-import {AnimatePresence, motion} from "framer-motion"
 import {contextDots} from "../../../styles/common";
 import PropTypes from 'prop-types'
 import {Grow} from "@material-ui/core";

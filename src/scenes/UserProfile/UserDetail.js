@@ -6,7 +6,6 @@ import UserProfile from "./components/UserProfile";
 import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
 import Grid from "@material-ui/core/Grid";
 import {PaddedPaper} from "../../styles/common";
-import CommentsSection from "../Comments/CommentsSection";
 import DetailSkeleton from "./components/DetailSkeleton";
 import Button from "@material-ui/core/Button";
 import ProfilePicture from "./components/ProfilePicture";

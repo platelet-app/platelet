@@ -4,8 +4,9 @@ import {
     logoutUser, refreshUserTokenActions
 } from './LoginActions'
 import {displayErrorNotification} from "../notifications/NotificationsActions";
+import {refreshUserTokenPrefix, loginUserPrefix} from "./LoginActions";
 
-const ignoreActionTypes = ["REFRESH_TOKEN", "SERVER_SETTINGS"]
+const ignoreActionTypes = [refreshUserTokenPrefix, "SERVER_SETTINGS", loginUserPrefix]
 
 function monitorableAction(action) {
     return action.type.includes("REQUEST") && !action.type.includes("SOCKET") &&
@@ -40,8 +41,7 @@ function* monitor(monitoredAction) {
     if (fail && fail.error && fail.error.status_code === 425) {
         console.log("token is already refreshed, trying action again")
         yield put({...monitoredAction, meta: {retries: retries++}})
-    }
-    else if (fail && fail.error && fail.error.status_code === 401) {
+    } else if (fail && fail.error && fail.error.status_code === 401) {
         console.log('detected 401, refreshing token')
         yield put(refreshTokenRequest())
 
