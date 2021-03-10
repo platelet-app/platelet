@@ -61,6 +61,16 @@ const useStyles = makeStyles(theme => ({
             visibility: "visible"
         }
     },
+    header: {
+        fontWeight: "bold",
+        padding: "6px"
+    },
+    divider: {
+        width: "300px"
+    }
+}));
+
+const taskGroupStyles = makeStyles({
     hoverDiv: {
         width: "100%",
         height: "35px",
@@ -71,18 +81,10 @@ const useStyles = makeStyles(theme => ({
             display: "inline"
         }
     },
-    header: {
-        fontWeight: "bold",
-        padding: "6px"
-    },
-    divider: {
-        width: "300px"
-    }
-}));
-
+})
 
 const TaskGroup = props => {
-    const classes = props.classes;
+    const classes = taskGroupStyles();
     const {show, hide} = showHide();
     const taskArr = Object.entries(props.group).map(([key, value]) => value)
     taskArr.sort((a, b) => a.order_in_relay - b.order_in_relay)
@@ -149,6 +151,10 @@ const TaskGroup = props => {
             </div>
         )
     })
+}
+
+TaskGroup.propTypes = {
+    showTasks: PropTypes.arrayOf(PropTypes.string),
 }
 
 const loaderStyles = makeStyles((theme) => ({
@@ -335,9 +341,7 @@ function TasksGrid(props) {
         const result = filterTasks(tasks, dashboardFilter)
         setFilteredTasksUUIDs(result);
     }
-
     useEffect(doSearch, [dashboardFilter])
-
 
     if (isFetching) {
         return <TasksGridSkeleton count={3}/>
@@ -346,14 +350,13 @@ function TasksGrid(props) {
             <Grid container
                   spacing={2}
                   direction={"row"}
-                  justify={"flex-start"}
+                  justify={"center"}
                   alignItems={"stretch"}
             >
                 {Object.keys(tasks).map(taskKey => {
                     const title = getColumnTitle(taskKey);
                     return (
-                        <React.Fragment key={taskKey}>
-                            <Grid item
+                            <Grid item key={taskKey}
                                   className={props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show}>
                                 <GridColumn title={title}
                                             classes={classes}
@@ -365,7 +368,6 @@ function TasksGrid(props) {
                                             key={title}/>
 
                             </Grid>
-                        </React.Fragment>
                     )
                 })}
             </Grid>

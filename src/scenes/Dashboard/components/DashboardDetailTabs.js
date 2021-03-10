@@ -12,7 +12,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import TimelineIcon from '@material-ui/icons/Timeline';
 import Grid from "@material-ui/core/Grid";
-import PersistentDrawerRight from "./SideInfoSection";
+import SideInfoSection from "./SideInfoSection";
 import Toolbar from "@material-ui/core/Toolbar";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
@@ -25,10 +25,13 @@ import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import {Hidden} from "@material-ui/core";
 import MotorcycleIcon from "@material-ui/icons/Motorcycle";
 import CallIcon from '@material-ui/icons/Call';
+import {useTheme, useMediaQuery} from "@material-ui/core"
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
     const value = parseInt(props.value)
+    const theme = useTheme();
+    const isMd = useMediaQuery(theme.breakpoints.down("md"))
 
     return (
         <div
@@ -39,7 +42,7 @@ export function TabPanel(props) {
             {...other}
         >
             {value === index && (
-                <Box p={3}>
+                <Box p={isMd ? 1 : 3}>
                     {children}
                 </Box>
             )}
@@ -200,11 +203,11 @@ export function DashboardDetailTabs(props) {
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <PersistentDrawerRight open={rightSideBarOpen}
+            <SideInfoSection open={rightSideBarOpen}
                                    handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
                                    handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {props.children}
-            </PersistentDrawerRight>
+            </SideInfoSection>
         </React.Fragment>
     );
 }

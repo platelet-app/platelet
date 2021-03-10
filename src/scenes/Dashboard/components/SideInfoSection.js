@@ -6,7 +6,6 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import CommentsSection from "../../Comments/CommentsSection";
 import {useDispatch, useSelector} from "react-redux";
 import {SwipeableDrawer} from "@material-ui/core";
 import ActionsRecord from "../../ActionsRecord/ActionsRecord";
@@ -58,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function PersistentDrawerRight(props) {
+export default function SideInfoSection(props) {
     const dispatch = useDispatch();
     const classes = useStyles();
     const theme = useTheme();
