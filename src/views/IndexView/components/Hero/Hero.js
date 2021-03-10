@@ -75,7 +75,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
             element.scrollIntoView(false);
         }}
         >
-      Keep informed
+      Sign up to our mailing list
     </Button>
   );
 

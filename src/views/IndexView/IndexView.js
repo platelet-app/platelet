@@ -3,6 +3,7 @@ import {makeStyles, Divider} from '@material-ui/core';
 import {Section, SectionAlternate} from 'components/organisms';
 import {GetStarted, Features, Hero, DialogShowcase} from './components';
 import DashboardShowcase from "./components/DashboardShowcase";
+import MobileShowcase from "./components/MobileShowcase";
 
 const useStyles = makeStyles(() => ({
     sectionAlternateNoPaddingTop: {
@@ -27,15 +28,15 @@ const IndexView = ({themeMode}) => {
             <Section>
                 <DialogShowcase themeMode={themeMode}/>
             </Section>
-            <Section className={classes.dividerSection}>
-                <Divider/>
-            </Section>
             <SectionAlternate>
-                <Features/>
+                <MobileShowcase themeMode={themeMode}/>
             </SectionAlternate>
-            <Section id={"mailing-list"} narrow>
-                <GetStarted/>
+            <Section>
+                <Features/>
             </Section>
+            <SectionAlternate id={"mailing-list"} innerNarrowed>
+                <GetStarted/>
+            </SectionAlternate>
         </div>
     );
 };

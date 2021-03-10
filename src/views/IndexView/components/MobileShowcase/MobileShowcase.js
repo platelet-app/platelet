@@ -1,8 +1,8 @@
 import React from "react";
 import {Grid, Typography, useMediaQuery} from "@material-ui/core";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
-import dialog_light from "../../../../assets/images/dialog-light.png"
-import dialog_dark from "../../../../assets/images/dialog-dark.png"
+import mobile_light from "../../../../assets/images/mobile-light.png"
+import mobile_dark from "../../../../assets/images/mobile-dark.png"
 
 
 const useStyles = makeStyles(theme => ({
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
             height: 530,
             width: 380,
         },
-        backgroundImage: `url(${dialog_light})`,
+        backgroundImage: `url(${mobile_light})`,
         height: 700,
         backgroundRepeat: "no-repeat",
         width: 550,
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
             height: 530,
             width: 380,
         },
-        backgroundImage: `url(${dialog_dark})`,
+        backgroundImage: `url(${mobile_dark})`,
         height: 700,
         backgroundRepeat: "no-repeat",
         width: 550,
@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-const DialogShowcase = ({themeMode = 'light', ...rest}) => {
+const MobileShowcase = ({themeMode = 'light', ...rest}) => {
     const classes = useStyles();
 
     const theme = useTheme();
@@ -57,11 +57,11 @@ const DialogShowcase = ({themeMode = 'light', ...rest}) => {
         <Grid container item data-aos={'fade-left'} alignItems={"center"} justify={"center"} spacing={2} direction={"column"} className={classes.text}>
             <Grid item>
                 <Typography variant={"h4"}>
-                    Easily view, edit and share job details
+                    Use from any internet capable device
                 </Typography>
             </Grid>
             <Grid item>
-                <Typography variant={"h6"}>Select from a directory of hospital locations and items. Share extra details in comments, or make private notes.</Typography>
+                <Typography variant={"h6"}>Use on any device with an internet browser. A native mobile app is planned.</Typography>
             </Grid>
         </Grid>
 
@@ -70,13 +70,13 @@ const DialogShowcase = ({themeMode = 'light', ...rest}) => {
             <div className={themeMode === "dark"? classes.backgroundDark : classes.background}/>
         </Grid>
 
-        return (
-            <Grid container direction={isMd ? "row" : "column-reverse"} justify={"space-between"} alignItems={isMd ? "center" : "flex-start"}>
-                {item1}
-                {item2}
-            </Grid>
-        )
+    return (
+        <Grid container direction={isMd ? "row" : "column"} justify={"space-between"} alignItems={isMd ? "center" : "flex-start"}>
+            {item2}
+            {item1}
+        </Grid>
+    )
 
 }
 
-export default DialogShowcase;
+export default MobileShowcase;
