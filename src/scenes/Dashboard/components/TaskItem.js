@@ -6,16 +6,15 @@ import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import {AnimatePresence, motion} from "framer-motion"
 import {contextDots} from "../../../styles/common";
 import PropTypes from 'prop-types'
+import {Grow} from "@material-ui/core";
 
 
 const TaskItem = React.memo(function TaskItem(props) {
     const contextClass = contextDots();
     return (
-        <AnimatePresence>
-            <motion.div
-            animate={{scale: [0.6, 1]}}
-            transition={{duration: 0.5}}
-            exit={{scale: [1, 0]}}
+        <Grow
+            in
+            {...(!props.animate ? { timeout: 0 } : {})}
         >
             <div style={{cursor: 'context-menu', position: "relative"}}>
             <Link style={{textDecoration: 'none'}}
@@ -35,16 +34,14 @@ const TaskItem = React.memo(function TaskItem(props) {
                 />
             </div>
         </div>
-        </motion.div>
-        </AnimatePresence>
+        </Grow>
     )
-
-
 })
 
 TaskItem.defaultProps = {
     assignedRiders: [],
     assignedCoordinators: [],
+    animate: true
 }
 TaskItem.propTypes = {
     pickupAddress: PropTypes.object,
@@ -62,7 +59,8 @@ TaskItem.propTypes = {
     taskUUID: PropTypes.string,
     parentID: PropTypes.number,
     view: PropTypes.string,
-    deleteDisabled: PropTypes.bool
+    deleteDisabled: PropTypes.bool,
+    animate: PropTypes.bool
 }
 
 export default TaskItem;

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import TaskItem from "./TaskItem";
 import {
@@ -29,7 +29,6 @@ import {
     appendTasksDeliveredRequest,
     appendTasksRejectedRequest
 } from "../../../redux/tasks/TasksWaypointActions";
-import {setDashboardFilter} from "../../../redux/Actions";
 import {clearDashboardFilter} from "../../../redux/dashboardFilter/DashboardFilterActions";
 
 
@@ -87,6 +86,9 @@ const TaskGroup = props => {
     const classes = taskGroupStyles();
     const {show, hide} = showHide();
     const taskArr = Object.entries(props.group).map(([key, value]) => value)
+
+
+
     taskArr.sort((a, b) => a.order_in_relay - b.order_in_relay)
     return taskArr.length === 0 ? <></> : taskArr.map((task, i, arr) => {
         const {
@@ -114,6 +116,7 @@ const TaskGroup = props => {
                 <Grid container alignItems={"center"} justify={"center"}>
                     <Grid item>
                         <TaskItem
+                            animate={props.animate}
                             pickupAddress={pickup_address}
                             assignedRiders={assigned_riders}
                             assignedCoordinators={assigned_coordinators}
@@ -302,6 +305,7 @@ function TasksGrid(props) {
     const isPosting = useSelector(state => postingSelector(state));
     const loadingSelector = createLoadingSelector(['GET_TASKS']);
     const isFetching = useSelector(state => loadingSelector(state));
+    const animate = useRef(false);
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
     const tasks = useSelector(state => state.tasks.tasks);
     const roleView = useSelector(state => state.roleView);
@@ -310,6 +314,9 @@ function TasksGrid(props) {
     const dashboardFilter = useSelector(state => state.dashboardFilter);
     const {show, hide} = showHide();
 
+    useEffect(() => {
+        animate.current = !isFetching
+    }, [isFetching])
 
     const emptyTask = {
         requester_contact: {
@@ -365,6 +372,7 @@ function TasksGrid(props) {
                                             disableAddButton={isPosting}
                                             taskKey={taskKey}
                                             showTasks={filteredTasksUUIDs}
+                                            animate={animate.current}
                                             key={title}/>
 
                             </Grid>
