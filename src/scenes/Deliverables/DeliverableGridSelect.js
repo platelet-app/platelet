@@ -16,14 +16,17 @@ import ClearIcon from "@material-ui/icons/Clear";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import styled from "@material-ui/core/styles/styled";
 import Box from "@material-ui/core/Box";
+import {Paper} from "@material-ui/core";
+import {dialogCardStyles} from "../Task/styles/DialogCompactStyles";
 
 const useStyles = makeStyles(({
     root: {
-        width: "365px"
+        width: "100%",
+        minWidth: 350
     }
 }))
 
-const DeliverableBox = styled(Box) ({
+const DeliverableBox = styled(Box)({
     backgroundColor: "rgba(180, 180, 180, 0.1)",
     paddingLeft: 10
 });
@@ -39,6 +42,7 @@ export default function DeliverableGridSelect(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const [addMode, setAddMode] = useState(false);
     const classes = useStyles();
+    const cardClasses = dialogCardStyles();
 
     let emptyDeliverable = {
         task_uuid: props.taskUUID,
@@ -82,46 +86,48 @@ export default function DeliverableGridSelect(props) {
         return <DeliverablesSkeleton/>
     } else {
         return (
-            <Grid container
-                  spacing={1}
-                  className={classes.root}
-                  direction={"column"}
-            >
-                {Object.values(deliverables).map(deliverable => {
-                    return (
-                        <Grid item key={deliverable.uuid}>
-                            <DeliverableBox>
-                            <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
-                                <Grid item>
-                            <DeliverableCard
-                                size={"compact"}
-                                label={deliverable.type}
-                                typeID={deliverable.type_id}
-                            />
-                                </Grid>
-                                <Grid item>
-                                    <IconButton
-                                        color={"inherit"}
-                                        onClick={() => dispatch(deleteDeliverableRequest(deliverable.uuid))}
-                                    >
-                                        <ClearIcon/>
-                                    </IconButton>
+            <Paper className={cardClasses.root}>
+                <Grid container
+                      spacing={1}
+                      className={classes.root}
+                      direction={"column"}
+                >
+                    {Object.values(deliverables).map(deliverable => {
+                        return (
+                            <Grid item key={deliverable.uuid}>
+                                <DeliverableBox>
+                                    <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+                                        <Grid item>
+                                            <DeliverableCard
+                                                size={"compact"}
+                                                label={deliverable.type}
+                                                typeID={deliverable.type_id}
+                                            />
+                                        </Grid>
+                                        <Grid item>
+                                            <IconButton
+                                                color={"inherit"}
+                                                onClick={() => dispatch(deleteDeliverableRequest(deliverable.uuid))}
+                                            >
+                                                <ClearIcon/>
+                                            </IconButton>
 
-                                </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </DeliverableBox>
                             </Grid>
-                            </DeliverableBox>
-                        </Grid>
-                    )
+                        )
 
-                })
-                }
-                <Grid item>
-                    {deliverablesSelect}
+                    })
+                    }
+                    <Grid item>
+                        {deliverablesSelect}
+                    </Grid>
+                    <Grid item>
+                        {addButton}
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    {addButton}
-                </Grid>
-            </Grid>
+            </Paper>
 
         )
     }

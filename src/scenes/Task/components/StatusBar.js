@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import {dialogComponent} from "../styles/TaskDialogCSS"
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {AppBar, Tooltip} from "@material-ui/core";
+import {AppBar, Hidden, Tooltip} from "@material-ui/core";
 import {ArrowButton} from "../../../components/Buttons";
 import {showHide} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
@@ -42,9 +42,11 @@ function StatusBar(props) {
                                 role={"coordinator"}
                                 taskUUID={props.taskUUID}/>
                         </Grid>
+                        <Hidden smDown>
                         <Grid item>
                             <Typography>Status: {props.status}</Typography>
                         </Grid>
+                        </Hidden>
                     </Grid>
                 </Grid>
                 <Grid item>

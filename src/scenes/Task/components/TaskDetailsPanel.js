@@ -17,6 +17,8 @@ import ClickableTextField from "../../../components/ClickableTextField";
 import ActivityPopover from "./ActivityPopover";
 import TimePicker from "./TimePicker";
 import {createPostingSelector} from "../../../redux/selectors";
+import {Paper} from "@material-ui/core";
+import {dialogCardStyles} from "../styles/DialogCompactStyles";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -36,6 +38,7 @@ function TaskDetailsPanel(props) {
     const tocPosting = useSelector(state => tocPostingSelector(state));
     const isPostingCancelTime = useSelector(state => cancelledPostingSelector(state));
     const isPostingRejectedTime = useSelector(state => rejectedPostingSelector(state));
+    const cardClasses = dialogCardStyles();
     const [state, setState] = useState({
         reference: null,
         time_of_call: null,
@@ -102,72 +105,74 @@ function TaskDetailsPanel(props) {
     }
 
     return (
-        <Grid container direction={"column"} spacing={3}>
-            <Grid item>
-                <LabelItemPair label={"Reference"}>
-                    <Typography>{state.reference}</Typography>
-                </LabelItemPair>
-                <LabelItemPair label={"TOC"}>
-                    <TimePicker
-                        onChange={onChangeTimeOfCall}
-                        disableClear={true}
-                        disabled={tocPosting}
-                        label={"TOC"}
-                        time={state.time_of_call}/>
-                </LabelItemPair>
-                <Typography>Requester contact:</Typography>
-                <div className={classes.requesterContact}>
-                    <LabelItemPair label={"Name"}>
-                        <ClickableTextField onFinished={sendRequesterContactData}
-                                            onChange={v => onChangeRequesterContact({name: v})}
-                                            value={state.requester_contact.name}/>
+        <Paper className={cardClasses.root}>
+            <Grid container direction={"column"} spacing={3}>
+                <Grid item>
+                    <LabelItemPair label={"Reference"}>
+                        <Typography>{state.reference}</Typography>
                     </LabelItemPair>
-                    <LabelItemPair label={"Tel"}>
-                        <ClickableTextField onFinished={sendRequesterContactData} telephone={true}
-                                            onChange={v => onChangeRequesterContact({telephone_number: v})}
-                                            value={state.requester_contact.telephone_number}/>
+                    <LabelItemPair label={"TOC"}>
+                        <TimePicker
+                            onChange={onChangeTimeOfCall}
+                            disableClear={true}
+                            disabled={tocPosting}
+                            label={"TOC"}
+                            time={state.time_of_call}/>
                     </LabelItemPair>
-                </div>
-                <Typography>Priority:</Typography>
-                <div className={classes.priority}>
-                    <PrioritySelect onSelect={onSelectPriority} priorityID={parseInt(priority_id)}/>
-                </div>
-                <LabelItemPair label={"Patch"}>
-                    <Typography>{state.patch}</Typography>
-                </LabelItemPair>
-                <LabelItemPair label={"Assigned rider"}>
-                    <Typography>{state.assigned_riders_display_string}</Typography>
-                </LabelItemPair>
-            </Grid>
-            <Grid item>
-                <Grid container direction={"column"}>
-                    <Grid item>
-                        <LabelItemPair label={""}>
-                            <ActivityPopover parentUUID={task.uuid}/>
+                    <Typography>Requester contact:</Typography>
+                    <div className={classes.requesterContact}>
+                        <LabelItemPair label={"Name"}>
+                            <ClickableTextField onFinished={sendRequesterContactData}
+                                                onChange={v => onChangeRequesterContact({name: v})}
+                                                value={state.requester_contact.name}/>
                         </LabelItemPair>
-                    </Grid>
-                    <Grid item>
-                        <LabelItemPair label={"Time cancelled"}>
-                            <TimePicker
-                                onChange={onChangeTimeCancelled}
-                                disabled={isPostingCancelTime || !!task.time_dropped_off || !!task.time_rejected}
-                                label={"Mark cancelled"}
-                                time={task.time_cancelled}/>
+                        <LabelItemPair label={"Tel"}>
+                            <ClickableTextField onFinished={sendRequesterContactData} telephone={true}
+                                                onChange={v => onChangeRequesterContact({telephone_number: v})}
+                                                value={state.requester_contact.telephone_number}/>
                         </LabelItemPair>
-                    </Grid>
-                    <Grid item>
-                        <LabelItemPair label={"Time rejected"}>
-                            <TimePicker
-                                onChange={onChangeTimeRejected}
-                                disabled={isPostingRejectedTime || !!task.time_dropped_off || !!task.time_cancelled}
-                                label={"Mark rejected"}
-                                time={task.time_rejected}/>
-                        </LabelItemPair>
-                    </Grid>
+                    </div>
+                    <Typography>Priority:</Typography>
+                    <div className={classes.priority}>
+                        <PrioritySelect onSelect={onSelectPriority} priorityID={parseInt(priority_id)}/>
+                    </div>
+                    <LabelItemPair label={"Patch"}>
+                        <Typography>{state.patch}</Typography>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Assigned rider"}>
+                        <Typography>{state.assigned_riders_display_string}</Typography>
+                    </LabelItemPair>
                 </Grid>
+                <Grid item>
+                    <Grid container direction={"column"}>
+                        <Grid item>
+                            <LabelItemPair label={""}>
+                                <ActivityPopover parentUUID={task.uuid}/>
+                            </LabelItemPair>
+                        </Grid>
+                        <Grid item>
+                            <LabelItemPair label={"Time cancelled"}>
+                                <TimePicker
+                                    onChange={onChangeTimeCancelled}
+                                    disabled={isPostingCancelTime || !!task.time_dropped_off || !!task.time_rejected}
+                                    label={"Mark cancelled"}
+                                    time={task.time_cancelled}/>
+                            </LabelItemPair>
+                        </Grid>
+                        <Grid item>
+                            <LabelItemPair label={"Time rejected"}>
+                                <TimePicker
+                                    onChange={onChangeTimeRejected}
+                                    disabled={isPostingRejectedTime || !!task.time_dropped_off || !!task.time_cancelled}
+                                    label={"Mark rejected"}
+                                    time={task.time_rejected}/>
+                            </LabelItemPair>
+                        </Grid>
+                    </Grid>
 
+                </Grid>
             </Grid>
-        </Grid>
+        </Paper>
     )
 }
 

@@ -31,7 +31,7 @@ export function DismissButton(props) {
 }
 
 export const ThemedLink = styled(withTheme(Link))(props => ({
-    color: props.theme.palette.text.primary
+        color: props.theme.palette.text.primary
     })
 )
 
@@ -87,7 +87,7 @@ export function PaddedPaper(props) {
                 padding: padding
             }
         }>
-                    {props.children}
+            {props.children}
         </Paper>
     )
 }

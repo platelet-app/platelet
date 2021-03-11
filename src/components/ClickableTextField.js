@@ -4,8 +4,15 @@ import {TextField} from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import PropTypes from "prop-types"
 import {TelephoneTextFieldControlled} from "./TextFields";
+import clsx from "clsx";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+    text: {
+        maxWidth: 300,
+        [theme.breakpoints.down("md")]: {
+            maxWidth: 250
+        }
+    },
     label: {
         fontStyle: "italic",
         color: "gray",
@@ -18,7 +25,7 @@ const useStyles = makeStyles({
             background: "rgb(242, 242, 242)"
         }
     }
-});
+}));
 
 function ClickableTextField(props) {
     const [editMode, setEditMode] = useState(false);
@@ -47,11 +54,29 @@ function ClickableTextField(props) {
 
     const stuff = props.disabled ?
         props.value ?
-            <Typography onClick={toggleEditMode}>{props.value}</Typography> :
+            <Typography
+                noWrap
+                className={classes.text}
+                onClick={toggleEditMode}
+                align={"right"}>
+                {props.value}
+            </Typography> :
             <></> :
         props.value ?
-            <Typography className={classes.hoverHighlight} onClick={toggleEditMode}>{props.value}</Typography> :
-            <Typography onClick={toggleEditMode} className={classes.label}>{props.label}</Typography>
+            <Typography
+                noWrap
+                className={clsx(classes.hoverHighlight, classes.text)}
+                align={"right"}
+                onClick={toggleEditMode}>
+                {props.value}
+            </Typography> :
+            <Typography
+                noWrap
+                onClick={toggleEditMode}
+                className={clsx(classes.label, classes.text)}
+                align={"right"}>
+                {props.label}
+            </Typography>
 
     if (editMode) {
         if (props.telephone) {
@@ -87,6 +112,7 @@ function ClickableTextField(props) {
             return (
                 <TextField
                     margin="dense"
+                    className={clsx(classes.label, classes.text)}
                     onKeyUp={(ev) => {
                         switch (ev.key) {
                             case "Enter": {

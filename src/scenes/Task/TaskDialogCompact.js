@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
-import LocationDetailAndSelector from "./components/LocationDetailAndSelector";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import {useHistory} from "react-router";
@@ -9,63 +8,55 @@ import {decodeUUID, determineTaskType} from "../../utilities";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions"
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {
-    addNewDropoffLocationAndSetTaskRequest,
-    addNewPickupLocationAndSetTaskRequest,
-    setTaskDropoffDestinationRequest,
-    setTaskPickupDestinationRequest,
-    unsetTaskDropoffDestinationRequest,
-    unsetTaskPickupDestinationRequest,
-    updateDropoffLocationAndUpdateTaskRequest,
-    updatePickupLocationAndUpdateTaskRequest,
-} from "../../redux/taskDestinations/TaskDestinationsActions";
 import TaskDetailsPanel from "./components/TaskDetailsPanel";
 import CommentsSection from "../Comments/CommentsSection";
-import {PaddedPaper, showHide} from "../../styles/common";
-import LabelItemPair from "../../components/LabelItemPair";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import TimePicker from "./components/TimePicker";
-import {
-    updateTaskDropoffTimeRequest,
-    updateTaskPickupTimeRequest
-} from "../../redux/tasks/TasksActions";
-import {createPostingSelector} from "../../redux/selectors";
 import {useTheme} from "@material-ui/core/styles";
 import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
-import {DialogContent} from "@material-ui/core";
+import PickUpDetails from "./components/PickUpDetails";
+import DropOffDetails from "./components/DropOffDetails";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     dialogContent: {
         overflow: ""
     },
     root: {
-        padding: "20px"
+        padding: 20,
+        [theme.breakpoints.down("md")]: {
+            padding: 5,
+            paddingTop: 5
+        },
     },
     item: {
         minHeight: "425px"
     },
     statusBar: {
         paddingBottom: 8
-    }
-})
+    },
+    separator: {
+        height: 25,
+        width: 25,
+        [theme.breakpoints.down("sm")]: {
+            width: 500
+        },
+        [theme.breakpoints.down("xs")]: {
+            width: 300
+        },
 
-const pickupPostingSelector = createPostingSelector(["UPDATE_TASK_PICKUP_TIME"]);
-const dropoffPostingSelector = createPostingSelector(["UPDATE_TASK_DROPOFF_TIME"]);
+
+    },
+}))
+
 
 function TaskDialogCompact(props) {
     const theme = useTheme();
-    const mobileView = useSelector(state => state.mobileView);
     const history = useHistory();
     const dispatch = useDispatch();
-    const {show, hide} = showHide();
     const task = useSelector(state => state.task.task);
-    const savedLocations = useSelector(state => state.availableLocations.locations);
     const classes = useStyles();
     const [taskStatus, setTaskStatus] = useState("No status")
 
-    const isPostingPickupTime = useSelector(state => pickupPostingSelector(state));
-    const isPostingDropoffTime = useSelector(state => dropoffPostingSelector(state));
+    const isSm = useMediaQuery(theme.breakpoints.down("xs"));
 
     let taskUUID = null;
 
@@ -102,72 +93,6 @@ function TaskDialogCompact(props) {
 
     useEffect(setStatus, [task])
 
-    function onChangeTimePickedUp(value) {
-        if (value || value === null)
-            dispatch(updateTaskPickupTimeRequest(task.uuid, {time_picked_up: value}))
-    }
-
-    function onChangeTimeDropoff(value) {
-        if (value || value === null)
-            dispatch(updateTaskDropoffTimeRequest(task.uuid, {time_dropped_off: value}))
-    }
-
-    function onChangePickupLocation(value, makeNew = false) {
-        if (task.pickup_location) {
-            if (makeNew) {
-                dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
-            } else {
-                dispatch(updatePickupLocationAndUpdateTaskRequest(task.uuid, {address: value}))
-            }
-        } else {
-            dispatch(addNewPickupLocationAndSetTaskRequest(task.uuid, {address: value}))
-        }
-    }
-
-    function onClearPickupLocation() {
-        if (task.pickup_location) {
-            dispatch(unsetTaskPickupDestinationRequest(task.uuid))
-        }
-    }
-
-    function onChangeDropoffLocation(value, makeNew = false) {
-        if (task.dropoff_location) {
-            if (makeNew) {
-                dispatch(addNewDropoffLocationAndSetTaskRequest(task.uuid, {address: value}))
-            } else {
-                dispatch(updateDropoffLocationAndUpdateTaskRequest(task.uuid, {address: value}))
-            }
-        } else {
-            dispatch(addNewDropoffLocationAndSetTaskRequest(task.uuid, {address: value}))
-        }
-    }
-
-    function onClearDropoffLocation() {
-        if (task.dropoff_location) {
-            dispatch(unsetTaskDropoffDestinationRequest(task.uuid))
-        }
-    }
-
-    function onSelectPickupFromSaved(location) {
-        const locationUUID = location.uuid;
-        if (locationUUID && savedLocations) {
-            const result = savedLocations[locationUUID];
-        }
-        if (locationUUID) {
-            dispatch(setTaskPickupDestinationRequest(taskUUID, locationUUID))
-        }
-    }
-
-    function onSelectDropoffFromSaved(location) {
-        const locationUUID = location.uuid;
-        if (locationUUID && savedLocations) {
-            const result = savedLocations[locationUUID];
-        }
-        if (locationUUID) {
-            dispatch(setTaskDropoffDestinationRequest(taskUUID, locationUUID))
-        }
-    }
-
     let handleClose = e => {
         e.stopPropagation();
         if (props.location.state)
@@ -195,7 +120,7 @@ function TaskDialogCompact(props) {
         return (
             <Dialog
                 disableEscapeKeyDown
-                fullScreen={mobileView}
+                fullScreen={isSm}
                 maxWidth={"md"}
                 fullWidth={true}
                 open={true}
@@ -209,79 +134,39 @@ function TaskDialogCompact(props) {
                 aria-labelledby="task-dialog">
                 {statusBar}
                 <div className={classes.root}>
-                    <Grid container direction={"column"} spacing={4} alignItems={"flex-start"} justify={"flex-start"}>
-                        <Grid container item direction={"row"} spacing={1} alignItems={"center"}
-                              justify={"flex-start"}>
+                    <Grid container direction={"column"} alignItems={"flex-start"} justify={"center"}>
+                        <Grid container item direction={"row"} justify={isSm ? "center": "flex-start"}>
                             <Grid item>
-                                <PaddedPaper minWidth={"425px"} minHeight={"410px"}>
-                                    <Grid container direction={"column"} justify={"space-between"} spacing={3}>
-                                        <Grid item>
-                                            <LocationDetailAndSelector
-                                                onSelectPreset={onSelectPickupFromSaved}
-                                                onChange={onChangePickupLocation}
-                                                onEditPreset={(value) => onChangePickupLocation(value, true)}
-                                                onClear={onClearPickupLocation}
-                                                location={task.pickup_location}
-                                                displayPresets={true}
-                                                label={"Pick up"}/>
-                                        </Grid>
-                                        <Grid item>
-                                            <LabelItemPair label={"Time picked up"}>
-                                                <TimePicker
-                                                    onChange={onChangeTimePickedUp}
-                                                    disabled={isPostingPickupTime}
-                                                    label={"Mark picked up"}
-                                                    time={task.time_picked_up}/>
-                                            </LabelItemPair>
-                                        </Grid>
-                                    </Grid>
-                                </PaddedPaper>
+                                <PickUpDetails
+                                    taskUUID={taskUUID}
+                                    location={task.pickup_location}
+                                    time={task.time_picked_up}
+                                />
                             </Grid>
                             <Grid item>
-                                <ArrowForwardIcon className={mobileView ? hide : show}/>
-                                <ArrowDownwardIcon className={mobileView ? show : hide}/>
+                                <div className={classes.separator}/>
                             </Grid>
                             <Grid item>
-                                <PaddedPaper minWidth={"425px"} minHeight={"410px"}>
-                                    <Grid container direction={"column"} justify={"flex-start"} spacing={3}>
-                                        <Grid item>
-                                            <LocationDetailAndSelector
-                                                onSelectPreset={onSelectDropoffFromSaved}
-                                                onChange={onChangeDropoffLocation}
-                                                onClear={onClearDropoffLocation}
-                                                onEditPreset={(value) => onChangeDropoffLocation(value, true)}
-                                                location={task.dropoff_location}
-                                                displayPresets={true}
-                                                label={"Deliver"}/>
-                                        </Grid>
-                                        <Grid item>
-                                            <LabelItemPair label={"Time delivered"}>
-                                                <TimePicker
-                                                    onChange={onChangeTimeDropoff}
-                                                    disabled={isPostingDropoffTime || !!!task.time_picked_up}
-                                                    label={"Mark delivered"}
-                                                    time={task.time_dropped_off}/>
-                                            </LabelItemPair>
-                                        </Grid>
-                                    </Grid>
-                                </PaddedPaper>
+                                <DropOffDetails
+                                    disableTimeButton={!!!task.time_picked_up}
+                                    taskUUID={taskUUID}
+                                    location={task.dropoff_location}
+                                    time={task.time_dropped_off}
+                                />
                             </Grid>
                         </Grid>
-                        <Grid container item direction={"row"} spacing={1}
-                              justify={"flex-start"}>
+                        <Grid item>
+                            <div className={classes.separator}/>
+                        </Grid>
+                        <Grid container item direction={"row"} justify={isSm ? "center": "flex-start"}>
                             <Grid item>
-                                <PaddedPaper minWidth={"425px"} minHeight={"410px"}>
-                                    <TaskDetailsPanel/>
-                                </PaddedPaper>
+                                <TaskDetailsPanel/>
                             </Grid>
                             <Grid item>
-
-                                <div style={{width: "23px"}}/>
+                                <div className={classes.separator}/>
                             </Grid>
                             <Grid item>
-                                <PaddedPaper minWidth={"425px"} minHeight={"410px"}>
-                                    <DeliverableGridSelect taskUUID={taskUUID}/>
-                                </PaddedPaper>
+                                <DeliverableGridSelect taskUUID={taskUUID}/>
                             </Grid>
                         </Grid>
                         <Grid item>
