@@ -1,4 +1,4 @@
-import {throttle, call, put, takeEvery, select, takeLatest} from 'redux-saga/effects'
+import {call, put, select, takeLatest} from 'redux-saga/effects'
 import {
     loginUserSuccess,
     loginUserFailure,
@@ -7,7 +7,7 @@ import {
     refreshUserTokenFailure, refreshUserTokenSuccess, loginUserActions, refreshUserTokenActions
 } from "./LoginActions"
 
-import {createApiControl, getApiControl} from "../Api";
+import {getApiControl} from "../Api";
 import {deleteLogin, saveLogin} from "../../utilities";
 import {displayWarningNotification} from "../notifications/NotificationsActions";
 
