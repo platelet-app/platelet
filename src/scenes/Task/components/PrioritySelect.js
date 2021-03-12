@@ -6,9 +6,19 @@ import Radio from "@material-ui/core/Radio"
 import {useSelector} from "react-redux";
 import {useEffect} from 'react'
 import PropTypes from "prop-types"
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Typography from "@material-ui/core/Typography";
+
+const useStyles = makeStyles({
+    label: {
+        fontSize: 14
+    }
+});
+
 
 function PrioritySelect(props) {
     const [value, setValue] = React.useState(props.priorityID || null);
+    const classes = useStyles();
     const availablePriorities = useSelector(state => state.availablePriorities.priorities);
 
     const handleChange = event => {
@@ -27,7 +37,12 @@ function PrioritySelect(props) {
         <FormControl component="fieldset">
             <RadioGroup row aria-label="priority" name="priority" value={value} onChange={handleChange}>
                 {availablePriorities.map((priority) =>
-                    (<FormControlLabel key={priority.id} value={priority.id} control={<Radio/>} label={priority.label}/>)
+                    (
+                        <FormControlLabel
+                            key={priority.id}
+                            value={priority.id}
+                            control={<Radio/>}
+                            label={<Typography className={classes.label}>{priority.label}</Typography>}/>)
                 )}
             </RadioGroup>
         </FormControl>

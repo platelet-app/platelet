@@ -10,13 +10,14 @@ export const TasksKanbanColumn = styled(withTheme(Box))(props => ({
     border: 0,
     boxShadow: '0 2px 3px 1px rgba(100, 100, 100, .3)',
     height: "100%",
-    minHeight: "100%",
     width: "100%",
-    minWidth: 360,
     [props.theme.breakpoints.down('sm')]: {
-        padding: 5
+        padding: 0,
+    },
+    [props.theme.breakpoints.up('sm')]: {
+        minWidth: 380,
     }
-    }));
+}));
 
 export const TasksSheetColumn = styled(StyledColumn)({
     borderRadius: 1,

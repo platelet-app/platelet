@@ -20,10 +20,11 @@ const initialState = {
 };
 
 
-
 export default function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const [state, setState] = React.useState(initialState);
+    const roleView = useSelector(state => state.roleView)
+    const whoami = useSelector(state => state.whoami.user);
     const classes = deleteButtonStyles();
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
@@ -40,50 +41,49 @@ export default function TaskContextMenu(props) {
         relayNext,
     } = props
 
-    const addRelay = React.useCallback(() => {
-        handleClose();
-        dispatch(addTaskRelayRequest(props.taskUUID));
-
-    }, [])
+    const addRelay = e => {
+        handleClose(e);
+        dispatch(addTaskRelayRequest(props.taskUUID, roleView, whoami.uuid));
+    }
 
     const handleClick = event => {
+        event.preventDefault();
         setState({
             mouseX: event.clientX - 2,
             mouseY: event.clientY - 4,
         });
     };
 
-    function onSelectPickedUp() {
-        handleClose();
+    function onSelectPickedUp(e) {
+        handleClose(e);
         const payload = {time_picked_up: new Date().toISOString()};
         dispatch(updateTaskPickupTimeRequest( props.taskUUID, payload ));
     }
 
-    function onSelectDroppedOff() {
-        handleClose();
+    function onSelectDroppedOff(e) {
+        handleClose(e);
         const payload = {time_dropped_off: new Date().toISOString()};
         dispatch(updateTaskDropoffTimeRequest(props.taskUUID, payload ));
     }
-    function onSelectCancelled() {
-        handleClose();
+    function onSelectCancelled(e) {
+        handleClose(e);
         const payload = {time_cancelled: new Date().toISOString()};
         dispatch(updateTaskCancelledTimeRequest(props.taskUUID, payload ));
     }
 
-    function onSelectRejected() {
-        handleClose();
+    function onSelectRejected(e) {
+        handleClose(e);
         const payload = {time_rejected: new Date().toISOString()};
         dispatch(updateTaskRejectedTimeRequest(props.taskUUID, payload ));
     }
 
-    function onDelete(result) {
-        handleClose();
-        if (result)
-            dispatch(deleteTaskRequest(props.taskUUID));
+    function onDelete(e) {
+        handleClose(e);
+        dispatch(deleteTaskRequest(props.taskUUID));
     }
 
-
-    const handleClose = () => {
+    const handleClose = (e) => {
+        e.preventDefault();
         setState(initialState);
     };
 
@@ -115,10 +115,7 @@ export default function TaskContextMenu(props) {
                 <MenuItem disabled={ !!props.timeCancelled || !!props.timeRejected } onClick={onSelectCancelled}>Mark cancelled</MenuItem>
                 <MenuItem
                     disabled={!!relayNext}
-                    onClick={() => {
-                        addRelay({
-                        })
-                    }}>
+                    onClick={addRelay}>
                     Add relay
                 </MenuItem>
                 <MenuItem className={props.deleteDisabled ? classes.deleteButtonDisabled : classes.deleteButton} onClick={onDelete}>Delete</MenuItem>

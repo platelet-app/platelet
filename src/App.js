@@ -233,7 +233,7 @@ function App(props) {
                 background: {
                     default: "rgb(235, 235, 235)"
                 }
-            }
+            },
 
         })
     }

@@ -49,7 +49,7 @@ export const StyledCard = styled(Card)({
     border: 0,
     borderRadius: 2,
     boxShadow: '0 1px 2px 1px #7a7a7a',
-    width: "350px",
+    width: "100%",
     height: "200px",
 });
 

@@ -8,38 +8,38 @@ import PropTypes from "prop-types"
 
 const useStyles = makeStyles({
     titleText: {
-        fontSize: "14px",
-        width: "20px"
+        fontSize: 14,
+        width: 20
     },
     cardText: {
-        fontSize: "14px",
-    }
+        fontSize: 14,
+        width: 220
+    },
+    root: {
+        width: "100%"
+    },
 });
 
 function CardItem(props) {
     const classes = useStyles();
     const {show, hide} = showHide();
     return (
-        <Grid item>
+        <div className={classes.root}>
             <Grid container spacing={1} direction={"row"} alignItems={"flex-end"} justify={"space-between"}>
                 <Grid className={props.label ? show : hide} item>
                     <Typography className={classes.titleText}>{props.label}:</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography style={{width: props.width ? props.width : "260px"}} align={"right"} noWrap={true} className={classes.cardText}>{props.children}</Typography>
+                    <Typography align={"right"} noWrap={true} className={classes.cardText}>{props.children}</Typography>
                 </Grid>
             </Grid>
-            <Grid item><Divider width={"100px"} orientation="horizontal" flexItem/></Grid>
-        </Grid>
+        </div>
     )
 }
 
-CardItem.defaultProps = {
-    width: "260px"
-}
 
 CardItem.propTypes = {
     label: PropTypes.string,
 }
 
-export default CardItem
+export default CardItem;

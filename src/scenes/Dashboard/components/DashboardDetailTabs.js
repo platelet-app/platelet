@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -7,7 +7,6 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {useDispatch, useSelector} from "react-redux";
 import {createPostingSelector} from "../../../redux/selectors";
-import {clearTaskContextMenuSnack} from "../../../redux/Actions";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import TimelineIcon from '@material-ui/icons/Timeline';
@@ -26,6 +25,8 @@ import {Hidden} from "@material-ui/core";
 import MotorcycleIcon from "@material-ui/icons/Motorcycle";
 import CallIcon from '@material-ui/icons/Call';
 import {useTheme, useMediaQuery} from "@material-ui/core"
+import DoneIcon from '@material-ui/icons/Done';
+import ExploreIcon from '@material-ui/icons/Explore';
 
 export function TabPanel(props) {
     const {children, index, ...other} = props;
@@ -68,9 +69,7 @@ const useStyles = makeStyles(theme => {
     const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
     return {
         appBar: {
-            [theme.breakpoints.up('sm')]: {
-                width: "100%",
-            },
+            width: "100%",
             background: appBarBack
         },
     }
@@ -80,7 +79,6 @@ const useStyles = makeStyles(theme => {
 export function DashboardDetailTabs(props) {
     const dispatch = useDispatch();
     const [rightSideBarOpen, setRightSideBarOpen] = useState(false);
-    const snack = useSelector(state => state.taskContextMenuSnack);
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(state => state.whoami.user);
     const roleView = useSelector(state => state.roleView);
@@ -96,18 +94,27 @@ export function DashboardDetailTabs(props) {
         "UPDATE_TASK_REJECTED_TIME"]);
     const isPosting = useSelector(state => postingSelector(state));
 
-    function dispatchSnack() {
-        if (!isPosting && snack !== undefined) {
-            snack.snack();
-            dispatch(clearTaskContextMenuSnack())
-        }
-    }
 
-    useEffect(dispatchSnack, [isPosting])
+    const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down("xs"));
 
     const handleChange = (event, newValue) => {
         props.onChange(event, newValue);
     };
+    const tabs = isXs ?
+        <Tabs value={parseInt(props.value)} onChange={handleChange}
+              aria-label={"dashboard-tabs"}>
+            <Tab icon={<ExploreIcon/>} {...a11yProps(0)} />
+            <Tab icon={<DoneIcon/>} {...a11yProps(1)} />
+        </Tabs>
+        :
+        <Tabs value={parseInt(props.value)} onChange={handleChange}
+              aria-label={"dashboard-tabs"}>
+            <Tab label="Active" {...a11yProps(0)} />
+            <Tab label="Completed" {...a11yProps(1)} />
+        </Tabs>
+
+
     return (
         <React.Fragment>
             <AppBar className={classes.appBar} position="static">
@@ -117,11 +124,7 @@ export function DashboardDetailTabs(props) {
                         <Grid item>
                             <Grid container spacing={2} direction={"row"} justify={"flex-start"} alignItems={"center"}>
                                 <Grid item>
-                                    <Tabs value={parseInt(props.value)} onChange={handleChange}
-                                          aria-label={"dashboard-tabs"}>
-                                        <Tab label="Active" {...a11yProps(0)} />
-                                        <Tab label="Completed" {...a11yProps(1)} />
-                                    </Tabs>
+                                    {tabs}
                                 </Grid>
                                 <Hidden smDown>
                                     <Grid item>
@@ -204,8 +207,8 @@ export function DashboardDetailTabs(props) {
                 </Toolbar>
             </AppBar>
             <SideInfoSection open={rightSideBarOpen}
-                                   handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
-                                   handleDrawerClose={() => setRightSideBarOpen(false)}>
+                             handleDrawerToggle={() => setRightSideBarOpen(!rightSideBarOpen)}
+                             handleDrawerClose={() => setRightSideBarOpen(false)}>
                 {props.children}
             </SideInfoSection>
         </React.Fragment>

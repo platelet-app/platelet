@@ -32,6 +32,7 @@ import {
 import {clearDashboardFilter} from "../../../redux/dashboardFilter/DashboardFilterActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
+import clsx from "clsx";
 
 
 const getColumnTitle = key => {
@@ -82,14 +83,15 @@ const taskGroupStyles = makeStyles({
             display: "inline"
         }
     },
+    root: {
+        width: "100%"
+    }
 })
 
 const TaskGroup = props => {
     const classes = taskGroupStyles();
     const {show, hide} = showHide();
     const taskArr = Object.entries(props.group).map(([key, value]) => value)
-
-
 
     taskArr.sort((a, b) => a.order_in_relay - b.order_in_relay)
     return taskArr.length === 0 ? <></> : taskArr.map((task, i, arr) => {
@@ -113,10 +115,13 @@ const TaskGroup = props => {
         const pickup_address = task.pickup_location ? task.pickup_location.address : null;
 
         return (
-            <div className={(props.showTasks === null || props.showTasks.includes(uuid)) ? show : hide}
+            <div
+                className={
+                clsx(classes.root,
+                (props.showTasks === null || props.showTasks.includes(uuid)) ? show : hide)}
                  key={uuid}>
-                <Grid container alignItems={"center"} justify={"center"}>
-                    <Grid item>
+                <Grid container className={classes.root} alignItems={"center"} justify={"center"}>
+                    <Grid item className={classes.root}>
                         <TaskItem
                             animate={props.animate}
                             pickupAddress={pickup_address}
@@ -145,11 +150,6 @@ const TaskGroup = props => {
                                     <ArrowDownwardIcon style={{height: "35px"}}/>
                                 </Tooltip>
                             </Grid>
-                            <Grid item
-                                  className={(!!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide}
-                            >
-                                <Divider className={hide}/>
-                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -177,6 +177,12 @@ const loaderStyles = makeStyles((theme) => ({
     },
 }));
 
+const gridColumnStyles = makeStyles({
+    gridItem: {
+        width: "100%"
+    }
+})
+
 const GridColumn = (props) => {
     const classes = useStyles();
     const loaderClass = loaderStyles();
@@ -184,6 +190,7 @@ const GridColumn = (props) => {
     const dispatch = useDispatch();
     const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
     const whoami = useSelector(state => state.whoami.user);
+    const gridColumnClasses = gridColumnStyles();
     let selectorsString = "";
     if (props.taskKey === "tasksDelivered")
         selectorsString = "APPEND_TASKS_DELIVERED"
@@ -208,15 +215,15 @@ const GridColumn = (props) => {
         (props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ?
             <React.Fragment>
 
-            <Button variant="contained" color="primary"
-                    disabled={props.disableAddButton}
-                    onClick={props.onAddTaskClick}
-                    className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
-            >
-                Create New
-            </Button>
+                <Button variant="contained" color="primary"
+                        disabled={props.disableAddButton}
+                        onClick={props.onAddTaskClick}
+                        className={(props.taskKey === "tasksNew" && !props.hideAddButton) && props.showTasks === null ? show : hide}
+                >
+                    Create New
+                </Button>
             </React.Fragment>
-                :
+            :
             (props.showTasks !== null && props.taskKey === "tasksNew") ?
                 <Button variant="contained" color="primary"
                         disabled={props.disableAddButton}
@@ -224,66 +231,67 @@ const GridColumn = (props) => {
                 >
                     Clear Search
                 </Button> :
-            <Typography className={classes.header}>{props.title}</Typography>
+                <Typography className={classes.header}>{props.title}</Typography>
 
 
     const tasksList = Object.entries(tasks).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).reverse();
     const lastParent = tasksList.length === 0 ? 0 : tasksList[tasksList.length - 1][0]
+
+    const theme = useTheme();
+    const aa = useMediaQuery(theme.breakpoints.down("tn"))
+    console.log(aa)
 
     return (
         <TasksKanbanColumn>
             <Grid container direction={"column"} spacing={2} alignItems={"center"} justify={"flex-start"}>
                 <Grid item>
                     {header}
-
                 </Grid>
                 <Grid item>
                     <Divider className={classes.divider}/>
                 </Grid>
-                <Grid item>
-                    <Grid container
-                          spacing={0}
-                          direction={"column"}
-                          justify={"flex-start"}
-                          alignItems={"center"}
-                          key={props.title + "column"}
-                    >
+                <Grid container item
+                      spacing={0}
+                      direction={"column"}
+                      justify={"flex-start"}
+                      alignItems={"center"}
+                      key={props.title + "column"}
+                >
 
-                        {tasksList.map(([key, jobs]) => {
-                            return (
-                                <Grid item key={key}>
-                                    <TaskGroup {...props} group={jobs}/>
-                                </Grid>
-                            )
-                        })
-                        }
-                        {(["tasksDelivered", "tasksRejected", "tasksCancelled"].includes(props.taskKey)) ?
-                            <React.Fragment>
-                                <Waypoint
-                                    onEnter={() => {
-                                        if (props.showTasks)
-                                            return;
-                                        if (lastParent) {
-                                            dispatch(appendFunction(
-                                                whoami.uuid,
-                                                1,
-                                                roleView,
-                                                props.taskKey,
-                                                lastParent
-                                            ))
-                                        }
+                    {tasksList.map(([key, jobs]) => {
+                        return (
+                            <Grid item className={gridColumnClasses.gridItem} key={key}>
+                                <TaskGroup {...props} group={jobs}/>
+                            </Grid>
+                        )
+                    })
+                    }
+                    {(["tasksDelivered", "tasksRejected", "tasksCancelled"].includes(props.taskKey)) ?
+                        <React.Fragment>
+                            <Waypoint
+                                onEnter={() => {
+                                    if (props.showTasks)
+                                        return;
+                                    if (lastParent) {
+                                        dispatch(appendFunction(
+                                            whoami.uuid,
+                                            1,
+                                            roleView,
+                                            props.taskKey,
+                                            lastParent
+                                        ))
                                     }
-                                    }
-                                />
-                                {endlessLoadIsFetching ?
-                                    <div className={loaderClass.root}>
-                                        <CircularProgress color="secondary"/>
-                                    </div> : <></>}
-                            </React.Fragment>
+                                }
+                                }
+                            />
+                            {endlessLoadIsFetching ?
+                                <div className={loaderClass.root}>
+                                    <CircularProgress color="secondary"/>
+                                </div> : <></>}
+                        </React.Fragment>
 
-                            : <></>}
+                        : <></>}
 
-                    </Grid>
                 </Grid>
             </Grid>
         </TasksKanbanColumn>
@@ -352,6 +360,7 @@ function TasksGrid(props) {
         const result = filterTasks(tasks, dashboardFilter)
         setFilteredTasksUUIDs(result);
     }
+
     useEffect(doSearch, [dashboardFilter])
 
     if (isFetching) {
@@ -367,19 +376,19 @@ function TasksGrid(props) {
                 {Object.keys(tasks).map(taskKey => {
                     const title = getColumnTitle(taskKey);
                     return (
-                            <Grid item key={taskKey}
-                                  className={props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show}>
-                                <GridColumn title={title}
-                                            classes={classes}
-                                            onAddTaskClick={addEmptyTask}
-                                            onAddRelayClick={addRelay}
-                                            disableAddButton={isPosting}
-                                            taskKey={taskKey}
-                                            showTasks={filteredTasksUUIDs}
-                                            animate={animate.current}
-                                            key={title}/>
+                        <Grid item key={taskKey}
+                              className={props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show}>
+                            <GridColumn title={title}
+                                        classes={classes}
+                                        onAddTaskClick={addEmptyTask}
+                                        onAddRelayClick={addRelay}
+                                        disableAddButton={isPosting}
+                                        taskKey={taskKey}
+                                        showTasks={filteredTasksUUIDs}
+                                        animate={animate.current}
+                                        key={title}/>
 
-                            </Grid>
+                        </Grid>
                     )
                 })}
             </Grid>

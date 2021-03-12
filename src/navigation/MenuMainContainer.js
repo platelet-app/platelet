@@ -1,37 +1,19 @@
 import React, {useState} from 'react';
 import 'typeface-roboto'
-import {Link, useHistory} from "react-router-dom";
 import '../index.css'
 import {makeStyles} from '@material-ui/core/styles';
-
-
 import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import List from '@material-ui/core/List';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Grid from "@material-ui/core/Grid";
 import MainWindow from "./MainWindow";
-import {createLoadingSelector} from "../redux/selectors";
-import {useDispatch, useSelector} from "react-redux";
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import {encodeUUID} from "../utilities";
-import {logoutUser} from "../redux/login/LoginActions";
-import UserAvatar from "../components/UserAvatar";
-import {setDarkMode} from "../redux/Actions";
-import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
-import Brightness4Icon from '@material-ui/icons/Brightness4';
-import {Hidden, TextField, Tooltip} from "@material-ui/core";
-import MobileNavigationDrawer from "./MobileNavigationDrawer";
+import {useDispatch} from "react-redux";
+import {Hidden} from "@material-ui/core";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
-import ExpandableTaskFilter from "./Components/ExpandableTaskFilter";
 import NavMenuSearch from "./Components/NavMenuSearch";
 import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
 import SearchIcon from "@material-ui/icons/Search";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import {showHide} from "../styles/common";
 import {clearDashboardFilter} from "../redux/dashboardFilter/DashboardFilterActions";
 
 const useStyles = makeStyles(theme => {
@@ -77,12 +59,12 @@ export function MenuMainContainer() {
                             <Hidden mdUp>
                                 <Grid container item alignItems={"center"} direction={"row"}>
                                     <Grid item>
-                                <IconButton onClick={toggleSearchMode}>
-                                    {toggleIcon}
-                                </IconButton>
+                                        <IconButton onClick={toggleSearchMode}>
+                                            {toggleIcon}
+                                        </IconButton>
                                     </Grid>
                                     <Grid item>
-                                {searchMode ? <TaskFilterTextField/> : <></>}
+                                        {searchMode ? <TaskFilterTextField/> : <></>}
                                     </Grid>
                                 </Grid>
                             </Hidden>
