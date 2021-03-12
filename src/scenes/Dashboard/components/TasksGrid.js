@@ -68,7 +68,12 @@ const useStyles = makeStyles(theme => ({
         padding: "6px"
     },
     divider: {
-        width: "300px"
+        width: "95%"
+    },
+    column: {
+        [theme.breakpoints.down("sm")]: {
+            width: "100%"
+        }
     }
 }));
 
@@ -237,10 +242,6 @@ const GridColumn = (props) => {
     const tasksList = Object.entries(tasks).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).reverse();
     const lastParent = tasksList.length === 0 ? 0 : tasksList[tasksList.length - 1][0]
 
-    const theme = useTheme();
-    const aa = useMediaQuery(theme.breakpoints.down("tn"))
-    console.log(aa)
-
     return (
         <TasksKanbanColumn>
             <Grid container direction={"column"} spacing={2} alignItems={"center"} justify={"flex-start"}>
@@ -372,12 +373,13 @@ function TasksGrid(props) {
                   direction={"row"}
                   justify={isSm ? "center" : "flex-start"}
                   alignItems={"stretch"}
+
             >
                 {Object.keys(tasks).map(taskKey => {
                     const title = getColumnTitle(taskKey);
                     return (
                         <Grid item key={taskKey}
-                              className={props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show}>
+                              className={clsx([props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show, classes.column])}>
                             <GridColumn title={title}
                                         classes={classes}
                                         onAddTaskClick={addEmptyTask}

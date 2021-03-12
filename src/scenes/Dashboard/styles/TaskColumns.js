@@ -15,7 +15,7 @@ export const TasksKanbanColumn = styled(withTheme(Box))(props => ({
         padding: 0,
     },
     [props.theme.breakpoints.up('sm')]: {
-        minWidth: 380,
+        width: 380,
     }
 }));
 
