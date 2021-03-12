@@ -12,13 +12,17 @@ import {showHide} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
 import RiderEditPopover from "./RiderEditPopover";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import {useTheme} from "@material-ui/core/styles";
 
 
 function StatusBar(props) {
     const classes = dialogComponent();
     const {show, hide} = showHide();
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     return (
-        <AppBar position={"sticky"} className={classes.statusBar}>
+        <AppBar position={isSm ? "relative" : "sticky"} className={classes.statusBar}>
             <Grid container direction={"row"} justify={"space-between"}>
                 <Grid item>
                     <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>

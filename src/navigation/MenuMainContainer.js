@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import 'typeface-roboto'
 import '../index.css'
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -15,6 +15,7 @@ import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
 import SearchIcon from "@material-ui/icons/Search";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {clearDashboardFilter} from "../redux/dashboardFilter/DashboardFilterActions";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const useStyles = makeStyles(theme => {
     const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;
@@ -47,9 +48,12 @@ export function MenuMainContainer() {
         setSearchMode(!searchMode);
     }
 
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"))
+
     return (
         <React.Fragment>
-            <AppBar position="sticky" className={classes.appBar}>
+            <AppBar position={isSm ? "relative": "sticky"} className={classes.appBar}>
                 <Toolbar className={classes.appBarComponents}>
                     <Grid container justify={"space-between"}>
                         <Grid item>

@@ -122,9 +122,9 @@ const TaskGroup = props => {
         return (
             <div
                 className={
-                clsx(classes.root,
-                (props.showTasks === null || props.showTasks.includes(uuid)) ? show : hide)}
-                 key={uuid}>
+                    clsx(classes.root,
+                        (props.showTasks === null || props.showTasks.includes(uuid)) ? show : hide)}
+                key={uuid}>
                 <Grid container className={classes.root} alignItems={"center"} justify={"center"}>
                     <Grid item className={classes.root}>
                         <TaskItem
@@ -378,8 +378,10 @@ function TasksGrid(props) {
                 {Object.keys(tasks).map(taskKey => {
                     const title = getColumnTitle(taskKey);
                     return (
-                        <Grid item key={taskKey}
-                              className={clsx([props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show, classes.column])}>
+                        <Grid
+                            item
+                            key={taskKey}
+                            className={clsx([props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show, classes.column])}>
                             <GridColumn title={title}
                                         classes={classes}
                                         onAddTaskClick={addEmptyTask}
