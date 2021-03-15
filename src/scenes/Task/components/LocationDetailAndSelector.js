@@ -8,26 +8,23 @@ import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSele
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Divider from "@material-ui/core/Divider";
-import {Tooltip, withMobileDialog} from "@material-ui/core";
+import {Tooltip} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import CancelIcon from "@material-ui/icons/Cancel";
 import {showHide, ThemedLink} from "../../../styles/common";
-import {createPostingSelector} from "../../../redux/selectors";
-import {useSelector} from "react-redux";
-import {addNewDropoffLocationAndSetTaskRequest} from "../../../redux/taskDestinations/TaskDestinationsActions";
 import {encodeUUID} from "../../../utilities";
 
 
 const useStyles = makeStyles({
     root: {
-        minWidth: "350px",
+        maxWidth: "350px",
     },
     button: {
         height: 9,
     },
     label: {
-        width: "250px"
+        maxWidth: "250px"
     }
 })
 

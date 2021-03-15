@@ -22,7 +22,7 @@ import {dialogCardStyles} from "../Task/styles/DialogCompactStyles";
 const useStyles = makeStyles(({
     root: {
         width: "100%",
-        minWidth: 350
+        maxWidth: 350
     }
 }))
 

@@ -23,9 +23,9 @@ function StatusBar(props) {
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     return (
         <AppBar position={isSm ? "relative" : "sticky"} className={classes.statusBar}>
-            <Grid container direction={"row"} justify={"space-between"}>
-                <Grid item>
-                    <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
+            <Hidden smDown>
+                <Grid container direction={"row"} justify={"space-between"}>
+                    <Grid container item direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
                         <Grid item>
                             <Tooltip title={props.assignedCoordinatorsDisplayString}>
                                 <AvatarGroup>
@@ -47,18 +47,18 @@ function StatusBar(props) {
                                 taskUUID={props.taskUUID}/>
                         </Grid>
                         <Hidden smDown>
-                        <Grid item>
-                            <Typography>Status: {props.status}</Typography>
-                        </Grid>
+                            <Grid item>
+                                <Typography>Status: {props.status}</Typography>
+                            </Grid>
                         </Hidden>
                     </Grid>
-                </Grid>
-                <Grid item>
-                    <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
+                    <Grid container item direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
                         <Grid item>
-                            <RiderEditPopover assignees={props.assignedRiders} className={props.assignedRiders.length > 0 ? show : hide} taskUUID={props.taskUUID}/>
+                            <RiderEditPopover assignees={props.assignedRiders}
+                                              className={props.assignedRiders.length > 0 ? show : hide}
+                                              taskUUID={props.taskUUID}/>
                         </Grid>
-                        <Grid item >
+                        <Grid item>
                             <Tooltip title={props.assignedRidersDisplayString}>
                                 <AvatarGroup>
                                     {props.assignedRiders.map((u) =>
@@ -73,13 +73,16 @@ function StatusBar(props) {
                             </Tooltip>
                         </Grid>
                         <Grid item>
-                            <AssignRiderCoordinatorPopover exclude={props.assignedRiders.map(u => u.uuid)} role={"rider"} taskUUID={props.taskUUID}/>
+                            <AssignRiderCoordinatorPopover exclude={props.assignedRiders.map(u => u.uuid)}
+                                                           role={"rider"} taskUUID={props.taskUUID}/>
                         </Grid>
                         <Grid item>
-                            <ArrowButton linkTo={encodeUUID(props.relayPrevious)} direction={"back"} tooltip={"Previous relay"} className={props.relayPrevious ? show : hide}/>
+                            <ArrowButton linkTo={encodeUUID(props.relayPrevious)} direction={"back"}
+                                         tooltip={"Previous relay"} className={props.relayPrevious ? show : hide}/>
                         </Grid>
-                        <Grid item >
-                            <ArrowButton linkTo={encodeUUID(props.relayNext)} direction={"forward"} tooltip={"Next relay"} className={props.relayNext ? show : hide}/>
+                        <Grid item>
+                            <ArrowButton linkTo={encodeUUID(props.relayNext)} direction={"forward"}
+                                         tooltip={"Next relay"} className={props.relayNext ? show : hide}/>
                         </Grid>
                         <Grid item>
                             <Button onClick={props.handleClose}>
@@ -88,8 +91,8 @@ function StatusBar(props) {
                         </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
-            </AppBar>
+            </Hidden>
+        </AppBar>
     )
 }
 

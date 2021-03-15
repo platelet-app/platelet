@@ -33,7 +33,7 @@ const tocPostingSelector = createPostingSelector([updateTaskTimeOfCallPrefix]);
 const cancelledPostingSelector = createPostingSelector([updateTaskCancelledTimePrefix]);
 const rejectedPostingSelector = createPostingSelector(["UPDATE_TASK_TIME_REJECTED"]);
 
-function TaskDetailsPanel(props) {
+function TaskDetailsPanel() {
     const task = useSelector(state => state.task.task);
     const tocPosting = useSelector(state => tocPostingSelector(state));
     const isPostingCancelTime = useSelector(state => cancelledPostingSelector(state));

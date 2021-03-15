@@ -15,38 +15,40 @@ import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
 import PickUpDetails from "./components/PickUpDetails";
 import DropOffDetails from "./components/DropOffDetails";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Container from "@material-ui/core/Container";
+import {Hidden} from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     dialogContent: {
         overflow: ""
     },
     root: {
-        padding: 20,
+        paddingTop: 20,
         [theme.breakpoints.down("md")]: {
             padding: 5,
             paddingTop: 5
         },
     },
     item: {
-        minHeight: "425px"
+        width: "100%",
+        [theme.breakpoints.up("sm")]: {
+            width: 0,
+            minWidth: 425
+        }
+
+    },
+    container: {
+        //width: "100%",
+        //margin: 0
     },
     statusBar: {
         paddingBottom: 8
     },
     separator: {
         height: 25,
-        width: 25,
-        [theme.breakpoints.down("sm")]: {
-            width: 500
-        },
-        [theme.breakpoints.down("xs")]: {
-            width: 300
-        },
-
-
+        width: 25
     },
 }))
-
 
 function TaskDialogCompact(props) {
     const theme = useTheme();
@@ -59,10 +61,6 @@ function TaskDialogCompact(props) {
     const isSm = useMediaQuery(theme.breakpoints.down("xs"));
 
     let taskUUID = null;
-
-    if (props.match) {
-        taskUUID = decodeUUID(props.match.params.task_uuid_b62) // everything before the query string
-    }
 
     if (props.match) {
         taskUUID = decodeUUID(props.match.params.task_uuid_b62)
@@ -129,53 +127,67 @@ function TaskDialogCompact(props) {
                     style: {
                         boxShadow: 'none',
                         background: theme.palette.background.default,
+                        padding: 0
                     },
                 }}
                 aria-labelledby="task-dialog">
-                {statusBar}
-                <div className={classes.root}>
-                    <Grid container direction={"column"} alignItems={"flex-start"} justify={"center"}>
-                        <Grid container item direction={"row"} justify={isSm ? "center": "flex-start"}>
-                            <Grid item>
-                                <PickUpDetails
-                                    taskUUID={taskUUID}
-                                    location={task.pickup_location}
-                                    time={task.time_picked_up}
-                                />
+                    {statusBar}
+                    <Container className={classes.root} maxWidth={false}>
+                        <Grid container className={classes.container} spacing={isSm ? 0 : 3} direction={"column"}
+                              alignItems={"flex-start"} justify={"center"}>
+                            <Grid container className={classes.container} spacing={isSm ? 0 : 3} item direction={"row"}
+                                  justify={isSm ? "center" : "flex-start"}>
+                                <Grid className={classes.item} item>
+                                    <PickUpDetails
+                                        taskUUID={taskUUID}
+                                        location={task.pickup_location}
+                                        time={task.time_picked_up}
+                                    />
+                                </Grid>
+                                <Hidden smUp>
+                                    <Grid item>
+                                        <div className={classes.separator}/>
+                                    </Grid>
+                                </Hidden>
+                                <Grid className={classes.item} item>
+                                    <DropOffDetails
+                                        disableTimeButton={!!!task.time_picked_up}
+                                        taskUUID={taskUUID}
+                                        location={task.dropoff_location}
+                                        time={task.time_dropped_off}
+                                    />
+                                </Grid>
                             </Grid>
-                            <Grid item>
-                                <div className={classes.separator}/>
+                            <Hidden smUp>
+                                <Grid item>
+                                    <div className={classes.separator}/>
+                                </Grid>
+                            </Hidden>
+                            <Grid container className={classes.container} spacing={isSm ? 0 : 3} item direction={"row"}
+                                  justify={isSm ? "center" : "flex-start"}>
+                                <Grid className={classes.item} item>
+                                    <TaskDetailsPanel/>
+                                </Grid>
+                                <Hidden smUp>
+                                    <Grid item>
+                                        <div className={classes.separator}/>
+                                    </Grid>
+                                </Hidden>
+                                <Grid className={classes.item} item>
+                                    <DeliverableGridSelect taskUUID={taskUUID}/>
+                                </Grid>
                             </Grid>
+                            <Hidden smUp>
+                                <Grid item>
+                                    <div className={classes.separator}/>
+                                </Grid>
+                            </Hidden>
                             <Grid item>
-                                <DropOffDetails
-                                    disableTimeButton={!!!task.time_picked_up}
-                                    taskUUID={taskUUID}
-                                    location={task.dropoff_location}
-                                    time={task.time_dropped_off}
-                                />
+                                <CommentsSection parentUUID={taskUUID}/>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <div className={classes.separator}/>
-                        </Grid>
-                        <Grid container item direction={"row"} justify={isSm ? "center": "flex-start"}>
-                            <Grid item>
-                                <TaskDetailsPanel/>
-                            </Grid>
-                            <Grid item>
-                                <div className={classes.separator}/>
-                            </Grid>
-                            <Grid item>
-                                <DeliverableGridSelect taskUUID={taskUUID}/>
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                            <CommentsSection parentUUID={taskUUID}/>
-                        </Grid>
-                    </Grid>
-                </div>
+                    </Container>
             </Dialog>
-
         )
     }
 
