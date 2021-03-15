@@ -9,11 +9,12 @@ import {getAvailableDeliverablesRequest} from "../deliverables/DeliverablesActio
 import {getAvailableLocationsRequest} from "../locations/LocationsActions";
 import {getUsersRequest} from "../users/UsersActions";
 import {getAvailablePatchesRequest} from "../patches/PatchesActions";
-import {getAllTasksRequest, setRoleViewAndGetTasks} from "../tasks/TasksActions";
+import {getAllTasksRequest, setRoleViewAndGetTasks, startRefreshTasksLoopFromSocket} from "../tasks/TasksActions";
 import {getRoleView, getWhoami} from "../Api";
 import {getServerSettingsRequest} from "../ServerSettings/ServerSettingsActions";
 import {connectAssignmentsSocket, connectCommentsSocket, connectSocket} from "../sockets/SocketActions";
 import {getApiURL, getDashboardRoleMode} from "../../utilities";
+import {useSelector} from "react-redux";
 // function loginCheck() {
 //     if (whoami && whoami.login_expiry) {
 //         // if the login is going to expire in 3 days, log out the user
@@ -57,6 +58,7 @@ export function* watchInitialiseApp() {
 }
 
 function* getStaticData() {
+    const whoami = yield select(getWhoami);
     yield all([
         put(connectSocket()),
         put(connectCommentsSocket()),
@@ -66,6 +68,7 @@ function* getStaticData() {
         put(getAvailableLocationsRequest()),
         put(getUsersRequest()),
         put(getAvailablePatchesRequest()),
+        put(startRefreshTasksLoopFromSocket(whoami.uuid))
     ])
 }
 

@@ -83,7 +83,6 @@ function Dashboard() {
                 dispatch(unsubscribeFromRiderAssignments(whoami.uuid))
                 dispatch(subscribeToCoordinatorAssignments(whoami.uuid))
             }
-            dispatch(startRefreshTasksLoopFromSocket(whoami.uuid))
 
         }
     }
