@@ -40,7 +40,6 @@ export default function DeliverableGridSelect(props) {
     const isPosting = useSelector(state => postingSelector(state));
     const loadingSelector = createLoadingSelector(["GET_DELIVERABLES"]);
     const isFetching = useSelector(state => loadingSelector(state));
-    const [addMode, setAddMode] = useState(false);
     const classes = useStyles();
     const cardClasses = dialogCardStyles();
 
@@ -51,36 +50,21 @@ export default function DeliverableGridSelect(props) {
     const onSelectDeliverable = (deliverable) => {
         let newDeliverable = {...emptyDeliverable, type_id: deliverable.id, type: deliverable.label};
         dispatch(addDeliverableRequest(newDeliverable))
-        setAddMode(false);
     };
 
-    const deliverablesSelect = addMode ?
+    const deliverablesSelect =
         <DeliverablesSelect
+            disabled={isPosting}
             id="deliverableSelect"
             onSelect={onSelectDeliverable}
             label={"deliverables"}
-        /> : <></>
+        />;
 
     React.useEffect(() => {
         if (availableDeliverables.length > 0)
             dispatch(getDeliverablesRequest(props.taskUUID))
 
     }, [availableDeliverables]);
-
-    const addButton =
-        <Button
-            variant={"contained"}
-            color={"primary"}
-            disabled={isPosting}
-            onClick={() => {
-                setAddMode(!addMode)
-                return
-                let newDeliverable = {...emptyDeliverable};
-                dispatch(addDeliverableRequest(newDeliverable))
-            }}
-        >
-            {addMode ? "Cancel" : "Add an item"}
-        </Button>
 
     if (isFetching) {
         return <DeliverablesSkeleton/>
@@ -122,9 +106,6 @@ export default function DeliverableGridSelect(props) {
                     }
                     <Grid item>
                         {deliverablesSelect}
-                    </Grid>
-                    <Grid item>
-                        {addButton}
                     </Grid>
                 </Grid>
             </Paper>

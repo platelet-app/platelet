@@ -21,6 +21,7 @@ function ClearButtonWithConfirmation(props) {
     const firstLocation = useRef(location.pathname);
 
     history.listen((location, action) => {
+        // close the dialog when back button is pressed
         if (action === "POP") {
             if (open) {
                 setOpen(false);
@@ -31,6 +32,7 @@ function ClearButtonWithConfirmation(props) {
 
     function onClick() {
         setOpen(true);
+        // this is to prevent returning to the dashboard when pressing back button
         history.push(`${location.pathname}/#`)
     }
 

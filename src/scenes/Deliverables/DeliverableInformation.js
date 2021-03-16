@@ -8,6 +8,7 @@ import {getDeliverablesRequest} from "../../redux/deliverables/DeliverablesActio
 export default function DeliverableInformation(props) {
     const dispatch = useDispatch();
     const deliverables = useSelector(state => state.deliverables.deliverables);
+
     function componentDidMount() {
         dispatch(getDeliverablesRequest(props.taskUUID));
 
@@ -23,11 +24,13 @@ export default function DeliverableInformation(props) {
               alignItems={"center"}
         >
             {Object.values(deliverables).map(deliverable => {
-                return <><Grid item>
-                    <DialogContentText>
-                        {deliverable.type ? deliverable.type : "Unknown deliverable type."}
-                    </DialogContentText>
-                </Grid></>
+                return (
+                    <Grid item>
+                        <DialogContentText>
+                            {deliverable.type ? deliverable.type : "Unknown deliverable type."}
+                        </DialogContentText>
+                    </Grid>
+                )
 
             })
             }

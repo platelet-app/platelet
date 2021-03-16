@@ -7,34 +7,55 @@ import CompactUserCard from "../../../components/CompactUserCard";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import DeliverableCard from "./DeliverableCard";
+import FormControl from "@material-ui/core/FormControl";
+import {InputLabel, MenuItem, Select} from "@material-ui/core";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import {useTheme} from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+    formControl: {
+        margin: theme.spacing(1),
+        width: "100%",
+        minWidth: 120,
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
+}));
+
 
 function DeliverablesSelect(props) {
     const availableDeliverables = useSelector(state => state.availableDeliverables.deliverables)
+    const classes = useStyles();
 
-    const onSelect = (event, selectedItem) => {
-        if (selectedItem)
-            props.onSelect(selectedItem);
+    const onSelect = (e) => {
+        if (e.target.value)
+            props.onSelect(e.target.value);
     };
 
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
     return (
-        <Autocomplete
-            size={"small"}
-            renderInput={(params) => (
-                <TextField autoFocus {...params} variant="outlined" margin="none"/>
-            )}
-            onChange={onSelect}
-            style={{width: 350}}
-            getOptionLabel={(option) => option.label}
-            renderOption={(option, {inputValue}) => {
-                return (
-                    <div style={{width: "100%"}}>
-                        <DeliverableCard label={option.label} typeID={option.id} size={"compact"}/>
-                        <Divider/>
-                    </div>
-                )
-            }
-            }
-            options={availableDeliverables}/>
+        <FormControl className={classes.formControl}>
+            <InputLabel id="select-deliver-item-label">Items</InputLabel>
+            <Select
+                disabled={props.disabled}
+                labelId="select-deliver-item-label"
+                id="select-deliver-item"
+                value={null}
+                onChange={onSelect}
+            >
+                {availableDeliverables.map(d => {
+                    return (
+                        <MenuItem value={d}>
+                            {d.label}
+                        </MenuItem>
+                    )
+                })}
+            </Select>
+        </FormControl>
     )
 
 }
