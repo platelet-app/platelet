@@ -11,9 +11,9 @@ import Divider from "@material-ui/core/Divider";
 import {Tooltip} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-import CancelIcon from "@material-ui/icons/Cancel";
 import {showHide, ThemedLink} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
+import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
 
 
 const useStyles = makeStyles({
@@ -110,15 +110,8 @@ function LocationDetailAndSelector(props) {
                             </Tooltip>
                         </Grid>
                         <Grid  className={(props.location && !props.disableClear) ? show : hide} item>
-                            <Tooltip title={"Clear"}>
-                                <IconButton
-                                    className={classes.button}
-                                    edge={"end"}
-                                    disabled={props.disabled}
-                                    onClick={onClickClearButton}>
-                                    <CancelIcon/>
-                                </IconButton>
-                            </Tooltip>
+                            <ClearButtonWithConfirmation label={props.label} disabled={props.disabled} onClear={onClickClearButton}/>
+
                         </Grid>
                     </Grid>
                 </Grid>

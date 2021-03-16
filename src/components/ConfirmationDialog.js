@@ -5,21 +5,20 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import PropTypes from "prop-types";
 
 // Not used currently in favour of notifications.
-export default function DeleteConfirmationDialog(props) {
+function ConfirmationDialog(props) {
     return (
         <Dialog
             open={props.open}
-            onClose={props.onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
-            <DialogTitle id="alert-dialog-title">Delete this {props.label}?</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{props.dialogTitle}</DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete this {props.label}?
-                    This can not be undone.
+                    {props.dialogText}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -27,15 +26,33 @@ export default function DeleteConfirmationDialog(props) {
                     props.onSelect(false);
                     props.onClose();
                 }} color="primary">
-                    No
+                    Cancel
                 </Button>
                 <Button onClick={() => {
                     props.onSelect(true);
                     props.onClose();
                 }} color="primary" autoFocus>
-                    Yes
+                    OK
                 </Button>
             </DialogActions>
         </Dialog>
     );
 }
+
+ConfirmationDialog.propTypes = {
+    open: PropTypes.bool,
+    onSelect: PropTypes.func,
+    onClose: PropTypes.func,
+    dialogText: PropTypes.string,
+    dialogTitle: PropTypes.string
+};
+
+ConfirmationDialog.defaultProps = {
+    open: false,
+    dialogText: "",
+    dialogTitle: "",
+    onSelect: () => {},
+    onClose: () => {}
+};
+
+export default ConfirmationDialog;
