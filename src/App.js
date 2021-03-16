@@ -106,22 +106,27 @@ function AppContents(props) {
     function handleError() {
         // any saga that returns with an error object that is not null will be handled here
         if (error) {
-            if (error.status_code === 404 || error.status_code === 401) {
-                // do nothing
+            if (error.status_code === 404 || error.status_code === 401 || error.status_code === 425) {
+                // do nothing if not found, unauthorised or too early (token refresh error)
             }
             // TODO: fix error messages not showing up here
             else if (error.status_code) {
-                if (error.message)
-                    props.enqueueSnackbar(`${error.message}`,
-                        {
-                            ...snackOptions,
-                            variant: "error",
-                        });
-                else
-                    props.enqueueSnackbar(`No message returned from the server.`, {
-                        ...snackOptions,
-                        variant: "error",
-                    });
+                if (error.response)
+                    error.response.then(data => {
+                        if (data.message) {
+                            props.enqueueSnackbar(`${data.message}`,
+                                {
+                                    ...snackOptions,
+                                    variant: "error",
+                                });
+                        } else {
+                            props.enqueueSnackbar(`No message returned from the server.`, {
+                                ...snackOptions,
+                                variant: "error",
+                            });
+
+                        }
+                    })
             } else {
                 if (process.env.REACT_APP_THROW_ERRORS === "true")
                     throw error;

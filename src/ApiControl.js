@@ -3,6 +3,23 @@ import axios from 'axios'
 import {saveLogin, deleteApiURL, getTabIdentifier, createTabIdentifier} from "./utilities";
 
 
+class HttpError extends Error {
+    constructor(message, response) {
+        super(message);
+        this.name = "HttpError";
+        this.status_code = response.status;
+        this.statusText = response.statusText;
+        this.response = response;
+        this.message = this.getErrorMessage(response);
+    }
+
+    async getErrorMessage(response) {
+        let result;
+        response.clone().json().then(data => result = data.message);
+        return result;
+    }
+}
+
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
         return Promise.resolve(response)
@@ -14,7 +31,7 @@ function status(response) {
 }
 
 function json(response) {
-    return response.json()
+    return response.clone().json()
 }
 
 function makeFetch(api_url, url, type, auth, content_type = undefined, data = undefined) {
@@ -42,17 +59,6 @@ function makeFetch(api_url, url, type, auth, content_type = undefined, data = un
             throw error;
         });
 
-}
-
-class HttpError extends Error {
-    constructor(message, response) {
-        super(message);
-        this.name = "HttpError";
-        this.status = response.status;
-        this.statusText = response.statusText;
-        this.message = response.data.message;
-        this.response = response;
-    }
 }
 
 function makeAxios(api_url, url, type, auth, content_type = undefined, data = {}) {
