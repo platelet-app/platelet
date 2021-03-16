@@ -12,6 +12,7 @@ function ConfirmationDialog(props) {
     return (
         <Dialog
             open={props.open}
+            onClose={props.onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
