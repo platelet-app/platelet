@@ -12,7 +12,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import {createPostingSelector} from "../../redux/selectors";
 import {deleteButtonStyles} from "./contextMenuCSS";
-
+import PropTypes from "prop-types";
 
 const initialState = {
     mouseX: null,
@@ -20,7 +20,7 @@ const initialState = {
 };
 
 
-export default function TaskContextMenu(props) {
+function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const [state, setState] = React.useState(initialState);
     const roleView = useSelector(state => state.roleView)
@@ -36,10 +36,6 @@ export default function TaskContextMenu(props) {
         "UPDATE_TASK_CANCELLED_TIME",
         "UPDATE_TASK_REJECTED_TIME"]);
     const isPosting = useSelector(state => postingSelector(state));
-
-    const {
-        relayNext,
-    } = props
 
     const addRelay = e => {
         handleClose(e);
@@ -114,13 +110,25 @@ export default function TaskContextMenu(props) {
                 <MenuItem disabled={ !!props.timeRejected || !!props.timeCancelled } onClick={onSelectRejected}>Mark rejected</MenuItem>
                 <MenuItem disabled={ !!props.timeCancelled || !!props.timeRejected } onClick={onSelectCancelled}>Mark cancelled</MenuItem>
                 <MenuItem
-                    disabled={!!relayNext}
+                    disabled={props.disableRelay}
                     onClick={addRelay}>
                     Add relay
                 </MenuItem>
-                <MenuItem className={props.deleteDisabled ? classes.deleteButtonDisabled : classes.deleteButton} onClick={onDelete}>Delete</MenuItem>
+                <MenuItem className={props.disableDeleted ? classes.deleteButtonDisabled : classes.deleteButton} onClick={onDelete}>Delete</MenuItem>
             </Menu>
         </>
     );
 }
 
+TaskContextMenu.propTypes = {
+    timePickedUp: PropTypes.string,
+    timeDroppedOff: PropTypes.string,
+    timeRejected: PropTypes.string,
+    timeCancelled: PropTypes.string,
+    taskUUID: PropTypes.string,
+    disableDeleted: PropTypes.bool,
+    disableRelay: PropTypes.bool,
+    assignedRiders: PropTypes.arrayOf(PropTypes.object),
+}
+
+export default TaskContextMenu;

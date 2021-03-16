@@ -145,7 +145,8 @@ const TaskCard = React.memo((props) => {
                 </Grid>
                 <Grid item className={classes.contextDots}>
                     <TaskContextMenu
-                        deleteDisabled={props.deleteDisabled}
+                        disableDeleted={props.deleteDisabled}
+                        disableRelay={!!props.relayNext}
                         {...props}
                     />
                 </Grid>
