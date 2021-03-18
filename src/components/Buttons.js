@@ -92,12 +92,12 @@ function ArrowButton(props) {
     const useStyles = makeStyles((theme) => ({
         button: {
             color: props.colour,
-            width: theme.spacing(4),
-            height: theme.spacing(4)
+            width: theme.spacing(props.size),
+            height: theme.spacing(props.size)
         },
         iconButton: {
-            width: theme.spacing(4),
-            height: theme.spacing(4)
+            width: theme.spacing(props.size),
+            height: theme.spacing(props.size)
         },
     }));
     const classes = useStyles();
@@ -134,12 +134,13 @@ function ArrowButton(props) {
 }
 
 ArrowButton.defaultProps = {
-    colour: "black",
+    colour: "primary",
     tooltip: "",
     onClick: () => {
     },
     disabled: false,
-    direction: "up"
+    direction: "up",
+    size: 4
 }
 
 ArrowButton.propTypes = {
@@ -149,7 +150,8 @@ ArrowButton.propTypes = {
     disabled: PropTypes.bool,
     direction: PropTypes.oneOf(["up", "down", "back", "forward"]),
     className: PropTypes.string,
-    linkTo: PropTypes.string
+    linkTo: PropTypes.string,
+    size: PropTypes.number
 }
 
 export {SmallCirclePlusButton, ArrowButton};
