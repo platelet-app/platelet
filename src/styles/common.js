@@ -13,8 +13,14 @@ import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
 
 export const showHide = makeStyles({
-    hide: {display: "none"},
-    show: {display: "initial"},
+    // not using display none because it lags horribly on mobile chrome for some reason
+    hide: {
+        position: "absolute!important",
+        top: "-9999px!important",
+        left: "-9999px!important"
+    },
+    haide: {display: "none"},
+    show: {display: "unset"},
 });
 
 export function DismissButton(props) {
