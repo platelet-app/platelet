@@ -34,7 +34,7 @@ function CoordinatorPicker(props) {
                 className={props.className}
                 size={props.size}
                 getOptionLabel={(option) => option.display_name}
-                style={{width: 350}}
+                style={{width: 300}}
                 renderInput={(params) => (
                     <TextField autoFocus {...params} label={props.label} variant="outlined" margin="none"/>
                 )}

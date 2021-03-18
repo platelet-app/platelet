@@ -54,7 +54,10 @@ function AssignRiderCoordinatorPopover(props) {
                     {buttons}
                 </Grid>
                 <Grid item>
-                        <CoordinatorPicker size={"small"} className={open ? show : hide} exclude={props.exclude} onSelect={onSelect}
+                        <CoordinatorPicker size={"small"}
+                                           className={open ? show : hide}
+                                           exclude={props.exclude}
+                                           onSelect={onSelect}
                                            label={"Select coordinator"}/>
                 </Grid>
             </Grid>

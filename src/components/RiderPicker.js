@@ -36,7 +36,7 @@ function RiderPicker(props) {
                 options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.display_name}
                 className={props.className}
-                style={{width: 350}}
+                style={{width: 300}}
                 renderInput={(params) => (
                     <TextField autoFocus {...params} label={props.label} variant="outlined" margin="none"/>
                 )}

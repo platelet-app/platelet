@@ -19,8 +19,7 @@ export const showHide = makeStyles({
         top: "-9999px!important",
         left: "-9999px!important"
     },
-    haide: {display: "none"},
-    show: {display: "unset"},
+    show: {},
 });
 
 export function DismissButton(props) {
