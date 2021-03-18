@@ -14,7 +14,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 
 export const showHide = makeStyles({
     hide: {display: "none"},
-    show: {display: "inherit"},
+    show: {display: "initial"},
 });
 
 export function DismissButton(props) {
