@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => (
             paddingRight: 20
         },
         contextDots: {
+            zIndex: 100,
             position: "relative",
             bottom: 35,
             left: 20
@@ -142,13 +143,6 @@ const TaskCard = React.memo((props) => {
                 </Grid>
                 <Grid className={classes.gridItem} item>
                     <CardItem label={"Priority"}>{props.priority}</CardItem>
-                </Grid>
-                <Grid item className={classes.contextDots}>
-                    <TaskContextMenu
-                        disableDeleted={props.deleteDisabled}
-                        disableRelay={!!props.relayNext}
-                        {...props}
-                    />
                 </Grid>
             </Grid>
         </CardContent>

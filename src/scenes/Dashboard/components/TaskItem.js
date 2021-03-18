@@ -4,9 +4,12 @@ import TaskCard from "./TaskCardsColoured"
 import {encodeUUID} from "../../../utilities";
 import PropTypes from 'prop-types'
 import {Grow} from "@material-ui/core";
+import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
+import {contextDots} from "../../../styles/common";
 
 
 const TaskItem = React.memo(function TaskItem(props) {
+    const classes = contextDots();
     return (
         <Grow
             in
@@ -23,6 +26,13 @@ const TaskItem = React.memo(function TaskItem(props) {
                         {...props}
                     />
             </Link>
+                <div className={classes.root}>
+                    <TaskContextMenu
+                        disableDeleted={props.deleteDisabled}
+                        disableRelay={!!props.relayNext}
+                        {...props}
+                    />
+                </div>
         </div>
         </Grow>
     )
