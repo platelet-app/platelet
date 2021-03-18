@@ -63,7 +63,9 @@ export function MenuMainContainer() {
                             <Hidden mdUp>
                                 <Grid container item alignItems={"center"} direction={"row"}>
                                     <Grid item>
-                                        <IconButton onClick={toggleSearchMode}>
+                                        <IconButton onClick={toggleSearchMode}
+                                                    color="inherit"
+                                        >
                                             {toggleIcon}
                                         </IconButton>
                                     </Grid>

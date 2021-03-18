@@ -25,7 +25,9 @@ export default function MobileNavigationDrawer() {
 
     return (
         <div>
-            <IconButton onClick={toggleDrawer}>
+            <IconButton onClick={toggleDrawer}
+                        color="inherit"
+            >
                 <MenuIcon/>
             </IconButton>
             <SwipeableDrawer

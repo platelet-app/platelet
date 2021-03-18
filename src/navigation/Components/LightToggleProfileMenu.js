@@ -62,9 +62,11 @@ function LightToggleProfileMenu(props) {
                 <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"} spacing={1}>
                     <Grid item>
                         <Tooltip title={"Toggle dark/light mode"}>
-                            <IconButton onClick={() => {
-                                dispatch(setDarkMode(!darkMode))
-                            }}>
+                            <IconButton
+                                color="inherit"
+                                onClick={() => {
+                                    dispatch(setDarkMode(!darkMode))
+                                }}>
                                 {darkMode ? <BrightnessHighIcon/> : <Brightness4Icon/>}
 
                             </IconButton>
