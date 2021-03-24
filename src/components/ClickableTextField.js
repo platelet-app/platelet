@@ -17,12 +17,12 @@ const useStyles = makeStyles(theme => ({
         fontStyle: "italic",
         color: "gray",
         "&:hover": {
-            background: "rgb(242, 242, 242)"
+            background: theme.palette.type === "dark"  ? "rgb(100, 100, 100)" : "rgb(242, 242, 242)"
         }
     },
     hoverHighlight: {
         "&:hover": {
-            background: "rgb(242, 242, 242)"
+            background: theme.palette.type === "dark"  ? "rgb(100, 100, 100)" : "rgb(242, 242, 242)"
         }
     }
 }));
