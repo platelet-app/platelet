@@ -1,7 +1,7 @@
 import {call, put, select, takeLatest} from "redux-saga/effects";
 import {findExistingTask} from "../../utilities";
 import {getApiControl} from "../Api";
-import {getTaskSuccess, getTaskFailure, getTaskNotFound, GET_TASK_REQUEST} from "./ActiveTaskActions";
+import {getTaskSuccess, getTaskFailure, getTaskNotFound, getTaskActions} from "./ActiveTaskActions";
 
 function* getTask(action) {
     try {
@@ -27,6 +27,6 @@ function* getTask(action) {
 }
 
 export function* watchGetTask() {
-    yield takeLatest(GET_TASK_REQUEST, getTask)
+    yield takeLatest(getTaskActions.request, getTask)
 }
 

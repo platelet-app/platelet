@@ -1,5 +1,5 @@
 import {
-    GET_TASK_SUCCESS,
+    getTaskActions,
     UPDATE_ACTIVE_TASK,
     UPDATE_ACTIVE_TASK_ASSIGNED_COORDINATOR,
     UPDATE_ACTIVE_TASK_ASSIGNED_RIDER, UPDATE_ACTIVE_TASK_REMOVE_ASSIGNED_RIDER
@@ -58,7 +58,7 @@ const initialState = {
 
 export function task(state = initialState, action) {
     switch (action.type) {
-        case GET_TASK_SUCCESS:
+        case getTaskActions.success:
             return {task: action.data, error: null};
         case UPDATE_ACTIVE_TASK:
             return {task: {...state.task, ...action.data.payload}, error: null}

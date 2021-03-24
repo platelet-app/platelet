@@ -34,9 +34,6 @@ function DeliverablesSelect(props) {
             props.onSelect(e.target.value);
     };
 
-    const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
-
     return (
         <FormControl className={classes.formControl}>
             <InputLabel id="select-deliver-item-label">Items</InputLabel>
