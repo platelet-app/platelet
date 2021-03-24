@@ -371,9 +371,7 @@ export const createSubscribeCommentsSocketMiddleware = () => {
                         console.log(action.data.type)
                         switch (action.data.type) {
                             case "ADD_COMMENT":
-                                // TODO: this is a temporary workaround, fix it properly
-                                if (action.data && action.data.data && action.data.data.publically_visible === false)
-                                    storeAPI.dispatch(addCommentFromSocket(action.data.data))
+                                storeAPI.dispatch(addCommentFromSocket(action.data.data))
                                 break;
                             case "DELETE_COMMENT":
                                 storeAPI.dispatch(deleteCommentFromSocket(action.data.uuid))
