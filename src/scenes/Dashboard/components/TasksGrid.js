@@ -97,6 +97,7 @@ const TaskGroup = props => {
     const classes = taskGroupStyles();
     const {show, hide} = showHide();
     const taskArr = Object.entries(props.group).map(([key, value]) => value)
+    const roleView = useSelector(state => state.roleView);
 
     taskArr.sort((a, b) => a.order_in_relay - b.order_in_relay)
     return taskArr.length === 0 ? <></> : taskArr.map((task, i, arr) => {
@@ -149,7 +150,7 @@ const TaskGroup = props => {
                             deleteDisabled={props.deleteDisabled}/>
                         <Grid container alignItems={"center"} justify={"center"} className={classes.hoverDiv}>
                             <Grid
-                                className={(!!relay_next && props.showTasks === null && !props.hideRelayIcons) ? show : hide}
+                                className={(!!relay_next && props.showTasks === null && !props.hideRelayIcons) && roleView === "coordinator" ? show : hide}
                                 item>
                                 <Tooltip title="Relay">
                                     <ArrowDownwardIcon style={{height: "35px"}}/>

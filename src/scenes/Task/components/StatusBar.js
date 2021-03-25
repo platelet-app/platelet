@@ -158,7 +158,7 @@ StatusBar.propTypes = {
     status: PropTypes.string,
     relayNext: PropTypes.string,
     relayPrevious: PropTypes.string,
-    taskUUID: PropTypes.string
+    taskUUID: PropTypes.string.isRequired
 }
 
 StatusBar.defaultProps = {

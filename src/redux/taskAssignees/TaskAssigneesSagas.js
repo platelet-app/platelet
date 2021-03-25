@@ -26,6 +26,11 @@ import {convertListDataToObjects} from "../redux_utilities";
 function* addTaskAssignedRider(action) {
     try {
         const api = yield select(getApiControl);
+        if (!action.data.taskUUID) {
+            yield put(addTaskAssignedRiderFailure(new Error("Task UUID is not defined")));
+            return;
+        }
+
         const currentTasks = yield select((state) => state.tasks.tasks);
         const currentTask = yield findExistingTask(currentTasks, action.data.taskUUID);
         const users = yield select(getUsersSelector);
