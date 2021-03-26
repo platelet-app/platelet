@@ -64,7 +64,7 @@ export default function DeliverableGridSelect(props) {
         if (availableDeliverables.length > 0)
             dispatch(getDeliverablesRequest(props.taskUUID))
 
-    }, [availableDeliverables]);
+    }, [availableDeliverables, props.taskUUID]);
 
     if (isFetching) {
         return <DeliverablesSkeleton/>
