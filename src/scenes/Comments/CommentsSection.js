@@ -24,7 +24,7 @@ export default function CommentsSection(props) {
             dispatch(clearComments())
         }
     }
-    useEffect(updateComments, []);
+    useEffect(updateComments, [props.parentUUID]);
 
     function componentDidMount() {
         dispatch(subscribeToComments(props.parentUUID));
@@ -32,7 +32,7 @@ export default function CommentsSection(props) {
             dispatch(unsubscribeFromComments(props.parentUUID));
         }
     }
-    useEffect(componentDidMount, []);
+    useEffect(componentDidMount, [props.parentUUID]);
 
     if (isFetching) {
         return <CommentsSkeleton/>
