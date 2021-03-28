@@ -6,17 +6,18 @@ import Typography from "@material-ui/core/Typography";
 
 function CompactUserCard(props) {
     return (
-        <Grid container spacing={1} alignItems={"center"} direction={"row"}>
+        <Grid container style={{width: "100%"}} spacing={1} alignItems={"center"} justify={"space-between"}
+              direction={"row"}>
             <Grid item>
-                <UserAvatar userUUID={props.userUUID}
-                            displayName={props.displayName}
-                            size={3}
-                            avatarURL={props.profilePictureURL}/>
-            </Grid>
-            <Grid item>
-                <Grid container direction={"column"}>
-                    <Grid container style={{width: "250px"}} direction={"row"} justify={"space-between"} alignItems={"center"}>
-                        <Grid item>
+                <Grid container spacing={1} alignItems={"center"} justify={"flex-start"} direction={"row"}>
+                    <Grid item>
+                        <UserAvatar userUUID={props.userUUID}
+                                    displayName={props.displayName}
+                                    size={3}
+                                    avatarURL={props.profilePictureURL}/>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction={"column"}>
                             <Grid item>
                                 <Typography>{props.displayName}</Typography>
                             </Grid>
@@ -24,13 +25,11 @@ function CompactUserCard(props) {
                                 <Typography>{props.patch}</Typography>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid item>
-                                <Typography>{props.vehicleName}</Typography>
-                            </Grid>
-                        </Grid>
                     </Grid>
                 </Grid>
+            </Grid>
+            <Grid item>
+                <Typography>{props.vehicleName}</Typography>
             </Grid>
         </Grid>
     )
