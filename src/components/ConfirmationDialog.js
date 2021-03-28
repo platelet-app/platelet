@@ -6,9 +6,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from "prop-types";
+import {useTheme} from "@material-ui/core/styles";
 
-// Not used currently in favour of notifications.
 function ConfirmationDialog(props) {
+    const theme = useTheme()
     return (
         <Dialog
             open={props.open}
@@ -26,13 +27,13 @@ function ConfirmationDialog(props) {
                 <Button onClick={() => {
                     props.onSelect(false);
                     props.onClose();
-                }} color="primary">
+                }} color={theme.palette.type === "dark" ? "white" : "primary"} autoFocus>
                     Cancel
                 </Button>
                 <Button onClick={() => {
                     props.onSelect(true);
                     props.onClose();
-                }} color="primary" autoFocus>
+                }} color={theme.palette.type === "dark" ? "white" : "primary"} autoFocus>
                     OK
                 </Button>
             </DialogActions>
