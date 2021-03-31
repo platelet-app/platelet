@@ -44,6 +44,7 @@ function StatusBar(props) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const task = useSelector(state => state.task.task);
+    const roleView = useSelector(state => state.roleView)
     // don't change container to container item, it breaks the layout for some reason
     return (
         <AppBar position={isSm ? "relative" : "sticky"} className={classes.statusBar}>
@@ -122,14 +123,14 @@ function StatusBar(props) {
                                              direction={"back"}
                                              size={3}
                                              tooltip={"Previous relay"}
-                                             className={!!task.relay_previous_uuid ? show : hide}/>
+                                             className={!!task.relay_previous_uuid && (roleView !== "rider") ? show : hide}/>
                             </Grid>
                             <Grid item>
                                 <ArrowButton linkTo={encodeUUID(task.relay_next ? task.relay_next.uuid : null)}
                                              direction={"forward"}
                                              size={3}
                                              tooltip={"Next relay"}
-                                             className={!!task.relay_next ? show : hide}/>
+                                             className={!!task.relay_next && (roleView !== "rider") ? show : hide}/>
                             </Grid>
                         </Hidden>
                         <Grid item>
