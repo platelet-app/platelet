@@ -167,7 +167,7 @@ function loadingReducer(state = {}, action) {
         return {};
     }
     const {type} = action;
-    const matches = /(.*)_(REQUEST|SUCCESS|FAILURE|NOTFOUND)/.exec(type);
+    const matches = /(.*)_(REQUEST|SUCCESS|FAILURE|NOT_FOUND)/.exec(type);
 
     // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
     if (!matches) return state;
@@ -184,7 +184,7 @@ function loadingReducer(state = {}, action) {
 
 function postingReducer(state = {}, action) {
     const {type} = action;
-    const matches = /(.*)_(REQUEST|SUCCESS|FAILURE|NOTFOUND)/.exec(type);
+    const matches = /(.*)_(REQUEST|SUCCESS|FAILURE|NOT_FOUND)/.exec(type);
 
     // not a *_REQUEST / *_SUCCESS /  *_FAILURE actions, so we ignore them
     if (!matches) return state;
@@ -201,15 +201,15 @@ function postingReducer(state = {}, action) {
 
 function notFoundReducer(state = {}, action) {
     const {type} = action;
-    const matches = /(.*)_(REQUEST|SUCCESS|NOTFOUND)/.exec(type);
+    const matches = /(.*)_(REQUEST|SUCCESS|NOT_FOUND)/.exec(type);
 
-    // not a *_REQUEST / *_SUCCESS /  *_NOTFOUND actions, so we ignore them
+    // not a *_REQUEST / *_SUCCESS /  *_NOT_FOUND actions, so we ignore them
     if (!matches) return state;
 
     const [, requestName, requestState] = matches;
     return {
         ...state,
-        [requestName]: requestState === 'NOTFOUND',
+        [requestName]: requestState === 'NOT_FOUND',
     };
 }
 
@@ -226,7 +226,7 @@ const errorReducer = (state = {}, action) => {
         // Store errorMessage
         // e.g. stores errorMessage when receiving GET_TODOS_FAILURE
         //      else clear errorMessage when receiving GET_TODOS_REQUEST
-        [requestName]: requestState === 'FAILURE' || requestState === 'NOTFOUND' ? error : '',
+        [requestName]: requestState === 'FAILURE' || requestState === 'NOT_FOUND' ? error : '',
     };
 };
 
