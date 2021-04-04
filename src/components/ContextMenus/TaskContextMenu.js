@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from "moment";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
@@ -13,12 +14,13 @@ import IconButton from '@material-ui/core/IconButton';
 import {createPostingSelector} from "../../redux/selectors";
 import {deleteButtonStyles} from "./contextMenuCSS";
 import PropTypes from "prop-types";
+import {findExistingTask} from "../../utilities";
+import {displayErrorNotification, displayInfoNotification} from "../../redux/notifications/NotificationsActions";
 
 const initialState = {
     mouseX: null,
     mouseY: null,
 };
-
 
 function TaskContextMenu(props) {
     const dispatch = useDispatch();
@@ -26,6 +28,7 @@ function TaskContextMenu(props) {
     const roleView = useSelector(state => state.roleView)
     const whoami = useSelector(state => state.whoami.user);
     const classes = deleteButtonStyles();
+    const tasks = useSelector(state => state.tasks.tasks)
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "ADD_TASK_RELAY",
@@ -36,6 +39,37 @@ function TaskContextMenu(props) {
         "UPDATE_TASK_CANCELLED_TIME",
         "UPDATE_TASK_REJECTED_TIME"]);
     const isPosting = useSelector(state => postingSelector(state));
+
+    function copyTaskDataToClipboard(e) {
+        handleClose(e);
+        const taskData = findExistingTask(tasks, props.taskUUID);
+        if (taskData) {
+            const data = {
+                FROM: taskData.pickup_location ? `${taskData.pickup_location.address.ward || ""} - ${taskData.pickup_location.address.line1|| ""}` : undefined,
+                TO: taskData.dropoff_location ? `${taskData.dropoff_location.address.ward || ""} - ${taskData.dropoff_location.address.line1|| ""}` : undefined,
+                PRIORITY: taskData.priority || undefined,
+                TOC: taskData.time_of_call ? moment(taskData.time_of_call).format('HH:mm') : undefined
+            };
+
+            let result = "";
+            let first = true;
+            for (const [key, value] of Object.entries(data)) {
+                if (value)
+                    result += `${first ? "" : " "}${key}: ${value}`
+                first = false;
+            };
+
+            navigator.clipboard.writeText(result).then(function () {
+                dispatch(displayInfoNotification("Copied to clipboard."))
+                /* clipboard successfully set */
+            }, function () {
+                dispatch(displayErrorNotification("Copy failed."))
+                /* clipboard write failed */
+            });
+        } else {
+            dispatch(displayErrorNotification("Copy failed."))
+        }
+    }
 
     const addRelay = e => {
         handleClose(e);
@@ -114,6 +148,7 @@ function TaskContextMenu(props) {
                     onClick={addRelay}>
                     Add relay
                 </MenuItem>
+                <MenuItem onClick={copyTaskDataToClipboard}>Save to clipboard</MenuItem>
                 <MenuItem className={props.disableDeleted ? classes.deleteButtonDisabled : classes.deleteButton} onClick={onDelete}>Delete</MenuItem>
             </Menu>
         </>
