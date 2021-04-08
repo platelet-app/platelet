@@ -92,7 +92,8 @@ function StatusBar(props) {
                 </Grid>
                 <Grid item>
                     <Grid container direction={"row"} alignItems={"center"} justify={"flex-start"} spacing={2}>
-                        <Hidden smDown>
+                        {/* TODO: add some way to assign people on mobile view, showing it for now*/}
+                        <Hidden>
                             <Grid item>
                                 <RiderEditPopover assignees={task.assigned_riders}
                                                   className={task.assigned_riders.length > 0 ? show : hide}
