@@ -34,7 +34,7 @@ export default function VehicleDetail(props) {
         if (user)
             dispatch(
                 updateVehicleRequest(
-                    {vehicleUUID: vehicle.uuid, payload: {...vehicle, assigned_user: user, assigned_user_uuid: user.uuid}}
+                    vehicle.uuid, {...vehicle, assigned_user: user, assigned_user_uuid: user.uuid}
                     )
             );
 
