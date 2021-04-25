@@ -19,7 +19,11 @@ import {
     getUserActions,
     updateUserActions,
     updateUserPasswordActions,
-    uploadUserProfilePictureActions, deleteUserActions, restoreUserActions, addUserActions,
+    uploadUserProfilePictureActions,
+    deleteUserActions,
+    restoreUserActions,
+    addUserActions,
+    restoreUserNotFound,
 } from "./UsersActions";
 import {getApiControl} from "../Api"
 import {displayInfoNotification} from "../notifications/NotificationsActions";
@@ -29,7 +33,7 @@ function* getUsers() {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.users.getUsers]);
-        const converted = yield convertListDataToObjects(result)
+        const converted = yield call(convertListDataToObjects, result);
         yield put(getUsersSuccess(converted))
     } catch (error) {
         yield put(getUsersFailure(error))
@@ -104,11 +108,19 @@ export function* watchUploadUserProfilePicture() {
 
 function* deleteUser(action) {
     try {
-        const restoreActions = () => [restoreUserRequest(action.data)];
+        const restoreActions = yield () => [restoreUserRequest(action.data.userUUID)];
         const api = yield select(getApiControl);
-        yield call([api, api.users.deleteUser], action.data);
-        yield put(deleteUserSuccess(action.data))
-        yield put(displayInfoNotification("User deleted", restoreActions))
+        try {
+            yield call([api, api.users.deleteUser], action.data.userUUID);
+        } catch (error) {
+            if (!error.status_code || error.status_code !== 404) {
+                // if we have any error other than a 404, then put a failure, else carry on
+                yield put(deleteUserFailure(error))
+                return;
+            }
+        }
+        yield put(deleteUserSuccess(action.data.userUUID));
+        yield put(displayInfoNotification("User deleted", restoreActions));
     } catch (error) {
         yield put(deleteUserFailure(error))
     }
@@ -121,10 +133,15 @@ export function* watchDeleteUser() {
 function* restoreUser(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.users.restoreUser], action.data);
-        const result = yield call([api, api.users.getUser], action.data);
+        yield call([api, api.users.restoreUser], action.data.userUUID);
+        const result = yield call([api, api.users.getUser], action.data.userUUID);
         yield put(restoreUserSuccess(result))
     } catch (error) {
+        if (error.status_code) {
+            if (error.status_code === 404) {
+                yield put(restoreUserNotFound(error));
+            }
+        }
         yield put(restoreUserFailure(error))
     }
 }
@@ -145,4 +162,15 @@ function* addUser(action) {
 
 export function* watchAddUser() {
     yield takeLatest(addUserActions.request, addUser)
+}
+
+export const testable = {
+    getUsers,
+    getUser,
+    addUser,
+    restoreUser,
+    deleteUser,
+    updateUser,
+    updateUserPassword,
+    uploadUserProfilePicture
 }
