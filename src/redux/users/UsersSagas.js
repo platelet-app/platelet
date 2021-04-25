@@ -1,30 +1,5 @@
 import { call, put, takeLatest, select} from 'redux-saga/effects'
-import {
-    getUserSuccess,
-    getUsersSuccess,
-    updateUserSuccess,
-    deleteUserSuccess,
-    restoreUserSuccess,
-    getUsersFailure,
-    getUserFailure,
-    updateUserFailure,
-    deleteUserFailure,
-    restoreUserFailure,
-    clearForceResetPasswordStatus,
-    restoreUserRequest,
-    uploadUserProfilePictureSuccess,
-    uploadUserProfilePictureFailure,
-    getUserNotFound,
-    getUsersActions,
-    getUserActions,
-    updateUserActions,
-    updateUserPasswordActions,
-    uploadUserProfilePictureActions,
-    deleteUserActions,
-    restoreUserActions,
-    addUserActions,
-    restoreUserNotFound,
-} from "./UsersActions";
+import * as userActions from "./UsersActions"
 import {getApiControl} from "../Api"
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {convertListDataToObjects} from "../redux_utilities";
@@ -34,9 +9,9 @@ function* getUsers() {
         const api = yield select(getApiControl);
         const result = yield call([api, api.users.getUsers]);
         const converted = yield call(convertListDataToObjects, result);
-        yield put(getUsersSuccess(converted))
+        yield put(userActions.getUsersSuccess(converted))
     } catch (error) {
-        yield put(getUsersFailure(error))
+        yield put(userActions.getUsersFailure(error))
     }
 }
 
@@ -44,90 +19,101 @@ function* getUser(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.users.getUser], action.data.userUUID);
-        yield put(getUserSuccess(result))
+        yield put(userActions.getUserSuccess(result))
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
-                yield put(getUserNotFound(error))
+                yield put(userActions.getUserNotFound(error))
             }
         }
-        yield put(getUserFailure(error))
+        yield put(userActions.getUserFailure(error))
     }
 }
 
 export function* watchGetUsers() {
-    yield takeLatest(getUsersActions.request, getUsers)
+    yield takeLatest(userActions.getUsersActions.request, getUsers)
 }
 
 export function* watchGetUser() {
-    yield takeLatest(getUserActions.request, getUser)
+    yield takeLatest(userActions.getUserActions.request, getUser)
 }
 
 function* updateUser(action) {
     try {
         const api = yield select(getApiControl);
         yield call([api, api.users.updateUser], action.data.userUUID, action.data.payload);
-        yield put(updateUserSuccess(action.data))
+        yield put(userActions.updateUserSuccess(action.data))
     } catch (error) {
-        yield put(updateUserFailure(error))
+        if (error.status_code && error.status_code === 404) {
+            yield put(userActions.updateUserNotFound(error));
+        }
+        yield put(userActions.updateUserFailure(error));
     }
 }
 
 export function* watchUpdateUser() {
-    yield takeLatest(updateUserActions.request, updateUser)
+    yield takeLatest(userActions.updateUserActions.request, updateUser)
 }
 
 function* updateUserPassword(action) {
     try {
         const api = yield select(getApiControl);
         yield call([api, api.users.updateUser], action.data.userUUID, action.data.payload);
-        yield put(updateUserSuccess(action.data))
-        yield put(clearForceResetPasswordStatus())
+        yield put(userActions.updateUserPasswordSuccess(action.data));
+        yield put(userActions.clearForceResetPasswordStatus());
     } catch (error) {
-        yield put(updateUserFailure(error))
+        if (error.status_code && error.status_code === 404) {
+            yield put(userActions.updateUserPasswordNotFound(error));
+        }
+        yield put(userActions.updateUserPasswordFailure(error));
     }
 }
 
 export function* watchUpdateUserPassword() {
-    yield takeLatest(updateUserPasswordActions.request, updateUserPassword)
+    yield takeLatest(userActions.updateUserPasswordActions.request, updateUserPassword)
 }
 
 function* uploadUserProfilePicture(action) {
     try {
         const api = yield select(getApiControl);
         yield call([api, api.users.uploadProfilePicture], action.data.userUUID, action.data.payload);
-        yield put(uploadUserProfilePictureSuccess(action.data))
+        yield put(userActions.uploadUserProfilePictureSuccess(action.data))
     } catch (error) {
-        yield put(uploadUserProfilePictureFailure(error))
+        if (error.status_code) {
+            if (error.status_code === 404) {
+                yield put(userActions.uploadUserProfilePictureNotFound(error));
+            }
+        }
+        yield put(userActions.uploadUserProfilePictureFailure(error))
     }
 }
 
 export function* watchUploadUserProfilePicture() {
-    yield takeLatest(uploadUserProfilePictureActions.request, uploadUserProfilePicture)
+    yield takeLatest(userActions.uploadUserProfilePictureActions.request, uploadUserProfilePicture)
 }
 
 function* deleteUser(action) {
     try {
-        const restoreActions = yield () => [restoreUserRequest(action.data.userUUID)];
+        const restoreActions = yield () => [userActions.restoreUserRequest(action.data.userUUID)];
         const api = yield select(getApiControl);
         try {
             yield call([api, api.users.deleteUser], action.data.userUUID);
         } catch (error) {
             if (!error.status_code || error.status_code !== 404) {
                 // if we have any error other than a 404, then put a failure, else carry on
-                yield put(deleteUserFailure(error))
+                yield put(userActions.deleteUserFailure(error))
                 return;
             }
         }
-        yield put(deleteUserSuccess(action.data.userUUID));
+        yield put(userActions.deleteUserSuccess(action.data.userUUID));
         yield put(displayInfoNotification("User deleted", restoreActions));
     } catch (error) {
-        yield put(deleteUserFailure(error))
+        yield put(userActions.deleteUserFailure(error))
     }
 }
 
 export function* watchDeleteUser() {
-    yield takeLatest(deleteUserActions.request, deleteUser)
+    yield takeLatest(userActions.deleteUserActions.request, deleteUser)
 }
 
 function* restoreUser(action) {
@@ -135,33 +121,33 @@ function* restoreUser(action) {
         const api = yield select(getApiControl);
         yield call([api, api.users.restoreUser], action.data.userUUID);
         const result = yield call([api, api.users.getUser], action.data.userUUID);
-        yield put(restoreUserSuccess(result))
+        yield put(userActions.restoreUserSuccess(result))
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
-                yield put(restoreUserNotFound(error));
+                yield put(userActions.restoreUserNotFound(error));
             }
         }
-        yield put(restoreUserFailure(error))
+        yield put(userActions.restoreUserFailure(error))
     }
 }
 
 export function* watchRestoreUser() {
-    yield takeLatest(restoreUserActions.request, restoreUser)
+    yield takeLatest(userActions.restoreUserActions.request, restoreUser)
 }
 
 function* addUser(action) {
     try {
         const api = yield select(getApiControl);
-        yield call([api, api.users.createUser], action.data.userUUID, action.data.payload);
-        yield put(updateUserSuccess(action.data))
+        yield call([api, api.users.createUser], action.data.payload);
+        yield put(userActions.addUserSuccess(action.data))
     } catch (error) {
-        yield put(updateUserFailure(error))
+        yield put(userActions.addUserFailure(error))
     }
 }
 
 export function* watchAddUser() {
-    yield takeLatest(addUserActions.request, addUser)
+    yield takeLatest(userActions.addUserActions.request, addUser)
 }
 
 export const testable = {
