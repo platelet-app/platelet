@@ -1,0 +1,212 @@
+{
+    "users": [
+        {
+            "links": {
+                "self": "/api/v0.1/user/9b6ac254-0dbf-4197-83b5-c9bfcc03455d",
+                "collection": "/api/v0.1/users"
+            },
+            "password_reset_on_login": false,
+            "roles": [
+                "admin",
+                "coordinator",
+                "rider"
+            ],
+            "patch": "North",
+            "assigned_vehicles": [],
+            "profile_picture_thumbnail_url": "https://example.com",
+            "display_name": "The Admin",
+            "name": "Someone Person",
+            "uuid": "9b6ac254-0dbf-4197-83b5-c9bfcc03455d",
+            "contact_number": null,
+            "username": "admin",
+            "time_modified": "2021-02-03T21:48:13.591676+00:00",
+            "patch_id": 1,
+            "time_created": "2021-02-01T17:58:23.801203+00:00"
+        },
+        {
+            "links": {
+                "self": "/api/v0.1/user/aa10d929-2afe-4bdb-b307-21eb2799b84c",
+                "collection": "/api/v0.1/users"
+            },
+            "password_reset_on_login": false,
+            "roles": [
+                "coordinator"
+            ],
+            "patch": null,
+            "assigned_vehicles": [],
+            "profile_picture_thumbnail_url": "https://example.com",
+            "display_name": "The Coordinator",
+            "name": "Someone Person The Second",
+            "uuid": "aa10d929-2afe-4bdb-b307-21eb2799b84c",
+            "contact_number": null,
+            "username": "coordinator",
+            "time_modified": "2021-02-10T16:12:59.309727+00:00",
+            "patch_id": null,
+            "time_created": "2021-02-01T17:58:23.800639+00:00"
+        },
+        {
+            "links": {
+                "self": "/api/v0.1/user/9d2167f4-a3b7-4bcc-bd59-bfeca0dbe951",
+                "collection": "/api/v0.1/users"
+            },
+            "password_reset_on_login": false,
+            "roles": [
+                "rider"
+            ],
+            "patch": "East",
+            "assigned_vehicles": [
+                {
+                    "links": {
+                        "self": "/api/v0.1/vehicle/f66f942a-97b6-4459-8a08-22011b0d608a",
+                        "collection": "/api/v0.1/vehicles"
+                    },
+                    "uuid": "f66f942a-97b6-4459-8a08-22011b0d608a",
+                    "name": "Bike One"
+                }
+            ],
+            "profile_picture_thumbnail_url": "https://example.com",
+            "display_name": "Kays",
+            "name": "Kayley Cardenas",
+            "uuid": "9d2167f4-a3b7-4bcc-bd59-bfeca0dbe951",
+            "contact_number": null,
+            "username": "blazeit",
+            "time_modified": "2021-02-10T16:12:38.656310+00:00",
+            "patch_id": 2,
+            "time_created": "2021-02-01T17:58:23.709725+00:00"
+        },
+        {
+            "links": {
+                "self": "/api/v0.1/user/3fc39f06-ce70-4070-9a8e-6c0f096ba30f",
+                "collection": "/api/v0.1/users"
+            },
+            "password_reset_on_login": false,
+            "roles": [
+                "rider",
+                "coordinator"
+            ],
+            "patch": "West",
+            "assigned_vehicles": [
+                {
+                    "links": {
+                        "self": "/api/v0.1/vehicle/b7a6badb-a075-4be2-a56d-86caf2adbecb",
+                        "collection": "/api/v0.1/vehicles"
+                    },
+                    "uuid": "b7a6badb-a075-4be2-a56d-86caf2adbecb",
+                    "name": "Bike Four"
+                }
+            ],
+            "profile_picture_thumbnail_url": "https://example.com",
+            "display_name": "Mr Kieron C",
+            "name": "Kieron Cullen",
+            "uuid": "3fc39f06-ce70-4070-9a8e-6c0f096ba30f",
+            "contact_number": null,
+            "username": "yeet",
+            "time_modified": "2021-02-10T16:13:18.610288+00:00",
+            "patch_id": 3,
+            "time_created": "2021-02-01T17:58:23.705172+00:00"
+        },
+        {
+            "links": {
+                "self": "/api/v0.1/user/0effe2e8-e7a3-4d0b-800d-165cb377ab28",
+                "collection": "/api/v0.1/users"
+            },
+            "password_reset_on_login": false,
+            "roles": [
+                "rider",
+                "coordinator"
+            ],
+            "patch": "North",
+            "assigned_vehicles": [
+                {
+                    "links": {
+                        "self": "/api/v0.1/vehicle/c94fdc25-3795-42f6-8659-9dd6d8747b1e",
+                        "collection": "/api/v0.1/vehicles"
+                    },
+                    "uuid": "c94fdc25-3795-42f6-8659-9dd6d8747b1e",
+                    "name": "Bike Two"
+                }
+            ],
+            "profile_picture_thumbnail_url": "https://example.com",
+            "display_name": "Kirby",
+            "name": "Abdi Kirby",
+            "uuid": "0effe2e8-e7a3-4d0b-800d-165cb377ab28",
+            "contact_number": null,
+            "username": "Kirbster",
+            "time_modified": "2021-03-12T00:22:08.368040+00:00",
+            "patch_id": 1,
+            "time_created": "2021-02-01T17:58:23.700840+00:00"
+        },
+        {
+            "links": {
+                "self": "/api/v0.1/user/b3c966a4-c575-4922-afd0-bfa07de90fc9",
+                "collection": "/api/v0.1/users"
+            },
+            "password_reset_on_login": false,
+            "roles": [
+                "rider"
+            ],
+            "patch": "Relief",
+            "assigned_vehicles": [
+                {
+                    "links": {
+                        "self": "/api/v0.1/vehicle/9127c695-e5f9-4e33-ab87-4472d7583613",
+                        "collection": "/api/v0.1/vehicles"
+                    },
+                    "uuid": "9127c695-e5f9-4e33-ab87-4472d7583613",
+                    "name": "Bike Three"
+                }
+            ],
+            "profile_picture_thumbnail_url": "https://example.com",
+            "display_name": "Anders Davidson",
+            "name": "Anderson Davidson",
+            "uuid": "b3c966a4-c575-4922-afd0-bfa07de90fc9",
+            "contact_number": null,
+            "username": "AndDavid",
+            "time_modified": "2021-02-10T16:14:05.966727+00:00",
+            "patch_id": 4,
+            "time_created": "2021-02-01T17:58:23.696207+00:00"
+        },
+        {
+            "links": {
+                "self": "/api/v0.1/user/abef0243-8975-4458-a5c8-80728fa430e8",
+                "collection": "/api/v0.1/users"
+            },
+            "password_reset_on_login": false,
+            "roles": [
+                "coordinator"
+            ],
+            "patch": null,
+            "assigned_vehicles": [],
+            "profile_picture_thumbnail_url": null,
+            "display_name": "Mr McKnight",
+            "name": "Blessing McKnight",
+            "uuid": "abef0243-8975-4458-a5c8-80728fa430e8",
+            "contact_number": null,
+            "username": "MusicalKnight",
+            "time_modified": "2021-02-01T17:58:23.691482+00:00",
+            "patch_id": null,
+            "time_created": "2021-02-01T17:58:23.691477+00:00"
+        },
+        {
+            "links": {
+                "self": "/api/v0.1/user/b202d5a1-ab10-4acc-96cc-def1e4ab4ff5",
+                "collection": "/api/v0.1/users"
+            },
+            "password_reset_on_login": false,
+            "roles": [
+                "coordinator"
+            ],
+            "patch": null,
+            "assigned_vehicles": [],
+            "profile_picture_thumbnail_url": "https://example.com",
+            "display_name": "Josie Whittle",
+            "name": "Josie Whittle",
+            "uuid": "b202d5a1-ab10-4acc-96cc-def1e4ab4ff5",
+            "contact_number": null,
+            "username": "JosiePosie",
+            "time_modified": "2021-02-12T00:39:47.617790+00:00",
+            "patch_id": null,
+            "time_created": "2021-02-01T17:58:23.687072+00:00"
+        }
+    ]
+}

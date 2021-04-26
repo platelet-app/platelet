@@ -1,5 +1,3 @@
-//TODO: this doesn't trigger the auth monitor. They are requests and should start with REQUEST. Convert it to use the factory functions
-
 import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
 
 export const appendTasksDeliveredPrefix = "APPEND_TASKS_DELIVERED";

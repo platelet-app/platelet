@@ -12,7 +12,7 @@ import {
 import {convertListDataToObjects} from "../redux_utilities";
 import {initialUserState} from "./UsersReducers";
 
-const rawdata = fs.readFileSync(path.resolve(__dirname, "../tests/testData.json"));
+const rawdata = fs.readFileSync(path.resolve(__dirname, "../../testing/testData.json"));
 const testData = convertListDataToObjects(JSON.parse(rawdata)['users']);
 
 
