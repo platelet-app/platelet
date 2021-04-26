@@ -49,7 +49,7 @@ export default function UserProfile(props) {
         <SaveCancelButtons
             disabled={isPosting}
             onSave={() => {
-                dispatch(updateUserRequest({userUUID: props.user.uuid, payload: state}));
+                dispatch(updateUserRequest(props.user.uuid, state));
                 setOldState(state);
             }}
             onCancel={() => {

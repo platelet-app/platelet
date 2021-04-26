@@ -16,7 +16,7 @@ export default function ResetPasswordForm(props) {
 
     function handlePasswordReset() {
         const payload = {password: newPass}
-        dispatch(updateUserPasswordRequest({userUUID: props.userUUID, payload}))
+        dispatch(updateUserPasswordRequest(props.userUUID, payload))
     }
 
     return (
