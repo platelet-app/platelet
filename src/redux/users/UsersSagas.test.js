@@ -1,4 +1,3 @@
-import Control from "../../ApiControl";
 import {
     watchAddUser,
     watchDeleteUser,
@@ -9,9 +8,7 @@ import {
     watchUpdateUserPassword, watchUploadUserProfilePicture
 } from "./UsersSagas";
 import {testable} from "./UsersSagas.js";
-import takeLatest from "redux-saga";
 import * as userActions from "./UsersActions"
-import {getUserActions, uploadUserProfilePictureFailure as uploadUserProfilePictureNotFound} from "./UsersActions";
 import {call, put, select} from "redux-saga/effects";
 import {getApiControl} from "../Api";
 import {convertListDataToObjects} from "../redux_utilities";
@@ -124,7 +121,7 @@ describe ("delete a user", () => {
         expect(gen.next(api).value).toEqual(
             call([api, api.users.deleteUser], action.data.userUUID)
         );
-        expect(gen.next().value).toEqual(put(userActions.deleteUserSuccess(action.data.userUUID)));
+        expect(gen.next().value).toEqual(put(userActions.deleteUserSuccess(action.data)));
         expect(gen.next().value).toEqual(
             put(displayInfoNotification("User deleted", restoreActions))
         );
@@ -141,7 +138,7 @@ describe ("delete a user", () => {
         const error = new Error();
         error.status_code = 404;
         // if the user doesn't exist, carry on as if everything is fine since we're trying to delete it anyway
-        expect(gen.throw(error).value).toEqual(put(userActions.deleteUserSuccess(action.data.userUUID)));
+        expect(gen.throw(error).value).toEqual(put(userActions.deleteUserSuccess(action.data)));
         expect(gen.next().value).toEqual(
             put(displayInfoNotification("User deleted", restoreActions))
         );

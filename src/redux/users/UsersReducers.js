@@ -19,7 +19,7 @@ export function users(state = initialState, action) {
         case getUsersActions.failure:
             return {...initialState, error: action.error};
         case addUserActions.success:
-            return {users: {...state.users, [action.data.uuid]: action.data}, error: null}
+            return {users: {...state.users, [action.data.uuid]: action.data}, error: null};
         case updateUserActions.success:
             const user = state.users[action.data.userUUID]
             if (user) {
@@ -31,14 +31,14 @@ export function users(state = initialState, action) {
         case restoreUserActions.success:
             return {users: {...state.users, [action.data.uuid]: action.data}, error: null}
         case deleteUserActions.success: {
-            return {users: _.omit(state.users, action.data), error: null}
+            return {users: _.omit(state.users, action.data.userUUID), error: null}
         }
         default:
             return state
     }
 }
 
-const initialUserState = {
+export const initialUserState = {
     user: {
         uuid: null,
         username: null,
@@ -68,10 +68,9 @@ export function user(state = initialUserState, action) {
         case getUserActions.success:
             return {user: action.data, error: null};
         case getUserActions.failure:
-        case getUserActions.notFound:
             return {...initialUserState, error: action.error};
         case updateUserActions.success:
-            return {user: Object.assign(state.user, action.data.payload), error: null};
+            return {user: {...state.user, ...action.data.payload}, error: null};
         default:
             return state
     }

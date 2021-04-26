@@ -105,7 +105,7 @@ function* deleteUser(action) {
                 return;
             }
         }
-        yield put(userActions.deleteUserSuccess(action.data.userUUID));
+        yield put(userActions.deleteUserSuccess(action.data));
         yield put(displayInfoNotification("User deleted", restoreActions));
     } catch (error) {
         yield put(userActions.deleteUserFailure(error))
