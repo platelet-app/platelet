@@ -18,8 +18,8 @@ export const deleteUserPrefix = "DELETE_USER";
 export const deleteUserActions = createRequestActions(deleteUserPrefix);
 export const {deleteUserSuccess, deleteUserFailure, deleteUserForbidden, deleteUserNotFound} = createRequestFunctions(deleteUserActions);
 
-export function deleteUserRequest(data) {
-    return { type: deleteUserActions.request, data }
+export function deleteUserRequest(userUUID) {
+    return { type: deleteUserActions.request, data: {userUUID}}
 }
 
 
@@ -27,8 +27,8 @@ export const restoreUserPrefix = "RESTORE_USER";
 export const restoreUserActions = createRequestActions(restoreUserPrefix);
 export const {restoreUserSuccess, restoreUserFailure, restoreUserForbidden, restoreUserNotFound} = createRequestFunctions(restoreUserActions);
 
-export function restoreUserRequest(data) {
-    return { type: restoreUserActions.request, data }
+export function restoreUserRequest(userUUID) {
+    return { type: restoreUserActions.request, data: {userUUID} }
 }
 
 
