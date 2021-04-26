@@ -17,6 +17,10 @@ import DropOffDetails from "./components/DropOffDetails";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Container from "@material-ui/core/Container";
 import {Hidden} from "@material-ui/core";
+import {createNotFoundSelector} from "../../redux/selectors";
+import {getTaskPrefix} from "../../redux/activeTask/ActiveTaskActions"
+import NotFound from "../../ErrorComponents/NotFound";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(theme => ({
     dialogContent: {
@@ -57,6 +61,8 @@ function TaskDialogCompact(props) {
     const task = useSelector(state => state.task.task);
     const classes = useStyles();
     const [taskStatus, setTaskStatus] = useState("No status")
+    const notFoundSelector = createNotFoundSelector([getTaskPrefix]);
+    const notFound = useSelector(state => notFoundSelector(state));
 
     const isSm = useMediaQuery(theme.breakpoints.down("xs"));
 
@@ -101,19 +107,38 @@ function TaskDialogCompact(props) {
     };
     const statusBar = !task ? <></> :
         <StatusBar
-            relayNext={task.relay_next ? task.relay_next.uuid : null}
-            relayPrevious={task.relay_previous ? task.relay_previous.uuid : null}
             handleClose={handleClose}
-            assignedRiders={task.assigned_riders}
-            assignedCoordinators={task.assigned_coordinators}
-            assignedCoordinatorsDisplayString={task.assigned_coordinators_display_string}
-            assignedRidersDisplayString={task.assigned_riders_display_string}
-            taskUUID={taskUUID}
             status={taskStatus}
+            taskUUID={taskUUID}
         />
+
 
     if (!task) {
         return <Dialog open={true}><FormSkeleton/></Dialog>
+    } else if (notFound) {
+        return (
+            <Dialog
+                disableEscapeKeyDown
+                fullScreen={isSm}
+                maxWidth={"md"}
+                fullWidth={true}
+                open={true}
+                onClose={handleClose}
+                PaperProps={{
+                    style: {
+                        boxShadow: 'none',
+                        background: theme.palette.background.default,
+                        padding: 0
+                    },
+                }}
+                aria-labelledby="task-dialog">
+                <NotFound>
+                    <Typography>
+                        Task with UUID {taskUUID} not found.
+                    </Typography>
+                </NotFound>
+            </Dialog>
+        )
     } else {
         return (
             <Dialog
@@ -131,66 +156,65 @@ function TaskDialogCompact(props) {
                     },
                 }}
                 aria-labelledby="task-dialog">
-                    {statusBar}
-                    <Container className={classes.root} maxWidth={false}>
-                        <Grid container className={classes.container} spacing={isSm ? 0 : 3} direction={"column"}
-                              alignItems={"flex-start"} justify={"center"}>
-                            <Grid container className={classes.container} spacing={isSm ? 0 : 3} item direction={"row"}
-                                  justify={isSm ? "center" : "flex-start"}>
-                                <Grid className={classes.item} item>
-                                    <PickUpDetails
-                                        taskUUID={taskUUID}
-                                        location={task.pickup_location}
-                                        time={task.time_picked_up}
-                                    />
-                                </Grid>
-                                <Hidden smUp>
-                                    <Grid item>
-                                        <div className={classes.separator}/>
-                                    </Grid>
-                                </Hidden>
-                                <Grid className={classes.item} item>
-                                    <DropOffDetails
-                                        disableTimeButton={!!!task.time_picked_up}
-                                        taskUUID={taskUUID}
-                                        location={task.dropoff_location}
-                                        time={task.time_dropped_off}
-                                    />
-                                </Grid>
+                {statusBar}
+                <Container className={classes.root} maxWidth={false}>
+                    <Grid container className={classes.container} spacing={isSm ? 0 : 3} direction={"column"}
+                          alignItems={"flex-start"} justify={"center"}>
+                        <Grid container className={classes.container} spacing={isSm ? 0 : 3} item direction={"row"}
+                              justify={isSm ? "center" : "flex-start"}>
+                            <Grid className={classes.item} item>
+                                <PickUpDetails
+                                    taskUUID={taskUUID}
+                                    location={task.pickup_location}
+                                    time={task.time_picked_up}
+                                />
                             </Grid>
                             <Hidden smUp>
                                 <Grid item>
                                     <div className={classes.separator}/>
                                 </Grid>
                             </Hidden>
-                            <Grid container className={classes.container} spacing={isSm ? 0 : 3} item direction={"row"}
-                                  justify={isSm ? "center" : "flex-start"}>
-                                <Grid className={classes.item} item>
-                                    <TaskDetailsPanel/>
-                                </Grid>
-                                <Hidden smUp>
-                                    <Grid item>
-                                        <div className={classes.separator}/>
-                                    </Grid>
-                                </Hidden>
-                                <Grid className={classes.item} item>
-                                    <DeliverableGridSelect taskUUID={taskUUID}/>
-                                </Grid>
-                            </Grid>
-                            <Hidden smUp>
-                                <Grid item>
-                                    <div className={classes.separator}/>
-                                </Grid>
-                            </Hidden>
-                            <Grid item>
-                                <CommentsSection parentUUID={taskUUID}/>
+                            <Grid className={classes.item} item>
+                                <DropOffDetails
+                                    disableTimeButton={!!!task.time_picked_up}
+                                    taskUUID={taskUUID}
+                                    location={task.dropoff_location}
+                                    time={task.time_dropped_off}
+                                />
                             </Grid>
                         </Grid>
-                    </Container>
+                        <Hidden smUp>
+                            <Grid item>
+                                <div className={classes.separator}/>
+                            </Grid>
+                        </Hidden>
+                        <Grid container className={classes.container} spacing={isSm ? 0 : 3} item direction={"row"}
+                              justify={isSm ? "center" : "flex-start"}>
+                            <Grid className={classes.item} item>
+                                <TaskDetailsPanel/>
+                            </Grid>
+                            <Hidden smUp>
+                                <Grid item>
+                                    <div className={classes.separator}/>
+                                </Grid>
+                            </Hidden>
+                            <Grid className={classes.item} item>
+                                <DeliverableGridSelect taskUUID={taskUUID}/>
+                            </Grid>
+                        </Grid>
+                        <Hidden smUp>
+                            <Grid item>
+                                <div className={classes.separator}/>
+                            </Grid>
+                        </Hidden>
+                        <Grid item>
+                            <CommentsSection parentUUID={taskUUID}/>
+                        </Grid>
+                    </Grid>
+                </Container>
             </Dialog>
         )
     }
-
 }
 
 export default TaskDialogCompact;
