@@ -45,9 +45,9 @@ import {
     findExistingTaskParentByID,
 } from "../../utilities";
 import {
-    APPEND_TASKS_CANCELLED_SUCCESS,
-    APPEND_TASKS_DELIVERED_SUCCESS,
-    APPEND_TASKS_REJECTED_SUCCESS
+    appendTasksDeliveredActions,
+    appendTasksCancelledActions,
+    appendTasksRejectedActions
 } from "./TasksWaypointActions";
 import _ from "lodash"
 import {
@@ -116,9 +116,9 @@ export function tasks(state = initialTasksState, action) {
                 return state;
             }
         }
-        case APPEND_TASKS_DELIVERED_SUCCESS:
-        case APPEND_TASKS_REJECTED_SUCCESS:
-        case APPEND_TASKS_CANCELLED_SUCCESS: {
+        case appendTasksDeliveredActions.success:
+        case appendTasksRejectedActions.success:
+        case appendTasksCancelledActions.success: {
             let result;
             for (const [key, value] of Object.entries(action.data)) {
                 const converted = convertToRelays(value);
