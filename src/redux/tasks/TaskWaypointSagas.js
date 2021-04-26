@@ -4,7 +4,7 @@ import * as taskWaypointActions from "./TasksWaypointActions";
 import {subscribeToUUIDs} from "../sockets/SocketActions";
 
 
-function * appendDelivered(action) {
+function* appendDelivered(action) {
     const api = yield select(getApiControl);
     try {
         const tasks = yield call([api, api.tasks.getTasks], action.userUUID, action.page, action.role, "delivered", action.beforeParent);
@@ -15,9 +15,8 @@ function * appendDelivered(action) {
             if (error.status_code === 404) {
                 yield put(taskWaypointActions.appendTasksDeliveredNotFound(error))
             }
-        } else {
-            yield put(taskWaypointActions.appendTasksDeliveredFailure(error))
         }
+        yield put(taskWaypointActions.appendTasksDeliveredFailure(error))
     }
 }
 
@@ -25,7 +24,7 @@ export function* watchAppendTasksDelivered() {
     yield takeEvery(taskWaypointActions.appendTasksDeliveredActions.request, appendDelivered)
 }
 
-function *appendRejected(action) {
+function* appendRejected(action) {
     const api = yield select(getApiControl);
     try {
         const tasks = yield call([api, api.tasks.getTasks], action.userUUID, action.page, action.role, "rejected", action.beforeParent);
@@ -36,9 +35,8 @@ function *appendRejected(action) {
             if (error.status_code === 404) {
                 yield put(taskWaypointActions.appendTasksRejectedNotFound(error))
             }
-        } else {
-            yield put(taskWaypointActions.appendTasksRejectedFailure(error))
         }
+        yield put(taskWaypointActions.appendTasksRejectedFailure(error))
     }
 }
 
@@ -46,7 +44,7 @@ export function* watchAppendTasksRejected() {
     yield takeEvery(taskWaypointActions.appendTasksRejectedActions.request, appendRejected)
 }
 
-function * appendCancelled(action) {
+function* appendCancelled(action) {
     const api = yield select(getApiControl);
     try {
         const tasks = yield call([api, api.tasks.getTasks], action.userUUID, action.page, action.role, "cancelled", action.beforeParent);
@@ -57,11 +55,11 @@ function * appendCancelled(action) {
             if (error.status_code === 404) {
                 yield put(taskWaypointActions.appendTasksCancelledNotFound(error))
             }
-        } else {
-            yield put(taskWaypointActions.appendTasksCancelledFailure(error))
         }
+        yield put(taskWaypointActions.appendTasksCancelledFailure(error))
     }
 }
+
 export function* watchAppendTasksCancelled() {
     yield takeEvery(taskWaypointActions.appendTasksCancelledActions.request, appendCancelled)
 }
