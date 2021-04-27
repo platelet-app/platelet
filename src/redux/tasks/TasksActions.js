@@ -36,6 +36,7 @@ export const addTaskRelayPrefix = "ADD_TASK_RELAY";
 export const addTaskRelayActions = createRequestActions(addTaskRelayPrefix);
 export const {addTaskRelaySuccess, addTaskRelayFailure, addTaskRelayForbidden} = createRequestFunctions(addTaskRelayActions);
 
+// TODO: does this need a payload parameter?
 export function addTaskRelayRequest(relayPrevious, autoAssignRole = "", autoAssignUserUUID = "") {
     return { type: addTaskRelayActions.request, data: { relayPrevious, autoAssign: {role: autoAssignRole, uuid: autoAssignUserUUID} }}
 }
