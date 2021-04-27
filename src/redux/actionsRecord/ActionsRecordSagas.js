@@ -1,61 +1,49 @@
 import {call, put, takeEvery, select} from 'redux-saga/effects'
 import {getApiControl} from "../Api";
-import {
-    actionRecordsNotFound,
-    GET_ACTIONS_RECORD_REQUEST, GET_TASKS_ACTIONS_RECORD_REQUEST,
-    getActionsRecordFailure,
-    getActionsRecordForbidden,
-    getActionsRecordSuccess,
-    getTasksActionsRecordFailure,
-    getTasksActionsRecordForbidden,
-    getTasksActionsRecordSuccess,
-    tasksActionsRecordsNotFound
-} from "./ActionsRecordActions";
+import * as actionRecordActions from "./ActionsRecordActions";
 import {sortByCreatedTime} from "../../utilities";
 
 function* getActionsRecord(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.log.getRecords], action.data, "newest");
+        const result = yield call([api, api.log.getRecords], action.data.uuid, "newest");
         const sorted = sortByCreatedTime(result);
-        yield put(getActionsRecordSuccess(sorted))
+        yield put(actionRecordActions.getActionsRecordSuccess(sorted))
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
-                yield put(actionRecordsNotFound())
+                yield put(actionRecordActions.getActionsRecordNotFound(error))
             }
         } else if (error.status_code === 403) {
-            yield put(getActionsRecordForbidden(error))
-        } else {
-            yield put(getActionsRecordFailure(error))
-
+            yield put(actionRecordActions.getActionsRecordForbidden(error))
         }
+        yield put(actionRecordActions.getActionsRecordFailure(error))
+
     }
 }
 
 export function* watchGetActionsRecord() {
-    yield takeEvery(GET_ACTIONS_RECORD_REQUEST, getActionsRecord)
+    yield takeEvery(actionRecordActions.getActionsRecordActions.request, getActionsRecord)
 }
 
 function* getTasksActionsRecord(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.log.getTasksRecords], action.data, "newest");
-        yield put(getTasksActionsRecordSuccess(result))
+        const result = yield call([api, api.log.getTasksRecords], action.data.userUUID, "newest");
+        yield put(actionRecordActions.getTasksActionsRecordSuccess(result))
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
-                yield put(tasksActionsRecordsNotFound())
+                yield put(actionRecordActions.getTasksActionsRecordNotFound())
             }
         } else if (error.status_code === 403) {
-            yield put(getTasksActionsRecordForbidden(error))
-        } else {
-            yield put(getTasksActionsRecordFailure(error))
-
+            yield put(actionRecordActions.getTasksActionsRecordForbidden(error))
         }
+
+        yield put(actionRecordActions.getTasksActionsRecordFailure(error))
     }
 }
 
 export function* watchGetTasksActionsRecord() {
-    yield takeEvery(GET_TASKS_ACTIONS_RECORD_REQUEST, getTasksActionsRecord)
+    yield takeEvery(actionRecordActions.getTasksActionsRecordActions.request, getTasksActionsRecord)
 }
