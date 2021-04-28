@@ -13,6 +13,9 @@ import {call, put, select} from "redux-saga/effects";
 import {getApiControl} from "../Api";
 import {convertListDataToObjects} from "../redux_utilities";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
+import sagaTestingErrors from "../testing/errorConsts";
+
+const {notFoundError, forbiddenError, plainError} = sagaTestingErrors;
 
 beforeAll(() => {
 })
@@ -41,8 +44,7 @@ describe("add a user", () => {
         const action = {data: {payload: {}}}
         const gen = testable.addUser(action);
         gen.next();
-        const error = new Error();
-        expect(gen.throw(error).value).toEqual(put(userActions.addUserFailure(error)));
+        expect(gen.throw(plainError).value).toEqual(put(userActions.addUserFailure(plainError)));
         expect(gen.next().done).toEqual(true);
     });
 })
@@ -66,7 +68,7 @@ describe("get all users", () => {
     test("get all users failure", () => {
         const gen = testable.getUsers();
         gen.next();
-        expect(gen.throw(new Error()).value).toEqual(put(userActions.getUsersFailure(new Error())))
+        expect(gen.throw(plainError).value).toEqual(put(userActions.getUsersFailure(plainError)))
         expect(gen.next().done).toEqual(true);
     });
 });
@@ -91,16 +93,14 @@ describe("get a user", () => {
     test("get a user failure", () => {
         const gen = testable.getUser();
         gen.next();
-        expect(gen.throw(new Error()).value).toEqual(put(userActions.getUserFailure(new Error())))
+        expect(gen.throw(plainError).value).toEqual(put(userActions.getUserFailure(plainError)))
         expect(gen.next().done).toEqual(true);
     });
     test("get a user that doesn't exist", () => {
         const gen = testable.getUser();
         gen.next();
-        const error = new Error();
-        error.status_code = 404;
-        expect(gen.throw(error).value).toEqual(put(userActions.getUserNotFound(error)))
-        expect(gen.next().value).toEqual(put(userActions.getUserFailure(error)));
+        expect(gen.throw(notFoundError).value).toEqual(put(userActions.getUserNotFound(notFoundError)))
+        expect(gen.next().value).toEqual(put(userActions.getUserFailure(notFoundError)));
         expect(gen.next().done).toEqual(true);
     });
 });
@@ -135,10 +135,8 @@ describe ("delete a user", () => {
         gen.next();
         gen.next(restoreActions);
         gen.next(api);
-        const error = new Error();
-        error.status_code = 404;
         // if the user doesn't exist, carry on as if everything is fine since we're trying to delete it anyway
-        expect(gen.throw(error).value).toEqual(put(userActions.deleteUserSuccess(action.data)));
+        expect(gen.throw(notFoundError).value).toEqual(put(userActions.deleteUserSuccess(action.data)));
         expect(gen.next().value).toEqual(
             put(displayInfoNotification("User deleted", restoreActions))
         );
@@ -147,8 +145,7 @@ describe ("delete a user", () => {
     test("delete a user failure", () => {
         const gen = testable.deleteUser();
         gen.next();
-        const error = new Error();
-        expect(gen.throw(error).value).toEqual(put(userActions.deleteUserFailure(error)))
+        expect(gen.throw(plainError).value).toEqual(put(userActions.deleteUserFailure(plainError)))
     });
 });
 
@@ -181,9 +178,8 @@ describe ("restore a user", () => {
         const action = {data: {userUUID: ""}}
         const gen = testable.restoreUser(action);
         gen.next();
-        const error = new Error();
-        expect(gen.throw(error).value).toEqual(
-            put(userActions.restoreUserFailure(error))
+        expect(gen.throw(plainError).value).toEqual(
+            put(userActions.restoreUserFailure(plainError))
         );
         expect(gen.next().done).toEqual(true);
     });
@@ -191,13 +187,11 @@ describe ("restore a user", () => {
         const action = {data: {userUUID: ""}}
         const gen = testable.restoreUser(action);
         gen.next();
-        const error = new Error();
-        error.status_code = 404;
-        expect(gen.throw(error).value).toEqual(
-            put(userActions.restoreUserNotFound(error))
+        expect(gen.throw(notFoundError).value).toEqual(
+            put(userActions.restoreUserNotFound(notFoundError))
         );
-        expect(gen.next(error).value).toEqual(
-            put(userActions.restoreUserFailure(error))
+        expect(gen.next(notFoundError).value).toEqual(
+            put(userActions.restoreUserFailure(notFoundError))
         );
         expect(gen.next().done).toEqual(true);
     });
@@ -226,18 +220,15 @@ describe("update a user", () => {
         const action = {data: {payload: {}, userUUID: ""}}
         const gen = testable.updateUser(action);
         gen.next();
-        const error = new Error();
-        error.status_code = 404;
-        expect(gen.throw(error).value).toEqual(put(userActions.updateUserNotFound(error)));
-        expect(gen.next(error).value).toEqual(put(userActions.updateUserFailure(error)));
+        expect(gen.throw(notFoundError).value).toEqual(put(userActions.updateUserNotFound(notFoundError)));
+        expect(gen.next(notFoundError).value).toEqual(put(userActions.updateUserFailure(notFoundError)));
         expect(gen.next().done).toEqual(true);
     });
     test("update a user failure", () => {
         const action = {data: {payload: {}, userUUID: ""}}
         const gen = testable.updateUser(action);
         gen.next();
-        const error = new Error();
-        expect(gen.throw(error).value).toEqual(put(userActions.updateUserFailure(error)));
+        expect(gen.throw(plainError).value).toEqual(put(userActions.updateUserFailure(plainError)));
         expect(gen.next().done).toEqual(true);
     });
 });
@@ -266,18 +257,15 @@ describe("update a user's password", () => {
         const action = {data: {payload: {password: ""}, userUUID: ""}}
         const gen = testable.updateUserPassword(action);
         gen.next();
-        const error = new Error();
-        error.status_code = 404;
-        expect(gen.throw(error).value).toEqual(put(userActions.updateUserPasswordNotFound(error)));
-        expect(gen.next(error).value).toEqual(put(userActions.updateUserPasswordFailure(error)));
+        expect(gen.throw(notFoundError).value).toEqual(put(userActions.updateUserPasswordNotFound(notFoundError)));
+        expect(gen.next(notFoundError).value).toEqual(put(userActions.updateUserPasswordFailure(notFoundError)));
         expect(gen.next().done).toEqual(true);
     });
     test("update a user's password failure", () => {
         const action = {data: {payload: {password: ""}, userUUID: ""}}
         const gen = testable.updateUserPassword(action);
         gen.next();
-        const error = new Error();
-        expect(gen.throw(error).value).toEqual(put(userActions.updateUserPasswordFailure(error)));
+        expect(gen.throw(plainError).value).toEqual(put(userActions.updateUserPasswordFailure(plainError)));
         expect(gen.next().done).toEqual(true);
     });
 });
@@ -307,13 +295,11 @@ describe("upload a user profile picture", () => {
         const action = {data: {payload: {image_data: ""}, userUUID: ""}}
         const gen = testable.uploadUserProfilePicture(action);
         expect(gen.next().value).toEqual(select(getApiControl));
-        const error = new Error();
-        error.status_code = 404;
-        expect(gen.throw(error).value).toEqual(
-            put(userActions.uploadUserProfilePictureNotFound(error))
+        expect(gen.throw(notFoundError).value).toEqual(
+            put(userActions.uploadUserProfilePictureNotFound(notFoundError))
         );
         expect(gen.next().value).toEqual(
-            put(userActions.uploadUserProfilePictureFailure(error))
+            put(userActions.uploadUserProfilePictureFailure(notFoundError))
         );
         expect(gen.next().done).toEqual(true);
     });
@@ -321,9 +307,8 @@ describe("upload a user profile picture", () => {
         const action = {data: {payload: {image_data: ""}, userUUID: ""}}
         const gen = testable.uploadUserProfilePicture(action);
         gen.next();
-        const error = new Error();
-        expect(gen.throw(error).value).toEqual(
-            put(userActions.uploadUserProfilePictureFailure(error))
+        expect(gen.throw(plainError).value).toEqual(
+            put(userActions.uploadUserProfilePictureFailure(plainError))
         );
         expect(gen.next().done).toEqual(true);
     })
