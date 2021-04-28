@@ -164,6 +164,10 @@ export default function* rootSaga() {
         call(updateActiveTaskMonitor),
         call(watchDebounceDashboardFilter),
         call(taskProcessingSagas.watchAddTaskSuccess),
-        call(taskProcessingSagas.watchSortAndSendToState)
+        call(taskProcessingSagas.watchSortAndSendToState),
+        call(taskProcessingSagas.watchRestoreTaskSuccess),
+        call(taskProcessingSagas.watchDeleteTaskSuccess),
+        call(taskProcessingSagas.watchAddTaskRelaySuccess),
+        call(taskProcessingSagas.watchResetGroupRelayUUIDs)
     ])
 }

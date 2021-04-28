@@ -99,6 +99,8 @@ export function tasks(state = initialTasksState, action) {
             return {tasks: {...state.tasks, tasksCancelled: action.data}, error: null};
         case taskCategoryActions.tasksCancelled.add:
             return {tasks: {...state.tasks, tasksCancelled: {...state.tasks.tasksActive, ...action.data}}, error: null}
+        case getTasksActions.success:
+            return {tasks: action.data, error: null};
         default:
             return state;
     }

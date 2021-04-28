@@ -187,6 +187,9 @@ export function convertTaskGroupToObject(group) {
 export function determineTaskType(taskGroup) {
     const result = {};
     const taskList = Object.values(taskGroup)
+    if (taskGroup.length === 0) {
+        return null;
+    }
     // sort out cancelled and rejected first
     const cancelledRejected = taskList.filter(t => !!t.time_rejected || !!t.time_cancelled);
     const filteredCancelledRejected = taskList.filter(t => !!!t.time_rejected && !!!t.time_cancelled);

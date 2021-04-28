@@ -8,7 +8,7 @@ import {
 } from "./task_redux_utilities";
 import {
     convertTaskGroupToObject,
-    determineTaskType,
+    determineTaskType, findExistingTask,
     findExistingTaskParent,
     findExistingTaskParentByID
 } from "../../utilities";
@@ -20,7 +20,11 @@ import {
 import update from "immutability-helper";
 import {
     setTaskDropoffDestinationActions,
-    setTaskPickupDestinationActions, unsetTaskDropoffDestinationActions, unsetTaskPickupDestinationActions
+    setTaskDropoffDestinationRequest,
+    setTaskPickupDestinationActions,
+    unsetTaskDropoffDestinationActions,
+    unsetTaskDropoffDestinationRequest,
+    unsetTaskPickupDestinationActions
 } from "../taskDestinations/TaskDestinationsActions";
 import {
     addTaskAssignedCoordinatorActions,
@@ -29,8 +33,11 @@ import {
 } from "../taskAssignees/TaskAssigneesActions";
 import _ from "lodash";
 import {initialTasksState} from "./TasksReducers";
-import {call, put, takeEvery} from "redux-saga/effects";
-import {taskCategoryActionFunctions} from "./TasksActions";
+import {call, put, select, takeEvery} from "redux-saga/effects";
+import {deleteTaskActions, restoreTaskRequest, taskCategoryActionFunctions} from "./TasksActions";
+import {getTasksSelector} from "../Api";
+import {unsubscribeFromUUID} from "../sockets/SocketActions";
+import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function* sortAndSendToState(action) {
     const result = yield call(determineTaskType, action.taskGroup);
@@ -52,30 +59,95 @@ export function* watchAddTaskSuccess() {
     yield takeEvery(taskActions.addTaskActions.success, addTaskSuccess)
 }
 
-// case restoreTaskActions.success:
-// case RESTORE_TASK_FROM_SOCKET: {
-//     const parent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
-//     let newGroup;
-//     let newTasks;
-//     if (parent.taskGroup) {
-//         newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.parentID)
-//         newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
-//     } else {
-//         newTasks = state.tasks;
-//         newGroup = {[action.data.uuid]: action.data}
-//     }
-//     return {tasks: sortAndConcat(newTasks, newGroup), error: null}
-// }
+
+function* restoreTaskSuccess(action) {
+    const tasks = yield select(getTasksSelector);
+    const parent = yield call(findExistingTaskParentByID, tasks, action.data.parent_id);
+    let newGroup;
+    if (parent.taskGroup) {
+        newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
+    } else {
+        newGroup = {[action.data.uuid]: action.data}
+    }
+    yield put(taskActions.sortAndSendToState(newGroup))
+}
+export function* watchRestoreTaskSuccess() {
+    yield takeEvery(taskActions.restoreTaskActions.success, restoreTaskSuccess)
+}
+
+function* deleteTaskSuccess(action) {
+    let relayPrevious;
+    const tasks = yield select(getTasksSelector);
+    const parent = yield call(findExistingTaskParent, tasks, action.data)
+    const beforeDelete = yield parent.taskGroup[action.data]
+    if (beforeDelete) {
+        const groupValues = yield call([Object, Object.values], parent.taskGroup);
+        const groupSorted = yield call([groupValues, groupValues.sort], taskGroupSort)
+        if (beforeDelete.dropoff_location && beforeDelete.relay_previous_uuid && groupSorted[groupSorted.length - 1].uuid === beforeDelete.uuid) {
+            relayPrevious = yield call(findExistingTask, tasks, beforeDelete.relay_previous_uuid);
+            yield put(setTaskDropoffDestinationRequest(
+                beforeDelete.relay_previous_uuid,
+                beforeDelete.dropoff_location.uuid
+            ));
+        }
+        yield put(taskActions.resetGroupRelayUUIDs(beforeDelete.parent_id));
+    } else {
+        // task could not be found!
+        return;
+    }
+    yield put(unsubscribeFromUUID(action.data));
+    let restoreActions;
+    if (relayPrevious) {
+        restoreActions = yield () => [
+            taskActions.restoreTaskRequest(action.data),
+            unsetTaskDropoffDestinationRequest(
+                beforeDelete.relay_previous_uuid
+            ),
+        ];
+    } else {
+        restoreActions = yield () => [
+            taskActions.restoreTaskRequest(action.data)]
+    }
+    yield put(displayInfoNotification("Task deleted", restoreActions));
+    if (parent.taskGroup) {
+        const filteredGroup = yield call(_.omit, parent.taskGroup, action.data)
+        if (_.isEmpty(filteredGroup)) {
+            const newList = yield call(_.omit, tasks[parent.listType], parent.parentID);
+            yield put(taskCategoryActionFunctions[parent.listType].put(newList));
+        } else {
+            yield put(taskActions.sortAndSendToState(filteredGroup));
+        }
+    }
+}
+
+export function *watchDeleteTaskSuccess() {
+    yield takeEvery(deleteTaskActions.success, deleteTaskSuccess);
+}
+
+export const testable = {
+    restoreTaskSuccess,
+    sortAndSendToState,
+    deleteTaskSuccess,
+    addTaskSuccess,
+    watchRestoreTaskSuccess,
+    watchDeleteTaskSuccess,
+    watchAddTaskSuccess,
+    watchSortAndSendToState
+};
 // case addTaskRelayActions.success:
 // case ADD_TASK_RELAY_FROM_SOCKET: {
-//     const parent = findExistingTaskParentByID(state.tasks, action.data.parent_id);
-//     if (parent.taskGroup) {
-//         const newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
-//         return {tasks: sortAndConcat(state.tasks, newGroup), error: null}
-//     } else {
-//         return state;
-//     }
-// }
+function* addTaskRelaySuccess(action) {
+    const tasks = yield select(getTasksSelector);
+    const parent = yield call(findExistingTaskParentByID, tasks, action.data.parent_id);
+    if (parent.taskGroup) {
+        const newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
+        yield put(taskActions.sortAndSendToState(newGroup))
+    }
+}
+
+export function* watchAddTaskRelaySuccess() {
+    yield takeEvery(taskActions.addTaskRelayActions.success, addTaskRelaySuccess)
+}
 //
 // case putTaskActions.success:
 // case PUT_TASK_FROM_SOCKET: {
@@ -237,64 +309,50 @@ export function* watchAddTaskSuccess() {
 //         return state;
 //     }
 // }
-// case deleteTaskActions.success:
-// case DELETE_TASK_FROM_SOCKET: {
-//     const parent = findExistingTaskParent(state.tasks, action.data)
-//     if (parent.taskGroup) {
-//         const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.parentID)
-//         const filteredGroup = _.omit(parent.taskGroup, action.data)
-//         if (_.isEmpty(filteredGroup)) {
-//             const {[parent.parentID]: removedParent, ...newTasksList} = state.tasks[parent.listType]
-//             return {tasks: {...newTasks, [parent.listType]: newTasksList}, error: null}
-//         } else {
-//             return {tasks: sortAndConcat(newTasks, filteredGroup), error: null};
-//         }
-//
-//     } else {
-//         return state;
-//     }
-// }
-// case RESET_GROUP_RELAY_UUIDS: {
-//     const parent = findExistingTaskParentByID(state.tasks, action.parentID)
-//     if (!parent.taskGroup)
-//         return state;
-//     let count = 0;
-//     let newTask;
-//     const newGroupRelayFixed = [];
-//     const sortedGroup = Object.values(parent.taskGroup).sort(taskGroupSort);
-//     for (const t of sortedGroup) {
-//         // first one in the group and so has no previous relays
-//         if (count === 0) {
-//             newTask = {
-//                 ...t,
-//                 relay_previous_uuid: null,
-//                 relay_previous: null
-//             }
-//
-//             // Not the first one, so relay_previous is the task from before
-//         } else {
-//             newTask = {
-//                 ...t,
-//                 relay_previous_uuid: sortedGroup[count - 1].uuid,
-//                 relay_previous: sortedGroup[count - 1]
-//             }
-//         }
-//         // not on the final task, so set relay_next to the next one
-//         if (parent.taskGroup.length !== count + 1) {
-//             newTask = {...newTask, relay_next: sortedGroup[count + 1]}
-//             // if we're on the final task, then there is no relay_next
-//         } else {
-//             newTask = {...newTask, relay_next: null}
-//         }
-//         // add the final result to the list, increment counter
-//         newGroupRelayFixed.push(newTask)
-//         count++;
-//     }
-//     const result = convertTaskGroupToObject(newGroupRelayFixed);
-//     // TODO: make this better
-//
-//     return {tasks: sortAndConcat(state.tasks, result[sortedGroup[0].parent_id]), error: null};
-// }
+function* resetGroupRelayUUIDs(action) {
+    const tasks = yield select(getTasksSelector);
+    const parent = yield call(findExistingTaskParentByID, tasks, action.parentID);
+    if (!parent.taskGroup)
+        return;
+    let count = 0;
+    let newTask;
+    const newGroupRelayFixed = [];
+    const sortedGroup = Object.values(parent.taskGroup).sort(taskGroupSort);
+    for (const t of sortedGroup) {
+        // first one in the group and so has no previous relays
+        if (count === 0) {
+            newTask = {
+                ...t,
+                relay_previous_uuid: null,
+                relay_previous: null
+            }
+
+            // Not the first one, so relay_previous is the task from before
+        } else {
+            newTask = {
+                ...t,
+                relay_previous_uuid: sortedGroup[count - 1].uuid,
+                relay_previous: sortedGroup[count - 1]
+            }
+        }
+        // not on the final task, so set relay_next to the next one
+        if (parent.taskGroup.length !== count + 1) {
+            newTask = {...newTask, relay_next: sortedGroup[count + 1]}
+            // if we're on the final task, then there is no relay_next
+        } else {
+            newTask = {...newTask, relay_next: null}
+        }
+        // add the final result to the list, increment counter
+        newGroupRelayFixed.push(newTask)
+        count++;
+    }
+    const result = yield call(convertTaskGroupToObject, newGroupRelayFixed);
+    // TODO: make this better
+    yield put(taskActions.sortAndSendToState(result[sortedGroup[0].parent_id]));
+}
+export function* watchResetGroupRelayUUIDs() {
+    yield takeEvery(taskActions.RESET_GROUP_RELAY_UUIDS, resetGroupRelayUUIDs)
+}
 // case getTasksActions.success:
 // return {tasks: action.data, error: null};
 // case GROUP_RELAYS_TOGETHER:

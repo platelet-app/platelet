@@ -212,38 +212,8 @@ export function* watchPostNewTaskRelay() {
 function* deleteTask(action) {
     try {
         const api = yield select(getApiControl);
-        const currentTasks = yield select((state) => state.tasks.tasks);
         yield call([api, api.tasks.deleteTask], action.data.taskUUID);
-        const {taskGroup} = yield findExistingTaskParent(currentTasks, action.data.taskUUID)
-        const beforeDelete = yield taskGroup[action.data.taskUUID]
-
         yield put(deleteTaskSuccess(action.data.taskUUID))
-        let relayPrevious;
-        if (beforeDelete) {
-            const groupSorted = Object.values(taskGroup).sort(taskGroupSort)
-            if (beforeDelete.dropoff_location && beforeDelete.relay_previous_uuid && groupSorted[groupSorted.length - 1].uuid === beforeDelete.uuid) {
-                relayPrevious = yield findExistingTask(currentTasks, beforeDelete.relay_previous_uuid);
-                yield put(setTaskDropoffDestinationRequest(
-                    beforeDelete.relay_previous_uuid,
-                    beforeDelete.dropoff_location.uuid
-                ));
-            }
-            yield put(resetGroupRelayUUIDs(beforeDelete.parent_id));
-        }
-        yield put(unsubscribeFromUUID(action.data.taskUUID));
-        let restoreActions;
-        if (relayPrevious) {
-            restoreActions = () => [
-                restoreTaskRequest(action.data.taskUUID),
-                unsetTaskDropoffDestinationRequest(
-                    beforeDelete.relay_previous_uuid
-                ),
-            ];
-        } else {
-            restoreActions = () => [
-                restoreTaskRequest(action.data.taskUUID)]
-        }
-        yield put(displayInfoNotification("Task deleted", restoreActions));
     } catch (error) {
         yield put(deleteTaskFailure(error));
     }
