@@ -14,6 +14,7 @@ import {
     watchSetRoleViewAndGetTasks,
     watchRefreshTasksFromSocket, watchUpdateTaskTimeOfCall, watchUpdateTaskTimeCancelled
 } from "./tasks/TasksSagas"
+import * as taskProcessingSagas from "./tasks/TaskProcessingSagas"
 import {
     watchAddNewDropoffLocationAndSetTask,
     watchAddNewPickupLocationAndSetTask,
@@ -161,6 +162,8 @@ export default function* rootSaga() {
         call(watchUpdateDropoffLocationAndUpdateTask),
         call(watchAddNewDropoffLocationAndSetTask),
         call(updateActiveTaskMonitor),
-        call(watchDebounceDashboardFilter)
+        call(watchDebounceDashboardFilter),
+        call(taskProcessingSagas.watchAddTaskSuccess),
+        call(taskProcessingSagas.watchSortAndSendToState)
     ])
 }

@@ -24,6 +24,52 @@ export const SET_ROLE_VIEW_AND_GET_TASKS = "SET_ROLE_VIEW_AND_GET_TASKS";
 export const SET_CURRENT_TASK = "SET_CURRENT_TASK";
 export const CLEAR_CURRENT_TASK = "CLEAR_CURRENT_TASK";
 
+export const SORT_AND_SEND_TO_STATE = "SORT_AND_SEND_TO_STATE";
+
+export function sortAndSendToState(taskGroup) {
+    return {type: SORT_AND_SEND_TO_STATE, taskGroup}
+}
+
+export const taskCategoryActions = {
+    tasksNew: {
+        put: "PUT_NEW_TASKS",
+        add: "ADD_TO_NEW_TASKS"
+    },
+    tasksActive: {
+        put: "PUT_ACTIVE_TASKS",
+        add: "ADD_TO_ACTIVE_TASKS"
+    },
+    tasksPickedUp: {
+        put: "PUT_PICKED_UP_TASKS",
+        add: "ADD_TO_PICKED_UP_TASKS"
+    },
+    tasksDelivered: {
+        put: "PUT_DELIVERED_TASKS",
+        add: "ADD_TO_DELIVERED_TASKS"
+    },
+    tasksRejected: {
+        put: "PUT_REJECTED_TASKS",
+        add: "ADD_TO_REJECTED_TASKS"
+    },
+    tasksCancelled: {
+        put: "PUT_CANCELLED_TASKS",
+        add: "ADD_TO_CANCELLED_TASKS"
+    },
+}
+
+const generateTaskCategoryActionsFunctions = actions => {
+    const result = {};
+    for (const [key, value] of Object.entries(actions)) {
+        result[key] = {};
+        for (const [k, v] of Object.entries(value)) {
+            result[key][k] = (data) => ({ type: v, data });
+        }
+    }
+    return result;
+}
+
+export const taskCategoryActionFunctions = generateTaskCategoryActionsFunctions(taskCategoryActions);
+
 export const addTaskPrefix = "ADD_TASK";
 export const addTaskActions = createRequestActions(addTaskPrefix);
 export const {addTaskSuccess, addTaskFailure, addTaskForbidden} = createRequestFunctions(addTaskActions);

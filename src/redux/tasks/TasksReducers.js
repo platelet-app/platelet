@@ -27,7 +27,7 @@ import {
     updateTaskPickupTimeActions,
     updateTaskDropoffTimeActions,
     updateTaskCancelledTimeActions,
-    updateTaskRejectedTimeActions, deleteTaskActions, getTasksActions
+    updateTaskRejectedTimeActions, deleteTaskActions, getTasksActions, taskCategoryActions
 
 } from "./TasksActions";
 import {
@@ -67,14 +67,45 @@ export const initialTasksState = {
         tasksActive: [],
         tasksRejected: [],
         tasksCancelled: [],
-        tasksActivePickedUp: [],
+        tasksPickedUp: [],
         tasksDelivered: []
     },
     error: null
 }
 
-
 export function tasks(state = initialTasksState, action) {
+    switch (action.type) {
+        case taskCategoryActions.tasksNew.put:
+            return {tasks: {...state.tasks, tasksNew: action.data}, error: null};
+        case taskCategoryActions.tasksNew.add:
+            return {tasks: {...state.tasks, tasksNew: {...state.tasks.tasksNew, ...action.data}}, error: null}
+        case taskCategoryActions.tasksActive.put:
+            return {tasks: {...state.tasks, tasksActive: action.data}, error: null};
+        case taskCategoryActions.tasksActive.add:
+            return {tasks: {...state.tasks, tasksActive: {...state.tasks.tasksActive, ...action.data}}, error: null}
+        case taskCategoryActions.tasksPickedUp.put:
+            return {tasks: {...state.tasks, tasksPickedUp: action.data}, error: null};
+        case taskCategoryActions.tasksPickedUp.add:
+            return {tasks: {...state.tasks, tasksPickedUp: {...state.tasks.tasksPickedUp, ...action.data}}, error: null}
+        case taskCategoryActions.tasksDelivered.put:
+            return {tasks: {...state.tasks, tasksDelivered: action.data}, error: null};
+        case taskCategoryActions.tasksDelivered.add:
+            return {tasks: {...state.tasks, tasksDelivered: {...state.tasks.tasksActive, ...action.data}}, error: null}
+        case taskCategoryActions.tasksRejected.put:
+            return {tasks: {...state.tasks, tasksRejected: action.data}, error: null};
+        case taskCategoryActions.tasksRejected.add:
+            return {tasks: {...state.tasks, tasksRejected: {...state.tasks.tasksActive, ...action.data}}, error: null}
+        case taskCategoryActions.tasksCancelled.put:
+            return {tasks: {...state.tasks, tasksCancelled: action.data}, error: null};
+        case taskCategoryActions.tasksCancelled.add:
+            return {tasks: {...state.tasks, tasksCancelled: {...state.tasks.tasksActive, ...action.data}}, error: null}
+        default:
+            return state;
+    }
+
+}
+
+export function ntasks(state = initialTasksState, action) {
     switch (action.type) {
         case addTaskActions.success:
         case ADD_TASK_FROM_SOCKET:
