@@ -73,6 +73,7 @@
   "devDependencies": {
     "jest-canvas-mock": "^2.3.1",
     "jest-fetch-mock": "^3.0.3",
-    "redux-mock-store": "^1.5.4"
+    "redux-mock-store": "^1.5.4",
+    "redux-saga-test-plan": "^4.0.1"
   }
 }

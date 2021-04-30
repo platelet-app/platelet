@@ -240,7 +240,8 @@ export function findExistingTaskParentByID(tasks, parentID) {
         if (listType === "tasksCancelled" || listType === "tasksRejected") {
             continue;
         }
-        taskGroup = value[parentID]
+        if (value)
+            taskGroup = value[parentID]
         if (taskGroup) {
             return { listType, parentID, taskGroup };
         }
