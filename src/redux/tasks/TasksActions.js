@@ -1,5 +1,7 @@
 import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
 
+export const REPLACE_TASKS_STATE = "REPLACE_TASKS_STATE";
+
 export const UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET = "UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET";
 export const UPDATE_TASK_TIME_REJECTED_FROM_SOCKET = "UPDATE_TASK_TIME_REJECTED_FROM_SOCKET";
 export const PUT_TASK_FROM_SOCKET = "PUT_TASK_FROM_SOCKET";
@@ -273,3 +275,6 @@ export function groupRelaysTogether() {
     return { type: GROUP_RELAYS_TOGETHER }
 }
 
+export function replaceTasksState(data) {
+    return {type: REPLACE_TASKS_STATE, data}
+}

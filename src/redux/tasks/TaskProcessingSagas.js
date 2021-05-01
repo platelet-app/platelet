@@ -34,27 +34,15 @@ import {
 import _ from "lodash";
 import {initialTasksState} from "./TasksReducers";
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
-import {
-    deleteTaskActions,
-    restoreTaskRequest,
-    taskCategoryActionFunctions, updateTaskCancelledTimeRequest,
-    updateTaskRejectedTimeRequest as updateTaskActions
-} from "./TasksActions";
+import * as taskDestinationActions from "../taskDestinations/TaskDestinationsActions";
 import {getTasksSelector} from "../Api";
 import {unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function* sortAndSendToState(action) {
-    const tasks = yield select(getTasksSelector);
     const result = yield call(determineTaskType, action.taskGroup);
-    const parentID = action.taskGroup[Object.keys(action.taskGroup)[0]].parent_id
-    const parent = yield call(findExistingTaskParentByID, tasks, parentID);
-    if (parent.taskGroup) {
-        const filteredTasks = yield call(removeParentFromTasks, tasks, parent.listType, parentID);
-        yield put(taskActions.getTasksSuccess(filteredTasks))
-    }
     for (const [key, value] of Object.entries(result)) {
-        yield put(taskCategoryActionFunctions[key].add(value));
+        yield put(taskActions.taskCategoryActionFunctions[key].add(value));
     }
 }
 
@@ -132,7 +120,7 @@ function* deleteTaskSuccess(action) {
         const filteredGroup = yield call(_.omit, parent.taskGroup, action.data)
         if (_.isEmpty(filteredGroup)) {
             const newList = yield call(_.omit, tasks[parent.listType], parent.parentID);
-            yield put(taskCategoryActionFunctions[parent.listType].put(newList));
+            yield put(taskActions.taskCategoryActionFunctions[parent.listType].put(newList));
         } else {
             yield put(taskActions.sortAndSendToState(filteredGroup));
         }
@@ -227,6 +215,18 @@ export function* watchUpdateTaskSuccess() {
     yield all([
         takeEvery(taskActions.updateTaskActions.success, updateTaskSuccess),
         takeEvery(taskActions.UPDATE_TASK_FROM_SOCKET, updateTaskSuccess),
+        takeEvery(taskActions.updateTaskRequesterContactActions.success, updateTaskSuccess),
+        takeEvery(taskActions.updateTaskPriorityActions.success, updateTaskSuccess),
+        takeEvery(taskActions.updateTaskPatchActions.success, updateTaskSuccess),
+        takeEvery(taskActions.updateTaskPickupTimeActions.success, updateTaskSuccess),
+        takeEvery(taskActions.updateTaskDropoffTimeActions.success, updateTaskSuccess),
+        takeEvery(taskActions.UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET, updateTaskSuccess),
+        takeEvery(taskActions.UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, updateTaskSuccess),
+        takeEvery(taskActions.updateTaskTimeOfCallActions.success, updateTaskSuccess),
+        takeEvery(taskDestinationActions.setTaskDropoffDestinationActions.success, updateTaskSuccess),
+        takeEvery(taskDestinationActions.setTaskPickupDestinationActions.success, updateTaskSuccess),
+        takeEvery(taskDestinationActions.unsetTaskDropoffDestinationActions.success, updateTaskSuccess),
+        takeEvery(taskDestinationActions.unsetTaskPickupDestinationActions.success, updateTaskSuccess)
     ])
 }
 

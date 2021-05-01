@@ -27,7 +27,7 @@ import {
     updateTaskPickupTimeActions,
     updateTaskDropoffTimeActions,
     updateTaskCancelledTimeActions,
-    updateTaskRejectedTimeActions, deleteTaskActions, getTasksActions, taskCategoryActions
+    updateTaskRejectedTimeActions, deleteTaskActions, getTasksActions, taskCategoryActions, REPLACE_TASKS_STATE
 
 } from "./TasksActions";
 import {
@@ -59,6 +59,8 @@ import {
     setTaskDropoffDestinationActions,
     setTaskPickupDestinationActions, unsetTaskDropoffDestinationActions, unsetTaskPickupDestinationActions
 } from "../taskDestinations/TaskDestinationsActions";
+import {call, put} from "redux-saga/effects";
+import * as taskActions from "./TasksActions";
 
 
 export const initialTasksState = {
@@ -73,33 +75,62 @@ export const initialTasksState = {
     error: null
 }
 
+const categoriesCondense = () => {
+    let result = [];
+    for (const value of Object.values(taskCategoryActions)) {
+        result.push(value.add);
+    }
+    return result;
+}
+const categoriesCheck = categoriesCondense();
+
 export function tasks(state = initialTasksState, action) {
+    let filteredTasks = state.tasks;
+    if (action.type && categoriesCheck.includes(action.type)) {
+        // we're adding to state -
+        // find the first task we can
+        let task;
+        for (const g of Object.values(action.data)) {
+            for (const t of Object.values(g)) {
+                task = t;
+                break;
+            }
+            break;
+        }
+        // get the rest of the parent group from state
+        const parent = findExistingTaskParent(state.tasks, task.uuid);
+        if (parent.taskGroup) {
+            // if we find it, filter it from existing state and use that in the main reducer
+            filteredTasks = removeParentFromTasks(state.tasks, parent.listType, task.parent_id);
+        }
+    }
     switch (action.type) {
         case taskCategoryActions.tasksNew.put:
-            return {tasks: {...state.tasks, tasksNew: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksNew: action.data}, error: null};
         case taskCategoryActions.tasksNew.add:
-            return {tasks: {...state.tasks, tasksNew: {...state.tasks.tasksNew, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksNew: {...filteredTasks.tasksNew, ...action.data}}, error: null}
         case taskCategoryActions.tasksActive.put:
-            return {tasks: {...state.tasks, tasksActive: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksActive: action.data}, error: null};
         case taskCategoryActions.tasksActive.add:
-            return {tasks: {...state.tasks, tasksActive: {...state.tasks.tasksActive, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksActive: {...filteredTasks.tasksActive, ...action.data}}, error: null}
         case taskCategoryActions.tasksPickedUp.put:
-            return {tasks: {...state.tasks, tasksPickedUp: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksPickedUp: action.data}, error: null};
         case taskCategoryActions.tasksPickedUp.add:
-            return {tasks: {...state.tasks, tasksPickedUp: {...state.tasks.tasksPickedUp, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksPickedUp: {...filteredTasks.tasksPickedUp, ...action.data}}, error: null}
         case taskCategoryActions.tasksDelivered.put:
-            return {tasks: {...state.tasks, tasksDelivered: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksDelivered: action.data}, error: null};
         case taskCategoryActions.tasksDelivered.add:
-            return {tasks: {...state.tasks, tasksDelivered: {...state.tasks.tasksActive, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksDelivered: {...filteredTasks.tasksActive, ...action.data}}, error: null}
         case taskCategoryActions.tasksRejected.put:
-            return {tasks: {...state.tasks, tasksRejected: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksRejected: action.data}, error: null};
         case taskCategoryActions.tasksRejected.add:
-            return {tasks: {...state.tasks, tasksRejected: {...state.tasks.tasksActive, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksRejected: {...filteredTasks.tasksActive, ...action.data}}, error: null}
         case taskCategoryActions.tasksCancelled.put:
-            return {tasks: {...state.tasks, tasksCancelled: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksCancelled: action.data}, error: null};
         case taskCategoryActions.tasksCancelled.add:
-            return {tasks: {...state.tasks, tasksCancelled: {...state.tasks.tasksActive, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksCancelled: {...filteredTasks.tasksActive, ...action.data}}, error: null}
         case getTasksActions.success:
+        case REPLACE_TASKS_STATE:
             return {tasks: action.data, error: null};
         default:
             return state;
