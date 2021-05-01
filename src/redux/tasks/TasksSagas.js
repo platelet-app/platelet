@@ -364,9 +364,6 @@ function* updateTaskPatchFromServer(action) {
 function* updateTaskTimeCancelled(action) {
     try {
         // get the current task rejected_time value to make sure it isn't already marked
-        const currentTasks = yield select((state) => state.tasks.tasks);
-        const task = yield findExistingTask(currentTasks, action.data.taskUUID)
-        const currentValue = task ? task.time_cancelled : null;
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         // set the relays all to null to prevent visual indication on the grid
@@ -380,16 +377,6 @@ function* updateTaskTimeCancelled(action) {
             }, taskUUID: action.data.taskUUID
         }
         yield put(updateTaskCancelledTimeSuccess(data))
-        yield put(resetGroupRelayUUIDs(task.parent_id))
-        if (currentValue === null) {
-            // only notify if marking rejected for the first time
-            const restoreActions = () => [updateTaskCancelledTimeRequest(
-                action.data.taskUUID,
-                {time_cancelled: null}
-            )];
-            const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
-            yield put(displayInfoNotification("Task marked cancelled", restoreActions, viewLink))
-        }
     } catch (error) {
         yield put(updateTaskCancelledTimeFailure(error))
     }
@@ -414,19 +401,6 @@ function* updateTaskRejectedTime(action) {
             }, taskUUID: action.data.taskUUID
         }
         yield put(updateTaskRejectedTimeSuccess(data))
-        // then recalculate it
-        yield put(groupRelaysTogether())
-        yield put(resetGroupRelayUUIDs(task.parent_id))
-
-        if (currentValue === null) {
-            // only notify if marking rejected for the first time
-            const restoreActions = () => [updateTaskRejectedTimeRequest(
-                action.data.taskUUID,
-                {time_rejected: null}
-            )];
-            const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
-            yield put(displayInfoNotification("Task marked rejected", restoreActions, viewLink))
-        }
     } catch (error) {
         yield put(updateTaskRejectedTimeFailure(error))
     }

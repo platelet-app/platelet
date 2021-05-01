@@ -8,7 +8,7 @@ import {
 } from "./task_redux_utilities";
 import {
     convertTaskGroupToObject,
-    determineTaskType, findExistingTask,
+    determineTaskType, encodeUUID, findExistingTask,
     findExistingTaskParent,
     findExistingTaskParentByID
 } from "../../utilities";
@@ -37,7 +37,7 @@ import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import {
     deleteTaskActions,
     restoreTaskRequest,
-    taskCategoryActionFunctions,
+    taskCategoryActionFunctions, updateTaskCancelledTimeRequest,
     updateTaskRejectedTimeRequest as updateTaskActions
 } from "./TasksActions";
 import {getTasksSelector} from "../Api";
@@ -45,7 +45,14 @@ import {unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 
 function* sortAndSendToState(action) {
+    const tasks = yield select(getTasksSelector);
     const result = yield call(determineTaskType, action.taskGroup);
+    const parentID = action.taskGroup[Object.keys(action.taskGroup)[0]].parent_id
+    const parent = yield call(findExistingTaskParentByID, tasks, parentID);
+    if (parent.taskGroup) {
+        const filteredTasks = yield call(removeParentFromTasks, tasks, parent.listType, parentID);
+        yield put(taskActions.getTasksSuccess(filteredTasks))
+    }
     for (const [key, value] of Object.entries(result)) {
         yield put(taskCategoryActionFunctions[key].add(value));
     }
@@ -79,6 +86,7 @@ function* restoreTaskSuccess(action) {
     }
     yield put(taskActions.sortAndSendToState(newGroup))
 }
+
 export function* watchRestoreTaskSuccess() {
     yield all([
         takeEvery(taskActions.restoreTaskActions.success, restoreTaskSuccess),
@@ -131,7 +139,7 @@ function* deleteTaskSuccess(action) {
     }
 }
 
-export function *watchDeleteTaskSuccess() {
+export function* watchDeleteTaskSuccess() {
     yield all([
         takeEvery(taskActions.deleteTaskActions.success, deleteTaskSuccess),
         takeEvery(taskActions.DELETE_TASK_FROM_SOCKET, deleteTaskSuccess)
@@ -171,6 +179,7 @@ export const testable = {
     watchUpdateTaskTimeCancelledTimeRejectedSuccess,
     updateTaskTimeCancelledTimeRejectedSuccess
 };
+
 function* putTaskSuccess(action) {
     const tasks = yield select(getTasksSelector);
     const parent = yield call(findExistingTaskParent, tasks, action.data.uuid);
@@ -188,6 +197,7 @@ export function* watchPutTaskSuccess() {
         takeEvery(taskActions.PUT_TASK_FROM_SOCKET, putTaskSuccess)
     ])
 }
+
 // case appendTasksDeliveredActions.success:
 // case appendTasksRejectedActions.success:
 // case appendTasksCancelledActions.success: {
@@ -217,25 +227,46 @@ export function* watchUpdateTaskSuccess() {
     yield all([
         takeEvery(taskActions.updateTaskActions.success, updateTaskSuccess),
         takeEvery(taskActions.UPDATE_TASK_FROM_SOCKET, updateTaskSuccess),
-
-
     ])
 }
+
 // case updateTaskCancelledTimeActions.success:
 // case UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET:
 //     case UPDATE_TASK_TIME_REJECTED_FROM_SOCKET:
 //     case updateTaskRejectedTimeActions.success: {
 function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
     // TODO: this
+    const {payload} = action.data
     const tasks = yield select(getTasksSelector);
-
     const parent = yield call(findExistingTaskParent, tasks, action.data.taskUUID);
+    if (action.type === taskActions.updateTaskCancelledTimeActions.success) {
+        const currentValue = parent.taskGroup[action.data.taskUUID].time_cancelled;
+        if (currentValue === null) {
+            // only notify if marking rejected for the first time
+            const restoreActions = () => [taskActions.updateTaskCancelledTimeRequest(
+                action.data.taskUUID,
+                {time_cancelled: null}
+            )];
+            const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
+            yield put(displayInfoNotification("Task marked cancelled", restoreActions, viewLink))
+        }
+    } else {
+        const currentValue = parent.taskGroup[action.data.taskUUID].time_rejected;
+        if (currentValue === null) {
+            // only notify if marking rejected for the first time
+            const restoreActions = () => [taskActions.updateTaskRejectedTimeRequest(
+                action.data.taskUUID,
+                {time_rejected: null}
+            )];
+            const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
+            yield put(displayInfoNotification("Task marked rejected", restoreActions, viewLink))
+        }
+    }
     if (parent.taskGroup) {
         let newGroup = {};
-        let newTasksSecond = {};
         // if it was already categorised as rejected or cancelled, we need to put it back into the existing parent group before sorting it again
         if (parent.listType === "tasksRejected" || parent.listType === "tasksCancelled") {
-            const rejectedCancelledTask = {...parent.taskGroup[action.data.taskUUID], ...action.data.payload};
+            const rejectedCancelledTask = {...parent.taskGroup[action.data.taskUUID], ...payload};
             const taskCurrentParent = yield call(findExistingTaskParentByID, tasks, parent.parentID)
             if (taskCurrentParent.taskGroup) {
                 newGroup = {...taskCurrentParent.taskGroup, [action.data.taskUUID]: rejectedCancelledTask}
@@ -244,13 +275,13 @@ function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
             }
             yield put(taskActions.sortAndSendToState(newGroup));
         } else {
-            let updatedItem;
             const taskToUpdate = parent.taskGroup[action.data.taskUUID];
-            updatedItem = {...taskToUpdate, ...action.data.payload};
-            const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
+            const updatedItem = {...taskToUpdate, ...payload};
+            const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem};
             yield put(taskActions.sortAndSendToState(updatedGroup));
         }
     }
+    yield put(taskActions.resetGroupRelayUUIDs(payload.parent_id));
 }
 
 export function* watchUpdateTaskTimeCancelledTimeRejectedSuccess() {
@@ -261,6 +292,7 @@ export function* watchUpdateTaskTimeCancelledTimeRejectedSuccess() {
         takeEvery(taskActions.UPDATE_TASK_TIME_REJECTED_FROM_SOCKET, updateTaskTimeCancelledTimeRejectedSuccess),
     ]);
 }
+
 // case addTaskAssignedRiderActions.success:
 // case UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET: {
 //     // Get the parent group first
@@ -379,9 +411,11 @@ function* resetGroupRelayUUIDs(action) {
     // TODO: make this better
     yield put(taskActions.sortAndSendToState(result[sortedGroup[0].parent_id]));
 }
+
 export function* watchResetGroupRelayUUIDs() {
     yield takeEvery(taskActions.RESET_GROUP_RELAY_UUIDS, resetGroupRelayUUIDs)
 }
+
 // case getTasksActions.success:
 // return {tasks: action.data, error: null};
 // case GROUP_RELAYS_TOGETHER:
