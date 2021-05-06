@@ -1,7 +1,7 @@
 import {testable} from "./TaskProcessingSagas"
 import * as taskActions from "./TasksActions"
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
-import {determineTaskType, findExistingTaskParent} from "../../utilities";
+import {determineTaskType, encodeUUID, findExistingTaskParent} from "../../utilities";
 import {taskCategoryActionFunctions} from "./TasksActions";
 import {getTasksSelector} from "../Api";
 import {initialTasksState} from "./TasksReducers";
@@ -10,6 +10,7 @@ import {taskGroupSort} from "./task_redux_utilities";
 import {unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {expectSaga, testSaga} from "redux-saga-test-plan";
+import * as matchers from 'redux-saga-test-plan/matchers';
 
 describe("saga take a new tasks group, sorts it and puts it back into state", () => {
     test("watch sort and send to state", () => {
@@ -346,7 +347,28 @@ describe("putting a task into state after successful request to update time canc
             .next()
             .isDone()
     });
-    it("puts an update task with ", () => {
+    it("updates the task state with cancelled time and sends a notification", () => {
+        const action = {type: taskActions.updateTaskCancelledTimeActions.success, data: {taskUUID: "someUUID", time_cancelled: new Date().toISOString()}};
+        const restoreActions = () => [taskActions.updateTaskCancelledTimeRequest(
+            action.data.taskUUID,
+            {time_cancelled: null}
+        )];
+        const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
+        return expectSaga(testable.updateTaskTimeCancelledTimeRejectedSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksNew: {
+                        1: {
+                            someUUID: {
+                                time_cancelled: null,
+                                parent_id: 1
+                            }
+                        }
+                    }
+                }]])
+            .put(displayInfoNotification("Task marked cancelled", restoreActions, viewLink))
+            .run()
+
 
     })
 })

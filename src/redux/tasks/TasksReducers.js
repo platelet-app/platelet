@@ -59,9 +59,6 @@ import {
     setTaskDropoffDestinationActions,
     setTaskPickupDestinationActions, unsetTaskDropoffDestinationActions, unsetTaskPickupDestinationActions
 } from "../taskDestinations/TaskDestinationsActions";
-import {call, put} from "redux-saga/effects";
-import * as taskActions from "./TasksActions";
-
 
 export const initialTasksState = {
     tasks: {

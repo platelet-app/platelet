@@ -178,6 +178,7 @@ function* postNewTaskRelay(action) {
             order_in_relay: orderInRelay,
             reference: result.reference
         };
+        yield put(addTaskRelaySuccess(task));
         yield put(updateTaskSuccess({
                 taskUUID: action.data.relayPrevious,
                 payload: {relay_next: task}
@@ -187,7 +188,6 @@ function* postNewTaskRelay(action) {
             yield put(setTaskDropoffDestinationRequest(task.uuid, previousTask.dropoff_location.uuid))
             yield put(unsetTaskDropoffDestinationRequest(previousTask.uuid))
         }
-        yield put(addTaskRelaySuccess(task));
         if (action.data.autoAssign.role && action.data.autoAssign.uuid) {
             if (action.data.autoAssign.role === "coordinator") {
                 yield put(addTaskAssignedCoordinatorSuccess({
@@ -198,7 +198,6 @@ function* postNewTaskRelay(action) {
                 }));
             }
         }
-        yield put(subscribeToUUID(task.uuid))
     } catch (error) {
         yield put(addTaskRelayFailure(error))
     }

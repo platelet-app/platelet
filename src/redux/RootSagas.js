@@ -171,6 +171,7 @@ export default function* rootSaga() {
         call(taskProcessingSagas.watchResetGroupRelayUUIDs),
         call(taskProcessingSagas.watchUpdateTaskSuccess),
         call(taskProcessingSagas.watchPutTaskSuccess),
-        call(taskProcessingSagas.watchUpdateTaskTimeCancelledTimeRejectedSuccess)
+        call(taskProcessingSagas.watchUpdateTaskTimeCancelledTimeRejectedSuccess),
+        call(taskProcessingSagas.watchAddTaskAssignedCoordinatorSuccess)
     ])
 }
