@@ -39,11 +39,11 @@ import * as taskDestinationActions from "../taskDestinations/TaskDestinationsAct
 import {getTasksSelector} from "../Api";
 import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
+import * as restoreFactories from "./TaskRestoreFactoryFunctions";
 
 function* sortAndSendToState(action) {
     const result = yield call(determineTaskType, action.taskGroup);
     for (const [key, value] of Object.entries(result)) {
-        console.log(value)
         yield put(taskActions.taskCategoryActionFunctions[key].add(value));
     }
 }
@@ -92,8 +92,9 @@ function* deleteTaskSuccess(action) {
     if (beforeDelete) {
         const groupValues = yield call([Object, Object.values], parent.taskGroup);
         const groupSorted = yield call([groupValues, groupValues.sort], taskGroupSort)
-        if (beforeDelete.dropoff_location && beforeDelete.relay_previous_uuid && groupSorted[groupSorted.length - 1].uuid === beforeDelete.uuid) {
+        if (beforeDelete.relay_previous_uuid)
             relayPrevious = yield call(findExistingTask, tasks, beforeDelete.relay_previous_uuid);
+        if (beforeDelete.dropoff_location && beforeDelete.relay_previous_uuid && groupSorted[groupSorted.length - 1].uuid === beforeDelete.uuid) {
             yield put(setTaskDropoffDestinationRequest(
                 beforeDelete.relay_previous_uuid,
                 beforeDelete.dropoff_location.uuid
@@ -107,15 +108,9 @@ function* deleteTaskSuccess(action) {
     yield put(unsubscribeFromUUID(action.data));
     let restoreActions;
     if (relayPrevious) {
-        restoreActions = yield () => [
-            taskActions.restoreTaskRequest(action.data),
-            unsetTaskDropoffDestinationRequest(
-                beforeDelete.relay_previous_uuid
-            ),
-        ];
+        restoreActions = yield call(restoreFactories.actionDeleteWithRelaysRestoreFactory, action, beforeDelete.relay_previous_uuid);
     } else {
-        restoreActions = yield () => [
-            taskActions.restoreTaskRequest(action.data)]
+        restoreActions = yield call(restoreFactories.actionDeleteRestoreFactory)
     }
     yield put(displayInfoNotification("Task deleted", restoreActions));
     if (parent.taskGroup) {
@@ -240,14 +235,9 @@ function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
     if (action.type === taskActions.updateTaskCancelledTimeActions.success) {
         const currentValue = parent.taskGroup[action.data.taskUUID].time_cancelled;
         if (currentValue === null) {
-            // only notify if marking rejected for the first time
-            const restoreActions = yield () => [taskActions.updateTaskCancelledTimeRequest(
-                action.data.taskUUID,
-                {time_cancelled: null}
-            )];
+            // only notify if marking cancelled for the first time
             const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
-            yield put(displayInfoNotification("Task marked cancelled", restoreActions, viewLink))
-            return
+            yield put(displayInfoNotification("Task marked cancelled", restoreFactories.actionTimeCancelledRestoreFactory(action), viewLink))
         }
     } else {
         const currentValue = parent.taskGroup[action.data.taskUUID].time_rejected;

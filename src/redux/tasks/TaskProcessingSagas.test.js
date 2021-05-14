@@ -2,7 +2,7 @@ import {testable} from "./TaskProcessingSagas"
 import * as taskActions from "./TasksActions"
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import {determineTaskType, encodeUUID, findExistingTaskParent} from "../../utilities";
-import {taskCategoryActionFunctions} from "./TasksActions";
+import {sortAndSendToState, taskCategoryActionFunctions} from "./TasksActions";
 import {getTasksSelector} from "../Api";
 import {initialTasksState} from "./TasksReducers";
 import _ from "lodash";
@@ -10,7 +10,9 @@ import {taskGroupSort} from "./task_redux_utilities";
 import {unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {expectSaga, testSaga} from "redux-saga-test-plan";
-import * as matchers from 'redux-saga-test-plan/matchers';
+import * as restoreFactories from "./TaskRestoreFactoryFunctions";
+import {setTaskDropoffDestinationRequest} from "../taskDestinations/TaskDestinationsActions";
+jest.mock('./TaskRestoreFactoryFunctions')
 
 describe("saga take a new tasks group, sorts it and puts it back into state", () => {
     test("watch sort and send to state", () => {
@@ -116,69 +118,84 @@ describe("sagas that delete a task, after the request has succeeded", () => {
         const action = {
             type: taskActions.deleteTaskActions.success, data
         };
-        const tasks = initialTasksState;
-        const gen = testable.deleteTaskSuccess(action);
-        const beforeDelete = {
-            uuid: "someUUID",
-            parent_id: 1
-        };
-        const filteredGroup = {};
-        const newList = {};
-        const groupValues = [];
+        const existingTask = {
+            someUUID: {
+                uuid: "someUUID",
+                parent_id: 1
+            }
+        }
+        restoreFactories.actionDeleteWithRelaysRestoreFactory.mockReturnValue(jest.fn())
+        return expectSaga(testable.deleteTaskSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksNew: {
+                        1: existingTask,
+                    }
+                }
+                ]
+            ])
+            .put(unsubscribeFromUUID(action.data))
+            .put(taskActions.resetGroupRelayUUIDs(1))
+            .put(displayInfoNotification("Task deleted", restoreFactories.actionDeleteRestoreFactory(action, "someUUID")))
+            .put(taskActions.taskCategoryActionFunctions["tasksNew"].put({}))
+    .run()
 
-        const restoreActions = () => [
-            taskActions.restoreTaskRequest(action.data)]
-        expect(gen.next().value).toEqual(select(getTasksSelector));
-        expect(gen.next(tasks).value).toEqual(call(findExistingTaskParent, tasks, action.data));
-        expect(gen.next(parent).value).toEqual(parent.taskGroup["someUUID"])
-        expect(gen.next(parent).value).toEqual(
-            call([Object, Object.values], parent.taskGroup)
-        )
-        expect(gen.next(groupValues).value).toEqual(
-            call([groupValues, groupValues.sort], taskGroupSort)
-        )
-        expect(gen.next(beforeDelete).value).toEqual(
-            put(taskActions.resetGroupRelayUUIDs(beforeDelete.parent_id))
-        )
-        expect(gen.next().value).toEqual(
-            put(unsubscribeFromUUID(action.data))
-        );
-        expect(gen.next().value()).toEqual(
-            restoreActions()
-        )
-        expect(gen.next(restoreActions).value).toEqual(
-            put(displayInfoNotification("Task deleted", restoreActions))
-        )
-
-        expect(gen.next(parent).value).toEqual(call(_.omit, parent.taskGroup, action.data));
-        expect(gen.next(filteredGroup).value).toEqual(
-            call(_.omit, tasks[parent.listType], parent.parentID)
-        );
-        expect(gen.next(filteredGroup).value).toEqual(
-            put(taskCategoryActionFunctions[parent.listType].put(newList))
-        );
-        expect(gen.next().done).toEqual(true);
     });
-    test("delete a task that has relays", () => {
-        return
-        const data = "someUUID";
+    test("delete a task that has relays but no locations", () => {
+        const data = "someUUID2";
         const action = {
             type: taskActions.deleteTaskActions.success, data
         };
-        const tasks = initialTasksState;
-        const gen = testable.deleteTaskSuccess(action);
-        const filteredGroup = {
-            "someUUID": {uuid: "someUUID"}
+        const existingTask = {
+            "someUUID": {uuid: "someUUID", parent_id: 1},
+            "someUUID2": {uuid: "someUUID2", parent_id: 1, relay_previous_uuid: "someUUID"}
         };
-        expect(gen.next().value).toEqual(select(getTasksSelector));
-        expect(gen.next(tasks).value).toEqual(call(findExistingTaskParent, tasks, action.data));
-        expect(gen.next(parent).value).toEqual(
-            call(_.omit, parent.taskGroup, action.data)
-        );
-        expect(gen.next(filteredGroup).value).toEqual(
-            put(taskActions.sortAndSendToState(filteredGroup))
-        );
-        expect(gen.next().done).toEqual(true);
+        restoreFactories.actionDeleteWithRelaysRestoreFactory.mockReturnValue(jest.fn())
+        return expectSaga(testable.deleteTaskSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksNew: {
+                        1: existingTask,
+                    }
+                }
+                ]
+            ])
+            .put(unsubscribeFromUUID(action.data))
+            .put(taskActions.resetGroupRelayUUIDs(1))
+            .put(displayInfoNotification("Task deleted", restoreFactories.actionDeleteWithRelaysRestoreFactory(action, "someUUID")))
+            .put(taskActions.sortAndSendToState({"someUUID": existingTask['someUUID']}))
+            .run()
+
+    });
+    test("delete a task that has relays and locations", () => {
+        const data = "someUUID2";
+        const action = {
+            type: taskActions.deleteTaskActions.success, data
+        };
+        const existingTask = {
+            "someUUID": {uuid: "someUUID", parent_id: 1, pickup_location: {uuid: "someLocation"}, dropoff_location: {uuid: "someLocation2"}},
+            "someUUID2": {uuid: "someUUID2", parent_id: 1, relay_previous_uuid: "someUUID", pickup_location: {uuid: "someLocation3"}, dropoff_location: {uuid: "someLocation4"}},
+        };
+        restoreFactories.actionDeleteWithRelaysRestoreFactory.mockReturnValue(jest.fn())
+        return expectSaga(testable.deleteTaskSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksNew: {
+                        1: existingTask,
+                    }
+                }
+                ]
+            ])
+            .put(setTaskDropoffDestinationRequest(
+            existingTask.someUUID2.relay_previous_uuid,
+            existingTask.someUUID2.dropoff_location.uuid
+        ))
+            .put(taskActions.resetGroupRelayUUIDs(1))
+            .put(unsubscribeFromUUID(action.data))
+            .put(displayInfoNotification("Task deleted", restoreFactories.actionDeleteWithRelaysRestoreFactory(action, "someUUID")))
+            .put(taskActions.sortAndSendToState({"someUUID": existingTask['someUUID']}))
+            .run()
+
     });
     test("delete a task that cannot be found", () => {
         const data = "someUUID";
@@ -348,12 +365,10 @@ describe("putting a task into state after successful request to update time canc
             .isDone()
     });
     it("updates the task state with cancelled time and sends a notification", () => {
-        const action = {type: taskActions.updateTaskCancelledTimeActions.success, data: {taskUUID: "someUUID", time_cancelled: new Date().toISOString()}};
-        const restoreActions = () => [taskActions.updateTaskCancelledTimeRequest(
-            action.data.taskUUID,
-            {time_cancelled: null}
-        )];
+        const action = {type: taskActions.updateTaskCancelledTimeActions.success,
+            data: {taskUUID: "someUUID", payload: {time_cancelled: new Date().toISOString()}}};
         const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
+        restoreFactories.actionTimeCancelledRestoreFactory.mockReturnValue(jest.fn())
         return expectSaga(testable.updateTaskTimeCancelledTimeRejectedSuccess, action)
             .provide([
                 [select(getTasksSelector), {
@@ -366,7 +381,9 @@ describe("putting a task into state after successful request to update time canc
                         }
                     }
                 }]])
-            .put(displayInfoNotification("Task marked cancelled", restoreActions, viewLink))
+            .put(displayInfoNotification("Task marked cancelled", restoreFactories.actionTimeCancelledRestoreFactory(action), viewLink))
+            .put(sortAndSendToState({someUUID: {...action.data.payload, parent_id: 1}}))
+            .put(taskActions.resetGroupRelayUUIDs(1))
             .run()
 
 

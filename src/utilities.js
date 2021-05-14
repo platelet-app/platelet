@@ -257,10 +257,17 @@ export function findExistingTaskParent(tasks, uuid) {
 
 
     for (const [listType, value] of Object.entries(tasks)) {
-        for (const [parentID, taskGroup] of Object.entries(value)) {
+        for (const [key, taskGroup] of Object.entries(value)) {
             const result = taskGroup[uuid]
+            let parentID;
+            try {
+                parentID = parseInt(key);
+            } catch (error) {
+                parentID = key;
+            }
+
             if (result) {
-                return {listType, taskGroup, parentID};
+                return {listType, taskGroup, parentID: parseInt(parentID)};
             }
         }
     }
