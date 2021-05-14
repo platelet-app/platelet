@@ -11,4 +11,3 @@ export const actionDeleteWithRelaysRestoreFactory = (action, relayPreviousUUID) 
 export const actionDeleteRestoreFactory = (action) => () => [
         taskActions.restoreTaskRequest(action.data)
 ];
-

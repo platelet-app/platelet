@@ -165,7 +165,6 @@ function* postNewTaskRelay(action) {
 
         }
         const api = yield select(getApiControl);
-        const users = yield select(getUsersSelector);
         const whoami = yield select(getWhoami);
         const result = yield call([api, api.tasks.createTask], {
             ...emptyTask, ...prevTaskData,
@@ -178,26 +177,7 @@ function* postNewTaskRelay(action) {
             order_in_relay: orderInRelay,
             reference: result.reference
         };
-        yield put(addTaskRelaySuccess(task));
-        yield put(updateTaskSuccess({
-                taskUUID: action.data.relayPrevious,
-                payload: {relay_next: task}
-            }
-        ))
-        if (previousTask.dropoff_location && previousTask.dropoff_location.uuid) {
-            yield put(setTaskDropoffDestinationRequest(task.uuid, previousTask.dropoff_location.uuid))
-            yield put(unsetTaskDropoffDestinationRequest(previousTask.uuid))
-        }
-        if (action.data.autoAssign.role && action.data.autoAssign.uuid) {
-            if (action.data.autoAssign.role === "coordinator") {
-                yield put(addTaskAssignedCoordinatorSuccess({
-                    taskUUID: task.uuid,
-                    payload: {
-                        user: users[action.data.autoAssign.uuid]
-                    }
-                }));
-            }
-        }
+        yield put(addTaskRelaySuccess({payload: task, autoAssign: action.data.autoAssign}));
     } catch (error) {
         yield put(addTaskRelayFailure(error))
     }

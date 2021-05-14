@@ -36,7 +36,7 @@ import _ from "lodash";
 import {initialTasksState} from "./TasksReducers";
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import * as taskDestinationActions from "../taskDestinations/TaskDestinationsActions";
-import {getTasksSelector} from "../Api";
+import {getTasksSelector, getUsersSelector} from "../Api";
 import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import * as restoreFactories from "./TaskRestoreFactoryFunctions";
@@ -110,7 +110,7 @@ function* deleteTaskSuccess(action) {
     if (relayPrevious) {
         restoreActions = yield call(restoreFactories.actionDeleteWithRelaysRestoreFactory, action, beforeDelete.relay_previous_uuid);
     } else {
-        restoreActions = yield call(restoreFactories.actionDeleteRestoreFactory)
+        restoreActions = yield call(restoreFactories.actionDeleteRestoreFactory, action)
     }
     yield put(displayInfoNotification("Task deleted", restoreActions));
     if (parent.taskGroup) {
@@ -132,13 +132,32 @@ export function* watchDeleteTaskSuccess() {
 }
 
 function* addTaskRelaySuccess(action) {
-    yield put(subscribeToUUID(action.data.uuid))
+    const {autoAssign, payload} = action.data
+    yield put(subscribeToUUID(payload.uuid))
     const tasks = yield select(getTasksSelector);
-    const parent = yield call(findExistingTaskParentByID, tasks, action.data.parent_id);
+    const parent = yield call(findExistingTaskParentByID, tasks, payload.parent_id);
     if (parent.taskGroup) {
-        const newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
+        const newGroup = {...parent.taskGroup, [payload.uuid]: payload}
+        newGroup[payload.relay_previous_uuid].relay_next = payload
         yield put(taskActions.sortAndSendToState(newGroup))
+        if (autoAssign.role && autoAssign.uuid) {
+            const users = yield select(getUsersSelector);
+            if (autoAssign.role === "coordinator") {
+                yield put(taskAssigneesActions.addTaskAssignedCoordinatorSuccess({
+                    taskUUID: payload.uuid,
+                    payload: {
+                        user: users[autoAssign.uuid]
+                    }
+                }));
+            }
+        }
+        const previousTask = newGroup[payload.relay_previous_uuid];
+        if (previousTask.dropoff_location && previousTask.dropoff_location.uuid) {
+            yield put(setTaskDropoffDestinationRequest(payload.uuid, previousTask.dropoff_location.uuid))
+            yield put(unsetTaskDropoffDestinationRequest(previousTask.uuid))
+        }
     }
+
     // TODO: consider if this should do something different when the parent is not found
 }
 

@@ -3,15 +3,16 @@ import * as taskActions from "./TasksActions"
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import {determineTaskType, encodeUUID, findExistingTaskParent} from "../../utilities";
 import {sortAndSendToState, taskCategoryActionFunctions} from "./TasksActions";
-import {getTasksSelector} from "../Api";
+import {getTasksSelector, getUsersSelector} from "../Api";
 import {initialTasksState} from "./TasksReducers";
 import _ from "lodash";
 import {taskGroupSort} from "./task_redux_utilities";
-import {unsubscribeFromUUID} from "../sockets/SocketActions";
+import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {expectSaga, testSaga} from "redux-saga-test-plan";
 import * as restoreFactories from "./TaskRestoreFactoryFunctions";
 import {setTaskDropoffDestinationRequest} from "../taskDestinations/TaskDestinationsActions";
+import * as taskAssigneesActions from "../taskAssignees/TaskAssigneesActions";
 jest.mock('./TaskRestoreFactoryFunctions')
 
 describe("saga take a new tasks group, sorts it and puts it back into state", () => {
@@ -265,12 +266,21 @@ describe("sagas that restore a deleted task after the request has completed", ()
 
 describe("sagas that add a new task relay after the request has completed", () => {
     const data = {
-        parent_id: 1,
-        uuid: "someUUID2"
+        payload: {
+            parent_id: 1,
+            uuid: "someUUID2",
+            relay_previous_uuid: "someUUID1"
+        },
+        autoAssign: {
+            role: "coordinator",
+            uuid: "someUser"
+        }
     };
     const data2 = {
-        parent_id: 1,
-        uuid: "someUUID1"
+        payload: {
+            parent_id: 1,
+            uuid: "someUUID1",
+        }
 
     }
     const action = {type: taskActions.addTaskRelayActions.success, data}
@@ -288,11 +298,22 @@ describe("sagas that add a new task relay after the request has completed", () =
         return expectSaga(testable.addTaskRelaySuccess, action)
             .provide([
                 [select(getTasksSelector), {
-                    tasksNew: {1: {[data2.uuid]: data2}}
+                    tasksNew: {1: {[data2.payload.uuid]: data2.payload}}
+                }],
+                [select(getUsersSelector), {
+                    someUser: {uuid: "someUser"}
                 }]
             ])
-            .put(taskActions.sortAndSendToState({[data.uuid]: data, [data2.uuid]: data2}))
-            .run()
+
+            .put(subscribeToUUID(data.payload.uuid))
+            .put(taskActions.sortAndSendToState({[data.payload.uuid]: data.payload, [data2.payload.uuid]: data2.payload}))
+            .put(taskAssigneesActions.addTaskAssignedCoordinatorSuccess({
+            taskUUID: data.payload.uuid,
+            payload: {
+                user: {uuid: "someUser"}
+            }
+        }))
+    .run()
 
     });
     it("add new task relay for a parent that isn't in state", () => {
