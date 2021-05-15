@@ -129,9 +129,9 @@ export function tasks(state = initialTasksState, action) {
         case getTasksActions.success:
         case REPLACE_TASKS_STATE:
             return {tasks: action.data, error: null};
+        case getTasksActions.failure:
+            return {...initialTasksState, error: action.error};
         default:
             return state;
     }
-
 }
-

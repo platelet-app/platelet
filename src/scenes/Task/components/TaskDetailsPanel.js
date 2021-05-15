@@ -54,7 +54,7 @@ function TaskDetailsPanel() {
     const classes = useStyles();
 
     function setTaskData() {
-        const {
+        let {
             reference,
             time_of_call,
             patch,
@@ -62,6 +62,12 @@ function TaskDetailsPanel() {
             uuid,
             requester_contact
         } = task;
+        if (requester_contact === null) {
+            requester_contact = {
+                name: null,
+                telephone_number: null
+            };
+        }
         setState({reference, time_of_call, patch, assigned_riders_display_string, uuid, requester_contact})
     }
 

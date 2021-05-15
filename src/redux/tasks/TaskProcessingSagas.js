@@ -7,6 +7,7 @@ import {
     sortAndConcat, taskGroupSort
 } from "./task_redux_utilities";
 import * as taskAssigneesActions from "../taskAssignees/TaskAssigneesActions"
+import * as taskWaypointActions from "./TasksWaypointActions"
 import {
     convertTaskGroupToObject,
     determineTaskType, encodeUUID, findExistingTask,
@@ -37,7 +38,7 @@ import {initialTasksState} from "./TasksReducers";
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import * as taskDestinationActions from "../taskDestinations/TaskDestinationsActions";
 import {getTasksSelector, getUsersSelector} from "../Api";
-import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
+import {subscribeToUUID, subscribeToUUIDs, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import * as restoreFactories from "./TaskRestoreFactoryFunctions";
 
@@ -183,6 +184,8 @@ export function* watchAddTaskRelaySuccess() {
 
 export const testable = {
     restoreTaskSuccess,
+    watchAppendTasksCancelledDeliveredRejected,
+    appendTasksSuccess,
     sortAndSendToState,
     deleteTaskSuccess,
     addTaskSuccess,
@@ -216,20 +219,28 @@ export function* watchPutTaskSuccess() {
     ])
 }
 
-// case appendTasksDeliveredActions.success:
-// case appendTasksRejectedActions.success:
-// case appendTasksCancelledActions.success: {
-//     let result;
-//     for (const [key, value] of Object.entries(action.data)) {
-//         const converted = convertToRelays(value);
-//         const newList = {...state.tasks[key]}
-//         for (const [parentID, taskGroup] of Object.entries(converted)) {
-//             newList[parentID] = {...newList[parentID], ...taskGroup}
-//         }
-//         result = update(state.tasks, {[key]: {$set: newList}})
-//     }
-//     return {tasks: result, error: null}
-// }
+function* appendTasksSuccess(action) {
+    const tasks = yield select(getTasksSelector);
+    for (const [key, value] of Object.entries(action.data)) {
+        yield put(subscribeToUUIDs(value.map(t => t.uuid)))
+        const converted = yield call(convertToRelays, value);
+        const newList = {...tasks[key]}
+        for (const [parentID, taskGroup] of Object.entries(converted)) {
+            newList[parentID] = {...newList[parentID], ...taskGroup}
+        }
+        yield put(taskActions.taskCategoryActionFunctions[key].put(newList));
+    }
+}
+
+export function* watchAppendTasksCancelledDeliveredRejected() {
+    yield all([
+        takeEvery(taskWaypointActions.appendTasksCancelledActions.success, appendTasksSuccess),
+        takeEvery(taskWaypointActions.appendTasksDeliveredActions.success, appendTasksSuccess),
+        takeEvery(taskWaypointActions.appendTasksRejectedActions.success, appendTasksSuccess)
+        ]
+    )
+}
+
 function* updateTaskSuccess(action) {
     const tasks = yield select(getTasksSelector);
     const parent = findExistingTaskParent(tasks, action.data.taskUUID);
@@ -429,23 +440,9 @@ function* resetGroupRelayUUIDs(action) {
         count++;
     }
     const result = yield call(convertTaskGroupToObject, newGroupRelayFixed);
-    // TODO: make this better
     yield put(taskActions.sortAndSendToState(result[sortedGroup[0].parent_id]));
 }
 
 export function* watchResetGroupRelayUUIDs() {
     yield takeEvery(taskActions.RESET_GROUP_RELAY_UUIDS, resetGroupRelayUUIDs)
 }
-
-// case getTasksActions.success:
-// return {tasks: action.data, error: null};
-// case GROUP_RELAYS_TOGETHER:
-//     return state;
-// // return {tasks: groupRelaysTogether(state.tasks), error: null}
-// case getTasksActions.failure:
-// return {...initialTasksState, error: action.error};
-// default:
-// return state
-// }
-// }
-//

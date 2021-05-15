@@ -6,13 +6,14 @@ import {sortAndSendToState, taskCategoryActionFunctions} from "./TasksActions";
 import {getTasksSelector, getUsersSelector} from "../Api";
 import {initialTasksState} from "./TasksReducers";
 import _ from "lodash";
-import {taskGroupSort} from "./task_redux_utilities";
-import {subscribeToUUID, unsubscribeFromUUID} from "../sockets/SocketActions";
+import {convertToRelays, taskGroupSort} from "./task_redux_utilities";
+import {subscribeToUUID, subscribeToUUIDs, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {expectSaga, testSaga} from "redux-saga-test-plan";
 import * as restoreFactories from "./TaskRestoreFactoryFunctions";
 import {setTaskDropoffDestinationRequest} from "../taskDestinations/TaskDestinationsActions";
 import * as taskAssigneesActions from "../taskAssignees/TaskAssigneesActions";
+import * as taskWaypointActions from "./TasksWaypointActions";
 
 jest.mock('./TaskRestoreFactoryFunctions')
 
@@ -433,7 +434,84 @@ describe("putting a task into state after successful request to update time canc
             .put(sortAndSendToState({someUUID: {...action.data.payload, parent_id: 1}}))
             .put(taskActions.resetGroupRelayUUIDs(1))
             .run()
-
-
+    })
+})
+describe("appending tasks to delivered, cancelled, rejected endless scrolling column", () => {
+    const currentTasks = [...Array(20).keys()].map(
+        i => {
+            return {
+                uuid: "someUUID" + i,
+                parent_id: i
+            }
+        }
+    )
+    const taskState = {};
+    for (const i of currentTasks) {
+        taskState[i.parent_id] = {[i.uuid]: i}
+    };
+    const newTasks = [...Array(20).keys()].map(
+        i => {
+            return {
+                uuid: "newUUID" + i + 20,
+                parent_id: i + 20
+            }
+        }
+    )
+    const convertedTasks = {};
+    for (const i of newTasks) {
+        convertedTasks[i.parent_id] = {[i.uuid]: i}
+    };
+    test("watch append delivered, cancelled, rejected saga", () => {
+        testSaga(testable.watchAppendTasksCancelledDeliveredRejected)
+            .next()
+            .all([
+                takeEvery(taskWaypointActions.appendTasksCancelledActions.success, testable.appendTasksSuccess),
+                takeEvery(taskWaypointActions.appendTasksDeliveredActions.success, testable.appendTasksSuccess),
+                takeEvery(taskWaypointActions.appendTasksRejectedActions.success, testable.appendTasksSuccess)
+            ])
+            .next()
+            .isDone()
+    });
+    test("append tasks to the delivered tasks column", () => {
+        const action = {type: taskWaypointActions.appendTasksDeliveredActions.success,
+            data: {tasksDelivered: newTasks}
+        }
+        return expectSaga(testable.appendTasksSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksDelivered: taskState
+                }]])
+            .put(subscribeToUUIDs(newTasks.map(t => t.uuid)))
+            .call(convertToRelays, newTasks)
+            .put(taskActions.taskCategoryActionFunctions["tasksDelivered"].put({...convertedTasks, ...taskState}))
+            .run();
+    });
+    test("append tasks to the rejected tasks column", () => {
+        const action = {type: taskWaypointActions.appendTasksRejectedActions.success,
+            data: {tasksRejected: newTasks}
+        }
+        return expectSaga(testable.appendTasksSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksRejected: taskState
+                }]])
+            .put(subscribeToUUIDs(newTasks.map(t => t.uuid)))
+            .call(convertToRelays, newTasks)
+            .put(taskActions.taskCategoryActionFunctions["tasksRejected"].put({...convertedTasks, ...taskState}))
+            .run();
+    });
+    test("append tasks to the cancelled tasks column", () => {
+        const action = {type: taskWaypointActions.appendTasksCancelledActions.success,
+            data: {tasksCancelled: newTasks}
+        }
+        return expectSaga(testable.appendTasksSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksCancelled: taskState
+                }]])
+            .put(subscribeToUUIDs(newTasks.map(t => t.uuid)))
+            .call(convertToRelays, newTasks)
+            .put(taskActions.taskCategoryActionFunctions["tasksCancelled"].put({...convertedTasks, ...taskState}))
+            .run();
     })
 })
