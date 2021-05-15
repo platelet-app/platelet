@@ -7,10 +7,6 @@ export const UPDATE_TASK_TIME_REJECTED_FROM_SOCKET = "UPDATE_TASK_TIME_REJECTED_
 export const PUT_TASK_FROM_SOCKET = "PUT_TASK_FROM_SOCKET";
 export const UPDATE_TASK_FROM_SOCKET = "UPDATE_TASK_FROM_SOCKET";
 export const ADD_TASK_RELAY_FROM_SOCKET = "ADD_TASK_RELAY_FROM_SOCKET";
-export const UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET = "UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET";
-export const UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET = "UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET";
-export const UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET";
-export const UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET";
 export const ADD_TASK_FROM_SOCKET = "ADD_TASK_FROM_SOCKET"
 export const DELETE_TASK_FROM_SOCKET = "DELETE_TASK_FROM_SOCKET"
 export const RESTORE_TASK_FROM_SOCKET = "RESTORE_TASK_FROM_SOCKET"
@@ -241,22 +237,6 @@ export function updateTaskTimeRejectedFromSocket(data) {
 
 export function updateTaskTimeCancelledFromSocket(data) {
     return { type: UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET, data }
-}
-
-export function updateTaskAssignedRiderFromSocket(data) {
-    return { type: UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET, data }
-}
-
-export function updateTaskRemoveAssignedRiderFromSocket(data) {
-    return { type: UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET, data }
-}
-
-export function updateTaskAssignedCoordinatorFromSocket(data) {
-    return { type: UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET, data }
-}
-
-export function updateTaskRemoveAssignedCoordinatorFromSocket(data) {
-    return { type: UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET, data }
 }
 
 export function startRefreshTasksLoopFromSocket(userUUID) {

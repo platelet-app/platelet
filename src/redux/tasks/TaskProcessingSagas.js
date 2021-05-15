@@ -41,6 +41,7 @@ import {getTasksSelector, getUsersSelector} from "../Api";
 import {subscribeToUUID, subscribeToUUIDs, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import * as restoreFactories from "./TaskRestoreFactoryFunctions";
+import {updateTaskPatchRequest} from "./TasksActions";
 
 function* sortAndSendToState(action) {
     const result = yield call(determineTaskType, action.taskGroup);
@@ -184,6 +185,8 @@ export function* watchAddTaskRelaySuccess() {
 
 export const testable = {
     restoreTaskSuccess,
+    watchAddTaskAssignedRiderSuccess,
+    addTaskAssignedRiderSuccess,
     watchAppendTasksCancelledDeliveredRejected,
     appendTasksSuccess,
     sortAndSendToState,
@@ -325,45 +328,71 @@ export function* watchUpdateTaskTimeCancelledTimeRejectedSuccess() {
     ]);
 }
 
-// case addTaskAssignedRiderActions.success:
-// case UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET: {
-//     // Get the parent group first
-//     const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
-//     if (parent.taskGroup) {
-//         const task = parent.taskGroup[action.data.taskUUID]
-//         const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.parentID)
-//         const updatedItem = {
-//             ...task,
-//             ...addAssigneeToList(task,
-//                 action.data.payload.rider, "rider")
-//         }
-//         const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
-//         return {tasks: sortAndConcat(newTasks, updatedGroup), error: null}
-//     } else {
-//         return state;
-//     }
-// }
-// case removeTaskAssignedRiderActions.success:
-// case UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET: {
-//     // Get the parent group first
-//     const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
-//     // remove it from the list
-//     const newTasks = removeParentFromTasks(state.tasks, parent.listType, parent.parentID)
-//     if (parent.taskGroup) {
-//         const task = parent.taskGroup[action.data.taskUUID]
-//         const updatedItem = {
-//             ...task,
-//             ...removeAssigneeFromList(task,
-//                 action.data.payload.user_uuid, "rider")
-//         }
-//         const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
-//
-//         // sort the item and merge it
-//         return {tasks: sortAndConcat(newTasks, updatedGroup), error: null}
-//     } else {
-//         return state;
-//     }
-// }
+function* addTaskAssignedRiderSuccess(action) {
+    const tasks = yield select(getTasksSelector);
+    // Get the parent group first
+    const currentTask = yield findExistingTask(tasks, action.data.taskUUID);
+    const parent = findExistingTaskParent(tasks, action.data.taskUUID);
+    if (action.data.payload.patch_id) {
+        yield put(updateTaskPatchRequest(
+            action.data.taskUUID,
+            {patch_id: action.data.payload.patch_id}
+        ));
+        delete action.data.payload.patch_id;
+    }
+    if (currentTask.assigned_riders.length === 0) {
+        yield put(displayInfoNotification("Task marked as ACTIVE."))
+    }
+    yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: action.data.payload.rider.patch_id, patch: action.data.payload.rider.patch}))
+    if (parent.taskGroup) {
+        const task = parent.taskGroup[action.data.taskUUID]
+        const updatedItem = {
+            ...task,
+            ...addAssigneeToList(task,
+                action.data.payload.rider, "rider")
+        }
+        const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
+        yield put(taskActions.sortAndSendToState(updatedGroup));
+    }
+}
+
+export function* watchAddTaskAssignedRiderSuccess() {
+    yield all([
+        takeEvery(taskAssigneesActions.addTaskAssignedRiderActions.success, addTaskAssignedRiderSuccess),
+        takeEvery(taskAssigneesActions.UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET, addTaskAssignedRiderSuccess)
+    ])
+}
+
+function* removeTaskAssignedRiderSuccess(action) {
+    const tasks = yield select(getTasksSelector);
+    // Get the parent group first
+    const parent = findExistingTaskParent(tasks, action.data.taskUUID);
+    if (parent.taskGroup) {
+        const task = parent.taskGroup[action.data.taskUUID]
+        const updatedItem = {
+            ...task,
+            ...removeAssigneeFromList(task,
+                action.data.payload.user_uuid, "rider")
+        }
+        const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
+        // sort the item and merge it
+        yield put(taskActions.sortAndSendToState(updatedGroup));
+
+        if (updatedItem && updatedItem.assigned_riders && updatedItem.assigned_riders.length > 0) {
+            const finalUser = updatedItem.assigned_riders[updatedItem.assigned_riders.length - 1];
+            yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: finalUser.patch_id, patch: finalUser.patch}))
+        } else if (updatedItem) {
+            yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: null, patch: null}))
+        }
+    }
+}
+
+export function* watchRemoveTaskAssignedRiderSuccess() {
+    yield all([
+        takeEvery(taskAssigneesActions.removeTaskAssignedRiderActions.success, removeTaskAssignedRiderSuccess),
+        takeEvery(taskAssigneesActions.UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET, removeTaskAssignedRiderSuccess)
+    ]);
+}
 function* addTaskAssignedCoordinatorSuccess(action) {
     // Get the parent group first
     const tasks = yield select(getTasksSelector);

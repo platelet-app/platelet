@@ -513,5 +513,26 @@ describe("appending tasks to delivered, cancelled, rejected endless scrolling co
             .call(convertToRelays, newTasks)
             .put(taskActions.taskCategoryActionFunctions["tasksCancelled"].put({...convertedTasks, ...taskState}))
             .run();
-    })
+    });
+})
+
+describe("test assignment of riders to tasks", () => {
+    it("tests watching for successful assignment requests", () => {
+        testSaga(testable.watchAddTaskAssignedRiderSuccess)
+            .next()
+            .all([
+                takeEvery(taskAssigneesActions.addTaskAssignedRiderActions.success, testable.addTaskAssignedRiderSuccess),
+                takeEvery(taskAssigneesActions.UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET, testable.addTaskAssignedRiderSuccess)
+                ])
+            .next()
+            .isDone()
+    });
+    test("assigning a rider to a task", () => {
+        return
+        const action = {
+
+        }
+        return expectSaga(testable.addTaskAssignedRiderSuccess, action)
+            .run();
+    });
 })

@@ -32,13 +32,13 @@ import {
     deleteTaskFromSocket,
     putTaskFromSocket,
     resetGroupRelayUUIDs,
-    restoreTaskFromSocket, updateTaskAssignedCoordinatorFromSocket,
-    updateTaskAssignedRiderFromSocket, updateTaskDropoffLocationFromSocket,
-    updateTaskFromSocket, updateTaskPickupLocationFromSocket, updateTaskRemoveAssignedCoordinatorFromSocket,
-    updateTaskRemoveAssignedRiderFromSocket,
+    restoreTaskFromSocket,
+    updateTaskDropoffLocationFromSocket,
+    updateTaskFromSocket, updateTaskPickupLocationFromSocket,
     updateTaskTimeCancelledFromSocket,
     updateTaskTimeRejectedFromSocket
 } from "../tasks/TasksActions";
+import * as taskAssigneeActions from "../taskAssignees/TaskAssigneesActions"
 import {
     addCommentFromSocket,
     deleteCommentFromSocket,
@@ -215,7 +215,7 @@ export const createSubscribeSocketMiddleware = () => {
                                 const assignedUser = storeAPI.getState().users.users[user_uuid]
                                 if (assignedUser) {
                                     const rider = assignedUser
-                                    storeAPI.dispatch(updateTaskAssignedRiderFromSocket({
+                                    storeAPI.dispatch(taskAssigneeActions.updateTaskAssignedRiderFromSocket({
                                         taskUUID: action.data.object_uuid,
                                         payload: {rider, user_uuid}
                                     }))
@@ -223,7 +223,7 @@ export const createSubscribeSocketMiddleware = () => {
                                 break;
                             case "REMOVE_ASSIGNED_RIDER_FROM_TASK": {
                                 const user_uuid_remove = action.data.data.user_uuid
-                                storeAPI.dispatch(updateTaskRemoveAssignedRiderFromSocket({
+                                storeAPI.dispatch(taskAssigneeActions.updateTaskRemoveAssignedRiderFromSocket({
                                     taskUUID: action.data.object_uuid,
                                     payload: {user_uuid: user_uuid_remove}
                                 }))}
@@ -233,7 +233,7 @@ export const createSubscribeSocketMiddleware = () => {
                                 const assignedUser = storeAPI.getState().users.users[user_uuid]
                                 if (assignedUser) {
                                     const user = assignedUser
-                                    storeAPI.dispatch(updateTaskAssignedCoordinatorFromSocket({
+                                    storeAPI.dispatch(taskAssigneeActions.updateTaskAssignedCoordinatorFromSocket({
                                         taskUUID: action.data.object_uuid,
                                         payload: {user, user_uuid}
                                     }))
@@ -241,7 +241,7 @@ export const createSubscribeSocketMiddleware = () => {
                                 break;
                             case "REMOVE_ASSIGNED_COORDINATOR_FROM_TASK": {
                                 const user_uuid_remove = action.data.data.user_uuid
-                                storeAPI.dispatch(updateTaskRemoveAssignedCoordinatorFromSocket({
+                                storeAPI.dispatch(taskAssigneeActions.updateTaskRemoveAssignedCoordinatorFromSocket({
                                     taskUUID: action.data.object_uuid,
                                     payload: {user_uuid: user_uuid_remove}
                                 }))}

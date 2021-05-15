@@ -83,6 +83,7 @@ import authenticationMonitor from "./login/AuthenticationMonitor";
 import updateActiveTaskMonitor from "./activeTask/ActiveTaskMonitors"
 import {watchGetTask} from "./activeTask/ActiveTaskSagas"
 import {watchDebounceDashboardFilter} from "./dashboardFilter/DashboardFilterSagas";
+import {watchAddTaskAssignedRiderSuccess} from "./tasks/TaskProcessingSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -168,9 +169,11 @@ export default function* rootSaga() {
         call(taskProcessingSagas.watchRestoreTaskSuccess),
         call(taskProcessingSagas.watchDeleteTaskSuccess),
         call(taskProcessingSagas.watchAddTaskRelaySuccess),
+        call(taskProcessingSagas.watchRemoveTaskAssignedRiderSuccess),
         call(taskProcessingSagas.watchResetGroupRelayUUIDs),
         call(taskProcessingSagas.watchUpdateTaskSuccess),
         call(taskProcessingSagas.watchPutTaskSuccess),
+        call(taskProcessingSagas.watchAddTaskAssignedRiderSuccess),
         call(taskProcessingSagas.watchUpdateTaskTimeCancelledTimeRejectedSuccess),
         call(taskProcessingSagas.watchAddTaskAssignedCoordinatorSuccess),
         call(taskProcessingSagas.watchAppendTasksCancelledDeliveredRejected)
