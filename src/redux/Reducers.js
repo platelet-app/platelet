@@ -16,7 +16,7 @@ import {
     SET_DARK_MODE
 } from './Actions'
 import {dashboardFilter} from "./dashboardFilter/DashboardFilterReducers";
-import {tasks, ntasks} from "./tasks/TasksReducers"
+import {tasks} from "./tasks/TasksReducers"
 import {task} from "./activeTask/ActiveTaskReducer"
 import {userStatistics} from "./statistics/statisticsReducers";
 import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
@@ -238,7 +238,6 @@ export function error(state =  null, action){
 const appReducer = combineReducers({
     task,
     tasks,
-    ntasks,
     deliverables,
     availableDeliverables,
     availablePriorities,

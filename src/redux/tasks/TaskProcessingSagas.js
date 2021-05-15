@@ -53,8 +53,21 @@ export function* watchSortAndSendToState() {
 }
 
 function* addTaskSuccess(action) {
-    const data = yield {[action.data.uuid]: action.data};
+    const {payload, autoAssign} = action.data;
+    const data = yield {[payload.uuid]: payload};
     yield put(taskActions.sortAndSendToState(data))
+    if (autoAssign.role && autoAssign.uuid) {
+        const users = yield select(getUsersSelector);
+        if (action.data.autoAssign.role === "coordinator") {
+            yield put(taskAssigneesActions.addTaskAssignedCoordinatorSuccess({
+                taskUUID: payload.uuid,
+                payload: {
+                    user: users[autoAssign.uuid]
+                }
+            }));
+        }
+    }
+    yield put(subscribeToUUID(payload.uuid))
 }
 
 export function* watchAddTaskSuccess() {
@@ -100,7 +113,6 @@ function* deleteTaskSuccess(action) {
                 beforeDelete.dropoff_location.uuid
             ));
         }
-        yield put(taskActions.resetGroupRelayUUIDs(beforeDelete.parent_id));
     } else {
         // task could not be found!
         return;
@@ -122,6 +134,7 @@ function* deleteTaskSuccess(action) {
             yield put(taskActions.sortAndSendToState(filteredGroup));
         }
     }
+    yield put(taskActions.resetGroupRelayUUIDs(beforeDelete.parent_id));
 }
 
 export function* watchDeleteTaskSuccess() {

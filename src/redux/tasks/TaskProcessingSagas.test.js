@@ -13,6 +13,7 @@ import {expectSaga, testSaga} from "redux-saga-test-plan";
 import * as restoreFactories from "./TaskRestoreFactoryFunctions";
 import {setTaskDropoffDestinationRequest} from "../taskDestinations/TaskDestinationsActions";
 import * as taskAssigneesActions from "../taskAssignees/TaskAssigneesActions";
+
 jest.mock('./TaskRestoreFactoryFunctions')
 
 describe("saga take a new tasks group, sorts it and puts it back into state", () => {
@@ -80,16 +81,26 @@ describe("sagas that add a task, after the request has succeeded", () => {
             }
         };
         const action = {
-            type: taskActions.addTaskActions.success, data: data["someUUID"]
+            type: taskActions.addTaskActions.success,
+            data: {payload: data["someUUID"], autoAssign: {role: "coordinator", uuid: "someUser"}}
         };
-        const gen = testable.addTaskSuccess(action);
-        expect(gen.next().value).toEqual(
-            data
-        );
-        expect(gen.next(data).value).toEqual(
-            put(taskActions.sortAndSendToState(data))
-        )
-        expect(gen.next().done).toEqual(true);
+        return expectSaga(testable.addTaskSuccess, action)
+            .provide([
+                [select(getUsersSelector), {
+                    someUser: {uuid: "someUser"}
+                }]
+            ])
+            .put(taskActions.sortAndSendToState(data))
+            .put(taskAssigneesActions.addTaskAssignedCoordinatorSuccess({
+                    taskUUID: "someUUID",
+                    payload: {
+                        user: {uuid: "someUser"}
+                    }
+                }
+
+            ))
+            .put(subscribeToUUID("someUUID"))
+            .run()
     });
 });
 
@@ -139,7 +150,7 @@ describe("sagas that delete a task, after the request has succeeded", () => {
             .put(taskActions.resetGroupRelayUUIDs(1))
             .put(displayInfoNotification("Task deleted", restoreFactories.actionDeleteRestoreFactory(action, "someUUID")))
             .put(taskActions.taskCategoryActionFunctions["tasksNew"].put({}))
-    .run()
+            .run()
 
     });
     test("delete a task that has relays but no locations", () => {
@@ -162,9 +173,9 @@ describe("sagas that delete a task, after the request has succeeded", () => {
                 ]
             ])
             .put(unsubscribeFromUUID(action.data))
-            .put(taskActions.resetGroupRelayUUIDs(1))
             .put(displayInfoNotification("Task deleted", restoreFactories.actionDeleteWithRelaysRestoreFactory(action, "someUUID")))
             .put(taskActions.sortAndSendToState({"someUUID": existingTask['someUUID']}))
+            .put(taskActions.resetGroupRelayUUIDs(1))
             .run()
 
     });
@@ -174,8 +185,19 @@ describe("sagas that delete a task, after the request has succeeded", () => {
             type: taskActions.deleteTaskActions.success, data
         };
         const existingTask = {
-            "someUUID": {uuid: "someUUID", parent_id: 1, pickup_location: {uuid: "someLocation"}, dropoff_location: {uuid: "someLocation2"}},
-            "someUUID2": {uuid: "someUUID2", parent_id: 1, relay_previous_uuid: "someUUID", pickup_location: {uuid: "someLocation3"}, dropoff_location: {uuid: "someLocation4"}},
+            "someUUID": {
+                uuid: "someUUID",
+                parent_id: 1,
+                pickup_location: {uuid: "someLocation"},
+                dropoff_location: {uuid: "someLocation2"}
+            },
+            "someUUID2": {
+                uuid: "someUUID2",
+                parent_id: 1,
+                relay_previous_uuid: "someUUID",
+                pickup_location: {uuid: "someLocation3"},
+                dropoff_location: {uuid: "someLocation4"}
+            },
         };
         restoreFactories.actionDeleteWithRelaysRestoreFactory.mockReturnValue(jest.fn())
         return expectSaga(testable.deleteTaskSuccess, action)
@@ -188,13 +210,13 @@ describe("sagas that delete a task, after the request has succeeded", () => {
                 ]
             ])
             .put(setTaskDropoffDestinationRequest(
-            existingTask.someUUID2.relay_previous_uuid,
-            existingTask.someUUID2.dropoff_location.uuid
-        ))
-            .put(taskActions.resetGroupRelayUUIDs(1))
+                existingTask.someUUID2.relay_previous_uuid,
+                existingTask.someUUID2.dropoff_location.uuid
+            ))
             .put(unsubscribeFromUUID(action.data))
             .put(displayInfoNotification("Task deleted", restoreFactories.actionDeleteWithRelaysRestoreFactory(action, "someUUID")))
             .put(taskActions.sortAndSendToState({"someUUID": existingTask['someUUID']}))
+            .put(taskActions.resetGroupRelayUUIDs(1))
             .run()
 
     });
@@ -306,14 +328,17 @@ describe("sagas that add a new task relay after the request has completed", () =
             ])
 
             .put(subscribeToUUID(data.payload.uuid))
-            .put(taskActions.sortAndSendToState({[data.payload.uuid]: data.payload, [data2.payload.uuid]: data2.payload}))
+            .put(taskActions.sortAndSendToState({
+                [data.payload.uuid]: data.payload,
+                [data2.payload.uuid]: data2.payload
+            }))
             .put(taskAssigneesActions.addTaskAssignedCoordinatorSuccess({
-            taskUUID: data.payload.uuid,
-            payload: {
-                user: {uuid: "someUser"}
-            }
-        }))
-    .run()
+                taskUUID: data.payload.uuid,
+                payload: {
+                    user: {uuid: "someUser"}
+                }
+            }))
+            .run()
 
     });
     it("add new task relay for a parent that isn't in state", () => {
@@ -386,8 +411,10 @@ describe("putting a task into state after successful request to update time canc
             .isDone()
     });
     it("updates the task state with cancelled time and sends a notification", () => {
-        const action = {type: taskActions.updateTaskCancelledTimeActions.success,
-            data: {taskUUID: "someUUID", payload: {time_cancelled: new Date().toISOString()}}};
+        const action = {
+            type: taskActions.updateTaskCancelledTimeActions.success,
+            data: {taskUUID: "someUUID", payload: {time_cancelled: new Date().toISOString()}}
+        };
         const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
         restoreFactories.actionTimeCancelledRestoreFactory.mockReturnValue(jest.fn())
         return expectSaga(testable.updateTaskTimeCancelledTimeRejectedSuccess, action)

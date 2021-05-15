@@ -109,22 +109,10 @@ const emptyTask = {
 function* postNewTask(action) {
     try {
         const api = yield select(getApiControl);
-        const users = yield select(getUsersSelector);
         const result = yield call([api, api.tasks.createTask], action.data.payload, action.data.autoAssign);
         const parentID = result.parent_id ? parseInt(result.parent_id) : 0
         const task = {...action.data.payload, "uuid": result.uuid, parent_id: parentID, order_in_relay: 1, reference: result.reference};
-        yield put(addTaskSuccess(task));
-        if (action.data.autoAssign.role && action.data.autoAssign.uuid) {
-            if (action.data.autoAssign.role === "coordinator") {
-                yield put(addTaskAssignedCoordinatorSuccess({
-                    taskUUID: task.uuid,
-                    payload: {
-                        user: users[action.data.autoAssign.uuid]
-                    }
-                }));
-            }
-        }
-        yield put(subscribeToUUID(task.uuid))
+        yield put(addTaskSuccess({payload: task, autoAssign: action.data.autoAssign}));
     } catch (error) {
         yield put(addTaskFailure(error))
     }
