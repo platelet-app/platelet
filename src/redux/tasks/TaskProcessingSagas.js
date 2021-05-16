@@ -201,7 +201,11 @@ export const testable = {
     putTaskSuccess,
     watchPutTaskSuccess,
     watchUpdateTaskTimeCancelledTimeRejectedSuccess,
-    updateTaskTimeCancelledTimeRejectedSuccess
+    updateTaskTimeCancelledTimeRejectedSuccess,
+    watchRemoveTaskAssignedCoordinatorSuccess,
+    removeTaskAssignedCoordinatorSuccess,
+    watchAddTaskAssignedCoordinatorSuccess,
+    addTaskAssignedCoordinatorSuccess
 };
 
 function* putTaskSuccess(action) {
@@ -331,8 +335,8 @@ export function* watchUpdateTaskTimeCancelledTimeRejectedSuccess() {
 function* addTaskAssignedRiderSuccess(action) {
     const tasks = yield select(getTasksSelector);
     // Get the parent group first
-    const currentTask = yield findExistingTask(tasks, action.data.taskUUID);
-    const parent = findExistingTaskParent(tasks, action.data.taskUUID);
+    const currentTask = yield call(findExistingTask, tasks, action.data.taskUUID);
+    const parent = yield call(findExistingTaskParent, tasks, action.data.taskUUID);
     if (action.data.payload.patch_id) {
         yield put(updateTaskPatchRequest(
             action.data.taskUUID,
@@ -410,27 +414,34 @@ function* addTaskAssignedCoordinatorSuccess(action) {
 }
 
 export function* watchAddTaskAssignedCoordinatorSuccess() {
-    yield takeEvery(taskAssigneesActions.addTaskAssignedCoordinatorActions.success, addTaskAssignedCoordinatorSuccess)
+    yield all([
+        takeEvery(taskAssigneesActions.addTaskAssignedCoordinatorActions.success, addTaskAssignedCoordinatorSuccess),
+        takeEvery(taskAssigneesActions.UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET, addTaskAssignedCoordinatorSuccess)
+        ])
 }
-// case removeTaskAssignedCoordinatorActions.success:
-// case UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET: {
-//     // Get the parent group first
-//     const parent = findExistingTaskParent(state.tasks, action.data.taskUUID);
-//     if (parent.taskGroup) {
-//         const task = parent.taskGroup[action.data.taskUUID]
-//         const updatedItem = {
-//             ...task,
-//             ...removeAssigneeFromList(task,
-//                 action.data.payload.user_uuid, "coordinator")
-//         }
-//         const updatedGroup = update(parent.taskGroup, {[action.data.taskUUID]: {$set: updatedItem}})
-//         const newList = {[parent.listType]: {...state.tasks[parent.listType], [parent.parentID]: updatedGroup}}
-//         const tasksUpdated = {...state.tasks, ...newList}
-//         return {tasks: tasksUpdated, error: null}
-//     } else {
-//         return state;
-//     }
-// }
+function* removeTaskAssignedCoordinatorSuccess(action) {
+    const tasks = yield select(getTasksSelector);
+    // Get the parent group first
+    const parent = findExistingTaskParent(tasks, action.data.taskUUID);
+    if (parent.taskGroup) {
+        const task = parent.taskGroup[action.data.taskUUID]
+        const updatedItem = {
+            ...task,
+            ...removeAssigneeFromList(task,
+                action.data.payload.user_uuid, "coordinator")
+        }
+        const updatedGroup = update(parent.taskGroup, {[action.data.taskUUID]: {$set: updatedItem}})
+        yield put(taskActions.sortAndSendToState(updatedGroup));
+    }
+}
+
+export function* watchRemoveTaskAssignedCoordinatorSuccess() {
+    yield all([
+        takeEvery(taskAssigneesActions.removeTaskAssignedCoordinatorActions.success, removeTaskAssignedCoordinatorSuccess),
+        takeEvery(taskAssigneesActions.UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET, removeTaskAssignedCoordinatorSuccess)
+    ])
+}
+
 function* resetGroupRelayUUIDs(action) {
     const tasks = yield select(getTasksSelector);
     const parent = yield call(findExistingTaskParentByID, tasks, action.parentID);

@@ -117,15 +117,15 @@ export function tasks(state = initialTasksState, action) {
         case taskCategoryActions.tasksDelivered.put:
             return {tasks: {...filteredTasks, tasksDelivered: action.data}, error: null};
         case taskCategoryActions.tasksDelivered.add:
-            return {tasks: {...filteredTasks, tasksDelivered: {...filteredTasks.tasksActive, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksDelivered: {...filteredTasks.tasksDelivered, ...action.data}}, error: null}
         case taskCategoryActions.tasksRejected.put:
             return {tasks: {...filteredTasks, tasksRejected: action.data}, error: null};
         case taskCategoryActions.tasksRejected.add:
-            return {tasks: {...filteredTasks, tasksRejected: {...filteredTasks.tasksActive, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksRejected: {...filteredTasks.tasksRejected, ...action.data}}, error: null}
         case taskCategoryActions.tasksCancelled.put:
             return {tasks: {...filteredTasks, tasksCancelled: action.data}, error: null};
         case taskCategoryActions.tasksCancelled.add:
-            return {tasks: {...filteredTasks, tasksCancelled: {...filteredTasks.tasksActive, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksCancelled: {...filteredTasks.tasksCancelled, ...action.data}}, error: null}
         case getTasksActions.success:
         case REPLACE_TASKS_STATE:
             return {tasks: action.data, error: null};

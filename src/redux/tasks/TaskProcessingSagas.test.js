@@ -2,7 +2,7 @@ import {testable} from "./TaskProcessingSagas"
 import * as taskActions from "./TasksActions"
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import {determineTaskType, encodeUUID, findExistingTaskParent} from "../../utilities";
-import {sortAndSendToState, taskCategoryActionFunctions} from "./TasksActions";
+import {sortAndSendToState, taskCategoryActionFunctions, updateTaskPatchRequest} from "./TasksActions";
 import {getTasksSelector, getUsersSelector} from "../Api";
 import {initialTasksState} from "./TasksReducers";
 import _ from "lodash";
@@ -517,6 +517,18 @@ describe("appending tasks to delivered, cancelled, rejected endless scrolling co
 })
 
 describe("test assignment of riders to tasks", () => {
+    const tasksState = {
+        tasksNew: {
+            1: {
+                someUUID: {
+                    uuid: "someUUID",
+                    assigned_riders: [],
+                    patch_id: null,
+                    patch: null
+                }
+            }
+        }
+    }
     it("tests watching for successful assignment requests", () => {
         testSaga(testable.watchAddTaskAssignedRiderSuccess)
             .next()
@@ -528,11 +540,42 @@ describe("test assignment of riders to tasks", () => {
             .isDone()
     });
     test("assigning a rider to a task", () => {
-        return
         const action = {
-
+            type: taskAssigneesActions.addTaskAssignedRiderSuccess,
+            data: {
+                taskUUID: "someUUID",
+                payload: {
+                    patch_id: 1,
+                    rider: {
+                        patch_id: 1,
+                        patch: "North",
+                        uuid: "userUUID",
+                        display_name: "Someone Person"
+                    }
+                }
+            }
         }
+        const endResult =
+            { someUUID: {
+                    ...tasksState.tasksNew["1"].someUUID,
+                    assigned_riders_display_string: "Someone Person",
+                    assigned_riders: [action.data.payload.rider]
+                }
+            }
         return expectSaga(testable.addTaskAssignedRiderSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    ...tasksState
+                }]])
+            .put(taskActions.updateTaskPatchRequest(
+            action.data.taskUUID,
+            {patch_id: action.data.payload.patch_id}
+        ))
+            .put(displayInfoNotification("Task marked as ACTIVE."))
+            .put(taskActions.updateTaskPatchRequest(action.data.taskUUID, {patch_id: action.data.payload.rider.patch_id, patch: action.data.payload.rider.patch}))
+            .put(taskActions.sortAndSendToState(
+                endResult
+            ))
             .run();
     });
 })

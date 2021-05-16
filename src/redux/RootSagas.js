@@ -170,6 +170,7 @@ export default function* rootSaga() {
         call(taskProcessingSagas.watchDeleteTaskSuccess),
         call(taskProcessingSagas.watchAddTaskRelaySuccess),
         call(taskProcessingSagas.watchRemoveTaskAssignedRiderSuccess),
+        call(taskProcessingSagas.watchRemoveTaskAssignedCoordinatorSuccess),
         call(taskProcessingSagas.watchResetGroupRelayUUIDs),
         call(taskProcessingSagas.watchUpdateTaskSuccess),
         call(taskProcessingSagas.watchPutTaskSuccess),
