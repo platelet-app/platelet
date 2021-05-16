@@ -471,12 +471,16 @@ export const createSubscribeAssignmentsSocketMiddleware = () => {
                                 const parent = findExistingTaskParentByID(storeAPI.getState().tasks.tasks, action.data.data.parent_id)
                                 if (parent.taskGroup) {
                                     storeAPI.dispatch(addTaskRelayFromSocket({
-                                        ...action.data.data
+                                        payload: {
+                                            ...action.data.data
+                                        }
                                     }))
                                     storeAPI.dispatch(resetGroupRelayUUIDs(action.data.data.parent_id));
                                 } else {
                                     storeAPI.dispatch(addTaskFromSocket({
-                                        ...action.data.data
+                                        payload: {
+                                            ...action.data.data
+                                        }
                                     }))
                                 }
                                 storeAPI.dispatch(subscribeToUUID(action.data.data.uuid))

@@ -58,7 +58,7 @@ function* addTaskSuccess(action) {
     const {payload, autoAssign} = action.data;
     const data = yield {[payload.uuid]: payload};
     yield put(taskActions.sortAndSendToState(data))
-    if (autoAssign.role && autoAssign.uuid) {
+    if (autoAssign && autoAssign.role && autoAssign.uuid) {
         const users = yield select(getUsersSelector);
         if (action.data.autoAssign.role === "coordinator") {
             yield put(taskAssigneesActions.addTaskAssignedCoordinatorSuccess({
@@ -121,14 +121,19 @@ function* deleteTaskSuccess(action) {
         // task could not be found!
         return;
     }
-    yield put(unsubscribeFromUUID(action.data));
-    let restoreActions;
-    if (relayPrevious) {
-        restoreActions = yield call(restoreFactories.actionDeleteWithRelaysRestoreFactory, action, beforeDelete.relay_previous_uuid);
-    } else {
-        restoreActions = yield call(restoreFactories.actionDeleteRestoreFactory, action)
+    if (action.type !== taskActions.DELETE_TASK_FROM_SOCKET) {
+        // bit of a workaround so that socket based restore action still works
+        // TODO: make this work so that restore always sends a socket message, backend work
+        yield put(unsubscribeFromUUID(action.data));
+        // don't show a notification if it comes from a socket communication
+        let restoreActions;
+        if (relayPrevious) {
+            restoreActions = yield call(restoreFactories.actionDeleteWithRelaysRestoreFactory, action, beforeDelete.relay_previous_uuid);
+        } else {
+            restoreActions = yield call(restoreFactories.actionDeleteRestoreFactory, action)
+        }
+        yield put(displayInfoNotification("Task deleted", restoreActions));
     }
-    yield put(displayInfoNotification("Task deleted", restoreActions));
     if (parent.taskGroup) {
         const filteredGroup = yield call(_.omit, parent.taskGroup, action.data)
         if (_.isEmpty(filteredGroup)) {
@@ -157,7 +162,7 @@ function* addTaskRelaySuccess(action) {
         const newGroup = {...parent.taskGroup, [payload.uuid]: payload}
         newGroup[payload.relay_previous_uuid].relay_next = payload
         yield put(taskActions.sortAndSendToState(newGroup))
-        if (autoAssign.role && autoAssign.uuid) {
+        if (autoAssign && autoAssign.role && autoAssign.uuid) {
             const users = yield select(getUsersSelector);
             if (autoAssign.role === "coordinator") {
                 yield put(taskAssigneesActions.addTaskAssignedCoordinatorSuccess({
@@ -346,7 +351,7 @@ function* addTaskAssignedRiderSuccess(action) {
         ));
         delete action.data.payload.patch_id;
     }
-    if (currentTask.assigned_riders.length === 0) {
+    if (action.type !== taskAssigneesActions.UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET && currentTask.assigned_riders.length === 0) {
         yield put(displayInfoNotification("Task marked as ACTIVE."))
     }
     yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: action.data.payload.rider.patch_id, patch: action.data.payload.rider.patch}))
