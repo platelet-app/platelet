@@ -86,10 +86,12 @@ function* restoreTaskSuccess(action) {
     let newGroup;
     if (parent.taskGroup) {
         newGroup = {...parent.taskGroup, [action.data.uuid]: action.data}
+        yield put(taskActions.sortAndSendToState(newGroup))
+        yield put(taskActions.resetGroupRelayUUIDs(parent.parentID));
     } else {
         newGroup = {[action.data.uuid]: action.data}
+        yield put(taskActions.sortAndSendToState(newGroup))
     }
-    yield put(taskActions.sortAndSendToState(newGroup))
 }
 
 export function* watchRestoreTaskSuccess() {

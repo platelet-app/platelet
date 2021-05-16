@@ -283,6 +283,7 @@ describe("sagas that restore a deleted task after the request has completed", ()
                 ]
             ])
             .put(taskActions.sortAndSendToState({[data.uuid]: data, ...existingTask}))
+            .put(taskActions.resetGroupRelayUUIDs(1))
             .run();
     });
 });
