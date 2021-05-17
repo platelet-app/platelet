@@ -294,10 +294,9 @@ function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
         if (currentValue === null) {
             // only notify if marking cancelled for the first time
             const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
-            if(action.type !== taskActions.UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET)
-                yield put(displayInfoNotification("Task marked cancelled", restoreFactories.actionTimeCancelledRestoreFactory(action), viewLink))
+            yield put(displayInfoNotification("Task marked cancelled", restoreFactories.actionTimeCancelledRestoreFactory(action), viewLink))
         }
-    } else {
+    } else if (action.type === taskActions.updateTaskRejectedTimeActions.success) {
         const currentValue = parent.taskGroup[action.data.taskUUID].time_rejected;
         if (currentValue === null) {
             // only notify if marking rejected for the first time
@@ -306,8 +305,7 @@ function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
                 {time_rejected: null}
             )];
             const viewLink = yield `/task/${encodeUUID(action.data.taskUUID)}`
-            if(action.type !== taskActions.UPDATE_TASK_TIME_REJECTED_FROM_SOCKET)
-                yield put(displayInfoNotification("Task marked rejected", restoreActions, viewLink))
+            yield put(displayInfoNotification("Task marked rejected", restoreActions, viewLink))
         }
     }
     if (parent.taskGroup) {
