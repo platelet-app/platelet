@@ -33,7 +33,7 @@ import {clearDashboardFilter} from "../../../redux/dashboardFilter/DashboardFilt
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
-import {getTasksSelector} from "../../../redux/Api";
+import {getTasksSelector} from "../../../redux/Selectors";
 
 
 const getColumnTitle = key => {

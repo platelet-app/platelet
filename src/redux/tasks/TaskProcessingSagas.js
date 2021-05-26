@@ -22,19 +22,13 @@ import {
 import _ from "lodash";
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import * as taskDestinationActions from "../taskDestinations/TaskDestinationsActions";
-import {getTasksCancelledSelector, getTasksRejectedSelector, getTasksSelector, getUsersSelector} from "../Api";
+import {getTasksSelector, getUsersSelector} from "../Selectors";
 import {subscribeToUUID, subscribeToUUIDs, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import * as restoreFactories from "./TaskRestoreFactoryFunctions";
-import {replaceTasksState, updateTaskPatchRequest} from "./TasksActions";
 
 
 function* sortAndSendToState(action) {
-    const tasks = yield select(getTasksSelector);
-    const tasksRejected = yield select(getTasksRejectedSelector);
-    const tasksCancelled = yield select(getTasksCancelledSelector);
-
-
     const result = yield call(determineTaskType, action.taskGroup);
     for (const [key, value] of Object.entries(result)) {
         yield put(taskActions.taskCategoryActionFunctions[key].add(value));
@@ -385,7 +379,7 @@ function* addTaskAssignedRiderSuccess(action) {
     const currentTask = yield call(findExistingTask, tasks, action.data.taskUUID);
     const parent = yield call(findExistingTaskParent, tasks, action.data.taskUUID);
     if (action.data.payload.patch_id) {
-        yield put(updateTaskPatchRequest(
+        yield put(taskActions.updateTaskPatchRequest(
             action.data.taskUUID,
             {patch_id: action.data.payload.patch_id}
         ));
@@ -394,7 +388,7 @@ function* addTaskAssignedRiderSuccess(action) {
     if (action.type !== taskAssigneesActions.UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET && currentTask.assigned_riders.length === 0) {
         yield put(displayInfoNotification("Task marked as ACTIVE."))
     }
-    yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: action.data.payload.rider.patch_id, patch: action.data.payload.rider.patch}))
+    yield put(taskActions.updateTaskPatchRequest(action.data.taskUUID, {patch_id: action.data.payload.rider.patch_id, patch: action.data.payload.rider.patch}))
     if (parent.taskGroup) {
         const task = parent.taskGroup[action.data.taskUUID]
         const updatedItem = {
@@ -431,9 +425,9 @@ function* removeTaskAssignedRiderSuccess(action) {
 
         if (updatedItem && updatedItem.assigned_riders && updatedItem.assigned_riders.length > 0) {
             const finalUser = updatedItem.assigned_riders[updatedItem.assigned_riders.length - 1];
-            yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: finalUser.patch_id, patch: finalUser.patch}))
+            yield put(taskActions.updateTaskPatchRequest(action.data.taskUUID, {patch_id: finalUser.patch_id, patch: finalUser.patch}))
         } else if (updatedItem) {
-            yield put(updateTaskPatchRequest(action.data.taskUUID, {patch_id: null, patch: null}))
+            yield put(taskActions.updateTaskPatchRequest(action.data.taskUUID, {patch_id: null, patch: null}))
         }
     }
 }

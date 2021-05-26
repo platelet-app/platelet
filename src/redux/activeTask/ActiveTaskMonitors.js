@@ -1,5 +1,5 @@
 import {put, select, takeEvery} from "redux-saga/effects";
-import {getActiveTaskSelector} from "../Api";
+import {getActiveTaskSelector} from "../Selectors";
 import {
     updateActiveTask,
     updateActiveTaskAssignedCoordinator,

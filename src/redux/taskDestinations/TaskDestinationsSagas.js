@@ -1,5 +1,5 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
-import {getApiControl, getPresetLocations, getTasksSelector} from "../Api";
+import {getApiControl, getPresetLocations, getTasksSelector} from "../Selectors";
 import {
     addNewDropoffLocationAndSetTaskActions,
     addNewDropoffLocationAndSetTaskFailure,

@@ -1,5 +1,5 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import * as taskWaypointActions from "./TasksWaypointActions";
 
 

@@ -25,7 +25,7 @@ import {
 } from "../../redux/sockets/SocketActions";
 import {getTaskUUIDEtags} from "./utilities";
 import {getDashboardRoleMode, saveDashboardRoleMode} from "../../utilities";
-import {getTasksInitialisedStatus, getTasksSelector} from "../../redux/Api";
+import {getTasksInitialisedStatus, getTasksSelector} from "../../redux/Selectors";
 
 function Dashboard() {
     const dispatch = useDispatch();

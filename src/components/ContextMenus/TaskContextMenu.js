@@ -16,7 +16,7 @@ import {deleteButtonStyles} from "./contextMenuCSS";
 import PropTypes from "prop-types";
 import {findExistingTask} from "../../utilities";
 import {displayErrorNotification, displayInfoNotification} from "../../redux/notifications/NotificationsActions";
-import {getTasksSelector} from "../../redux/Api";
+import {getTasksSelector} from "../../redux/Selectors";
 
 const initialState = {
     mouseX: null,

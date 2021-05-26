@@ -68,7 +68,7 @@ import {
 } from "./TasksActions"
 
 
-import {getApiControl, getTasksSelector, getUsersSelector, getWhoami} from "../Api"
+import {getApiControl, getTasksSelector, getUsersSelector, getWhoami} from "../Selectors"
 import {
     refreshTaskAssignmentsSocket,
     refreshTasksDataSocket,

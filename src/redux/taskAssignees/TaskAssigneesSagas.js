@@ -1,5 +1,5 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
-import {getApiControl, getTasksSelector, getUsersSelector} from "../Api";
+import {getApiControl, getTasksSelector, getUsersSelector} from "../Selectors";
 import {
     addTaskAssignedCoordinatorActions,
     removeTaskAssignedRiderActions,

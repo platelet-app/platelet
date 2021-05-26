@@ -17,7 +17,7 @@ import {
     getAvailableDeliverablesActions
 } from "./DeliverablesActions"
 
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import {convertListDataToObjects} from "../redux_utilities";
 
 export function* postNewDeliverable(action) {

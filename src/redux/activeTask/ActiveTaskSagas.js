@@ -1,6 +1,6 @@
 import {call, put, select, takeLatest} from "redux-saga/effects";
 import {findExistingTask} from "../../utilities";
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import {getTaskSuccess, getTaskFailure, getTaskNotFound, getTaskActions} from "./ActiveTaskActions";
 
 function* getTask(action) {

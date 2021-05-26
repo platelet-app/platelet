@@ -1,5 +1,5 @@
 import {call, put, select, takeLatest} from "redux-saga/effects";
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import {getServerSettingsActions, getServerSettingsFailure, getServerSettingsSuccess} from "./ServerSettingsActions";
 
 export function* getServerSettings() {

@@ -3,7 +3,7 @@ import * as taskActions from "./TasksActions"
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import {determineTaskType, encodeUUID, findExistingTaskParent} from "../../utilities";
 import {sortAndSendToState, taskCategoryActionFunctions, updateTaskPatchRequest} from "./TasksActions";
-import {getTasksSelector, getUsersSelector} from "../Api";
+import {getTasksSelector, getUsersSelector} from "../Selectors";
 import {initialTasksState} from "./TasksReducers";
 import _ from "lodash";
 import {convertToRelays, taskGroupSort} from "./task_redux_utilities";
