@@ -251,7 +251,7 @@ function* updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess(action) {
         const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
         switch (action.type) {
             case taskActions.updateTaskRejectedTimeActions.success: {
-                const currentValue = parent.taskGroup[action.data.taskUUID].time_cancelled;
+                const currentValue = parent.taskGroup[action.data.taskUUID].time_rejected;
                 if (currentValue === null) {
                     // only notify if marking rejected for the first time
                     yield put(displayInfoNotification("Task marked rejected", restoreFactories.actionTimeRejectedRestoreFactory(action), viewLink))
@@ -259,7 +259,7 @@ function* updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess(action) {
                 break;
             }
             case taskActions.updateTaskCancelledTimeActions.success: {
-                const currentValue = parent.taskGroup[action.data.taskUUID].time_rejected;
+                const currentValue = parent.taskGroup[action.data.taskUUID].time_cancelled;
                 if (currentValue === null) {
                     // only notify if marking rejecting for the first time
                     yield put(displayInfoNotification("Task marked cancelled", restoreFactories.actionTimeCancelledRestoreFactory(action), viewLink))
