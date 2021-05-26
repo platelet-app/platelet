@@ -175,7 +175,7 @@ export default function* rootSaga() {
         call(taskProcessingSagas.watchUpdateTaskSuccess),
         call(taskProcessingSagas.watchPutTaskSuccess),
         call(taskProcessingSagas.watchAddTaskAssignedRiderSuccess),
-        call(taskProcessingSagas.watchUpdateTaskTimeCancelledTimeRejectedSuccess),
+        call(taskProcessingSagas.watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
         call(taskProcessingSagas.watchAddTaskAssignedCoordinatorSuccess),
         call(taskProcessingSagas.watchAppendTasksCancelledDeliveredRejected)
     ])

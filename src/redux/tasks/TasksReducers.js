@@ -27,7 +27,12 @@ import {
     updateTaskPickupTimeActions,
     updateTaskDropoffTimeActions,
     updateTaskCancelledTimeActions,
-    updateTaskRejectedTimeActions, deleteTaskActions, getTasksActions, taskCategoryActions, REPLACE_TASKS_STATE
+    updateTaskRejectedTimeActions,
+    deleteTaskActions,
+    getTasksActions,
+    taskCategoryActions,
+    REPLACE_TASKS_STATE,
+    replaceTasksState
 
 } from "./TasksActions";
 import {
@@ -59,6 +64,7 @@ import {
     setTaskDropoffDestinationActions,
     setTaskPickupDestinationActions, unsetTaskDropoffDestinationActions, unsetTaskPickupDestinationActions
 } from "../taskDestinations/TaskDestinationsActions";
+import {put} from "redux-saga/effects";
 
 export const initialTasksState = {
     tasks: {
@@ -83,7 +89,7 @@ const categoriesCheck = categoriesCondense();
 
 export function tasks(state = initialTasksState, action) {
     let filteredTasks = state.tasks;
-    if (action.type && categoriesCheck.includes(action.type)) {
+    if (categoriesCheck.includes(action.type)) {
         // we're adding to state -
         // find the first task we can
         let task;
@@ -99,6 +105,14 @@ export function tasks(state = initialTasksState, action) {
         if (parent.taskGroup) {
             // if we find it, filter it from existing state and use that in the main reducer
             filteredTasks = removeParentFromTasks(state.tasks, parent.listType, task.parent_id);
+            if ([taskCategoryActions.tasksRejected.add, taskCategoryActions.tasksCancelled.add].includes(action.type)) {
+                const existingCheck = findExistingTaskParentByID(
+                    _.pick(state.tasks, ["tasksRejected", "tasksCancelled"])
+                , parent.parentID);
+                if (existingCheck.taskGroup)
+                    action.data[parent.parentID] = {...existingCheck.taskGroup, ...action.data[parent.parentID]}
+
+            }
         }
     }
     switch (action.type) {

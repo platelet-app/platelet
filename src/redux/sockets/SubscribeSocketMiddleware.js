@@ -165,14 +165,12 @@ export const createSubscribeSocketMiddleware = () => {
                             case "UPDATE_TASK":
                                 const {time_rejected, time_cancelled, etag, ...everythingElse} = {...action.data.data};
                                 if (!!time_rejected || time_rejected === null) {
-                                    console.log(time_rejected)
                                     storeAPI.dispatch(updateTaskTimeRejectedFromSocket({
                                         taskUUID: action.data.object_uuid,
                                         payload: {time_rejected, etag}
                                     }));
                                 }
                                 if (!!time_cancelled || time_cancelled === null) {
-                                    console.log(time_cancelled)
                                     storeAPI.dispatch(updateTaskTimeCancelledFromSocket({
                                         taskUUID: action.data.object_uuid,
                                         payload: {time_cancelled, etag}
@@ -270,7 +268,6 @@ export const createSubscribeSocketMiddleware = () => {
                             default:
                                 break;
                         }
-                        console.log(action.data.data)
                     } else
                         console.log("this came from us")
                 }
@@ -282,7 +279,6 @@ export const createSubscribeSocketMiddleware = () => {
                         case "TASKS_REFRESH": {
                             console.log("TASKS REFRESH")
                             const tasks = JSON.parse(action.data.data);
-                            console.log(tasks)
                             if (tasks.length !== 0) {
                                 for (const task of tasks) {
                                     if (task.deleted) {
@@ -312,7 +308,6 @@ export const createSubscribeSocketMiddleware = () => {
                                     storeAPI.dispatch(addTaskFromSocket(task))
                                 }
                             }
-                            console.log(tasks)
                             break;
                         }
 
@@ -368,7 +363,6 @@ export const createSubscribeCommentsSocketMiddleware = () => {
                     console.log("ignore")
                 } else {
                     if (action.data.tab_id != null && getTabIdentifier() !== action.data.tab_id) {
-                        console.log(action.data.type)
                         switch (action.data.type) {
                             case "ADD_COMMENT":
                                 storeAPI.dispatch(addCommentFromSocket(action.data.data))

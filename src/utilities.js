@@ -237,9 +237,6 @@ export function findExistingTaskParentByID(tasks, parentID) {
     let listType = undefined;
     let taskGroup = undefined;
     for (const [listType, value] of Object.entries(tasks)) {
-        if (listType === "tasksCancelled" || listType === "tasksRejected") {
-            continue;
-        }
         if (value)
             taskGroup = value[parentID]
         if (taskGroup) {

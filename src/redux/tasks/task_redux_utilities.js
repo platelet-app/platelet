@@ -11,7 +11,22 @@ export function convertTaskListsToObjects(tasks) {
     for (const [key, value] of Object.entries(tasks)) {
         groupedTasks[key] = convertToRelays(value);
     }
+
     return groupedTasks;
+}
+
+export function shiftParentIDs(taskGroup, shiftValue = 1000000) {
+    const shifted = {};
+    for (const task of Object.values(taskGroup)) {
+        let newPID = 0;
+        for (const i of Object.values(task)) {
+            if (!newPID)
+                newPID = i.parent_id += shiftValue;
+            break;
+        }
+        shifted[newPID] = task;
+    }
+    return shifted;
 }
 
 export function convertToRelays(group) {

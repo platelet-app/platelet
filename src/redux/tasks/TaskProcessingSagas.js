@@ -4,7 +4,7 @@ import {
     convertToRelays,
     removeAssigneeFromList,
     removeParentFromTasks,
-    sortAndConcat, taskGroupSort
+    taskGroupSort
 } from "./task_redux_utilities";
 import * as taskAssigneesActions from "../taskAssignees/TaskAssigneesActions"
 import * as taskWaypointActions from "./TasksWaypointActions"
@@ -14,36 +14,27 @@ import {
     findExistingTaskParent,
     findExistingTaskParentByID
 } from "../../utilities";
-import {
-    appendTasksCancelledActions,
-    appendTasksDeliveredActions,
-    appendTasksRejectedActions
-} from "./TasksWaypointActions";
 import update from "immutability-helper";
 import {
-    setTaskDropoffDestinationActions,
     setTaskDropoffDestinationRequest,
-    setTaskPickupDestinationActions,
-    unsetTaskDropoffDestinationActions,
     unsetTaskDropoffDestinationRequest,
-    unsetTaskPickupDestinationActions
 } from "../taskDestinations/TaskDestinationsActions";
-import {
-    addTaskAssignedCoordinatorActions,
-    addTaskAssignedRiderActions, removeTaskAssignedCoordinatorActions,
-    removeTaskAssignedRiderActions
-} from "../taskAssignees/TaskAssigneesActions";
 import _ from "lodash";
-import {initialTasksState} from "./TasksReducers";
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
 import * as taskDestinationActions from "../taskDestinations/TaskDestinationsActions";
-import {getTasksSelector, getUsersSelector} from "../Api";
+import {getTasksCancelledSelector, getTasksRejectedSelector, getTasksSelector, getUsersSelector} from "../Api";
 import {subscribeToUUID, subscribeToUUIDs, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import * as restoreFactories from "./TaskRestoreFactoryFunctions";
-import {updateTaskPatchRequest} from "./TasksActions";
+import {replaceTasksState, updateTaskPatchRequest} from "./TasksActions";
+
 
 function* sortAndSendToState(action) {
+    const tasks = yield select(getTasksSelector);
+    const tasksRejected = yield select(getTasksRejectedSelector);
+    const tasksCancelled = yield select(getTasksCancelledSelector);
+
+
     const result = yield call(determineTaskType, action.taskGroup);
     for (const [key, value] of Object.entries(result)) {
         yield put(taskActions.taskCategoryActionFunctions[key].add(value));
@@ -105,8 +96,9 @@ function* deleteTaskSuccess(action) {
     let relayPrevious;
     const tasks = yield select(getTasksSelector);
     const parent = yield call(findExistingTaskParent, tasks, action.data)
-    const beforeDelete = yield parent.taskGroup[action.data]
-    if (beforeDelete) {
+    let beforeDelete;
+    if (parent.taskGroup && parent.taskGroup[action.data]) {
+        beforeDelete = parent.taskGroup[action.data]
         const groupValues = yield call([Object, Object.values], parent.taskGroup);
         const groupSorted = yield call([groupValues, groupValues.sort], taskGroupSort)
         if (beforeDelete.relay_previous_uuid)
@@ -190,31 +182,6 @@ export function* watchAddTaskRelaySuccess() {
     ]);
 }
 
-export const testable = {
-    restoreTaskSuccess,
-    watchAddTaskAssignedRiderSuccess,
-    addTaskAssignedRiderSuccess,
-    watchAppendTasksCancelledDeliveredRejected,
-    appendTasksSuccess,
-    sortAndSendToState,
-    deleteTaskSuccess,
-    addTaskSuccess,
-    watchRestoreTaskSuccess,
-    watchDeleteTaskSuccess,
-    watchAddTaskSuccess,
-    watchSortAndSendToState,
-    addTaskRelaySuccess,
-    watchAddTaskRelaySuccess,
-    putTaskSuccess,
-    watchPutTaskSuccess,
-    watchUpdateTaskTimeCancelledTimeRejectedSuccess,
-    updateTaskTimeCancelledTimeRejectedSuccess,
-    watchRemoveTaskAssignedCoordinatorSuccess,
-    removeTaskAssignedCoordinatorSuccess,
-    watchAddTaskAssignedCoordinatorSuccess,
-    addTaskAssignedCoordinatorSuccess
-};
-
 function* putTaskSuccess(action) {
     const tasks = yield select(getTasksSelector);
     const parent = yield call(findExistingTaskParent, tasks, action.data.uuid);
@@ -273,11 +240,9 @@ export function* watchUpdateTaskSuccess() {
         takeEvery(taskActions.updateTaskRequesterContactActions.success, updateTaskSuccess),
         takeEvery(taskActions.updateTaskPriorityActions.success, updateTaskSuccess),
         takeEvery(taskActions.updateTaskPatchActions.success, updateTaskSuccess),
-        takeEvery(taskActions.updateTaskPickupTimeActions.success, updateTaskSuccess),
-        takeEvery(taskActions.updateTaskDropoffTimeActions.success, updateTaskSuccess),
-        takeEvery(taskActions.UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET, updateTaskSuccess),
-        takeEvery(taskActions.UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, updateTaskSuccess),
         takeEvery(taskActions.updateTaskTimeOfCallActions.success, updateTaskSuccess),
+        takeEvery(taskActions.updateTaskRejectedTimeActions.success, updateTaskSuccess),
+        takeEvery(taskActions.updateTaskCancelledTimeActions.success, updateTaskSuccess),
         takeEvery(taskDestinationActions.setTaskDropoffDestinationActions.success, updateTaskSuccess),
         takeEvery(taskDestinationActions.setTaskPickupDestinationActions.success, updateTaskSuccess),
         takeEvery(taskDestinationActions.unsetTaskDropoffDestinationActions.success, updateTaskSuccess),
@@ -285,7 +250,70 @@ export function* watchUpdateTaskSuccess() {
     ])
 }
 
-function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
+function* updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess(action) {
+    const tasks = yield select(getTasksSelector);
+    const parent = yield call(findExistingTaskParent, tasks, action.data.taskUUID);
+    if (parent.taskGroup) {
+        const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
+        switch (action.type) {
+            case taskActions.updateTaskRejectedTimeActions.success: {
+                const currentValue = parent.taskGroup[action.data.taskUUID].time_cancelled;
+                if (currentValue === null) {
+                    // only notify if marking rejected for the first time
+                    yield put(displayInfoNotification("Task marked rejected", restoreFactories.actionTimeRejectedRestoreFactory(action), viewLink))
+                }
+                break;
+            }
+            case taskActions.updateTaskCancelledTimeActions.success: {
+                const currentValue = parent.taskGroup[action.data.taskUUID].time_rejected;
+                if (currentValue === null) {
+                    // only notify if marking rejecting for the first time
+                    yield put(displayInfoNotification("Task marked cancelled", restoreFactories.actionTimeCancelledRestoreFactory(action), viewLink))
+                }
+                break;
+            }
+            case taskActions.updateTaskPickupTimeActions.success: {
+                const currentValue = parent.taskGroup[action.data.taskUUID].time_picked_up;
+                if (currentValue === null) {
+                    // only notify if marking picked up for the first time
+                    yield put(displayInfoNotification("Task marked picked up", restoreFactories.actionTimePickedUpRestoreFactory(action), viewLink))
+                }
+                break;
+            }
+            case taskActions.updateTaskDropoffTimeActions.success: {
+                const currentValue = parent.taskGroup[action.data.taskUUID].time_dropped_off;
+                if (currentValue === null) {
+                    // only notify if marking picked up for the first time
+                    yield put(displayInfoNotification("Task marked delivered", restoreFactories.actionTimeDroppedOffRestoreFactory(action), viewLink))
+                }
+                break;
+            }
+            default:
+                return
+        }
+        const taskToUpdate = parent.taskGroup[action.data.taskUUID]
+        const updatedItem = {...taskToUpdate, ...action.data.payload};
+        const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
+        yield put(taskActions.sortAndSendToState(updatedGroup))
+    }
+    if (parent.parentID)
+        yield put(taskActions.resetGroupRelayUUIDs(parent.parentID))
+}
+
+export function* watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess() {
+    yield all([
+        takeEvery(taskActions.updateTaskCancelledTimeActions.success, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        takeEvery(taskActions.updateTaskRejectedTimeActions.success, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        takeEvery(taskActions.UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        takeEvery(taskActions.UPDATE_TASK_TIME_REJECTED_FROM_SOCKET, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        takeEvery(taskActions.updateTaskPickupTimeActions.success, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        takeEvery(taskActions.updateTaskDropoffTimeActions.success, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        takeEvery(taskActions.UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        takeEvery(taskActions.UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        ])
+}
+
+function* updateTaskTimeCancelledTimeRejectedSuccessNope(action) {
     const {payload} = action.data
     const tasks = yield select(getTasksSelector);
     const parent = yield call(findExistingTaskParent, tasks, action.data.taskUUID);
@@ -295,6 +323,17 @@ function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
             // only notify if marking cancelled for the first time
             const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
             yield put(displayInfoNotification("Task marked cancelled", restoreFactories.actionTimeCancelledRestoreFactory(action), viewLink))
+        } else {
+            // need to remove the parent here first and put the group back in without the uncancelled task
+            const filteredTasks = yield call(removeParentFromTasks, tasks, "tasksCancelled", parent.parentID);
+            const filteredGroup = yield call(_.omit, parent.taskGroup, action.data.taskUUID);
+            let newList;
+            // if it's empty with the removed task then don't put it back in the list
+            if (_.isEmpty(filteredGroup))
+                newList = {...filteredTasks['tasksCancelled']}
+            else
+                newList = {...filteredTasks['tasksCancelled'], [parent.parentID]: filteredGroup};
+            yield put(taskActions.taskCategoryActionFunctions.tasksCancelled.put(newList));
         }
     } else if (action.type === taskActions.updateTaskRejectedTimeActions.success) {
         const currentValue = parent.taskGroup[action.data.taskUUID].time_rejected;
@@ -306,11 +345,21 @@ function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
             )];
             const viewLink = yield `/task/${encodeUUID(action.data.taskUUID)}`
             yield put(displayInfoNotification("Task marked rejected", restoreActions, viewLink))
+        } else {
+            // need to remove the parent here first and put the group back in without the unrejected task
+            const filteredTasks = yield call(removeParentFromTasks, tasks, "tasksRejected", parent.parentID);
+            const filteredGroup = yield call(_.omit, parent.taskGroup, action.data.taskUUID);
+            let newList;
+            // if it's empty with the removed task then don't put it back in the list
+            if (_.isEmpty(filteredGroup))
+                newList = {...filteredTasks['tasksRejected']}
+            else
+                newList = {...filteredTasks['tasksRejected'], [parent.parentID]: filteredGroup};
+            yield put(taskActions.taskCategoryActionFunctions.tasksRejected.put(newList));
         }
     }
     if (parent.taskGroup) {
         let newGroup = {};
-        // if it was already categorised as rejected or cancelled, we need to put it back into the existing parent group before sorting it again
         if (parent.listType === "tasksRejected" || parent.listType === "tasksCancelled") {
             const rejectedCancelledTask = {...parent.taskGroup[action.data.taskUUID], ...payload};
             const taskCurrentParent = yield call(findExistingTaskParentByID, tasks, parent.parentID)
@@ -328,15 +377,6 @@ function* updateTaskTimeCancelledTimeRejectedSuccess(action) {
         }
     }
     yield put(taskActions.resetGroupRelayUUIDs(parent.parentID));
-}
-
-export function* watchUpdateTaskTimeCancelledTimeRejectedSuccess() {
-    yield all([
-        takeEvery(taskActions.updateTaskCancelledTimeActions.success, updateTaskTimeCancelledTimeRejectedSuccess),
-        takeEvery(taskActions.updateTaskRejectedTimeActions.success, updateTaskTimeCancelledTimeRejectedSuccess),
-        takeEvery(taskActions.UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET, updateTaskTimeCancelledTimeRejectedSuccess),
-        takeEvery(taskActions.UPDATE_TASK_TIME_REJECTED_FROM_SOCKET, updateTaskTimeCancelledTimeRejectedSuccess),
-    ]);
 }
 
 function* addTaskAssignedRiderSuccess(action) {
@@ -493,3 +533,29 @@ function* resetGroupRelayUUIDs(action) {
 export function* watchResetGroupRelayUUIDs() {
     yield takeEvery(taskActions.RESET_GROUP_RELAY_UUIDS, resetGroupRelayUUIDs)
 }
+
+export const testable = {
+    restoreTaskSuccess,
+    watchAddTaskAssignedRiderSuccess,
+    addTaskAssignedRiderSuccess,
+    watchAppendTasksCancelledDeliveredRejected,
+    appendTasksSuccess,
+    sortAndSendToState,
+    deleteTaskSuccess,
+    addTaskSuccess,
+    watchRestoreTaskSuccess,
+    watchDeleteTaskSuccess,
+    watchAddTaskSuccess,
+    watchSortAndSendToState,
+    addTaskRelaySuccess,
+    watchAddTaskRelaySuccess,
+    putTaskSuccess,
+    watchPutTaskSuccess,
+    watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess,
+    updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess,
+    watchRemoveTaskAssignedCoordinatorSuccess,
+    removeTaskAssignedCoordinatorSuccess,
+    watchAddTaskAssignedCoordinatorSuccess,
+    addTaskAssignedCoordinatorSuccess
+};
+
