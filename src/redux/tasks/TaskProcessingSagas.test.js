@@ -438,8 +438,81 @@ describe("putting a task into state after successful request to update time canc
             .put(sortAndSendToState({someUUID: {...action.data.payload, parent_id: 1}}))
             .put(taskActions.resetGroupRelayUUIDs(1))
             .run()
+    });
+    it("updates the task state with rejected time and sends a notification", () => {
+        const action = {
+            type: taskActions.updateTaskRejectedTimeActions.success,
+            data: {taskUUID: "someUUID", payload: {time_rejected: new Date().toISOString()}}
+        };
+        const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
+        restoreFactories.actionTimeRejectedRestoreFactory.mockReturnValue(jest.fn())
+        return expectSaga(testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksNew: {
+                        1: {
+                            someUUID: {
+                                time_rejected: null,
+                                parent_id: 1
+                            }
+                        }
+                    }
+                }]])
+            .put(displayInfoNotification("Task marked rejected", restoreFactories.actionTimeRejectedRestoreFactory(action), viewLink))
+            .put(sortAndSendToState({someUUID: {...action.data.payload, parent_id: 1}}))
+            .put(taskActions.resetGroupRelayUUIDs(1))
+            .run()
     })
-})
+    it("updates the task state with dropped off time and sends a notification", () => {
+        const action = {
+            type: taskActions.updateTaskDropoffTimeActions.success,
+            data: {taskUUID: "someUUID", payload: {time_dropped_off: new Date().toISOString()}}
+        };
+        const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
+        restoreFactories.actionTimeDroppedOffRestoreFactory.mockReturnValue(jest.fn())
+        return expectSaga(testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksNew: {
+                        1: {
+                            someUUID: {
+                                time_dropped_off: null,
+                                parent_id: 1
+                            }
+                        }
+                    }
+                }]])
+            .put(displayInfoNotification("Task marked delivered", restoreFactories.actionTimeDroppedOffRestoreFactory(action), viewLink))
+            .put(sortAndSendToState({someUUID: {...action.data.payload, parent_id: 1}}))
+            .put(taskActions.resetGroupRelayUUIDs(1))
+            .run()
+    });
+    it("updates the task state with dropped off time and sends a notification", () => {
+        const action = {
+            type: taskActions.updateTaskPickupTimeActions.success,
+            data: {taskUUID: "someUUID", payload: {time_picked_up: new Date().toISOString()}}
+        };
+        const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
+        restoreFactories.actionTimePickedUpRestoreFactory.mockReturnValue(jest.fn())
+        return expectSaga(testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess, action)
+            .provide([
+                [select(getTasksSelector), {
+                    tasksNew: {
+                        1: {
+                            someUUID: {
+                                time_picked_up: null,
+                                parent_id: 1
+                            }
+                        }
+                    }
+                }]])
+            .put(displayInfoNotification("Task marked picked up", restoreFactories.actionTimePickedUpRestoreFactory(action), viewLink))
+            .put(sortAndSendToState({someUUID: {...action.data.payload, parent_id: 1}}))
+            .put(taskActions.resetGroupRelayUUIDs(1))
+            .run()
+    });
+});
+
 describe("appending tasks to delivered, cancelled, rejected endless scrolling column", () => {
     const currentTasks = [...Array(20).keys()].map(
         i => {
