@@ -1,10 +1,9 @@
-import {testable} from "./TaskProcessingSagas"
+import {testable, watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess} from "./TaskProcessingSagas"
 import * as taskActions from "./TasksActions"
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
-import {determineTaskType, encodeUUID, findExistingTaskParent} from "../../utilities";
+import {determineTaskType, encodeUUID, findExistingTaskParent, findExistingTaskParentByID} from "../../utilities";
 import {sortAndSendToState, taskCategoryActionFunctions, updateTaskPatchRequest} from "./TasksActions";
 import {getTasksSelector, getUsersSelector} from "../Selectors";
-import {initialTasksState} from "./TasksReducers";
 import _ from "lodash";
 import {convertToRelays, taskGroupSort} from "./task_redux_utilities";
 import {subscribeToUUID, subscribeToUUIDs, unsubscribeFromUUID} from "../sockets/SocketActions";
@@ -98,7 +97,6 @@ describe("sagas that add a task, after the request has succeeded", () => {
                         user: {uuid: "someUser"}
                     }
                 }
-
             ))
             .put(subscribeToUUID("someUUID"))
             .run()
@@ -226,14 +224,14 @@ describe("sagas that delete a task, after the request has succeeded", () => {
         const action = {
             type: taskActions.deleteTaskActions.success, data
         };
-        const gen = testable.deleteTaskSuccess(action);
-        const beforeDelete = undefined;
-        gen.next();
-        gen.next();
-        gen.next(parent);
-        gen.next(beforeDelete);
+        expectSaga(testable.deleteTaskSuccess, action)
+            .provide([
+                [select(getTasksSelector),
+                    {tasksNew: {}}
+                ]])
+            .call(findExistingTaskParent, {tasksNew: {}}, data)
+            .run()
 
-        expect(gen.next(parent).done).toEqual(true);
     });
 });
 
@@ -263,6 +261,7 @@ describe("sagas that restore a deleted task after the request has completed", ()
                     tasksNew: {}
                 }]
             ])
+            .call(findExistingTaskParentByID, {tasksNew: {}}, action.data.parent_id)
             .put(taskActions.sortAndSendToState({[data.uuid]: data}))
             .run();
     });
@@ -399,15 +398,19 @@ describe("sagas that take a task and put it into state, replacing the existing o
     })
 })
 
-describe("putting a task into state after successful request to update time cancelled or rejected", () => {
-    test("watch for time cancelled/rejected actions", () => {
-        testSaga(testable.watchUpdateTaskTimeCancelledTimeRejectedSuccess)
+describe("putting a task into state after successful request to update time cancelled, rejected, picked up or delivered", () => {
+    test("watch for time cancelled/rejected/pickedup/delivered actions", () => {
+        testSaga(testable.watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess)
             .next()
             .all([
-                takeEvery(taskActions.updateTaskCancelledTimeActions.success, testable.updateTaskTimeCancelledTimeRejectedSuccess),
-                takeEvery(taskActions.updateTaskRejectedTimeActions.success, testable.updateTaskTimeCancelledTimeRejectedSuccess),
-                takeEvery(taskActions.UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET, testable.updateTaskTimeCancelledTimeRejectedSuccess),
-                takeEvery(taskActions.UPDATE_TASK_TIME_REJECTED_FROM_SOCKET, testable.updateTaskTimeCancelledTimeRejectedSuccess),
+                takeEvery(taskActions.updateTaskCancelledTimeActions.success, testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+                takeEvery(taskActions.updateTaskRejectedTimeActions.success, testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+                takeEvery(taskActions.UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET, testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+                takeEvery(taskActions.UPDATE_TASK_TIME_REJECTED_FROM_SOCKET, testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+                takeEvery(taskActions.updateTaskPickupTimeActions.success, testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+                takeEvery(taskActions.updateTaskDropoffTimeActions.success, testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+                takeEvery(taskActions.UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET, testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+                takeEvery(taskActions.UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
             ])
             .next()
             .isDone()
@@ -419,7 +422,7 @@ describe("putting a task into state after successful request to update time canc
         };
         const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
         restoreFactories.actionTimeCancelledRestoreFactory.mockReturnValue(jest.fn())
-        return expectSaga(testable.updateTaskTimeCancelledTimeRejectedSuccess, action)
+        return expectSaga(testable.updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess, action)
             .provide([
                 [select(getTasksSelector), {
                     tasksNew: {
@@ -449,7 +452,8 @@ describe("appending tasks to delivered, cancelled, rejected endless scrolling co
     const taskState = {};
     for (const i of currentTasks) {
         taskState[i.parent_id] = {[i.uuid]: i}
-    };
+    }
+    ;
     const newTasks = [...Array(20).keys()].map(
         i => {
             return {
@@ -461,7 +465,8 @@ describe("appending tasks to delivered, cancelled, rejected endless scrolling co
     const convertedTasks = {};
     for (const i of newTasks) {
         convertedTasks[i.parent_id] = {[i.uuid]: i}
-    };
+    }
+    ;
     test("watch append delivered, cancelled, rejected saga", () => {
         testSaga(testable.watchAppendTasksCancelledDeliveredRejected)
             .next()
@@ -474,7 +479,8 @@ describe("appending tasks to delivered, cancelled, rejected endless scrolling co
             .isDone()
     });
     test("append tasks to the delivered tasks column", () => {
-        const action = {type: taskWaypointActions.appendTasksDeliveredActions.success,
+        const action = {
+            type: taskWaypointActions.appendTasksDeliveredActions.success,
             data: {tasksDelivered: newTasks}
         }
         return expectSaga(testable.appendTasksSuccess, action)
@@ -488,7 +494,8 @@ describe("appending tasks to delivered, cancelled, rejected endless scrolling co
             .run();
     });
     test("append tasks to the rejected tasks column", () => {
-        const action = {type: taskWaypointActions.appendTasksRejectedActions.success,
+        const action = {
+            type: taskWaypointActions.appendTasksRejectedActions.success,
             data: {tasksRejected: newTasks}
         }
         return expectSaga(testable.appendTasksSuccess, action)
@@ -502,7 +509,8 @@ describe("appending tasks to delivered, cancelled, rejected endless scrolling co
             .run();
     });
     test("append tasks to the cancelled tasks column", () => {
-        const action = {type: taskWaypointActions.appendTasksCancelledActions.success,
+        const action = {
+            type: taskWaypointActions.appendTasksCancelledActions.success,
             data: {tasksCancelled: newTasks}
         }
         return expectSaga(testable.appendTasksSuccess, action)
@@ -536,7 +544,7 @@ describe("test assignment of riders to tasks", () => {
             .all([
                 takeEvery(taskAssigneesActions.addTaskAssignedRiderActions.success, testable.addTaskAssignedRiderSuccess),
                 takeEvery(taskAssigneesActions.UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET, testable.addTaskAssignedRiderSuccess)
-                ])
+            ])
             .next()
             .isDone()
     });
@@ -557,7 +565,8 @@ describe("test assignment of riders to tasks", () => {
             }
         }
         const endResult =
-            { someUUID: {
+            {
+                someUUID: {
                     ...tasksState.tasksNew["1"].someUUID,
                     assigned_riders_display_string: "Someone Person",
                     assigned_riders: [action.data.payload.rider]
@@ -569,11 +578,14 @@ describe("test assignment of riders to tasks", () => {
                     ...tasksState
                 }]])
             .put(taskActions.updateTaskPatchRequest(
-            action.data.taskUUID,
-            {patch_id: action.data.payload.patch_id}
-        ))
+                action.data.taskUUID,
+                {patch_id: action.data.payload.patch_id}
+            ))
             .put(displayInfoNotification("Task marked as ACTIVE."))
-            .put(taskActions.updateTaskPatchRequest(action.data.taskUUID, {patch_id: action.data.payload.rider.patch_id, patch: action.data.payload.rider.patch}))
+            .put(taskActions.updateTaskPatchRequest(action.data.taskUUID, {
+                patch_id: action.data.payload.rider.patch_id,
+                patch: action.data.payload.rider.patch
+            }))
             .put(taskActions.sortAndSendToState(
                 endResult
             ))

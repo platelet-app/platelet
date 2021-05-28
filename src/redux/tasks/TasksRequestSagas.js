@@ -7,10 +7,7 @@ import {
     select,
     all
 } from 'redux-saga/effects'
-
 import * as taskActions from "./TasksActions"
-
-
 import {getApiControl, getWhoami} from "../Selectors"
 import {
     refreshTaskAssignmentsSocket,
@@ -382,7 +379,6 @@ export function* refreshTasksFromSocket(action) {
 export function* watchRefreshTasksFromSocket() {
     yield takeLatest(taskActions.START_REFRESH_TASKS_LOOP_FROM_SOCKET, refreshTasksFromSocket)
 }
-
 
 function* setRoleViewAndGetTasks(action) {
     yield put(setRoleView(action.data.role))
