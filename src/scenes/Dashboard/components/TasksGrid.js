@@ -22,7 +22,6 @@ import {CircularProgress, Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import TasksGridSkeleton from "./TasksGridSkeleton";
 import PropTypes from 'prop-types'
-import {initialTasksState} from "../../../redux/tasks/TasksReducers";
 import {showHide} from "../../../styles/common";
 import {
     appendTasksCancelledRequest,

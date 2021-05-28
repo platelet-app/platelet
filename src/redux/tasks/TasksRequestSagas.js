@@ -1,5 +1,4 @@
 import {
-    debounce,
     call,
     put,
     takeEvery,
@@ -9,21 +8,15 @@ import {
     all
 } from 'redux-saga/effects'
 import {
-    restoreTaskRequest,
-    updateTaskRejectedTimeRequest,
-    updateTaskDropoffTimeRequest,
-    updateTaskPickupTimeRequest,
     addTaskRelaySuccess,
     addTaskRelayFailure,
     resetGroupRelayUUIDs,
-    groupRelaysTogether,
     getAllTasksRequest,
     SET_ROLE_VIEW_AND_GET_TASKS,
     START_REFRESH_TASKS_LOOP_FROM_SOCKET,
     updateTaskTimeOfCallFailure,
     updateTaskTimeOfCallSuccess,
     updateTaskTimeOfCallActions,
-    updateTaskCancelledTimeRequest,
     addTaskActions,
     addTaskRelayActions,
     deleteTaskActions,
@@ -43,55 +36,21 @@ import {
     updateTaskCancelledTimeActions,
     updateTaskRejectedTimeActions,
 } from "./TasksActions"
-import {
-    addTaskSuccess,
-    updateTaskSuccess,
-    restoreTaskSuccess,
-    deleteTaskSuccess,
-    updateTaskRequesterContactSuccess,
-    updateTaskPickupTimeSuccess,
-    updateTaskDropoffTimeSuccess,
-    updateTaskPrioritySuccess,
-    updateTaskRejectedTimeSuccess,
-    updateTaskPatchSuccess,
-    addTaskFailure,
-    deleteTaskFailure,
-    restoreTaskFailure,
-    updateTaskFailure,
-    updateTaskRequesterContactFailure,
-    updateTaskPickupTimeFailure,
-    updateTaskDropoffTimeFailure,
-    updateTaskPriorityFailure,
-    updateTaskPatchFailure,
-    updateTaskRejectedTimeFailure,
-    updateTaskPatchRequest
-} from "./TasksActions"
+
+import * as taskActions from "./TasksActions"
 
 
-import {getApiControl, getTasksSelector, getUsersSelector, getWhoami} from "../Selectors"
+import {getApiControl, getWhoami} from "../Selectors"
 import {
     refreshTaskAssignmentsSocket,
     refreshTasksDataSocket,
     subscribeToUUID,
-    unsubscribeFromUUID
 } from "../sockets/SocketActions";
-import {displayInfoNotification} from "../notifications/NotificationsActions";
-import {encodeUUID, findExistingTask, findExistingTaskParent} from "../../utilities";
-import {
-    addTaskAssignedCoordinatorRequest,
-    addTaskAssignedCoordinatorSuccess,
-    addTaskAssignedRiderSuccess
-} from "../taskAssignees/TaskAssigneesActions";
+import {findExistingTask} from "../../utilities";
 import {setRoleView} from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
 import {createLoadingSelector, createPostingSelector} from "../selectors";
-import {convertTaskListsToObjects, taskGroupSort} from "./task_redux_utilities";
-import {
-    setTaskDropoffDestinationRequest,
-    unsetTaskDropoffDestinationRequest
-} from "../taskDestinations/TaskDestinationsActions";
-import * as taskActions from "./TasksActions";
-import * as restoreFactories from "./TaskRestoreFactoryFunctions";
+import {convertTaskListsToObjects} from "./task_redux_utilities";
 
 
 const emptyTask = {
@@ -120,9 +79,9 @@ function* postNewTask(action) {
             order_in_relay: 1,
             reference: result.reference
         };
-        yield put(addTaskSuccess({payload: task, autoAssign: action.data.autoAssign}));
+        yield put(taskActions.addTaskSuccess({payload: task, autoAssign: action.data.autoAssign}));
     } catch (error) {
-        yield put(addTaskFailure(error))
+        yield put(taskActions.addTaskFailure(error))
     }
 }
 
@@ -188,9 +147,9 @@ function* deleteTask(action) {
     try {
         const api = yield select(getApiControl);
         yield call([api, api.tasks.deleteTask], action.data.taskUUID);
-        yield put(deleteTaskSuccess(action.data.taskUUID))
+        yield put(taskActions.deleteTaskSuccess(action.data.taskUUID))
     } catch (error) {
-        yield put(deleteTaskFailure(error));
+        yield put(taskActions.deleteTaskFailure(error));
     }
 }
 
@@ -203,7 +162,7 @@ function* restoreTask(action) {
         const api = yield select(getApiControl);
         yield call([api, api.tasks.restoreTask], action.data.taskUUID);
         const result = yield call([api, api.tasks.getTask], action.data.taskUUID);
-        yield put(restoreTaskSuccess(result))
+        yield put(taskActions.restoreTaskSuccess(result))
         const currentTasks = yield select((state) => state.tasks.tasks);
         const afterRestore = yield findExistingTask(currentTasks, action.data.taskUUID)
         if (afterRestore) {
@@ -211,7 +170,7 @@ function* restoreTask(action) {
         }
         yield put(subscribeToUUID(result.uuid))
     } catch (error) {
-        yield put(restoreTaskFailure(error))
+        yield put(taskActions.restoreTaskFailure(error))
     }
 }
 
@@ -224,9 +183,9 @@ function* updateTask(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskSuccess(data))
+        yield put(taskActions.updateTaskSuccess(data))
     } catch (error) {
-        yield put(updateTaskFailure(error))
+        yield put(taskActions.updateTaskFailure(error))
     }
 }
 
@@ -235,9 +194,9 @@ function* updateTaskRequesterContact(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskRequesterContactSuccess(data))
+        yield put(taskActions.updateTaskRequesterContactSuccess(data))
     } catch (error) {
-        yield put(updateTaskRequesterContactFailure(error))
+        yield put(taskActions.updateTaskRequesterContactFailure(error))
     }
 }
 
@@ -247,9 +206,9 @@ function* updateTaskPickupTime(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskPickupTimeSuccess(data))
+        yield put(taskActions.updateTaskPickupTimeSuccess(data))
     } catch (error) {
-        yield put(updateTaskPickupTimeFailure(error))
+        yield put(taskActions.updateTaskPickupTimeFailure(error))
     }
 }
 
@@ -269,9 +228,9 @@ function* updateTaskDropoffTime(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskDropoffTimeSuccess(data))
+        yield put(taskActions.updateTaskDropoffTimeSuccess(data))
     } catch (error) {
-        yield put(updateTaskDropoffTimeFailure(error))
+        yield put(taskActions.updateTaskDropoffTimeFailure(error))
     }
 }
 
@@ -280,9 +239,9 @@ function* updateTaskPriority(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskPrioritySuccess(data))
+        yield put(taskActions.updateTaskPrioritySuccess(data))
     } catch (error) {
-        yield put(updateTaskPriorityFailure(error))
+        yield put(taskActions.updateTaskPriorityFailure(error))
     }
 }
 
@@ -291,9 +250,9 @@ function* updateTaskPatch(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskPatchSuccess(data))
+        yield put(taskActions.updateTaskPatchSuccess(data))
     } catch (error) {
-        yield put(updateTaskPatchFailure(error))
+        yield put(taskActions.updateTaskPatchFailure(error))
     }
 }
 
@@ -306,9 +265,9 @@ function* updateTaskPatchFromServer(action) {
             patch: "",
             patch_id: null
         };
-        yield put(updateTaskPatchRequest(action.data.taskUUID, payload))
+        yield put(taskActions.updateTaskPatchRequest(action.data.taskUUID, payload))
     } catch (error) {
-        yield put(updateTaskPatchFailure(error))
+        yield put(taskActions.updateTaskPatchFailure(error))
     }
 }
 
@@ -347,9 +306,9 @@ function* updateTaskRejectedTime(action) {
                 relay_previous: null
             }, taskUUID: action.data.taskUUID
         }
-        yield put(updateTaskRejectedTimeSuccess(data))
+        yield put(taskActions.updateTaskRejectedTimeSuccess(data))
     } catch (error) {
-        yield put(updateTaskRejectedTimeFailure(error))
+        yield put(taskActions.updateTaskRejectedTimeFailure(error))
     }
 }
 
