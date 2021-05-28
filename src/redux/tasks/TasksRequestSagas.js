@@ -7,35 +7,6 @@ import {
     select,
     all
 } from 'redux-saga/effects'
-import {
-    addTaskRelaySuccess,
-    addTaskRelayFailure,
-    resetGroupRelayUUIDs,
-    getAllTasksRequest,
-    SET_ROLE_VIEW_AND_GET_TASKS,
-    START_REFRESH_TASKS_LOOP_FROM_SOCKET,
-    updateTaskTimeOfCallFailure,
-    updateTaskTimeOfCallSuccess,
-    updateTaskTimeOfCallActions,
-    addTaskActions,
-    addTaskRelayActions,
-    deleteTaskActions,
-    restoreTaskActions,
-    updateTaskCancelledTimeSuccess,
-    updateTaskCancelledTimeFailure,
-    updateTaskActions,
-    getTasksActions,
-    getTasksSuccess,
-    getTasksNotFound,
-    getTasksFailure,
-    updateTaskRequesterContactActions,
-    updateTaskPickupTimeActions,
-    updateTaskDropoffTimeActions,
-    updateTaskPriorityActions,
-    updateTaskPatchActions,
-    updateTaskCancelledTimeActions,
-    updateTaskRejectedTimeActions,
-} from "./TasksActions"
 
 import * as taskActions from "./TasksActions"
 
@@ -86,7 +57,7 @@ function* postNewTask(action) {
 }
 
 export function* watchPostNewTask() {
-    yield takeEvery(addTaskActions.request, postNewTask)
+    yield takeEvery(taskActions.addTaskActions.request, postNewTask)
 }
 
 function* postNewTaskRelay(action) {
@@ -132,14 +103,14 @@ function* postNewTaskRelay(action) {
             order_in_relay: orderInRelay,
             reference: result.reference
         };
-        yield put(addTaskRelaySuccess({payload: task, autoAssign: action.data.autoAssign}));
+        yield put(taskActions.addTaskRelaySuccess({payload: task, autoAssign: action.data.autoAssign}));
     } catch (error) {
-        yield put(addTaskRelayFailure(error))
+        yield put(taskActions.addTaskRelayFailure(error))
     }
 }
 
 export function* watchPostNewTaskRelay() {
-    yield takeEvery(addTaskRelayActions.request, postNewTaskRelay)
+    yield takeEvery(taskActions.addTaskRelayActions.request, postNewTaskRelay)
 }
 
 
@@ -154,7 +125,7 @@ function* deleteTask(action) {
 }
 
 export function* watchDeleteTask() {
-    yield takeEvery(deleteTaskActions.request, deleteTask)
+    yield takeEvery(taskActions.deleteTaskActions.request, deleteTask)
 }
 
 function* restoreTask(action) {
@@ -166,7 +137,7 @@ function* restoreTask(action) {
         const currentTasks = yield select((state) => state.tasks.tasks);
         const afterRestore = yield findExistingTask(currentTasks, action.data.taskUUID)
         if (afterRestore) {
-            yield put(resetGroupRelayUUIDs(afterRestore.parent_id))
+            yield put(taskActions.resetGroupRelayUUIDs(afterRestore.parent_id))
         }
         yield put(subscribeToUUID(result.uuid))
     } catch (error) {
@@ -175,7 +146,7 @@ function* restoreTask(action) {
 }
 
 export function* watchRestoreTask() {
-    yield takeEvery(restoreTaskActions.request, restoreTask)
+    yield takeEvery(taskActions.restoreTaskActions.request, restoreTask)
 }
 
 function* updateTask(action) {
@@ -217,9 +188,9 @@ function* updateTaskTimeOfCall(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.tasks.updateTask], action.data.taskUUID, action.data.payload);
         const data = {payload: {...action.data.payload, etag: result.etag}, taskUUID: action.data.taskUUID}
-        yield put(updateTaskTimeOfCallSuccess(data))
+        yield put(taskActions.updateTaskTimeOfCallSuccess(data))
     } catch (error) {
-        yield put(updateTaskTimeOfCallFailure(error))
+        yield put(taskActions.updateTaskTimeOfCallFailure(error))
     }
 }
 
@@ -286,9 +257,9 @@ function* updateTaskTimeCancelled(action) {
                 relay_previous: null
             }, taskUUID: action.data.taskUUID
         }
-        yield put(updateTaskCancelledTimeSuccess(data))
+        yield put(taskActions.updateTaskCancelledTimeSuccess(data))
     } catch (error) {
-        yield put(updateTaskCancelledTimeFailure(error))
+        yield put(taskActions.updateTaskCancelledTimeFailure(error))
     }
 }
 
@@ -313,39 +284,39 @@ function* updateTaskRejectedTime(action) {
 }
 
 export function* watchUpdateTask() {
-    yield takeEvery(updateTaskActions.request, updateTask)
+    yield takeEvery(taskActions.updateTaskActions.request, updateTask)
 }
 
 export function* watchUpdateTaskRequesterContact() {
-    yield takeEvery(updateTaskRequesterContactActions.request, updateTaskRequesterContact)
+    yield takeEvery(taskActions.updateTaskRequesterContactActions.request, updateTaskRequesterContact)
 }
 
 export function* watchUpdateTaskPickupTime() {
-    yield takeEvery(updateTaskPickupTimeActions.request, updateTaskPickupTime)
+    yield takeEvery(taskActions.updateTaskPickupTimeActions.request, updateTaskPickupTime)
 }
 
 export function* watchUpdateTaskDropoffTime() {
-    yield takeEvery(updateTaskDropoffTimeActions.request, updateTaskDropoffTime)
+    yield takeEvery(taskActions.updateTaskDropoffTimeActions.request, updateTaskDropoffTime)
 }
 
 export function* watchUpdateTaskTimeOfCall() {
-    yield takeEvery(updateTaskTimeOfCallActions.request, updateTaskTimeOfCall)
+    yield takeEvery(taskActions.updateTaskTimeOfCallActions.request, updateTaskTimeOfCall)
 }
 
 export function* watchUpdateTaskPriority() {
-    yield takeEvery(updateTaskPriorityActions.request, updateTaskPriority)
+    yield takeEvery(taskActions.updateTaskPriorityActions.request, updateTaskPriority)
 }
 
 export function* watchUpdateTaskPatch() {
-    yield takeEvery(updateTaskPatchActions.request, updateTaskPatch)
+    yield takeEvery(taskActions.updateTaskPatchActions.request, updateTaskPatch)
 }
 
 export function* watchUpdateTaskTimeCancelled() {
-    yield takeEvery(updateTaskCancelledTimeActions.request, updateTaskTimeCancelled)
+    yield takeEvery(taskActions.updateTaskCancelledTimeActions.request, updateTaskTimeCancelled)
 }
 
 export function* watchUpdateTaskRejectedTime() {
-    yield takeEvery(updateTaskRejectedTimeActions.request, updateTaskRejectedTime)
+    yield takeEvery(taskActions.updateTaskRejectedTimeActions.request, updateTaskRejectedTime)
 }
 
 function* getTasks(action) {
@@ -369,19 +340,19 @@ function* getTasks(action) {
                 tasksCancelled,
                 tasksRejected
             });
-        yield put(getTasksSuccess(result))
+        yield put(taskActions.getTasksSuccess(result))
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
-                yield put(getTasksNotFound(error))
+                yield put(taskActions.getTasksNotFound(error))
             }
         }
-        yield put(getTasksFailure(error))
+        yield put(taskActions.getTasksFailure(error))
     }
 }
 
 export function* watchGetTasks() {
-    yield takeLatest(getTasksActions.request, getTasks)
+    yield takeLatest(taskActions.getTasksActions.request, getTasks)
 }
 
 
@@ -409,15 +380,15 @@ export function* refreshTasksFromSocket(action) {
 }
 
 export function* watchRefreshTasksFromSocket() {
-    yield takeLatest(START_REFRESH_TASKS_LOOP_FROM_SOCKET, refreshTasksFromSocket)
+    yield takeLatest(taskActions.START_REFRESH_TASKS_LOOP_FROM_SOCKET, refreshTasksFromSocket)
 }
 
 
 function* setRoleViewAndGetTasks(action) {
     yield put(setRoleView(action.data.role))
-    yield put(getAllTasksRequest(action.data.userUUID, action.data.page, action.data.role))
+    yield put(taskActions.getAllTasksRequest(action.data.userUUID, action.data.page, action.data.role))
 }
 
 export function* watchSetRoleViewAndGetTasks() {
-    yield takeLatest(SET_ROLE_VIEW_AND_GET_TASKS, setRoleViewAndGetTasks)
+    yield takeLatest(taskActions.SET_ROLE_VIEW_AND_GET_TASKS, setRoleViewAndGetTasks)
 }
