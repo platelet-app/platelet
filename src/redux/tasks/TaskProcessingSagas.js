@@ -283,15 +283,15 @@ function* updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess(action) {
                 break;
             }
             default:
-                return
+                return;
         }
         const taskToUpdate = parent.taskGroup[action.data.taskUUID]
         const updatedItem = {...taskToUpdate, ...action.data.payload};
-        const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem}
-        yield put(taskActions.sortAndSendToState(updatedGroup))
+        const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem};
+        yield put(taskActions.sortAndSendToState(updatedGroup));
     }
     if (parent.parentID)
-        yield put(taskActions.resetGroupRelayUUIDs(parent.parentID))
+        yield put(taskActions.resetGroupRelayUUIDs(parent.parentID));
 }
 
 export function* watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess() {
@@ -304,7 +304,7 @@ export function* watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess() 
         takeEvery(taskActions.updateTaskDropoffTimeActions.success, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
         takeEvery(taskActions.UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
         takeEvery(taskActions.UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
-        ])
+        ]);
 }
 
 function* updateTaskTimeCancelledTimeRejectedSuccessNope(action) {

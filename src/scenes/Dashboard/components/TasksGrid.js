@@ -264,7 +264,6 @@ const GridColumn = (props) => {
                     {tasksList.map(([key, jobs]) => {
                         return (
                             <Grid item className={gridColumnClasses.gridItem} key={key}>
-                                {key}
                                 <TaskGroup {...props} group={jobs}/>
                             </Grid>
                         )

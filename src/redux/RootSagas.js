@@ -13,7 +13,7 @@ import {
     watchUpdateTaskRequesterContact,
     watchSetRoleViewAndGetTasks,
     watchRefreshTasksFromSocket, watchUpdateTaskTimeOfCall, watchUpdateTaskTimeCancelled
-} from "./tasks/TasksSagas"
+} from "./tasks/TasksRequestSagas"
 import * as taskProcessingSagas from "./tasks/TaskProcessingSagas"
 import {
     watchAddNewDropoffLocationAndSetTask,

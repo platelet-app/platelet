@@ -1,79 +1,25 @@
 import {
-    UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET,
-    UPDATE_TASK_FROM_SOCKET,
-    UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET,
-    ADD_TASK_FROM_SOCKET,
-    DELETE_TASK_FROM_SOCKET,
-    RESTORE_TASK_FROM_SOCKET,
-    ADD_TASK_RELAY_FROM_SOCKET,
-    RESET_GROUP_RELAY_UUIDS,
-    GROUP_RELAYS_TOGETHER,
-    PUT_TASK_FROM_SOCKET,
-    UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET,
-    UPDATE_TASK_TIME_REJECTED_FROM_SOCKET,
-    UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET,
-    UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET,
-    UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET,
-    UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET,
-    updateTaskTimeOfCallActions,
-    addTaskActions,
-    restoreTaskActions,
-    addTaskRelayActions,
-    putTaskActions,
-    updateTaskActions,
-    updateTaskRequesterContactActions,
-    updateTaskPriorityActions,
-    updateTaskPatchActions,
-    updateTaskPickupTimeActions,
-    updateTaskDropoffTimeActions,
-    updateTaskCancelledTimeActions,
-    updateTaskRejectedTimeActions,
-    deleteTaskActions,
     getTasksActions,
     taskCategoryActions,
     REPLACE_TASKS_STATE,
-    replaceTasksState
-
 } from "./TasksActions";
 import {
-    convertToRelays,
-    taskGroupSort,
     removeParentFromTasks,
-    addAssigneeToList,
-    removeAssigneeFromList,
-    sortAndConcat
 } from "./task_redux_utilities";
-import update from "immutability-helper";
 import {
-    convertTaskGroupToObject,
     findExistingTaskParent,
     findExistingTaskParentByID,
 } from "../../utilities";
-import {
-    appendTasksDeliveredActions,
-    appendTasksCancelledActions,
-    appendTasksRejectedActions
-} from "./TasksWaypointActions";
 import _ from "lodash"
-import {
-    addTaskAssignedCoordinatorActions,
-    addTaskAssignedRiderActions, removeTaskAssignedCoordinatorActions,
-    removeTaskAssignedRiderActions
-} from "../taskAssignees/TaskAssigneesActions";
-import {
-    setTaskDropoffDestinationActions,
-    setTaskPickupDestinationActions, unsetTaskDropoffDestinationActions, unsetTaskPickupDestinationActions
-} from "../taskDestinations/TaskDestinationsActions";
-import {put} from "redux-saga/effects";
 
 export const initialTasksState = {
     tasks: {
-        tasksNew: [],
-        tasksActive: [],
-        tasksRejected: [],
-        tasksCancelled: [],
-        tasksPickedUp: [],
-        tasksDelivered: []
+        tasksNew: {},
+        tasksActive: {},
+        tasksRejected: {},
+        tasksCancelled: {},
+        tasksPickedUp: {},
+        tasksDelivered: {}
     },
     error: null
 }
