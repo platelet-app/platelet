@@ -1,3 +1,47 @@
+# Platelet web
+
+This is the web front end for Platelet. It works with an instance of platelet-api. It uses React, Material-UI, Redux, Redux-Saga and other NPM libraries.
+
+## Setup
+
+There is minimal setup required for running this project. On Ubuntu 20.04, install the package `npm`
+
+`sudo apt install npm`
+
+In the project directory run:
+
+`npm install`
+
+and
+
+`npm start`
+
+to run the development server. You can then navigate to http://localhost:3000 to load platelet-web.
+
+## Environment Variables
+
+###### REACT_APP_API_URL
+
+This is the URL for the Platelet API you'd like to connect to. For example if you are running the API on localhost:
+
+`http://localhost:5000/api/v0.1/`
+
+You can use https or http and the full URL must be set including the leading `/`.
+
+###### REACT_APP_SOCKET_API_URL
+
+This is the URL for the socketio websocket server. Platelet API provides a websocket server using Flask-SocketIO, so in most cases this can be the same as `REACT_APP_API_URL`.
+
+###### REACT_APP_THROW_ERRORS
+
+Set this to `true` if Redux should throw errors instead of handling them and showing a notification. This can be helpful when developing.
+
+###### REACT_APP_DISABLE_SOCKETS
+
+Set this to `true` if socket updates should be disabled.
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
