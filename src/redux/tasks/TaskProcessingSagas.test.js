@@ -1,7 +1,8 @@
 import {testable, watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess} from "./TaskProcessingSagas"
 import * as taskActions from "./TasksActions"
 import {all, call, put, select, takeEvery} from "redux-saga/effects";
-import {determineTaskType, encodeUUID, findExistingTaskParent, findExistingTaskParentByID} from "../../utilities";
+import {encodeUUID} from "../../utilities";
+import {determineTaskType, findExistingTaskParent, findExistingTaskParentByID} from "./task_redux_utilities";
 import {sortAndSendToState, taskCategoryActionFunctions, updateTaskPatchRequest} from "./TasksActions";
 import {getTasksSelector, getUsersSelector} from "../Selectors";
 import _ from "lodash";
