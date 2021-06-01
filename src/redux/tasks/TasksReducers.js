@@ -4,12 +4,10 @@ import {
     REPLACE_TASKS_STATE,
 } from "./TasksActions";
 import {
-    removeParentFromTasks,
-} from "./task_redux_utilities";
-import {
     findExistingTaskParent,
     findExistingTaskParentByID,
-} from "../../utilities";
+    removeParentFromTasks,
+} from "./task_redux_utilities";
 import _ from "lodash"
 
 export const initialTasksState = {

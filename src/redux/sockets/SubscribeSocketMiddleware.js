@@ -1,6 +1,6 @@
 import * as io from 'socket.io-client'
 import _ from "lodash"
-import {encodeUUID, getApiURL, getSocketApiURL} from "../../utilities";
+import {encodeUUID, getSocketApiURL} from "../../utilities";
 import {
     requestResponseReceived,
     SOCKET_CONNECT,
@@ -25,7 +25,8 @@ import {
     subscribedResponseReceived,
     subscribeToUUID, unsubscribeFromUUID
 } from "./SocketActions";
-import {findExistingTask, findExistingTaskParentByID, getTabIdentifier} from "../../utilities";
+import {getTabIdentifier} from "../../utilities";
+import {findExistingTask, findExistingTaskParentByID} from "../tasks/task_redux_utilities";
 import {
     addTaskFromSocket,
     addTaskRelayFromSocket,

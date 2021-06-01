@@ -25,10 +25,9 @@ import {
     updateDropoffLocationAndUpdateTaskFailure,
     updatePickupLocationAndUpdateTaskActions,
     updatePickupLocationAndUpdateTaskFailure,
-    updateTaskPickupLocationAndUpdateTaskFailure,
 } from "./TaskDestinationsActions";
 import {updateLocationRequest} from "../locations/LocationsActions";
-import {findExistingTask} from "../../utilities";
+import {findExistingTask} from "../tasks/task_redux_utilities";
 
 function* setTaskPickupDestination(action) {
     try {

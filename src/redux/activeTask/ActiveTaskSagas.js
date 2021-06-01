@@ -1,5 +1,5 @@
 import {call, put, select, takeLatest} from "redux-saga/effects";
-import {findExistingTask} from "../../utilities";
+import {findExistingTask} from "../tasks/task_redux_utilities";
 import {getApiControl} from "../Selectors";
 import {getTaskSuccess, getTaskFailure, getTaskNotFound, getTaskActions} from "./ActiveTaskActions";
 

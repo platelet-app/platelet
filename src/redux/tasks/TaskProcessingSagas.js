@@ -9,11 +9,15 @@ import {
 import * as taskAssigneesActions from "../taskAssignees/TaskAssigneesActions"
 import * as taskWaypointActions from "./TasksWaypointActions"
 import {
-    convertTaskGroupToObject,
-    determineTaskType, encodeUUID, findExistingTask,
+    encodeUUID
+} from "../../utilities";
+import {
+    findExistingTask,
     findExistingTaskParent,
     findExistingTaskParentByID
-} from "../../utilities";
+} from "./task_redux_utilities";
+
+import {convertTaskGroupToObject, determineTaskType} from "./task_redux_utilities"
 import update from "immutability-helper";
 import {
     setTaskDropoffDestinationRequest,

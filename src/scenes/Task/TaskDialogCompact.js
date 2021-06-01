@@ -4,7 +4,8 @@ import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import {useHistory} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
-import {decodeUUID, determineTaskType} from "../../utilities";
+import {decodeUUID} from "../../utilities";
+
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import {getTaskRequest} from "../../redux/activeTask/ActiveTaskActions"
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -21,6 +22,7 @@ import {createNotFoundSelector} from "../../redux/selectors";
 import {getTaskPrefix} from "../../redux/activeTask/ActiveTaskActions"
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
+import {determineTaskType} from "../../redux/tasks/task_redux_utilities";
 
 const useStyles = makeStyles(theme => ({
     dialogContent: {

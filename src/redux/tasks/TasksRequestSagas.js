@@ -14,7 +14,7 @@ import {
     refreshTasksDataSocket,
     subscribeToUUID,
 } from "../sockets/SocketActions";
-import {findExistingTask} from "../../utilities";
+import {findExistingTask} from "./task_redux_utilities";
 import {setRoleView} from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
 import {createLoadingSelector, createPostingSelector} from "../selectors";

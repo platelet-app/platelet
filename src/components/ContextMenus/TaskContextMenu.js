@@ -14,7 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import {createPostingSelector} from "../../redux/selectors";
 import {deleteButtonStyles} from "./contextMenuCSS";
 import PropTypes from "prop-types";
-import {findExistingTask} from "../../utilities";
+import {findExistingTask} from "../../redux/tasks/task_redux_utilities";
 import {displayErrorNotification, displayInfoNotification} from "../../redux/notifications/NotificationsActions";
 import {getTasksSelector} from "../../redux/Selectors";
 
