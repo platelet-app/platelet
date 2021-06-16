@@ -1,12 +1,11 @@
-import {testable, watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess} from "./TaskProcessingSagas"
+import {testable} from "./TaskProcessingSagas"
 import * as taskActions from "./TasksActions"
-import {all, call, put, select, takeEvery} from "redux-saga/effects";
+import {call, put, select, takeEvery} from "redux-saga/effects";
 import {encodeUUID} from "../../utilities";
 import {determineTaskType, findExistingTaskParent, findExistingTaskParentByID} from "./task_redux_utilities";
-import {sortAndSendToState, taskCategoryActionFunctions, updateTaskPatchRequest} from "./TasksActions";
+import {sortAndSendToState, taskCategoryActionFunctions} from "./TasksActions";
 import {getTasksSelector, getUsersSelector} from "../Selectors";
-import _ from "lodash";
-import {convertToRelays, taskGroupSort} from "./task_redux_utilities";
+import {convertToRelays} from "./task_redux_utilities";
 import {subscribeToUUID, subscribeToUUIDs, unsubscribeFromUUID} from "../sockets/SocketActions";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {expectSaga, testSaga} from "redux-saga-test-plan";
