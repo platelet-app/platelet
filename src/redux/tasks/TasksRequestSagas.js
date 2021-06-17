@@ -321,13 +321,13 @@ function* getTasks(action) {
         const api = yield select(getApiControl);
         // get all the different tasks for different status and combine them
         const [tasksNew, tasksActive, tasksPickedUp, tasksDelivered, tasksCancelled, tasksRejected] = yield all([
-            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "new", "", "descending"),
-            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "active", "", "ascending"),
-            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "picked_up", "", "ascending"),
-            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "delivered", "", "descending"),
-            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "cancelled", "", "descending"),
-            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "rejected", "", "descending"),
-        ])
+            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "new", 0, "descending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "active", 0, "ascending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 0, action.data.role, "picked_up", 0, "ascending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "delivered", 0, "descending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "cancelled", 0, "descending"),
+            call([api, api.tasks.getTasks], action.data.userUUID, 1, action.data.role, "rejected", 0, "descending"),
+        ]);
         const result = convertTaskListsToObjects(
             {
                 tasksNew,
@@ -337,7 +337,7 @@ function* getTasks(action) {
                 tasksCancelled,
                 tasksRejected
             });
-        yield put(taskActions.getTasksSuccess(result))
+        yield put(taskActions.getTasksSuccess(result));
     } catch (error) {
         if (error.status_code) {
             if (error.status_code === 404) {
