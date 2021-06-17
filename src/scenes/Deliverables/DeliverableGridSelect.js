@@ -54,7 +54,7 @@ export default function DeliverableGridSelect(props) {
     const deliverablesList = Object.values(deliverables);
 
     const onAddNewDeliverable = (deliverable) => {
-        let newDeliverable = {...emptyDeliverable, type_id: deliverable.id, type: deliverable.label};
+        let newDeliverable = {...emptyDeliverable, count: 1, type_id: deliverable.id, type: deliverable.label};
         dispatch(addDeliverableRequest(newDeliverable));
         deliverablesList.push(newDeliverable);
     };

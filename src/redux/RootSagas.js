@@ -29,7 +29,7 @@ import {
     watchGetAvailableDeliverables,
     watchGetDeliverables,
     watchPostNewDeliverable,
-    watchUpdateDeliverable
+    watchUpdateDeliverable, watchUpdateDeliverableCount
 } from "./deliverables/DeliverablesSagas"
 import {
     watchDeleteComment,
@@ -83,7 +83,6 @@ import authenticationMonitor from "./login/AuthenticationMonitor";
 import updateActiveTaskMonitor from "./activeTask/ActiveTaskMonitors"
 import {watchGetTask} from "./activeTask/ActiveTaskSagas"
 import {watchDebounceDashboardFilter} from "./dashboardFilter/DashboardFilterSagas";
-import {watchAddTaskAssignedRiderSuccess} from "./tasks/TaskProcessingSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -164,6 +163,7 @@ export default function* rootSaga() {
         call(watchAddNewDropoffLocationAndSetTask),
         call(updateActiveTaskMonitor),
         call(watchDebounceDashboardFilter),
+        call(watchUpdateDeliverableCount),
         call(taskProcessingSagas.watchAddTaskSuccess),
         call(taskProcessingSagas.watchSortAndSendToState),
         call(taskProcessingSagas.watchRestoreTaskSuccess),
@@ -177,6 +177,6 @@ export default function* rootSaga() {
         call(taskProcessingSagas.watchAddTaskAssignedRiderSuccess),
         call(taskProcessingSagas.watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
         call(taskProcessingSagas.watchAddTaskAssignedCoordinatorSuccess),
-        call(taskProcessingSagas.watchAppendTasksCancelledDeliveredRejected)
+        call(taskProcessingSagas.watchAppendTasksCancelledDeliveredRejected),
     ])
 }
