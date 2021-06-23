@@ -2,17 +2,12 @@ import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {
     addDeliverableRequest,
-    deleteDeliverableRequest,
     getDeliverablesRequest, updateDeliverableRequest,
 } from "../../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
-import Button from "@material-ui/core/Button";
 import DeliverableCard from "./components/DeliverableCard";
-import DeliverablesSelect from "./components/DeliverableSelect";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import IconButton from "@material-ui/core/IconButton";
-import ClearIcon from "@material-ui/icons/Clear";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import styled from "@material-ui/core/styles/styled";
 import Box from "@material-ui/core/Box";
