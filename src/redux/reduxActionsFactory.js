@@ -8,7 +8,7 @@ export function createRequestActions(prefix) {
     }
 }
 
-function toCamel (s) {
+export function toCamel (s) {
     return s.replace(/([-_][a-z])/ig, ($1) => {
         return $1.toUpperCase()
             .replace("-", "")

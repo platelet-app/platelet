@@ -1,4 +1,4 @@
-import {call, put, takeEvery, takeLatest, select} from 'redux-saga/effects'
+import {call, put, takeEvery, takeLatest, select, debounce} from 'redux-saga/effects'
 import {
     addDeliverableSuccess,
     updateDeliverableSuccess,
@@ -14,10 +14,13 @@ import {
     deleteDeliverableActions,
     updateDeliverableActions,
     getDeliverablesActions,
-    getAvailableDeliverablesActions
+    getAvailableDeliverablesActions,
+    updateDeliverableCountPrefix,
+    updateDeliverableCountActions,
+    updateDeliverableCountSuccess, updateDeliverableCountFailure
 } from "./DeliverablesActions"
 
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import {convertListDataToObjects} from "../redux_utilities";
 
 export function* postNewDeliverable(action) {
@@ -61,6 +64,20 @@ export function* updateDeliverable(action) {
 
 export function* watchUpdateDeliverable() {
     yield takeEvery(updateDeliverableActions.request, updateDeliverable)
+}
+
+export function* updateDeliverableCount(action) {
+    try {
+        const api = yield select(getApiControl);
+        yield call([api, api.deliverables.updateDeliverable], action.data.deliverableUUID, action.data.payload);
+        yield put(updateDeliverableCountSuccess(action.data))
+    } catch (error) {
+        yield put(updateDeliverableCountFailure(error))
+    }
+}
+
+export function* watchUpdateDeliverableCount() {
+    yield debounce(300, updateDeliverableCountActions.request, updateDeliverableCount);
 }
 
 export function* getDeliverables(action) {

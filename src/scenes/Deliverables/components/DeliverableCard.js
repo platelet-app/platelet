@@ -1,4 +1,3 @@
-import {StyledSharpCard} from "../../../styles/common";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography"
 import React from "react";
@@ -10,12 +9,8 @@ import ChildCareIcon from "@material-ui/icons/ChildCare"
 import DescriptionIcon from "@material-ui/icons/Description"
 import AcUnitIcon from "@material-ui/icons/AcUnit"
 import ClearIcon from "@material-ui/icons/Clear"
-import {useDispatch} from "react-redux";
 import IconButton from "@material-ui/core/IconButton"
-import {deleteDeliverableRequest} from "../../../redux/deliverables/DeliverablesActions"
 import PropTypes from "prop-types";
-import Box from "@material-ui/core/Box";
-import styled from "@material-ui/core/styles/styled";
 
 
 function getIcon(typeID) {
@@ -32,7 +27,6 @@ function getIcon(typeID) {
 }
 
 function DeliverableCard(props) {
-    const dispatch = useDispatch();
     const spacingValue = props.size === "compact" ? 3 : 6;
     const useStyles = makeStyles((theme) => ({
         sample: {
@@ -75,18 +69,6 @@ function DeliverableCard(props) {
         }
     }
 
-    const deleteButton = (props.onDelete && props.size === "normal") ?
-        <Grid item>
-            <IconButton
-            color={"inherit"}
-            onClick={props.onDelete}
-        >
-            <ClearIcon/>
-        </IconButton>
-        </Grid>
-
-        : <></>
-
     const height = props.size === "compact" ? "50px" : "100px"
 
     return (
@@ -105,7 +87,6 @@ function DeliverableCard(props) {
                         </Grid>
                     </Grid>
                 </Grid>
-                    {deleteButton}
             </Grid>
     )
 }

@@ -5,7 +5,7 @@ import {
     getAvailablePrioritiesSuccess,
 } from "./PrioritiesActions"
 
-import { getApiControl } from "../Api";
+import { getApiControl } from "../Selectors";
 
 export function* getAvailablePriorities() {
     try {

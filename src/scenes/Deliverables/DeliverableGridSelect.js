@@ -2,22 +2,20 @@ import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {
     addDeliverableRequest,
-    deleteDeliverableRequest,
-    getDeliverablesRequest,
+    getDeliverablesRequest, updateDeliverableRequest,
 } from "../../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
 import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
-import Button from "@material-ui/core/Button";
 import DeliverableCard from "./components/DeliverableCard";
-import DeliverablesSelect from "./components/DeliverableSelect";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import IconButton from "@material-ui/core/IconButton";
-import ClearIcon from "@material-ui/icons/Clear";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import styled from "@material-ui/core/styles/styled";
 import Box from "@material-ui/core/Box";
 import {Paper} from "@material-ui/core";
 import {dialogCardStyles} from "../Task/styles/DialogCompactStyles";
+import IncreaseDecreaseCounter from "../../components/IncreaseDecreaseCounter";
+import { v4 as uuidv4 } from 'uuid';
+
 
 const useStyles = makeStyles(({
     root: {
@@ -45,25 +43,31 @@ export default function DeliverableGridSelect(props) {
 
     let emptyDeliverable = {
         task_uuid: props.taskUUID,
+        uuid: uuidv4()
     };
 
-    const onSelectDeliverable = (deliverable) => {
-        let newDeliverable = {...emptyDeliverable, type_id: deliverable.id, type: deliverable.label};
-        dispatch(addDeliverableRequest(newDeliverable))
+    const deliverablesList = Object.values(deliverables);
+
+    const onAddNewDeliverable = (deliverable) => {
+        let newDeliverable = {...emptyDeliverable, count: 1, type_id: deliverable.id, type: deliverable.label};
+        dispatch(addDeliverableRequest(newDeliverable));
+        deliverablesList.push(newDeliverable);
     };
 
-    const deliverablesSelect =
-        <DeliverablesSelect
-            disabled={isPosting}
-            id="deliverableSelect"
-            onSelect={onSelectDeliverable}
-            label={"deliverables"}
-        />;
+    const onChange = (deliverableType, count) => {
+        const existing = deliverablesList.find(d => d.type_id === deliverableType.id);
+        if (existing) {
+            dispatch(updateDeliverableRequest(existing.uuid, {count}));
+        } else {
+            onAddNewDeliverable(deliverableType);
+        }
+
+    }
+
 
     React.useEffect(() => {
         if (availableDeliverables.length > 0)
-            dispatch(getDeliverablesRequest(props.taskUUID))
-
+            dispatch(getDeliverablesRequest(props.taskUUID));
     }, [availableDeliverables, props.taskUUID]);
 
     if (isFetching) {
@@ -76,7 +80,8 @@ export default function DeliverableGridSelect(props) {
                       className={classes.root}
                       direction={"column"}
                 >
-                    {Object.values(deliverables).map(deliverable => {
+                    {Object.values(availableDeliverables).map(deliverable => {
+                        const existing = deliverablesList.find(d => d.type_id === deliverable.id);
                         return (
                             <Grid item key={deliverable.uuid}>
                                 <DeliverableBox>
@@ -84,33 +89,25 @@ export default function DeliverableGridSelect(props) {
                                         <Grid item>
                                             <DeliverableCard
                                                 size={"compact"}
-                                                label={deliverable.type}
-                                                typeID={deliverable.type_id}
+                                                label={deliverable.label}
+                                                typeID={deliverable.id}
                                             />
                                         </Grid>
                                         <Grid item>
-                                            <IconButton
-                                                color={"inherit"}
-                                                onClick={() => dispatch(deleteDeliverableRequest(deliverable.uuid))}
-                                            >
-                                                <ClearIcon/>
-                                            </IconButton>
-
+                                            <IncreaseDecreaseCounter
+                                                value={existing ? existing.count || 0 : 0}
+                                                onChange={(count) => onChange(deliverable, count)}
+                                                disabled={isPosting}
+                                            />
                                         </Grid>
                                     </Grid>
                                 </DeliverableBox>
                             </Grid>
                         )
-
                     })
                     }
-                    <Grid item>
-                        {deliverablesSelect}
-                    </Grid>
                 </Grid>
             </Paper>
-
         )
     }
-
 }

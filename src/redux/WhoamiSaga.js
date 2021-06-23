@@ -1,6 +1,6 @@
 import { throttle, call, put, takeEvery , takeLatest, select} from 'redux-saga/effects'
 import {GET_WHOAMI_REQUEST, getWhoamiFailure, getWhoamiSuccess, REFRESH_WHOAMI_REQUEST} from "./Actions";
-import { getApiControl } from "./Api";
+import { getApiControl } from "./Selectors";
 
 function* getWhoami() {
     try {

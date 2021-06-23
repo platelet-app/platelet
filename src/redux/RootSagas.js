@@ -13,7 +13,8 @@ import {
     watchUpdateTaskRequesterContact,
     watchSetRoleViewAndGetTasks,
     watchRefreshTasksFromSocket, watchUpdateTaskTimeOfCall, watchUpdateTaskTimeCancelled
-} from "./tasks/TasksSagas"
+} from "./tasks/TasksRequestSagas"
+import * as taskProcessingSagas from "./tasks/TaskProcessingSagas"
 import {
     watchAddNewDropoffLocationAndSetTask,
     watchAddNewPickupLocationAndSetTask,
@@ -28,7 +29,7 @@ import {
     watchGetAvailableDeliverables,
     watchGetDeliverables,
     watchPostNewDeliverable,
-    watchUpdateDeliverable
+    watchUpdateDeliverable, watchUpdateDeliverableCount
 } from "./deliverables/DeliverablesSagas"
 import {
     watchDeleteComment,
@@ -161,6 +162,21 @@ export default function* rootSaga() {
         call(watchUpdateDropoffLocationAndUpdateTask),
         call(watchAddNewDropoffLocationAndSetTask),
         call(updateActiveTaskMonitor),
-        call(watchDebounceDashboardFilter)
+        call(watchDebounceDashboardFilter),
+        call(watchUpdateDeliverableCount),
+        call(taskProcessingSagas.watchAddTaskSuccess),
+        call(taskProcessingSagas.watchSortAndSendToState),
+        call(taskProcessingSagas.watchRestoreTaskSuccess),
+        call(taskProcessingSagas.watchDeleteTaskSuccess),
+        call(taskProcessingSagas.watchAddTaskRelaySuccess),
+        call(taskProcessingSagas.watchRemoveTaskAssignedRiderSuccess),
+        call(taskProcessingSagas.watchRemoveTaskAssignedCoordinatorSuccess),
+        call(taskProcessingSagas.watchResetGroupRelayUUIDs),
+        call(taskProcessingSagas.watchUpdateTaskSuccess),
+        call(taskProcessingSagas.watchPutTaskSuccess),
+        call(taskProcessingSagas.watchAddTaskAssignedRiderSuccess),
+        call(taskProcessingSagas.watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        call(taskProcessingSagas.watchAddTaskAssignedCoordinatorSuccess),
+        call(taskProcessingSagas.watchAppendTasksCancelledDeliveredRejected),
     ])
 }

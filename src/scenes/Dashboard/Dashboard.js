@@ -24,16 +24,17 @@ import {
     unsubscribeFromUUIDs,
 } from "../../redux/sockets/SocketActions";
 import {getTaskUUIDEtags} from "./utilities";
-import {initialTasksState} from "../../redux/tasks/TasksReducers";
 import {getDashboardRoleMode, saveDashboardRoleMode} from "../../utilities";
+import {getTasksInitialisedStatus, getTasksSelector} from "../../redux/Selectors";
 
 function Dashboard() {
     const dispatch = useDispatch();
-    const loadingSelector = createLoadingSelector(['GET_TASKS']);
+    const loadingSelector = createLoadingSelector(["GET_TASKS"]);
     const isFetching = useSelector(state => loadingSelector(state));
     const isPostingNewTaskSelector = createPostingSelector(["ADD_TASK"]);
     const isPostingNewTask = useSelector(state => isPostingNewTaskSelector(state));
-    const tasks = useSelector(state => state.tasks.tasks);
+    const tasks = useSelector(getTasksSelector);
+    const tasksInitialised = useSelector(getTasksInitialisedStatus)
     const mobileView = useSelector(state => state.mobileView);
     const firstUpdateNewTask = useRef(true);
     const firstTaskSubscribeCompleted = useRef(false);
@@ -45,7 +46,7 @@ function Dashboard() {
 
 
     function setInitialRoleView() {
-        if (whoami.uuid && tasks === initialTasksState.tasks) {
+        if (whoami.uuid && !tasksInitialised) {
             const savedRoleMode = getDashboardRoleMode();
             if (whoami.roles.includes(savedRoleMode))
                 dispatch(setRoleViewAndGetTasks(whoami.uuid, "", savedRoleMode));
@@ -107,8 +108,7 @@ function Dashboard() {
             <Paper elevation={3}>
                 <DashboardDetailTabs value={viewMode} onChange={(event, newValue) => setViewMode(newValue)}>
                     <TabPanel value={0} index={0}>
-                        <TasksGrid tasks={tasks}
-                                   fullScreenModal={mobileView}
+                        <TasksGrid fullScreenModal={mobileView}
                                    modalView={"edit"}
                                    hideRelayIcons={(roleView === "rider")}
                                    hideAddButton={!postPermission}

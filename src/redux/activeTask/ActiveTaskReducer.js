@@ -83,6 +83,8 @@ export function task(state = initialState, action) {
                         action.data.payload.user_uuid, "rider")
                 }, error: null}
         }
+        case getTaskActions.failure:
+            return {...initialState, error: action.error};
         default:
             return state;
     }

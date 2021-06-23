@@ -1,6 +1,6 @@
 import { call, put, takeLatest, select} from 'redux-saga/effects'
 import * as userActions from "./UsersActions"
-import {getApiControl} from "../Api"
+import {getApiControl} from "../Selectors"
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {convertListDataToObjects} from "../redux_utilities";
 

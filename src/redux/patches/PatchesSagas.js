@@ -4,7 +4,7 @@ import {
     getAvailablePatchesSuccess,
 } from "./PatchesActions"
 
-import { getApiControl } from "../Api";
+import { getApiControl } from "../Selectors";
 import {getAvailableLocationsFailure} from "../locations/LocationsActions";
 
 export function* getAvailablePatches() {

@@ -28,6 +28,14 @@ export const getDeliverablesPrefix = "GET_DELIVERABLES";
 export const getDeliverablesActions = createRequestActions(getDeliverablesPrefix);
 export const {getDeliverablesSuccess, getDeliverablesFailure, getDeliverablesForbidden, getDeliverablesNotFound} = createRequestFunctions(getDeliverablesActions)
 
+export const updateDeliverableCountPrefix = "UPDATE_DELIVERABLE_COUNT";
+export const updateDeliverableCountActions = createRequestActions(updateDeliverableCountPrefix);
+export const {updateDeliverableCountSuccess, updateDeliverableCountFailure, updateDeliverableCountForbidden, updateDeliverableCountNotFound} = createRequestFunctions(updateDeliverableCountActions)
+
+export function updateDeliverableCountRequest(deliverableUUID, value) {
+    return {type: updateDeliverableCountActions.request, data: {deliverableUUID, payload: {count: value}}};
+}
+
 export function getDeliverablesRequest(parentUUID) {
     return { type: getDeliverablesActions.request, data: {parentUUID}}
 }

@@ -24,7 +24,7 @@ import {
 
 import {getWhoamiSuccess} from "../Actions"
 import {getUsersSuccess} from "../users/UsersActions"
-import {getApiControl, getWhoami} from "../Api";
+import {getApiControl, getWhoami} from "../Selectors";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {convertListDataToObjects} from "../redux_utilities";
 

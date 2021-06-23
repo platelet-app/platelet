@@ -22,7 +22,6 @@ import {CircularProgress, Typography} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import TasksGridSkeleton from "./TasksGridSkeleton";
 import PropTypes from 'prop-types'
-import {initialTasksState} from "../../../redux/tasks/TasksReducers";
 import {showHide} from "../../../styles/common";
 import {
     appendTasksCancelledRequest,
@@ -33,6 +32,7 @@ import {clearDashboardFilter} from "../../../redux/dashboardFilter/DashboardFilt
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
+import {getTasksSelector} from "../../../redux/Selectors";
 
 
 const getColumnTitle = key => {
@@ -194,7 +194,7 @@ const GridColumn = (props) => {
     const loaderClass = loaderStyles();
     const {show, hide} = showHide();
     const dispatch = useDispatch();
-    const tasks = useSelector(state => state.tasks.tasks[props.taskKey]);
+    const tasks = useSelector(getTasksSelector)[props.taskKey];
     const whoami = useSelector(state => state.whoami.user);
     const gridColumnClasses = gridColumnStyles();
     let selectorsString = "";
@@ -241,7 +241,7 @@ const GridColumn = (props) => {
 
 
     const tasksList = Object.entries(tasks).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).reverse();
-    const lastParent = tasksList.length === 0 ? 0 : tasksList[tasksList.length - 1][0]
+    const lastParent = tasksList.length === 0 ? 0 : tasksList[tasksList.length - 1][0];
 
     return (
         <TasksKanbanColumn>
@@ -319,7 +319,7 @@ function TasksGrid(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const animate = useRef(false);
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
-    const tasks = useSelector(state => state.tasks.tasks);
+    const tasks = useSelector(getTasksSelector);
     const roleView = useSelector(state => state.roleView);
     const whoami = useSelector(state => state.whoami.user);
     const dispatch = useDispatch();
@@ -365,6 +365,8 @@ function TasksGrid(props) {
 
     useEffect(doSearch, [dashboardFilter])
 
+    useEffect(() => console.log(tasks), [tasks])
+
     if (isFetching) {
         return <TasksGridSkeleton count={3}/>
     } else {
@@ -401,11 +403,7 @@ function TasksGrid(props) {
     }
 }
 
-TasksGrid.defaultProps = {
-    tasks: {initialTasksState}
-}
 TasksGrid.propTypes = {
-    tasks: PropTypes.object,
     fullScreenModal: PropTypes.bool,
     modalView: PropTypes.string,
     hideRelayIcons: PropTypes.bool,

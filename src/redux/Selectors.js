@@ -1,5 +1,8 @@
 export const getApiControl = (state) => state.apiControl;
 export const getTasksSelector = (state) => state.tasks.tasks;
+export const getTasksRejectedSelector = (state) => state.tasks.tasks['tasksRejected'];
+export const getTasksCancelledSelector = (state) => state.tasks.tasks['tasksCancelled'];
+export const getTasksInitialisedStatus = (state) => (state.tasks.initialised && state.tasksRejectedCancelled.initialised);
 export const getWhoami = (state) => state.whoami.user;
 export const getRoleView = (state) => state.roleView;
 export const getUsersSelector = (state) => state.users.users;

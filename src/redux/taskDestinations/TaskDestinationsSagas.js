@@ -1,5 +1,5 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
-import {getApiControl, getPresetLocations, getTasksSelector} from "../Api";
+import {getApiControl, getPresetLocations, getTasksSelector} from "../Selectors";
 import {
     addNewDropoffLocationAndSetTaskActions,
     addNewDropoffLocationAndSetTaskFailure,
@@ -25,10 +25,9 @@ import {
     updateDropoffLocationAndUpdateTaskFailure,
     updatePickupLocationAndUpdateTaskActions,
     updatePickupLocationAndUpdateTaskFailure,
-    updateTaskPickupLocationAndUpdateTaskFailure,
 } from "./TaskDestinationsActions";
 import {updateLocationRequest} from "../locations/LocationsActions";
-import {findExistingTask} from "../../utilities";
+import {findExistingTask} from "../tasks/task_redux_utilities";
 
 function* setTaskPickupDestination(action) {
     try {

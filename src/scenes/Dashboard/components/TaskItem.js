@@ -63,4 +63,6 @@ TaskItem.propTypes = {
     animate: PropTypes.bool
 }
 
+TaskItem.whyDidYouRender = true;
+
 export default TaskItem;

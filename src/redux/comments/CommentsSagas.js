@@ -21,7 +21,7 @@ import {
     restoreCommentActions
 } from "./CommentsActions"
 
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import {convertListDataToObjects} from "../redux_utilities";
 

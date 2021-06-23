@@ -1,5 +1,5 @@
 import {put, select, takeEvery} from "redux-saga/effects";
-import {getActiveTaskSelector} from "../Api";
+import {getActiveTaskSelector} from "../Selectors";
 import {
     updateActiveTask,
     updateActiveTaskAssignedCoordinator,
@@ -9,7 +9,7 @@ import {
     UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET,
     UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET,
     UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET,
-} from "../tasks/TasksActions";
+} from "../taskAssignees/TaskAssigneesActions";
 import {
     addTaskAssignedCoordinatorActions,
     addTaskAssignedRiderActions,

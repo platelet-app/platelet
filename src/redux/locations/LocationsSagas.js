@@ -13,7 +13,7 @@ import {
     updateLocationSuccess,
 } from "./LocationsActions"
 
-import { getApiControl } from "../Api";
+import { getApiControl } from "../Selectors";
 import {convertListDataToObjects} from "../redux_utilities";
 
 function* getAvailableLocations() {

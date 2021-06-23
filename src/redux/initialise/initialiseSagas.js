@@ -10,7 +10,7 @@ import {getAvailableLocationsRequest} from "../locations/LocationsActions";
 import {getUsersRequest} from "../users/UsersActions";
 import {getAvailablePatchesRequest} from "../patches/PatchesActions";
 import {getAllTasksRequest, setRoleViewAndGetTasks, startRefreshTasksLoopFromSocket} from "../tasks/TasksActions";
-import {getRoleView, getWhoami} from "../Api";
+import {getRoleView, getWhoami} from "../Selectors";
 import {getServerSettingsRequest} from "../ServerSettings/ServerSettingsActions";
 import {connectAssignmentsSocket, connectCommentsSocket, connectSocket} from "../sockets/SocketActions";
 import {getApiURL, getDashboardRoleMode} from "../../utilities";

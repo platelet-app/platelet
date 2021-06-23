@@ -7,7 +7,7 @@ import {
     refreshUserTokenFailure, refreshUserTokenSuccess, loginUserActions, refreshUserTokenActions
 } from "./LoginActions"
 
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import {deleteLogin, saveLogin} from "../../utilities";
 import {displayWarningNotification} from "../notifications/NotificationsActions";
 

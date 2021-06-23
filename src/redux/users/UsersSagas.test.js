@@ -10,7 +10,7 @@ import {
 import {testable} from "./UsersSagas.js";
 import * as userActions from "./UsersActions"
 import {call, put, select} from "redux-saga/effects";
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import {convertListDataToObjects} from "../redux_utilities";
 import {displayInfoNotification} from "../notifications/NotificationsActions";
 import sagaTestingErrors from "../testing/errorConsts";

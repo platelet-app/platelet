@@ -1,17 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Autocomplete} from "@material-ui/lab";
 import {useSelector} from "react-redux";
-import TextField from "@material-ui/core/TextField";
-import CompactUserCard from "../../../components/CompactUserCard";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
-import DeliverableCard from "./DeliverableCard";
 import FormControl from "@material-ui/core/FormControl";
 import {InputLabel, MenuItem, Select} from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import {useTheme} from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
     formControl: {
@@ -59,7 +51,6 @@ function DeliverablesSelect(props) {
 
 DeliverablesSelect.protoTypes = {
     onSelect: PropTypes.func,
-
 }
 
 export default DeliverablesSelect;

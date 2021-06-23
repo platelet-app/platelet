@@ -1,14 +1,12 @@
 import {createRequestActions, createRequestFunctions} from "../reduxActionsFactory";
 
+export const REPLACE_TASKS_STATE = "REPLACE_TASKS_STATE";
+
 export const UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET = "UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET";
 export const UPDATE_TASK_TIME_REJECTED_FROM_SOCKET = "UPDATE_TASK_TIME_REJECTED_FROM_SOCKET";
 export const PUT_TASK_FROM_SOCKET = "PUT_TASK_FROM_SOCKET";
 export const UPDATE_TASK_FROM_SOCKET = "UPDATE_TASK_FROM_SOCKET";
 export const ADD_TASK_RELAY_FROM_SOCKET = "ADD_TASK_RELAY_FROM_SOCKET";
-export const UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET = "UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET";
-export const UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET = "UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET";
-export const UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET";
-export const UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET = "UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET";
 export const ADD_TASK_FROM_SOCKET = "ADD_TASK_FROM_SOCKET"
 export const DELETE_TASK_FROM_SOCKET = "DELETE_TASK_FROM_SOCKET"
 export const RESTORE_TASK_FROM_SOCKET = "RESTORE_TASK_FROM_SOCKET"
@@ -23,6 +21,52 @@ export const SET_ROLE_VIEW_AND_GET_TASKS = "SET_ROLE_VIEW_AND_GET_TASKS";
 
 export const SET_CURRENT_TASK = "SET_CURRENT_TASK";
 export const CLEAR_CURRENT_TASK = "CLEAR_CURRENT_TASK";
+
+export const SORT_AND_SEND_TO_STATE = "SORT_AND_SEND_TO_STATE";
+
+export function sortAndSendToState(taskGroup) {
+    return {type: SORT_AND_SEND_TO_STATE, taskGroup}
+}
+
+export const taskCategoryActions = {
+    tasksNew: {
+        put: "PUT_NEW_TASKS",
+        add: "ADD_TO_NEW_TASKS"
+    },
+    tasksActive: {
+        put: "PUT_ACTIVE_TASKS",
+        add: "ADD_TO_ACTIVE_TASKS"
+    },
+    tasksPickedUp: {
+        put: "PUT_PICKED_UP_TASKS",
+        add: "ADD_TO_PICKED_UP_TASKS"
+    },
+    tasksDelivered: {
+        put: "PUT_DELIVERED_TASKS",
+        add: "ADD_TO_DELIVERED_TASKS"
+    },
+    tasksRejected: {
+        put: "PUT_REJECTED_TASKS",
+        add: "ADD_TO_REJECTED_TASKS"
+    },
+    tasksCancelled: {
+        put: "PUT_CANCELLED_TASKS",
+        add: "ADD_TO_CANCELLED_TASKS"
+    },
+}
+
+const generateTaskCategoryActionsFunctions = actions => {
+    const result = {};
+    for (const [key, value] of Object.entries(actions)) {
+        result[key] = {};
+        for (const [k, v] of Object.entries(value)) {
+            result[key][k] = (data) => ({ type: v, data });
+        }
+    }
+    return result;
+}
+
+export const taskCategoryActionFunctions = generateTaskCategoryActionsFunctions(taskCategoryActions);
 
 export const addTaskPrefix = "ADD_TASK";
 export const addTaskActions = createRequestActions(addTaskPrefix);
@@ -195,22 +239,6 @@ export function updateTaskTimeCancelledFromSocket(data) {
     return { type: UPDATE_TASK_TIME_CANCELLED_FROM_SOCKET, data }
 }
 
-export function updateTaskAssignedRiderFromSocket(data) {
-    return { type: UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET, data }
-}
-
-export function updateTaskRemoveAssignedRiderFromSocket(data) {
-    return { type: UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET, data }
-}
-
-export function updateTaskAssignedCoordinatorFromSocket(data) {
-    return { type: UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET, data }
-}
-
-export function updateTaskRemoveAssignedCoordinatorFromSocket(data) {
-    return { type: UPDATE_TASK_REMOVE_ASSIGNED_COORDINATOR_FROM_SOCKET, data }
-}
-
 export function startRefreshTasksLoopFromSocket(userUUID) {
     return {type: START_REFRESH_TASKS_LOOP_FROM_SOCKET, userUUID}
 }
@@ -227,3 +255,6 @@ export function groupRelaysTogether() {
     return { type: GROUP_RELAYS_TOGETHER }
 }
 
+export function replaceTasksState(data) {
+    return {type: REPLACE_TASKS_STATE, data}
+}

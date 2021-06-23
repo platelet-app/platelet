@@ -1,6 +1,6 @@
 import {testable} from "./ActionsRecordSagas"
 import {call, put, select} from "redux-saga/effects";
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 import {sortByCreatedTime} from "../../utilities";
 import * as actionRecordActions from "./ActionsRecordActions";
 import sagaTestingErrors from "../testing/errorConsts";

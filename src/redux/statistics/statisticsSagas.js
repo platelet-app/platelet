@@ -1,6 +1,6 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
 import {getUserStatisticsActions, getUserStatisticsFailure, getUserStatisticsSuccess} from "./statisticsActions";
-import {getApiControl} from "../Api";
+import {getApiControl} from "../Selectors";
 
 function* getUserStatistics(action) {
     try {
