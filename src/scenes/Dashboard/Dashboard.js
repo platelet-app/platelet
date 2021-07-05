@@ -23,7 +23,7 @@ import {
     unsubscribeFromRiderAssignments,
     unsubscribeFromUUIDs,
 } from "../../redux/sockets/SocketActions";
-import {getTaskUUIDEtags} from "./utilities";
+import {getTaskUUIDEtags} from "./utilities/functions";
 import {getDashboardRoleMode, saveDashboardRoleMode} from "../../utilities";
 import {getTasksInitialisedStatus, getTasksSelector} from "../../redux/Selectors";
 

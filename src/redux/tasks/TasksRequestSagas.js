@@ -16,7 +16,7 @@ import {
 } from "../sockets/SocketActions";
 import {findExistingTask} from "./task_redux_utilities";
 import {setRoleView} from "../Actions";
-import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
+import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities/functions";
 import {createLoadingSelector, createPostingSelector} from "../selectors";
 import {convertTaskListsToObjects} from "./task_redux_utilities";
 

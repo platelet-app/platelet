@@ -4,9 +4,7 @@ import {
     REPLACE_TASKS_STATE,
 } from "./TasksActions";
 import {
-    findExistingTaskParent,
-    findExistingTaskParentByID,
-    removeParentFromTasks,
+    findExistingTask,
 } from "./task_redux_utilities";
 import _ from "lodash"
 
@@ -35,29 +33,12 @@ export function tasks(state = initialTasksState, action) {
     let filteredTasks = state.tasks;
     if (categoriesCheck.includes(action.type)) {
         // we're adding to state -
-        // find the first task we can
-        let task;
-        for (const g of Object.values(action.data)) {
-            for (const t of Object.values(g)) {
-                task = t;
-                break;
-            }
-            break;
+        for (const key of Object.keys(action.data)) {
+            const {listType} = findExistingTask(filteredTasks, key);
+            if (listType)
+                filteredTasks = {...filteredTasks, ..._.omit(filteredTasks[listType], key)}
         }
-        // get the rest of the parent group from state
-        const parent = findExistingTaskParent(state.tasks, task.uuid);
-        if (parent.taskGroup) {
-            // if we find it, filter it from existing state and use that in the main reducer
-            filteredTasks = removeParentFromTasks(state.tasks, parent.listType, task.parent_id);
-            if ([taskCategoryActions.tasksRejected.add, taskCategoryActions.tasksCancelled.add].includes(action.type)) {
-                const existingCheck = findExistingTaskParentByID(
-                    _.pick(state.tasks, ["tasksRejected", "tasksCancelled"])
-                , parent.parentID);
-                if (existingCheck.taskGroup)
-                    action.data[parent.parentID] = {...existingCheck.taskGroup, ...action.data[parent.parentID]}
 
-            }
-        }
     }
     switch (action.type) {
         case taskCategoryActions.tasksNew.put:

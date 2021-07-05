@@ -3,7 +3,6 @@ import {
     addAssigneeToList,
     convertToRelays,
     removeAssigneeFromList,
-    removeParentFromTasks,
     taskGroupSort
 } from "./task_redux_utilities";
 import * as taskAssigneesActions from "../taskAssignees/TaskAssigneesActions"
@@ -45,7 +44,7 @@ export function* watchSortAndSendToState() {
 
 function* addTaskSuccess(action) {
     const {payload, autoAssign} = action.data;
-    const data = yield {[payload.uuid]: payload};
+    const data = {[payload.uuid]: payload};
     yield put(taskActions.sortAndSendToState(data))
     if (autoAssign && autoAssign.role && autoAssign.uuid) {
         const users = yield select(getUsersSelector);

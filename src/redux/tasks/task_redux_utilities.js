@@ -8,9 +8,12 @@ export function taskGroupSort(a, b) {
 export function convertTaskListsToObjects(tasks) {
     let groupedTasks = {};
     for (const [key, value] of Object.entries(tasks)) {
-        groupedTasks[key] = convertToRelays(value);
+        const result = {};
+        for (const task of value) {
+            result[task.uuid] = task;
+        }
+        groupedTasks[key] = result;
     }
-
     return groupedTasks;
 }
 
@@ -32,13 +35,13 @@ export function convertToRelays(group) {
     let result = {};
     let currentParentId = -1;
     let currentIndex = -1;
-    for (const t of group) {
-        if (currentParentId !== t.parent_id) {
-            currentParentId = t.parent_id;
+    for (const [key, value] of Object.entries(group)) {
+        if (currentParentId !== value.parent_id) {
+            currentParentId = value.parent_id;
             currentIndex += 1;
             result[currentParentId] = {};
         }
-        result[currentParentId][t.uuid] = t;
+        result[currentParentId][key] = value;
     }
     return result;
 
@@ -111,7 +114,7 @@ export function convertTaskGroupToObject(group) {
     for (const task of group) {
         newGroup[task.uuid] = task;
     }
-    return {[group[0].parent_id]: newGroup};
+    return newGroup;
 }
 
 export function determineTaskType(taskGroup) {
@@ -137,20 +140,21 @@ export function determineTaskType(taskGroup) {
         return result;
         // if it has no assigned riders, it goes in new
     } else if (!filteredCancelledRejected.some(t => t.assigned_riders.length)) {
-        return { ...result, tasksNew: convertTaskGroupToObject(filteredCancelledRejected) };
+        return {...result, tasksNew: convertTaskGroupToObject(filteredCancelledRejected)};
         // if it has any assigned riders, but none are picked up, goes into active
     } else if ((taskList.some(t => t.assigned_riders.length) && !taskList.some(t => !!t.time_picked_up))) {
-        return { ...result, tasksActive: convertTaskGroupToObject(filteredCancelledRejected) };
+        return {...result, tasksActive: convertTaskGroupToObject(filteredCancelledRejected)};
         // some are not delivered but some are picked up, it goes in picked up
     } else if ((taskList.some(t => t.assigned_riders.length)) && taskList.some(t => !!t.time_picked_up) && taskList.some(t => !!!t.time_dropped_off)) {
-        return { ...result, tasksPickedUp: convertTaskGroupToObject(filteredCancelledRejected) };
+        return {...result, tasksPickedUp: convertTaskGroupToObject(filteredCancelledRejected)};
         // else if the last one is delivered
     } else if ((taskList.some(t => t.assigned_riders.length)) && taskList.some(t => !!t.time_picked_up) && !taskList.some(t => !!!t.time_dropped_off)) {
-        return { ...result, tasksDelivered: convertTaskGroupToObject(filteredCancelledRejected) };
+        return {...result, tasksDelivered: convertTaskGroupToObject(filteredCancelledRejected)};
     } else {
         return null;
     }
 }
+
 export function findExistingTaskParentByID(tasks, parentID) {
     // this returns the task parent by it's integer id
     let listType = undefined;
@@ -159,10 +163,10 @@ export function findExistingTaskParentByID(tasks, parentID) {
         if (value)
             taskGroup = value[parentID]
         if (taskGroup) {
-            return { listType, parentID, taskGroup };
+            return {listType, parentID, taskGroup};
         }
     }
-    return { listType, parentID, taskGroup };
+    return {listType, parentID, taskGroup};
 }
 
 export function findExistingTaskParent(tasks, uuid) {
@@ -187,7 +191,7 @@ export function findExistingTaskParent(tasks, uuid) {
             }
         }
     }
-    return { listType, taskGroup, parentID };
+    return {listType, taskGroup, parentID};
 }
 
 export function recursiveFindTaskChild(task, uuid) {
@@ -199,8 +203,14 @@ export function recursiveFindTaskChild(task, uuid) {
 }
 
 export function findExistingTask(tasks, uuid) {
-    const taskParent = findExistingTaskParent(tasks, uuid);
-    if (taskParent.taskGroup)
-        return taskParent.taskGroup[uuid]
-    return undefined;
+    let listType = undefined;
+    let result = undefined;
+
+    for (const [listType, value] of Object.entries(tasks)) {
+        const result = value[uuid]
+        if (result) {
+            return {listType, result};
+        }
+    }
+    return {listType, result};
 }
