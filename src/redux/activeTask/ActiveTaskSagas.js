@@ -6,10 +6,10 @@ import {getTaskSuccess, getTaskFailure, getTaskNotFound, getTaskActions} from ".
 function* getTask(action) {
     try {
         const currentTasks = yield select((state) => state.tasks.tasks);
-        let task = findExistingTask(currentTasks, action.data.taskUUID)
-        if (task) {
+        let {result} = findExistingTask(currentTasks, action.data.taskUUID)
+        if (result) {
             // if it's already in the list of tasks, no need to get it
-            yield put(getTaskSuccess(task))
+            yield put(getTaskSuccess(result))
         } else {
             // not in the list so call the api
             const api = yield select(getApiControl);
