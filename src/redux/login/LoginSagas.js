@@ -16,7 +16,7 @@ function* login(action) {
     const api = yield select(getApiControl);
     try {
         const result = yield call([api, api.login], action.username, action.password);
-        yield saveLogin(result.access_token);
+        yield call(saveLogin, result.access_token);
         yield put(loginUserSuccess(result.access_token))
     } catch (error) {
         if (error.status_code === 401) {
@@ -33,7 +33,7 @@ export function* watchLogin() {
 }
 
 function* logout() {
-    yield deleteLogin();
+    yield call(deleteLogin);
     yield put(logoutUserSuccess());
 }
 
@@ -45,7 +45,7 @@ function* refreshToken(action) {
     try {
         const api = yield select(getApiControl);
         const result = yield call([api, api.refreshToken]);
-        yield saveLogin(result.access_token);
+        yield call(saveLogin, result.access_token);
         yield put(refreshUserTokenSuccess(result.access_token))
     } catch (error) {
         yield put(refreshUserTokenFailure(error))
