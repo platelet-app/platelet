@@ -33,7 +33,7 @@ export function TaskStrip(props) {
                 {itemsList.map((entry, i, arr) => (
                     <>
                     <Grid item>
-                        <Typography style={{maxWidth: "400px"}} noWrap={true}>
+                        <Typography style={{maxWidth: "400px"}} noWrap>
                             {entry}
                         </Typography>
                     </Grid>

@@ -27,8 +27,15 @@ function getIcon(typeID) {
 }
 
 function DeliverableCard(props) {
-    const spacingValue = props.size === "compact" ? 3 : 6;
+    const spacingValue = props.compact ? 3 : 6;
     const useStyles = makeStyles((theme) => ({
+        root: {
+            width: "100%",
+            margin: props.compact ? 3 : 10
+        },
+        label: {
+            maxWidth: 120
+        },
         sample: {
             color: theme.palette.getContrastText(red[500]),
             backgroundColor: red[500],
@@ -69,10 +76,9 @@ function DeliverableCard(props) {
         }
     }
 
-    const height = props.size === "compact" ? "50px" : "100px"
 
     return (
-            <Grid style={{height}} container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
+            <Grid className={classes.root} container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
                 <Grid item>
                     <Grid container spacing={2} justify={"flex-start"} alignItems={"center"} direction={"row"}>
                         <Grid item>
@@ -81,11 +87,14 @@ function DeliverableCard(props) {
                             </Avatar>
                         </Grid>
                         <Grid item>
-                            <Typography>
+                            <Typography noWrap className={classes.label}>
                                 {props.label}
                             </Typography>
                         </Grid>
                     </Grid>
+                </Grid>
+                <Grid item>
+                    {props.children}
                 </Grid>
             </Grid>
     )
@@ -95,12 +104,12 @@ DeliverableCard.propTypes = {
     typeID: PropTypes.number,
     label: PropTypes.string,
     onDelete: PropTypes.func,
-    size: PropTypes.oneOf(["normal", "compact"])
+    compact: PropTypes.bool
 }
 
 DeliverableCard.defaultProps = {
     onDelete: () => {},
-    size: "normal",
+    compact: false,
     label: "Unknown"
 }
 

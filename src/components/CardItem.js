@@ -30,7 +30,7 @@ function CardItem(props) {
                     <Typography className={classes.titleText}>{props.label}:</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography align={"right"} noWrap={true} className={classes.cardText}>{props.children}</Typography>
+                    <Typography align={"right"} noWrap className={classes.cardText}>{props.children}</Typography>
                 </Grid>
             </Grid>
         </div>
