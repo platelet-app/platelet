@@ -5,7 +5,7 @@ import {
     getDeliverablesRequest, updateDeliverableRequest,
 } from "../../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
-import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
+import {createDeletingSelector, createLoadingSelector, createPostingSelector} from "../../redux/selectors";
 import DeliverableCard from "./components/DeliverableCard";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -34,11 +34,16 @@ const EditableDeliverable = props => {
     const deliverable = props.deliverable;
     const postingSelector = createPostingSelector(["ADD_DELIVERABLE"]);
     const isPosting = useSelector(state => postingSelector(state));
+    const deletingSelector = createDeletingSelector(["DELETE_DELIVERABLE"]);
+    const isDeleting = useSelector(state => deletingSelector(state));
+    const dispatch = useDispatch();
 
     const addCounter = deliverable.count > 0 ?
         <IncreaseDecreaseCounter
             value={deliverable.count || 0}
+            disabled={isDeleting}
             onChange={(count) => props.onChange(deliverable, count)}
+            onDelete={() => dispatch(deleteDeliverableRequest(deliverable.uuid))}
         /> :
         <SmallCirclePlusButton
             onClick={() => props.onChange(deliverable, 1)}
@@ -79,11 +84,7 @@ export default function DeliverableGridSelect(props) {
 
     const onChange = (deliverable, count) => {
         if (deliverable.uuid) {
-            if (count === 0) {
-                dispatch(deleteDeliverableRequest(deliverable.uuid));
-            } else {
-                dispatch(updateDeliverableRequest(deliverable.uuid, {count}));
-            }
+            dispatch(updateDeliverableRequest(deliverable.uuid, {count}));
         } else if (deliverable.id) {
             onAddNewDeliverable(deliverable);
         }
