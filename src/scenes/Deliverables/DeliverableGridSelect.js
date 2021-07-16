@@ -75,10 +75,6 @@ export default function DeliverableGridSelect(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const classes = useStyles();
     const cardClasses = dialogCardStyles();
-    const [state, setState] = useState({
-        deliverables: [],
-        defaults: []
-    });
 
     let emptyDeliverable = {
         task_uuid: props.taskUUID,
@@ -104,7 +100,9 @@ export default function DeliverableGridSelect(props) {
     }, [availableDeliverables, props.taskUUID]);
 
 
-    useEffect(() => {
+    if (isFetching) {
+        return <DeliverablesSkeleton/>
+    } else {
         const result = {
             deliverables: [],
             defaults: []
@@ -117,16 +115,10 @@ export default function DeliverableGridSelect(props) {
                 result.defaults.push(i)
             }
         }
-        setState(result);
-    }, [deliverables, availableDeliverables])
-
-    if (isFetching) {
-        return <DeliverablesSkeleton/>
-    } else {
         return (
             <Paper className={cardClasses.root}>
                 <Grid container spacing={3} justify={"space-between"} direction={"column"}>
-                    {Object.keys(state).map(key => {
+                    {Object.keys(result).map(key => {
                         return (
                             <Grid key={key} item>
                                 <Grid container
@@ -134,7 +126,7 @@ export default function DeliverableGridSelect(props) {
                                       className={classes.root}
                                       direction={"column"}
                                 >
-                                    {state[key].map(deliverable => {
+                                    {result[key].map(deliverable => {
                                         const value = Object.values(deliverables).find(d => d.type_id === deliverable.id)
                                         return (
                                             <Grid item key={deliverable.id || deliverable.uuid}>
