@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {
     addDeliverableRequest, deleteDeliverableRequest,
@@ -43,7 +43,11 @@ const EditableDeliverable = props => {
             value={deliverable.count || 0}
             disabled={isDeleting}
             onChange={(count) => props.onChange(deliverable, count)}
-            onDelete={() => dispatch(deleteDeliverableRequest(deliverable.uuid))}
+            onDelete={() => {
+                if (deliverable.uuid) {
+                    dispatch(deleteDeliverableRequest(deliverable.uuid))
+                }
+            }}
         /> :
         <SmallCirclePlusButton
             onClick={() => props.onChange(deliverable, 1)}
@@ -71,6 +75,10 @@ export default function DeliverableGridSelect(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const classes = useStyles();
     const cardClasses = dialogCardStyles();
+    const [state, setState] = useState({
+        deliverables: [],
+        defaults: []
+    });
 
     let emptyDeliverable = {
         task_uuid: props.taskUUID,
@@ -88,7 +96,6 @@ export default function DeliverableGridSelect(props) {
         } else if (deliverable.id) {
             onAddNewDeliverable(deliverable);
         }
-
     }
 
     React.useEffect(() => {
@@ -96,32 +103,51 @@ export default function DeliverableGridSelect(props) {
             dispatch(getDeliverablesRequest(props.taskUUID));
     }, [availableDeliverables, props.taskUUID]);
 
+
+    useEffect(() => {
+        const result = {
+            deliverables: [],
+            defaults: []
+        };
+        for (const i of Object.values(availableDeliverables)) {
+            const value = Object.values(deliverables).find(d => d.type_id === i.id)
+            if (value) {
+                result.deliverables.push(value)
+            } else {
+                result.defaults.push(i)
+            }
+        }
+        setState(result);
+    }, [deliverables, availableDeliverables])
+
     if (isFetching) {
         return <DeliverablesSkeleton/>
     } else {
         return (
             <Paper className={cardClasses.root}>
                 <Grid container spacing={3} justify={"space-between"} direction={"column"}>
-                    <Grid item>
-                        <Grid container
-                              spacing={1}
-                              className={classes.root}
-                              direction={"column"}
-                        >
-                            {Object.values(availableDeliverables).map(deliverable => {
-                                const value = Object.values(deliverables).find(d => d.type_id === deliverable.id)
-                                return (
-                                    <Grid item key={deliverable.id}>
-                                        <EditableDeliverable onChange={onChange} deliverable={value || deliverable}/>
-                                    </Grid>
-                                )
-                            })
-                            }
-                            <Grid/>
-                        </Grid>
-                    </Grid>
+                    {Object.keys(state).map(key => {
+                        return (
+                            <Grid key={key} item>
+                                <Grid container
+                                      spacing={1}
+                                      className={classes.root}
+                                      direction={"column"}
+                                >
+                                    {state[key].map(deliverable => {
+                                        const value = Object.values(deliverables).find(d => d.type_id === deliverable.id)
+                                        return (
+                                            <Grid item key={deliverable.id || deliverable.uuid}>
+                                                <EditableDeliverable onChange={onChange}
+                                                                     deliverable={value || deliverable}/>
+                                            </Grid>
+                                        )
+                                    })
+                                    }
+                                </Grid>
+                            </Grid>
+                        )})}
                 </Grid>
-
             </Paper>
         )
     }
