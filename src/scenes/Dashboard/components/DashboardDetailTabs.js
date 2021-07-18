@@ -170,6 +170,15 @@ export function DashboardDetailTabs(props) {
                                             >
                                                 <MenuItem onClick={() => {
                                                     setAnchorElRoleMenu(null);
+                                                    if (roleView !== "all") {
+                                                        dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "all"))
+                                                        saveDashboardRoleMode("all");
+                                                    }
+                                                }}>
+                                                    All Tasks
+                                                </MenuItem>
+                                                <MenuItem onClick={() => {
+                                                    setAnchorElRoleMenu(null);
                                                     if (roleView !== "coordinator") {
                                                         dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"))
                                                         saveDashboardRoleMode("coordinator");

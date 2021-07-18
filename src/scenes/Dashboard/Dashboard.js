@@ -48,7 +48,7 @@ function Dashboard() {
     function setInitialRoleView() {
         if (whoami.uuid && !tasksInitialised) {
             const savedRoleMode = getDashboardRoleMode();
-            if (whoami.roles.includes(savedRoleMode))
+            if (whoami.roles.includes(savedRoleMode) || (savedRoleMode === "all" && whoami.roles.includes("coordinator")))
                 dispatch(setRoleViewAndGetTasks(whoami.uuid, "", savedRoleMode));
             else if (whoami.roles.includes("coordinator")) {
                 dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"));

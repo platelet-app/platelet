@@ -88,7 +88,7 @@ const TaskCard = React.memo((props) => {
         className = classes.delivered
     }
 
-    const coordAvatars = props.assignedCoordinators ? roleView === "coordinator" ? props.assignedCoordinators.filter(u => u.uuid !== whoami.uuid) : props.assignedCoordinators : [];
+    const coordAvatars = props.assignedCoordinators ? ["coordinator", "all"].includes(roleView) ? props.assignedCoordinators.filter(u => u.uuid !== whoami.uuid) : props.assignedCoordinators : [];
     const riderAvatars = props.assignedRiders ? roleView === "rider" ? props.assignedRiders.filter(u => u.uuid !== whoami.uuid) : props.assignedRiders : [];
     const cardInnerContent =
         <CardContent className={classes.cardContent}>

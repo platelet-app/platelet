@@ -33,7 +33,7 @@ export function saveDashboardRoleMode(mode) {
 }
 
 export function getDashboardRoleMode() {
-    return localStorage.getItem("dashboardRoleMode") || "coordinator";
+    return localStorage.getItem("dashboardRoleMode") || "all";
 }
 
 export function saveLogin(apiBearer) {

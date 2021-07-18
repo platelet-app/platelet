@@ -194,7 +194,10 @@ class Task {
     }
 
     async getTasks(user_id, page, role, status, before_parent, order="descending") {
-        return makeFetch(this.api_url,`tasks/${user_id}?page=${(page || "0")}&role=${role || ""}&status=${status || ""}&before_parent=${(before_parent || "0")}&order=${order}`, "GET", this.bearer)
+        if (role === "all")
+            return makeFetch(this.api_url,`tasks?page=${(page || "0")}&status=${status || ""}&before_parent=${(before_parent || "0")}&order=${order}`, "GET", this.bearer)
+        else
+            return makeFetch(this.api_url,`tasks/${user_id}?page=${(page || "0")}&role=${role || ""}&status=${status || ""}&before_parent=${(before_parent || "0")}&order=${order}`, "GET", this.bearer)
     }
 
     async getTask(task_id) {
