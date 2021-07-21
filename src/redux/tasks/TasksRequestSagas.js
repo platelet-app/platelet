@@ -38,7 +38,10 @@ const emptyTask = {
 function* postNewTask(action) {
     try {
         const api = yield select(getApiControl);
-        const result = yield call([api, api.tasks.createTask], action.data.payload, action.data.autoAssign);
+        // if on the "all" view then it should default to coordinator
+        console.log(action.data.autoAssign)
+        const autoAssign = action.data.autoAssign.role === "all" ? {...action.data.autoAssign, role: "coordinator"} : action.data.autoAssign
+        const result = yield call([api, api.tasks.createTask], action.data.payload, autoAssign);
         const parentID = result.parent_id ? parseInt(result.parent_id) : 0
         const task = {
             ...action.data.payload,
@@ -47,7 +50,7 @@ function* postNewTask(action) {
             order_in_relay: 1,
             reference: result.reference
         };
-        yield put(taskActions.addTaskSuccess({payload: task, autoAssign: action.data.autoAssign}));
+        yield put(taskActions.addTaskSuccess({payload: task, autoAssign: autoAssign}));
     } catch (error) {
         yield put(taskActions.addTaskFailure(error))
     }
@@ -89,9 +92,11 @@ function* postNewTaskRelay(action) {
         }
         const api = yield select(getApiControl);
         const whoami = yield select(getWhoami);
+        // if on the "all" view then it should default to coordinator
+        const autoAssign = action.data.autoAssign.role === "all" ? {...action.data.autoAssign, role: "coordinator"} : action.data.autoAssign
         const result = yield call([api, api.tasks.createTask], {
             ...emptyTask, ...prevTaskData,
-        }, action.data.autoAssign);
+        }, autoAssign);
         const orderInRelay = result.order_in_relay ? parseInt(result.order_in_relay) : 0;
         const task = {
             ...emptyTask, ...prevTaskData,
@@ -100,7 +105,7 @@ function* postNewTaskRelay(action) {
             order_in_relay: orderInRelay,
             reference: result.reference
         };
-        yield put(taskActions.addTaskRelaySuccess({payload: task, autoAssign: action.data.autoAssign}));
+        yield put(taskActions.addTaskRelaySuccess({payload: task, autoAssign: autoAssign}));
     } catch (error) {
         yield put(taskActions.addTaskRelayFailure(error))
     }
