@@ -136,9 +136,10 @@ export function DashboardDetailTabs(props) {
                         <Grid item>
                             <Grid container spacing={2} direction={"row"} justify={"flex-start"} alignItems={"center"}>
                                 <Grid item>
-                                    <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"}>
+                                    <Grid
+                                        className={whoami.roles.includes("rider") && !whoami.roles.includes("coordinator") ? hide : show}
+                                        container direction={"row"} justify={"flex-start"} alignItems={"center"}>
                                         <Grid
-                                            className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide}
                                             item>
                                             <Hidden smDown>
                                                 <Typography>{`${roleView} view`.toUpperCase()}</Typography>
@@ -147,9 +148,7 @@ export function DashboardDetailTabs(props) {
                                                 {roleView === "rider" ? <MotorcycleIcon/> : <CallIcon/>}
                                             </Hidden>
                                         </Grid>
-                                        <Grid
-                                            className={whoami.roles.includes("rider") && whoami.roles.includes("coordinator") ? show : hide}
-                                            item>
+                                        <Grid item>
                                             <IconButton
                                                 color="inherit"
                                                 aria-controls="simple-menu"
@@ -168,7 +167,9 @@ export function DashboardDetailTabs(props) {
                                                     setAnchorElRoleMenu(null);
                                                 }}
                                             >
-                                                <MenuItem onClick={() => {
+                                                <MenuItem
+                                                    className={whoami.roles.includes("coordinator") ? show : hide}
+                                                    onClick={() => {
                                                     setAnchorElRoleMenu(null);
                                                     if (roleView !== "all") {
                                                         dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "all"))
@@ -177,7 +178,9 @@ export function DashboardDetailTabs(props) {
                                                 }}>
                                                     All Tasks
                                                 </MenuItem>
-                                                <MenuItem onClick={() => {
+                                                <MenuItem
+                                                    className={whoami.roles.includes("coordinator") ? show : hide}
+                                                    onClick={() => {
                                                     setAnchorElRoleMenu(null);
                                                     if (roleView !== "coordinator") {
                                                         dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "coordinator"))
@@ -186,7 +189,9 @@ export function DashboardDetailTabs(props) {
                                                 }}>
                                                     Coordinator
                                                 </MenuItem>
-                                                <MenuItem onClick={() => {
+                                                <MenuItem
+                                                    className={whoami.roles.includes("rider") ? show : hide}
+                                                    onClick={() => {
                                                     setAnchorElRoleMenu(null);
                                                     if (roleView !== "rider") {
                                                         dispatch(setRoleViewAndGetTasks(whoami.uuid, "", "rider"))
