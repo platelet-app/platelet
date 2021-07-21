@@ -28,7 +28,7 @@ import {
     watchDeleteDeliverable,
     watchGetAvailableDeliverables,
     watchGetDeliverables,
-    watchPostNewDeliverable,
+    watchPostNewDeliverable, watchSetDeliverablesSorted,
     watchUpdateDeliverable, watchUpdateDeliverableCount
 } from "./deliverables/DeliverablesSagas"
 import {
@@ -115,6 +115,7 @@ export default function* rootSaga() {
         call(watchUpdateLocation),
         call(watchPostNewDeliverable),
         call(watchUpdateDeliverable),
+        call(watchSetDeliverablesSorted),
         call(watchGetVehicles),
         call(watchUpdateVehicle),
         call(watchPostNewVehicle),

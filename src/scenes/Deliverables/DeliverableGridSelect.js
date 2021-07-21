@@ -70,7 +70,7 @@ const EditableDeliverable = props => {
 export default function DeliverableGridSelect(props) {
     const dispatch = useDispatch();
     const availableDeliverables = useSelector(state => state.availableDeliverables.deliverables);
-    const deliverables = useSelector(state => state.deliverables.deliverables);
+    const deliverablesSorted = useSelector(state => state.deliverablesSorted);
     const loadingSelector = createLoadingSelector(["GET_DELIVERABLES"]);
     const isFetching = useSelector(state => loadingSelector(state));
     const classes = useStyles();
@@ -103,22 +103,10 @@ export default function DeliverableGridSelect(props) {
     if (isFetching) {
         return <DeliverablesSkeleton/>
     } else {
-        const result = {
-            deliverables: [],
-            defaults: []
-        };
-        for (const i of Object.values(availableDeliverables)) {
-            const value = Object.values(deliverables).find(d => d.type_id === i.id)
-            if (value) {
-                result.deliverables.push(value)
-            } else {
-                result.defaults.push(i)
-            }
-        }
         return (
             <Paper className={cardClasses.root}>
                 <Grid container spacing={3} justify={"space-between"} direction={"column"}>
-                    {Object.keys(result).map(key => {
+                    {Object.keys(deliverablesSorted).map(key => {
                         return (
                             <Grid key={key} item>
                                 <Grid container
@@ -126,12 +114,11 @@ export default function DeliverableGridSelect(props) {
                                       className={classes.root}
                                       direction={"column"}
                                 >
-                                    {result[key].map(deliverable => {
-                                        const value = Object.values(deliverables).find(d => d.type_id === deliverable.id)
+                                    {deliverablesSorted[key].map(deliverable => {
                                         return (
                                             <Grid item key={deliverable.id || deliverable.uuid}>
                                                 <EditableDeliverable onChange={onChange}
-                                                                     deliverable={value || deliverable}/>
+                                                                     deliverable={deliverable}/>
                                             </Grid>
                                         )
                                     })

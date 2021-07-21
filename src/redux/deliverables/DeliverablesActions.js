@@ -48,3 +48,14 @@ export const {getAvailableDeliverablesSuccess, getAvailableDeliverablesFailure, 
 export function getAvailableDeliverablesRequest() {
     return { type: getAvailableDeliverablesActions.request }
 }
+
+export const SET_DELIVERABLES_SORTED = "SET_DELIVERABLES_SORTED";
+export const DELIVERABLES_SORTED = "DELIVERABLES_SORTED";
+
+export function deliverablesSorted(data) {
+    return {type: DELIVERABLES_SORTED, data}
+}
+
+export function setDeliverablesSorted() {
+    return {type: SET_DELIVERABLES_SORTED}
+}

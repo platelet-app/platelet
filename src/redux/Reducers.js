@@ -19,7 +19,7 @@ import {dashboardFilter} from "./dashboardFilter/DashboardFilterReducers";
 import {tasks} from "./tasks/TasksReducers"
 import {task} from "./activeTask/ActiveTaskReducer"
 import {userStatistics} from "./statistics/statisticsReducers";
-import {availableDeliverables, deliverables} from "./deliverables/DeliverablesReducers"
+import {availableDeliverables, deliverables, deliverablesSorted} from "./deliverables/DeliverablesReducers"
 import {availableLocations, location} from "./locations/LocationsReducers"
 import {apiControl, authStatus} from "./login/LoginReducers";
 import {availablePatches} from "./patches/PatchesReducers";
@@ -256,6 +256,7 @@ const appReducer = combineReducers({
     task,
     tasks,
     deliverables,
+    deliverablesSorted,
     availableDeliverables,
     availablePriorities,
     availablePatches,

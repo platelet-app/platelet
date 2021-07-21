@@ -3,7 +3,7 @@ import {
     getAvailableDeliverablesActions,
     getDeliverablesActions,
     updateDeliverableActions,
-    deleteDeliverableActions
+    deleteDeliverableActions, SET_DELIVERABLES_SORTED, DELIVERABLES_SORTED
 } from "./DeliverablesActions";
 import _ from "lodash"
 
@@ -48,5 +48,20 @@ export function availableDeliverables(state = initialStateAvailables, action) {
             return {deliverables: action.data, error: null};
         default:
             return state
+    }
+}
+
+const initialDeliverablesSorted = {
+    deliverables: [],
+    defaults: []
+
+}
+
+export function deliverablesSorted(state = initialDeliverablesSorted, action) {
+    switch (action.type) {
+        case DELIVERABLES_SORTED:
+            return action.data;
+        default:
+            return state;
     }
 }

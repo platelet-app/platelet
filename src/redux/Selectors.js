@@ -8,3 +8,5 @@ export const getRoleView = (state) => state.roleView;
 export const getUsersSelector = (state) => state.users.users;
 export const getActiveTaskSelector = (state) => state.task.task;
 export const getPresetLocations = (state) => state.availableLocations.locations;
+export const availableDeliverablesSelector = (state) => state.availableDeliverables.deliverables;
+export const deliverablesSelector = (state) => state.deliverables.deliverables;
