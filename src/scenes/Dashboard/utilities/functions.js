@@ -41,3 +41,14 @@ export function filterTasks(tasks, search) {
         return result;
     }
 }
+
+export const getTaskUUIDEtags = tasks => {
+    let result = {};
+    for (const value of Object.values(tasks)) {
+        for (const task of Object.values(value)) {
+            result[task.uuid] = task.etag;
+        }
+    }
+    return result;
+}
+

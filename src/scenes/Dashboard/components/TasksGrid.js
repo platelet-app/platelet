@@ -33,6 +33,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
 import {getTasksSelector} from "../../../redux/Selectors";
+import {convertToRelays} from "../../../redux/tasks/task_redux_utilities";
 
 
 const getColumnTitle = key => {
@@ -194,7 +195,8 @@ const GridColumn = (props) => {
     const loaderClass = loaderStyles();
     const {show, hide} = showHide();
     const dispatch = useDispatch();
-    const tasks = useSelector(getTasksSelector)[props.taskKey];
+    //TODO: temporary just to get it working
+    const tasks = convertToRelays(useSelector(getTasksSelector)[props.taskKey]);
     const whoami = useSelector(state => state.whoami.user);
     const gridColumnClasses = gridColumnStyles();
     let selectorsString = "";

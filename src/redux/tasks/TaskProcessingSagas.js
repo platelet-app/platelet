@@ -3,7 +3,6 @@ import {
     addAssigneeToList,
     convertToRelays,
     removeAssigneeFromList,
-    removeParentFromTasks,
     taskGroupSort
 } from "./task_redux_utilities";
 import * as taskAssigneesActions from "../taskAssignees/TaskAssigneesActions"
@@ -45,7 +44,7 @@ export function* watchSortAndSendToState() {
 
 function* addTaskSuccess(action) {
     const {payload, autoAssign} = action.data;
-    const data = yield {[payload.uuid]: payload};
+    const data = {[payload.uuid]: payload};
     yield put(taskActions.sortAndSendToState(data))
     if (autoAssign && autoAssign.role && autoAssign.uuid) {
         const users = yield select(getUsersSelector);
@@ -309,72 +308,6 @@ export function* watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess() 
         takeEvery(taskActions.UPDATE_TASK_PICKUP_LOCATION_FROM_SOCKET, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
         takeEvery(taskActions.UPDATE_TASK_DROPOFF_LOCATION_FROM_SOCKET, updateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
         ]);
-}
-
-function* updateTaskTimeCancelledTimeRejectedSuccessNope(action) {
-    const {payload} = action.data
-    const tasks = yield select(getTasksSelector);
-    const parent = yield call(findExistingTaskParent, tasks, action.data.taskUUID);
-    if (action.type === taskActions.updateTaskCancelledTimeActions.success) {
-        const currentValue = parent.taskGroup[action.data.taskUUID].time_cancelled;
-        if (currentValue === null) {
-            // only notify if marking cancelled for the first time
-            const viewLink = `/task/${encodeUUID(action.data.taskUUID)}`
-            yield put(displayInfoNotification("Task marked cancelled", restoreFactories.actionTimeCancelledRestoreFactory(action), viewLink))
-        } else {
-            // need to remove the parent here first and put the group back in without the uncancelled task
-            const filteredTasks = yield call(removeParentFromTasks, tasks, "tasksCancelled", parent.parentID);
-            const filteredGroup = yield call(_.omit, parent.taskGroup, action.data.taskUUID);
-            let newList;
-            // if it's empty with the removed task then don't put it back in the list
-            if (_.isEmpty(filteredGroup))
-                newList = {...filteredTasks['tasksCancelled']}
-            else
-                newList = {...filteredTasks['tasksCancelled'], [parent.parentID]: filteredGroup};
-            yield put(taskActions.taskCategoryActionFunctions.tasksCancelled.put(newList));
-        }
-    } else if (action.type === taskActions.updateTaskRejectedTimeActions.success) {
-        const currentValue = parent.taskGroup[action.data.taskUUID].time_rejected;
-        if (currentValue === null) {
-            // only notify if marking rejected for the first time
-            const restoreActions = yield () => [taskActions.updateTaskRejectedTimeRequest(
-                action.data.taskUUID,
-                {time_rejected: null}
-            )];
-            const viewLink = yield `/task/${encodeUUID(action.data.taskUUID)}`
-            yield put(displayInfoNotification("Task marked rejected", restoreActions, viewLink))
-        } else {
-            // need to remove the parent here first and put the group back in without the unrejected task
-            const filteredTasks = yield call(removeParentFromTasks, tasks, "tasksRejected", parent.parentID);
-            const filteredGroup = yield call(_.omit, parent.taskGroup, action.data.taskUUID);
-            let newList;
-            // if it's empty with the removed task then don't put it back in the list
-            if (_.isEmpty(filteredGroup))
-                newList = {...filteredTasks['tasksRejected']}
-            else
-                newList = {...filteredTasks['tasksRejected'], [parent.parentID]: filteredGroup};
-            yield put(taskActions.taskCategoryActionFunctions.tasksRejected.put(newList));
-        }
-    }
-    if (parent.taskGroup) {
-        let newGroup = {};
-        if (parent.listType === "tasksRejected" || parent.listType === "tasksCancelled") {
-            const rejectedCancelledTask = {...parent.taskGroup[action.data.taskUUID], ...payload};
-            const taskCurrentParent = yield call(findExistingTaskParentByID, tasks, parent.parentID)
-            if (taskCurrentParent.taskGroup) {
-                newGroup = {...taskCurrentParent.taskGroup, [action.data.taskUUID]: rejectedCancelledTask}
-            } else {
-                newGroup = {[action.data.taskUUID]: rejectedCancelledTask}
-            }
-            yield put(taskActions.sortAndSendToState(newGroup));
-        } else {
-            const taskToUpdate = parent.taskGroup[action.data.taskUUID];
-            const updatedItem = {...taskToUpdate, ...payload};
-            const updatedGroup = {...parent.taskGroup, [action.data.taskUUID]: updatedItem};
-            yield put(taskActions.sortAndSendToState(updatedGroup));
-        }
-    }
-    yield put(taskActions.resetGroupRelayUUIDs(parent.parentID));
 }
 
 function* addTaskAssignedRiderSuccess(action) {
