@@ -16,14 +16,20 @@ import {dialogCardStyles} from "../Task/styles/DialogCompactStyles";
 import IncreaseDecreaseCounter from "../../components/IncreaseDecreaseCounter";
 import {v4 as uuidv4} from 'uuid';
 import {SmallCirclePlusButton} from "../../components/Buttons";
+import Typography from "@material-ui/core/Typography";
+import {showHide} from "../../styles/common";
+import Link from "@material-ui/core/Link";
 
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles({
     root: {
         width: "100%",
         maxWidth: 350
+    },
+    truncate: {
+        maxHeight: 410
     }
-}))
+})
 
 const DeliverableBox = styled(Box)({
     backgroundColor: "rgba(180, 180, 180, 0.1)",
@@ -72,9 +78,12 @@ export default function DeliverableGridSelect(props) {
     const availableDeliverables = useSelector(state => state.availableDeliverables.deliverables);
     const deliverablesSorted = useSelector(state => state.deliverablesSorted);
     const loadingSelector = createLoadingSelector(["GET_DELIVERABLES"]);
+    const [truncated, setTruncated] = useState(false);
     const isFetching = useSelector(state => loadingSelector(state));
     const classes = useStyles();
     const cardClasses = dialogCardStyles();
+
+    const {show, hide} = useStyles(showHide);
 
     let emptyDeliverable = {
         task_uuid: props.taskUUID,
@@ -100,12 +109,18 @@ export default function DeliverableGridSelect(props) {
     }, [availableDeliverables, props.taskUUID]);
 
 
+    useEffect(() => setTruncated(availableDeliverables.length > 6), [availableDeliverables]);
+
+
     if (isFetching) {
         return <DeliverablesSkeleton/>
     } else {
+        let count = 0;
         return (
-            <Paper className={cardClasses.root}>
-                <Grid container spacing={3} justify={"space-between"} direction={"column"}>
+            <Paper className={
+                cardClasses.root
+            }>
+                <Grid container justify={"space-between"} direction={"column"}>
                     {Object.keys(deliverablesSorted).map(key => {
                         return (
                             <Grid key={key} item>
@@ -115,17 +130,33 @@ export default function DeliverableGridSelect(props) {
                                       direction={"column"}
                                 >
                                     {deliverablesSorted[key].map(deliverable => {
+                                        count++;
                                         return (
                                             <Grid item key={deliverable.id || deliverable.uuid}>
-                                                <EditableDeliverable onChange={onChange}
-                                                                     deliverable={deliverable}/>
+                                                {count > 5 && truncated ?
+                                                    <></> :
+                                                    <EditableDeliverable
+                                                        onChange={onChange}
+                                                        deliverable={deliverable}/>
+                                                }
                                             </Grid>
                                         )
                                     })
                                     }
                                 </Grid>
                             </Grid>
-                        )})}
+                        )
+                    })}
+                    <Grid item>
+                        <Link href="#" onClick={e => {
+                            setTruncated(!truncated)
+                            e.preventDefault();
+                        }} color="inherit">
+                            {truncated ? "More..." : "Less..."}
+                        </Link>
+                        <Typography>
+                        </Typography>
+                    </Grid>
                 </Grid>
             </Paper>
         )
