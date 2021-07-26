@@ -11,6 +11,7 @@ import AcUnitIcon from "@material-ui/icons/AcUnit"
 import ClearIcon from "@material-ui/icons/Clear"
 import IconButton from "@material-ui/core/IconButton"
 import PropTypes from "prop-types";
+import {Tooltip} from "@material-ui/core";
 
 
 function getIcon(typeID) {
@@ -76,7 +77,6 @@ function DeliverableCard(props) {
         }
     }
 
-
     return (
             <Grid className={classes.root} container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
                 <Grid item>
@@ -87,9 +87,11 @@ function DeliverableCard(props) {
                             </Avatar>
                         </Grid>
                         <Grid item>
-                            <Typography noWrap className={classes.label}>
-                                {props.label}
-                            </Typography>
+                            <Tooltip title={props.label && props.label.length > 14 ? props.label : ""}>
+                                <Typography noWrap className={classes.label}>
+                                    {props.label}
+                                </Typography>
+                            </Tooltip>
                         </Grid>
                     </Grid>
                 </Grid>
