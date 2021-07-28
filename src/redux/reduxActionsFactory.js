@@ -28,7 +28,7 @@ export function createRequestFunctions(actions) {
         } else if (key === "success") {
             const newKey = `${toCamel(lowered)}`
             result[newKey] = (data) => {
-                return {type: value, data}
+                return {type: value, data, fetched: true}
             }
         } else if (["failure", "notFound", "forbidden"].includes(key)) {
             const newKey = `${toCamel(lowered)}`

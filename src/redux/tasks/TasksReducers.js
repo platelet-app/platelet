@@ -19,6 +19,7 @@ export const initialTasksState = {
         tasksPickedUp: {},
         tasksDelivered: {}
     },
+    fetched: false,
     error: null
 }
 
@@ -61,34 +62,34 @@ export function tasks(state = initialTasksState, action) {
     }
     switch (action.type) {
         case taskCategoryActions.tasksNew.put:
-            return {tasks: {...filteredTasks, tasksNew: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksNew: action.data}, error: null, fetched: state.fetched};
         case taskCategoryActions.tasksNew.add:
-            return {tasks: {...filteredTasks, tasksNew: {...filteredTasks.tasksNew, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksNew: {...filteredTasks.tasksNew, ...action.data}}, error: null, fetched: state.fetched}
         case taskCategoryActions.tasksActive.put:
-            return {tasks: {...filteredTasks, tasksActive: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksActive: action.data}, error: null, fetched: state.fetched};
         case taskCategoryActions.tasksActive.add:
-            return {tasks: {...filteredTasks, tasksActive: {...filteredTasks.tasksActive, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksActive: {...filteredTasks.tasksActive, ...action.data}}, error: null, fetched: state.fetched}
         case taskCategoryActions.tasksPickedUp.put:
-            return {tasks: {...filteredTasks, tasksPickedUp: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksPickedUp: action.data}, error: null, fetched: state.fetched};
         case taskCategoryActions.tasksPickedUp.add:
-            return {tasks: {...filteredTasks, tasksPickedUp: {...filteredTasks.tasksPickedUp, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksPickedUp: {...filteredTasks.tasksPickedUp, ...action.data}}, error: null, fetched: state.fetched}
         case taskCategoryActions.tasksDelivered.put:
-            return {tasks: {...filteredTasks, tasksDelivered: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksDelivered: action.data}, error: null, fetched: state.fetched};
         case taskCategoryActions.tasksDelivered.add:
-            return {tasks: {...filteredTasks, tasksDelivered: {...filteredTasks.tasksDelivered, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksDelivered: {...filteredTasks.tasksDelivered, ...action.data}}, error: null, fetched: state.fetched}
         case taskCategoryActions.tasksRejected.put:
-            return {tasks: {...filteredTasks, tasksRejected: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksRejected: action.data}, error: null, fetched: state.fetched};
         case taskCategoryActions.tasksRejected.add:
-            return {tasks: {...filteredTasks, tasksRejected: {...filteredTasks.tasksRejected, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksRejected: {...filteredTasks.tasksRejected, ...action.data}}, error: null, fetched: state.fetched}
         case taskCategoryActions.tasksCancelled.put:
-            return {tasks: {...filteredTasks, tasksCancelled: action.data}, error: null};
+            return {tasks: {...filteredTasks, tasksCancelled: action.data}, error: null, fetched: state.fetched};
         case taskCategoryActions.tasksCancelled.add:
-            return {tasks: {...filteredTasks, tasksCancelled: {...filteredTasks.tasksCancelled, ...action.data}}, error: null}
+            return {tasks: {...filteredTasks, tasksCancelled: {...filteredTasks.tasksCancelled, ...action.data}}, error: null, fetched: state.fetched}
         case getTasksActions.success:
         case REPLACE_TASKS_STATE:
-            return {tasks: action.data, error: null};
+            return {tasks: action.data, error: null, fetched: action.fetched};
         case getTasksActions.failure:
-            return {...initialTasksState, error: action.error};
+            return {...initialTasksState, error: action.error, fetched: false};
         default:
             return state;
     }
