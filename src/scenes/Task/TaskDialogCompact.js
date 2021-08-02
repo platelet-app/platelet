@@ -23,50 +23,42 @@ import {getTaskPrefix} from "../../redux/activeTask/ActiveTaskActions"
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
 import {determineTaskType} from "../../redux/tasks/task_redux_utilities";
+import TaskOverview from "./components/TaskOverview";
 
-const useStyles = makeStyles(theme => ({
-    dialogContent: {
-        overflow: ""
-    },
-    root: {
-        paddingTop: 20,
-        [theme.breakpoints.down("md")]: {
-            padding: 5,
-            paddingTop: 5
-        },
-    },
-    item: {
-        width: "100%",
-        [theme.breakpoints.up("sm")]: {
-            width: 0,
-            minWidth: 425
-        }
 
-    },
-    container: {
-        //width: "100%",
-        //margin: 0
-    },
-    statusBar: {
-        paddingBottom: 8
-    },
-    separator: {
-        height: 25,
-        width: 25
-    },
-}))
+const DialogWrapper = props => {
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("xs"));
+    const {handleClose} = props;
+    return (
+        <Dialog
+            disableEscapeKeyDown
+            fullScreen={isSm}
+            maxWidth={"md"}
+            fullWidth={true}
+            open={true}
+            onClose={handleClose}
+            PaperProps={{
+                style: {
+                    boxShadow: 'none',
+                    background: theme.palette.background.default,
+                    padding: 0
+                },
+            }}
+            aria-labelledby="task-dialog">
+            {props.children}
+        </Dialog>
+    )
+}
 
 function TaskDialogCompact(props) {
-    const theme = useTheme();
-    const history = useHistory();
     const dispatch = useDispatch();
     const task = useSelector(state => state.task.task);
-    const classes = useStyles();
     const [taskStatus, setTaskStatus] = useState("No status")
     const notFoundSelector = createNotFoundSelector([getTaskPrefix]);
     const notFound = useSelector(state => notFoundSelector(state));
+    const history = useHistory();
 
-    const isSm = useMediaQuery(theme.breakpoints.down("xs"));
 
     let taskUUID = null;
 
@@ -99,7 +91,7 @@ function TaskDialogCompact(props) {
 
     useEffect(setStatus, [task])
 
-    let handleClose = e => {
+    const handleClose = e => {
         e.stopPropagation();
         if (props.location.state)
             history.goBack();
@@ -107,6 +99,7 @@ function TaskDialogCompact(props) {
             history.push("/dashboard");
 
     };
+
     const statusBar = !task ? <></> :
         <StatusBar
             handleClose={handleClose}
@@ -115,106 +108,25 @@ function TaskDialogCompact(props) {
         />
 
 
+
     if (!task) {
         return <Dialog open={true}><FormSkeleton/></Dialog>
     } else if (notFound) {
         return (
-            <Dialog
-                disableEscapeKeyDown
-                fullScreen={isSm}
-                maxWidth={"md"}
-                fullWidth={true}
-                open={true}
-                onClose={handleClose}
-                PaperProps={{
-                    style: {
-                        boxShadow: 'none',
-                        background: theme.palette.background.default,
-                        padding: 0
-                    },
-                }}
-                aria-labelledby="task-dialog">
+            <DialogWrapper handleClose={handleClose}>
                 <NotFound>
                     <Typography>
                         Task with UUID {taskUUID} not found.
                     </Typography>
                 </NotFound>
-            </Dialog>
+            </DialogWrapper>
         )
     } else {
         return (
-            <Dialog
-                disableEscapeKeyDown
-                fullScreen={isSm}
-                maxWidth={"md"}
-                fullWidth={true}
-                open={true}
-                onClose={handleClose}
-                PaperProps={{
-                    style: {
-                        boxShadow: 'none',
-                        background: theme.palette.background.default,
-                        padding: 0
-                    },
-                }}
-                aria-labelledby="task-dialog">
+            <DialogWrapper handleClose={handleClose}>
                 {statusBar}
-                <Container className={classes.root} maxWidth={false}>
-                    <Grid container className={classes.container} spacing={isSm ? 0 : 3} direction={"column"}
-                          alignItems={"flex-start"} justify={"center"}>
-                        <Grid container className={classes.container} spacing={isSm ? 0 : 3} item direction={"row"}
-                              justify={isSm ? "center" : "flex-start"}>
-                            <Grid className={classes.item} item>
-                                <PickUpDetails
-                                    taskUUID={taskUUID}
-                                    location={task.pickup_location}
-                                    time={task.time_picked_up}
-                                />
-                            </Grid>
-                            <Hidden smUp>
-                                <Grid item>
-                                    <div className={classes.separator}/>
-                                </Grid>
-                            </Hidden>
-                            <Grid className={classes.item} item>
-                                <DropOffDetails
-                                    disableTimeButton={!!!task.time_picked_up}
-                                    taskUUID={taskUUID}
-                                    location={task.dropoff_location}
-                                    time={task.time_dropped_off}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Hidden smUp>
-                            <Grid item>
-                                <div className={classes.separator}/>
-                            </Grid>
-                        </Hidden>
-                        <Grid container className={classes.container} spacing={isSm ? 0 : 3} item direction={"row"}
-                              justify={isSm ? "center" : "flex-start"}>
-                            <Grid className={classes.item} item>
-                                <TaskDetailsPanel/>
-                            </Grid>
-                            <Hidden smUp>
-                                <Grid item>
-                                    <div className={classes.separator}/>
-                                </Grid>
-                            </Hidden>
-                            <Grid className={classes.item} item>
-                                <DeliverableGridSelect taskUUID={taskUUID}/>
-                            </Grid>
-                        </Grid>
-                        <Hidden smUp>
-                            <Grid item>
-                                <div className={classes.separator}/>
-                            </Grid>
-                        </Hidden>
-                        <Grid item>
-                            <CommentsSection parentUUID={taskUUID}/>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </Dialog>
+                <TaskOverview task={task} taskUUID={taskUUID}/>
+        </DialogWrapper>
         )
     }
 }
