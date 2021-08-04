@@ -3,8 +3,9 @@ import EditIcon from "@material-ui/icons/Edit";
 import React from "react";
 import {Popover} from "@material-ui/core";
 import TaskAssignees from "./TaskAssignees";
+import PropTypes from "prop-types";
 
-function RiderEditPopover(props) {
+function AssigneeEditPopover(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleClick = (event) => {
@@ -37,10 +38,23 @@ function RiderEditPopover(props) {
                     horizontal: 'center',
                 }}
             >
-                <TaskAssignees assignees={props.assignees} onRemove={handleClose} taskUUID={props.taskUUID}/>
+                <TaskAssignees {...props} onRemove={handleClose}/>
             </Popover>
         </div>
     );
 }
 
-export default RiderEditPopover;
+AssigneeEditPopover.propTypes = {
+    taskUUID: PropTypes.string.isRequired,
+    assignees: PropTypes.arrayOf(PropTypes.object),
+    rider: PropTypes.bool,
+    coordinator: PropTypes.bool
+}
+
+AssigneeEditPopover.defaultProps = {
+    assignees: [],
+    rider: false,
+    coordinator: false
+}
+
+export default AssigneeEditPopover;

@@ -1,20 +1,9 @@
 import {put, select, takeEvery} from "redux-saga/effects";
 import {getActiveTaskSelector} from "../Selectors";
-import {
-    updateActiveTask,
-    updateActiveTaskAssignedCoordinator,
-    updateActiveTaskAssignedRider, updateActiveTaskRemoveAssignedRider
-} from "./ActiveTaskActions";
-import {
-    UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET,
-    UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET,
-    UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET,
-} from "../taskAssignees/TaskAssigneesActions";
-import {
-    addTaskAssignedCoordinatorActions,
-    addTaskAssignedRiderActions,
-    removeTaskAssignedRiderActions
-} from "../taskAssignees/TaskAssigneesActions";
+
+import * as actions from "./ActiveTaskActions";
+
+import * as assigneeActions from "../taskAssignees/TaskAssigneesActions";
 
 const ignoreActionTypes = []
 
@@ -30,14 +19,16 @@ function* monitor(monitoredAction) {
     const task = yield select(getActiveTaskSelector)
     if (monitoredAction.data && monitoredAction.data.taskUUID && monitoredAction.data.payload) {
         if (monitoredAction.data.taskUUID === task.uuid) {
-            if (monitoredAction.type === addTaskAssignedRiderActions.success || monitoredAction.type === UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET) {
-                yield put(updateActiveTaskAssignedRider(task.uuid, monitoredAction.data.payload))
-            } else if (monitoredAction.type === addTaskAssignedCoordinatorActions.success || monitoredAction.type === UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET) {
-                yield put(updateActiveTaskAssignedCoordinator(task.uuid, monitoredAction.data.payload))
-            } else if (monitoredAction.type === removeTaskAssignedRiderActions.success || monitoredAction.type === UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET) {
-                yield put(updateActiveTaskRemoveAssignedRider(task.uuid, monitoredAction.data.payload))
+            if (monitoredAction.type === assigneeActions.addTaskAssignedRiderActions.success || monitoredAction.type === assigneeActions.UPDATE_TASK_ASSIGNED_RIDER_FROM_SOCKET) {
+                yield put(actions.updateActiveTaskAssignedRider(task.uuid, monitoredAction.data.payload))
+            } else if (monitoredAction.type === assigneeActions.addTaskAssignedCoordinatorActions.success || monitoredAction.type === assigneeActions.UPDATE_TASK_ASSIGNED_COORDINATOR_FROM_SOCKET) {
+                yield put(actions.updateActiveTaskAssignedCoordinator(task.uuid, monitoredAction.data.payload))
+            } else if (monitoredAction.type === assigneeActions.removeTaskAssignedRiderActions.success || monitoredAction.type === assigneeActions.UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET) {
+                yield put(actions.updateActiveTaskRemoveAssignedRider(task.uuid, monitoredAction.data.payload))
+            } else if (monitoredAction.type === assigneeActions.removeTaskAssignedCoordinatorActions.success || monitoredAction.type === assigneeActions.UPDATE_TASK_REMOVE_ASSIGNED_RIDER_FROM_SOCKET) {
+                yield put(actions.updateActiveTaskRemoveAssignedCoordinator(task.uuid, monitoredAction.data.payload))
             } else {
-                yield put(updateActiveTask(task.uuid, monitoredAction.data.payload))
+                yield put(actions.updateActiveTask(task.uuid, monitoredAction.data.payload))
             }
         }
     }

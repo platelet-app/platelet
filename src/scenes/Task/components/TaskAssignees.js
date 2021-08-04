@@ -4,6 +4,7 @@ import UserCard from "../../../components/UserCard";
 import React from "react";
 import {useDispatch} from "react-redux";
 import {
+    removeTaskAssignedCoordinatorRequest,
     removeTaskAssignedRiderRequest
 } from "../../../redux/taskAssignees/TaskAssigneesActions";
 import Divider from "@material-ui/core/Divider";
@@ -19,17 +20,23 @@ const useStyles = makeStyles({
 
 function TaskAssignees(props) {
     const dispatch = useDispatch();
-    const taskUUID = props.taskUUID;
+    const {taskUUID} = props;
     const classes = useStyles();
 
     const noAssigneeMessage = props.assignees ? props.assignees.length === 0 ?
         <Typography>No assignee.</Typography> : <></> : <></>
 
     function onRemoveUser(userUUID) {
-        dispatch(removeTaskAssignedRiderRequest(
-            taskUUID,
-            userUUID
-        ));
+        if (props.rider)
+            dispatch(removeTaskAssignedRiderRequest(
+                taskUUID,
+                userUUID
+            ));
+        else if (props.coordinator)
+            dispatch(removeTaskAssignedCoordinatorRequest(
+                taskUUID,
+                userUUID
+            ));
         if (props.onRemove)
             props.onRemove();
     }
@@ -57,9 +64,11 @@ function TaskAssignees(props) {
 }
 
 TaskAssignees.propTypes = {
-    taskUUID: PropTypes.string,
+    taskUUID: PropTypes.string.isRequired,
     assignees: PropTypes.arrayOf(PropTypes.object),
-    onRemove: PropTypes.func
+    onRemove: PropTypes.func,
+    coordinator: PropTypes.bool,
+    rider: PropTypes.bool
 }
 
 TaskAssignees.defaultProps = {

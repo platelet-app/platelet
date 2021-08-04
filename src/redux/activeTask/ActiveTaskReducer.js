@@ -2,7 +2,9 @@ import {
     getTaskActions,
     UPDATE_ACTIVE_TASK,
     UPDATE_ACTIVE_TASK_ASSIGNED_COORDINATOR,
-    UPDATE_ACTIVE_TASK_ASSIGNED_RIDER, UPDATE_ACTIVE_TASK_REMOVE_ASSIGNED_RIDER
+    UPDATE_ACTIVE_TASK_ASSIGNED_RIDER,
+    UPDATE_ACTIVE_TASK_REMOVE_ASSIGNED_COORDINATOR,
+    UPDATE_ACTIVE_TASK_REMOVE_ASSIGNED_RIDER
 } from "./ActiveTaskActions";
 import {addAssigneeToList, removeAssigneeFromList} from "../tasks/task_redux_utilities";
 
@@ -81,6 +83,13 @@ export function task(state = initialState, action) {
                     ...state.task,
                     ...removeAssigneeFromList(state.task,
                         action.data.payload.user_uuid, "rider")
+                }, error: null}
+        }
+        case UPDATE_ACTIVE_TASK_REMOVE_ASSIGNED_COORDINATOR: {
+            return { task: {
+                    ...state.task,
+                    ...removeAssigneeFromList(state.task,
+                        action.data.payload.user_uuid, "coordinator")
                 }, error: null}
         }
         case getTaskActions.failure:

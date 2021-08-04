@@ -22,9 +22,9 @@ function AssignRiderCoordinatorPopover(props) {
     const [open, setOpen] = React.useState(false);
     const onSelect = user => {
         if (user) {
-            if (props.role === "rider")
+            if (props.rider)
                 dispatch(addTaskAssignedRiderRequest(props.taskUUID, user.uuid, user.patch_id))
-            else if (props.role === "coordinator")
+            else if (props.coordinator)
                 dispatch(addTaskAssignedCoordinatorRequest(props.taskUUID, user.uuid))
         }
         handleClose();
@@ -32,22 +32,19 @@ function AssignRiderCoordinatorPopover(props) {
 
     function handleOpen() {
         setOpen(true);
-
     }
-
     function handleClose() {
         setOpen(false);
-
     }
 
 
     const buttons =
-        !open ? <SmallCirclePlusButton tooltip={`Assign a ${props.role}`} onClick={handleOpen}/> :
+        !open ? <SmallCirclePlusButton tooltip={`Assign a ${props.coordinator ? "coordinator" : "rider"}`} onClick={handleOpen}/> :
         <IconButton onClick={handleClose}>
             <CloseIcon/>
         </IconButton>
 
-    if (props.role === "coordinator") {
+    if (props.coordinator) {
         return (
             <Grid container direction={"row"} spacing={2} justify={"flex-start"} alignItems={"center"}>
                 <Grid item>
@@ -62,7 +59,7 @@ function AssignRiderCoordinatorPopover(props) {
                 </Grid>
             </Grid>
         );
-    } else if (props.role === "rider") {
+    } else if (props.rider) {
         return (
             <Grid container direction={"row"} spacing={2} justify={"flex-end"} alignItems={"center"}>
                 <Grid item>
@@ -83,8 +80,9 @@ function AssignRiderCoordinatorPopover(props) {
 
 AssignRiderCoordinatorPopover.propTypes = {
     taskUUID: PropTypes.string,
-    role: PropTypes.oneOf(["coordinator", "rider"]),
-    exclude: PropTypes.arrayOf(PropTypes.string)
+    exclude: PropTypes.arrayOf(PropTypes.string),
+    coordinator: PropTypes.bool,
+    rider: PropTypes.bool
 }
 
 AssignRiderCoordinatorPopover.defaultProps = {

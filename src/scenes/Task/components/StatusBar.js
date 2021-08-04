@@ -10,7 +10,7 @@ import {ArrowButton} from "../../../components/Buttons";
 import {showHide} from "../../../styles/common";
 import {encodeUUID} from "../../../utilities";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
-import RiderEditPopover from "./RiderEditPopover";
+import AssigneeEditPopover from "./AssigneeEditPopover";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
@@ -65,6 +65,13 @@ function StatusBar(props) {
                         </Grid>
                         <Hidden smDown>
                             <Grid item>
+                                <AssigneeEditPopover
+                                    coordinator
+                                    assignees={task.assigned_coordinators}
+                                    className={task.assigned_coordinators.length > 0 ? show : hide}
+                                    taskUUID={task.uuid}/>
+                            </Grid>
+                            <Grid item>
                                 <Tooltip title={task.assigned_coordinators_display_string}>
                                     <AvatarGroup>
                                         {task.assigned_coordinators.map((u) =>
@@ -81,7 +88,7 @@ function StatusBar(props) {
                             <Grid item>
                                 <AssignRiderCoordinatorPopover
                                     exclude={task.assigned_coordinators.map(u => u.uuid)}
-                                    role={"coordinator"}
+                                    coordinator
                                     taskUUID={props.taskUUID}/>
                             </Grid>
                         </Hidden>
@@ -95,9 +102,11 @@ function StatusBar(props) {
                         {/* TODO: add some way to assign people on mobile view, showing it for now*/}
                         <Hidden>
                             <Grid item>
-                                <RiderEditPopover assignees={task.assigned_riders}
-                                                  className={task.assigned_riders.length > 0 ? show : hide}
-                                                  taskUUID={task.uuid}/>
+                                <AssigneeEditPopover
+                                    rider
+                                    assignees={task.assigned_riders}
+                                    className={task.assigned_riders.length > 0 ? show : hide}
+                                    taskUUID={task.uuid}/>
                             </Grid>
                             <Grid item>
                                 <Tooltip title={task.assigned_riders_display_string}>
@@ -114,8 +123,10 @@ function StatusBar(props) {
                                 </Tooltip>
                             </Grid>
                             <Grid item>
-                                <AssignRiderCoordinatorPopover exclude={task.assigned_riders.map(u => u.uuid)}
-                                                               role={"rider"} taskUUID={props.taskUUID}/>
+                                <AssignRiderCoordinatorPopover
+                                    rider
+                                    exclude={task.assigned_riders.map(u => u.uuid)}
+                                    taskUUID={props.taskUUID}/>
                             </Grid>
                         </Hidden>
                         <Hidden smDown>
