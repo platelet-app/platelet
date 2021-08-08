@@ -4,7 +4,7 @@ import {loginRequest} from "../../../redux/login/LoginActions";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
 import Button from "@material-ui/core/Button";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import PasswordField from "./PasswordField";
 
 export default function LoginForm(props) {

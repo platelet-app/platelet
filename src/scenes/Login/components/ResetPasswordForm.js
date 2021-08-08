@@ -3,7 +3,7 @@ import Typography from "@material-ui/core/Typography";
 import PasswordField from "./PasswordField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import {useDispatch, useSelector} from "react-redux";
 import {updateUserPasswordRequest} from "../../../redux/users/UsersActions";
 

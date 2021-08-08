@@ -17,7 +17,7 @@ import {
 import {findExistingTask} from "./task_redux_utilities";
 import {setRoleView} from "../Actions";
 import {getTaskUUIDEtags} from "../../scenes/Dashboard/utilities";
-import {createLoadingSelector, createPostingSelector} from "../selectors";
+import {createLoadingSelector, createPostingSelector} from "../LoadingSelectors";
 import {convertTaskListsToObjects} from "./task_redux_utilities";
 
 

@@ -11,7 +11,7 @@ import {
     updateDropoffLocationAndUpdateTaskRequest
 } from "../../../redux/taskDestinations/TaskDestinationsActions";
 import {useDispatch, useSelector} from "react-redux";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import {Paper} from "@material-ui/core";
 import {dialogCardStyles} from "../styles/DialogCompactStyles";
 

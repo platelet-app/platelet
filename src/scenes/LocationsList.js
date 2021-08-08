@@ -1,6 +1,6 @@
 import React from "react";
 import {useSelector} from "react-redux";
-import {createLoadingSelector} from "../redux/selectors";
+import {createLoadingSelector} from "../redux/LoadingSelectors";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
 import Grid from "@material-ui/core/Grid";
 import LocationCard from "../components/LocationCard";

@@ -7,7 +7,7 @@ import {AddCircleButton} from "../components/Buttons";
 import {addUserRequest} from "../redux/users/UsersActions";
 import UserContextMenu from "../components/ContextMenus/UserContextMenu";
 import {contextDots, PaddedPaper} from "../styles/common";
-import {createPostingSelector} from "../redux/selectors";
+import {createPostingSelector} from "../redux/LoadingSelectors";
 import {sortByCreatedTime} from "../utilities";
 
 function filterUsers(users, search) {

@@ -3,7 +3,7 @@ import {decodeUUID} from "../../utilities";
 import {useDispatch, useSelector} from "react-redux";
 import {getUserRequest} from "../../redux/users/UsersActions";
 import UserProfile from "./components/UserProfile";
-import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
+import {createLoadingSelector, createNotFoundSelector} from "../../redux/LoadingSelectors";
 import Grid from "@material-ui/core/Grid";
 import {PaddedPaper} from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";

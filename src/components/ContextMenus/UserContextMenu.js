@@ -4,7 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
-import {createPostingSelector} from "../../redux/selectors";
+import {createPostingSelector} from "../../redux/LoadingSelectors";
 import {deleteUserRequest, restoreUserRequest} from "../../redux/users/UsersActions";
 import {deleteButtonStyles} from "./contextMenuCSS";
 

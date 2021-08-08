@@ -6,7 +6,7 @@ import {
     createNotFoundSelector,
     createPostingSelector,
     createSimpleLoadingSelector
-} from "../../../redux/selectors";
+} from "../../../redux/LoadingSelectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
 import Button from "@material-ui/core/Button";

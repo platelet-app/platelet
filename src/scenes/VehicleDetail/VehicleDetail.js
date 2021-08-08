@@ -3,7 +3,7 @@ import VehicleProfile from "./components/VehicleProfile";
 import {decodeUUID} from "../../utilities";
 import {getVehicleRequest, updateVehicleRequest} from "../../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
-import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
+import {createLoadingSelector, createNotFoundSelector} from "../../redux/LoadingSelectors";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";

@@ -11,7 +11,7 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
-import {createPostingSelector} from "../../redux/selectors";
+import {createPostingSelector} from "../../redux/LoadingSelectors";
 import {deleteButtonStyles} from "./contextMenuCSS";
 import PropTypes from "prop-types";
 import {findExistingTask} from "../../redux/tasks/task_redux_utilities";

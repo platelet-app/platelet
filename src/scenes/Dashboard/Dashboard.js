@@ -11,7 +11,7 @@ import {
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import {useDispatch, useSelector} from "react-redux"
-import {createLoadingSelector, createPostingSelector} from "../../redux/selectors";
+import {createLoadingSelector, createPostingSelector} from "../../redux/LoadingSelectors";
 import {DashboardDetailTabs, TabPanel} from "./components/DashboardDetailTabs";
 import {
     refreshTaskAssignmentsSocket,

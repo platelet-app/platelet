@@ -10,7 +10,7 @@ import MobileNavigationDrawer from "../MobileNavigationDrawer";
 import {useSelector} from "react-redux";
 import List from "@material-ui/core/List";
 import MenuItem from "@material-ui/core/MenuItem";
-import {createLoadingSelector} from "../../redux/selectors";
+import {createLoadingSelector} from "../../redux/LoadingSelectors";
 
 function NavMenuSearch() {
     const serverSettings = useSelector(state => state.serverSettings);

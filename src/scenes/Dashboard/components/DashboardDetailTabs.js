@@ -6,7 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {useDispatch, useSelector} from "react-redux";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import TimelineIcon from '@material-ui/icons/Timeline';

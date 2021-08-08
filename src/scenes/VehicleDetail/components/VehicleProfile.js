@@ -4,7 +4,7 @@ import {
 } from "../../../redux/vehicles/VehiclesActions";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import UsersSelect from "../../../components/UsersSelect";
 import {PaddedPaper} from "../../../styles/common";
 import EditIcon from '@material-ui/icons/Edit';

@@ -11,7 +11,7 @@ import {TextFieldUncontrolled} from "../../../components/TextFields";
 import Button from "@material-ui/core/Button";
 import {useDispatch, useSelector} from "react-redux";
 import {addCommentRequest} from "../../../redux/comments/CommentsActions";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import CommentAuthor from "./CommentAuthor";
 
 export default function CommentCard(props) {

@@ -3,7 +3,7 @@ import {TextFieldUncontrolled} from "../../../components/TextFields";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import {useDispatch, useSelector} from "react-redux";
 import {updateCommentRequest} from "../../../redux/comments/CommentsActions";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import CommentCard from "./CommentCard";
 
 const TextFieldSaveButtons = props => {

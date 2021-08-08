@@ -3,7 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import {AddCircleButton} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
 import {encodeUUID, orderTaskList} from "../../../utilities";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksSheetColumn} from "../styles/TaskColumns";
 import MaterialTable from 'material-table';

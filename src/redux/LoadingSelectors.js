@@ -58,5 +58,3 @@ export const createContextMenuSnackSelector = uuid => state => {
         return undefined;
     }
 };
-
-export const getCurrentSessionSelector = (state) => state.currentSession.session;

@@ -6,7 +6,7 @@ import {PaddedPaper} from "../../../styles/common";
 import "cropperjs/dist/cropper.css";
 import {uploadUserProfilePictureRequest} from "../../../redux/users/UsersActions";
 import {useDispatch, useSelector} from "react-redux";
-import {createErrorSelector, createPostingSelector} from "../../../redux/selectors";
+import {createErrorSelector, createPostingSelector} from "../../../redux/LoadingSelectors";
 
 
 export default function ProfilePicture(props) {

@@ -8,7 +8,7 @@ import {Link} from "react-router-dom";
 import {addVehicleRequest, getVehiclesRequest} from "../redux/vehicles/VehiclesActions";
 import {encodeUUID, sortByCreatedTime} from "../utilities";
 import {useDispatch, useSelector} from "react-redux";
-import {createLoadingSelector} from "../redux/selectors";
+import {createLoadingSelector} from "../redux/LoadingSelectors";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
 import VehicleContextMenu from "../components/ContextMenus/VehicleContextMenu";
 import VehicleCard from "../components/VehicleCard";

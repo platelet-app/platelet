@@ -5,7 +5,7 @@ import {
     getCommentsRequest
 } from "../../redux/comments/CommentsActions";
 import CommentsMain from "./components/CommentsMain";
-import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
+import {createLoadingSelector, createNotFoundSelector} from "../../redux/LoadingSelectors";
 import CommentsSkeleton from "./components/CommentsSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
 import {subscribeToComments, unsubscribeFromComments} from "../../redux/sockets/SocketActions";

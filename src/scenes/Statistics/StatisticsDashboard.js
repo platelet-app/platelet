@@ -1,7 +1,7 @@
 import React, {useState} from "react"
 import {PaddedPaper} from "../../styles/common";
 import TasksStatistics from "./components/TasksStatistics";
-import {createLoadingSelector} from "../../redux/selectors";
+import {createLoadingSelector} from "../../redux/LoadingSelectors";
 import {useDispatch, useSelector} from "react-redux";
 import StatsSkeleton from "./components/StatsSkeleton";
 import {getUserStatisticsRequest} from "../../redux/statistics/statisticsActions";

@@ -9,7 +9,7 @@ import Divider from "@material-ui/core/Divider";
 import Tooltip from "@material-ui/core/Tooltip";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
 import {useDispatch, useSelector} from "react-redux";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import {EditModeToggleButton} from "../../../components/EditModeToggleButton";
 
 export function ServerSettings(props) {

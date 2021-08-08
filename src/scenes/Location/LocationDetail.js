@@ -4,7 +4,7 @@ import {decodeUUID} from "../../utilities";
 import {PaddedPaper} from "../../styles/common";
 import {useDispatch, useSelector} from "react-redux";
 import {getLocationRequest} from "../../redux/locations/LocationsActions";
-import {createLoadingSelector, createNotFoundSelector} from "../../redux/selectors";
+import {createLoadingSelector, createNotFoundSelector} from "../../redux/LoadingSelectors";
 import NotFound from "../../ErrorComponents/NotFound";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 

@@ -5,7 +5,7 @@ import {
     getDeliverablesRequest, updateDeliverableRequest,
 } from "../../redux/deliverables/DeliverablesActions";
 import {useDispatch, useSelector} from "react-redux"
-import {createDeletingSelector, createLoadingSelector, createPostingSelector} from "../../redux/selectors";
+import {createDeletingSelector, createLoadingSelector, createPostingSelector} from "../../redux/LoadingSelectors";
 import DeliverableCard from "./components/DeliverableCard";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import makeStyles from "@material-ui/core/styles/makeStyles";

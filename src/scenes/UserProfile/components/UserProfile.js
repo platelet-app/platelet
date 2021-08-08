@@ -5,7 +5,7 @@ import Divider from "@material-ui/core/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import {updateUserRequest} from "../../../redux/users/UsersActions";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
-import {createPostingSelector} from "../../../redux/selectors";
+import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import {setCommentsObjectUUID} from "../../../redux/Actions";
 import {EditModeToggleButton} from "../../../components/EditModeToggleButton";
 

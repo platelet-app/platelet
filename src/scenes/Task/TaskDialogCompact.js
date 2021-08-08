@@ -18,7 +18,7 @@ import DropOffDetails from "./components/DropOffDetails";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Container from "@material-ui/core/Container";
 import {Hidden} from "@material-ui/core";
-import {createNotFoundSelector} from "../../redux/selectors";
+import {createNotFoundSelector} from "../../redux/LoadingSelectors";
 import {getTaskPrefix} from "../../redux/activeTask/ActiveTaskActions"
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
