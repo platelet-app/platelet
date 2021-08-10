@@ -15,7 +15,6 @@ import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
 import { determineTaskType } from "../../redux/tasks/task_redux_utilities";
 import TaskOverview from "./components/TaskOverview";
-import GuidedTaskDialog from "./GuidedTaskDialog";
 
 const DialogWrapper = (props) => {
     const theme = useTheme();
@@ -119,18 +118,11 @@ function TaskDialogCompact(props) {
                 </NotFound>
             </DialogWrapper>
         );
-    } else if (!task.setup_completed) {
+    } else {
         return (
             <DialogWrapper handleClose={handleClose}>
                 {statusBar}
                 <TaskOverview task={task} taskUUID={taskUUID} />
-            </DialogWrapper>
-        );
-    } else {
-        return (
-            <DialogWrapper handleClose={handleClose}>
-                {StatusBar}
-                <GuidedTaskDialog />
             </DialogWrapper>
         );
     }
