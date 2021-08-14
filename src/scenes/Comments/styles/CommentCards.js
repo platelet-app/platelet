@@ -14,10 +14,7 @@ export const commentStyles = makeStyles((theme) => ({
         minWidth: 220,
         maxWidth: 800,
         minHeight: 20,
-        background:
-            theme.palette.type === "dark"
-                ? theme.palette.background.paper
-                : theme.palette.primary.main,
+        background: theme.palette.background.paper,
         borderRadius: "1em",
 
         //        "&::after": {
@@ -41,18 +38,12 @@ export const commentStyles = makeStyles((theme) => ({
     timeStamp: {
         fontStyle: "italic",
         opacity: 0.3,
-        color:
-            theme.palette.type === "dark"
-                ? theme.palette.text.primary
-                : "white",
+        color: theme.palette.text.primary,
     },
     body: {
         whiteSpace: "pre-line",
         padding: 14,
-        color:
-            theme.palette.type === "dark"
-                ? theme.palette.text.primary
-                : "white",
+        color: theme.palette.text.primary,
     },
 }));
 
