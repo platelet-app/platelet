@@ -73,8 +73,8 @@ export default function CommentsMain(props) {
                     <Grid
                         className={
                             whoami.uuid === comment.author_uuid
-                                ? ""
-                                : classes.right
+                                ? classes.right
+                                : ""
                         }
                         item
                         key={comment.uuid}

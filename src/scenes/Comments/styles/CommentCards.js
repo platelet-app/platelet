@@ -9,6 +9,24 @@ const CommentCard = styled(Card)({
 });
 
 export const commentStyles = makeStyles((theme) => ({
+    speechBubblePrivate: {
+        position: "relative",
+        minWidth: 220,
+        maxWidth: 800,
+        minHeight: 20,
+        background: theme.palette.background.paper,
+        borderRadius: "1em",
+        "&::before": {
+            pointerEvents: "none",
+            borderRadius: "1em",
+            content: '""',
+            position: "absolute",
+            background: "black",
+            opacity: 0.1,
+            width: "100%",
+            height: "100%",
+        },
+    },
     speechBubble: {
         position: "relative",
         minWidth: 220,
@@ -16,24 +34,6 @@ export const commentStyles = makeStyles((theme) => ({
         minHeight: 20,
         background: theme.palette.background.paper,
         borderRadius: "1em",
-
-        //        "&::after": {
-        //            content: '""',
-        //            position: "absolute",
-        //            left: 0,
-        //            top: "50%",
-        //            width: 0,
-        //            height: 0,
-        //            border: "34px solid transparent",
-        //            borderRightColor:
-        //                theme.palette.type === "dark"
-        //                    ? theme.palette.background.paper
-        //                    : theme.palette.primary.main,
-        //            borderLeft: 0,
-        //            borderTop: 0,
-        //            marginTop: "-17px",
-        //            marginLeft: "-34px",
-        //        },
     },
     timeStamp: {
         fontStyle: "italic",
@@ -44,6 +44,13 @@ export const commentStyles = makeStyles((theme) => ({
         whiteSpace: "pre-line",
         padding: 14,
         color: theme.palette.text.primary,
+    },
+    icon: {
+        height: 20,
+        width: 20,
+    },
+    lockIcon: {
+        fill: "red",
     },
 }));
 

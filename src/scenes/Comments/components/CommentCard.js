@@ -1,11 +1,7 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import {
-    PublicCommentCard,
-    PrivateCommentCard,
-    commentStyles,
-} from "../styles/CommentCards";
+import { commentStyles } from "../styles/CommentCards";
 import LockIcon from "@material-ui/icons/Lock";
 import Tooltip from "@material-ui/core/Tooltip";
 import moment from "moment";
@@ -13,24 +9,18 @@ import CommentAuthor from "./CommentAuthor";
 import EditIcon from "@material-ui/icons/Edit";
 import { showHide } from "../../../styles/common";
 import { useSelector } from "react-redux";
+import clsx from "clsx";
 
 const CommentCard = React.memo((props) => {
     const { show, hide } = showHide();
     const classes = commentStyles();
     const timeCreatedString = moment(props.timeCreated).calendar();
     const whoami = useSelector((state) => state.whoami.user);
-    const Card = props.public
-        ? (props) => {
-              return <PublicCommentCard>{props.children}</PublicCommentCard>;
-          }
-        : (props) => {
-              return <PrivateCommentCard>{props.children}</PrivateCommentCard>;
-          };
     return (
         <Grid
             container
             direction={
-                whoami.uuid === props.author.uuid ? "row" : "row-reverse"
+                whoami.uuid === props.author.uuid ? "row-reverse" : "row"
             }
             alignItems={"flex-start"}
             spacing={1}
@@ -47,7 +37,11 @@ const CommentCard = React.memo((props) => {
                     container
                     direction={"row"}
                     justify={"space-between"}
-                    className={classes.speechBubble}
+                    className={
+                        props.public
+                            ? classes.speechBubble
+                            : classes.speechBubblePrivate
+                    }
                 >
                     <Grid item>
                         <Typography className={classes.body} align={"justify"}>
@@ -71,10 +65,7 @@ const CommentCard = React.memo((props) => {
                                     title={`Edited ${props.numEdits} times.`}
                                 >
                                     <EditIcon
-                                        style={{
-                                            height: "20px",
-                                            width: "20px",
-                                        }}
+                                        className={classes.icon}
                                         color={"disabled"}
                                     />
                                 </Tooltip>
@@ -85,10 +76,10 @@ const CommentCard = React.memo((props) => {
                                     title="Only visible to you"
                                 >
                                     <LockIcon
-                                        style={{
-                                            height: "20px",
-                                            width: "20px",
-                                        }}
+                                        className={clsx(
+                                            classes.icon,
+                                            classes.lockIcon
+                                        )}
                                     />
                                 </Tooltip>
                             </Grid>
