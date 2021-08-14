@@ -72,7 +72,7 @@ export default function CommentsMain(props) {
                 .map((comment) => (
                     <Grid
                         className={
-                            whoami.uuid === comment.author_uuid
+                            whoami.uuid === comment.author.uuid
                                 ? classes.right
                                 : ""
                         }
