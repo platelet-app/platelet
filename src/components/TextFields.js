@@ -96,51 +96,6 @@ TextFieldControlled.defaultProps = {
     onPressEnter: () => {},
 };
 
-export function TelephoneTextFieldControlled(props) {
-    const [currentValue, setCurrentValue] = useState(
-        props.value ? props.value : ""
-    );
-    const [errorState, setErrorState] = useState(false);
-
-    useEffect(
-        () => setErrorState(!validateNumber(currentValue)),
-        [currentValue]
-    );
-
-    return (
-        <TextField
-            {...props}
-            type={"tel"}
-            error={errorState}
-            helperText={errorState ? "Not a valid telephone number" : ""}
-            onChange={(e) => {
-                const result = e.target.value
-                    .split("")
-                    .filter(
-                        (val) =>
-                            Number.isInteger(parseInt(val)) ||
-                            val === " " ||
-                            val === "+" ||
-                            val === "0"
-                    );
-                const joined = result.join("");
-                setCurrentValue(joined);
-                if (props.onChange) {
-                    e.target.value = joined;
-                    props.onChange(e);
-                }
-            }}
-            value={currentValue}
-            margin="dense"
-            InputProps={{
-                maxLength: props.maxLength,
-                readOnly: props.readOnly,
-                disableUnderline: props.readOnly,
-            }}
-        />
-    );
-}
-
 export function TextFieldUncontrolled(props) {
     const [errorState, setErrorState] = useState(false);
     const multiline = props.multiline;
@@ -222,4 +177,50 @@ export function TextFieldUncontrolled(props) {
             />
         );
     }
+}
+
+// Not in use, instead use the other textfields and pass in the tel prop
+export function TelephoneTextFieldControlled(props) {
+    const [currentValue, setCurrentValue] = useState(
+        props.value ? props.value : ""
+    );
+    const [errorState, setErrorState] = useState(false);
+
+    useEffect(
+        () => setErrorState(!validateNumber(currentValue)),
+        [currentValue]
+    );
+
+    return (
+        <TextField
+            {...props}
+            type={"tel"}
+            error={errorState}
+            helperText={errorState ? "Not a valid telephone number" : ""}
+            onChange={(e) => {
+                const result = e.target.value
+                    .split("")
+                    .filter(
+                        (val) =>
+                            Number.isInteger(parseInt(val)) ||
+                            val === " " ||
+                            val === "+" ||
+                            val === "0"
+                    );
+                const joined = result.join("");
+                setCurrentValue(joined);
+                if (props.onChange) {
+                    e.target.value = joined;
+                    props.onChange(e);
+                }
+            }}
+            value={currentValue}
+            margin="dense"
+            InputProps={{
+                maxLength: props.maxLength,
+                readOnly: props.readOnly,
+                disableUnderline: props.readOnly,
+            }}
+        />
+    );
 }
