@@ -19,13 +19,14 @@ const CommentCard = React.memo((props) => {
     return (
         <Grid
             container
-            direction={
-                whoami.uuid === props.author.uuid ? "row-reverse" : "row"
+            direction={"column"}
+            wrap={"nowrap"}
+            alignItems={
+                whoami.uuid === props.author.uuid ? "flex-end" : "flex-start"
             }
-            alignItems={"flex-start"}
             spacing={1}
         >
-            <Grid item>
+            <Grid item className={props.showAuthor ? show : hide}>
                 <CommentAuthor
                     uuid={props.author.uuid}
                     displayName={props.author.display_name}

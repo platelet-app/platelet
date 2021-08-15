@@ -5,14 +5,14 @@ import { makeStyles } from "@material-ui/core";
 const CommentCard = styled(Card)({
     padding: "10px",
     minHeight: "100px",
-    width: "300px",
+    minWidth: "300px",
 });
 
 export const commentStyles = makeStyles((theme) => ({
     speechBubblePrivate: {
         position: "relative",
         minWidth: 220,
-        maxWidth: 800,
+        maxWidth: 850,
         minHeight: 20,
         background: theme.palette.background.paper,
         borderRadius: "1em",
@@ -30,10 +30,14 @@ export const commentStyles = makeStyles((theme) => ({
     speechBubble: {
         position: "relative",
         minWidth: 220,
-        maxWidth: 800,
+        maxWidth: 850,
         minHeight: 20,
         background: theme.palette.background.paper,
         borderRadius: "1em",
+    },
+    newComment: {
+        width: "50%",
+        minWidth: 350,
     },
     timeStamp: {
         fontStyle: "italic",
@@ -53,11 +57,3 @@ export const commentStyles = makeStyles((theme) => ({
         fill: "red",
     },
 }));
-
-export const PublicCommentCard = styled(CommentCard)({
-    //backgroundColor: "rgba(252, 252, 252, 0.1)"
-});
-
-export const PrivateCommentCard = styled(CommentCard)({
-    //backgroundColor: "rgba(242, 242, 242, 0.1)"
-});

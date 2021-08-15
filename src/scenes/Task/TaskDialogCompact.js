@@ -21,16 +21,20 @@ const DialogWrapper = (props) => {
     const isSm = useMediaQuery(theme.breakpoints.down("xs"));
     const { handleClose } = props;
     const useStyles = makeStyles({
-        root: {
+        paper: {
             boxShadow: "none",
             background: theme.palette.background.default,
             padding: 0,
             minHeight: 300,
         },
+        root: {
+            flexGrow: 1,
+        },
     });
     const classes = useStyles();
     return (
         <Dialog
+            className={classes.root}
             disableEscapeKeyDown
             fullScreen={isSm}
             maxWidth={"md"}
@@ -38,7 +42,7 @@ const DialogWrapper = (props) => {
             open={true}
             onClose={handleClose}
             PaperProps={{
-                className: classes.root,
+                className: classes.paper,
             }}
             aria-labelledby="task-dialog"
         >
