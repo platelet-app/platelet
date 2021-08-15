@@ -56,6 +56,7 @@ export default function CommentsMain(props) {
         root: {
             flexGrow: 1,
             width: "100%",
+            maxWidth: 1000,
         },
         right: {
             marginLeft: "auto",
