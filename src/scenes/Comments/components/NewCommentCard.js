@@ -11,10 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCommentRequest } from "../../../redux/comments/CommentsActions";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import CommentAuthor from "./CommentAuthor";
-import { commentStyles } from "../styles/CommentCards";
+import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
 import clsx from "clsx";
 
-export default function CommentCard(props) {
+export default function NewCommentCard(props) {
     const dispatch = useDispatch();
     const [publicComment, setPublicComment] = useState(true);
     const [commentContents, setCommentContents] = useState("");
@@ -31,95 +31,107 @@ export default function CommentCard(props) {
     useEffect(clearCommentOnPost, [isPosting]);
 
     return (
-        <Grid
-            className={clsx(classes.speechBubble, classes.newComment)}
-            container
-            direction={"column"}
-            alignItems={"flex-start"}
-            spacing={1}
-        >
-            <Grid item>
-                <Grid container direction={"row"} justify={"space-between"}>
-                    <Grid item>
-                        <CommentAuthor
-                            uuid={props.author.uuid}
-                            displayName={props.author.display_name}
-                            avatarURL={
-                                props.author.profile_picture_thumbnail_url
-                            }
-                        />
+        <CommentCardStyled>
+            <Grid
+                className={classes.newComment}
+                container
+                direction={"column"}
+                alignItems={"flex-start"}
+                spacing={1}
+            >
+                <Grid item>
+                    <Grid
+                        container
+                        direction={"row"}
+                        alignItems={"center"}
+                        justify={"space-between"}
+                    >
+                        <Grid item>
+                            <CommentAuthor
+                                uuid={props.author.uuid}
+                                displayName={props.author.display_name}
+                                avatarURL={
+                                    props.author.profile_picture_thumbnail_url
+                                }
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Tooltip
+                                title={
+                                    publicComment
+                                        ? "Visible to everyone"
+                                        : "Only visible to you"
+                                }
+                            >
+                                <IconButton
+                                    disabled={isPosting}
+                                    onClick={() => {
+                                        setPublicComment(!publicComment);
+                                    }}
+                                >
+                                    {publicComment ? (
+                                        <LockOpenIcon
+                                            className={classes.icon}
+                                        />
+                                    ) : (
+                                        <LockIcon
+                                            className={clsx(
+                                                classes.icon,
+                                                classes.lockIcon
+                                            )}
+                                        />
+                                    )}
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <Tooltip
-                            title={
-                                publicComment
-                                    ? "Visible to everyone"
-                                    : "Only visible to you"
-                            }
-                        >
-                            <IconButton
-                                disabled={isPosting}
+                </Grid>
+                <Grid item>
+                    <Divider />
+                </Grid>
+                <Grid item className={classes.newCommentTextField}>
+                    <TextFieldUncontrolled
+                        className={classes.newCommentTextField}
+                        id={"new-comment-field"}
+                        multiline
+                        disabled={isPosting}
+                        value={commentContents}
+                        onChange={(e) => {
+                            setCommentContents(e.target.value.slice(0, 10000));
+                        }}
+                    />
+                </Grid>
+                <Grid item className={classes.gridItem}>
+                    <Grid container direction={"row"} justify={"space-between"}>
+                        <Grid item>
+                            <Button
+                                disabled={
+                                    commentContents.length === 0 || isPosting
+                                }
                                 onClick={() => {
-                                    setPublicComment(!publicComment);
+                                    dispatch(
+                                        addCommentRequest(props.parentUUID, {
+                                            author: props.author,
+                                            publicly_visible: publicComment,
+                                            body: commentContents,
+                                        })
+                                    );
                                 }}
                             >
-                                {publicComment ? (
-                                    <LockOpenIcon className={classes.icon} />
-                                ) : (
-                                    <LockIcon
-                                        className={clsx(
-                                            classes.icon,
-                                            classes.lockIcon
-                                        )}
-                                    />
-                                )}
-                            </IconButton>
-                        </Tooltip>
+                                Post
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button
+                                disabled={commentContents.length === 0}
+                                onClick={() => setCommentContents("")}
+                            >
+                                Discard
+                            </Button>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item>
-                <Divider />
-            </Grid>
-            <Grid item>
-                <TextFieldUncontrolled
-                    id={"new-comment-field"}
-                    multiline
-                    disabled={isPosting}
-                    value={commentContents}
-                    onChange={(e) => {
-                        setCommentContents(e.target.value.slice(0, 10000));
-                    }}
-                />
-            </Grid>
-            <Grid item>
-                <Grid container direction={"row"} justify={"space-between"}>
-                    <Grid item>
-                        <Button
-                            disabled={commentContents.length === 0 || isPosting}
-                            onClick={() => {
-                                dispatch(
-                                    addCommentRequest(props.parentUUID, {
-                                        author: props.author,
-                                        publicly_visible: publicComment,
-                                        body: commentContents,
-                                    })
-                                );
-                            }}
-                        >
-                            Post
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            disabled={commentContents.length === 0}
-                            onClick={() => setCommentContents("")}
-                        >
-                            Discard
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </Grid>
+        </CommentCardStyled>
     );
 }

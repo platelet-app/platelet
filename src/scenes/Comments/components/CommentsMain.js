@@ -4,17 +4,49 @@ import React, { useState } from "react";
 import NewCommentCard from "./NewCommentCard";
 import { useSelector } from "react-redux";
 import CommentContextMenu from "../../../components/ContextMenus/CommentContextMenu";
-import { contextDots } from "../../../styles/common";
 import CommentCardEditMode from "./CommentCardEditMode";
 import Linkify from "react-linkify";
 import { makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
 
+const contextCreateStyles = makeStyles((theme) => ({
+    root: (props) => ({
+        position: "relative",
+        "&:hover": {
+            "& $dots": {
+                display: props.showContextMenu ? "inline" : "none",
+            },
+        },
+    }),
+    dots: (props) => ({
+        background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, ${theme.palette.background.paper} 33%, ${theme.palette.background.paper} 100%)`,
+        borderRadius: "1em",
+        position: "absolute",
+        bottom: 4,
+        right: 4,
+        display: "none",
+        zIndex: 1000,
+        "&::before": !props.publiclyVisible
+            ? {
+                  pointerEvents: "none",
+                  borderRadius: "1em",
+                  content: '""',
+                  position: "absolute",
+                  background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, black 33%, black 100%)`,
+                  opacity: 0.15,
+                  width: "100%",
+                  height: "100%",
+              }
+            : {},
+    }),
+}));
+
 function CommentCollection(props) {
-    const classes = contextDots();
+    const classes = contextCreateStyles(props);
+
     const [editMode, setEditMode] = useState(false);
     return (
-        <div>
+        <div className={classes.root}>
             {editMode ? (
                 <CommentCardEditMode
                     author={props.author}
@@ -37,15 +69,11 @@ function CommentCollection(props) {
                     <Linkify>{props.body}</Linkify>
                 </CommentCard>
             )}
-            <div className={classes.root}>
-                {false && props.showContextMenu && !editMode ? (
-                    <CommentContextMenu
-                        commentUUID={props.uuid}
-                        onSetEditMode={() => setEditMode(true)}
-                    />
-                ) : (
-                    <></>
-                )}
+            <div className={classes.dots}>
+                <CommentContextMenu
+                    commentUUID={props.uuid}
+                    onSetEditMode={() => setEditMode(true)}
+                />
             </div>
         </div>
     );
@@ -112,8 +140,9 @@ export default function CommentsMain(props) {
                             >
                                 <CommentCollection
                                     showContextMenu={
-                                        whoami.roles.includes("admin") ||
-                                        whoami.uuid === comment.author_uuid
+                                        // TODO: eventually let admins delete comments too
+                                        //whoami.roles.includes("admin") ||
+                                        whoami.uuid === comment.author.uuid
                                     }
                                     author={comment.author}
                                     showAuthor={
@@ -132,7 +161,7 @@ export default function CommentsMain(props) {
             <Grid item>
                 <div className={classes.tallSpacer} />
             </Grid>
-            <Grid item>
+            <Grid item className={classes.item}>
                 <NewCommentCard parentUUID={props.parentUUID} author={whoami} />
             </Grid>
         </Grid>
