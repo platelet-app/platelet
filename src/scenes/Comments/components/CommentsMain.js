@@ -15,7 +15,10 @@ const contextCreateStyles = makeStyles((theme) => ({
         position: "relative",
         "&:hover": {
             "& $dots": {
-                display: props.showContextMenu ? "inline" : "none",
+                display:
+                    props.showContextMenu && !props.editMode
+                        ? "inline"
+                        : "none",
             },
         },
     }),
@@ -43,8 +46,8 @@ const contextCreateStyles = makeStyles((theme) => ({
 }));
 
 function CommentCollection(props) {
-    const classes = contextCreateStyles(props);
     const [editMode, setEditMode] = useState(false);
+    const classes = contextCreateStyles({ ...props, editMode: editMode });
     return (
         <div className={classes.root}>
             {editMode ? (
