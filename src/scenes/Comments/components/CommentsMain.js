@@ -8,6 +8,7 @@ import CommentCardEditMode from "./CommentCardEditMode";
 import Linkify from "react-linkify";
 import { makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
+import PropTypes from "prop-types";
 
 const contextCreateStyles = makeStyles((theme) => ({
     root: (props) => ({
@@ -26,7 +27,7 @@ const contextCreateStyles = makeStyles((theme) => ({
         right: 4,
         display: "none",
         zIndex: 1000,
-        "&::before": !props.publiclyVisible
+        "&::before": !props.public
             ? {
                   pointerEvents: "none",
                   borderRadius: "1em",
@@ -43,29 +44,16 @@ const contextCreateStyles = makeStyles((theme) => ({
 
 function CommentCollection(props) {
     const classes = contextCreateStyles(props);
-
     const [editMode, setEditMode] = useState(false);
     return (
         <div className={classes.root}>
             {editMode ? (
                 <CommentCardEditMode
-                    author={props.author}
-                    showAuthor={props.showAuthor}
-                    timeCreated={props.timeCreated}
-                    numEdits={props.numEdits}
-                    public={props.publiclyVisible}
-                    body={props.body}
-                    uuid={props.uuid}
+                    {...props}
                     onReset={() => setEditMode(false)}
                 />
             ) : (
-                <CommentCard
-                    showAuthor={props.showAuthor}
-                    author={props.author}
-                    timeCreated={props.timeCreated}
-                    numEdits={props.numEdits}
-                    public={props.publiclyVisible}
-                >
+                <CommentCard {...props}>
                     <Linkify>{props.body}</Linkify>
                 </CommentCard>
             )}
@@ -79,7 +67,33 @@ function CommentCollection(props) {
     );
 }
 
-export default function CommentsMain(props) {
+CommentCollection.propTypes = {
+    showContextMenu: PropTypes.bool,
+    author: PropTypes.object,
+    showAuthor: PropTypes.bool,
+    timeCreated: PropTypes.string,
+    numEdits: PropTypes.number,
+    public: PropTypes.bool,
+    uuid: PropTypes.string,
+    body: PropTypes.string,
+};
+
+CommentCollection.defaultProps = {
+    showContextMenu: false,
+    author: {
+        display_name: "",
+        uuid: "",
+        profile_picture_thumbnail_url: "",
+    },
+    showAuthor: true,
+    timeCreated: undefined,
+    numEdits: 0,
+    public: false,
+    uuid: "",
+    body: "",
+};
+
+function CommentsMain(props) {
     const useStyles = makeStyles(() => ({
         root: {
             flexGrow: 1,
@@ -150,7 +164,7 @@ export default function CommentsMain(props) {
                                     }
                                     timeCreated={comment.time_created}
                                     numEdits={comment.num_edits}
-                                    publiclyVisible={comment.publicly_visible}
+                                    public={comment.publicly_visible}
                                     uuid={comment.uuid}
                                     body={comment.body}
                                 />
@@ -167,3 +181,15 @@ export default function CommentsMain(props) {
         </Grid>
     );
 }
+
+CommentsMain.propTypes = {
+    parentUUID: PropTypes.string,
+    comments: PropTypes.arrayOf(PropTypes.object),
+};
+
+CommentsMain.defaultProps = {
+    parentUUID: "",
+    comments: [],
+};
+
+export default CommentsMain;

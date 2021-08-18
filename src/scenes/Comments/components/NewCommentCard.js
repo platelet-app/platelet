@@ -13,8 +13,9 @@ import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import CommentAuthor from "./CommentAuthor";
 import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
 import clsx from "clsx";
+import PropTypes from "prop-types";
 
-export default function NewCommentCard(props) {
+function NewCommentCard(props) {
     const dispatch = useDispatch();
     const [publicComment, setPublicComment] = useState(true);
     const [commentContents, setCommentContents] = useState("");
@@ -123,7 +124,9 @@ export default function NewCommentCard(props) {
                         </Grid>
                         <Grid item>
                             <Button
-                                disabled={commentContents.length === 0}
+                                disabled={
+                                    commentContents.length === 0 || isPosting
+                                }
                                 onClick={() => setCommentContents("")}
                             >
                                 Discard
@@ -135,3 +138,18 @@ export default function NewCommentCard(props) {
         </CommentCardStyled>
     );
 }
+
+NewCommentCard.propTypes = {
+    author: PropTypes.object,
+    parentUUID: PropTypes.string,
+};
+
+NewCommentCard.defaultProps = {
+    author: {
+        display_name: "",
+        uuid: "",
+        profile_picture_thumbnail_url: "",
+    },
+    parentUUID: "",
+};
+export default NewCommentCard;

@@ -14,7 +14,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import { showHide } from "../../../styles/common";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
-import CommentContextMenu from "../../../components/ContextMenus/CommentContextMenu";
+import PropTypes from "prop-types";
 
 const CommentCard = React.memo((props) => {
     const { show, hide } = showHide();
@@ -114,5 +114,25 @@ const CommentCard = React.memo((props) => {
         </Grid>
     );
 });
+
+CommentCard.PropTypes = {
+    author: PropTypes.object,
+    public: PropTypes.bool,
+    showAuthor: PropTypes.bool,
+    numEdits: PropTypes.number,
+    timeCreated: PropTypes.string,
+};
+
+CommentCard.defaultProps = {
+    author: {
+        display_name: "",
+        uuid: "",
+        profile_picture_thumbnail_url: "",
+    },
+    numEdits: 0,
+    showAuthor: true,
+    public: false,
+    timeCreated: undefined,
+};
 
 export default CommentCard;

@@ -16,8 +16,9 @@ import {
     subscribeToComments,
     unsubscribeFromComments,
 } from "../../redux/sockets/SocketActions";
+import PropTypes from "prop-types";
 
-export default function CommentsSection(props) {
+function CommentsSection(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector([getCommentsPrefix]);
     const isFetching = useSelector((state) => loadingSelector(state));
@@ -54,3 +55,13 @@ export default function CommentsSection(props) {
         );
     }
 }
+
+CommentsSection.propTypes = {
+    parentUUID: PropTypes.string,
+};
+
+CommentsSection.defaultProps = {
+    parentUUID: "",
+};
+
+export default CommentsSection;
