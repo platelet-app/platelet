@@ -1,75 +1,138 @@
 import React from "react";
-import Card from '@material-ui/core/Card';
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import {PublicCommentCard, PrivateCommentCard} from "../styles/CommentCards";
-import LockIcon from '@material-ui/icons/Lock';
+import {
+    commentStyles,
+    CommentCardStyled,
+    PrivateCommentCardStyled,
+} from "../styles/CommentCards";
+import LockIcon from "@material-ui/icons/Lock";
 import Tooltip from "@material-ui/core/Tooltip";
-import ScheduleIcon from '@material-ui/icons/Schedule';
 import moment from "moment";
 import CommentAuthor from "./CommentAuthor";
-import EditIcon from '@material-ui/icons/Edit';
-import {showHide} from "../../../styles/common";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-
-const commentBodyClass = makeStyles({
-    body: {
-        whiteSpace: "pre-line"
-    }
-})
+import EditIcon from "@material-ui/icons/Edit";
+import { showHide } from "../../../styles/common";
+import { useSelector } from "react-redux";
+import clsx from "clsx";
+import PropTypes from "prop-types";
 
 const CommentCard = React.memo((props) => {
-    const {show, hide} = showHide();
-    const classes = commentBodyClass();
-    const Card = props.public ? (props) => {
-            return <PublicCommentCard>{props.children}</PublicCommentCard>
-        } :
-        (props) => {
-            return <PrivateCommentCard>{props.children}</PrivateCommentCard>
-        };
+    const { show, hide } = showHide();
+    const classes = commentStyles();
+    const timeCreatedString = moment(props.timeCreated).calendar();
+    const whoami = useSelector((state) => state.whoami.user);
+    const Card = props.public
+        ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
+        : (props) => (
+              <PrivateCommentCardStyled>
+                  {props.children}
+              </PrivateCommentCardStyled>
+          );
     return (
-        <Card>
-            <Grid container direction={"column"} alignItems={"flex-start"} spacing={1}>
-                <Grid item style={{width: "280px"}}>
-                    <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+        <Grid
+            container
+            direction={"column"}
+            wrap={"nowrap"}
+            alignItems={
+                whoami.uuid === props.author.uuid ? "flex-end" : "flex-start"
+            }
+            spacing={1}
+        >
+            <Grid item className={props.showAuthor ? show : hide}>
+                <CommentAuthor
+                    uuid={props.author.uuid}
+                    displayName={props.author.display_name}
+                    avatarURL={props.author.profile_picture_thumbnail_url}
+                />
+            </Grid>
+            <Grid item>
+                <Card>
+                    <Grid container direction={"row"} justify={"space-between"}>
                         <Grid item>
-                            <CommentAuthor
-                                uuid={props.author.uuid}
-                                displayName={props.author.display_name}
-                                avatarURL={props.author.profile_picture_thumbnail_url}/>
+                            <Typography
+                                className={classes.body}
+                                align={"justify"}
+                            >
+                                {props.children}
+                            </Typography>
                         </Grid>
                         <Grid item>
-                            <Grid container direction={"row"} justify={"flex-end"} alignItems={"flex-start"}>
+                            <Grid
+                                container
+                                spacing={1}
+                                alignItems={"center"}
+                                style={{ paddingTop: 20, paddingRight: 14 }}
+                                direction={"row"}
+                            >
                                 <Grid item>
-                                    <Tooltip className={props.numEdits && props.numEdits !== "0" ? show : hide}
-                                             title={`Edited ${props.numEdits} times.`}>
-                                        <EditIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
+                                    <Tooltip
+                                        className={
+                                            props.numEdits &&
+                                            props.numEdits !== "0"
+                                                ? show
+                                                : hide
+                                        }
+                                        title={`Edited ${props.numEdits} times.`}
+                                    >
+                                        <EditIcon
+                                            className={classes.icon}
+                                            color={"disabled"}
+                                        />
                                     </Tooltip>
                                 </Grid>
                                 <Grid item>
-                                    <Tooltip className={props.public ? hide : show} title="Only visible to you">
-                                        <LockIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
+                                    <Tooltip
+                                        className={props.public ? hide : show}
+                                        title="Only visible to you"
+                                    >
+                                        <LockIcon
+                                            className={clsx(
+                                                classes.icon,
+                                                classes.lockIcon
+                                            )}
+                                        />
                                     </Tooltip>
                                 </Grid>
                                 <Grid item>
-                                    <Tooltip title={moment(props.timeCreated).calendar()}>
-                                        <ScheduleIcon style={{height: "20px", width: "20px"}} color={"disabled"}/>
+                                    <Tooltip
+                                        title={moment(props.timeCreated).format(
+                                            "yyyy-mm-DD HH:mm"
+                                        )}
+                                    >
+                                        <Typography
+                                            className={classes.timeStamp}
+                                        >
+                                            {timeCreatedString}
+                                        </Typography>
                                     </Tooltip>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
-                <Grid item>
-                    <Divider style={{width: "280px"}}/>
-                </Grid>
-                <Grid item>
-                    <Typography className={classes.body} align={"justify"}>{props.children}</Typography>
-                </Grid>
+                </Card>
             </Grid>
-        </Card>
-    )
-})
+        </Grid>
+    );
+});
+
+CommentCard.PropTypes = {
+    author: PropTypes.object,
+    public: PropTypes.bool,
+    showAuthor: PropTypes.bool,
+    numEdits: PropTypes.number,
+    timeCreated: PropTypes.string,
+};
+
+CommentCard.defaultProps = {
+    author: {
+        display_name: "",
+        uuid: "",
+        profile_picture_thumbnail_url: "",
+    },
+    numEdits: 0,
+    showAuthor: true,
+    public: false,
+    timeCreated: undefined,
+};
 
 export default CommentCard;

@@ -1,27 +1,35 @@
-import React, {useEffect} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-    clearComments, getCommentsPrefix,
-    getCommentsRequest
+    clearComments,
+    getCommentsPrefix,
+    getCommentsRequest,
 } from "../../redux/comments/CommentsActions";
 import CommentsMain from "./components/CommentsMain";
-import {createLoadingSelector, createNotFoundSelector} from "../../redux/LoadingSelectors";
+import {
+    createLoadingSelector,
+    createNotFoundSelector,
+} from "../../redux/LoadingSelectors";
 import CommentsSkeleton from "./components/CommentsSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
-import {subscribeToComments, unsubscribeFromComments} from "../../redux/sockets/SocketActions";
+import {
+    subscribeToComments,
+    unsubscribeFromComments,
+} from "../../redux/sockets/SocketActions";
+import PropTypes from "prop-types";
 
-export default function CommentsSection(props) {
+function CommentsSection(props) {
     const dispatch = useDispatch();
     const loadingSelector = createLoadingSelector([getCommentsPrefix]);
-    const isFetching = useSelector(state => loadingSelector(state));
+    const isFetching = useSelector((state) => loadingSelector(state));
     const notFoundSelector = createNotFoundSelector([getCommentsPrefix]);
-    const notFound = useSelector(state => notFoundSelector(state));
-    const comments = useSelector(state => state.comments.comments);
+    const notFound = useSelector((state) => notFoundSelector(state));
+    const comments = useSelector((state) => state.comments.comments);
     function updateComments() {
         if (props.parentUUID) {
             dispatch(getCommentsRequest(props.parentUUID));
         } else {
-            dispatch(clearComments())
+            dispatch(clearComments());
         }
     }
     useEffect(updateComments, [props.parentUUID]);
@@ -30,19 +38,30 @@ export default function CommentsSection(props) {
         dispatch(subscribeToComments(props.parentUUID));
         return function cleanup() {
             dispatch(unsubscribeFromComments(props.parentUUID));
-        }
+        };
     }
     useEffect(componentDidMount, [props.parentUUID]);
 
     if (isFetching) {
-        return <CommentsSkeleton/>
+        return <CommentsSkeleton />;
     } else if (notFound) {
-        return <NotFound>Comments section could not found.</NotFound>
+        return <NotFound>Comments section could not found.</NotFound>;
     } else {
         return (
-            <div style={{paddingTop: "30px"}}>
-                <CommentsMain parentUUID={props.parentUUID} comments={Object.values(comments)}/>
-            </div>
-        )
+            <CommentsMain
+                parentUUID={props.parentUUID}
+                comments={Object.values(comments)}
+            />
+        );
     }
 }
+
+CommentsSection.propTypes = {
+    parentUUID: PropTypes.string,
+};
+
+CommentsSection.defaultProps = {
+    parentUUID: "",
+};
+
+export default CommentsSection;
