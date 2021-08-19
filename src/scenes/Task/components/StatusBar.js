@@ -137,11 +137,13 @@ function StatusBar(props) {
                     >
                         {/* TODO: add some way to assign people on mobile view, showing it for now*/}
                         <Hidden>
-                            <Grid item>
-                                <Typography className={classes.italic}>
-                                    Riders
-                                </Typography>
-                            </Grid>
+                            <Hidden smDown>
+                                <Grid item>
+                                    <Typography className={classes.italic}>
+                                        Riders
+                                    </Typography>
+                                </Grid>
+                            </Hidden>
                             <Grid item>
                                 <AssigneeEditPopover
                                     rider

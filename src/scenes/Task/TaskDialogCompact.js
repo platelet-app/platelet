@@ -16,6 +16,8 @@ import Typography from "@material-ui/core/Typography";
 import { determineTaskType } from "../../redux/tasks/task_redux_utilities";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
+import { Hidden } from "@material-ui/core";
+import CommentsSection from "../Comments/CommentsSection";
 
 const drawerWidth = 500;
 
@@ -31,7 +33,12 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         justify: "center",
     },
-    overview: { marginRight: drawerWidth },
+    overview: {
+        marginRight: drawerWidth,
+        [theme.breakpoints.down("sm")]: {
+            marginRight: 0,
+        },
+    },
 }));
 
 const DialogWrapper = (props) => {
@@ -138,10 +145,15 @@ function TaskDialogCompact(props) {
                         {statusBar}
                         <TaskOverview task={task} taskUUID={taskUUID} />
                     </div>
-                    <CommentsSideBar
-                        width={drawerWidth}
-                        parentUUID={taskUUID}
-                    />
+                    <Hidden smDown>
+                        <CommentsSideBar
+                            width={drawerWidth}
+                            parentUUID={taskUUID}
+                        />
+                    </Hidden>
+                    <Hidden mdUp>
+                        <CommentsSection parentUUID={taskUUID} />
+                    </Hidden>
                 </DialogWrapper>
             </>
         );
