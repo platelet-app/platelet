@@ -1,28 +1,41 @@
-import React, {useEffect, useState} from 'react';
-import PropTypes, {oneOf} from 'prop-types';
-import TextField from '@material-ui/core/TextField';
-import {useSelector} from "react-redux";
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import parse from 'autosuggest-highlight/parse';
-import match from 'autosuggest-highlight/match';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import TextField from "@material-ui/core/TextField";
+import { useSelector } from "react-redux";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
 import Divider from "@material-ui/core/Divider";
+import { makeStyles } from "@material-ui/core";
 
+const useStyles = makeStyles({
+    textBox: {
+        background: "white",
+        borderRadius: 10,
+    },
+});
 
 function RiderPicker(props) {
-    const availableUsers = useSelector(state => state.users.users);
-    const [filteredRiderSuggestions, setFilteredRiderSuggestions] = useState([]);
+    const availableUsers = useSelector((state) => state.users.users);
+    const [filteredRiderSuggestions, setFilteredRiderSuggestions] = useState(
+        []
+    );
     const [textBoxValue, setTextBoxValue] = useState(null);
     const onSelect = (event, selectedItem) => {
-        if (selectedItem)
-            props.onSelect(selectedItem);
+        if (selectedItem) props.onSelect(selectedItem);
         setTextBoxValue(null);
     };
+    const classes = useStyles();
 
     useEffect(() => {
-        const filteredSuggestions = Object.values(availableUsers).filter(u => u.roles.includes("rider") && !props.exclude.includes(u.uuid))
-        const vehicleUsers = filteredSuggestions.filter(user => user.assigned_vehicles.length !== 0)
-        const noVehicleUsers = filteredSuggestions.filter(user => user.assigned_vehicles.length === 0);
+        const filteredSuggestions = Object.values(availableUsers).filter(
+            (u) => u.roles.includes("rider") && !props.exclude.includes(u.uuid)
+        );
+        const vehicleUsers = filteredSuggestions.filter(
+            (user) => user.assigned_vehicles.length !== 0
+        );
+        const noVehicleUsers = filteredSuggestions.filter(
+            (user) => user.assigned_vehicles.length === 0
+        );
         const reorderedUsers = vehicleUsers.concat(noVehicleUsers);
         setFilteredRiderSuggestions(reorderedUsers);
     }, [availableUsers, props.exclude]);
@@ -36,30 +49,46 @@ function RiderPicker(props) {
                 options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.display_name}
                 className={props.className}
-                style={{width: 300}}
+                style={{ width: 300 }}
                 renderInput={(params) => (
-                    <TextField autoFocus {...params} label={props.label} variant="outlined" margin="none"/>
+                    <TextField
+                        className={classes.textBox}
+                        autoFocus
+                        {...params}
+                        label={props.label}
+                        variant="outlined"
+                        margin="none"
+                    />
                 )}
                 onChange={onSelect}
-                renderOption={(option, {inputValue}) => {
-                    const vehicleName = (option.assigned_vehicles && option.assigned_vehicles.length > 0) ? option.assigned_vehicles[option.assigned_vehicles.length - 1].name : "";
+                renderOption={(option, { inputValue }) => {
+                    const vehicleName =
+                        option.assigned_vehicles &&
+                        option.assigned_vehicles.length > 0
+                            ? option.assigned_vehicles[
+                                  option.assigned_vehicles.length - 1
+                              ].name
+                            : "";
 
                     return (
-                        <div style={{width: "100%"}}>
-                            <CompactUserCard userUUID={option.uuid}
-                                             displayName={option.display_name}
-                                             patch={option.patch}
-                                             profilePictureURL={option.profile_picture_thumbnail_url}
-                                             vehicleName={vehicleName}
+                        <div style={{ width: "100%" }}>
+                            <CompactUserCard
+                                userUUID={option.uuid}
+                                displayName={option.display_name}
+                                patch={option.patch}
+                                profilePictureURL={
+                                    option.profile_picture_thumbnail_url
+                                }
+                                vehicleName={vehicleName}
                             />
 
-                            <Divider/>
+                            <Divider />
                         </div>
-                    )
-                }
-                }/>
+                    );
+                }}
+            />
         </div>
-    )
+    );
 }
 
 RiderPicker.defaultProps = {
@@ -67,13 +96,13 @@ RiderPicker.defaultProps = {
     label: "Select",
     exclude: [],
     className: "",
-}
+};
 RiderPicker.propTypes = {
     onSelect: PropTypes.func,
     label: PropTypes.string,
     exclude: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
-    size: PropTypes.oneOf(["small", "medium"])
-}
+    size: PropTypes.oneOf(["small", "medium"]),
+};
 
 export default RiderPicker;

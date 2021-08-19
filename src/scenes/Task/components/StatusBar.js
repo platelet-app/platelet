@@ -25,10 +25,16 @@ export const dialogComponent = makeStyles((theme) => ({
         width: "100%",
         paddingLeft: 15,
         paddingRight: 15,
-        background: theme.palette.background.paper,
+        background:
+            theme.palette.type === "dark"
+                ? theme.palette.background.paper
+                : theme.palette.primary.main,
     },
     italic: {
         fontStyle: "italic",
+    },
+    appBarContents: {
+        color: "white",
     },
 }));
 
@@ -53,13 +59,18 @@ function StatusBar(props) {
             >
                 <Grid item>
                     <Hidden smDown>
-                        <Button onClick={props.handleClose}>Close</Button>
+                        <Button
+                            className={classes.appBarContents}
+                            onClick={props.handleClose}
+                        >
+                            Close
+                        </Button>
                     </Hidden>
                     <Hidden smUp>
                         <IconButton size={"small"} onClick={props.handleClose}>
                             <ArrowButton
                                 size={3}
-                                colour={"primary"}
+                                colour={"white"}
                                 direction={"back"}
                             />
                         </IconButton>
@@ -81,6 +92,7 @@ function StatusBar(props) {
                             </Grid>
                             <Grid item>
                                 <AssigneeEditPopover
+                                    iconColor={"white"}
                                     coordinator
                                     assignees={task.assigned_coordinators}
                                     className={
@@ -114,6 +126,7 @@ function StatusBar(props) {
                             </Grid>
                             <Grid item>
                                 <AssignRiderCoordinatorPopover
+                                    iconColor={"white"}
                                     exclude={task.assigned_coordinators.map(
                                         (u) => u.uuid
                                     )}
@@ -155,6 +168,7 @@ function StatusBar(props) {
                             </Hidden>
                             <Grid item>
                                 <AssigneeEditPopover
+                                    iconColor={"white"}
                                     rider
                                     assignees={task.assigned_riders}
                                     className={
@@ -186,6 +200,7 @@ function StatusBar(props) {
                             </Grid>
                             <Grid item>
                                 <AssignRiderCoordinatorPopover
+                                    iconColor={"white"}
                                     rider
                                     exclude={task.assigned_riders.map(
                                         (u) => u.uuid
@@ -234,6 +249,7 @@ function StatusBar(props) {
                 </Grid>
                 <Grid item>
                     <TaskContextMenu
+                        iconColor={"white"}
                         timeDroppedOff={task.time_dropped_off}
                         timePickedUp={task.time_picked_up}
                         assignedRiders={task.assigned_riders}

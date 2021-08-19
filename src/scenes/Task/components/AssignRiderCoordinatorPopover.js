@@ -1,34 +1,47 @@
-import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
-import Popover from '@material-ui/core/Popover';
+import React from "react";
 import RiderPicker from "../../../components/RiderPicker";
-import {SmallCirclePlusButton} from "../../../components/Buttons";
-import {useDispatch} from "react-redux";
+import { SmallCirclePlusButton } from "../../../components/Buttons";
+import { useDispatch } from "react-redux";
 import {
     addTaskAssignedCoordinatorRequest,
-    addTaskAssignedRiderRequest
+    addTaskAssignedRiderRequest,
 } from "../../../redux/taskAssignees/TaskAssigneesActions";
 import PropTypes from "prop-types";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
-import {showHide} from "../../../styles/common";
+import { showHide } from "../../../styles/common";
 import Grid from "@material-ui/core/Grid";
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
+import { makeStyles } from "@material-ui/core";
+import clsx from "clsx";
 
 function AssignRiderCoordinatorPopover(props) {
     const dispatch = useDispatch();
-    const {show, hide} = showHide();
+    const { show, hide } = showHide();
     const [open, setOpen] = React.useState(false);
-    const onSelect = user => {
+    const useStyles = makeStyles({
+        button: {
+            color: props.iconColor,
+        },
+    });
+    const classes = useStyles();
+    const onSelect = (user) => {
         if (user) {
             if (props.rider)
-                dispatch(addTaskAssignedRiderRequest(props.taskUUID, user.uuid, user.patch_id))
+                dispatch(
+                    addTaskAssignedRiderRequest(
+                        props.taskUUID,
+                        user.uuid,
+                        user.patch_id
+                    )
+                );
             else if (props.coordinator)
-                dispatch(addTaskAssignedCoordinatorRequest(props.taskUUID, user.uuid))
+                dispatch(
+                    addTaskAssignedCoordinatorRequest(props.taskUUID, user.uuid)
+                );
         }
         handleClose();
-    }
+    };
 
     function handleOpen() {
         setOpen(true);
@@ -37,56 +50,74 @@ function AssignRiderCoordinatorPopover(props) {
         setOpen(false);
     }
 
-
-    const buttons =
-        !open ? <SmallCirclePlusButton tooltip={`Assign a ${props.coordinator ? "coordinator" : "rider"}`} onClick={handleOpen}/> :
+    const buttons = !open ? (
+        <SmallCirclePlusButton
+            colour={props.iconColor}
+            tooltip={`Assign a ${props.coordinator ? "coordinator" : "rider"}`}
+            onClick={handleOpen}
+        />
+    ) : (
         <IconButton onClick={handleClose}>
-            <CloseIcon/>
+            <CloseIcon className={classes.button} />
         </IconButton>
+    );
 
     if (props.coordinator) {
         return (
-            <Grid container direction={"row"} spacing={2} justify={"flex-start"} alignItems={"center"}>
+            <Grid
+                container
+                direction={"row"}
+                spacing={2}
+                justify={"flex-start"}
+                alignItems={"center"}
+            >
+                <Grid item>{buttons}</Grid>
                 <Grid item>
-                    {buttons}
-                </Grid>
-                <Grid item>
-                        <CoordinatorPicker size={"small"}
-                                           className={open ? show : hide}
-                                           exclude={props.exclude}
-                                           onSelect={onSelect}
-                                           label={"Select coordinator"}/>
+                    <CoordinatorPicker
+                        size={"small"}
+                        className={clsx(open ? show : hide, classes.button)}
+                        exclude={props.exclude}
+                        onSelect={onSelect}
+                        label={"Select coordinator"}
+                    />
                 </Grid>
             </Grid>
         );
     } else if (props.rider) {
         return (
-            <Grid container direction={"row"} spacing={2} justify={"flex-end"} alignItems={"center"}>
+            <Grid
+                container
+                direction={"row"}
+                spacing={2}
+                justify={"flex-end"}
+                alignItems={"center"}
+            >
                 <Grid item>
-                    <RiderPicker className={open ? show : hide}
-                                 exclude={props.exclude}
-                                 onSelect={onSelect}
-                                 size={"small"}
-                                 label={"Select rider"}/>
+                    <RiderPicker
+                        className={clsx(open ? show : hide, classes.button)}
+                        exclude={props.exclude}
+                        onSelect={onSelect}
+                        size={"small"}
+                        label={"Select rider"}
+                    />
                 </Grid>
-                <Grid item>
-                    {buttons}
-                </Grid>
+                <Grid item>{buttons}</Grid>
             </Grid>
         );
     }
 }
 
-
 AssignRiderCoordinatorPopover.propTypes = {
+    iconColor: PropTypes.string,
     taskUUID: PropTypes.string,
     exclude: PropTypes.arrayOf(PropTypes.string),
     coordinator: PropTypes.bool,
-    rider: PropTypes.bool
-}
+    rider: PropTypes.bool,
+};
 
 AssignRiderCoordinatorPopover.defaultProps = {
-    exclude: []
-}
+    iconColor: "primary",
+    exclude: [],
+};
 
 export default AssignRiderCoordinatorPopover;
