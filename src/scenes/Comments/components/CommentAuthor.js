@@ -30,7 +30,7 @@ const CommentAuthor = React.memo((props) => {
                     to={"/user/" + encodeUUID(props.uuid)}
                 >
                     <UserAvatar
-                        size={theme.spacing(0.6)}
+                        size={theme.spacing(0.5)}
                         userUUID={props.uuid}
                         displayName={props.displayName}
                         avatarURL={props.avatarURL}

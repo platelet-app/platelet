@@ -15,28 +15,35 @@ import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
 import { determineTaskType } from "../../redux/tasks/task_redux_utilities";
 import TaskOverview from "./components/TaskOverview";
+import CommentsSideBar from "./components/CommentsSideBar";
+
+const drawerWidth = 500;
+
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        boxShadow: "none",
+        background: theme.palette.background.default,
+        padding: 0,
+        minHeight: 300,
+    },
+    root: {
+        flexGrow: 1,
+        alignItems: "center",
+        justify: "center",
+    },
+    overview: { marginRight: drawerWidth },
+}));
 
 const DialogWrapper = (props) => {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("xs"));
     const { handleClose } = props;
-    const useStyles = makeStyles({
-        paper: {
-            boxShadow: "none",
-            background: theme.palette.background.default,
-            padding: 0,
-            minHeight: 300,
-        },
-        root: {
-            flexGrow: 1,
-        },
-    });
     const classes = useStyles();
     return (
         <Dialog
             className={classes.root}
             disableEscapeKeyDown
-            fullScreen={isSm}
+            fullScreen={true}
             maxWidth={"md"}
             fullWidth={true}
             open={true}
@@ -58,6 +65,7 @@ function TaskDialogCompact(props) {
     const notFoundSelector = createNotFoundSelector([getTaskPrefix]);
     const notFound = useSelector((state) => notFoundSelector(state));
     const history = useHistory();
+    const classes = useStyles();
 
     let taskUUID = null;
 
@@ -124,10 +132,18 @@ function TaskDialogCompact(props) {
         );
     } else {
         return (
-            <DialogWrapper handleClose={handleClose}>
-                {statusBar}
-                <TaskOverview task={task} taskUUID={taskUUID} />
-            </DialogWrapper>
+            <>
+                <DialogWrapper handleClose={handleClose}>
+                    <div className={classes.overview}>
+                        {statusBar}
+                        <TaskOverview task={task} taskUUID={taskUUID} />
+                    </div>
+                    <CommentsSideBar
+                        width={drawerWidth}
+                        parentUUID={taskUUID}
+                    />
+                </DialogWrapper>
+            </>
         );
     }
 }

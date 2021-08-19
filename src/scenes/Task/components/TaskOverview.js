@@ -22,7 +22,9 @@ const useStyles = makeStyles((theme) => ({
             padding: 5,
             paddingTop: 5,
         },
+        margin: "auto",
     },
+
     item: {
         width: "100%",
         [theme.breakpoints.up("sm")]: {
@@ -56,13 +58,13 @@ function TaskOverview(props) {
     const isSm = useMediaQuery(theme.breakpoints.down("xs"));
 
     return (
-        <Container className={classes.root} maxWidth={false}>
+        <Container className={classes.root} maxWidth={true}>
             <Grid
                 container
                 className={classes.container}
                 spacing={isSm ? 0 : 3}
                 direction={"column"}
-                alignItems={"flex-start"}
+                alignItems={"center"}
                 justify={"center"}
             >
                 <Grid
@@ -71,7 +73,7 @@ function TaskOverview(props) {
                     spacing={isSm ? 0 : 3}
                     item
                     direction={"row"}
-                    justify={isSm ? "center" : "flex-start"}
+                    justify={"center"}
                 >
                     <Grid className={classes.item} item>
                         <PickUpDetails
@@ -105,7 +107,7 @@ function TaskOverview(props) {
                     spacing={isSm ? 0 : 3}
                     item
                     direction={"row"}
-                    justify={isSm ? "center" : "flex-start"}
+                    justify={"center"}
                 >
                     <Grid className={classes.item} item>
                         <TaskDetailsPanel />
@@ -119,14 +121,6 @@ function TaskOverview(props) {
                         <DeliverableGridSelect taskUUID={taskUUID} />
                     </Grid>
                 </Grid>
-                <Hidden smUp>
-                    <Grid item>
-                        <div className={classes.separator} />
-                    </Grid>
-                </Hidden>
-                <Grid item className={classes.comments}>
-                    <CommentsSection parentUUID={taskUUID} />
-                </Grid>
             </Grid>
         </Container>
     );
@@ -138,4 +132,3 @@ TaskOverview.propTypes = {
 };
 
 export default TaskOverview;
-

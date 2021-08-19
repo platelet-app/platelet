@@ -19,19 +19,16 @@ import { useSelector } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
 
 export const dialogComponent = makeStyles((theme) => ({
-    fullWidth: {
-        display: "flex",
-        width: "100%",
-        paddingLeft: 15,
-        paddingRight: 15,
-    },
-    statusBar: {
+    root: {
         padding: 2,
         display: "flex",
         width: "100%",
         paddingLeft: 15,
         paddingRight: 15,
         background: theme.palette.background.paper,
+    },
+    italic: {
+        fontStyle: "italic",
     },
 }));
 
@@ -46,7 +43,7 @@ function StatusBar(props) {
     return (
         <AppBar
             position={isSm ? "relative" : "sticky"}
-            className={classes.statusBar}
+            className={classes.root}
         >
             <Grid
                 container
@@ -55,6 +52,20 @@ function StatusBar(props) {
                 alignItems={"center"}
             >
                 <Grid item>
+                    <Hidden smDown>
+                        <Button onClick={props.handleClose}>Close</Button>
+                    </Hidden>
+                    <Hidden smUp>
+                        <IconButton size={"small"} onClick={props.handleClose}>
+                            <ArrowButton
+                                size={3}
+                                colour={"primary"}
+                                direction={"back"}
+                            />
+                        </IconButton>
+                    </Hidden>
+                </Grid>
+                <Grid item>
                     <Grid
                         container
                         direction={"row"}
@@ -62,26 +73,12 @@ function StatusBar(props) {
                         justify={"flex-start"}
                         spacing={2}
                     >
-                        <Grid item>
-                            <Hidden smDown>
-                                <Button onClick={props.handleClose}>
-                                    Close
-                                </Button>
-                            </Hidden>
-                            <Hidden smUp>
-                                <IconButton
-                                    size={"small"}
-                                    onClick={props.handleClose}
-                                >
-                                    <ArrowButton
-                                        size={3}
-                                        colour={"primary"}
-                                        direction={"back"}
-                                    />
-                                </IconButton>
-                            </Hidden>
-                        </Grid>
                         <Hidden smDown>
+                            <Grid item>
+                                <Typography className={classes.italic}>
+                                    Coordinators
+                                </Typography>
+                            </Grid>
                             <Grid item>
                                 <AssigneeEditPopover
                                     coordinator
@@ -140,6 +137,11 @@ function StatusBar(props) {
                     >
                         {/* TODO: add some way to assign people on mobile view, showing it for now*/}
                         <Hidden>
+                            <Grid item>
+                                <Typography className={classes.italic}>
+                                    Riders
+                                </Typography>
+                            </Grid>
                             <Grid item>
                                 <AssigneeEditPopover
                                     rider
@@ -217,19 +219,19 @@ function StatusBar(props) {
                                 />
                             </Grid>
                         </Hidden>
-                        <Grid item>
-                            <TaskContextMenu
-                                timeDroppedOff={task.time_dropped_off}
-                                timePickedUp={task.time_picked_up}
-                                assignedRiders={task.assigned_riders}
-                                disableDeleted={true}
-                                disableRelay={true}
-                                taskUUID={task.uuid}
-                                timeCancelled={task.time_cancelled}
-                                timeRejected={task.time_rejected}
-                            />
-                        </Grid>
                     </Grid>
+                </Grid>
+                <Grid item>
+                    <TaskContextMenu
+                        timeDroppedOff={task.time_dropped_off}
+                        timePickedUp={task.time_picked_up}
+                        assignedRiders={task.assigned_riders}
+                        disableDeleted={true}
+                        disableRelay={true}
+                        taskUUID={task.uuid}
+                        timeCancelled={task.time_cancelled}
+                        timeRejected={task.time_rejected}
+                    />
                 </Grid>
             </Grid>
         </AppBar>

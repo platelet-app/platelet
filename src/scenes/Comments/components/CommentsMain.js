@@ -124,7 +124,7 @@ function CommentsMain(props) {
             container
             className={classes.root}
             direction={"column"}
-            alignItems={"flex-start"}
+            alignItems={"center"}
         >
             {props.comments
                 .sort(
@@ -137,13 +137,7 @@ function CommentsMain(props) {
                     return (
                         <>
                             <Grid item>
-                                <div
-                                    className={
-                                        comment.author.uuid !== prevAuthorUUID
-                                            ? classes.tallSpacer
-                                            : classes.shortSpacer
-                                    }
-                                />
+                                <div className={classes.shortSpacer} />
                             </Grid>
                             <Grid
                                 className={clsx(
