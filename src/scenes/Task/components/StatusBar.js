@@ -76,7 +76,7 @@ function StatusBar(props) {
                         <Hidden smDown>
                             <Grid item>
                                 <Typography className={classes.italic}>
-                                    Coordinators
+                                    Coordinators:
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -140,7 +140,7 @@ function StatusBar(props) {
                             <Hidden smDown>
                                 <Grid item>
                                     <Typography className={classes.italic}>
-                                        Riders
+                                        Riders:
                                     </Typography>
                                 </Grid>
                             </Hidden>
