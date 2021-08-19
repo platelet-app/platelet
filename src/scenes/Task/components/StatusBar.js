@@ -123,7 +123,16 @@ function StatusBar(props) {
                             </Grid>
                         </Hidden>
                         <Grid item>
-                            <Typography>Status: {props.status}</Typography>
+                            <Grid container spacing={1} direction={"row"}>
+                                <Grid item>
+                                    <Typography className={classes.italic}>
+                                        Status:
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography>{props.status}</Typography>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>

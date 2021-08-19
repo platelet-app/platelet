@@ -115,7 +115,7 @@ export function TextFieldUncontrolled(props) {
                 onKeyPress={(ev) => {
                     if (ev.key === "Escape") {
                         if (props.onPressEscape) {
-                            props.onPressEscape();
+                            props.onPressEscape(ev);
                             ev.preventDefault();
                         }
                     }
@@ -132,7 +132,6 @@ export function TextFieldUncontrolled(props) {
                 helperText={errorState ? errorText : ""}
                 type={props.tel ? "tel" : ""}
                 onChange={(e) => {
-                    console.log(e.target.value);
                     if (props.tel) {
                         const result = e.target.value
                             .split("")
@@ -163,7 +162,7 @@ export function TextFieldUncontrolled(props) {
                         }
                         case "Escape": {
                             if (props.onPressEscape) {
-                                props.onPressEscape();
+                                props.onPressEscape(ev);
                                 ev.preventDefault();
                             }
                             break;

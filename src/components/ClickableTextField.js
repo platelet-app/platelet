@@ -104,8 +104,10 @@ function ClickableTextField(props) {
                 onPressEnter={(ev) => {
                     onFinishedEntry(ev);
                     setEditMode(false);
+                    ev.stopPropagation();
                 }}
                 onPressEscape={(ev) => {
+                    ev.stopPropagation();
                     onChange({
                         target: { value: firstValue.current },
                     });
