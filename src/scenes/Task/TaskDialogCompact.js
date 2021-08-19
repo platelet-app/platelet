@@ -20,6 +20,7 @@ import { Hidden } from "@material-ui/core";
 import CommentsSection from "../Comments/CommentsSection";
 
 const drawerWidth = 500;
+const drawerWidthMd = 400;
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -35,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
     },
     overview: {
         marginRight: drawerWidth,
+        [theme.breakpoints.down("md")]: {
+            marginRight: drawerWidthMd,
+        },
         [theme.breakpoints.down("sm")]: {
             marginRight: 0,
         },
@@ -73,6 +77,8 @@ function TaskDialogCompact(props) {
     const notFound = useSelector((state) => notFoundSelector(state));
     const history = useHistory();
     const classes = useStyles();
+    const theme = useTheme();
+    const isMd = useMediaQuery(theme.breakpoints.down("md"));
 
     let taskUUID = null;
 
@@ -147,7 +153,7 @@ function TaskDialogCompact(props) {
                     </div>
                     <Hidden smDown>
                         <CommentsSideBar
-                            width={drawerWidth}
+                            width={isMd ? drawerWidthMd : drawerWidth}
                             parentUUID={taskUUID}
                         />
                     </Hidden>
