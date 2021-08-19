@@ -96,7 +96,7 @@ const CommentCard = React.memo((props) => {
                                 <Grid item>
                                     <Tooltip
                                         title={moment(props.timeCreated).format(
-                                            "yyyy-mm-DD HH:mm"
+                                            "yyyy-MM-DD HH:mm"
                                         )}
                                     >
                                         <Typography
