@@ -33,7 +33,8 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
 import {getTasksSelector} from "../../../redux/Selectors";
-
+import { CustomizedDialogs } from '../../../components/CustomizedDialogs'
+import { TaskCreation } from '../components/TaskCreation'
 
 const getColumnTitle = key => {
     switch (key) {
@@ -304,7 +305,7 @@ GridColumn.propTypes = {
     title: PropTypes.string,
     classes: PropTypes.object,
     onAddTaskClick: PropTypes.func,
-    onAddRelayClick: PropTypes.func,
+    onAddRelayClick: PropTypes.bool,
     disableAddButton: PropTypes.bool,
     taskKey: PropTypes.string,
     showTasks: PropTypes.arrayOf(PropTypes.string),
@@ -319,6 +320,8 @@ function TasksGrid(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const animate = useRef(false);
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
+    const [showTaskCreation, setShowTaskCreation] = useState(false)
+
     const tasks = useSelector(getTasksSelector);
     const roleView = useSelector(state => state.roleView);
     const whoami = useSelector(state => state.whoami.user);
@@ -345,6 +348,8 @@ function TasksGrid(props) {
         time_cancelled: null
     };
 
+    // do we need this anymore? as click on create new btn should show the workflow
+    // rather than an empty task card
     const addEmptyTask = () => {
         dispatch(addTaskRequest({
             ...emptyTask,
@@ -371,34 +376,39 @@ function TasksGrid(props) {
         return <TasksGridSkeleton count={3}/>
     } else {
         return (
-            <Grid container
-                  spacing={2}
-                  direction={"row"}
-                  justify={isSm ? "center" : "flex-start"}
-                  alignItems={"stretch"}
+            <>
+                <Grid container
+                    spacing={2}
+                    direction={"row"}
+                    justify={isSm ? "center" : "flex-start"}
+                    alignItems={"stretch"}
 
-            >
-                {Object.keys(tasks).map(taskKey => {
-                    const title = getColumnTitle(taskKey);
-                    return (
-                        <Grid
-                            item
-                            key={taskKey}
-                            className={clsx([props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show, classes.column])}>
-                            <GridColumn title={title}
-                                        classes={classes}
-                                        onAddTaskClick={addEmptyTask}
-                                        onAddRelayClick={addRelay}
-                                        disableAddButton={isPosting}
-                                        taskKey={taskKey}
-                                        showTasks={filteredTasksUUIDs}
-                                        animate={animate.current}
-                                        key={title}/>
+                >
+                    {Object.keys(tasks).map(taskKey => {
+                        const title = getColumnTitle(taskKey);
+                        return (
+                            <Grid
+                                item
+                                key={taskKey}
+                                className={clsx([props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show, classes.column])}>
+                                <GridColumn title={title}
+                                            classes={classes}
+                                            onAddTaskClick={() => setShowTaskCreation(true)}
+                                            onAddRelayClick={addRelay}
+                                            disableAddButton={isPosting}
+                                            taskKey={taskKey}
+                                            showTasks={filteredTasksUUIDs}
+                                            animate={animate.current}
+                                            key={title}/>
 
-                        </Grid>
-                    )
-                })}
-            </Grid>
+                            </Grid>
+                        )
+                    })}
+                </Grid>
+                <CustomizedDialogs open={showTaskCreation} onClose={() => setShowTaskCreation(false)}>
+                    <TaskCreation />
+                </CustomizedDialogs>
+            </>
         )
     }
 }
