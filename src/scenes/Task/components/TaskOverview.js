@@ -62,7 +62,7 @@ function TaskOverview(props) {
             <Grid
                 container
                 className={classes.container}
-                spacing={isSm ? 0 : 3}
+                spacing={isSm ? 1 : 3}
                 direction={"column"}
                 alignItems={"flex-start"}
                 justify={"center"}
@@ -70,7 +70,7 @@ function TaskOverview(props) {
                 <Grid
                     container
                     className={classes.container}
-                    spacing={isSm ? 0 : 3}
+                    spacing={isSm ? 1 : 3}
                     item
                     direction={"row"}
                     alignItems={"flex-start"}
@@ -83,11 +83,6 @@ function TaskOverview(props) {
                             time={task.time_picked_up}
                         />
                     </Grid>
-                    <Hidden smUp>
-                        <Grid item>
-                            <div className={classes.separator} />
-                        </Grid>
-                    </Hidden>
                     <Grid className={classes.item} item>
                         <DropOffDetails
                             disableTimeButton={!!!task.time_picked_up}
@@ -99,30 +94,15 @@ function TaskOverview(props) {
                     <Grid className={classes.item} item>
                         <TaskDetailsPanel />
                     </Grid>
-                    <Hidden smUp>
-                        <Grid item>
-                            <div className={classes.separator} />
-                        </Grid>
-                    </Hidden>
                 </Grid>
-                <Hidden smUp>
-                    <Grid item>
-                        <div className={classes.separator} />
-                    </Grid>
-                </Hidden>
                 <Grid
                     container
                     className={classes.container}
-                    spacing={isSm ? 0 : 3}
+                    spacing={isSm ? 1 : 3}
                     item
                     direction={"row"}
                     justify={"flex-start"}
                 >
-                    <Hidden smUp>
-                        <Grid item>
-                            <div className={classes.separator} />
-                        </Grid>
-                    </Hidden>
                     <Grid className={classes.item} item>
                         <DeliverableGridSelect taskUUID={taskUUID} />
                     </Grid>
