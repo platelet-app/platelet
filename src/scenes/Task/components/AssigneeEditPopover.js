@@ -28,7 +28,7 @@ function AssigneeEditPopover(props) {
 
     return (
         <div className={props.className}>
-            <IconButton style={{ height: 6 }} onClick={handleClick}>
+            <IconButton onClick={handleClick}>
                 <EditIcon className={classes.button} />
             </IconButton>
             <Popover

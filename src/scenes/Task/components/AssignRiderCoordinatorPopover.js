@@ -12,19 +12,23 @@ import { showHide } from "../../../styles/common";
 import Grid from "@material-ui/core/Grid";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Tooltip } from "@material-ui/core";
 import clsx from "clsx";
+import { AddCircleOutline } from "@material-ui/icons";
+
+const useStyles = makeStyles((theme) => ({
+    button: (props) => ({
+        color: props.iconColor,
+        width: theme.spacing(4),
+        height: theme.spacing(4),
+    }),
+}));
 
 function AssignRiderCoordinatorPopover(props) {
     const dispatch = useDispatch();
     const { show, hide } = showHide();
     const [open, setOpen] = React.useState(false);
-    const useStyles = makeStyles({
-        button: {
-            color: props.iconColor,
-        },
-    });
-    const classes = useStyles();
+    const classes = useStyles(props);
     const onSelect = (user) => {
         if (user) {
             if (props.rider)
@@ -51,11 +55,18 @@ function AssignRiderCoordinatorPopover(props) {
     }
 
     const buttons = !open ? (
-        <SmallCirclePlusButton
-            colour={props.iconColor}
-            tooltip={`Assign a ${props.coordinator ? "coordinator" : "rider"}`}
-            onClick={handleOpen}
-        />
+        <Tooltip
+            title={`Assign a ${props.coordinator ? "coordinator" : "rider"}`}
+        >
+            <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handleOpen}
+            >
+                <AddCircleOutline className={classes.button} />
+            </IconButton>
+        </Tooltip>
     ) : (
         <IconButton onClick={handleClose}>
             <CloseIcon className={classes.button} />
@@ -68,10 +79,9 @@ function AssignRiderCoordinatorPopover(props) {
                 container
                 direction={"row"}
                 spacing={2}
-                justify={"flex-start"}
+                justify={"flex-end"}
                 alignItems={"center"}
             >
-                <Grid item>{buttons}</Grid>
                 <Grid item>
                     <CoordinatorPicker
                         size={"small"}
@@ -81,6 +91,7 @@ function AssignRiderCoordinatorPopover(props) {
                         label={"Select coordinator"}
                     />
                 </Grid>
+                <Grid item>{buttons}</Grid>
             </Grid>
         );
     } else if (props.rider) {

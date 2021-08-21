@@ -3,7 +3,6 @@ import { PropTypes } from "prop-types";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import PickUpDetails from "./PickUpDetails";
-import { Hidden } from "@material-ui/core";
 import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
