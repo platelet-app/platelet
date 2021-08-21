@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { AppBar, Hidden, Tooltip } from "@material-ui/core";
+import { AppBar, Hidden } from "@material-ui/core";
 import { ArrowButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
@@ -13,6 +13,7 @@ import { useTheme } from "@material-ui/core/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { useSelector } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
+import clsx from "clsx";
 
 const colourBarPercent = "90%";
 
@@ -50,9 +51,9 @@ export const dialogComponent = (props) =>
                 italic: {
                     fontStyle: "italic",
                 },
-                appBarContents: {
-                    color: "white",
-                },
+            },
+            text: {
+                color: theme.palette.type === "dark" ? "white" : "black",
             },
         };
     });
@@ -78,20 +79,11 @@ function StatusBar(props) {
             >
                 <Grid item>
                     <Hidden smDown>
-                        <Button
-                            className={classes.appBarContents}
-                            onClick={props.handleClose}
-                        >
-                            Close
-                        </Button>
+                        <Button onClick={props.handleClose}>Close</Button>
                     </Hidden>
                     <Hidden smUp>
                         <IconButton size={"small"} onClick={props.handleClose}>
-                            <ArrowButton
-                                size={3}
-                                colour={"white"}
-                                direction={"back"}
-                            />
+                            <ArrowButton size={3} direction={"back"} />
                         </IconButton>
                     </Hidden>
                 </Grid>
@@ -106,12 +98,19 @@ function StatusBar(props) {
                         <Grid item>
                             <Grid container spacing={1} direction={"row"}>
                                 <Grid item>
-                                    <Typography className={classes.italic}>
+                                    <Typography
+                                        className={clsx(
+                                            classes.italic,
+                                            classes.text
+                                        )}
+                                    >
                                         Status:
                                     </Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography>{props.status}</Typography>
+                                    <Typography className={classes.text}>
+                                        {props.status}
+                                    </Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -165,7 +164,6 @@ function StatusBar(props) {
                 </Grid>
                 <Grid item>
                     <TaskContextMenu
-                        iconColor={"white"}
                         timeDroppedOff={task.time_dropped_off}
                         timePickedUp={task.time_picked_up}
                         assignedRiders={task.assigned_riders}
