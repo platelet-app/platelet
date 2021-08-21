@@ -5,14 +5,6 @@ import { useSelector } from "react-redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
 import Divider from "@material-ui/core/Divider";
-import { makeStyles } from "@material-ui/core";
-
-const useStyles = makeStyles({
-    textBox: {
-        background: "white",
-        borderRadius: 10,
-    },
-});
 
 function CoordinatorPicker(props) {
     const availableUsers = useSelector((state) => state.users.users);
@@ -23,7 +15,6 @@ function CoordinatorPicker(props) {
         if (selectedItem) props.onSelect(selectedItem);
         setTextBoxValue(null);
     };
-    const classes = useStyles();
 
     useEffect(() => {
         const filteredSuggestions = Object.values(availableUsers).filter(
@@ -46,7 +37,6 @@ function CoordinatorPicker(props) {
                 style={{ width: 300 }}
                 renderInput={(params) => (
                     <TextField
-                        className={classes.textBox}
                         autoFocus
                         {...params}
                         label={props.label}
