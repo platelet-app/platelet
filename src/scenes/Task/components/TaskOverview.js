@@ -64,7 +64,7 @@ function TaskOverview(props) {
                 className={classes.container}
                 spacing={isSm ? 0 : 3}
                 direction={"column"}
-                alignItems={"center"}
+                alignItems={"flex-start"}
                 justify={"center"}
             >
                 <Grid
@@ -73,7 +73,8 @@ function TaskOverview(props) {
                     spacing={isSm ? 0 : 3}
                     item
                     direction={"row"}
-                    justify={"center"}
+                    alignItems={"flex-start"}
+                    justify={"flex-start"}
                 >
                     <Grid className={classes.item} item>
                         <PickUpDetails
@@ -95,6 +96,14 @@ function TaskOverview(props) {
                             time={task.time_dropped_off}
                         />
                     </Grid>
+                    <Grid className={classes.item} item>
+                        <TaskDetailsPanel />
+                    </Grid>
+                    <Hidden smUp>
+                        <Grid item>
+                            <div className={classes.separator} />
+                        </Grid>
+                    </Hidden>
                 </Grid>
                 <Hidden smUp>
                     <Grid item>
@@ -107,11 +116,8 @@ function TaskOverview(props) {
                     spacing={isSm ? 0 : 3}
                     item
                     direction={"row"}
-                    justify={"center"}
+                    justify={"flex-start"}
                 >
-                    <Grid className={classes.item} item>
-                        <TaskDetailsPanel />
-                    </Grid>
                     <Hidden smUp>
                         <Grid item>
                             <div className={classes.separator} />
