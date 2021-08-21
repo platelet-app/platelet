@@ -17,12 +17,12 @@ const useStyles = makeStyles((theme) => ({
         overflow: "",
     },
     root: {
+        maxWidth: 1800,
         paddingTop: 20,
         [theme.breakpoints.down("md")]: {
             padding: 5,
             paddingTop: 5,
         },
-        margin: "auto",
     },
 
     item: {
@@ -63,52 +63,34 @@ function TaskOverview(props) {
                 container
                 className={classes.container}
                 spacing={isSm ? 1 : 3}
-                direction={"column"}
+                item
+                direction={"row"}
                 alignItems={"flex-start"}
-                justify={"center"}
+                justify={"flex-start"}
             >
-                <Grid
-                    container
-                    className={classes.container}
-                    spacing={isSm ? 1 : 3}
-                    item
-                    direction={"row"}
-                    alignItems={"flex-start"}
-                    justify={"flex-start"}
-                >
-                    <Grid className={classes.item} item>
-                        <PickUpDetails
-                            taskUUID={taskUUID}
-                            location={task.pickup_location}
-                            time={task.time_picked_up}
-                        />
-                    </Grid>
-                    <Grid className={classes.item} item>
-                        <DropOffDetails
-                            disableTimeButton={!!!task.time_picked_up}
-                            taskUUID={taskUUID}
-                            location={task.dropoff_location}
-                            time={task.time_dropped_off}
-                        />
-                    </Grid>
-                    <Grid className={classes.item} item>
-                        <TaskDetailsPanel />
-                    </Grid>
+                <Grid className={classes.item} item>
+                    <PickUpDetails
+                        taskUUID={taskUUID}
+                        location={task.pickup_location}
+                        time={task.time_picked_up}
+                    />
                 </Grid>
-                <Grid
-                    container
-                    className={classes.container}
-                    spacing={isSm ? 1 : 3}
-                    item
-                    direction={"row"}
-                    justify={"flex-start"}
-                >
-                    <Grid className={classes.item} item>
-                        <DeliverableGridSelect taskUUID={taskUUID} />
-                    </Grid>
-                    <Grid className={classes.item} item>
-                        <TaskAssignmentsPanel />
-                    </Grid>
+                <Grid className={classes.item} item>
+                    <DropOffDetails
+                        disableTimeButton={!!!task.time_picked_up}
+                        taskUUID={taskUUID}
+                        location={task.dropoff_location}
+                        time={task.time_dropped_off}
+                    />
+                </Grid>
+                <Grid className={classes.item} item>
+                    <TaskDetailsPanel />
+                </Grid>
+                <Grid className={classes.item} item>
+                    <DeliverableGridSelect taskUUID={taskUUID} />
+                </Grid>
+                <Grid className={classes.item} item>
+                    <TaskAssignmentsPanel />
                 </Grid>
             </Grid>
         </Container>
