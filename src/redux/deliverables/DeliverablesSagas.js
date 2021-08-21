@@ -23,7 +23,12 @@ export function* postNewDeliverable(action) {
             [api, api.deliverables.createDeliverable],
             action.data.payload
         );
-        const deliverable = { ...action.data.payload, uuid: result.uuid };
+        const timeCreated = new Date().toISOString();
+        const deliverable = {
+            ...action.data.payload,
+            uuid: result.uuid,
+            time_created: timeCreated,
+        };
         yield put(actions.addDeliverableSuccess(deliverable));
         yield put(actions.setDeliverablesSorted());
     } catch (error) {
@@ -158,7 +163,11 @@ export function* setDeliverablesSorted() {
             result.defaults.push(i);
         }
     }
-    result["deliverables"] = sortByCreatedTime(Object.values(deliverables));
+    result["deliverables"] = sortByCreatedTime(
+        result["deliverables"],
+        "oldest"
+    );
+    console.log(result["deliverables"]);
     yield put(actions.deliverablesSorted(result));
 }
 
