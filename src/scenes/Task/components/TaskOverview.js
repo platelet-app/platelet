@@ -7,10 +7,10 @@ import { Hidden } from "@material-ui/core";
 import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
-import CommentsSection from "../../Comments/CommentsSection";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
+import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 
 const useStyles = makeStyles((theme) => ({
     dialogContent: {
@@ -119,6 +119,9 @@ function TaskOverview(props) {
                     </Hidden>
                     <Grid className={classes.item} item>
                         <DeliverableGridSelect taskUUID={taskUUID} />
+                    </Grid>
+                    <Grid className={classes.item} item>
+                        <TaskAssignmentsPanel />
                     </Grid>
                 </Grid>
             </Grid>

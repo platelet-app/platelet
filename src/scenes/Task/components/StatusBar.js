@@ -1,6 +1,4 @@
 import React from "react";
-import { AvatarGroup } from "@material-ui/lab";
-import UserAvatar from "../../../components/UserAvatar";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -9,8 +7,6 @@ import { AppBar, Hidden, Tooltip } from "@material-ui/core";
 import { ArrowButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
-import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
-import AssigneeEditPopover from "./AssigneeEditPopover";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
@@ -18,28 +14,51 @@ import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { useSelector } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
 
-export const dialogComponent = makeStyles((theme) => ({
-    root: {
-        padding: 2,
-        display: "flex",
-        width: "100%",
-        paddingLeft: 15,
-        paddingRight: 15,
-        background:
-            theme.palette.type === "dark"
-                ? theme.palette.background.paper
-                : theme.palette.primary.main,
-    },
-    italic: {
-        fontStyle: "italic",
-    },
-    appBarContents: {
-        color: "white",
-    },
-}));
+const colourBarPercent = "90%";
+
+export const dialogComponent = (props) =>
+    makeStyles((theme) => {
+        let background;
+        console.log(props.status);
+        switch (props.status) {
+            case "New":
+                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.new} ${colourBarPercent}, ${theme.palette.taskStatus.new} 100%)`;
+                break;
+            case "Active":
+                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.active} ${colourBarPercent}, ${theme.palette.taskStatus.active} 100%)`;
+                break;
+            case "Picked up":
+                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} 100%)`;
+                break;
+            case "Delivered":
+                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} 100%)`;
+                break;
+            default:
+                background =
+                    theme.palette.type === "dark"
+                        ? theme.palette.background.paper
+                        : theme.palette.primary.main;
+        }
+        return {
+            root: {
+                padding: 2,
+                display: "flex",
+                width: "100%",
+                paddingLeft: 15,
+                paddingRight: 15,
+                background,
+                italic: {
+                    fontStyle: "italic",
+                },
+                appBarContents: {
+                    color: "white",
+                },
+            },
+        };
+    });
 
 function StatusBar(props) {
-    const classes = dialogComponent();
+    const classes = dialogComponent(props)();
     const { show, hide } = showHide();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -84,57 +103,6 @@ function StatusBar(props) {
                         justify={"flex-start"}
                         spacing={2}
                     >
-                        <Hidden smDown>
-                            <Grid item>
-                                <Typography className={classes.italic}>
-                                    Coordinators:
-                                </Typography>
-                            </Grid>
-                            <Grid item>
-                                <AssigneeEditPopover
-                                    iconColor={"white"}
-                                    coordinator
-                                    assignees={task.assigned_coordinators}
-                                    className={
-                                        task.assigned_coordinators.length > 0
-                                            ? show
-                                            : hide
-                                    }
-                                    taskUUID={task.uuid}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <Tooltip
-                                    title={
-                                        task.assigned_coordinators_display_string
-                                    }
-                                >
-                                    <AvatarGroup>
-                                        {task.assigned_coordinators.map((u) => (
-                                            <UserAvatar
-                                                key={u.uuid}
-                                                size={5}
-                                                userUUID={u.uuid}
-                                                displayName={u.display_name}
-                                                avatarURL={
-                                                    u.profile_picture_thumbnail_url
-                                                }
-                                            />
-                                        ))}
-                                    </AvatarGroup>
-                                </Tooltip>
-                            </Grid>
-                            <Grid item>
-                                <AssignRiderCoordinatorPopover
-                                    iconColor={"white"}
-                                    exclude={task.assigned_coordinators.map(
-                                        (u) => u.uuid
-                                    )}
-                                    coordinator
-                                    taskUUID={props.taskUUID}
-                                />
-                            </Grid>
-                        </Hidden>
                         <Grid item>
                             <Grid container spacing={1} direction={"row"}>
                                 <Grid item>
@@ -157,58 +125,6 @@ function StatusBar(props) {
                         justify={"flex-start"}
                         spacing={2}
                     >
-                        {/* TODO: add some way to assign people on mobile view, showing it for now*/}
-                        <Hidden>
-                            <Hidden smDown>
-                                <Grid item>
-                                    <Typography className={classes.italic}>
-                                        Riders:
-                                    </Typography>
-                                </Grid>
-                            </Hidden>
-                            <Grid item>
-                                <AssigneeEditPopover
-                                    iconColor={"white"}
-                                    rider
-                                    assignees={task.assigned_riders}
-                                    className={
-                                        task.assigned_riders.length > 0
-                                            ? show
-                                            : hide
-                                    }
-                                    taskUUID={task.uuid}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <Tooltip
-                                    title={task.assigned_riders_display_string}
-                                >
-                                    <AvatarGroup>
-                                        {task.assigned_riders.map((u) => (
-                                            <UserAvatar
-                                                key={u.uuid}
-                                                size={5}
-                                                userUUID={u.uuid}
-                                                displayName={u.display_name}
-                                                avatarURL={
-                                                    u.profile_picture_thumbnail_url
-                                                }
-                                            />
-                                        ))}
-                                    </AvatarGroup>
-                                </Tooltip>
-                            </Grid>
-                            <Grid item>
-                                <AssignRiderCoordinatorPopover
-                                    iconColor={"white"}
-                                    rider
-                                    exclude={task.assigned_riders.map(
-                                        (u) => u.uuid
-                                    )}
-                                    taskUUID={props.taskUUID}
-                                />
-                            </Grid>
-                        </Hidden>
                         <Hidden smDown>
                             <Grid item>
                                 <ArrowButton
