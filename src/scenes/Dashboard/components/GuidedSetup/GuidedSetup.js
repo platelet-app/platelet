@@ -9,7 +9,7 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
 import { CustomizedDialogs } from '../../../../components/CustomizedDialogs'
-import { Step1, Step2, Step3, Step4 } from './index'
+import { Step1, Step2, Step3, Step4, Step5 } from './index'
 
 
 const TabPanel = (props) => {
@@ -90,7 +90,7 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
                 <Step4 />
             </TabPanel>
             <TabPanel value={value} index={4}>
-                Item Five
+                <Step5 />
             </TabPanel>
         </div>
         <div className={classes.btnWrapper}>
