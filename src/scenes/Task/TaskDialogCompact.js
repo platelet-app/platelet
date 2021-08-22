@@ -15,30 +15,55 @@ import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
 import { determineTaskType } from "../../redux/tasks/task_redux_utilities";
 import TaskOverview from "./components/TaskOverview";
+import CommentsSideBar from "./components/CommentsSideBar";
+import { Button, Hidden } from "@material-ui/core";
+import CommentsSection from "../Comments/CommentsSection";
+
+const drawerWidth = 500;
+const drawerWidthMd = 400;
+
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        boxShadow: "none",
+        background: theme.palette.background.default,
+        padding: 0,
+        minHeight: 300,
+    },
+    root: {
+        flexGrow: 1,
+        alignItems: "center",
+        justify: "center",
+    },
+    overview: {
+        marginRight: drawerWidth,
+        [theme.breakpoints.down("md")]: {
+            marginRight: drawerWidthMd,
+        },
+        [theme.breakpoints.down("sm")]: {
+            marginRight: 0,
+        },
+    },
+}));
 
 const DialogWrapper = (props) => {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("xs"));
     const { handleClose } = props;
-    const useStyles = makeStyles({
-        root: {
-            boxShadow: "none",
-            background: theme.palette.background.default,
-            padding: 0,
-            minHeight: 300,
-        },
-    });
     const classes = useStyles();
     return (
         <Dialog
+            onKeyUp={(e) => {
+                if (e.key === "Escape") handleClose(e);
+            }}
+            className={classes.root}
             disableEscapeKeyDown
-            fullScreen={isSm}
+            fullScreen={true}
             maxWidth={"md"}
             fullWidth={true}
             open={true}
             onClose={handleClose}
             PaperProps={{
-                className: classes.root,
+                className: classes.paper,
             }}
             aria-labelledby="task-dialog"
         >
@@ -54,6 +79,9 @@ function TaskDialogCompact(props) {
     const notFoundSelector = createNotFoundSelector([getTaskPrefix]);
     const notFound = useSelector((state) => notFoundSelector(state));
     const history = useHistory();
+    const classes = useStyles();
+    const theme = useTheme();
+    const isMd = useMediaQuery(theme.breakpoints.down("md"));
 
     let taskUUID = null;
 
@@ -92,15 +120,16 @@ function TaskDialogCompact(props) {
         else history.push("/dashboard");
     };
 
-    const statusBar = !task ? (
-        <></>
-    ) : (
-        <StatusBar
-            handleClose={handleClose}
-            status={taskStatus}
-            taskUUID={taskUUID}
-        />
-    );
+    const statusBar =
+        !task || notFound ? (
+            <Button onClick={handleClose}>Close</Button>
+        ) : (
+            <StatusBar
+                handleClose={handleClose}
+                status={taskStatus}
+                taskUUID={taskUUID}
+            />
+        );
 
     if (!task) {
         return (
@@ -111,6 +140,7 @@ function TaskDialogCompact(props) {
     } else if (notFound) {
         return (
             <DialogWrapper handleClose={handleClose}>
+                {statusBar}
                 <NotFound>
                     <Typography>
                         Task with UUID {taskUUID} not found.
@@ -121,8 +151,19 @@ function TaskDialogCompact(props) {
     } else {
         return (
             <DialogWrapper handleClose={handleClose}>
-                {statusBar}
-                <TaskOverview task={task} taskUUID={taskUUID} />
+                <div className={classes.overview}>
+                    {statusBar}
+                    <TaskOverview task={task} taskUUID={taskUUID} />
+                </div>
+                <Hidden smDown>
+                    <CommentsSideBar
+                        width={isMd ? drawerWidthMd : drawerWidth}
+                        parentUUID={taskUUID}
+                    />
+                </Hidden>
+                <Hidden mdUp>
+                    <CommentsSection parentUUID={taskUUID} />
+                </Hidden>
             </DialogWrapper>
         );
     }

@@ -1,21 +1,23 @@
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
-import seedrandom from 'seedrandom'
+import seedrandom from "seedrandom";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
-const ctx = document.createElement('canvas').getContext('2d')
+const ctx = document.createElement("canvas").getContext("2d");
 
-const colorToHex = color => {
+const colorToHex = (color) => {
     ctx.fillStyle = color;
-    return ctx.fillStyle
-}
+    return ctx.fillStyle;
+};
 
-const PHI = 1.618033988749895
+const PHI = 1.618033988749895;
 
-const generateColorFromString = str =>
+const generateColorFromString = (str) =>
     colorToHex(
-        `hsl(${Math.floor(((seedrandom(str)() + 1 / PHI) % 1) * 360)}, 50%, 50%)`,
-    )
+        `hsl(${Math.floor(
+            ((seedrandom(str)() + 1 / PHI) % 1) * 360
+        )}, 50%, 50%)`
+    );
 
 function stringToColor(string) {
     let hash = 0;
@@ -26,7 +28,7 @@ function stringToColor(string) {
         hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }
 
-    let color = '#';
+    let color = "#";
 
     for (i = 0; i < 3; i += 1) {
         const value = (hash >> (i * 8)) & 0xff;
@@ -37,11 +39,13 @@ function stringToColor(string) {
     return color;
 }
 
-
 const UserAvatar = React.memo((props) => {
-    const nameArray = props.displayName ? props.displayName.split(" ") : ["n", "a"];
-    const reducer = (accumulator, currentValue) => accumulator + currentValue[0];
-    const initials = nameArray.reduce(reducer, '').slice(0, 2);
+    const nameArray = props.displayName
+        ? props.displayName.split(" ")
+        : ["n", "a"];
+    const reducer = (accumulator, currentValue) =>
+        accumulator + currentValue[0];
+    const initials = nameArray.reduce(reducer, "").slice(0, 2);
     const avatarFallbackColor = generateColorFromString(props.userUUID);
 
     const useStyles = makeStyles((theme) => ({
@@ -49,14 +53,20 @@ const UserAvatar = React.memo((props) => {
             color: theme.palette.getContrastText(avatarFallbackColor),
             backgroundColor: avatarFallbackColor,
             width: props.size ? theme.spacing(props.size) : theme.spacing(6),
-            height: props.size ? theme.spacing(props.size) : theme.spacing(6)
+            height: props.size ? theme.spacing(props.size) : theme.spacing(6),
         },
     }));
 
     const classes = useStyles();
     return (
-        <Avatar alt={props.displayName} src={props.avatarURL} className={classes.card}>{initials}</Avatar>
-    )
-})
+        <Avatar
+            alt={props.displayName}
+            src={props.avatarURL}
+            className={classes.card}
+        >
+            {initials}
+        </Avatar>
+    );
+});
 
 export default UserAvatar;

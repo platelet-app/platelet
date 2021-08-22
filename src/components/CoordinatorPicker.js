@@ -1,27 +1,27 @@
-import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
-import TextField from '@material-ui/core/TextField';
-import {useSelector} from "react-redux";
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import parse from 'autosuggest-highlight/parse';
-import match from 'autosuggest-highlight/match';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import TextField from "@material-ui/core/TextField";
+import { useSelector } from "react-redux";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
 import Divider from "@material-ui/core/Divider";
-import AssignRiderCoordinatorPopover from "../scenes/Task/components/AssignRiderCoordinatorPopover";
-
 
 function CoordinatorPicker(props) {
-    const availableUsers = useSelector(state => state.users.users);
+    const availableUsers = useSelector((state) => state.users.users);
     const [textBoxValue, setTextBoxValue] = useState(null);
-    const [filteredCoordinatorSuggestions, setFilteredCoordinatorSuggestions] = useState([]);
+    const [filteredCoordinatorSuggestions, setFilteredCoordinatorSuggestions] =
+        useState([]);
     const onSelect = (event, selectedItem) => {
-        if (selectedItem)
-            props.onSelect(selectedItem);
+        if (selectedItem) props.onSelect(selectedItem);
         setTextBoxValue(null);
     };
 
     useEffect(() => {
-        const filteredSuggestions = Object.values(availableUsers).filter(u => u.roles.includes("coordinator") && !props.exclude.includes(u.uuid))
+        const filteredSuggestions = Object.values(availableUsers).filter(
+            (u) =>
+                u.roles.includes("coordinator") &&
+                !props.exclude.includes(u.uuid)
+        );
         setFilteredCoordinatorSuggestions(filteredSuggestions);
     }, [availableUsers, props.exclude]);
 
@@ -34,26 +34,35 @@ function CoordinatorPicker(props) {
                 className={props.className}
                 size={props.size}
                 getOptionLabel={(option) => option.display_name}
-                style={{width: 300}}
+                style={{ width: 200 }}
                 renderInput={(params) => (
-                    <TextField autoFocus {...params} label={props.label} variant="outlined" margin="none"/>
+                    <TextField
+                        autoFocus
+                        {...params}
+                        label={props.label}
+                        variant="outlined"
+                        margin="none"
+                    />
                 )}
                 onChange={onSelect}
-                renderOption={(option, {inputValue}) => {
+                renderOption={(option, { inputValue }) => {
                     return (
-                        <div style={{width: "100%"}}>
-                            <CompactUserCard userUUID={option.uuid}
-                                             displayName={option.display_name}
-                                             profilePictureURL={option.profile_picture_thumbnail_url}
+                        <div style={{ width: "100%" }}>
+                            <CompactUserCard
+                                userUUID={option.uuid}
+                                displayName={option.display_name}
+                                profilePictureURL={
+                                    option.profile_picture_thumbnail_url
+                                }
                             />
 
-                            <Divider/>
+                            <Divider />
                         </div>
-                    )
-                }
-                }/>
+                    );
+                }}
+            />
         </div>
-    )
+    );
 }
 
 CoordinatorPicker.defaultProps = {
@@ -61,13 +70,13 @@ CoordinatorPicker.defaultProps = {
     label: "Select",
     exclude: [],
     className: "",
-}
+};
 CoordinatorPicker.propTypes = {
     onSelect: PropTypes.func,
     label: PropTypes.string,
     exclude: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
-    size: PropTypes.oneOf(["small", "medium"])
-}
+    size: PropTypes.oneOf(["small", "medium"]),
+};
 
 export default CoordinatorPicker;
