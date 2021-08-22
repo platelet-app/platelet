@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     flexWrap: 'wrap',
+    alignItems: 'center',
   },
   textField: {
     marginLeft: theme.spacing(1),

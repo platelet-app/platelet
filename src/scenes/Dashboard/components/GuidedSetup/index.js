@@ -9,7 +9,7 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
 import { CustomizedDialogs } from '../../../../components/CustomizedDialogs'
-import { ContactForm } from '../../../../components/ContactForm'
+import { Step1 } from './Step1'
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -77,7 +77,7 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-                <ContactForm />
+                <Step1 />
             </TabPanel>
             <TabPanel value={value} index={1}>
                 Item Two
