@@ -4,9 +4,12 @@ import React from "react";
 import { Popover, makeStyles } from "@material-ui/core";
 import TaskAssignees from "./TaskAssignees";
 import PropTypes from "prop-types";
+import { showHide } from "../../../styles/common";
+import clsx from "clsx";
 
 function AssigneeEditPopover(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const { show, hide } = showHide();
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -29,7 +32,12 @@ function AssigneeEditPopover(props) {
     return (
         <>
             <IconButton onClick={handleClick}>
-                <EditIcon className={classes.button} />
+                <EditIcon
+                    className={clsx(
+                        classes.button,
+                        props.assignees.length === 0 ? hide : show
+                    )}
+                />
             </IconButton>
             <Popover
                 id={id}
