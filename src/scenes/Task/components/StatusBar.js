@@ -55,6 +55,9 @@ export const dialogComponent = (props) =>
             text: {
                 color: theme.palette.type === "dark" ? "white" : "black",
             },
+            items: {
+                marginTop: 5,
+            },
         };
     });
 
@@ -72,6 +75,7 @@ function StatusBar(props) {
             className={classes.root}
         >
             <Grid
+                className={classes.items}
                 container
                 direction={"row"}
                 justify={"space-between"}
