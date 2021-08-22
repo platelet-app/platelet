@@ -33,7 +33,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
 import {getTasksSelector} from "../../../redux/Selectors";
-import { GuidedSetup } from '../components/GuidedSetup/index'
+import { GuidedSetup } from './GuidedSetup/GuidedSetup'
 
 const getColumnTitle = key => {
     switch (key) {
