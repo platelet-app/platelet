@@ -107,7 +107,6 @@ export default function UsersList(props) {
                                                     displayName={
                                                         user.display_name
                                                     }
-                                                    patch={user.patch}
                                                     userUUID={user.uuid}
                                                     avatarURL={
                                                         user.profile_picture_thumbnail_url
