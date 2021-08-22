@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types'
 
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -46,12 +45,13 @@ const DialogContent = withStyles((theme) => ({
 
 const DialogActions = withStyles((theme) => ({
   root: {
+    display: "inline-block",
     margin: 0,
     padding: theme.spacing(1),
   },
 }))(MuiDialogActions);
 
-export const CustomizedDialogs = ({ open, onClose, children })  => {
+export const CustomizedDialogs = ({ open, onClose, children: [content, cta] })  => {
   return (
     <Dialog 
       onClose={onClose} 
@@ -60,12 +60,10 @@ export const CustomizedDialogs = ({ open, onClose, children })  => {
       maxWidth={'lg'}>
       <DialogTitle id="customized-dialog-title" onClose={onClose} />
       <DialogContent dividers>
-        {children}
+        {content}
       </DialogContent>
       <DialogActions>
-        <Button autoFocus onClick={onClose} color="primary">
-          Save changes
-        </Button>
+        {cta}
       </DialogActions>
     </Dialog>
   );
@@ -73,6 +71,6 @@ export const CustomizedDialogs = ({ open, onClose, children })  => {
 
 CustomizedDialogs.propTypes = {
   open: PropTypes.bool,
-  onClose: PropTypes.bool,
+  onClose: PropTypes.func,
   children: PropTypes.node,
 }
