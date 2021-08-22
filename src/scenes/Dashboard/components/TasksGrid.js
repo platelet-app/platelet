@@ -33,8 +33,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
 import {getTasksSelector} from "../../../redux/Selectors";
-import { CustomizedDialogs } from '../../../components/CustomizedDialogs'
-import { TaskCreation } from '../components/TaskCreation'
+import { GuidedSetup } from '../components/GuidedSetup/index'
 
 const getColumnTitle = key => {
     switch (key) {
@@ -320,7 +319,7 @@ function TasksGrid(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const animate = useRef(false);
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
-    const [showTaskCreation, setShowTaskCreation] = useState(false)
+    const [showGuidedSetup, setShowGuidedSetup] = useState(false)
 
     const tasks = useSelector(getTasksSelector);
     const roleView = useSelector(state => state.roleView);
@@ -393,7 +392,7 @@ function TasksGrid(props) {
                                 className={clsx([props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show, classes.column])}>
                                 <GridColumn title={title}
                                             classes={classes}
-                                            onAddTaskClick={() => setShowTaskCreation(true)}
+                                            onAddTaskClick={() => setShowGuidedSetup(true)}
                                             onAddRelayClick={addRelay}
                                             disableAddButton={isPosting}
                                             taskKey={taskKey}
@@ -405,9 +404,7 @@ function TasksGrid(props) {
                         )
                     })}
                 </Grid>
-                <CustomizedDialogs open={showTaskCreation} onClose={() => setShowTaskCreation(false)}>
-                    <TaskCreation />
-                </CustomizedDialogs>
+                <GuidedSetup show={showGuidedSetup} onClose={() => setShowGuidedSetup(false)}/>
             </>
         )
     }
