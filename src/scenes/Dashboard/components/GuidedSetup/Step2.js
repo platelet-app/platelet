@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 import { ContactForm } from '../../../../components/ContactForm'
 import MenuItem from '@material-ui/core/MenuItem';  
 import TextField from '@material-ui/core/TextField';
@@ -46,9 +45,7 @@ export const Step2 = () => {
 
     return (
         <div>
-            <Box p={1}>
-                <Typography>{"Where is it being picked up from?"}</Typography>
-            </Box>
+            <Typography>{"Where is it being picked up from?"}</Typography>
             <form className={classes.root} noValidate autoComplete="off">
                 <TextField
                     id="outlined-select-location"
@@ -65,9 +62,7 @@ export const Step2 = () => {
                 ))}
                 </TextField>
             </form>
-            <Box p={1}>
-                <Typography>{"Sender Contact:"}</Typography>
-            </Box>
+            <Typography>{"Sender Contact:"}</Typography>
             <ContactForm />
         </div>
     )

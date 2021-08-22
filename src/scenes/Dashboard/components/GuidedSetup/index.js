@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import { CustomizedDialogs } from '../../../../components/CustomizedDialogs'
 import { Step1 } from './Step1'
 import { Step2 } from './Step2'
+import { Step3 } from './Step3'
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -84,7 +85,7 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
                 <Step2 />
             </TabPanel>
             <TabPanel value={value} index={2}>
-                Item Three
+                <Step3 />
             </TabPanel>
             <TabPanel value={value} index={3}>
                 Item Four
