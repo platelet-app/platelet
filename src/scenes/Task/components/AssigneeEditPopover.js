@@ -27,7 +27,7 @@ function AssigneeEditPopover(props) {
     const classes = useStyles();
 
     return (
-        <div className={props.className}>
+        <>
             <IconButton onClick={handleClick}>
                 <EditIcon className={classes.button} />
             </IconButton>
@@ -47,7 +47,7 @@ function AssigneeEditPopover(props) {
             >
                 <TaskAssignees {...props} onRemove={handleClose} />
             </Popover>
-        </div>
+        </>
     );
 }
 

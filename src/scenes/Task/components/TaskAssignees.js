@@ -2,10 +2,10 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import UserCard from "../../../components/UserCard";
 import React from "react";
-import {useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import {
     removeTaskAssignedCoordinatorRequest,
-    removeTaskAssignedRiderRequest
+    removeTaskAssignedRiderRequest,
 } from "../../../redux/taskAssignees/TaskAssigneesActions";
 import Divider from "@material-ui/core/Divider";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -13,54 +13,63 @@ import PropTypes from "prop-types";
 
 const useStyles = makeStyles({
     root: {
-        padding: 15
-    }
-
-})
+        minWidth: 300,
+        padding: 10,
+    },
+    spacer: {
+        height: 15,
+    },
+});
 
 function TaskAssignees(props) {
     const dispatch = useDispatch();
-    const {taskUUID} = props;
+    const { taskUUID } = props;
     const classes = useStyles();
 
-    const noAssigneeMessage = props.assignees ? props.assignees.length === 0 ?
-        <Typography>No assignee.</Typography> : <></> : <></>
+    const noAssigneeMessage = props.assignees ? (
+        props.assignees.length === 0 ? (
+            <Typography>No assignee.</Typography>
+        ) : (
+            <></>
+        )
+    ) : (
+        <></>
+    );
 
     function onRemoveUser(userUUID) {
         if (props.rider)
-            dispatch(removeTaskAssignedRiderRequest(
-                taskUUID,
-                userUUID
-            ));
+            dispatch(removeTaskAssignedRiderRequest(taskUUID, userUUID));
         else if (props.coordinator)
-            dispatch(removeTaskAssignedCoordinatorRequest(
-                taskUUID,
-                userUUID
-            ));
-        if (props.onRemove)
-            props.onRemove();
+            dispatch(removeTaskAssignedCoordinatorRequest(taskUUID, userUUID));
+        if (props.onRemove) props.onRemove();
     }
 
-
     return (
-        <Grid container className={classes.root} direction={"column"} spacing={3} justify={"center"} alignItems={"flex-start"}>
-            <Grid item>
-                {noAssigneeMessage}
-            </Grid>
+        <Grid
+            container
+            className={classes.root}
+            direction={"column"}
+            justify={"center"}
+            alignItems={"flex-start"}
+        >
+            <Grid item>{noAssigneeMessage}</Grid>
             {Object.values(props.assignees).map((user) => {
                 return (
                     <Grid item key={user.uuid}>
                         <UserCard
+                            compact
                             onDelete={() => onRemoveUser(user.uuid)}
-                            user={user}
+                            userUUID={user.uuid}
+                            displayName={user.display_name}
+                            avatarURL={user.profile_picture_thumbnail_url}
                         />
-                        <Divider/>
-
+                        <Divider />
+                        <div className={classes.spacer} />
                     </Grid>
-                )
+                );
             })}
         </Grid>
-    )
+    );
 }
 
 TaskAssignees.propTypes = {
@@ -68,12 +77,12 @@ TaskAssignees.propTypes = {
     assignees: PropTypes.arrayOf(PropTypes.object),
     onRemove: PropTypes.func,
     coordinator: PropTypes.bool,
-    rider: PropTypes.bool
-}
+    rider: PropTypes.bool,
+};
 
 TaskAssignees.defaultProps = {
     assignees: [],
-    onRemove: () => {}
-}
+    onRemove: () => {},
+};
 
 export default TaskAssignees;
