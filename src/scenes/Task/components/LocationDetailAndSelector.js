@@ -28,13 +28,20 @@ const useStyles = makeStyles({
 });
 
 const initialState = {
-    what3words: "",
-    ward: "",
-    line1: "",
-    line2: "",
-    town: "",
-    county: "",
-    postcode: "",
+    address: {
+        what3words: "",
+        ward: "",
+        line1: "",
+        line2: "",
+        town: "",
+        county: "",
+        postcode: "",
+    },
+    contact: {
+        telephone_number: "",
+        email_address: "",
+        name: "",
+    },
 };
 
 function LocationDetailAndSelector(props) {
@@ -46,29 +53,24 @@ function LocationDetailAndSelector(props) {
 
     function updateStateFromProps() {
         if (props.location) {
+            let result = { ...initialState };
             if (props.location.address) {
-                const {
-                    what3words,
-                    ward,
-                    line1,
-                    line2,
-                    town,
-                    county,
-                    postcode,
-                } = props.location.address;
-                setState({
-                    what3words,
-                    ward,
-                    line1,
-                    line2,
-                    town,
-                    county,
-                    postcode,
-                });
+                result = {
+                    ...result,
+                    address: { ...result.address, ...props.location.address },
+                };
             }
             setProtectedLocation(
                 props.location ? props.location.protected : false
             );
+            if (props.location.contact) {
+                result = {
+                    ...result,
+                    contact: { ...result.contact, ...props.location.contact },
+                };
+            }
+            console.log(result);
+            setState(result);
         } else {
             setState(initialState);
             setProtectedLocation(false);
@@ -210,11 +212,17 @@ function LocationDetailAndSelector(props) {
                             label={"w3w"}
                             disabled={protectedLocation}
                             onFinished={(v) => {
-                                const result = { ...state, what3words: v };
+                                const result = {
+                                    ...state,
+                                    address: {
+                                        ...state.address,
+                                        what3words: v,
+                                    },
+                                };
                                 setState(result);
                                 props.onChange(result);
                             }}
-                            value={state.what3words}
+                            value={state.address.what3words}
                         />
                     </LabelItemPair>
                     <LabelItemPair label={"Ward"}>
@@ -222,11 +230,14 @@ function LocationDetailAndSelector(props) {
                             label="ward"
                             disabled={protectedLocation}
                             onFinished={(v) => {
-                                const result = { ...state, ward: v };
+                                const result = {
+                                    ...state,
+                                    address: { ...state.address, ward: v },
+                                };
                                 setState(result);
                                 props.onChange(result);
                             }}
-                            value={state.ward}
+                            value={state.address.ward}
                         />
                     </LabelItemPair>
                     <LabelItemPair label={"Line1"}>
@@ -234,11 +245,14 @@ function LocationDetailAndSelector(props) {
                             label={"line1"}
                             disabled={protectedLocation}
                             onFinished={(v) => {
-                                const result = { ...state, line1: v };
+                                const result = {
+                                    ...state,
+                                    address: { ...state.address, line1: v },
+                                };
                                 setState(result);
                                 props.onChange(result);
                             }}
-                            value={state.line1}
+                            value={state.address.line1}
                         />
                     </LabelItemPair>
                     <LabelItemPair label={"Line2"}>
@@ -246,11 +260,14 @@ function LocationDetailAndSelector(props) {
                             label={"line2"}
                             disabled={protectedLocation}
                             onFinished={(v) => {
-                                const result = { ...state, line2: v };
+                                const result = {
+                                    ...state,
+                                    address: { ...state.address, line2: v },
+                                };
                                 setState(result);
                                 props.onChange(result);
                             }}
-                            value={state.line2}
+                            value={state.address.line2}
                         />
                     </LabelItemPair>
                     <LabelItemPair label={"Town"}>
@@ -258,11 +275,14 @@ function LocationDetailAndSelector(props) {
                             label={"town"}
                             disabled={protectedLocation}
                             onFinished={(v) => {
-                                const result = { ...state, town: v };
+                                const result = {
+                                    ...state,
+                                    address: { ...state.address, town: v },
+                                };
                                 setState(result);
                                 props.onChange(result);
                             }}
-                            value={state.town}
+                            value={state.address.town}
                         />
                     </LabelItemPair>
                     <LabelItemPair label={"County"}>
@@ -270,11 +290,14 @@ function LocationDetailAndSelector(props) {
                             label={"county"}
                             disabled={protectedLocation}
                             onFinished={(v) => {
-                                const result = { ...state, county: v };
+                                const result = {
+                                    ...state,
+                                    address: { ...state.address, county: v },
+                                };
                                 setState(result);
                                 props.onChange(result);
                             }}
-                            value={state.county}
+                            value={state.address.county}
                         />
                     </LabelItemPair>
                     <LabelItemPair label={"Postcode"}>
@@ -282,11 +305,20 @@ function LocationDetailAndSelector(props) {
                             label={"postcode"}
                             disabled={protectedLocation}
                             onFinished={(v) => {
-                                const result = { ...state, postcode: v };
+                                const result = {
+                                    ...state,
+                                    address: { ...state.address, postcode: v },
+                                };
                                 setState(result);
                                 props.onChange(result);
                             }}
-                            value={state.postcode}
+                            value={state.address.postcode}
+                        />
+                    </LabelItemPair>
+                    <LabelItemPair label={"Telephone"}>
+                        <ClickableTextField
+                            disabled={protectedLocation}
+                            value={state.contact.telephone_number}
                         />
                     </LabelItemPair>
                 </Grid>
@@ -320,6 +352,11 @@ LocationDetailAndSelector.propDefaults = {
             town: null,
             county: null,
             postcode: null,
+        },
+        contact: {
+            name: null,
+            telephone_number: null,
+            email_address: null,
         },
     },
     onSelectPreset: () => {},
