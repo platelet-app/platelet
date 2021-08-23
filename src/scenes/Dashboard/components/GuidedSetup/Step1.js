@@ -15,7 +15,7 @@ export const Step1 = ({ values, onChange }) => {
     return (
         <div>
             <Typography>{"What are the caller's contact details?"}</Typography>
-            <ContactForm onChange={onChange} />
+            <ContactForm values={values['caller']} onChange={onChange} />
         </div>
     )
 }

@@ -69,6 +69,11 @@ const defaultValues = {
     phone: "",
     email: "",
   },
+  receiver: {
+    name: "",
+    phone: "",
+    email: "",
+  },
   dropOffLocation: "",
   priority: "",
   items: {
@@ -89,11 +94,19 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
     setValue(newValue);
   };
 
-  const handleFormValuesChange = (e, value, field) => {
-    if(field === "caller") {
-      formValues[field] = value
-      setFormValues(formValues)
-    }
+  const handleCallerContactChange = (value) => {
+    const result = {...formValues, caller: {...formValues.caller, ...value}}
+    setFormValues(result)
+  }
+
+  const handleSenderContactChange = (value) => {
+    const result = {...formValues, sender: {...formValues.sender, ...value}}
+    setFormValues(result)
+  }
+
+  const handleReceiverContactChange = (value) => {
+    const result = {...formValues, receiver: {...formValues.receiver, ...value}}
+    setFormValues(result)
   }
 
   return (
@@ -109,19 +122,19 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-                <Step1 values={formValues} onChange={handleFormValuesChange} />
+                <Step1 values={formValues} onChange={handleCallerContactChange} />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <Step2 values={formValues} onChange={handleFormValuesChange} />
+                <Step2 values={formValues} onChange={handleSenderContactChange} />
             </TabPanel>
             <TabPanel value={value} index={2}>
-                <Step3 values={formValues} onChange={handleFormValuesChange} />
+                <Step3 values={formValues} onChange={handleReceiverContactChange} />
             </TabPanel>
             <TabPanel value={value} index={3}>
-                <Step4 values={formValues} onChange={handleFormValuesChange} />
+                <Step4 values={formValues} onChange={() => {}} />
             </TabPanel>
             <TabPanel value={value} index={4}>
-                <Step5 values={formValues} onChange={handleFormValuesChange} />
+                <Step5 values={formValues} onChange={() => {}} />
             </TabPanel>
         </div>
         <div className={classes.btnWrapper}>

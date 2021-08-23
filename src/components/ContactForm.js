@@ -16,24 +16,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const initialValues = {
-  name: "",
-  phone: "",
-  email: "",
-}
-
-export const ContactForm = ({ onChange }) => {
+export const ContactForm = ({ values, onChange }) => {
     const classes = useStyles();
 
-    const [value, setValue] = useState(initialValues)
-
-    const handleChange = (e) => {
-      if(e.currentTarget.id) {
-        value[e.currentTarget.id] = e.target.value
-        setValue(value)
-        onChange(e, value, "caller")
-      }
-    }
 
     return (
       <form className={classes.root} noValidate autoComplete="off">
@@ -43,7 +28,8 @@ export const ContactForm = ({ onChange }) => {
             className={classes.textField}
             margin="normal"
             variant="outlined"
-            onChange={handleChange}
+            onChange={(e) => onChange({name: e.target.value})}
+            value={values.name}
             />
 
         <TextField
@@ -52,7 +38,7 @@ export const ContactForm = ({ onChange }) => {
             className={classes.textField}
             margin="normal"
             variant="outlined"
-            onChange={handleChange}
+            onChange={(e) => onChange({phone: e.target.value})}
             />
         <TextField
             defaultValue="Email"
@@ -60,7 +46,7 @@ export const ContactForm = ({ onChange }) => {
             className={classes.textField}
             margin="normal"
             variant="outlined"
-            onChange={handleChange}
+            onChange={(e) => onChange({email: e.target.value})}
             />
       </form>
     )

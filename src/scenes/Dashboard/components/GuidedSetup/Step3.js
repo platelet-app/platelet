@@ -4,13 +4,13 @@ import Typography from '@material-ui/core/Typography';
 import { ContactForm } from '../../../../components/ContactForm'
 import DropOffDetails from "../../../Task/components/DropOffDetails";
 
-export const Step3 = () => {
+export const Step3 = ({ values, onChange}) => {
     return (
         <div>
             <Typography>{"Where is it being delivered?"}</Typography>
             <DropOffDetails />
             <Typography>{"Recipient contact:"}</Typography>
-            <ContactForm />
+            <ContactForm values={values['receiver']} onChange={onChange} />
         </div>
     )
 }

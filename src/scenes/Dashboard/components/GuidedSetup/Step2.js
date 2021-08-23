@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export const Step2 = () => {
+export const Step2 = ({ values, onChange }) => {
     const classes = useStyles();
     const [location, setLocation] = React.useState('EUR');
 
@@ -63,7 +63,7 @@ export const Step2 = () => {
                 </TextField>
             </form>
             <Typography>{"Sender Contact:"}</Typography>
-            <ContactForm />
+            <ContactForm values={values['sender']} onChange={onChange} />
         </div>
     )
 }
