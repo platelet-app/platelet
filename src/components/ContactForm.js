@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
@@ -16,33 +16,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const ContactForm = () => {
+const initialValues = {
+  name: "",
+  phone: "",
+  email: "",
+}
+
+export const ContactForm = ({ onChange }) => {
     const classes = useStyles();
 
-    return (
-        <div className={classes.root}>
-            <TextField
-                // label="Normal"
-                defaultValue="Name"
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-                />
+    const [value, setValue] = useState(initialValues)
 
-            <TextField
-                // label="Normal"
-                defaultValue="Tel"
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-                />
-            <TextField
-                // label="Normal"
-                defaultValue="Email"
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-                />
-        </div>
+    const handleChange = (e) => {
+      if(e.currentTarget.id) {
+        value[e.currentTarget.id] = e.target.value
+        setValue(value)
+        onChange(e, value, "caller")
+      }
+    }
+
+    return (
+      <form className={classes.root} noValidate autoComplete="off">
+        <TextField
+            defaultValue="Name"
+            id="name"
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+            onChange={handleChange}
+            />
+
+        <TextField
+            defaultValue="Tel"
+            id="phone"
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+            onChange={handleChange}
+            />
+        <TextField
+            defaultValue="Email"
+            id="email"
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+            onChange={handleChange}
+            />
+      </form>
     )
 }

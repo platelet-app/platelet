@@ -11,11 +11,11 @@ const step1Styles = makeStyles((theme) => ({
     },
   }));
 
-export const Step1 = () => {
+export const Step1 = ({ values, onChange }) => {
     return (
         <div>
             <Typography>{"What are the caller's contact details?"}</Typography>
-            <ContactForm />
+            <ContactForm onChange={onChange} />
         </div>
     )
 }

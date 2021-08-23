@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -57,13 +57,44 @@ const guidedSetupStyles = makeStyles((theme) => ({
   }
 }));
 
+const defaultValues = {
+  caller: {
+    name: "",
+    phone: "",
+    email: "",
+  },
+  pickUpLocation: "",
+  sender: {
+    name: "",
+    phone: "",
+    email: "",
+  },
+  dropOffLocation: "",
+  priority: "",
+  items: {
+    sample: 0,
+    covidSample: 0,
+    milk: 0,
+    documents: 0,
+    equipment: 0,
+  },
+}
+
 export const GuidedSetup = ({ show, onClose, showPreview }) => {
   const classes = guidedSetupStyles();
   const [value, setValue] = React.useState(0);
+  const [formValues, setFormValues] = useState(defaultValues)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const handleFormValuesChange = (e, value, field) => {
+    if(field === "caller") {
+      formValues[field] = value
+      setFormValues(formValues)
+    }
+  }
 
   return (
     <CustomizedDialogs open={show} onClose={onClose}>
@@ -78,19 +109,19 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-                <Step1 />
+                <Step1 values={formValues} onChange={handleFormValuesChange} />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <Step2 />
+                <Step2 values={formValues} onChange={handleFormValuesChange} />
             </TabPanel>
             <TabPanel value={value} index={2}>
-                <Step3 />
+                <Step3 values={formValues} onChange={handleFormValuesChange} />
             </TabPanel>
             <TabPanel value={value} index={3}>
-                <Step4 />
+                <Step4 values={formValues} onChange={handleFormValuesChange} />
             </TabPanel>
             <TabPanel value={value} index={4}>
-                <Step5 />
+                <Step5 values={formValues} onChange={handleFormValuesChange} />
             </TabPanel>
         </div>
         <div className={classes.btnWrapper}>
