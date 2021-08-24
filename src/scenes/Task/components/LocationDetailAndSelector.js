@@ -372,7 +372,7 @@ LocationDetailAndSelector.propTypes = {
     showContact: PropTypes.bool,
 };
 
-LocationDetailAndSelector.propDefaults = {
+LocationDetailAndSelector.defaultProps = {
     label: "",
     displayPresets: true,
     disableClear: false,
