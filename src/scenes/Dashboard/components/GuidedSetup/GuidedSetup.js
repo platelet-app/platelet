@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import {useDispatch, useSelector} from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -7,6 +8,13 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import {v4 as uuidv4} from 'uuid';
+
+import { addTaskRequest } from "../../../../redux/tasks/TasksActions";
+import { setTaskDropoffDestinationRequest } from "../../../../redux/taskDestinations/TaskDestinationsActions";
+import {
+  addDeliverableRequest, updateDeliverableRequest,
+} from "../../../../redux/deliverables/DeliverablesActions";
 
 import { CustomizedDialogs } from '../../../../components/CustomizedDialogs'
 import { Step1, Step2, Step3, Step4, Step5 } from './index'
@@ -63,7 +71,7 @@ const defaultValues = {
     phone: "",
     email: "",
   },
-  pickUpLocation: "",
+  pickUpLocation: null,
   sender: {
     name: "",
     phone: "",
@@ -74,7 +82,7 @@ const defaultValues = {
     phone: "",
     email: "",
   },
-  dropOffLocation: "",
+  dropOffLocation: null,
   priority: "",
   items: {
     sample: 0,
@@ -87,8 +95,41 @@ const defaultValues = {
 
 export const GuidedSetup = ({ show, onClose, showPreview }) => {
   const classes = guidedSetupStyles();
+  const [taskUUID, setTaskUUID ]= useState("");
   const [value, setValue] = React.useState(0);
   const [formValues, setFormValues] = useState(defaultValues)
+
+  const roleView = useSelector(state => state.roleView);
+  const whoami = useSelector(state => state.whoami.user);
+  const dispatch = useDispatch();
+
+  const emptyTask = {
+    requester_contact: {
+        name: "",
+        telephone_number: ""
+    },
+    assigned_riders: [],
+    assigned_coordinators: [],
+    time_picked_up: null,
+    time_dropped_off: null,
+    time_rejected: null,
+    time_cancelled: null
+};
+
+  useEffect(() => {
+    if(show) {
+      const uuid = uuidv4();
+      const newTask = {...emptyTask, uuid}
+      setTaskUUID(uuid)
+
+      dispatch(addTaskRequest({
+        ...newTask,
+        time_of_call: new Date().toISOString(),
+        time_created: new Date().toISOString()
+      }, roleView, whoami.uuid))
+    }
+    
+  }, [show])
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -108,6 +149,45 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
     const result = {...formValues, receiver: {...formValues.receiver, ...value}}
     setFormValues(result)
   }
+  
+  const onPickUpLocationSaved = (pickUpLocation) => {
+    const result = {...formValues, pickUpLocation}
+    const locationUUID = pickUpLocation.uuid;
+
+    setFormValues(result)
+
+    if (locationUUID) {
+        dispatch(setTaskDropoffDestinationRequest(taskUUID, locationUUID))
+    }
+}
+
+  const onSelectDropoffFromSaved = (dropOffLocation) => {
+    const result = {...formValues, dropOffLocation}
+    const locationUUID = dropOffLocation.uuid;
+
+    setFormValues(result)
+    if (locationUUID) {
+        dispatch(setTaskDropoffDestinationRequest(taskUUID, locationUUID))
+    }
+  }
+
+  let emptyDeliverable = {
+    task_uuid: taskUUID,
+    uuid: uuidv4()
+};
+
+  const onAddNewDeliverable = (deliverable) => {
+    let newDeliverable = {...emptyDeliverable, count: 1, type_id: deliverable.id, type: deliverable.label};
+    dispatch(addDeliverableRequest(newDeliverable));
+};
+
+  const handleDeliverablesChange = (deliverable, count) => {
+    if (deliverable.uuid) {
+        dispatch(updateDeliverableRequest(deliverable.uuid, {count}));
+    } else if (deliverable.id) {
+        onAddNewDeliverable(deliverable);
+    }
+}
 
   return (
     <CustomizedDialogs open={show} onClose={onClose}>
@@ -125,16 +205,22 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
                 <Step1 values={formValues} onChange={handleCallerContactChange} />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <Step2 values={formValues} onChange={handleSenderContactChange} />
+                <Step2 
+                  values={formValues} 
+                  onChange={handleSenderContactChange} 
+                  onSelect={onPickUpLocationSaved} />
             </TabPanel>
             <TabPanel value={value} index={2}>
-                <Step3 values={formValues} onChange={handleReceiverContactChange} />
+                <Step3 
+                  values={formValues} 
+                  onChange={handleReceiverContactChange}
+                  onSelect={onSelectDropoffFromSaved} />
             </TabPanel>
             <TabPanel value={value} index={3}>
                 <Step4 values={formValues} onChange={() => {}} />
             </TabPanel>
             <TabPanel value={value} index={4}>
-                <Step5 values={formValues} onChange={() => {}} />
+                <Step5 values={formValues} taskUUID={taskUUID} onChange={handleDeliverablesChange} />
             </TabPanel>
         </div>
         <div className={classes.btnWrapper}>

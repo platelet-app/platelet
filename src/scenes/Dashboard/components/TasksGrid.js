@@ -11,9 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
 import Button from "@material-ui/core/Button";
 import {Waypoint} from "react-waypoint";
-import {
-    addTaskRelayRequest, addTaskRequest,
-} from "../../../redux/tasks/TasksActions";
+import { addTaskRelayRequest } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -333,29 +331,7 @@ function TasksGrid(props) {
     useEffect(() => {
         animate.current = !isFetching
     }, [isFetching])
-
-    const emptyTask = {
-        requester_contact: {
-            name: "",
-            telephone_number: ""
-        },
-        assigned_riders: [],
-        assigned_coordinators: [],
-        time_picked_up: null,
-        time_dropped_off: null,
-        time_rejected: null,
-        time_cancelled: null
-    };
-
-    // do we need this anymore? as click on create new btn should show the workflow
-    // rather than an empty task card
-    const addEmptyTask = () => {
-        dispatch(addTaskRequest({
-            ...emptyTask,
-            time_of_call: new Date().toISOString(),
-            time_created: new Date().toISOString()
-        }, roleView, whoami.uuid))
-    };
+ 
 
     const addRelay = React.useCallback((data) => {
         dispatch(addTaskRelayRequest(data));

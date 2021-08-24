@@ -1,28 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { ContactForm } from '../../../../components/ContactForm'
-import MenuItem from '@material-ui/core/MenuItem';  
-import TextField from '@material-ui/core/TextField';
 
-const locations = [
-  {
-    value: 'USD',
-    label: '$',
-  },
-  {
-    value: 'EUR',
-    label: '€',
-  },
-  {
-    value: 'BTC',
-    label: '฿',
-  },
-  {
-    value: 'JPY',
-    label: '¥',
-  },
-];
+import { ContactForm } from '../../../../components/ContactForm'
+import LocationDetailAndSelector from '../../../Task/components/LocationDetailAndSelector'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,33 +16,11 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export const Step2 = ({ values, onChange }) => {
-    const classes = useStyles();
-    const [location, setLocation] = React.useState('EUR');
-
-    const handleChange = (event) => {
-        setLocation(event.target.value);
-    };
-
+export const Step2 = ({ values, onChange, onSelect }) => {
     return (
         <div>
             <Typography>{"Where is it being picked up from?"}</Typography>
-            <form className={classes.root} noValidate autoComplete="off">
-                <TextField
-                    id="outlined-select-location"
-                    select
-                    label="Locations"
-                    value={location}
-                    onChange={handleChange}
-                    variant="outlined"
-                    >
-                {locations.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                    </MenuItem>
-                ))}
-                </TextField>
-            </form>
+            <LocationDetailAndSelector displayPresets onSelectPreset={onSelect} location={values.pickUpLocation} />
             <Typography>{"Sender Contact:"}</Typography>
             <ContactForm values={values['sender']} onChange={onChange} />
         </div>
