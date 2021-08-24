@@ -319,38 +319,40 @@ function LocationDetailAndSelector(props) {
                         />
                     </LabelItemPair>
                     <div className={classes.separator} />
-                    <LabelItemPair label={"Name"}>
-                        <ClickableTextField
-                            disabled={protectedLocation}
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    contact: { ...state.contact, name: v },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.contact.name}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"Telephone"}>
-                        <ClickableTextField
-                            disabled={protectedLocation}
-                            tel
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    contact: {
-                                        ...state.contact,
-                                        telephone_number: v,
-                                    },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.contact.telephone_number}
-                        />
-                    </LabelItemPair>
+                    <div className={props.showContact ? show : hide}>
+                        <LabelItemPair label={"Name"}>
+                            <ClickableTextField
+                                disabled={protectedLocation}
+                                onFinished={(v) => {
+                                    const result = {
+                                        ...state,
+                                        contact: { ...state.contact, name: v },
+                                    };
+                                    setState(result);
+                                    props.onChange(result);
+                                }}
+                                value={state.contact.name}
+                            />
+                        </LabelItemPair>
+                        <LabelItemPair label={"Telephone"}>
+                            <ClickableTextField
+                                disabled={protectedLocation}
+                                tel
+                                onFinished={(v) => {
+                                    const result = {
+                                        ...state,
+                                        contact: {
+                                            ...state.contact,
+                                            telephone_number: v,
+                                        },
+                                    };
+                                    setState(result);
+                                    props.onChange(result);
+                                }}
+                                value={state.contact.telephone_number}
+                            />
+                        </LabelItemPair>
+                    </div>
                 </Grid>
             </Grid>
         </div>
@@ -367,6 +369,7 @@ LocationDetailAndSelector.propTypes = {
     disableClear: PropTypes.bool,
     onClear: PropTypes.func,
     onEditPreset: PropTypes.func,
+    showContact: PropTypes.bool,
 };
 
 LocationDetailAndSelector.propDefaults = {
@@ -393,6 +396,7 @@ LocationDetailAndSelector.propDefaults = {
     onChange: () => {},
     onClear: () => {},
     onEditPreset: () => {},
+    showContact: false,
 };
 
 export default LocationDetailAndSelector;

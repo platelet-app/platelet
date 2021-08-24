@@ -94,6 +94,7 @@ function PickUpDetails(props) {
                         location={props.location}
                         displayPresets={true}
                         label={"Pick up"}
+                        showContact={props.showContact}
                     />
                 </Grid>
                 <Grid item>

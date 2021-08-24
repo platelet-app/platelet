@@ -97,6 +97,7 @@ function DropOffDetails(props) {
                         location={props.location}
                         displayPresets={true}
                         label={"Deliver"}
+                        showContact={props.showContact}
                     />
                 </Grid>
                 <Grid item>
