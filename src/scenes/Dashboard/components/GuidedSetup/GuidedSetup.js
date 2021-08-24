@@ -19,7 +19,6 @@ import {
 } from "../../../../redux/deliverables/DeliverablesActions";
 
 import { CustomizedDialogs } from '../../../../components/CustomizedDialogs'
-import TaskOverview from '../../../../scenes/Task/components/TaskOverview'
 import { Step1, Step2, Step3, Step4, Step5 } from './index'
 
 
@@ -117,7 +116,6 @@ export const GuidedSetup = ({ show, onClose }) => {
   const [task, setTask] = useState(emptyTask)
   const [value, setValue] = React.useState(0);
   const [formValues, setFormValues] = useState(defaultValues)
-
   const roleView = useSelector(state => state.roleView);
   const whoami = useSelector(state => state.whoami.user);
   const dispatch = useDispatch();
@@ -180,7 +178,7 @@ export const GuidedSetup = ({ show, onClose }) => {
   let emptyDeliverable = {
     task_uuid: task.uuid,
     uuid: uuidv4()
-};
+  };
 
   const onAddNewDeliverable = (deliverable) => {
     let newDeliverable = {...emptyDeliverable, count: 1, type_id: deliverable.id, type: deliverable.label};
@@ -199,7 +197,13 @@ export const GuidedSetup = ({ show, onClose }) => {
   
   return (
     <>
-      <CustomizedDialogs open={show} onClose={onClose}>
+      <CustomizedDialogs 
+        open={show} 
+        onClose={() => {
+          onClose()
+          setFormValues(defaultValues)
+          setValue(0)
+        }} >
           <div className={classes.tabContent}>
               <AppBar position="static">
                   <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
