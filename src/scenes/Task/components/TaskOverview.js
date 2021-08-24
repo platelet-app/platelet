@@ -72,6 +72,7 @@ function TaskOverview(props) {
                         taskUUID={taskUUID}
                         location={task.pickup_location}
                         time={task.time_picked_up}
+                        showContact
                     />
                 </Grid>
                 <Grid className={classes.item} item>
@@ -80,6 +81,7 @@ function TaskOverview(props) {
                         taskUUID={taskUUID}
                         location={task.dropoff_location}
                         time={task.time_dropped_off}
+                        showContact
                     />
                 </Grid>
                 <Grid className={classes.item} item>

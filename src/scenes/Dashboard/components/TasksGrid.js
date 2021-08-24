@@ -11,9 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {TasksKanbanColumn} from "../styles/TaskColumns";
 import Button from "@material-ui/core/Button";
 import {Waypoint} from "react-waypoint";
-import {
-    addTaskRelayRequest, addTaskRequest,
-} from "../../../redux/tasks/TasksActions";
+import { addTaskRelayRequest } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -33,7 +31,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
 import {getTasksSelector} from "../../../redux/Selectors";
-
+import { GuidedSetup } from '../../GuidedSetup/GuidedSetup'
 
 const getColumnTitle = key => {
     switch (key) {
@@ -304,7 +302,7 @@ GridColumn.propTypes = {
     title: PropTypes.string,
     classes: PropTypes.object,
     onAddTaskClick: PropTypes.func,
-    onAddRelayClick: PropTypes.func,
+    onAddRelayClick: PropTypes.bool,
     disableAddButton: PropTypes.bool,
     taskKey: PropTypes.string,
     showTasks: PropTypes.arrayOf(PropTypes.string),
@@ -319,6 +317,8 @@ function TasksGrid(props) {
     const isFetching = useSelector(state => loadingSelector(state));
     const animate = useRef(false);
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
+    const [showGuidedSetup, setShowGuidedSetup] = useState(false)
+
     const tasks = useSelector(getTasksSelector);
     const roleView = useSelector(state => state.roleView);
     const whoami = useSelector(state => state.whoami.user);
@@ -331,27 +331,7 @@ function TasksGrid(props) {
     useEffect(() => {
         animate.current = !isFetching
     }, [isFetching])
-
-    const emptyTask = {
-        requester_contact: {
-            name: "",
-            telephone_number: ""
-        },
-        assigned_riders: [],
-        assigned_coordinators: [],
-        time_picked_up: null,
-        time_dropped_off: null,
-        time_rejected: null,
-        time_cancelled: null
-    };
-
-    const addEmptyTask = () => {
-        dispatch(addTaskRequest({
-            ...emptyTask,
-            time_of_call: new Date().toISOString(),
-            time_created: new Date().toISOString()
-        }, roleView, whoami.uuid))
-    };
+ 
 
     const addRelay = React.useCallback((data) => {
         dispatch(addTaskRelayRequest(data));
@@ -371,34 +351,37 @@ function TasksGrid(props) {
         return <TasksGridSkeleton count={3}/>
     } else {
         return (
-            <Grid container
-                  spacing={2}
-                  direction={"row"}
-                  justify={isSm ? "center" : "flex-start"}
-                  alignItems={"stretch"}
+            <>
+                <Grid container
+                    spacing={2}
+                    direction={"row"}
+                    justify={isSm ? "center" : "flex-start"}
+                    alignItems={"stretch"}
 
-            >
-                {Object.keys(tasks).map(taskKey => {
-                    const title = getColumnTitle(taskKey);
-                    return (
-                        <Grid
-                            item
-                            key={taskKey}
-                            className={clsx([props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show, classes.column])}>
-                            <GridColumn title={title}
-                                        classes={classes}
-                                        onAddTaskClick={addEmptyTask}
-                                        onAddRelayClick={addRelay}
-                                        disableAddButton={isPosting}
-                                        taskKey={taskKey}
-                                        showTasks={filteredTasksUUIDs}
-                                        animate={animate.current}
-                                        key={title}/>
+                >
+                    {Object.keys(tasks).map(taskKey => {
+                        const title = getColumnTitle(taskKey);
+                        return (
+                            <Grid
+                                item
+                                key={taskKey}
+                                className={clsx([props.excludeColumnList && props.excludeColumnList.includes(taskKey) ? hide : show, classes.column])}>
+                                <GridColumn title={title}
+                                            classes={classes}
+                                            onAddTaskClick={() => setShowGuidedSetup(true)}
+                                            onAddRelayClick={addRelay}
+                                            disableAddButton={isPosting}
+                                            taskKey={taskKey}
+                                            showTasks={filteredTasksUUIDs}
+                                            animate={animate.current}
+                                            key={title}/>
 
-                        </Grid>
-                    )
-                })}
-            </Grid>
+                            </Grid>
+                        )
+                    })}
+                </Grid>
+                <GuidedSetup show={showGuidedSetup} onClose={() => setShowGuidedSetup(false)}/>
+            </>
         )
     }
 }
