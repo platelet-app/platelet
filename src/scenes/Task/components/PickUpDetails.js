@@ -18,7 +18,6 @@ import {
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
-import ClickableTextField from "../../../components/ClickableTextField";
 
 function PickUpDetails(props) {
     const dispatch = useDispatch();
@@ -48,23 +47,21 @@ function PickUpDetails(props) {
     function onChangePickupLocation(value, makeNew = false) {
         if (props.location) {
             if (makeNew) {
+                debugger;
                 dispatch(
-                    addNewPickupLocationAndSetTaskRequest(props.taskUUID, {
-                        address: value,
-                    })
+                    addNewPickupLocationAndSetTaskRequest(props.taskUUID, value)
                 );
             } else {
                 dispatch(
-                    updatePickupLocationAndUpdateTaskRequest(props.taskUUID, {
-                        address: value,
-                    })
+                    updatePickupLocationAndUpdateTaskRequest(
+                        props.taskUUID,
+                        value
+                    )
                 );
             }
         } else {
             dispatch(
-                addNewPickupLocationAndSetTaskRequest(props.taskUUID, {
-                    address: value,
-                })
+                addNewPickupLocationAndSetTaskRequest(props.taskUUID, value)
             );
         }
     }

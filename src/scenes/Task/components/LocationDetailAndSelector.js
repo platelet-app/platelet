@@ -25,6 +25,9 @@ const useStyles = makeStyles({
     label: {
         maxWidth: "250px",
     },
+    separator: {
+        height: 10,
+    },
 });
 
 const initialState = {
@@ -315,9 +318,36 @@ function LocationDetailAndSelector(props) {
                             value={state.address.postcode}
                         />
                     </LabelItemPair>
+                    <div className={classes.separator} />
+                    <LabelItemPair label={"Name"}>
+                        <ClickableTextField
+                            disabled={protectedLocation}
+                            onFinished={(v) => {
+                                const result = {
+                                    ...state,
+                                    contact: { ...state.contact, name: v },
+                                };
+                                setState(result);
+                                props.onChange(result);
+                            }}
+                            value={state.contact.name}
+                        />
+                    </LabelItemPair>
                     <LabelItemPair label={"Telephone"}>
                         <ClickableTextField
                             disabled={protectedLocation}
+                            tel
+                            onFinished={(v) => {
+                                const result = {
+                                    ...state,
+                                    contact: {
+                                        ...state.contact,
+                                        telephone_number: v,
+                                    },
+                                };
+                                setState(result);
+                                props.onChange(result);
+                            }}
                             value={state.contact.telephone_number}
                         />
                     </LabelItemPair>
