@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory } from "react-router-dom";
 import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +11,7 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import {v4 as uuidv4} from 'uuid';
 
+import { encodeUUID } from "../../../../utilities";
 import { addTaskRequest } from "../../../../redux/tasks/TasksActions";
 import { setTaskDropoffDestinationRequest } from "../../../../redux/taskDestinations/TaskDestinationsActions";
 import {
@@ -108,12 +110,13 @@ const emptyTask = {
   time_cancelled: null
 };
 
-export const GuidedSetup = ({ show, onClose, showPreview }) => {
+export const GuidedSetup = ({ show, onClose }) => {
+  const history = useHistory();
+
   const classes = guidedSetupStyles();
   const [task, setTask] = useState(emptyTask)
   const [value, setValue] = React.useState(0);
   const [formValues, setFormValues] = useState(defaultValues)
-  const [showTaskOverview, setShowTaskOverview] = useState(false)
 
   const roleView = useSelector(state => state.roleView);
   const whoami = useSelector(state => state.whoami.user);
@@ -192,12 +195,8 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
     }
   }
 
-  const onShowTaskOverview = () => {
-    // onClose()
-    setShowTaskOverview(true)
-  }
-
-
+  const onShowTaskOverview = () => history.push(`/task/${encodeUUID(task.uuid)}`);
+  
   return (
     <>
       <CustomizedDialogs open={show} onClose={onClose}>
@@ -246,13 +245,12 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
               ? (<Button autoFocus onClick={() => setValue(value => value +1)} color="primary">
                       Next
                   </Button>)
-              : (<Button autoFocus onClick={() => {}} color="primary">
+              : (<Button autoFocus onClick={onShowTaskOverview} color="primary">
                       Finish
                   </Button>)}
               </div>
           </div>
       </CustomizedDialogs>
-      {showTaskOverview && <TaskOverview task={task} taskUUID={task.uuid} />}
     </>
   );
 }
