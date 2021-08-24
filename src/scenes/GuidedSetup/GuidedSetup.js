@@ -249,7 +249,13 @@ export const GuidedSetup = ({ show, onClose }) => {
               ? (<Button autoFocus onClick={() => setValue(value => value +1)} color="primary">
                       Next
                   </Button>)
-              : (<Button autoFocus onClick={onShowTaskOverview} color="primary">
+              : (<Button 
+                  autoFocus 
+                  onClick={() => {
+                    onShowTaskOverview()
+                    onClose()
+                  }} 
+                  color="primary">
                       Finish
                   </Button>)}
               </div>
