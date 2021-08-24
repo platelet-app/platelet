@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types'
 
 import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -51,9 +52,18 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
+const CustomizedDialogsStyles = makeStyles((theme) => ({
+  dialogPaper: {
+    minHeight: '60vh',
+    maxHeight: '60vh',
+  },
+}));
+
 export const CustomizedDialogs = ({ open, onClose, children: [content, cta] })  => {
+  const classes = CustomizedDialogsStyles()
   return (
     <Dialog 
+      classes={{ paper: classes.dialogPaper }}
       onClose={onClose} 
       aria-labelledby="customized-dialog-title" 
       open={open}
