@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import { ContactForm } from '../../../../components/ContactForm'
+import { ContactForm } from '../../components/ContactForm'
 
 import { Styles } from './styles'
 

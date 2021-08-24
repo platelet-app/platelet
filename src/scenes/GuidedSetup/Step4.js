@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 
-import PrioritySelect from "../../../Task/components/PrioritySelect";
+import PrioritySelect from "../../scenes/Task/components/PrioritySelect";
 
 import { Styles } from './styles'
 

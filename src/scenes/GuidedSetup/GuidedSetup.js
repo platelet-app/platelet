@@ -11,14 +11,14 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import {v4 as uuidv4} from 'uuid';
 
-import { encodeUUID } from "../../../../utilities";
-import { addTaskRequest } from "../../../../redux/tasks/TasksActions";
-import { setTaskDropoffDestinationRequest, setTaskPickupDestinationRequest } from "../../../../redux/taskDestinations/TaskDestinationsActions";
+import { encodeUUID } from "../../utilities";
+import { addTaskRequest } from "../../redux/tasks/TasksActions";
+import { setTaskDropoffDestinationRequest, setTaskPickupDestinationRequest } from "../../redux/taskDestinations/TaskDestinationsActions";
 import {
   addDeliverableRequest, updateDeliverableRequest,
-} from "../../../../redux/deliverables/DeliverablesActions";
+} from "../../redux/deliverables/DeliverablesActions";
 
-import { CustomizedDialogs } from '../../../../components/CustomizedDialogs'
+import { CustomizedDialogs } from '../../components/CustomizedDialogs'
 import { Step1, Step2, Step3, Step4, Step5 } from './index'
 
 

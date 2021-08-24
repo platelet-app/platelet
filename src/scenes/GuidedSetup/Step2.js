@@ -1,8 +1,8 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 
-import { ContactForm } from '../../../../components/ContactForm'
-import LocationDetailAndSelector from '../../../Task/components/LocationDetailAndSelector'
+import { ContactForm } from '../../components/ContactForm'
+import LocationDetailAndSelector from '../../scenes/Task/components/LocationDetailAndSelector'
 
 import { Styles } from './styles'
 

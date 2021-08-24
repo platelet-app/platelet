@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 
-import DeliverableGridSelect from '../../../Deliverables/DeliverableGridSelect'
+import DeliverableGridSelect from '../Deliverables/DeliverableGridSelect'
 
 import { Styles } from './styles'
 
