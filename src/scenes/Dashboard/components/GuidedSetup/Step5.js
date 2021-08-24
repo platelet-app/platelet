@@ -3,11 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import DeliverableGridSelect from '../../../Deliverables/DeliverableGridSelect'
 
-export const Step5 = () => {
+export const Step5 = ({ values, taskUUID }) => {
     return (    
         <div>
             <Typography>{"What is being delivered?"}</Typography>
-            <DeliverableGridSelect />
+            <DeliverableGridSelect taskUUID={taskUUID}/>
         </div>
     )
 }
