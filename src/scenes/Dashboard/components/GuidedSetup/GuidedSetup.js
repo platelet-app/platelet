@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from "react-redux";
@@ -13,7 +13,7 @@ import {v4 as uuidv4} from 'uuid';
 
 import { encodeUUID } from "../../../../utilities";
 import { addTaskRequest } from "../../../../redux/tasks/TasksActions";
-import { setTaskDropoffDestinationRequest } from "../../../../redux/taskDestinations/TaskDestinationsActions";
+import { setTaskDropoffDestinationRequest, setTaskPickupDestinationRequest } from "../../../../redux/taskDestinations/TaskDestinationsActions";
 import {
   addDeliverableRequest, updateDeliverableRequest,
 } from "../../../../redux/deliverables/DeliverablesActions";
@@ -161,7 +161,7 @@ export const GuidedSetup = ({ show, onClose }) => {
     setFormValues(result)
 
     if (locationUUID) {
-        dispatch(setTaskDropoffDestinationRequest(task.uuid, locationUUID))
+        dispatch(setTaskPickupDestinationRequest(task.uuid, locationUUID))
     }
 }
 
