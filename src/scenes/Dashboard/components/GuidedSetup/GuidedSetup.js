@@ -17,6 +17,7 @@ import {
 } from "../../../../redux/deliverables/DeliverablesActions";
 
 import { CustomizedDialogs } from '../../../../components/CustomizedDialogs'
+import TaskOverview from '../../../../scenes/Task/components/TaskOverview'
 import { Step1, Step2, Step3, Step4, Step5 } from './index'
 
 
@@ -93,34 +94,36 @@ const defaultValues = {
   },
 }
 
+const emptyTask = {
+  uuid: "",
+  requester_contact: {
+      name: "",
+      telephone_number: ""
+  },
+  assigned_riders: [],
+  assigned_coordinators: [],
+  time_picked_up: null,
+  time_dropped_off: null,
+  time_rejected: null,
+  time_cancelled: null
+};
+
 export const GuidedSetup = ({ show, onClose, showPreview }) => {
   const classes = guidedSetupStyles();
-  const [taskUUID, setTaskUUID ]= useState("");
+  const [task, setTask] = useState(emptyTask)
   const [value, setValue] = React.useState(0);
   const [formValues, setFormValues] = useState(defaultValues)
+  const [showTaskOverview, setShowTaskOverview] = useState(false)
 
   const roleView = useSelector(state => state.roleView);
   const whoami = useSelector(state => state.whoami.user);
   const dispatch = useDispatch();
 
-  const emptyTask = {
-    requester_contact: {
-        name: "",
-        telephone_number: ""
-    },
-    assigned_riders: [],
-    assigned_coordinators: [],
-    time_picked_up: null,
-    time_dropped_off: null,
-    time_rejected: null,
-    time_cancelled: null
-};
-
   useEffect(() => {
     if(show) {
       const uuid = uuidv4();
       const newTask = {...emptyTask, uuid}
-      setTaskUUID(uuid)
+      setTask(newTask)
 
       dispatch(addTaskRequest({
         ...newTask,
@@ -157,7 +160,7 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
     setFormValues(result)
 
     if (locationUUID) {
-        dispatch(setTaskDropoffDestinationRequest(taskUUID, locationUUID))
+        dispatch(setTaskDropoffDestinationRequest(task.uuid, locationUUID))
     }
 }
 
@@ -167,12 +170,12 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
 
     setFormValues(result)
     if (locationUUID) {
-        dispatch(setTaskDropoffDestinationRequest(taskUUID, locationUUID))
+        dispatch(setTaskDropoffDestinationRequest(task.uuid, locationUUID))
     }
   }
 
   let emptyDeliverable = {
-    task_uuid: taskUUID,
+    task_uuid: task.uuid,
     uuid: uuidv4()
 };
 
@@ -187,61 +190,70 @@ export const GuidedSetup = ({ show, onClose, showPreview }) => {
     } else if (deliverable.id) {
         onAddNewDeliverable(deliverable);
     }
-}
+  }
+
+  const onShowTaskOverview = () => {
+    // onClose()
+    setShowTaskOverview(true)
+  }
+
 
   return (
-    <CustomizedDialogs open={show} onClose={onClose}>
-        <div className={classes.tabContent}>
-            <AppBar position="static">
-                <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-                    <Tab label="Step 1" {...a11yProps(0)} />
-                    <Tab label="Step 2" {...a11yProps(1)} />
-                    <Tab label="Step 3" {...a11yProps(2)} />
-                    <Tab label="Step 4" {...a11yProps(3)} />
-                    <Tab label="Step 5" {...a11yProps(4)} />
-                </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-                <Step1 values={formValues} onChange={handleCallerContactChange} />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <Step2 
-                  values={formValues} 
-                  onChange={handleSenderContactChange} 
-                  onSelect={onPickUpLocationSaved} />
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                <Step3 
-                  values={formValues} 
-                  onChange={handleReceiverContactChange}
-                  onSelect={onSelectDropoffFromSaved} />
-            </TabPanel>
-            <TabPanel value={value} index={3}>
-                <Step4 values={formValues} onChange={() => {}} />
-            </TabPanel>
-            <TabPanel value={value} index={4}>
-                <Step5 values={formValues} taskUUID={taskUUID} onChange={handleDeliverablesChange} />
-            </TabPanel>
-        </div>
-        <div className={classes.btnWrapper}>
-            <Button autoFocus onClick={onClose} color="primary">
-                Skip to overview
-            </Button>
-            <div>
-            {value > 0 && (
-                <Button autoFocus onClick={() => setValue(value => value -1)} color="primary">
-                    Previous
-                </Button>)}
-            {value < 4 
-            ? (<Button autoFocus onClick={() => setValue(value => value +1)} color="primary">
-                    Next
-                </Button>)
-            : (<Button autoFocus onClick={() => {}} color="primary">
-                    Finish
-                </Button>)}
-            </div>
-        </div>
-    </CustomizedDialogs>
+    <>
+      <CustomizedDialogs open={show} onClose={onClose}>
+          <div className={classes.tabContent}>
+              <AppBar position="static">
+                  <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+                      <Tab label="Step 1" {...a11yProps(0)} />
+                      <Tab label="Step 2" {...a11yProps(1)} />
+                      <Tab label="Step 3" {...a11yProps(2)} />
+                      <Tab label="Step 4" {...a11yProps(3)} />
+                      <Tab label="Step 5" {...a11yProps(4)} />
+                  </Tabs>
+              </AppBar>
+              <TabPanel value={value} index={0}>
+                  <Step1 values={formValues} onChange={handleCallerContactChange} />
+              </TabPanel>
+              <TabPanel value={value} index={1}>
+                  <Step2 
+                    values={formValues} 
+                    onChange={handleSenderContactChange} 
+                    onSelect={onPickUpLocationSaved} />
+              </TabPanel>
+              <TabPanel value={value} index={2}>
+                  <Step3 
+                    values={formValues} 
+                    onChange={handleReceiverContactChange}
+                    onSelect={onSelectDropoffFromSaved} />
+              </TabPanel>
+              <TabPanel value={value} index={3}>
+                  <Step4 values={formValues} onChange={() => {}} />
+              </TabPanel>
+              <TabPanel value={value} index={4}>
+                  <Step5 values={formValues} taskUUID={task.uuid} onChange={handleDeliverablesChange} />
+              </TabPanel>
+          </div>
+          <div className={classes.btnWrapper}>
+              <Button autoFocus onClick={onShowTaskOverview} color="primary">
+                  Skip to overview
+              </Button>
+              <div>
+              {value > 0 && (
+                  <Button autoFocus onClick={() => setValue(value => value -1)} color="primary">
+                      Previous
+                  </Button>)}
+              {value < 4 
+              ? (<Button autoFocus onClick={() => setValue(value => value +1)} color="primary">
+                      Next
+                  </Button>)
+              : (<Button autoFocus onClick={() => {}} color="primary">
+                      Finish
+                  </Button>)}
+              </div>
+          </div>
+      </CustomizedDialogs>
+      {showTaskOverview && <TaskOverview task={task} taskUUID={task.uuid} />}
+    </>
   );
 }
 
