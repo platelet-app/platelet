@@ -195,15 +195,15 @@ export const GuidedSetup = ({ show, onClose }) => {
 
   const onShowTaskOverview = () => history.push(`/task/${encodeUUID(task.uuid)}`);
   
+  const onCloseForm = () => {
+    onClose()
+    setFormValues(defaultValues)
+    setValue(0)
+  }
+  
   return (
     <>
-      <CustomizedDialogs 
-        open={show} 
-        onClose={() => {
-          onClose()
-          setFormValues(defaultValues)
-          setValue(0)
-        }} >
+      <CustomizedDialogs  open={show} onClose={onCloseForm} >
           <div className={classes.tabContent}>
               <AppBar position="static">
                   <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
@@ -253,7 +253,7 @@ export const GuidedSetup = ({ show, onClose }) => {
                   autoFocus 
                   onClick={() => {
                     onShowTaskOverview()
-                    onClose()
+                    onCloseForm()
                   }} 
                   color="primary">
                       Finish
