@@ -23,7 +23,7 @@ export const ContactForm = ({ values, onChange }) => {
     return (
       <form className={classes.root} noValidate autoComplete="off">
         <TextField
-            defaultValue="Name"
+            label="Name"
             id="name"
             className={classes.textField}
             margin="normal"
@@ -33,20 +33,22 @@ export const ContactForm = ({ values, onChange }) => {
             />
 
         <TextField
-            defaultValue="Tel"
+            label="Phone Number"
             id="phone"
             className={classes.textField}
             margin="normal"
             variant="outlined"
             onChange={(e) => onChange({phone: e.target.value})}
+            value={values.phone}
             />
         <TextField
-            defaultValue="Email"
+            label="Email"
             id="email"
             className={classes.textField}
             margin="normal"
             variant="outlined"
             onChange={(e) => onChange({email: e.target.value})}
+            value={values.email}
             />
       </form>
     )
