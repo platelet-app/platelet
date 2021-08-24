@@ -1,12 +1,15 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+
 import DeliverableGridSelect from '../../../Deliverables/DeliverableGridSelect'
 
+import { Styles } from './styles'
+
 export const Step5 = ({ values, taskUUID }) => {
+    const classes = Styles()
     return (    
-        <div>
-            <Typography>{"What is being delivered?"}</Typography>
+        <div className={classes.wrapper}>
+            <Typography variant="h6" gutterBottom >{"What is being delivered?"}</Typography>
             <DeliverableGridSelect taskUUID={taskUUID}/>
         </div>
     )

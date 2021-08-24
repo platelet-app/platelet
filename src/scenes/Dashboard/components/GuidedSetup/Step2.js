@@ -1,28 +1,24 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
 import { ContactForm } from '../../../../components/ContactForm'
 import LocationDetailAndSelector from '../../../Task/components/LocationDetailAndSelector'
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-       display: 'flex',
-       justifyContent: 'center',
-      '& .MuiTextField-root': {
-        margin: theme.spacing(1),
-        width: '30ch',
-      },
-    },
-  }));
+import { Styles } from './styles'
 
 export const Step2 = ({ values, onChange, onSelect }) => {
+    const classes = Styles()
     return (
-        <div>
-            <Typography>{"Where is it being picked up from?"}</Typography>
-            <LocationDetailAndSelector displayPresets onSelectPreset={onSelect} location={values.pickUpLocation} />
-            <Typography>{"Sender Contact:"}</Typography>
-            <ContactForm values={values['sender']} onChange={onChange} />
+      <div className={classes.columnWrapper}>
+        <div classes={classes.block}>
+          <Typography variant="h6" gutterBottom >{"Where is it being picked up from?"}</Typography>
+          <LocationDetailAndSelector displayPresets onSelectPreset={onSelect} location={values.pickUpLocation} />
         </div>
+
+        <div classes={classes.block}>
+          <Typography variant="h6" gutterBottom >{"Sender Contact:"}</Typography>
+          <ContactForm values={values['sender']} onChange={onChange} />
+        </div>
+      </div>
     )
 }

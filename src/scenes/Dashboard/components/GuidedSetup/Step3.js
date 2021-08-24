@@ -1,16 +1,24 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+
 import { ContactForm } from '../../../../components/ContactForm'
 import LocationDetailAndSelector from '../../../Task/components/LocationDetailAndSelector'
 
+import { Styles } from './styles'
+
 export const Step3 = ({ values, onChange, onSelect }) => {
+    const classes = Styles()
     return (
-        <div>
-            <Typography>{"Where is it being delivered?"}</Typography>
-            <LocationDetailAndSelector displayPresets onSelectPreset={onSelect} location={values.dropOffLocation} />
-            <Typography>{"Recipient contact:"}</Typography>
-            <ContactForm values={values['receiver']} onChange={onChange} />
+        <div className={classes.columnWrapper}>
+            <div classes={classes.block}>
+                <Typography variant="h6" gutterBottom >{"Where is it being delivered?"}</Typography>
+                <LocationDetailAndSelector displayPresets onSelectPreset={onSelect} location={values.dropOffLocation} />
+            </div>
+
+            <div classes={classes.block}>
+                <Typography variant="h6" gutterBottom >{"Recipient contact:"}</Typography>
+                <ContactForm values={values['receiver']} onChange={onChange} />
+            </div>
         </div>
     )
 }

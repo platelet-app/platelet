@@ -1,22 +1,17 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+
 import PrioritySelect from "../../../Task/components/PrioritySelect";
 
-const step4Styles = makeStyles((theme) => ({
-    select: {
-      display: 'flex',
-      justifyContent: 'center'
-    },
-  }));
+import { Styles } from './styles'
 
 export const Step4 = () => {
-    const classes = step4Styles()
+    const classes = Styles()
 
     return (
-        <div>
-            <Typography>{"What is the priority?"}</Typography>
-            <div className={classes.select}>
+        <div className={classes.wrapper}>
+            <Typography variant="h6" gutterBottom >{"What is the priority?"}</Typography>
+            <div>
                 <PrioritySelect />
             </div>
         </div>

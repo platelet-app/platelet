@@ -67,7 +67,7 @@ export const CustomizedDialogs = ({ open, onClose, children: [content, cta] })  
       onClose={onClose} 
       aria-labelledby="customized-dialog-title" 
       open={open}
-      maxWidth={'lg'}>
+      maxWidth={'xl'}>
       <DialogTitle id="customized-dialog-title" onClose={onClose} />
       <DialogContent dividers>
         {content}
