@@ -7,17 +7,16 @@ import "typeface-roboto";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { useDispatch, useSelector } from "react-redux";
 import { useIdleTimer } from "react-idle-timer";
-import { setDarkMode, setIdleStatus, setMobileView } from "./redux/Actions";
-import { logoutUser, removeApiURL } from "./redux/login/LoginActions";
+import { setIdleStatus, setMobileView } from "./redux/Actions";
+import { withAuthenticator } from "@aws-amplify/ui-react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Moment from "react-moment";
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import {
-    clearServerSettings,
-    getServerSettingsRequest,
-} from "./redux/ServerSettings/ServerSettingsActions";
+import Amplify, { Auth } from "aws-amplify";
+import config from "../src/aws-exports.js";
+
+import { getServerSettingsRequest } from "./redux/ServerSettings/ServerSettingsActions";
 import { SnackbarProvider, withSnackbar } from "notistack";
 import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import { Helmet } from "react-helmet";
@@ -27,6 +26,14 @@ import { DismissButton, showHide } from "./styles/common";
 import { Link } from "react-router-dom";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
+
+// configure amplify and set up authentication
+Amplify.configure({
+    ...config,
+    ssr: true,
+});
+
+Auth.configure(config);
 
 const useStyles = makeStyles((theme) => ({
     centeredDiv: {
@@ -283,4 +290,4 @@ function App(props) {
     );
 }
 
-export default App;
+export default withAuthenticator(App);
