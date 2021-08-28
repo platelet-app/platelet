@@ -1,0 +1,188 @@
+type User
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    username: String!
+    contact: Contact
+    displayName: String!
+    name: String
+    dateOfBirth: AWSDateTime
+    assignedVehicles: [Vehicle]
+    patch: Patch
+    status: String!
+    profilePictureURL: String
+    profilePictureThumbnailURL: String
+    comments: [Comment]
+    loggedActions: [LogEntry]
+  }
+  type Location
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    name: String
+    contact: Contact
+    address: Address
+    listed: Boolean
+    protected: Boolean
+    comments: [Comment]
+    loggedActions: [LogEntry]
+  }
+
+  type LogEntry
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    ipAddress: String
+    callingUser: User
+    dataFields: String
+  }
+type Priority
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    label: String!
+  }
+
+  type Patch
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    label: String!
+  }
+type Vehicle
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    name: String!
+    manufacturer: String
+    model: String
+    dateOfManufacture: AWSDateTime
+    dateOfRegistration: AWSDateTime
+    assignedUser: User
+    comments: [Comment]
+    loggedActions: [LogEntry]
+  }
+type Contact
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    name: String
+    address: [Address]
+    telephoneNumber: String
+    mobileNumber: String
+    emailAddress: String
+  }
+
+type Address
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    ward: String
+    line1: String
+    line2: String
+    line3: String
+    town: String
+    county: String
+    state: String
+    country: String
+    postcode: String
+    zipcode: String
+    what3words: String
+  }
+
+type Deliverable
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    type: DeliverableType
+    count: Int!
+    unit: DeliverableUnit
+    numBoxes: Int
+    comments: [Comment]
+
+  }
+
+type DeliverableType
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    label: String!
+  }
+
+  type DeliverableUnit
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    label: String!
+  }
+
+type Task
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+  id: ID!
+  reference: String!
+  orderInRelay: Int!
+  author: User!
+  timeOfCall: AWSDateTime!
+  timePickedUp: AWSDateTime
+  timeDroppedOff: AWSDateTime
+  timeCancelled: AWSDateTime
+  timeRejected: AWSDateTime
+  requesterContact: Contact
+  pickupLocation: Location
+  dropoffLocation: Location
+  patch: Patch
+  priority: Priority
+  deliverables: [Deliverable]
+  assignedRidersDisplayString: String
+  assignedCoordinatorsDisplayString: String
+  assignedRiders: [User]
+  assignedCoordinators: [User]
+  relayPrevious: Task
+  relayNext: Task
+  loggedActions: [LogEntry]
+  comments: [Comment]
+  status: String
+}
+
+type Comment
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    body: String!
+    author: User!
+    publiclyVisible: Boolean
+    loggedActions: [LogEntry]
+    numEdits: Int
+  }
+
+  type Locale
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    label: String!
+    code: String!
+  }
+
+type ServerSettings
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    imageURL: String
+    favicon: String
+    version: String
+    hostname: String
+  }
+
+  type Organisation
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    id: ID!
+    organisationName: String!
+  }
+  type Group
+  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
+  {
+    groupName: String
+    locale: Locale
+  }
