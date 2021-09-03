@@ -22,14 +22,14 @@ export const onCreateUser = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       displayName
       name
@@ -47,36 +47,32 @@ export const onCreateUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      patch {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      patch
       status
       profilePictureURL
       profilePictureThumbnailURL
@@ -89,23 +85,24 @@ export const onCreateUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -116,18 +113,19 @@ export const onCreateUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -152,14 +150,14 @@ export const onUpdateUser = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       displayName
       name
@@ -177,36 +175,32 @@ export const onUpdateUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      patch {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      patch
       status
       profilePictureURL
       profilePictureThumbnailURL
@@ -219,23 +213,24 @@ export const onUpdateUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -246,18 +241,19 @@ export const onUpdateUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -282,14 +278,14 @@ export const onDeleteUser = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       displayName
       name
@@ -307,36 +303,32 @@ export const onDeleteUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      patch {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      patch
       status
       profilePictureURL
       profilePictureThumbnailURL
@@ -349,23 +341,24 @@ export const onDeleteUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -376,18 +369,19 @@ export const onDeleteUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -412,14 +406,14 @@ export const onCreateLocation = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       address {
         id
@@ -434,8 +428,8 @@ export const onCreateLocation = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       listed
       protected
@@ -448,23 +442,24 @@ export const onCreateLocation = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -475,18 +470,19 @@ export const onCreateLocation = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -511,14 +507,14 @@ export const onUpdateLocation = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       address {
         id
@@ -533,8 +529,8 @@ export const onUpdateLocation = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       listed
       protected
@@ -547,23 +543,24 @@ export const onUpdateLocation = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -574,18 +571,19 @@ export const onUpdateLocation = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -610,14 +608,14 @@ export const onDeleteLocation = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       address {
         id
@@ -632,8 +630,8 @@ export const onDeleteLocation = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       listed
       protected
@@ -646,23 +644,24 @@ export const onDeleteLocation = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -673,18 +672,19 @@ export const onDeleteLocation = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -702,8 +702,8 @@ export const onCreateLogEntry = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -715,15 +715,10 @@ export const onCreateLogEntry = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -732,22 +727,22 @@ export const onCreateLogEntry = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       dataFields
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -765,8 +760,8 @@ export const onUpdateLogEntry = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -778,15 +773,10 @@ export const onUpdateLogEntry = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -795,22 +785,22 @@ export const onUpdateLogEntry = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       dataFields
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -828,8 +818,8 @@ export const onDeleteLogEntry = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -841,15 +831,10 @@ export const onDeleteLogEntry = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -858,82 +843,22 @@ export const onDeleteLogEntry = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       dataFields
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onCreatePriority = /* GraphQL */ `
-  subscription OnCreatePriority {
-    onCreatePriority {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onUpdatePriority = /* GraphQL */ `
-  subscription OnUpdatePriority {
-    onUpdatePriority {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onDeletePriority = /* GraphQL */ `
-  subscription OnDeletePriority {
-    onDeletePriority {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onCreatePatch = /* GraphQL */ `
-  subscription OnCreatePatch {
-    onCreatePatch {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onUpdatePatch = /* GraphQL */ `
-  subscription OnUpdatePatch {
-    onUpdatePatch {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onDeletePatch = /* GraphQL */ `
-  subscription OnDeletePatch {
-    onDeletePatch {
-      id
-      label
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -955,8 +880,8 @@ export const onCreateVehicle = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -968,15 +893,10 @@ export const onCreateVehicle = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -985,18 +905,18 @@ export const onCreateVehicle = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       comments {
         id
@@ -1007,23 +927,24 @@ export const onCreateVehicle = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -1034,18 +955,19 @@ export const onCreateVehicle = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1067,8 +989,8 @@ export const onUpdateVehicle = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -1080,15 +1002,10 @@ export const onUpdateVehicle = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -1097,18 +1014,18 @@ export const onUpdateVehicle = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       comments {
         id
@@ -1119,23 +1036,24 @@ export const onUpdateVehicle = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -1146,18 +1064,19 @@ export const onUpdateVehicle = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1179,8 +1098,8 @@ export const onDeleteVehicle = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -1192,15 +1111,10 @@ export const onDeleteVehicle = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -1209,18 +1123,18 @@ export const onDeleteVehicle = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       comments {
         id
@@ -1231,23 +1145,24 @@ export const onDeleteVehicle = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -1258,18 +1173,19 @@ export const onDeleteVehicle = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1291,14 +1207,14 @@ export const onCreateContact = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       telephoneNumber
       mobileNumber
       emailAddress
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1320,14 +1236,14 @@ export const onUpdateContact = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       telephoneNumber
       mobileNumber
       emailAddress
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1349,14 +1265,14 @@ export const onDeleteContact = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       telephoneNumber
       mobileNumber
       emailAddress
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1375,8 +1291,8 @@ export const onCreateAddress = /* GraphQL */ `
       postcode
       zipcode
       what3words
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1395,8 +1311,8 @@ export const onUpdateAddress = /* GraphQL */ `
       postcode
       zipcode
       what3words
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1415,8 +1331,8 @@ export const onDeleteAddress = /* GraphQL */ `
       postcode
       zipcode
       what3words
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1424,19 +1340,9 @@ export const onCreateDeliverable = /* GraphQL */ `
   subscription OnCreateDeliverable {
     onCreateDeliverable {
       id
-      type {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      type
       count
-      unit {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      unit
       numBoxes
       comments {
         id
@@ -1447,26 +1353,27 @@ export const onCreateDeliverable = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1474,19 +1381,9 @@ export const onUpdateDeliverable = /* GraphQL */ `
   subscription OnUpdateDeliverable {
     onUpdateDeliverable {
       id
-      type {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      type
       count
-      unit {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      unit
       numBoxes
       comments {
         id
@@ -1497,26 +1394,27 @@ export const onUpdateDeliverable = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1524,19 +1422,9 @@ export const onDeleteDeliverable = /* GraphQL */ `
   subscription OnDeleteDeliverable {
     onDeleteDeliverable {
       id
-      type {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      type
       count
-      unit {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      unit
       numBoxes
       comments {
         id
@@ -1547,86 +1435,27 @@ export const onDeleteDeliverable = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onCreateDeliverableType = /* GraphQL */ `
-  subscription OnCreateDeliverableType {
-    onCreateDeliverableType {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onUpdateDeliverableType = /* GraphQL */ `
-  subscription OnUpdateDeliverableType {
-    onUpdateDeliverableType {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onDeleteDeliverableType = /* GraphQL */ `
-  subscription OnDeleteDeliverableType {
-    onDeleteDeliverableType {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onCreateDeliverableUnit = /* GraphQL */ `
-  subscription OnCreateDeliverableUnit {
-    onCreateDeliverableUnit {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onUpdateDeliverableUnit = /* GraphQL */ `
-  subscription OnUpdateDeliverableUnit {
-    onUpdateDeliverableUnit {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onDeleteDeliverableUnit = /* GraphQL */ `
-  subscription OnDeleteDeliverableUnit {
-    onDeleteDeliverableUnit {
-      id
-      label
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1645,8 +1474,8 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -1658,15 +1487,10 @@ export const onCreateTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -1675,18 +1499,18 @@ export const onCreateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       timeOfCall
       timePickedUp
@@ -1709,14 +1533,14 @@ export const onCreateTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       pickupLocation {
         id
@@ -1727,8 +1551,8 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -1743,8 +1567,8 @@ export const onCreateTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -1753,18 +1577,18 @@ export const onCreateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       dropoffLocation {
         id
@@ -1775,8 +1599,8 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -1791,8 +1615,8 @@ export const onCreateTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -1801,57 +1625,37 @@ export const onCreateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      patch {
-        id
-        label
-        timeCreated
-        timeModified
-      }
-      priority {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      patch
+      priority
       deliverables {
         id
-        type {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        type
         count
-        unit {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        unit
         numBoxes
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       assignedRidersDisplayString
       assignedCoordinatorsDisplayString
@@ -1864,8 +1668,8 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -1877,15 +1681,10 @@ export const onCreateTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -1894,18 +1693,18 @@ export const onCreateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       assignedCoordinators {
         id
@@ -1916,8 +1715,8 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -1929,15 +1728,10 @@ export const onCreateTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -1946,18 +1740,18 @@ export const onCreateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       relayPrevious {
         id
@@ -1969,11 +1763,12 @@ export const onCreateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -1986,43 +1781,35 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -2032,11 +1819,12 @@ export const onCreateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -2044,11 +1832,12 @@ export const onCreateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -2059,11 +1848,13 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -2074,30 +1865,32 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       relayNext {
         id
@@ -2109,11 +1902,12 @@ export const onCreateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -2126,43 +1920,35 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -2172,11 +1958,12 @@ export const onCreateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -2184,11 +1971,12 @@ export const onCreateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -2199,11 +1987,13 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -2214,30 +2004,32 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -2248,15 +2040,16 @@ export const onCreateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       comments {
         id
@@ -2267,27 +2060,28 @@ export const onCreateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       status
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -2306,8 +2100,8 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -2319,15 +2113,10 @@ export const onUpdateTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -2336,18 +2125,18 @@ export const onUpdateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       timeOfCall
       timePickedUp
@@ -2370,14 +2159,14 @@ export const onUpdateTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       pickupLocation {
         id
@@ -2388,8 +2177,8 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -2404,8 +2193,8 @@ export const onUpdateTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -2414,18 +2203,18 @@ export const onUpdateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       dropoffLocation {
         id
@@ -2436,8 +2225,8 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -2452,8 +2241,8 @@ export const onUpdateTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -2462,57 +2251,37 @@ export const onUpdateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      patch {
-        id
-        label
-        timeCreated
-        timeModified
-      }
-      priority {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      patch
+      priority
       deliverables {
         id
-        type {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        type
         count
-        unit {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        unit
         numBoxes
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       assignedRidersDisplayString
       assignedCoordinatorsDisplayString
@@ -2525,8 +2294,8 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -2538,15 +2307,10 @@ export const onUpdateTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -2555,18 +2319,18 @@ export const onUpdateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       assignedCoordinators {
         id
@@ -2577,8 +2341,8 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -2590,15 +2354,10 @@ export const onUpdateTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -2607,18 +2366,18 @@ export const onUpdateTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       relayPrevious {
         id
@@ -2630,11 +2389,12 @@ export const onUpdateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -2647,43 +2407,35 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -2693,11 +2445,12 @@ export const onUpdateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -2705,11 +2458,12 @@ export const onUpdateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -2720,11 +2474,13 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -2735,30 +2491,32 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       relayNext {
         id
@@ -2770,11 +2528,12 @@ export const onUpdateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -2787,43 +2546,35 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -2833,11 +2584,12 @@ export const onUpdateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -2845,11 +2597,12 @@ export const onUpdateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -2860,11 +2613,13 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -2875,30 +2630,32 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -2909,15 +2666,16 @@ export const onUpdateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       comments {
         id
@@ -2928,27 +2686,28 @@ export const onUpdateTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       status
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -2967,8 +2726,8 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -2980,15 +2739,10 @@ export const onDeleteTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -2997,18 +2751,18 @@ export const onDeleteTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       timeOfCall
       timePickedUp
@@ -3031,14 +2785,14 @@ export const onDeleteTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       pickupLocation {
         id
@@ -3049,8 +2803,8 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -3065,8 +2819,8 @@ export const onDeleteTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -3075,18 +2829,18 @@ export const onDeleteTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       dropoffLocation {
         id
@@ -3097,8 +2851,8 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -3113,8 +2867,8 @@ export const onDeleteTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -3123,57 +2877,37 @@ export const onDeleteTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      patch {
-        id
-        label
-        timeCreated
-        timeModified
-      }
-      priority {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      patch
+      priority
       deliverables {
         id
-        type {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        type
         count
-        unit {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        unit
         numBoxes
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       assignedRidersDisplayString
       assignedCoordinatorsDisplayString
@@ -3186,8 +2920,8 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -3199,15 +2933,10 @@ export const onDeleteTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -3216,18 +2945,18 @@ export const onDeleteTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       assignedCoordinators {
         id
@@ -3238,8 +2967,8 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -3251,15 +2980,10 @@ export const onDeleteTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -3268,18 +2992,18 @@ export const onDeleteTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       relayPrevious {
         id
@@ -3291,11 +3015,12 @@ export const onDeleteTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -3308,43 +3033,35 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -3354,11 +3071,12 @@ export const onDeleteTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -3366,11 +3084,12 @@ export const onDeleteTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -3381,11 +3100,13 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -3396,30 +3117,32 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       relayNext {
         id
@@ -3431,11 +3154,12 @@ export const onDeleteTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -3448,43 +3172,35 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -3494,11 +3210,12 @@ export const onDeleteTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -3506,11 +3223,12 @@ export const onDeleteTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -3521,11 +3239,13 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -3536,30 +3256,32 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -3570,15 +3292,16 @@ export const onDeleteTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       comments {
         id
@@ -3589,27 +3312,28 @@ export const onDeleteTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       status
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3627,8 +3351,8 @@ export const onCreateComment = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -3640,15 +3364,10 @@ export const onCreateComment = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -3657,18 +3376,18 @@ export const onCreateComment = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       publiclyVisible
       loggedActions {
@@ -3680,19 +3399,20 @@ export const onCreateComment = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       numEdits
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3710,8 +3430,8 @@ export const onUpdateComment = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -3723,15 +3443,10 @@ export const onUpdateComment = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -3740,18 +3455,18 @@ export const onUpdateComment = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       publiclyVisible
       loggedActions {
@@ -3763,19 +3478,20 @@ export const onUpdateComment = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       numEdits
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3793,8 +3509,8 @@ export const onDeleteComment = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -3806,15 +3522,10 @@ export const onDeleteComment = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -3823,18 +3534,18 @@ export const onDeleteComment = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       publiclyVisible
       loggedActions {
@@ -3846,52 +3557,20 @@ export const onDeleteComment = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       numEdits
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onCreateLocale = /* GraphQL */ `
-  subscription OnCreateLocale {
-    onCreateLocale {
-      id
-      label
-      code
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onUpdateLocale = /* GraphQL */ `
-  subscription OnUpdateLocale {
-    onUpdateLocale {
-      id
-      label
-      code
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const onDeleteLocale = /* GraphQL */ `
-  subscription OnDeleteLocale {
-    onDeleteLocale {
-      id
-      label
-      code
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3903,8 +3582,8 @@ export const onCreateServerSettings = /* GraphQL */ `
       favicon
       version
       hostname
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3916,8 +3595,8 @@ export const onUpdateServerSettings = /* GraphQL */ `
       favicon
       version
       hostname
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3929,8 +3608,8 @@ export const onDeleteServerSettings = /* GraphQL */ `
       favicon
       version
       hostname
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3939,8 +3618,8 @@ export const onCreateOrganisation = /* GraphQL */ `
     onCreateOrganisation {
       id
       organisationName
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3949,8 +3628,8 @@ export const onUpdateOrganisation = /* GraphQL */ `
     onUpdateOrganisation {
       id
       organisationName
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3959,8 +3638,8 @@ export const onDeleteOrganisation = /* GraphQL */ `
     onDeleteOrganisation {
       id
       organisationName
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3969,15 +3648,9 @@ export const onCreateGroup = /* GraphQL */ `
     onCreateGroup {
       id
       groupName
-      locale {
-        id
-        label
-        code
-        timeCreated
-        timeModified
-      }
-      timeCreated
-      timeModified
+      locale
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -3986,15 +3659,9 @@ export const onUpdateGroup = /* GraphQL */ `
     onUpdateGroup {
       id
       groupName
-      locale {
-        id
-        label
-        code
-        timeCreated
-        timeModified
-      }
-      timeCreated
-      timeModified
+      locale
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -4003,15 +3670,9 @@ export const onDeleteGroup = /* GraphQL */ `
     onDeleteGroup {
       id
       groupName
-      locale {
-        id
-        label
-        code
-        timeCreated
-        timeModified
-      }
-      timeCreated
-      timeModified
+      locale
+      createdAt
+      updatedAt
     }
   }
 `;

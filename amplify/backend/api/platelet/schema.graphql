@@ -1,6 +1,6 @@
 type User
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+@model
+{
     id: ID!
     username: String!
     contact: Contact
@@ -14,10 +14,10 @@ type User
     profilePictureThumbnailURL: String
     comments: [Comment]
     loggedActions: [LogEntry]
-  }
-  type Location
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+}
+type Location
+@model
+{
     id: ID!
     name: String
     contact: Contact
@@ -26,32 +26,35 @@ type User
     protected: Boolean
     comments: [Comment]
     loggedActions: [LogEntry]
-  }
+}
 
-  type LogEntry
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+type LogEntry
+@model
+{
     id: ID!
     ipAddress: String
     callingUser: User
     dataFields: String
-  }
-type Priority
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
-    id: ID!
-    label: String!
-  }
+}
+enum Priority
+{
+    HIGH
+    MEDIUM
+    LOW
+}
 
-  type Patch
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
-    id: ID!
-    label: String!
-  }
+enum Patch
+{
+    NORTH
+    WEST
+    EAST
+    SOUTH
+    RELIEF
+    AIR_AMBULANCE
+}
 type Vehicle
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+@model
+{
     id: ID!
     name: String!
     manufacturer: String
@@ -61,21 +64,21 @@ type Vehicle
     assignedUser: User
     comments: [Comment]
     loggedActions: [LogEntry]
-  }
+}
 type Contact
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+@model
+{
     id: ID!
     name: String
     address: [Address]
     telephoneNumber: String
     mobileNumber: String
     emailAddress: String
-  }
+}
 
 type Address
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+@model
+{
     id: ID!
     ward: String
     line1: String
@@ -88,11 +91,11 @@ type Address
     postcode: String
     zipcode: String
     what3words: String
-  }
+}
 
 type Deliverable
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+@model
+{
     id: ID!
     type: DeliverableType
     count: Int!
@@ -100,89 +103,104 @@ type Deliverable
     numBoxes: Int
     comments: [Comment]
 
-  }
+}
 
-type DeliverableType
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
-    id: ID!
-    label: String!
-  }
+enum DeliverableType
+{
+    MILK
+    BLOOD
+    PLATELETS
+    SAMPLE
+    COVID_SAMPLE
+    DOCUMENTS
+    EQUIPMENT
+    OTHER
+}
 
-  type DeliverableUnit
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
-    id: ID!
-    label: String!
-  }
+enum DeliverableUnit
+{
+    LITRE
+    MILLILITRES
+    GRAMS
+    COUNT
+    BOX
+}
 
 type Task
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
-  id: ID!
-  reference: String!
-  orderInRelay: Int!
-  author: User!
-  timeOfCall: AWSDateTime!
-  timePickedUp: AWSDateTime
-  timeDroppedOff: AWSDateTime
-  timeCancelled: AWSDateTime
-  timeRejected: AWSDateTime
-  requesterContact: Contact
-  pickupLocation: Location
-  dropoffLocation: Location
-  patch: Patch
-  priority: Priority
-  deliverables: [Deliverable]
-  assignedRidersDisplayString: String
-  assignedCoordinatorsDisplayString: String
-  assignedRiders: [User]
-  assignedCoordinators: [User]
-  relayPrevious: Task
-  relayNext: Task
-  loggedActions: [LogEntry]
-  comments: [Comment]
-  status: String
+@model
+@key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
+{
+    id: ID!
+    reference: String!
+    orderInRelay: Int!
+    author: User!
+    timeOfCall: AWSDateTime!
+    timePickedUp: AWSDateTime
+    timeDroppedOff: AWSDateTime
+    timeCancelled: AWSDateTime
+    timeRejected: AWSDateTime
+    requesterContact: Contact
+    pickupLocation: Location
+    dropoffLocation: Location
+    patch: Patch
+    priority: Priority
+    deliverables: [Deliverable]
+    assignedRidersDisplayString: String
+    assignedCoordinatorsDisplayString: String
+    assignedRiders: [User]
+    assignedCoordinators: [User]
+    relayPrevious: Task
+    relayNext: Task
+    loggedActions: [LogEntry]
+    comments: [Comment]
+    status: TaskStatus!
+}
+
+enum TaskStatus
+{
+    NEW,
+    ACTIVE,
+    PICKED_UP,
+    DROPPED_OFF,
+    CANCELLED,
+    REJECTED
 }
 
 type Comment
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+@model
+{
     id: ID!
     body: String!
     author: User!
     publiclyVisible: Boolean
     loggedActions: [LogEntry]
     numEdits: Int
-  }
+}
 
-  type Locale
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
-    id: ID!
-    label: String!
-    code: String!
-  }
+enum Locale
+{
+    GB
+}
 
 type ServerSettings
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+@model
+{
     id: ID!
     imageURL: String
     favicon: String
     version: String
     hostname: String
-  }
+}
 
-  type Organisation
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+type Organisation
+@model
+{
     id: ID!
     organisationName: String!
-  }
-  type Group
-  @model(timestamps:{createdAt: "timeCreated", updatedAt: "timeModified"})
-  {
+}
+type Group
+@model
+{
     groupName: String
     locale: Locale
-  }
+}

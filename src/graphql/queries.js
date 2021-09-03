@@ -22,14 +22,14 @@ export const getUser = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       displayName
       name
@@ -47,36 +47,32 @@ export const getUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      patch {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      patch
       status
       profilePictureURL
       profilePictureThumbnailURL
@@ -89,23 +85,24 @@ export const getUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -116,18 +113,19 @@ export const getUser = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -147,8 +145,8 @@ export const listUsers = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -160,15 +158,10 @@ export const listUsers = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -177,18 +170,18 @@ export const listUsers = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -215,14 +208,14 @@ export const getLocation = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       address {
         id
@@ -237,8 +230,8 @@ export const getLocation = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       listed
       protected
@@ -251,23 +244,24 @@ export const getLocation = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -278,18 +272,19 @@ export const getLocation = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -309,8 +304,8 @@ export const listLocations = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -325,8 +320,8 @@ export const listLocations = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -335,18 +330,18 @@ export const listLocations = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -366,8 +361,8 @@ export const getLogEntry = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -379,15 +374,10 @@ export const getLogEntry = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -396,22 +386,22 @@ export const getLogEntry = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       dataFields
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -431,69 +421,16 @@ export const listLogEntries = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
-      }
-      nextToken
-    }
-  }
-`;
-export const getPriority = /* GraphQL */ `
-  query GetPriority($id: ID!) {
-    getPriority(id: $id) {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const listPriorities = /* GraphQL */ `
-  query ListPriorities(
-    $filter: ModelPriorityFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listPriorities(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        label
-        timeCreated
-        timeModified
-      }
-      nextToken
-    }
-  }
-`;
-export const getPatch = /* GraphQL */ `
-  query GetPatch($id: ID!) {
-    getPatch(id: $id) {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const listPatches = /* GraphQL */ `
-  query ListPatches(
-    $filter: ModelPatchFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listPatches(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        label
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -517,8 +454,8 @@ export const getVehicle = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -530,15 +467,10 @@ export const getVehicle = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -547,18 +479,18 @@ export const getVehicle = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       comments {
         id
@@ -569,23 +501,24 @@ export const getVehicle = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -596,18 +529,19 @@ export const getVehicle = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -631,29 +565,30 @@ export const listVehicles = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -677,14 +612,14 @@ export const getContact = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       telephoneNumber
       mobileNumber
       emailAddress
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -711,14 +646,14 @@ export const listContacts = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -739,8 +674,8 @@ export const getAddress = /* GraphQL */ `
       postcode
       zipcode
       what3words
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -764,8 +699,8 @@ export const listAddresses = /* GraphQL */ `
         postcode
         zipcode
         what3words
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -775,19 +710,9 @@ export const getDeliverable = /* GraphQL */ `
   query GetDeliverable($id: ID!) {
     getDeliverable(id: $id) {
       id
-      type {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      type
       count
-      unit {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      unit
       numBoxes
       comments {
         id
@@ -798,26 +723,27 @@ export const getDeliverable = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -830,92 +756,20 @@ export const listDeliverables = /* GraphQL */ `
     listDeliverables(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        type {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        type
         count
-        unit {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        unit
         numBoxes
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
-      }
-      nextToken
-    }
-  }
-`;
-export const getDeliverableType = /* GraphQL */ `
-  query GetDeliverableType($id: ID!) {
-    getDeliverableType(id: $id) {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const listDeliverableTypes = /* GraphQL */ `
-  query ListDeliverableTypes(
-    $filter: ModelDeliverableTypeFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listDeliverableTypes(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        label
-        timeCreated
-        timeModified
-      }
-      nextToken
-    }
-  }
-`;
-export const getDeliverableUnit = /* GraphQL */ `
-  query GetDeliverableUnit($id: ID!) {
-    getDeliverableUnit(id: $id) {
-      id
-      label
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const listDeliverableUnits = /* GraphQL */ `
-  query ListDeliverableUnits(
-    $filter: ModelDeliverableUnitFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listDeliverableUnits(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        label
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -936,8 +790,8 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -949,15 +803,10 @@ export const getTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -966,18 +815,18 @@ export const getTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       timeOfCall
       timePickedUp
@@ -1000,14 +849,14 @@ export const getTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         telephoneNumber
         mobileNumber
         emailAddress
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       pickupLocation {
         id
@@ -1018,8 +867,8 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -1034,8 +883,8 @@ export const getTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -1044,18 +893,18 @@ export const getTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       dropoffLocation {
         id
@@ -1066,8 +915,8 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         address {
           id
@@ -1082,8 +931,8 @@ export const getTask = /* GraphQL */ `
           postcode
           zipcode
           what3words
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         listed
         protected
@@ -1092,57 +941,37 @@ export const getTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
-      patch {
-        id
-        label
-        timeCreated
-        timeModified
-      }
-      priority {
-        id
-        label
-        timeCreated
-        timeModified
-      }
+      patch
+      priority
       deliverables {
         id
-        type {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        type
         count
-        unit {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        unit
         numBoxes
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       assignedRidersDisplayString
       assignedCoordinatorsDisplayString
@@ -1155,8 +984,8 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -1168,15 +997,10 @@ export const getTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -1185,18 +1009,18 @@ export const getTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       assignedCoordinators {
         id
@@ -1207,8 +1031,8 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -1220,15 +1044,10 @@ export const getTask = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -1237,18 +1056,18 @@ export const getTask = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       relayPrevious {
         id
@@ -1260,11 +1079,12 @@ export const getTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -1277,43 +1097,35 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -1323,11 +1135,12 @@ export const getTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -1335,11 +1148,12 @@ export const getTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -1350,11 +1164,13 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -1365,30 +1181,32 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       relayNext {
         id
@@ -1400,11 +1218,12 @@ export const getTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -1417,43 +1236,35 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -1463,11 +1274,12 @@ export const getTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -1475,11 +1287,12 @@ export const getTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -1490,11 +1303,13 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -1505,30 +1320,32 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       loggedActions {
         id
@@ -1539,15 +1356,16 @@ export const getTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       comments {
         id
@@ -1558,27 +1376,28 @@ export const getTask = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       status
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1599,11 +1418,12 @@ export const listTasks = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         timeOfCall
         timePickedUp
@@ -1616,43 +1436,35 @@ export const listTasks = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         pickupLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dropoffLocation {
           id
           name
           listed
           protected
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
-        priority {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
+        priority
         deliverables {
           id
+          type
           count
+          unit
           numBoxes
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
@@ -1662,11 +1474,12 @@ export const listTasks = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         assignedCoordinators {
           id
@@ -1674,11 +1487,12 @@ export const listTasks = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayPrevious {
           id
@@ -1689,11 +1503,13 @@ export const listTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         relayNext {
           id
@@ -1704,30 +1520,32 @@ export const listTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          patch
+          priority
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         comments {
           id
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         status
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -1747,8 +1565,8 @@ export const getComment = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         displayName
         name
@@ -1760,15 +1578,10 @@ export const getComment = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        patch {
-          id
-          label
-          timeCreated
-          timeModified
-        }
+        patch
         status
         profilePictureURL
         profilePictureThumbnailURL
@@ -1777,18 +1590,18 @@ export const getComment = /* GraphQL */ `
           body
           publiclyVisible
           numEdits
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       publiclyVisible
       loggedActions {
@@ -1800,19 +1613,20 @@ export const getComment = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         dataFields
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       numEdits
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1832,52 +1646,24 @@ export const listComments = /* GraphQL */ `
           displayName
           name
           dateOfBirth
+          patch
           status
           profilePictureURL
           profilePictureThumbnailURL
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         publiclyVisible
         loggedActions {
           id
           ipAddress
           dataFields
-          timeCreated
-          timeModified
+          createdAt
+          updatedAt
         }
         numEdits
-        timeCreated
-        timeModified
-      }
-      nextToken
-    }
-  }
-`;
-export const getLocale = /* GraphQL */ `
-  query GetLocale($id: ID!) {
-    getLocale(id: $id) {
-      id
-      label
-      code
-      timeCreated
-      timeModified
-    }
-  }
-`;
-export const listLocales = /* GraphQL */ `
-  query ListLocales(
-    $filter: ModelLocaleFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listLocales(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        label
-        code
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -1891,8 +1677,8 @@ export const getServerSettings = /* GraphQL */ `
       favicon
       version
       hostname
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1909,8 +1695,8 @@ export const listServerSettings = /* GraphQL */ `
         favicon
         version
         hostname
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -1921,8 +1707,8 @@ export const getOrganisation = /* GraphQL */ `
     getOrganisation(id: $id) {
       id
       organisationName
-      timeCreated
-      timeModified
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1936,8 +1722,8 @@ export const listOrganisations = /* GraphQL */ `
       items {
         id
         organisationName
-        timeCreated
-        timeModified
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -1948,15 +1734,9 @@ export const getGroup = /* GraphQL */ `
     getGroup(id: $id) {
       id
       groupName
-      locale {
-        id
-        label
-        code
-        timeCreated
-        timeModified
-      }
-      timeCreated
-      timeModified
+      locale
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -1970,15 +1750,167 @@ export const listGroups = /* GraphQL */ `
       items {
         id
         groupName
-        locale {
+        locale
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const tasksByStatus = /* GraphQL */ `
+  query TasksByStatus(
+    $status: TaskStatus
+    $sortDirection: ModelSortDirection
+    $filter: ModelTaskFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    tasksByStatus(
+      status: $status
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        reference
+        orderInRelay
+        author {
           id
-          label
-          code
-          timeCreated
-          timeModified
+          username
+          displayName
+          name
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
         }
-        timeCreated
-        timeModified
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          createdAt
+          updatedAt
+        }
+        pickupLocation {
+          id
+          name
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        dropoffLocation {
+          id
+          name
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        patch
+        priority
+        deliverables {
+          id
+          type
+          count
+          unit
+          numBoxes
+          createdAt
+          updatedAt
+        }
+        assignedRidersDisplayString
+        assignedCoordinatorsDisplayString
+        assignedRiders {
+          id
+          username
+          displayName
+          name
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        assignedCoordinators {
+          id
+          username
+          displayName
+          name
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        relayPrevious {
+          id
+          reference
+          orderInRelay
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          assignedRidersDisplayString
+          assignedCoordinatorsDisplayString
+          status
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          reference
+          orderInRelay
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          assignedRidersDisplayString
+          assignedCoordinatorsDisplayString
+          status
+          createdAt
+          updatedAt
+        }
+        loggedActions {
+          id
+          ipAddress
+          dataFields
+          createdAt
+          updatedAt
+        }
+        comments {
+          id
+          body
+          publiclyVisible
+          numEdits
+          createdAt
+          updatedAt
+        }
+        status
+        createdAt
+        updatedAt
       }
       nextToken
     }
