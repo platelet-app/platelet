@@ -168,6 +168,7 @@ function TaskContextMenu(props) {
                 <MenuItem
                     disabled={
                         !!props.timePickedUp ||
+                        props.assignedRiders === null ||
                         !props.assignedRiders.length ||
                         !!props.timeRejected ||
                         !!props.timeCancelled

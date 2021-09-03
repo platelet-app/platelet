@@ -133,7 +133,7 @@ type Task
     id: ID!
     reference: String!
     orderInRelay: Int!
-    author: User!
+    author: User
     timeOfCall: AWSDateTime!
     timePickedUp: AWSDateTime
     timeDroppedOff: AWSDateTime
