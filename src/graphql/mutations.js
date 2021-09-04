@@ -36,44 +36,21 @@ export const createUser = /* GraphQL */ `
       }
       displayName
       name
+      roles
       dateOfBirth
       assignedVehicles {
-        id
-        name
-        manufacturer
-        model
-        dateOfManufacture
-        dateOfRegistration
-        assignedUser {
+        items {
           id
-          username
-          displayName
+          assignedUserID
           name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
+          manufacturer
+          model
+          dateOfManufacture
+          dateOfRegistration
           createdAt
           updatedAt
         }
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       patch
       status
@@ -81,12 +58,14 @@ export const createUser = /* GraphQL */ `
       profilePictureThumbnailURL
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -96,7 +75,7 @@ export const createUser = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -115,6 +94,7 @@ export const createUser = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -167,44 +147,21 @@ export const updateUser = /* GraphQL */ `
       }
       displayName
       name
+      roles
       dateOfBirth
       assignedVehicles {
-        id
-        name
-        manufacturer
-        model
-        dateOfManufacture
-        dateOfRegistration
-        assignedUser {
+        items {
           id
-          username
-          displayName
+          assignedUserID
           name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
+          manufacturer
+          model
+          dateOfManufacture
+          dateOfRegistration
           createdAt
           updatedAt
         }
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       patch
       status
@@ -212,12 +169,14 @@ export const updateUser = /* GraphQL */ `
       profilePictureThumbnailURL
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -227,7 +186,7 @@ export const updateUser = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -246,6 +205,7 @@ export const updateUser = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -298,44 +258,21 @@ export const deleteUser = /* GraphQL */ `
       }
       displayName
       name
+      roles
       dateOfBirth
       assignedVehicles {
-        id
-        name
-        manufacturer
-        model
-        dateOfManufacture
-        dateOfRegistration
-        assignedUser {
+        items {
           id
-          username
-          displayName
+          assignedUserID
           name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
+          manufacturer
+          model
+          dateOfManufacture
+          dateOfRegistration
           createdAt
           updatedAt
         }
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       patch
       status
@@ -343,12 +280,14 @@ export const deleteUser = /* GraphQL */ `
       profilePictureThumbnailURL
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -358,7 +297,7 @@ export const deleteUser = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -377,6 +316,7 @@ export const deleteUser = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -447,12 +387,14 @@ export const createLocation = /* GraphQL */ `
       protected
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -462,7 +404,7 @@ export const createLocation = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -481,6 +423,7 @@ export const createLocation = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -551,12 +494,14 @@ export const updateLocation = /* GraphQL */ `
       protected
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -566,7 +511,7 @@ export const updateLocation = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -585,6 +530,7 @@ export const updateLocation = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -655,12 +601,14 @@ export const deleteLocation = /* GraphQL */ `
       protected
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -670,7 +618,7 @@ export const deleteLocation = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -689,6 +637,7 @@ export const deleteLocation = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -728,16 +677,10 @@ export const createLogEntry = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -745,6 +688,7 @@ export const createLogEntry = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -789,16 +733,10 @@ export const updateLogEntry = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -806,6 +744,7 @@ export const updateLogEntry = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -850,16 +789,10 @@ export const deleteLogEntry = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -867,6 +800,7 @@ export const deleteLogEntry = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -896,6 +830,7 @@ export const createVehicle = /* GraphQL */ `
   ) {
     createVehicle(input: $input, condition: $condition) {
       id
+      assignedUserID
       name
       manufacturer
       model
@@ -915,16 +850,10 @@ export const createVehicle = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -932,6 +861,7 @@ export const createVehicle = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -950,12 +880,14 @@ export const createVehicle = /* GraphQL */ `
       }
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -965,7 +897,7 @@ export const createVehicle = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -984,6 +916,7 @@ export const createVehicle = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1008,6 +941,7 @@ export const updateVehicle = /* GraphQL */ `
   ) {
     updateVehicle(input: $input, condition: $condition) {
       id
+      assignedUserID
       name
       manufacturer
       model
@@ -1027,16 +961,10 @@ export const updateVehicle = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -1044,6 +972,7 @@ export const updateVehicle = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -1062,12 +991,14 @@ export const updateVehicle = /* GraphQL */ `
       }
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1077,7 +1008,7 @@ export const updateVehicle = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -1096,6 +1027,7 @@ export const updateVehicle = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1120,6 +1052,7 @@ export const deleteVehicle = /* GraphQL */ `
   ) {
     deleteVehicle(input: $input, condition: $condition) {
       id
+      assignedUserID
       name
       manufacturer
       model
@@ -1139,16 +1072,10 @@ export const deleteVehicle = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -1156,6 +1083,7 @@ export const deleteVehicle = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -1174,12 +1102,14 @@ export const deleteVehicle = /* GraphQL */ `
       }
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1189,7 +1119,7 @@ export const deleteVehicle = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -1208,6 +1138,7 @@ export const deleteVehicle = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1403,12 +1334,14 @@ export const createDeliverable = /* GraphQL */ `
       numBoxes
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1418,7 +1351,7 @@ export const createDeliverable = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -1447,12 +1380,14 @@ export const updateDeliverable = /* GraphQL */ `
       numBoxes
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1462,7 +1397,7 @@ export const updateDeliverable = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -1491,12 +1426,14 @@ export const deleteDeliverable = /* GraphQL */ `
       numBoxes
       comments {
         id
+        parentID
         body
         author {
           id
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1506,7 +1443,7 @@ export const deleteDeliverable = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedActions {
+        loggedAction {
           id
           ipAddress
           dataFields
@@ -1545,16 +1482,10 @@ export const createTask = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -1562,6 +1493,7 @@ export const createTask = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -1640,6 +1572,7 @@ export const createTask = /* GraphQL */ `
         protected
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -1688,6 +1621,7 @@ export const createTask = /* GraphQL */ `
         protected
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -1714,6 +1648,7 @@ export const createTask = /* GraphQL */ `
         numBoxes
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -1725,99 +1660,15 @@ export const createTask = /* GraphQL */ `
       }
       assignedRidersDisplayString
       assignedCoordinatorsDisplayString
-      assignedRiders {
-        id
-        username
-        contact {
+      assignees {
+        items {
           id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          taskID
+          role
           createdAt
           updatedAt
         }
-        displayName
-        name
-        dateOfBirth
-        assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      assignedCoordinators {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        dateOfBirth
-        assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       relayPrevious {
         id
@@ -1828,6 +1679,7 @@ export const createTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -1879,31 +1731,8 @@ export const createTask = /* GraphQL */ `
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
-        assignedRiders {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
+        assignees {
+          nextToken
         }
         relayPrevious {
           id
@@ -1949,12 +1778,7 @@ export const createTask = /* GraphQL */ `
           updatedAt
         }
         comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
+          nextToken
         }
         status
         statusHumanReadable
@@ -1970,6 +1794,7 @@ export const createTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -2021,31 +1846,8 @@ export const createTask = /* GraphQL */ `
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
-        assignedRiders {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
+        assignees {
+          nextToken
         }
         relayPrevious {
           id
@@ -2091,12 +1893,7 @@ export const createTask = /* GraphQL */ `
           updatedAt
         }
         comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
+          nextToken
         }
         status
         statusHumanReadable
@@ -2111,6 +1908,7 @@ export const createTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -2124,32 +1922,16 @@ export const createTask = /* GraphQL */ `
         updatedAt
       }
       comments {
-        id
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
+          parentID
+          body
+          publiclyVisible
+          numEdits
           createdAt
           updatedAt
         }
-        publiclyVisible
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
+        nextToken
       }
       status
       statusHumanReadable
@@ -2181,16 +1963,10 @@ export const updateTask = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -2198,6 +1974,7 @@ export const updateTask = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -2276,6 +2053,7 @@ export const updateTask = /* GraphQL */ `
         protected
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -2324,6 +2102,7 @@ export const updateTask = /* GraphQL */ `
         protected
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -2350,6 +2129,7 @@ export const updateTask = /* GraphQL */ `
         numBoxes
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -2361,99 +2141,15 @@ export const updateTask = /* GraphQL */ `
       }
       assignedRidersDisplayString
       assignedCoordinatorsDisplayString
-      assignedRiders {
-        id
-        username
-        contact {
+      assignees {
+        items {
           id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          taskID
+          role
           createdAt
           updatedAt
         }
-        displayName
-        name
-        dateOfBirth
-        assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      assignedCoordinators {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        dateOfBirth
-        assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       relayPrevious {
         id
@@ -2464,6 +2160,7 @@ export const updateTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -2515,31 +2212,8 @@ export const updateTask = /* GraphQL */ `
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
-        assignedRiders {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
+        assignees {
+          nextToken
         }
         relayPrevious {
           id
@@ -2585,12 +2259,7 @@ export const updateTask = /* GraphQL */ `
           updatedAt
         }
         comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
+          nextToken
         }
         status
         statusHumanReadable
@@ -2606,6 +2275,7 @@ export const updateTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -2657,31 +2327,8 @@ export const updateTask = /* GraphQL */ `
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
-        assignedRiders {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
+        assignees {
+          nextToken
         }
         relayPrevious {
           id
@@ -2727,12 +2374,7 @@ export const updateTask = /* GraphQL */ `
           updatedAt
         }
         comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
+          nextToken
         }
         status
         statusHumanReadable
@@ -2747,6 +2389,7 @@ export const updateTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -2760,32 +2403,16 @@ export const updateTask = /* GraphQL */ `
         updatedAt
       }
       comments {
-        id
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
+          parentID
+          body
+          publiclyVisible
+          numEdits
           createdAt
           updatedAt
         }
-        publiclyVisible
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
+        nextToken
       }
       status
       statusHumanReadable
@@ -2817,16 +2444,10 @@ export const deleteTask = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -2834,6 +2455,7 @@ export const deleteTask = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -2912,6 +2534,7 @@ export const deleteTask = /* GraphQL */ `
         protected
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -2960,6 +2583,7 @@ export const deleteTask = /* GraphQL */ `
         protected
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -2986,6 +2610,7 @@ export const deleteTask = /* GraphQL */ `
         numBoxes
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -2997,99 +2622,15 @@ export const deleteTask = /* GraphQL */ `
       }
       assignedRidersDisplayString
       assignedCoordinatorsDisplayString
-      assignedRiders {
-        id
-        username
-        contact {
+      assignees {
+        items {
           id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          taskID
+          role
           createdAt
           updatedAt
         }
-        displayName
-        name
-        dateOfBirth
-        assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      assignedCoordinators {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        dateOfBirth
-        assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
       relayPrevious {
         id
@@ -3100,6 +2641,7 @@ export const deleteTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -3151,31 +2693,8 @@ export const deleteTask = /* GraphQL */ `
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
-        assignedRiders {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
+        assignees {
+          nextToken
         }
         relayPrevious {
           id
@@ -3221,12 +2740,7 @@ export const deleteTask = /* GraphQL */ `
           updatedAt
         }
         comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
+          nextToken
         }
         status
         statusHumanReadable
@@ -3242,6 +2756,7 @@ export const deleteTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -3293,31 +2808,8 @@ export const deleteTask = /* GraphQL */ `
         }
         assignedRidersDisplayString
         assignedCoordinatorsDisplayString
-        assignedRiders {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
+        assignees {
+          nextToken
         }
         relayPrevious {
           id
@@ -3363,12 +2855,7 @@ export const deleteTask = /* GraphQL */ `
           updatedAt
         }
         comments {
-          id
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
+          nextToken
         }
         status
         statusHumanReadable
@@ -3383,6 +2870,7 @@ export const deleteTask = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -3396,22 +2884,64 @@ export const deleteTask = /* GraphQL */ `
         updatedAt
       }
       comments {
-        id
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
+          parentID
+          body
+          publiclyVisible
+          numEdits
           createdAt
           updatedAt
         }
-        publiclyVisible
+        nextToken
+      }
+      status
+      statusHumanReadable
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createAssignment = /* GraphQL */ `
+  mutation CreateAssignment(
+    $input: CreateAssignmentInput!
+    $condition: ModelAssignmentConditionInput
+  ) {
+    createAssignment(input: $input, condition: $condition) {
+      id
+      taskID
+      assignee {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        assignedVehicles {
+          nextToken
+        }
+        patch
+        status
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          numEdits
+          createdAt
+          updatedAt
+        }
         loggedActions {
           id
           ipAddress
@@ -3419,12 +2949,122 @@ export const deleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        numEdits
         createdAt
         updatedAt
       }
-      status
-      statusHumanReadable
+      role
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateAssignment = /* GraphQL */ `
+  mutation UpdateAssignment(
+    $input: UpdateAssignmentInput!
+    $condition: ModelAssignmentConditionInput
+  ) {
+    updateAssignment(input: $input, condition: $condition) {
+      id
+      taskID
+      assignee {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        assignedVehicles {
+          nextToken
+        }
+        patch
+        status
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          numEdits
+          createdAt
+          updatedAt
+        }
+        loggedActions {
+          id
+          ipAddress
+          dataFields
+          createdAt
+          updatedAt
+        }
+        createdAt
+        updatedAt
+      }
+      role
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteAssignment = /* GraphQL */ `
+  mutation DeleteAssignment(
+    $input: DeleteAssignmentInput!
+    $condition: ModelAssignmentConditionInput
+  ) {
+    deleteAssignment(input: $input, condition: $condition) {
+      id
+      taskID
+      assignee {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        assignedVehicles {
+          nextToken
+        }
+        patch
+        status
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          numEdits
+          createdAt
+          updatedAt
+        }
+        loggedActions {
+          id
+          ipAddress
+          dataFields
+          createdAt
+          updatedAt
+        }
+        createdAt
+        updatedAt
+      }
+      role
       createdAt
       updatedAt
     }
@@ -3437,6 +3077,7 @@ export const createComment = /* GraphQL */ `
   ) {
     createComment(input: $input, condition: $condition) {
       id
+      parentID
       body
       author {
         id
@@ -3452,16 +3093,10 @@ export const createComment = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -3469,6 +3104,7 @@ export const createComment = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -3486,7 +3122,7 @@ export const createComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
-      loggedActions {
+      loggedAction {
         id
         ipAddress
         callingUser {
@@ -3494,6 +3130,7 @@ export const createComment = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -3519,6 +3156,7 @@ export const updateComment = /* GraphQL */ `
   ) {
     updateComment(input: $input, condition: $condition) {
       id
+      parentID
       body
       author {
         id
@@ -3534,16 +3172,10 @@ export const updateComment = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -3551,6 +3183,7 @@ export const updateComment = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -3568,7 +3201,7 @@ export const updateComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
-      loggedActions {
+      loggedAction {
         id
         ipAddress
         callingUser {
@@ -3576,6 +3209,7 @@ export const updateComment = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status
@@ -3601,6 +3235,7 @@ export const deleteComment = /* GraphQL */ `
   ) {
     deleteComment(input: $input, condition: $condition) {
       id
+      parentID
       body
       author {
         id
@@ -3616,16 +3251,10 @@ export const deleteComment = /* GraphQL */ `
         }
         displayName
         name
+        roles
         dateOfBirth
         assignedVehicles {
-          id
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          createdAt
-          updatedAt
+          nextToken
         }
         patch
         status
@@ -3633,6 +3262,7 @@ export const deleteComment = /* GraphQL */ `
         profilePictureThumbnailURL
         comments {
           id
+          parentID
           body
           publiclyVisible
           numEdits
@@ -3650,7 +3280,7 @@ export const deleteComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
-      loggedActions {
+      loggedAction {
         id
         ipAddress
         callingUser {
@@ -3658,6 +3288,7 @@ export const deleteComment = /* GraphQL */ `
           username
           displayName
           name
+          roles
           dateOfBirth
           patch
           status

@@ -6,8 +6,9 @@ type User
     contact: Contact
     displayName: String!
     name: String
+    roles: [Role!]!
     dateOfBirth: AWSDateTime
-    assignedVehicles: [Vehicle]
+    assignedVehicles: [Vehicle] @connection(keyName: "byAssignedUser", fields: ["id"])
     patch: Patch
     status: String!
     profilePictureURL: String
@@ -15,6 +16,14 @@ type User
     comments: [Comment]
     loggedActions: [LogEntry]
 }
+
+enum Role
+{
+    COORDINATOR
+    RIDER
+    ADMIN
+}
+
 type Location
 @model
 {
@@ -54,14 +63,16 @@ enum Patch
 }
 type Vehicle
 @model
+@key(name: "byAssignedUser", fields: ["assignedUserID"])
 {
     id: ID!
+    assignedUserID: ID
     name: String!
     manufacturer: String
     model: String
     dateOfManufacture: AWSDateTime
     dateOfRegistration: AWSDateTime
-    assignedUser: User
+    assignedUser: User @connection(fields: ["assignedUserID"])
     comments: [Comment]
     loggedActions: [LogEntry]
 }
@@ -133,7 +144,7 @@ type Task
     id: ID!
     reference: String!
     orderInRelay: Int!
-    author: User
+    author: User @connection
     timeOfCall: AWSDateTime!
     timePickedUp: AWSDateTime
     timeDroppedOff: AWSDateTime
@@ -147,14 +158,22 @@ type Task
     deliverables: [Deliverable]
     assignedRidersDisplayString: String
     assignedCoordinatorsDisplayString: String
-    assignedRiders: [User]
-    assignedCoordinators: [User]
+    assignees: [Assignment!] @connection(keyName: "byTask", fields: ["id"])
     relayPrevious: Task
     relayNext: Task
     loggedActions: [LogEntry]
-    comments: [Comment]
+    comments: [Comment] @connection(keyName: "byParent", fields: ["id"])
     status: TaskStatus!
     statusHumanReadable: String @function(name: "PlateletTaskResolvers-${env}")
+}
+
+type Assignment
+@model
+@key(name: "byTask", fields: ["taskID"])
+{
+    taskID: ID!
+    assignee: User! @connection
+    role: Role!
 }
 
 enum TaskStatus
@@ -169,12 +188,14 @@ enum TaskStatus
 
 type Comment
 @model
+@key(name: "byParent", fields: ["parentID", "body"])
 {
     id: ID!
+    parentID: ID!
     body: String!
-    author: User!
+    author: User @connection
     publiclyVisible: Boolean
-    loggedActions: [LogEntry]
+    loggedAction: [LogEntry]
     numEdits: Int
 }
 
