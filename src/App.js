@@ -232,10 +232,12 @@ function AppContents(props) {
 const AppMain = withSnackbar(AppContents);
 
 const taskStatus = {
-    new: "rgba(252, 231, 121, 1)",
-    active: "cornflowerblue",
-    pickedUp: "orange",
-    delivered: "lightgreen",
+    NEW: "rgba(252, 231, 121, 1)",
+    ACTIVE: "cornflowerblue",
+    PICKED_UP: "orange",
+    DROPPED_OFF: "lightgreen",
+    CANCELLED: "blue",
+    REJECTED: "grey",
 };
 
 function App(props) {

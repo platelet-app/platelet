@@ -275,7 +275,7 @@ const GridColumn = (props) => {
         case "tasksPickedUp":
             taskStatusEnum = "PICKED_UP";
             break;
-        case "tasksDroppedOff":
+        case "tasksDelivered":
             taskStatusEnum = "DROPPED_OFF";
             break;
         case "tasksRejected":
@@ -365,7 +365,6 @@ const GridColumn = (props) => {
                     key={props.title + "column"}
                 >
                     {tasks.map((task) => {
-                        debugger;
                         return (
                             <Grid item className={gridColumnClasses.gridItem}>
                                 <TaskItem

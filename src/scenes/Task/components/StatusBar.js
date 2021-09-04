@@ -17,41 +17,30 @@ import clsx from "clsx";
 
 const colourBarPercent = "90%";
 
+const generateClass = (theme, status) => {
+    return {
+        padding: 2,
+        display: "flex",
+        width: "100%",
+        paddingLeft: 15,
+        paddingRight: 15,
+        italic: {
+            fontStyle: "italic",
+        },
+        background: `linear-gradient(0deg,
+        ${theme.palette.background.paper}
+        ${colourBarPercent},
+        ${theme.palette.background.paper}
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]}
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]} 100%)`,
+    };
+};
 export const dialogComponent = (props) =>
     makeStyles((theme) => {
-        let background;
-        console.log(props.status);
-        switch (props.status) {
-            case "New":
-                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.new} ${colourBarPercent}, ${theme.palette.taskStatus.new} 100%)`;
-                break;
-            case "Active":
-                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.active} ${colourBarPercent}, ${theme.palette.taskStatus.active} 100%)`;
-                break;
-            case "Picked up":
-                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} 100%)`;
-                break;
-            case "Delivered":
-                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} 100%)`;
-                break;
-            default:
-                background =
-                    theme.palette.type === "dark"
-                        ? theme.palette.background.paper
-                        : theme.palette.primary.main;
-        }
         return {
-            root: {
-                padding: 2,
-                display: "flex",
-                width: "100%",
-                paddingLeft: 15,
-                paddingRight: 15,
-                background,
-                italic: {
-                    fontStyle: "italic",
-                },
-            },
+            root: generateClass(theme, props.status),
             text: {
                 color: theme.palette.type === "dark" ? "white" : "black",
             },

@@ -16,26 +16,30 @@ import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 
 const colourBarPercent = "90%";
 
+const generateClass = (theme, status) => {
+    return {
+        background: `linear-gradient(0deg,
+        ${theme.palette.background.paper}
+        ${colourBarPercent},
+        ${theme.palette.background.paper}
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]}
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]} 100%)`,
+        cursor: "pointer",
+    };
+};
+
 const useStyles = makeStyles((theme) => ({
     cardContent: {
         paddingTop: 5,
     },
-    new: {
-        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.new} ${colourBarPercent}, ${theme.palette.taskStatus.new} 100%)`,
-        cursor: "pointer",
-    },
-    active: {
-        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.active} ${colourBarPercent}, ${theme.palette.taskStatus.active} 100%)`,
-        cursor: "pointer",
-    },
-    pickedUp: {
-        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} 100%)`,
-        cursor: "pointer",
-    },
-    delivered: {
-        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} 100%)`,
-        cursor: "pointer",
-    },
+    NEW: generateClass(theme, "NEW"),
+    ACTIVE: generateClass(theme, "ACTIVE"),
+    PICKED_UP: generateClass(theme, "PICKED_UP"),
+    DROPPED_OFF: generateClass(theme, "DROPPED_OFF"),
+    CANCELLED: generateClass(theme, "CANCELLED"),
+    REJECTED: generateClass(theme, "REJECTED"),
     itemTopBarContainer: {
         width: "100%",
         height: 30,
@@ -83,17 +87,7 @@ const TaskCard = React.memo((props) => {
         ? !!props.assignedRiders.length
         : false;
 
-    let className;
-
-    if (!hasRider) {
-        className = classes.new;
-    } else if (hasRider && !props.timePickedUp) {
-        className = classes.active;
-    } else if (hasRider && props.timePickedUp && !props.timeDroppedOff) {
-        className = classes.pickedUp;
-    } else if (props.timeDroppedOff) {
-        className = classes.delivered;
-    }
+    const className = classes[props.status];
 
     const coordAvatars = props.assignedCoordinators
         ? ["coordinator", "all"].includes(roleView)
