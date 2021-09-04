@@ -1,14 +1,24 @@
-import * as queries from "./graphql/queries";
-
 const resolvers = {
-    Tasks: {
-        tasksAll: (ctx) => {},
-        tasksNew: (ctx) => {},
-        tasksActive: (ctx) => {},
-        tasksPickedUp: (ctx) => {},
-        tasksDelivered: (ctx) => {},
-        tasksCancelled: (ctx) => {},
-        tasksRejected: (ctx) => {},
+    Task: {
+        statusHumanReadable: (event) => {
+            const status = event.source ? event.source.status : undefined;
+            switch (status) {
+                case "NEW":
+                    return "New";
+                case "ACTIVE":
+                    return "Active";
+                case "PICKED_UP":
+                    return "Picked up";
+                case "DROPPED_OFF":
+                    return "Dropped off";
+                case "REJECTED":
+                    return "Rejected";
+                case "CANCELLED":
+                    return "Cancelled";
+                default:
+                    return "";
+            }
+        },
     },
 };
 

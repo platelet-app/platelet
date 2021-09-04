@@ -154,6 +154,7 @@ type Task
     loggedActions: [LogEntry]
     comments: [Comment]
     status: TaskStatus!
+    statusHumanReadable: String @function(name: "PlateletTaskResolvers-${env}")
 }
 
 enum TaskStatus

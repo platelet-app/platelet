@@ -290,7 +290,6 @@ const GridColumn = (props) => {
 
     async function getTasks() {
         try {
-            console.log("RUNNING GETASKS");
             const tasksData = await API.graphql({
                 query: queries.tasksByStatus,
                 variables: { status: taskStatusEnum },
@@ -302,7 +301,6 @@ const GridColumn = (props) => {
         }
     }
     useEffect(() => getTasks(), []);
-    console.log("woooo", tasks);
 
     const header =
         props.taskKey === "tasksNew" &&
@@ -373,6 +371,7 @@ const GridColumn = (props) => {
                                 <TaskItem
                                     animate={props.animate}
                                     {...task}
+                                    taskUUID={task.id}
                                     view={props.modalView}
                                     deleteDisabled={props.deleteDisabled}
                                 />

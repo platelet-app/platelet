@@ -1853,6 +1853,7 @@ export const onCreateTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -1870,6 +1871,7 @@ export const onCreateTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -1889,6 +1891,7 @@ export const onCreateTask = /* GraphQL */ `
           updatedAt
         }
         status
+        statusHumanReadable
         createdAt
         updatedAt
       }
@@ -1992,6 +1995,7 @@ export const onCreateTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -2009,6 +2013,7 @@ export const onCreateTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -2028,6 +2033,7 @@ export const onCreateTask = /* GraphQL */ `
           updatedAt
         }
         status
+        statusHumanReadable
         createdAt
         updatedAt
       }
@@ -2080,6 +2086,7 @@ export const onCreateTask = /* GraphQL */ `
         updatedAt
       }
       status
+      statusHumanReadable
       createdAt
       updatedAt
     }
@@ -2479,6 +2486,7 @@ export const onUpdateTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -2496,6 +2504,7 @@ export const onUpdateTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -2515,6 +2524,7 @@ export const onUpdateTask = /* GraphQL */ `
           updatedAt
         }
         status
+        statusHumanReadable
         createdAt
         updatedAt
       }
@@ -2618,6 +2628,7 @@ export const onUpdateTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -2635,6 +2646,7 @@ export const onUpdateTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -2654,6 +2666,7 @@ export const onUpdateTask = /* GraphQL */ `
           updatedAt
         }
         status
+        statusHumanReadable
         createdAt
         updatedAt
       }
@@ -2706,6 +2719,7 @@ export const onUpdateTask = /* GraphQL */ `
         updatedAt
       }
       status
+      statusHumanReadable
       createdAt
       updatedAt
     }
@@ -3105,6 +3119,7 @@ export const onDeleteTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -3122,6 +3137,7 @@ export const onDeleteTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -3141,6 +3157,7 @@ export const onDeleteTask = /* GraphQL */ `
           updatedAt
         }
         status
+        statusHumanReadable
         createdAt
         updatedAt
       }
@@ -3244,6 +3261,7 @@ export const onDeleteTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -3261,6 +3279,7 @@ export const onDeleteTask = /* GraphQL */ `
           assignedRidersDisplayString
           assignedCoordinatorsDisplayString
           status
+          statusHumanReadable
           createdAt
           updatedAt
         }
@@ -3280,6 +3299,7 @@ export const onDeleteTask = /* GraphQL */ `
           updatedAt
         }
         status
+        statusHumanReadable
         createdAt
         updatedAt
       }
@@ -3332,6 +3352,7 @@ export const onDeleteTask = /* GraphQL */ `
         updatedAt
       }
       status
+      statusHumanReadable
       createdAt
       updatedAt
     }
