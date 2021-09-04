@@ -288,13 +288,51 @@ const GridColumn = (props) => {
             taskStatusEnum = "";
     }
 
+    const MyQuery = `
+  query tasksByStatus (
+    $status: TaskStatus
+    $sortDirection: ModelSortDirection
+    $filter: ModelTaskFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    tasksByStatus(
+      status: $status
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+    items {
+      assignees {
+        items {
+          role
+          assignee {
+            id
+            displayName
+            name
+          }
+        }
+      }
+      id
+      reference
+      timeOfCall
+      status
+      statusHumanReadable
+    }
+  }
+}
+`;
+
     async function getTasks() {
         try {
             const tasksData = await API.graphql({
-                query: queries.tasksByStatus,
+                query: MyQuery,
                 variables: { status: taskStatusEnum },
             });
             const tasks = tasksData.data.tasksByStatus.items;
+            console.log("ASDFASSDF");
+            console.log(tasks);
             setTasks(tasks);
         } catch (error) {
             console.log("Request failed", error);
@@ -370,6 +408,26 @@ const GridColumn = (props) => {
                                 <TaskItem
                                     animate={props.animate}
                                     {...task}
+                                    assignedRiders={
+                                        task.assignees.items
+                                            ? task.assignees.items
+                                                  .filter(
+                                                      (i) => i.role === "RIDER"
+                                                  )
+                                                  .map((i) => i.assignee)
+                                            : []
+                                    }
+                                    assignedCoordinators={
+                                        task.assignees.items
+                                            ? task.assignees.items
+                                                  .filter(
+                                                      (i) =>
+                                                          i.role ===
+                                                          "COORDINATOR"
+                                                  )
+                                                  .map((i) => i.assignee)
+                                            : []
+                                    }
                                     taskUUID={task.id}
                                     view={props.modalView}
                                     deleteDisabled={props.deleteDisabled}

@@ -6,7 +6,7 @@ type User
     contact: Contact
     displayName: String!
     name: String
-    roles: [Role!]!
+    roles: [Role!]
     dateOfBirth: AWSDateTime
     assignedVehicles: [Vehicle] @connection(keyName: "byAssignedUser", fields: ["id"])
     patch: Patch
@@ -170,6 +170,7 @@ type Task
 type Assignment
 @model
 @key(name: "byTask", fields: ["taskID"])
+@key(name: "byTaskByRole", fields: ["taskID", "role"], queryField: "assigneesByRole")
 {
     taskID: ID!
     assignee: User! @connection
