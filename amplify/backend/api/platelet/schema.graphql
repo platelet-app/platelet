@@ -156,8 +156,8 @@ type Task
     patch: Patch
     priority: Priority
     deliverables: [Deliverable]
-    assignedRidersDisplayString: String
-    assignedCoordinatorsDisplayString: String
+    assignedRidersDisplayString: String! @function(name: "PlateletTaskResolvers-${env}")
+    assignedCoordinatorsDisplayString: String! @function(name: "PlateletTaskResolvers-${env}")
     assignees: [Assignment!] @connection(keyName: "byTask", fields: ["id"])
     relayPrevious: Task
     relayNext: Task

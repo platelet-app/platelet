@@ -1,7 +1,7 @@
 const resolvers = {
     Task: {
-        statusHumanReadable: (event) => {
-            const status = event.source ? event.source.status : undefined;
+        statusHumanReadable: (ctx) => {
+            const status = ctx.source ? ctx.source.status : undefined;
             switch (status) {
                 case "NEW":
                     return "New";
@@ -18,6 +18,23 @@ const resolvers = {
                 default:
                     return "";
             }
+        },
+        //TODO figure out how to generate assignees display strings and why event.source doesn't have assignees field
+        assignedCoordinatorsDisplayString: (ctx) => {
+            return "";
+            const assignees = ctx.source
+                ? ctx.source.assignees.items
+                : undefined;
+            if (assignees) {
+                const assignedCoordinators = assignees.filter(
+                    (u) => u.role === "COORDINATOR"
+                );
+                return assignedCoordinators.join(", ");
+            }
+            return "";
+        },
+        assignedRidersDisplayString: (ctx) => {
+            return "";
         },
     },
 };

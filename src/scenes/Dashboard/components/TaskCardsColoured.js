@@ -123,13 +123,11 @@ const TaskCard = React.memo((props) => {
                             <AvatarGroup>
                                 {coordAvatars.map((u) => (
                                     <UserAvatar
-                                        key={u.uuid}
+                                        key={u.id}
                                         size={3}
-                                        userUUID={u.uuid}
-                                        displayName={u.display_name}
-                                        avatarURL={
-                                            u.profile_picture_thumbnail_url
-                                        }
+                                        userUUID={u.id}
+                                        displayName={u.displayName}
+                                        avatarURL={u.profilePictureThumbnailURL}
                                     />
                                 ))}
                             </AvatarGroup>
@@ -140,13 +138,11 @@ const TaskCard = React.memo((props) => {
                             <AvatarGroup>
                                 {riderAvatars.map((u) => (
                                     <UserAvatar
-                                        key={u.uuid}
+                                        key={u.id}
                                         size={3}
-                                        userUUID={u.uuid}
-                                        displayName={u.display_name}
-                                        avatarURL={
-                                            u.profile_picture_thumbnail_url
-                                        }
+                                        userUUID={u.id}
+                                        displayName={u.displayName}
+                                        avatarURL={u.profilePictureThumbnailURL}
                                     />
                                 ))}
                             </AvatarGroup>

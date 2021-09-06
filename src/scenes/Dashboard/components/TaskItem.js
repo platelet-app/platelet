@@ -9,12 +9,9 @@ import { contextDots } from "../../../styles/common";
 
 const TaskItem = React.memo(function TaskItem(props) {
     const classes = contextDots();
-    console.log("AFJFJFJFJF");
-    console.log(props.assignedCoordinators);
     return (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <div style={{ cursor: "context-menu", position: "relative" }}>
-                {props.statusHumanReadable}
                 <Link
                     style={{ textDecoration: "none" }}
                     key={props.taskUUID}
@@ -22,10 +19,6 @@ const TaskItem = React.memo(function TaskItem(props) {
                         pathname: `/task/${encodeUUID(props.taskUUID)}`,
                     }}
                 >
-                    {props.assignedRiders.map((i) => i.displayName)}
-                    {props.assignedCoordinators
-                        .map((i) => i.displayName)
-                        .join(",")}
                     <TaskCard title={"Task"} {...props} />
                 </Link>
                 <div className={classes.root}>
