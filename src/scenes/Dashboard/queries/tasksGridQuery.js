@@ -30,6 +30,12 @@ export const dashboardQuery = `
       timeOfCall
       status
       statusHumanReadable
+      relayNext {
+        id
+      }
+      relayPrevious {
+        id
+      }
     }
   }
 }

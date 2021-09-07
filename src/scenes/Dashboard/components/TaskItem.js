@@ -9,6 +9,22 @@ import { contextDots } from "../../../styles/common";
 
 const TaskItem = React.memo(function TaskItem(props) {
     const classes = contextDots();
+    const assignedCoordinators = props.assignees.items
+        ? props.assignees.items
+              .filter((i) => i.role === "COORDINATOR")
+              .map((i) => i.assignee)
+        : [];
+    const assignedRiders = props.assignees.items
+        ? props.assignees.items
+              .filter((i) => i.role === "RIDER")
+              .map((i) => i.assignee)
+        : [];
+    const assignedCoordinatorsDisplayString = assignedCoordinators
+        .map((i) => i.displayName)
+        .join(", ");
+    const assignedRidersDisplayString = assignedRiders
+        .map((i) => i.displayName)
+        .join(", ");
     return (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <div style={{ cursor: "context-menu", position: "relative" }}>
@@ -19,7 +35,18 @@ const TaskItem = React.memo(function TaskItem(props) {
                         pathname: `/task/${encodeUUID(props.taskUUID)}`,
                     }}
                 >
-                    <TaskCard title={"Task"} {...props} />
+                    <TaskCard
+                        title={"Task"}
+                        {...props}
+                        assignedRiders={assignedRiders}
+                        assignedCoordinators={assignedCoordinators}
+                        assignedRidersDisplayString={
+                            assignedRidersDisplayString
+                        }
+                        assignedCoordinatorsDisplayString={
+                            assignedCoordinatorsDisplayString
+                        }
+                    />
                 </Link>
                 <div className={classes.root}>
                     <TaskContextMenu
