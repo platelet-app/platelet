@@ -18,7 +18,7 @@
       "function": {
         "PlateletTaskResolvers": {
           "deploymentBucketName": "amplify-platelet-dev-165046-deployment",
-          "s3Key": "amplify-builds/PlateletTaskResolvers-56734a657744425a7871-build.zip"
+          "s3Key": "amplify-builds/PlateletTaskResolvers-3245504973786735457a-build.zip"
         }
       }
     }

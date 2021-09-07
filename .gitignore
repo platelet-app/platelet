@@ -13,6 +13,7 @@
 /build
 
 .env
+.graphqlrc
 
 # misc
 .DS_Store
