@@ -1,19 +1,20 @@
 type User @model {
   id: ID!
   username: String!
-  contact: [Address]
+  contact: [AddressAndContactDetails]
   displayName: String!
   name: String
   roles: [Role]
   dateOfBirth: AWSDateTime
   vehicles: [Vehicle] @connection(keyName: "byAssignedUser", fields: ["id"])
   patch: [Patch]
-  status: String!
   profilePictureURL: String
   profilePictureThumbnailURL: String
   comments: [Comment]
   group: Group @connection(name: "GroupMembers")
   tasks: [UserTasks] @connection(name: "UserTasks")
+  tasksCoordinator: [CoordinatorTasks] @connection(name: "CoordinatorTasks")
+  active: Int!
 }
 
 type Group @model {
@@ -34,7 +35,15 @@ type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   comments: [Comment]
 }
 
-type Address @model {
+type Location @model {
+  id: ID!
+  name: String
+  address: AddressAndContactDetails @connection
+  listed: Int
+  comments: [Comment]
+}
+
+type AddressAndContactDetails @model {
   id: ID!
   name: String
   telephoneNumber: [String]
@@ -49,18 +58,13 @@ type Address @model {
   state: String
   country: String
   postcode: String
-  zipcode: String
   what3words: String
-  listed: Boolean
-  protected: Boolean
-  comments: [Comment]
 }
 type Deliverable @model {
   id: ID!
-  type: DeliverableType
+  type: DeliverableType!
   count: Int!
   unit: DeliverableUnit
-  numBoxes: Int
   comments: [Comment]
 }
 
@@ -68,6 +72,11 @@ type UserTasks @model(queries: null) {
   id: ID!
   user: User @connection(name: "UserTasks")
   task: Task @connection(name: "TaskUsers")
+}
+type CoordinatorTasks @model(queries: null) {
+  id: ID!
+  coordinator: User @connection(name: "CoordinatorTasks")
+  task: Task @connection(name: "TaskCoordinators")
 }
 
 type Task
@@ -86,16 +95,17 @@ type Task
   timeDroppedOff: AWSDateTime
   timeCancelled: AWSDateTime
   timeRejected: AWSDateTime
-  requesterContact: Address
-  pickupLocation: Address @connection
-  dropoffLocation: Address @connection
+  requesterContact: AddressAndContactDetails
+  pickupLocation: AddressAndContactDetails @connection
+  dropoffLocation: AddressAndContactDetails @connection
   patch: Patch
-  coordinators: [User] @connection
+  coordinators: [CoordinatorTasks] @connection(name: "TaskCoordinators")
   riders: [UserTasks] @connection(name: "TaskUsers")
   priority: Priority
   deliverables: [Deliverable!]
-  relayPrevious: Task
-  relayNext: Task
+  relayPrevious: Task @connection
+  relayNext: Task @connection
+  group: [Group] @connection
   comments: [Comment!] @connection(keyName: "byParent", fields: ["id"])
   status: TaskStatus!
 }
@@ -108,6 +118,12 @@ type Comment @model @key(name: "byParent", fields: ["parentID", "body"]) {
   publiclyVisible: Boolean
 }
 
+type DeliverableType @model {
+  id: ID!
+  name: String!
+}
+
+#TODO: Need to understand more of the context around statuses available, discuss with group
 enum TaskStatus {
   NEW
   ACTIVE
@@ -130,17 +146,6 @@ enum Patch {
   SOUTH
   RELIEF
   AIR_AMBULANCE
-}
-
-enum DeliverableType {
-  MILK
-  BLOOD
-  PLATELETS
-  SAMPLE
-  COVID_SAMPLE
-  DOCUMENTS
-  EQUIPMENT
-  OTHER
 }
 
 enum DeliverableUnit {

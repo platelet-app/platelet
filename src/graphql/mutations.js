@@ -24,18 +24,7 @@ export const createUser = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -58,7 +47,6 @@ export const createUser = /* GraphQL */ `
         nextToken
       }
       patch
-      status
       profilePictureURL
       profilePictureThumbnailURL
       comments {
@@ -73,9 +61,9 @@ export const createUser = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -100,6 +88,15 @@ export const createUser = /* GraphQL */ `
         }
         nextToken
       }
+      tasksCoordinator {
+        items {
+          id
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      active
       createdAt
       updatedAt
     }
@@ -128,18 +125,7 @@ export const updateUser = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -162,7 +148,6 @@ export const updateUser = /* GraphQL */ `
         nextToken
       }
       patch
-      status
       profilePictureURL
       profilePictureThumbnailURL
       comments {
@@ -177,9 +162,9 @@ export const updateUser = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -204,6 +189,15 @@ export const updateUser = /* GraphQL */ `
         }
         nextToken
       }
+      tasksCoordinator {
+        items {
+          id
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      active
       createdAt
       updatedAt
     }
@@ -232,18 +226,7 @@ export const deleteUser = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -266,7 +249,6 @@ export const deleteUser = /* GraphQL */ `
         nextToken
       }
       patch
-      status
       profilePictureURL
       profilePictureThumbnailURL
       comments {
@@ -281,9 +263,9 @@ export const deleteUser = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -308,6 +290,15 @@ export const deleteUser = /* GraphQL */ `
         }
         nextToken
       }
+      tasksCoordinator {
+        items {
+          id
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      active
       createdAt
       updatedAt
     }
@@ -330,9 +321,9 @@ export const createGroup = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -360,9 +351,9 @@ export const updateGroup = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -390,9 +381,9 @@ export const deleteGroup = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -434,10 +425,7 @@ export const createVehicle = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -449,7 +437,6 @@ export const createVehicle = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -469,6 +456,10 @@ export const createVehicle = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -484,9 +475,9 @@ export const createVehicle = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -530,10 +521,7 @@ export const updateVehicle = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -545,7 +533,6 @@ export const updateVehicle = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -565,6 +552,10 @@ export const updateVehicle = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -580,9 +571,9 @@ export const updateVehicle = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -626,10 +617,7 @@ export const deleteVehicle = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -641,7 +629,6 @@ export const deleteVehicle = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -661,6 +648,10 @@ export const deleteVehicle = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -676,9 +667,9 @@ export const deleteVehicle = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -691,12 +682,177 @@ export const deleteVehicle = /* GraphQL */ `
     }
   }
 `;
-export const createAddress = /* GraphQL */ `
-  mutation CreateAddress(
-    $input: CreateAddressInput!
-    $condition: ModelAddressConditionInput
+export const createLocation = /* GraphQL */ `
+  mutation CreateLocation(
+    $input: CreateLocationInput!
+    $condition: ModelLocationConditionInput
   ) {
-    createAddress(input: $input, condition: $condition) {
+    createLocation(input: $input, condition: $condition) {
+      id
+      name
+      address {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        createdAt
+        updatedAt
+      }
+      listed
+      comments {
+        id
+        parentID
+        body
+        author {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          createdAt
+          updatedAt
+        }
+        publiclyVisible
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateLocation = /* GraphQL */ `
+  mutation UpdateLocation(
+    $input: UpdateLocationInput!
+    $condition: ModelLocationConditionInput
+  ) {
+    updateLocation(input: $input, condition: $condition) {
+      id
+      name
+      address {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        createdAt
+        updatedAt
+      }
+      listed
+      comments {
+        id
+        parentID
+        body
+        author {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          createdAt
+          updatedAt
+        }
+        publiclyVisible
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteLocation = /* GraphQL */ `
+  mutation DeleteLocation(
+    $input: DeleteLocationInput!
+    $condition: ModelLocationConditionInput
+  ) {
+    deleteLocation(input: $input, condition: $condition) {
+      id
+      name
+      address {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        createdAt
+        updatedAt
+      }
+      listed
+      comments {
+        id
+        parentID
+        body
+        author {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          createdAt
+          updatedAt
+        }
+        publiclyVisible
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createAddressAndContactDetails = /* GraphQL */ `
+  mutation CreateAddressAndContactDetails(
+    $input: CreateAddressAndContactDetailsInput!
+    $condition: ModelAddressAndContactDetailsConditionInput
+  ) {
+    createAddressAndContactDetails(input: $input, condition: $condition) {
       id
       name
       telephoneNumber
@@ -711,43 +867,18 @@ export const createAddress = /* GraphQL */ `
       state
       country
       postcode
-      zipcode
       what3words
-      listed
-      protected
-      comments {
-        id
-        parentID
-        body
-        author {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        publiclyVisible
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
   }
 `;
-export const updateAddress = /* GraphQL */ `
-  mutation UpdateAddress(
-    $input: UpdateAddressInput!
-    $condition: ModelAddressConditionInput
+export const updateAddressAndContactDetails = /* GraphQL */ `
+  mutation UpdateAddressAndContactDetails(
+    $input: UpdateAddressAndContactDetailsInput!
+    $condition: ModelAddressAndContactDetailsConditionInput
   ) {
-    updateAddress(input: $input, condition: $condition) {
+    updateAddressAndContactDetails(input: $input, condition: $condition) {
       id
       name
       telephoneNumber
@@ -762,43 +893,18 @@ export const updateAddress = /* GraphQL */ `
       state
       country
       postcode
-      zipcode
       what3words
-      listed
-      protected
-      comments {
-        id
-        parentID
-        body
-        author {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        publiclyVisible
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
   }
 `;
-export const deleteAddress = /* GraphQL */ `
-  mutation DeleteAddress(
-    $input: DeleteAddressInput!
-    $condition: ModelAddressConditionInput
+export const deleteAddressAndContactDetails = /* GraphQL */ `
+  mutation DeleteAddressAndContactDetails(
+    $input: DeleteAddressAndContactDetailsInput!
+    $condition: ModelAddressAndContactDetailsConditionInput
   ) {
-    deleteAddress(input: $input, condition: $condition) {
+    deleteAddressAndContactDetails(input: $input, condition: $condition) {
       id
       name
       telephoneNumber
@@ -813,32 +919,7 @@ export const deleteAddress = /* GraphQL */ `
       state
       country
       postcode
-      zipcode
       what3words
-      listed
-      protected
-      comments {
-        id
-        parentID
-        body
-        author {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        publiclyVisible
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
@@ -851,10 +932,14 @@ export const createDeliverable = /* GraphQL */ `
   ) {
     createDeliverable(input: $input, condition: $condition) {
       id
-      type
+      type {
+        id
+        name
+        createdAt
+        updatedAt
+      }
       count
       unit
-      numBoxes
       comments {
         id
         parentID
@@ -867,9 +952,9 @@ export const createDeliverable = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -889,10 +974,14 @@ export const updateDeliverable = /* GraphQL */ `
   ) {
     updateDeliverable(input: $input, condition: $condition) {
       id
-      type
+      type {
+        id
+        name
+        createdAt
+        updatedAt
+      }
       count
       unit
-      numBoxes
       comments {
         id
         parentID
@@ -905,9 +994,9 @@ export const updateDeliverable = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -927,10 +1016,14 @@ export const deleteDeliverable = /* GraphQL */ `
   ) {
     deleteDeliverable(input: $input, condition: $condition) {
       id
-      type
+      type {
+        id
+        name
+        createdAt
+        updatedAt
+      }
       count
       unit
-      numBoxes
       comments {
         id
         parentID
@@ -943,9 +1036,9 @@ export const deleteDeliverable = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -983,10 +1076,7 @@ export const createUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -998,7 +1088,6 @@ export const createUserTasks = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -1018,6 +1107,10 @@ export const createUserTasks = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -1032,9 +1125,9 @@ export const createUserTasks = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -1058,10 +1151,7 @@ export const createUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1080,10 +1170,7 @@ export const createUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1102,10 +1189,7 @@ export const createUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1119,10 +1203,8 @@ export const createUserTasks = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -1153,6 +1235,9 @@ export const createUserTasks = /* GraphQL */ `
           status
           createdAt
           updatedAt
+        }
+        group {
+          nextToken
         }
         comments {
           nextToken
@@ -1191,10 +1276,7 @@ export const updateUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1206,7 +1288,6 @@ export const updateUserTasks = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -1226,6 +1307,10 @@ export const updateUserTasks = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -1240,9 +1325,9 @@ export const updateUserTasks = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -1266,10 +1351,7 @@ export const updateUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1288,10 +1370,7 @@ export const updateUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1310,10 +1389,7 @@ export const updateUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1327,10 +1403,8 @@ export const updateUserTasks = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -1361,6 +1435,9 @@ export const updateUserTasks = /* GraphQL */ `
           status
           createdAt
           updatedAt
+        }
+        group {
+          nextToken
         }
         comments {
           nextToken
@@ -1399,10 +1476,7 @@ export const deleteUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1414,7 +1488,6 @@ export const deleteUserTasks = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -1434,6 +1507,10 @@ export const deleteUserTasks = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -1448,9 +1525,9 @@ export const deleteUserTasks = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -1474,10 +1551,7 @@ export const deleteUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1496,10 +1570,7 @@ export const deleteUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1518,10 +1589,7 @@ export const deleteUserTasks = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1535,10 +1603,8 @@ export const deleteUserTasks = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -1569,6 +1635,609 @@ export const deleteUserTasks = /* GraphQL */ `
           status
           createdAt
           updatedAt
+        }
+        group {
+          nextToken
+        }
+        comments {
+          nextToken
+        }
+        status
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createCoordinatorTasks = /* GraphQL */ `
+  mutation CreateCoordinatorTasks(
+    $input: CreateCoordinatorTasksInput!
+    $condition: ModelCoordinatorTasksConditionInput
+  ) {
+    createCoordinatorTasks(input: $input, condition: $condition) {
+      id
+      coordinator {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+        }
+        patch
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
+        group {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        tasks {
+          nextToken
+        }
+        tasksCoordinator {
+          nextToken
+        }
+        active
+        createdAt
+        updatedAt
+      }
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        pickupLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        dropoffLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
+        priority
+        deliverables {
+          id
+          count
+          unit
+          createdAt
+          updatedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+        }
+        comments {
+          nextToken
+        }
+        status
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateCoordinatorTasks = /* GraphQL */ `
+  mutation UpdateCoordinatorTasks(
+    $input: UpdateCoordinatorTasksInput!
+    $condition: ModelCoordinatorTasksConditionInput
+  ) {
+    updateCoordinatorTasks(input: $input, condition: $condition) {
+      id
+      coordinator {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+        }
+        patch
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
+        group {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        tasks {
+          nextToken
+        }
+        tasksCoordinator {
+          nextToken
+        }
+        active
+        createdAt
+        updatedAt
+      }
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        pickupLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        dropoffLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
+        priority
+        deliverables {
+          id
+          count
+          unit
+          createdAt
+          updatedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+        }
+        comments {
+          nextToken
+        }
+        status
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteCoordinatorTasks = /* GraphQL */ `
+  mutation DeleteCoordinatorTasks(
+    $input: DeleteCoordinatorTasksInput!
+    $condition: ModelCoordinatorTasksConditionInput
+  ) {
+    deleteCoordinatorTasks(input: $input, condition: $condition) {
+      id
+      coordinator {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+        }
+        patch
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
+        group {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        tasks {
+          nextToken
+        }
+        tasksCoordinator {
+          nextToken
+        }
+        active
+        createdAt
+        updatedAt
+      }
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        pickupLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        dropoffLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          createdAt
+          updatedAt
+        }
+        patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
+        priority
+        deliverables {
+          id
+          count
+          unit
+          createdAt
+          updatedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
         }
         comments {
           nextToken
@@ -1608,10 +2277,7 @@ export const createTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1623,7 +2289,6 @@ export const createTask = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -1643,6 +2308,10 @@ export const createTask = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -1666,18 +2335,7 @@ export const createTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -1696,18 +2354,7 @@ export const createTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -1726,18 +2373,7 @@ export const createTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -1745,15 +2381,6 @@ export const createTask = /* GraphQL */ `
       coordinators {
         items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
           createdAt
           updatedAt
         }
@@ -1770,10 +2397,14 @@ export const createTask = /* GraphQL */ `
       priority
       deliverables {
         id
-        type
+        type {
+          id
+          name
+          createdAt
+          updatedAt
+        }
         count
         unit
-        numBoxes
         comments {
           id
           parentID
@@ -1796,9 +2427,9 @@ export const createTask = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -1822,10 +2453,7 @@ export const createTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1844,10 +2472,7 @@ export const createTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1866,10 +2491,7 @@ export const createTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1883,10 +2505,8 @@ export const createTask = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -1917,6 +2537,9 @@ export const createTask = /* GraphQL */ `
           status
           createdAt
           updatedAt
+        }
+        group {
+          nextToken
         }
         comments {
           nextToken
@@ -1936,9 +2559,9 @@ export const createTask = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -1962,10 +2585,7 @@ export const createTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -1984,10 +2604,7 @@ export const createTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2006,10 +2623,7 @@ export const createTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2023,10 +2637,8 @@ export const createTask = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -2058,12 +2670,24 @@ export const createTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        group {
+          nextToken
+        }
         comments {
           nextToken
         }
         status
         createdAt
         updatedAt
+      }
+      group {
+        items {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       comments {
         items {
@@ -2108,10 +2732,7 @@ export const updateTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2123,7 +2744,6 @@ export const updateTask = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -2143,6 +2763,10 @@ export const updateTask = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -2166,18 +2790,7 @@ export const updateTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -2196,18 +2809,7 @@ export const updateTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -2226,18 +2828,7 @@ export const updateTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -2245,15 +2836,6 @@ export const updateTask = /* GraphQL */ `
       coordinators {
         items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
           createdAt
           updatedAt
         }
@@ -2270,10 +2852,14 @@ export const updateTask = /* GraphQL */ `
       priority
       deliverables {
         id
-        type
+        type {
+          id
+          name
+          createdAt
+          updatedAt
+        }
         count
         unit
-        numBoxes
         comments {
           id
           parentID
@@ -2296,9 +2882,9 @@ export const updateTask = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -2322,10 +2908,7 @@ export const updateTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2344,10 +2927,7 @@ export const updateTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2366,10 +2946,7 @@ export const updateTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2383,10 +2960,8 @@ export const updateTask = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -2417,6 +2992,9 @@ export const updateTask = /* GraphQL */ `
           status
           createdAt
           updatedAt
+        }
+        group {
+          nextToken
         }
         comments {
           nextToken
@@ -2436,9 +3014,9 @@ export const updateTask = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -2462,10 +3040,7 @@ export const updateTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2484,10 +3059,7 @@ export const updateTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2506,10 +3078,7 @@ export const updateTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2523,10 +3092,8 @@ export const updateTask = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -2558,12 +3125,24 @@ export const updateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        group {
+          nextToken
+        }
         comments {
           nextToken
         }
         status
         createdAt
         updatedAt
+      }
+      group {
+        items {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       comments {
         items {
@@ -2608,10 +3187,7 @@ export const deleteTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2623,7 +3199,6 @@ export const deleteTask = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -2643,6 +3218,10 @@ export const deleteTask = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -2666,18 +3245,7 @@ export const deleteTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -2696,18 +3264,7 @@ export const deleteTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -2726,18 +3283,7 @@ export const deleteTask = /* GraphQL */ `
         state
         country
         postcode
-        zipcode
         what3words
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
@@ -2745,15 +3291,6 @@ export const deleteTask = /* GraphQL */ `
       coordinators {
         items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
           createdAt
           updatedAt
         }
@@ -2770,10 +3307,14 @@ export const deleteTask = /* GraphQL */ `
       priority
       deliverables {
         id
-        type
+        type {
+          id
+          name
+          createdAt
+          updatedAt
+        }
         count
         unit
-        numBoxes
         comments {
           id
           parentID
@@ -2796,9 +3337,9 @@ export const deleteTask = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -2822,10 +3363,7 @@ export const deleteTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2844,10 +3382,7 @@ export const deleteTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2866,10 +3401,7 @@ export const deleteTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2883,10 +3415,8 @@ export const deleteTask = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -2917,6 +3447,9 @@ export const deleteTask = /* GraphQL */ `
           status
           createdAt
           updatedAt
+        }
+        group {
+          nextToken
         }
         comments {
           nextToken
@@ -2936,9 +3469,9 @@ export const deleteTask = /* GraphQL */ `
           roles
           dateOfBirth
           patch
-          status
           profilePictureURL
           profilePictureThumbnailURL
+          active
           createdAt
           updatedAt
         }
@@ -2962,10 +3495,7 @@ export const deleteTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -2984,10 +3514,7 @@ export const deleteTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -3006,10 +3533,7 @@ export const deleteTask = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -3023,10 +3547,8 @@ export const deleteTask = /* GraphQL */ `
         priority
         deliverables {
           id
-          type
           count
           unit
-          numBoxes
           createdAt
           updatedAt
         }
@@ -3058,12 +3580,24 @@ export const deleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        group {
+          nextToken
+        }
         comments {
           nextToken
         }
         status
         createdAt
         updatedAt
+      }
+      group {
+        items {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       comments {
         items {
@@ -3109,10 +3643,7 @@ export const createComment = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -3124,7 +3655,6 @@ export const createComment = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -3144,6 +3674,10 @@ export const createComment = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -3180,10 +3714,7 @@ export const updateComment = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -3195,7 +3726,6 @@ export const updateComment = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -3215,6 +3745,10 @@ export const updateComment = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
@@ -3251,10 +3785,7 @@ export const deleteComment = /* GraphQL */ `
           state
           country
           postcode
-          zipcode
           what3words
-          listed
-          protected
           createdAt
           updatedAt
         }
@@ -3266,7 +3797,6 @@ export const deleteComment = /* GraphQL */ `
           nextToken
         }
         patch
-        status
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -3286,10 +3816,53 @@ export const deleteComment = /* GraphQL */ `
         tasks {
           nextToken
         }
+        tasksCoordinator {
+          nextToken
+        }
+        active
         createdAt
         updatedAt
       }
       publiclyVisible
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createDeliverableType = /* GraphQL */ `
+  mutation CreateDeliverableType(
+    $input: CreateDeliverableTypeInput!
+    $condition: ModelDeliverableTypeConditionInput
+  ) {
+    createDeliverableType(input: $input, condition: $condition) {
+      id
+      name
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateDeliverableType = /* GraphQL */ `
+  mutation UpdateDeliverableType(
+    $input: UpdateDeliverableTypeInput!
+    $condition: ModelDeliverableTypeConditionInput
+  ) {
+    updateDeliverableType(input: $input, condition: $condition) {
+      id
+      name
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteDeliverableType = /* GraphQL */ `
+  mutation DeleteDeliverableType(
+    $input: DeleteDeliverableTypeInput!
+    $condition: ModelDeliverableTypeConditionInput
+  ) {
+    deleteDeliverableType(input: $input, condition: $condition) {
+      id
+      name
       createdAt
       updatedAt
     }

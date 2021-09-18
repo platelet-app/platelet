@@ -7,6 +7,51 @@ These should be run on an empty local DB using `amplify mock` since we're forcin
 Start your GraphQL backend with `amplify mock` and navigate to the GraphQL console, usually at `http://192.168.1.57:20002/`.  Copy and paste the below code and run each mutation or query starting at the bottom and moving up to the top.  These are just examples to show what is possible and to test the schema construction before moving to the UI updates.
 
 ```bash
+
+query GetRiderTasks{
+  getUser(id:"5678"){
+    username
+    tasksCoordinator{
+      items{
+        task{
+          name
+        }
+      }
+    }
+    tasks{
+      items{
+        task{
+          name
+        }
+      }
+      
+    }
+  }
+}
+
+mutation AddUserAsCoord{
+  createCoordinatorTasks(input: {
+    coordinatorTasksTaskId:"3456",
+    coordinatorTasksCoordinatorId: "5678"
+  }) {
+    id
+  }
+}
+
+query GetTasksByCoord{
+  getUser(id: "5678"){
+    id
+    name
+    tasksCoordinator{
+      items{
+        task{
+          name
+        }
+      }
+    }
+  }
+}
+
 #Get all the tasks assigned to a user
 query GetUser{
   getUser(id:"98765"){
@@ -132,7 +177,7 @@ mutation CreateBobUser{
     id: "98765"
     username: "bob",
     displayName: "Bob Dole"
-    status: "available"
+    active: 1
   }){
     id
     username
@@ -146,7 +191,7 @@ mutation CreateTomUser{
     id: "7654"
     username: "tom",
     displayName: "Tom Sawyer"
-    status: "available"
+    active: 1
   }){
     id
     username
@@ -160,7 +205,7 @@ mutation CreateJaneUser{
     id: "5678"
     username: "jane",
     displayName: "Jane Happy"
-    status: "available"
+    active: 1
   }){
     id
     username
