@@ -1,7 +1,7 @@
 type User @model {
   id: ID!
   username: String!
-  contact: [AddressAndContactDetails]
+  contact: AddressAndContactDetails @connection
   displayName: String!
   name: String
   roles: [Role]
@@ -46,9 +46,9 @@ type Location @model {
 type AddressAndContactDetails @model {
   id: ID!
   name: String
-  telephoneNumber: [String]
-  mobileNumber: [String]
-  emailAddress: [String]
+  telephoneNumber: String
+  mobileNumber: String
+  emailAddress: String
   ward: String
   line1: String
   line2: String
