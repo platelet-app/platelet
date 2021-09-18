@@ -18,6 +18,8 @@ import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
 import { Button, Hidden } from "@material-ui/core";
 import CommentsSection from "../Comments/CommentsSection";
+import * as queries from "../../graphql/queries";
+import API from "@aws-amplify/api";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -72,9 +74,50 @@ const DialogWrapper = (props) => {
     );
 };
 
+const initialLocationState = {
+    address: null,
+    contact: { name: null, telephone_number: null },
+    protected: false,
+    listed: false,
+};
+const initialState = {
+    task: {
+        id: null,
+        reference: "",
+        etag: "",
+        author: null,
+        author_uuid: null,
+        pickupLocation: initialLocationState,
+        dropoffLocation: initialLocationState,
+        patch: null,
+        requesterContact: {
+            name: null,
+            telephoneNumber: null,
+        },
+        priority: null,
+        timeOfCall: null,
+        deliverables: null,
+        comments: null,
+        links: null,
+        timePickedUp: null,
+        timeDroppedOff: null,
+        rider: null,
+        assignedRiders: [],
+        assignedCoordinators: [],
+        timeCancelled: null,
+        timeRejected: null,
+        createdAt: null,
+        updatedAt: null,
+        orderInRelay: 0,
+        assignedRidersDisplayString: "",
+        assignedCoordinatorsDisplayString: "",
+    },
+    error: null,
+};
+
 function TaskDialogCompact(props) {
     const dispatch = useDispatch();
-    const task = useSelector((state) => state.task.task);
+    //const task = useSelector((state) => state.task.task);
     const [taskStatus, setTaskStatus] = useState("No status");
     const notFoundSelector = createNotFoundSelector([getTaskPrefix]);
     const notFound = useSelector((state) => notFoundSelector(state));
@@ -82,37 +125,38 @@ function TaskDialogCompact(props) {
     const classes = useStyles();
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("md"));
+    const [isFetching, setIsFetching] = useState(false);
+    const [task, setTask] = useState(initialState);
 
     let taskUUID = null;
 
     if (props.match) {
         taskUUID = decodeUUID(props.match.params.task_uuid_b62);
     } else {
-        taskUUID = task.uuid;
+        taskUUID = task.id;
     }
+    async function getTasks() {
+        setIsFetching(true);
+        try {
+            const taskData = await API.graphql({
+                query: queries.getTask,
+                variables: { id: taskUUID },
+            });
+            setIsFetching(false);
+            const task = taskData.data.getTask;
+            setTask(task);
+        } catch (error) {
+            setIsFetching(false);
+            console.log("Request failed", error);
+        }
+    }
+    useEffect(() => getTasks(), []);
 
     function componentDidMount() {
-        dispatch(getTaskRequest(taskUUID));
+        //dispatch(getTaskRequest(taskUUID));
     }
 
     useEffect(componentDidMount, [props.location.key]);
-
-    function setStatus() {
-        const result = Object.keys(determineTaskType({ task }));
-        if (result) {
-            if (result.includes("tasksNew")) {
-                setTaskStatus("New");
-            } else if (result.includes("tasksActive")) {
-                setTaskStatus("Active");
-            } else if (result.includes("tasksPickedUp")) {
-                setTaskStatus("Picked up");
-            } else if (result.includes("tasksDelivered")) {
-                setTaskStatus("Delivered");
-            }
-        }
-    }
-
-    useEffect(setStatus, [task]);
 
     const handleClose = (e) => {
         e.stopPropagation();
@@ -126,7 +170,7 @@ function TaskDialogCompact(props) {
         ) : (
             <StatusBar
                 handleClose={handleClose}
-                status={taskStatus}
+                status={task.statusHumanReadable}
                 taskUUID={taskUUID}
             />
         );
@@ -137,7 +181,7 @@ function TaskDialogCompact(props) {
                 <FormSkeleton />
             </Dialog>
         );
-    } else if (notFound) {
+    } else if (false) {
         return (
             <DialogWrapper handleClose={handleClose}>
                 {statusBar}

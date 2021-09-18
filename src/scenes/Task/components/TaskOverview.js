@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { PropTypes } from "prop-types";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -10,6 +10,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
+import * as queries from "../../../graphql/queries";
+import API from "@aws-amplify/api";
 
 const useStyles = makeStyles((theme) => ({
     dialogContent: {
@@ -50,11 +52,71 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const initialLocationState = {
+    address: null,
+    contact: { name: null, telephone_number: null },
+    protected: false,
+    listed: false,
+};
+const initialState = {
+    task: {
+        uuid: null,
+        reference: "",
+        etag: "",
+        author: null,
+        author_uuid: null,
+        pickupLocation: initialLocationState,
+        dropoffLocation: initialLocationState,
+        patch: null,
+        requesterContact: {
+            name: null,
+            telephoneNumber: null,
+        },
+        priority: null,
+        timeOfCall: null,
+        deliverables: null,
+        comments: null,
+        links: null,
+        timePickedUp: null,
+        timeDroppedOff: null,
+        rider: null,
+        assignedRiders: [],
+        assignedCoordinators: [],
+        timeCancelled: null,
+        timeRejected: null,
+        createdAt: null,
+        updatedAt: null,
+        orderInRelay: 0,
+        assignedRidersDisplayString: "",
+        assignedCoordinatorsDisplayString: "",
+    },
+    error: null,
+};
+
 function TaskOverview(props) {
-    const { task, taskUUID } = props;
+    const { taskUUID } = props;
     const classes = useStyles();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("xs"));
+    const [isFetching, setIsFetching] = useState(false);
+    const [task, setTask] = useState(initialState);
+
+    async function getTasks() {
+        setIsFetching(true);
+        try {
+            const taskData = await API.graphql({
+                query: queries.getTask,
+                variables: { id: taskUUID },
+            });
+            setIsFetching(false);
+            const task = taskData.data.task;
+            setTask(task);
+        } catch (error) {
+            setIsFetching(false);
+            console.log("Request failed", error);
+        }
+    }
+    useEffect(() => getTasks(), []);
 
     return (
         <Container className={classes.root} maxWidth={true}>
