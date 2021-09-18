@@ -9,25 +9,30 @@ export const onCreateUser = /* GraphQL */ `
       contact {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
         telephoneNumber
         mobileNumber
         emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
+        listed
+        protected
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
         createdAt
         updatedAt
       }
@@ -35,7 +40,7 @@ export const onCreateUser = /* GraphQL */ `
       name
       roles
       dateOfBirth
-      assignedVehicles {
+      vehicles {
         items {
           id
           assignedUserID
@@ -72,37 +77,25 @@ export const onCreateUser = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
         createdAt
         updatedAt
       }
-      loggedActions {
+      group {
         id
-        ipAddress
-        callingUser {
+        name
+        users {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      tasks {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
           createdAt
           updatedAt
         }
-        dataFields
-        createdAt
-        updatedAt
+        nextToken
       }
       createdAt
       updatedAt
@@ -117,25 +110,30 @@ export const onUpdateUser = /* GraphQL */ `
       contact {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
         telephoneNumber
         mobileNumber
         emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
+        listed
+        protected
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
         createdAt
         updatedAt
       }
@@ -143,7 +141,7 @@ export const onUpdateUser = /* GraphQL */ `
       name
       roles
       dateOfBirth
-      assignedVehicles {
+      vehicles {
         items {
           id
           assignedUserID
@@ -180,37 +178,25 @@ export const onUpdateUser = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
         createdAt
         updatedAt
       }
-      loggedActions {
+      group {
         id
-        ipAddress
-        callingUser {
+        name
+        users {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      tasks {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
           createdAt
           updatedAt
         }
-        dataFields
-        createdAt
-        updatedAt
+        nextToken
       }
       createdAt
       updatedAt
@@ -225,25 +211,30 @@ export const onDeleteUser = /* GraphQL */ `
       contact {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
         telephoneNumber
         mobileNumber
         emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
+        listed
+        protected
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
         createdAt
         updatedAt
       }
@@ -251,7 +242,7 @@ export const onDeleteUser = /* GraphQL */ `
       name
       roles
       dateOfBirth
-      assignedVehicles {
+      vehicles {
         items {
           id
           assignedUserID
@@ -288,509 +279,107 @@ export const onDeleteUser = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
         createdAt
         updatedAt
       }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateLocation = /* GraphQL */ `
-  subscription OnCreateLocation {
-    onCreateLocation {
-      id
-      name
-      contact {
+      group {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        createdAt
-        updatedAt
-      }
-      address {
-        id
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        zipcode
-        what3words
-        createdAt
-        updatedAt
-      }
-      listed
-      protected
-      comments {
-        id
-        parentID
-        body
-        author {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateLocation = /* GraphQL */ `
-  subscription OnUpdateLocation {
-    onUpdateLocation {
-      id
-      name
-      contact {
-        id
-        name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        createdAt
-        updatedAt
-      }
-      address {
-        id
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        zipcode
-        what3words
-        createdAt
-        updatedAt
-      }
-      listed
-      protected
-      comments {
-        id
-        parentID
-        body
-        author {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteLocation = /* GraphQL */ `
-  subscription OnDeleteLocation {
-    onDeleteLocation {
-      id
-      name
-      contact {
-        id
-        name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        createdAt
-        updatedAt
-      }
-      address {
-        id
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        zipcode
-        what3words
-        createdAt
-        updatedAt
-      }
-      listed
-      protected
-      comments {
-        id
-        parentID
-        body
-        author {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateLogEntry = /* GraphQL */ `
-  subscription OnCreateLogEntry {
-    onCreateLogEntry {
-      id
-      ipAddress
-      callingUser {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        assignedVehicles {
+        users {
           nextToken
         }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }
-      dataFields
+      tasks {
+        items {
+          id
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
   }
 `;
-export const onUpdateLogEntry = /* GraphQL */ `
-  subscription OnUpdateLogEntry {
-    onUpdateLogEntry {
+export const onCreateGroup = /* GraphQL */ `
+  subscription OnCreateGroup {
+    onCreateGroup {
       id
-      ipAddress
-      callingUser {
-        id
-        username
-        contact {
+      name
+      users {
+        items {
           id
+          username
+          displayName
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
           createdAt
           updatedAt
         }
-        displayName
-        name
-        roles
-        dateOfBirth
-        assignedVehicles {
-          nextToken
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
-      dataFields
       createdAt
       updatedAt
     }
   }
 `;
-export const onDeleteLogEntry = /* GraphQL */ `
-  subscription OnDeleteLogEntry {
-    onDeleteLogEntry {
+export const onUpdateGroup = /* GraphQL */ `
+  subscription OnUpdateGroup {
+    onUpdateGroup {
       id
-      ipAddress
-      callingUser {
-        id
-        username
-        contact {
+      name
+      users {
+        items {
           id
+          username
+          displayName
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
           createdAt
           updatedAt
         }
-        displayName
-        name
-        roles
-        dateOfBirth
-        assignedVehicles {
-          nextToken
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
+        nextToken
       }
-      dataFields
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteGroup = /* GraphQL */ `
+  subscription OnDeleteGroup {
+    onDeleteGroup {
+      id
+      name
+      users {
+        items {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -815,6 +404,19 @@ export const onCreateVehicle = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -822,7 +424,7 @@ export const onCreateVehicle = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -834,16 +436,17 @@ export const onCreateVehicle = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -867,35 +470,6 @@ export const onCreateVehicle = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
         createdAt
         updatedAt
       }
@@ -923,6 +497,19 @@ export const onUpdateVehicle = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -930,7 +517,7 @@ export const onUpdateVehicle = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -942,16 +529,17 @@ export const onUpdateVehicle = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -975,35 +563,6 @@ export const onUpdateVehicle = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
         createdAt
         updatedAt
       }
@@ -1031,6 +590,19 @@ export const onDeleteVehicle = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -1038,7 +610,7 @@ export const onDeleteVehicle = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -1050,16 +622,17 @@ export const onDeleteVehicle = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -1083,21 +656,40 @@ export const onDeleteVehicle = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
         createdAt
         updatedAt
       }
-      loggedActions {
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateAddress = /* GraphQL */ `
+  subscription OnCreateAddress {
+    onCreateAddress {
+      id
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      zipcode
+      what3words
+      listed
+      protected
+      comments {
         id
-        ipAddress
-        callingUser {
+        parentID
+        body
+        author {
           id
           username
           displayName
@@ -1111,117 +703,10 @@ export const onDeleteVehicle = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        dataFields
+        publiclyVisible
         createdAt
         updatedAt
       }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateContact = /* GraphQL */ `
-  subscription OnCreateContact {
-    onCreateContact {
-      id
-      name
-      address {
-        id
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        zipcode
-        what3words
-        createdAt
-        updatedAt
-      }
-      telephoneNumber
-      mobileNumber
-      emailAddress
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateContact = /* GraphQL */ `
-  subscription OnUpdateContact {
-    onUpdateContact {
-      id
-      name
-      address {
-        id
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        zipcode
-        what3words
-        createdAt
-        updatedAt
-      }
-      telephoneNumber
-      mobileNumber
-      emailAddress
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteContact = /* GraphQL */ `
-  subscription OnDeleteContact {
-    onDeleteContact {
-      id
-      name
-      address {
-        id
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        zipcode
-        what3words
-        createdAt
-        updatedAt
-      }
-      telephoneNumber
-      mobileNumber
-      emailAddress
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateAddress = /* GraphQL */ `
-  subscription OnCreateAddress {
-    onCreateAddress {
-      id
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      zipcode
-      what3words
       createdAt
       updatedAt
     }
@@ -1231,6 +716,10 @@ export const onUpdateAddress = /* GraphQL */ `
   subscription OnUpdateAddress {
     onUpdateAddress {
       id
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
       ward
       line1
       line2
@@ -1242,6 +731,30 @@ export const onUpdateAddress = /* GraphQL */ `
       postcode
       zipcode
       what3words
+      listed
+      protected
+      comments {
+        id
+        parentID
+        body
+        author {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        publiclyVisible
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
@@ -1251,6 +764,10 @@ export const onDeleteAddress = /* GraphQL */ `
   subscription OnDeleteAddress {
     onDeleteAddress {
       id
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
       ward
       line1
       line2
@@ -1262,6 +779,30 @@ export const onDeleteAddress = /* GraphQL */ `
       postcode
       zipcode
       what3words
+      listed
+      protected
+      comments {
+        id
+        parentID
+        body
+        author {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        publiclyVisible
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
@@ -1294,14 +835,6 @@ export const onCreateDeliverable = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
         createdAt
         updatedAt
       }
@@ -1337,14 +870,6 @@ export const onUpdateDeliverable = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
         createdAt
         updatedAt
       }
@@ -1380,14 +905,621 @@ export const onDeleteDeliverable = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateUserTasks = /* GraphQL */ `
+  subscription OnCreateUserTasks {
+    onCreateUserTasks {
+      id
+      user {
+        id
+        username
+        contact {
           id
-          ipAddress
-          dataFields
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
-        numEdits
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+        }
+        patch
+        status
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
+        group {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        tasks {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        pickupLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        dropoffLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
+        priority
+        deliverables {
+          id
+          type
+          count
+          unit
+          numBoxes
+          createdAt
+          updatedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        comments {
+          nextToken
+        }
+        status
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateUserTasks = /* GraphQL */ `
+  subscription OnUpdateUserTasks {
+    onUpdateUserTasks {
+      id
+      user {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+        }
+        patch
+        status
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
+        group {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        tasks {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        pickupLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        dropoffLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
+        priority
+        deliverables {
+          id
+          type
+          count
+          unit
+          numBoxes
+          createdAt
+          updatedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        comments {
+          nextToken
+        }
+        status
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteUserTasks = /* GraphQL */ `
+  subscription OnDeleteUserTasks {
+    onDeleteUserTasks {
+      id
+      user {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+        }
+        patch
+        status
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
+        group {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        tasks {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        pickupLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        dropoffLocation {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
+          createdAt
+          updatedAt
+        }
+        patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
+        priority
+        deliverables {
+          id
+          type
+          count
+          unit
+          numBoxes
+          createdAt
+          updatedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          patch
+          priority
+          status
+          createdAt
+          updatedAt
+        }
+        comments {
+          nextToken
+        }
+        status
         createdAt
         updatedAt
       }
@@ -1400,9 +1532,8 @@ export const onCreateTask = /* GraphQL */ `
   subscription OnCreateTask {
     onCreateTask {
       id
-      reference
-      orderInRelay
-      author {
+      name
+      createdBy {
         id
         username
         contact {
@@ -1411,6 +1542,19 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -1418,7 +1562,7 @@ export const onCreateTask = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -1430,16 +1574,17 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -1452,56 +1597,20 @@ export const onCreateTask = /* GraphQL */ `
       requesterContact {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
         telephoneNumber
         mobileNumber
         emailAddress
-        createdAt
-        updatedAt
-      }
-      pickupLocation {
-        id
-        name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
         listed
         protected
         comments {
@@ -1509,14 +1618,36 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        createdAt
+        updatedAt
+      }
+      pickupLocation {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
+        listed
+        protected
+        comments {
           id
-          ipAddress
-          dataFields
+          parentID
+          body
+          publiclyVisible
           createdAt
           updatedAt
         }
@@ -1526,31 +1657,20 @@ export const onCreateTask = /* GraphQL */ `
       dropoffLocation {
         id
         name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
         listed
         protected
         comments {
@@ -1558,14 +1678,6 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -1573,6 +1685,31 @@ export const onCreateTask = /* GraphQL */ `
         updatedAt
       }
       patch
+      coordinators {
+        items {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      riders {
+        items {
+          id
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       priority
       deliverables {
         id
@@ -1585,30 +1722,16 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
         createdAt
         updatedAt
       }
-      assignedRidersDisplayString
-      assignedCoordinatorsDisplayString
-      assignees {
-        items {
-          id
-          taskID
-          role
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
       relayPrevious {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -1633,12 +1756,39 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -1647,12 +1797,32 @@ export const onCreateTask = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -1663,15 +1833,9 @@ export const onCreateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1679,17 +1843,13 @@ export const onCreateTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1697,17 +1857,7 @@ export const onCreateTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -1715,15 +1865,13 @@ export const onCreateTask = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
         createdAt
         updatedAt
       }
       relayNext {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -1748,12 +1896,39 @@ export const onCreateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -1762,12 +1937,32 @@ export const onCreateTask = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -1778,15 +1973,9 @@ export const onCreateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1794,17 +1983,13 @@ export const onCreateTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1812,17 +1997,7 @@ export const onCreateTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -1830,28 +2005,6 @@ export const onCreateTask = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
         createdAt
         updatedAt
       }
@@ -1861,14 +2014,12 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
         nextToken
       }
       status
-      statusHumanReadable
       createdAt
       updatedAt
     }
@@ -1878,9 +2029,8 @@ export const onUpdateTask = /* GraphQL */ `
   subscription OnUpdateTask {
     onUpdateTask {
       id
-      reference
-      orderInRelay
-      author {
+      name
+      createdBy {
         id
         username
         contact {
@@ -1889,6 +2039,19 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -1896,7 +2059,7 @@ export const onUpdateTask = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -1908,16 +2071,17 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -1930,56 +2094,20 @@ export const onUpdateTask = /* GraphQL */ `
       requesterContact {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
         telephoneNumber
         mobileNumber
         emailAddress
-        createdAt
-        updatedAt
-      }
-      pickupLocation {
-        id
-        name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
         listed
         protected
         comments {
@@ -1987,14 +2115,36 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        createdAt
+        updatedAt
+      }
+      pickupLocation {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
+        listed
+        protected
+        comments {
           id
-          ipAddress
-          dataFields
+          parentID
+          body
+          publiclyVisible
           createdAt
           updatedAt
         }
@@ -2004,31 +2154,20 @@ export const onUpdateTask = /* GraphQL */ `
       dropoffLocation {
         id
         name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
         listed
         protected
         comments {
@@ -2036,14 +2175,6 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -2051,6 +2182,31 @@ export const onUpdateTask = /* GraphQL */ `
         updatedAt
       }
       patch
+      coordinators {
+        items {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      riders {
+        items {
+          id
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       priority
       deliverables {
         id
@@ -2063,30 +2219,16 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
         createdAt
         updatedAt
       }
-      assignedRidersDisplayString
-      assignedCoordinatorsDisplayString
-      assignees {
-        items {
-          id
-          taskID
-          role
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
       relayPrevious {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -2111,12 +2253,39 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -2125,12 +2294,32 @@ export const onUpdateTask = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -2141,15 +2330,9 @@ export const onUpdateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2157,17 +2340,13 @@ export const onUpdateTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2175,17 +2354,7 @@ export const onUpdateTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -2193,15 +2362,13 @@ export const onUpdateTask = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
         createdAt
         updatedAt
       }
       relayNext {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -2226,12 +2393,39 @@ export const onUpdateTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -2240,12 +2434,32 @@ export const onUpdateTask = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -2256,15 +2470,9 @@ export const onUpdateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2272,17 +2480,13 @@ export const onUpdateTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2290,17 +2494,7 @@ export const onUpdateTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -2308,28 +2502,6 @@ export const onUpdateTask = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
         createdAt
         updatedAt
       }
@@ -2339,14 +2511,12 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
         nextToken
       }
       status
-      statusHumanReadable
       createdAt
       updatedAt
     }
@@ -2356,9 +2526,8 @@ export const onDeleteTask = /* GraphQL */ `
   subscription OnDeleteTask {
     onDeleteTask {
       id
-      reference
-      orderInRelay
-      author {
+      name
+      createdBy {
         id
         username
         contact {
@@ -2367,6 +2536,19 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -2374,7 +2556,7 @@ export const onDeleteTask = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -2386,16 +2568,17 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -2408,56 +2591,20 @@ export const onDeleteTask = /* GraphQL */ `
       requesterContact {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
         telephoneNumber
         mobileNumber
         emailAddress
-        createdAt
-        updatedAt
-      }
-      pickupLocation {
-        id
-        name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
         listed
         protected
         comments {
@@ -2465,14 +2612,36 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        createdAt
+        updatedAt
+      }
+      pickupLocation {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
+        listed
+        protected
+        comments {
           id
-          ipAddress
-          dataFields
+          parentID
+          body
+          publiclyVisible
           createdAt
           updatedAt
         }
@@ -2482,31 +2651,20 @@ export const onDeleteTask = /* GraphQL */ `
       dropoffLocation {
         id
         name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
         listed
         protected
         comments {
@@ -2514,14 +2672,6 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -2529,6 +2679,31 @@ export const onDeleteTask = /* GraphQL */ `
         updatedAt
       }
       patch
+      coordinators {
+        items {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      riders {
+        items {
+          id
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       priority
       deliverables {
         id
@@ -2541,30 +2716,16 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
         createdAt
         updatedAt
       }
-      assignedRidersDisplayString
-      assignedCoordinatorsDisplayString
-      assignees {
-        items {
-          id
-          taskID
-          role
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
       relayPrevious {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -2589,12 +2750,39 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -2603,12 +2791,32 @@ export const onDeleteTask = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -2619,15 +2827,9 @@ export const onDeleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2635,17 +2837,13 @@ export const onDeleteTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2653,17 +2851,7 @@ export const onDeleteTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -2671,15 +2859,13 @@ export const onDeleteTask = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
         createdAt
         updatedAt
       }
       relayNext {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -2704,12 +2890,39 @@ export const onDeleteTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -2718,12 +2931,32 @@ export const onDeleteTask = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -2734,15 +2967,9 @@ export const onDeleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2750,17 +2977,13 @@ export const onDeleteTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2768,17 +2991,7 @@ export const onDeleteTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -2786,28 +2999,6 @@ export const onDeleteTask = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
         createdAt
         updatedAt
       }
@@ -2817,173 +3008,12 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
         nextToken
       }
       status
-      statusHumanReadable
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateAssignment = /* GraphQL */ `
-  subscription OnCreateAssignment {
-    onCreateAssignment {
-      id
-      taskID
-      assignee {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        assignedVehicles {
-          nextToken
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      role
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateAssignment = /* GraphQL */ `
-  subscription OnUpdateAssignment {
-    onUpdateAssignment {
-      id
-      taskID
-      assignee {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        assignedVehicles {
-          nextToken
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      role
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteAssignment = /* GraphQL */ `
-  subscription OnDeleteAssignment {
-    onDeleteAssignment {
-      id
-      taskID
-      assignee {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        assignedVehicles {
-          nextToken
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      role
       createdAt
       updatedAt
     }
@@ -3004,6 +3034,19 @@ export const onCreateComment = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -3011,7 +3054,7 @@ export const onCreateComment = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -3023,43 +3066,22 @@ export const onCreateComment = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
       }
       publiclyVisible
-      loggedAction {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
-      }
-      numEdits
       createdAt
       updatedAt
     }
@@ -3080,6 +3102,19 @@ export const onUpdateComment = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -3087,7 +3122,7 @@ export const onUpdateComment = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -3099,43 +3134,22 @@ export const onUpdateComment = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
       }
       publiclyVisible
-      loggedAction {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
-      }
-      numEdits
       createdAt
       updatedAt
     }
@@ -3156,6 +3170,19 @@ export const onDeleteComment = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -3163,7 +3190,7 @@ export const onDeleteComment = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -3175,145 +3202,22 @@ export const onDeleteComment = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
       }
       publiclyVisible
-      loggedAction {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
-      }
-      numEdits
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateServerSettings = /* GraphQL */ `
-  subscription OnCreateServerSettings {
-    onCreateServerSettings {
-      id
-      imageURL
-      favicon
-      version
-      hostname
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateServerSettings = /* GraphQL */ `
-  subscription OnUpdateServerSettings {
-    onUpdateServerSettings {
-      id
-      imageURL
-      favicon
-      version
-      hostname
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteServerSettings = /* GraphQL */ `
-  subscription OnDeleteServerSettings {
-    onDeleteServerSettings {
-      id
-      imageURL
-      favicon
-      version
-      hostname
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateOrganisation = /* GraphQL */ `
-  subscription OnCreateOrganisation {
-    onCreateOrganisation {
-      id
-      organisationName
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateOrganisation = /* GraphQL */ `
-  subscription OnUpdateOrganisation {
-    onUpdateOrganisation {
-      id
-      organisationName
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteOrganisation = /* GraphQL */ `
-  subscription OnDeleteOrganisation {
-    onDeleteOrganisation {
-      id
-      organisationName
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateGroup = /* GraphQL */ `
-  subscription OnCreateGroup {
-    onCreateGroup {
-      id
-      groupName
-      locale
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateGroup = /* GraphQL */ `
-  subscription OnUpdateGroup {
-    onUpdateGroup {
-      id
-      groupName
-      locale
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteGroup = /* GraphQL */ `
-  subscription OnDeleteGroup {
-    onDeleteGroup {
-      id
-      groupName
-      locale
       createdAt
       updatedAt
     }

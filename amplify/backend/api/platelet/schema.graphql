@@ -1,229 +1,158 @@
-type User
-@model
-{
-    id: ID!
-    username: String!
-    contact: Contact
-    displayName: String!
-    name: String
-    roles: [Role!]
-    dateOfBirth: AWSDateTime
-    assignedVehicles: [Vehicle!] @connection(keyName: "byAssignedUser", fields: ["id"])
-    patch: Patch
-    status: String!
-    profilePictureURL: String
-    profilePictureThumbnailURL: String
-    comments: [Comment!]
-    loggedActions: [LogEntry!]
+type User @model {
+  id: ID!
+  username: String!
+  contact: [Address]
+  displayName: String!
+  name: String
+  roles: [Role]
+  dateOfBirth: AWSDateTime
+  vehicles: [Vehicle] @connection(keyName: "byAssignedUser", fields: ["id"])
+  patch: [Patch]
+  status: String!
+  profilePictureURL: String
+  profilePictureThumbnailURL: String
+  comments: [Comment]
+  group: Group @connection(name: "GroupMembers")
+  tasks: [UserTasks] @connection(name: "UserTasks")
 }
 
-enum Role
-{
-    COORDINATOR
-    RIDER
-    ADMIN
+type Group @model {
+  id: ID!
+  name: String
+  users: [User] @connection(name: "GroupMembers")
 }
 
-type Location
-@model
-{
-    id: ID!
-    name: String
-    contact: Contact
-    address: Address @connection
-    listed: Boolean
-    protected: Boolean
-    comments: [Comment!]
-    loggedActions: [LogEntry!]
+type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
+  id: ID!
+  assignedUserID: ID
+  name: String!
+  manufacturer: String
+  model: String
+  dateOfManufacture: AWSDateTime
+  dateOfRegistration: AWSDateTime
+  assignedUser: User @connection(fields: ["assignedUserID"])
+  comments: [Comment]
 }
 
-type LogEntry
-@model
-{
-    id: ID!
-    ipAddress: String
-    callingUser: User
-    dataFields: String
+type Address @model {
+  id: ID!
+  name: String
+  telephoneNumber: [String]
+  mobileNumber: [String]
+  emailAddress: [String]
+  ward: String
+  line1: String
+  line2: String
+  line3: String
+  town: String
+  county: String
+  state: String
+  country: String
+  postcode: String
+  zipcode: String
+  what3words: String
+  listed: Boolean
+  protected: Boolean
+  comments: [Comment]
 }
-enum Priority
-{
-    HIGH
-    MEDIUM
-    LOW
-}
-
-enum Patch
-{
-    NORTH
-    WEST
-    EAST
-    SOUTH
-    RELIEF
-    AIR_AMBULANCE
-}
-type Vehicle
-@model
-@key(name: "byAssignedUser", fields: ["assignedUserID"])
-{
-    id: ID!
-    assignedUserID: ID
-    name: String!
-    manufacturer: String
-    model: String
-    dateOfManufacture: AWSDateTime
-    dateOfRegistration: AWSDateTime
-    assignedUser: User @connection(fields: ["assignedUserID"])
-    comments: [Comment!]
-    loggedActions: [LogEntry!]
-}
-type Contact
-@model
-{
-    id: ID!
-    name: String
-    address: Address @connection
-    telephoneNumber: String
-    mobileNumber: String
-    emailAddress: String
+type Deliverable @model {
+  id: ID!
+  type: DeliverableType
+  count: Int!
+  unit: DeliverableUnit
+  numBoxes: Int
+  comments: [Comment]
 }
 
-type Address
-@model
-{
-    id: ID!
-    ward: String
-    line1: String
-    line2: String
-    line3: String
-    town: String
-    county: String
-    state: String
-    country: String
-    postcode: String
-    zipcode: String
-    what3words: String
-}
-
-type Deliverable
-@model
-{
-    id: ID!
-    type: DeliverableType
-    count: Int!
-    unit: DeliverableUnit
-    numBoxes: Int
-    comments: [Comment!]
-
-}
-
-enum DeliverableType
-{
-    MILK
-    BLOOD
-    PLATELETS
-    SAMPLE
-    COVID_SAMPLE
-    DOCUMENTS
-    EQUIPMENT
-    OTHER
-}
-
-enum DeliverableUnit
-{
-    LITRE
-    MILLILITRES
-    GRAMS
-    COUNT
-    BOX
+type UserTasks @model(queries: null) {
+  id: ID!
+  user: User @connection(name: "UserTasks")
+  task: Task @connection(name: "TaskUsers")
 }
 
 type Task
-@model
-@key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
-{
-    id: ID!
-    reference: String!
-    orderInRelay: Int!
-    author: User @connection
-    timeOfCall: AWSDateTime!
-    timePickedUp: AWSDateTime
-    timeDroppedOff: AWSDateTime
-    timeCancelled: AWSDateTime
-    timeRejected: AWSDateTime
-    requesterContact: Contact
-    pickupLocation: Location
-    dropoffLocation: Location
-    patch: Patch
-    priority: Priority
-    deliverables: [Deliverable!]
-    assignedRidersDisplayString: String! @function(name: "PlateletTaskResolvers-${env}")
-    assignedCoordinatorsDisplayString: String! @function(name: "PlateletTaskResolvers-${env}")
-    assignees: [Assignment!] @connection(keyName: "byTask", fields: ["id"])
-    relayPrevious: Task
-    relayNext: Task
-    loggedActions: [LogEntry!]
-    comments: [Comment!] @connection(keyName: "byParent", fields: ["id"])
-    status: TaskStatus!
-    statusHumanReadable: String @function(name: "PlateletTaskResolvers-${env}")
+  @model
+  @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus") {
+  #   @key(
+  #     name: "byStatusbyGroup"
+  #     fields: ["status", "group"]
+  #     queryField: "tasksByStatusbyGroup"
+  #   )
+  id: ID!
+  name: String
+  createdBy: User @connection
+  timeOfCall: AWSDateTime
+  timePickedUp: AWSDateTime
+  timeDroppedOff: AWSDateTime
+  timeCancelled: AWSDateTime
+  timeRejected: AWSDateTime
+  requesterContact: Address
+  pickupLocation: Address @connection
+  dropoffLocation: Address @connection
+  patch: Patch
+  coordinators: [User] @connection
+  riders: [UserTasks] @connection(name: "TaskUsers")
+  priority: Priority
+  deliverables: [Deliverable!]
+  relayPrevious: Task
+  relayNext: Task
+  comments: [Comment!] @connection(keyName: "byParent", fields: ["id"])
+  status: TaskStatus!
 }
 
-type Assignment
-@model
-@key(name: "byTask", fields: ["taskID"])
-@key(name: "byTaskByRole", fields: ["taskID", "role"], queryField: "assigneesByRole")
-{
-    taskID: ID!
-    assignee: User! @connection
-    role: Role!
+type Comment @model @key(name: "byParent", fields: ["parentID", "body"]) {
+  id: ID!
+  parentID: ID!
+  body: String!
+  author: User @connection
+  publiclyVisible: Boolean
 }
 
-enum TaskStatus
-{
-    NEW,
-    ACTIVE,
-    PICKED_UP,
-    DROPPED_OFF,
-    CANCELLED,
-    REJECTED
+enum TaskStatus {
+  NEW
+  ACTIVE
+  PICKED_UP
+  DROPPED_OFF
+  CANCELLED
+  REJECTED
 }
 
-type Comment
-@model
-@key(name: "byParent", fields: ["parentID", "body"])
-{
-    id: ID!
-    parentID: ID!
-    body: String!
-    author: User @connection
-    publiclyVisible: Boolean
-    loggedAction: [LogEntry!]
-    numEdits: Int
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
 }
 
-enum Locale
-{
-    GB
+enum Patch {
+  NORTH
+  WEST
+  EAST
+  SOUTH
+  RELIEF
+  AIR_AMBULANCE
 }
 
-type ServerSettings
-@model
-{
-    id: ID!
-    imageURL: String
-    favicon: String
-    version: String
-    hostname: String
+enum DeliverableType {
+  MILK
+  BLOOD
+  PLATELETS
+  SAMPLE
+  COVID_SAMPLE
+  DOCUMENTS
+  EQUIPMENT
+  OTHER
 }
 
-type Organisation
-@model
-{
-    id: ID!
-    organisationName: String!
+enum DeliverableUnit {
+  LITRE
+  MILLILITRES
+  GRAMS
+  COUNT
+  BOX
 }
-type Group
-@model
-{
-    groupName: String
-    locale: Locale
+
+enum Role {
+  COORDINATOR
+  RIDER
+  ADMIN
 }

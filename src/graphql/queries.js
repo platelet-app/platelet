@@ -9,25 +9,30 @@ export const getUser = /* GraphQL */ `
       contact {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
         telephoneNumber
         mobileNumber
         emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
+        listed
+        protected
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
         createdAt
         updatedAt
       }
@@ -35,7 +40,7 @@ export const getUser = /* GraphQL */ `
       name
       roles
       dateOfBirth
-      assignedVehicles {
+      vehicles {
         items {
           id
           assignedUserID
@@ -72,37 +77,25 @@ export const getUser = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
         createdAt
         updatedAt
       }
-      loggedActions {
+      group {
         id
-        ipAddress
-        callingUser {
+        name
+        users {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      tasks {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
           createdAt
           updatedAt
         }
-        dataFields
-        createdAt
-        updatedAt
+        nextToken
       }
       createdAt
       updatedAt
@@ -125,6 +118,19 @@ export const listUsers = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -132,7 +138,7 @@ export const listUsers = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -144,16 +150,17 @@ export const listUsers = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -162,59 +169,13 @@ export const listUsers = /* GraphQL */ `
     }
   }
 `;
-export const getLocation = /* GraphQL */ `
-  query GetLocation($id: ID!) {
-    getLocation(id: $id) {
+export const getGroup = /* GraphQL */ `
+  query GetGroup($id: ID!) {
+    getGroup(id: $id) {
       id
       name
-      contact {
-        id
-        name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        createdAt
-        updatedAt
-      }
-      address {
-        id
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        zipcode
-        what3words
-        createdAt
-        updatedAt
-      }
-      listed
-      protected
-      comments {
-        id
-        parentID
-        body
-        author {
+      users {
+        items {
           id
           username
           displayName
@@ -228,182 +189,26 @@ export const getLocation = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
+        nextToken
       }
       createdAt
       updatedAt
     }
   }
 `;
-export const listLocations = /* GraphQL */ `
-  query ListLocations(
-    $filter: ModelLocationFilterInput
+export const listGroups = /* GraphQL */ `
+  query ListGroups(
+    $filter: ModelGroupFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listLocations(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listGroups(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
-        listed
-        protected
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getLogEntry = /* GraphQL */ `
-  query GetLogEntry($id: ID!) {
-    getLogEntry(id: $id) {
-      id
-      ipAddress
-      callingUser {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        assignedVehicles {
+        users {
           nextToken
         }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      dataFields
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listLogEntries = /* GraphQL */ `
-  query ListLogEntries(
-    $filter: ModelLogEntryFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listLogEntries(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
         createdAt
         updatedAt
       }
@@ -430,6 +235,19 @@ export const getVehicle = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -437,7 +255,7 @@ export const getVehicle = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -449,16 +267,17 @@ export const getVehicle = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -482,35 +301,6 @@ export const getVehicle = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
         createdAt
         updatedAt
       }
@@ -553,82 +343,9 @@ export const listVehicles = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getContact = /* GraphQL */ `
-  query GetContact($id: ID!) {
-    getContact(id: $id) {
-      id
-      name
-      address {
-        id
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        zipcode
-        what3words
-        createdAt
-        updatedAt
-      }
-      telephoneNumber
-      mobileNumber
-      emailAddress
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listContacts = /* GraphQL */ `
-  query ListContacts(
-    $filter: ModelContactFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listContacts(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
-        telephoneNumber
-        mobileNumber
-        emailAddress
         createdAt
         updatedAt
       }
@@ -640,6 +357,10 @@ export const getAddress = /* GraphQL */ `
   query GetAddress($id: ID!) {
     getAddress(id: $id) {
       id
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
       ward
       line1
       line2
@@ -651,6 +372,30 @@ export const getAddress = /* GraphQL */ `
       postcode
       zipcode
       what3words
+      listed
+      protected
+      comments {
+        id
+        parentID
+        body
+        author {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        publiclyVisible
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
@@ -665,6 +410,10 @@ export const listAddresses = /* GraphQL */ `
     listAddresses(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
         ward
         line1
         line2
@@ -676,6 +425,16 @@ export const listAddresses = /* GraphQL */ `
         postcode
         zipcode
         what3words
+        listed
+        protected
+        comments {
+          id
+          parentID
+          body
+          publiclyVisible
+          createdAt
+          updatedAt
+        }
         createdAt
         updatedAt
       }
@@ -710,14 +469,6 @@ export const getDeliverable = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
         createdAt
         updatedAt
       }
@@ -744,7 +495,6 @@ export const listDeliverables = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
@@ -759,9 +509,8 @@ export const getTask = /* GraphQL */ `
   query GetTask($id: ID!) {
     getTask(id: $id) {
       id
-      reference
-      orderInRelay
-      author {
+      name
+      createdBy {
         id
         username
         contact {
@@ -770,6 +519,19 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -777,7 +539,7 @@ export const getTask = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -789,16 +551,17 @@ export const getTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
@@ -811,56 +574,20 @@ export const getTask = /* GraphQL */ `
       requesterContact {
         id
         name
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
         telephoneNumber
         mobileNumber
         emailAddress
-        createdAt
-        updatedAt
-      }
-      pickupLocation {
-        id
-        name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
         listed
         protected
         comments {
@@ -868,14 +595,36 @@ export const getTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        createdAt
+        updatedAt
+      }
+      pickupLocation {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
+        listed
+        protected
+        comments {
           id
-          ipAddress
-          dataFields
+          parentID
+          body
+          publiclyVisible
           createdAt
           updatedAt
         }
@@ -885,31 +634,20 @@ export const getTask = /* GraphQL */ `
       dropoffLocation {
         id
         name
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        address {
-          id
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          zipcode
-          what3words
-          createdAt
-          updatedAt
-        }
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        zipcode
+        what3words
         listed
         protected
         comments {
@@ -917,14 +655,6 @@ export const getTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -932,6 +662,31 @@ export const getTask = /* GraphQL */ `
         updatedAt
       }
       patch
+      coordinators {
+        items {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          patch
+          status
+          profilePictureURL
+          profilePictureThumbnailURL
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      riders {
+        items {
+          id
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       priority
       deliverables {
         id
@@ -944,30 +699,16 @@ export const getTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
         createdAt
         updatedAt
       }
-      assignedRidersDisplayString
-      assignedCoordinatorsDisplayString
-      assignees {
-        items {
-          id
-          taskID
-          role
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
       relayPrevious {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -992,12 +733,39 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -1006,12 +774,32 @@ export const getTask = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -1022,15 +810,9 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1038,17 +820,13 @@ export const getTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1056,17 +834,7 @@ export const getTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -1074,15 +842,13 @@ export const getTask = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
         createdAt
         updatedAt
       }
       relayNext {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -1107,12 +873,39 @@ export const getTask = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -1121,12 +914,32 @@ export const getTask = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -1137,15 +950,9 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1153,17 +960,13 @@ export const getTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1171,17 +974,7 @@ export const getTask = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -1189,28 +982,6 @@ export const getTask = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
-        createdAt
-        updatedAt
-      }
-      loggedActions {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
         createdAt
         updatedAt
       }
@@ -1220,14 +991,12 @@ export const getTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
         nextToken
       }
       status
-      statusHumanReadable
       createdAt
       updatedAt
     }
@@ -1242,9 +1011,8 @@ export const listTasks = /* GraphQL */ `
     listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -1269,12 +1037,39 @@ export const listTasks = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -1283,12 +1078,32 @@ export const listTasks = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -1299,15 +1114,9 @@ export const listTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1315,17 +1124,13 @@ export const listTasks = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1333,17 +1138,7 @@ export const listTasks = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -1351,92 +1146,6 @@ export const listTasks = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getAssignment = /* GraphQL */ `
-  query GetAssignment($id: ID!) {
-    getAssignment(id: $id) {
-      id
-      taskID
-      assignee {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        assignedVehicles {
-          nextToken
-        }
-        patch
-        status
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          numEdits
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      role
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listAssignments = /* GraphQL */ `
-  query ListAssignments(
-    $filter: ModelAssignmentFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listAssignments(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        taskID
-        assignee {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        role
         createdAt
         updatedAt
       }
@@ -1459,6 +1168,19 @@ export const getComment = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
@@ -1466,7 +1188,7 @@ export const getComment = /* GraphQL */ `
         name
         roles
         dateOfBirth
-        assignedVehicles {
+        vehicles {
           nextToken
         }
         patch
@@ -1478,43 +1200,22 @@ export const getComment = /* GraphQL */ `
           parentID
           body
           publiclyVisible
-          numEdits
           createdAt
           updatedAt
         }
-        loggedActions {
+        group {
           id
-          ipAddress
-          dataFields
+          name
           createdAt
           updatedAt
+        }
+        tasks {
+          nextToken
         }
         createdAt
         updatedAt
       }
       publiclyVisible
-      loggedAction {
-        id
-        ipAddress
-        callingUser {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        dataFields
-        createdAt
-        updatedAt
-      }
-      numEdits
       createdAt
       updatedAt
     }
@@ -1546,103 +1247,6 @@ export const listComments = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        loggedAction {
-          id
-          ipAddress
-          dataFields
-          createdAt
-          updatedAt
-        }
-        numEdits
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getServerSettings = /* GraphQL */ `
-  query GetServerSettings($id: ID!) {
-    getServerSettings(id: $id) {
-      id
-      imageURL
-      favicon
-      version
-      hostname
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listServerSettings = /* GraphQL */ `
-  query ListServerSettings(
-    $filter: ModelServerSettingsFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listServerSettings(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        imageURL
-        favicon
-        version
-        hostname
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getOrganisation = /* GraphQL */ `
-  query GetOrganisation($id: ID!) {
-    getOrganisation(id: $id) {
-      id
-      organisationName
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listOrganisations = /* GraphQL */ `
-  query ListOrganisations(
-    $filter: ModelOrganisationFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listOrganisations(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        organisationName
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getGroup = /* GraphQL */ `
-  query GetGroup($id: ID!) {
-    getGroup(id: $id) {
-      id
-      groupName
-      locale
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listGroups = /* GraphQL */ `
-  query ListGroups(
-    $filter: ModelGroupFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listGroups(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        groupName
-        locale
         createdAt
         updatedAt
       }
@@ -1667,9 +1271,8 @@ export const tasksByStatus = /* GraphQL */ `
     ) {
       items {
         id
-        reference
-        orderInRelay
-        author {
+        name
+        createdBy {
           id
           username
           displayName
@@ -1694,12 +1297,39 @@ export const tasksByStatus = /* GraphQL */ `
           telephoneNumber
           mobileNumber
           emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
+          listed
+          protected
           createdAt
           updatedAt
         }
         pickupLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
@@ -1708,12 +1338,32 @@ export const tasksByStatus = /* GraphQL */ `
         dropoffLocation {
           id
           name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          zipcode
+          what3words
           listed
           protected
           createdAt
           updatedAt
         }
         patch
+        coordinators {
+          nextToken
+        }
+        riders {
+          nextToken
+        }
         priority
         deliverables {
           id
@@ -1724,15 +1374,9 @@ export const tasksByStatus = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedRidersDisplayString
-        assignedCoordinatorsDisplayString
-        assignees {
-          nextToken
-        }
         relayPrevious {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1740,17 +1384,13 @@ export const tasksByStatus = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
           createdAt
           updatedAt
         }
         relayNext {
           id
-          reference
-          orderInRelay
+          name
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1758,17 +1398,7 @@ export const tasksByStatus = /* GraphQL */ `
           timeRejected
           patch
           priority
-          assignedRidersDisplayString
-          assignedCoordinatorsDisplayString
           status
-          statusHumanReadable
-          createdAt
-          updatedAt
-        }
-        loggedActions {
-          id
-          ipAddress
-          dataFields
           createdAt
           updatedAt
         }
@@ -1776,49 +1406,6 @@ export const tasksByStatus = /* GraphQL */ `
           nextToken
         }
         status
-        statusHumanReadable
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const assigneesByRole = /* GraphQL */ `
-  query AssigneesByRole(
-    $taskID: ID
-    $role: ModelStringKeyConditionInput
-    $sortDirection: ModelSortDirection
-    $filter: ModelAssignmentFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    assigneesByRole(
-      taskID: $taskID
-      role: $role
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        taskID
-        assignee {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          status
-          profilePictureURL
-          profilePictureThumbnailURL
-          createdAt
-          updatedAt
-        }
-        role
         createdAt
         updatedAt
       }
