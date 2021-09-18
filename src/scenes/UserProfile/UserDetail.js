@@ -47,10 +47,10 @@ export default function UserDetail(props) {
         try {
             const userData = await API.graphql({
                 query: getUserQuery,
-                variables: { id: props.location.key },
+                variables: { id: userUUID },
             });
             setIsFetching(false);
-            const user = userData.data.user;
+            const user = userData.data.getUser;
             setUser(user);
         } catch (error) {
             setIsFetching(false);
@@ -58,7 +58,7 @@ export default function UserDetail(props) {
         }
     }
 
-    useEffect(() => newUserProfile, [props.location.key]);
+    useEffect(() => newUserProfile(), [props.location.key]);
 
     if (isFetching) {
         return <DetailSkeleton />;
