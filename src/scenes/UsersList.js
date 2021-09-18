@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserCard from "../components/UserCard";
 import Grid from "@material-ui/core/Grid";
+import * as queries from "../graphql/queries";
+import API from "@aws-amplify/api";
 import { TextFieldControlled } from "../components/TextFields";
 import { AddCircleButton } from "../components/Buttons";
 import { addUserRequest } from "../redux/users/UsersActions";
@@ -16,8 +18,8 @@ function filterUsers(users, search) {
     } else {
         return users.filter((user) => {
             if (
-                user.display_name
-                    ? user.display_name
+                user.displayName
+                    ? user.displayName
                           .toLowerCase()
                           .includes(search.toLowerCase())
                     : false
@@ -45,13 +47,31 @@ const initialSnack = { snack: () => {} };
 export default function UsersList(props) {
     const contextClass = contextDots();
     const dispatch = useDispatch();
-    const users = useSelector((state) => state.users.users);
+    const [users, setUsers] = useState([]);
+    const [isFetching, setIsFetching] = useState(false);
     const postingSelector = createPostingSelector(["ADD_USER"]);
     const deletingSelector = createPostingSelector(["DELETE_USER"]);
     const isPosting = useSelector((state) => postingSelector(state));
     const isDeleting = useSelector((state) => deletingSelector(state));
     //useEffect(() => setFilteredUsers(users), [users]);
     const [snack, setSnack] = React.useState(initialSnack);
+
+    async function getUsers() {
+        setIsFetching(true);
+        try {
+            const usersData = await API.graphql({
+                query: queries.listUsers,
+            });
+            setIsFetching(false);
+            const users = usersData.data.listUsers.items;
+            setUsers(users);
+        } catch (error) {
+            setIsFetching(false);
+            console.log("Request failed", error);
+        }
+    }
+
+    useEffect(() => getUsers(), []);
 
     function dispatchSnack() {
         if (!isDeleting) {
@@ -93,38 +113,28 @@ export default function UsersList(props) {
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2}>
-                                {sortByCreatedTime(Object.values(users)).map(
-                                    (user) => (
-                                        <Grid key={user.uuid} item>
-                                            <div
-                                                style={{
-                                                    cursor: "context-menu",
-                                                    position: "relative",
-                                                }}
-                                            >
-                                                <UserCard
-                                                    key={user.uuid}
-                                                    displayName={
-                                                        user.display_name
-                                                    }
-                                                    userUUID={user.uuid}
-                                                    avatarURL={
-                                                        user.profile_picture_thumbnail_url
-                                                    }
-                                                />
-                                                <div
-                                                    className={
-                                                        contextClass.root
-                                                    }
-                                                >
-                                                    <UserContextMenu
-                                                        user={user}
-                                                    />
-                                                </div>
+                                {sortByCreatedTime(users).map((user) => (
+                                    <Grid key={user.id} item>
+                                        <div
+                                            style={{
+                                                cursor: "context-menu",
+                                                position: "relative",
+                                            }}
+                                        >
+                                            <UserCard
+                                                key={user.id}
+                                                displayName={user.displayName}
+                                                userUUID={user.id}
+                                                avatarURL={
+                                                    user.profilePictureThumbnailURL
+                                                }
+                                            />
+                                            <div className={contextClass.root}>
+                                                <UserContextMenu user={user} />
                                             </div>
-                                        </Grid>
-                                    )
-                                )}
+                                        </div>
+                                    </Grid>
+                                ))}
                             </Grid>
                         </Grid>
                     </Grid>
