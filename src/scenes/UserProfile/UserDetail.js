@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { decodeUUID } from "../../utilities";
 import API from "@aws-amplify/api";
+import _ from "lodash";
 
 import { useDispatch, useSelector } from "react-redux";
 import { getUserRequest } from "../../redux/users/UsersActions";
-import { getUserQuery } from "./queries/getUserQuery";
+import * as queries from "./queries";
 import UserProfile from "./components/UserProfile";
 import {
     createLoadingSelector,
@@ -46,7 +47,7 @@ export default function UserDetail(props) {
         setIsFetching(true);
         try {
             const userData = await API.graphql({
-                query: getUserQuery,
+                query: queries.getUserQuery,
                 variables: { id: userUUID },
             });
             setIsFetching(false);
@@ -57,8 +58,19 @@ export default function UserDetail(props) {
             console.log("Request failed", error);
         }
     }
-
     useEffect(() => newUserProfile(), [props.location.key]);
+
+    async function onUpdate(value) {
+        const input = _.omit(value, "contact");
+        try {
+            const result = await API.graphql({
+                query: queries.updateUser,
+                variables: { id: userUUID, input },
+            });
+        } catch (error) {
+            console.log("Update request failed", error);
+        }
+    }
 
     if (isFetching) {
         return <DetailSkeleton />;
@@ -69,7 +81,7 @@ export default function UserDetail(props) {
             <Grid container direction={"row"} spacing={4}>
                 <Grid item>
                     <PaddedPaper width={"600px"}>
-                        <UserProfile user={user} />
+                        <UserProfile user={user} onUpdate={onUpdate} />
                     </PaddedPaper>
                 </Grid>
                 <Grid item>

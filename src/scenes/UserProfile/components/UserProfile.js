@@ -1,37 +1,41 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Divider from "@material-ui/core/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
-import { updateUserRequest } from "../../../redux/users/UsersActions";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
-import { createPostingSelector } from "../../../redux/LoadingSelectors";
-import { setCommentsObjectUUID } from "../../../redux/Actions";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
 
+export const initialUserState = {
+    id: null,
+    username: "",
+    contact: { emailAddress: "", telephoneNumber: "" },
+    name: null,
+    dateOfBirth: null,
+    patch: "",
+    roles: "",
+    displayName: null,
+    profilePictureURL: "",
+    profilePictureThumbnailURL: "",
+};
+
 export default function UserProfile(props) {
-    const dispatch = useDispatch();
     const [editMode, setEditMode] = useState(false);
-    const postingSelector = createPostingSelector(["UPDATE_USER"]);
-    const isPosting = useSelector((state) => postingSelector(state));
-    const [state, setState] = useState({ ...props.user });
+    const [state, setState] = useState(initialUserState);
     const [oldState, setOldState] = useState({ ...props.user });
     const whoami = useSelector((state) => state.whoami.user);
 
-    function resetAfterPost() {
-        if (!isPosting && editMode) {
-            setEditMode(false);
-        }
+    function updateStateFromProps() {
+        setState(props.user);
+        setOldState(props.user);
     }
+    useEffect(updateStateFromProps, [props.user]);
 
-    useEffect(resetAfterPost, [isPosting]);
-
-    dispatch(setCommentsObjectUUID(props.user.id));
     let header =
         props.user.id === whoami.uuid ? (
             <h2>My Profile.</h2>
         ) : (
-            <h2>Profile for {props.user.display_name}</h2>
+            <h2>Profile for {state.displayName}</h2>
         );
 
     let editToggle = <></>;
@@ -59,9 +63,9 @@ export default function UserProfile(props) {
         <></>
     ) : (
         <SaveCancelButtons
-            disabled={isPosting}
             onSave={() => {
-                dispatch(updateUserRequest(props.user.id, state));
+                props.onUpdate(state);
+                setEditMode(false);
                 setOldState(state);
             }}
             onCancel={() => {
@@ -112,7 +116,7 @@ export default function UserProfile(props) {
                 >
                     <Grid item>
                         <TextFieldUncontrolled
-                            value={props.user.name}
+                            value={state.name}
                             InputProps={{
                                 readOnly: !editMode,
                                 disableUnderline: !editMode,
@@ -127,12 +131,11 @@ export default function UserProfile(props) {
                     {divider}
                     <Grid item>
                         <TextFieldUncontrolled
-                            value={props.user.displayName}
+                            value={state.displayName}
                             InputProps={{
                                 readOnly: !editMode,
                                 disableUnderline: !editMode,
                             }}
-                            disabled={isPosting}
                             label={"Display Name"}
                             id={"display-name"}
                             onChange={(e) => {
@@ -146,16 +149,11 @@ export default function UserProfile(props) {
                     {divider}
                     <Grid item>
                         <TextFieldUncontrolled
-                            value={
-                                props.user.contact
-                                    ? props.user.contact.email
-                                    : ""
-                            }
+                            value={state.contact.emailAddress}
                             InputProps={{
                                 readOnly: !editMode,
                                 disableUnderline: !editMode,
                             }}
-                            disabled={isPosting}
                             label={"Email Address"}
                             id={"email-address"}
                             onChange={(e) => {
@@ -163,7 +161,7 @@ export default function UserProfile(props) {
                                     ...state,
                                     contact: {
                                         ...state.contact,
-                                        email: e.target.value,
+                                        emailAddress: e.target.value,
                                     },
                                 });
                             }}
@@ -172,16 +170,11 @@ export default function UserProfile(props) {
                     {divider}
                     <Grid item>
                         <TextFieldUncontrolled
-                            value={
-                                props.user.contact
-                                    ? props.user.contact.number
-                                    : ""
-                            }
+                            value={state.contact.telephoneNumber}
                             InputProps={{
                                 readOnly: !editMode,
                                 disableUnderline: !editMode,
                             }}
-                            disabled={isPosting}
                             label={"Contact Number"}
                             id={"contact-number"}
                             onChange={(e) => {
@@ -189,7 +182,7 @@ export default function UserProfile(props) {
                                     ...state,
                                     contact: {
                                         ...state.contact,
-                                        contactNumber: e.target.value,
+                                        telephoneNumber: e.target.value,
                                     },
                                 });
                             }}
