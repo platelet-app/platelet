@@ -5,6 +5,7 @@ import Divider from "@material-ui/core/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
+import { getWhoami } from "../../../redux/Selectors";
 
 export const initialUserState = {
     id: null,
@@ -23,7 +24,7 @@ export default function UserProfile(props) {
     const [editMode, setEditMode] = useState(false);
     const [state, setState] = useState(initialUserState);
     const [oldState, setOldState] = useState({ ...props.user });
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
 
     function updateStateFromProps() {
         setState(props.user);
@@ -32,7 +33,7 @@ export default function UserProfile(props) {
     useEffect(updateStateFromProps, [props.user]);
 
     let header =
-        props.user.id === whoami.uuid ? (
+        props.user.id === whoami.id ? (
             <h2>My Profile.</h2>
         ) : (
             <h2>Profile for {state.displayName}</h2>
@@ -40,11 +41,11 @@ export default function UserProfile(props) {
 
     let editToggle = <></>;
     if (whoami.roles) {
-        if (whoami.roles.includes("admin") || whoami.uuid === props.user.id) {
+        if (whoami.roles.includes("ADMIN") || whoami.id === props.user.id) {
             editToggle = (
                 <EditModeToggleButton
                     tooltipDefault={
-                        props.user.id === whoami.uuid
+                        props.user.id === whoami.id
                             ? "Edit your profile"
                             : "Edit this user"
                     }

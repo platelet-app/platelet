@@ -1,59 +1,81 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
-import {Hidden} from "@material-ui/core";
+import { Hidden } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import MobileNavigationDrawer from "../MobileNavigationDrawer";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import List from "@material-ui/core/List";
 import MenuItem from "@material-ui/core/MenuItem";
-import {createLoadingSelector} from "../../redux/LoadingSelectors";
+import { createLoadingSelector } from "../../redux/LoadingSelectors";
+import { getWhoami } from "../../redux/Selectors";
 
 function NavMenuSearch() {
-    const serverSettings = useSelector(state => state.serverSettings);
+    const serverSettings = useSelector((state) => state.serverSettings);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
-    const isFetching = useSelector(state => loadingSelector(state));
-    const whoami = useSelector(state => state.whoami.user);
+    const isFetching = useSelector((state) => loadingSelector(state));
+    const whoami = useSelector(getWhoami);
 
     const [anchorElDashMenu, setAnchorElDashMenu] = useState(null);
 
     let adminLink = <></>;
-    let dashboardMenu = <List/>
+    let dashboardMenu = <List />;
 
     if (!isFetching) {
         if (whoami.roles) {
-            if (whoami.roles.includes("admin")) {
-                adminLink =
-                    <MenuItem onClick={() => {
-                        setAnchorElDashMenu(null);
-                    }} component={Link} to={"/admin"}>
+            if (whoami.roles.includes("ADMIN")) {
+                adminLink = (
+                    <MenuItem
+                        onClick={() => {
+                            setAnchorElDashMenu(null);
+                        }}
+                        component={Link}
+                        to={"/admin"}
+                    >
                         Admin
                     </MenuItem>
+                );
             }
         }
         dashboardMenu = (
             <List component="nav">
-                <MenuItem onClick={() => {
-                    setAnchorElDashMenu(null);
-                }} component={Link} to={"/users"}>
+                <MenuItem
+                    onClick={() => {
+                        setAnchorElDashMenu(null);
+                    }}
+                    component={Link}
+                    to={"/users"}
+                >
                     Users
                 </MenuItem>
-                <MenuItem onClick={() => {
-                    setAnchorElDashMenu(null);
-                }} component={Link} to={"/vehicles"}>
+                <MenuItem
+                    onClick={() => {
+                        setAnchorElDashMenu(null);
+                    }}
+                    component={Link}
+                    to={"/vehicles"}
+                >
                     Vehicles
                 </MenuItem>
-                <MenuItem onClick={() => {
-                    setAnchorElDashMenu(null);
-                }} component={Link} to={"/locations"}>
+                <MenuItem
+                    onClick={() => {
+                        setAnchorElDashMenu(null);
+                    }}
+                    component={Link}
+                    to={"/locations"}
+                >
                     Locations
                 </MenuItem>
-                <MenuItem onClick={() => {
-                    setAnchorElDashMenu(null);
-                }} component={Link} to={"/statistics"}>
+                <MenuItem
+                    onClick={() => {
+                        setAnchorElDashMenu(null);
+                    }}
+                    component={Link}
+                    to={"/statistics"}
+                >
                     Statistics
                 </MenuItem>
                 {adminLink}
@@ -61,7 +83,13 @@ function NavMenuSearch() {
         );
     }
     return (
-        <Grid container direction={"row"} spacing={3} justify={"flex-start"} alignItems={"center"}>
+        <Grid
+            container
+            direction={"row"}
+            spacing={3}
+            justify={"flex-start"}
+            alignItems={"center"}
+        >
             <Hidden smDown>
                 <Grid item>
                     <Typography variant="h6">
@@ -71,12 +99,24 @@ function NavMenuSearch() {
             </Hidden>
             <Grid item>
                 <Hidden smDown>
-                    <Grid container direction={"row"} spacing={0} justify={"flex-start"}
-                          alignItems={"center"}>
+                    <Grid
+                        container
+                        direction={"row"}
+                        spacing={0}
+                        justify={"flex-start"}
+                        alignItems={"center"}
+                    >
                         <Grid item>
                             <Typography variant="h6">
-                                <Link to={"/dashboard"}
-                                      style={{textDecoration: 'none', color: "white"}}>Dashboard</Link>
+                                <Link
+                                    to={"/dashboard"}
+                                    style={{
+                                        textDecoration: "none",
+                                        color: "white",
+                                    }}
+                                >
+                                    Dashboard
+                                </Link>
                             </Typography>
                         </Grid>
                         <Grid item>
@@ -86,8 +126,9 @@ function NavMenuSearch() {
                                 aria-haspopup="true"
                                 onClick={(event) => {
                                     setAnchorElDashMenu(event.currentTarget);
-                                }}>
-                                <ArrowDropDownIcon/>
+                                }}
+                            >
+                                <ArrowDropDownIcon />
                             </IconButton>
                             <Menu
                                 id="dasboard-menu"
@@ -104,11 +145,11 @@ function NavMenuSearch() {
                     </Grid>
                 </Hidden>
                 <Hidden mdUp>
-                    <MobileNavigationDrawer/>
+                    <MobileNavigationDrawer />
                 </Hidden>
             </Grid>
         </Grid>
-    )
+    );
 }
 
 export default NavMenuSearch;

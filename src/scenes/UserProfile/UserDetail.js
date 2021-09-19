@@ -18,6 +18,7 @@ import Button from "@material-ui/core/Button";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
+import { getWhoami } from "../../redux/Selectors";
 
 const initialUserState = {
     id: "",
@@ -36,7 +37,7 @@ const initialUserState = {
 
 export default function UserDetail(props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
     const notFoundSelector = createNotFoundSelector(["GET_USER"]);
     const notFound = useSelector((state) => notFoundSelector(state));
     const [isFetching, setIsFetching] = useState(false);
@@ -89,8 +90,8 @@ export default function UserDetail(props) {
                         userUUID={user.uuid}
                         altText={user.display_name}
                         editable={
-                            user.uuid === whoami.uuid ||
-                            whoami.roles.includes("admin")
+                            user.uuid === whoami.id ||
+                            whoami.roles.includes("ADMIN")
                         }
                     />
                 </Grid>

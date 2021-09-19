@@ -14,9 +14,10 @@ import Brightness4Icon from "@material-ui/icons/Brightness4";
 import Typography from "@material-ui/core/Typography";
 import UserAvatar from "../../components/UserAvatar";
 import { useDispatch, useSelector } from "react-redux";
+import { getWhoami } from "../../redux/Selectors";
 
 function LightToggleProfileMenu(props) {
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
     const darkMode = useSelector((state) => state.darkMode);
     const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
     const dispatch = useDispatch();
