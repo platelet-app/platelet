@@ -11,6 +11,7 @@ import UserContextMenu from "../components/ContextMenus/UserContextMenu";
 import { contextDots, PaddedPaper } from "../styles/common";
 import { createPostingSelector } from "../redux/LoadingSelectors";
 import { sortByCreatedTime } from "../utilities";
+import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -88,58 +89,70 @@ export default function UsersList(props) {
             }}
         />
     );
-    return (
-        <Grid
-            container
-            direction={"column"}
-            spacing={3}
-            alignItems={"flex-start"}
-            justify={"center"}
-        >
-            <Grid item>
-                <PaddedPaper width={"800px"}>
-                    <Grid
-                        container
-                        spacing={1}
-                        direction={"column"}
-                        justify={"center"}
-                        alignItems={"flex-start"}
-                    >
-                        <Grid item>
-                            <TextFieldControlled
-                                label={"Search users"}
-                                //onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <Grid container spacing={2}>
-                                {sortByCreatedTime(users).map((user) => (
-                                    <Grid key={user.id} item>
-                                        <div
-                                            style={{
-                                                cursor: "context-menu",
-                                                position: "relative",
-                                            }}
-                                        >
-                                            <UserCard
-                                                key={user.id}
-                                                displayName={user.displayName}
-                                                userUUID={user.id}
-                                                avatarURL={
-                                                    user.profilePictureThumbnailURL
-                                                }
-                                            />
-                                            <div className={contextClass.root}>
-                                                <UserContextMenu user={user} />
+    if (isFetching) {
+        return <CardsGridSkeleton />;
+    } else {
+        return (
+            <Grid
+                container
+                direction={"column"}
+                spacing={3}
+                alignItems={"flex-start"}
+                justify={"center"}
+            >
+                <Grid item>
+                    <PaddedPaper width={"800px"}>
+                        <Grid
+                            container
+                            spacing={1}
+                            direction={"column"}
+                            justify={"center"}
+                            alignItems={"flex-start"}
+                        >
+                            <Grid item>
+                                <TextFieldControlled
+                                    label={"Search users"}
+                                    //onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <Grid container spacing={2}>
+                                    {sortByCreatedTime(users).map((user) => (
+                                        <Grid key={user.id} item>
+                                            <div
+                                                style={{
+                                                    cursor: "context-menu",
+                                                    position: "relative",
+                                                }}
+                                            >
+                                                <UserCard
+                                                    key={user.id}
+                                                    displayName={
+                                                        user.displayName
+                                                    }
+                                                    userUUID={user.id}
+                                                    avatarURL={
+                                                        user.profilePictureThumbnailURL
+                                                    }
+                                                />
+                                                <div
+                                                    className={
+                                                        contextClass.root
+                                                    }
+                                                >
+                                                    <UserContextMenu
+                                                        user={user}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                    </Grid>
-                                ))}
+                                        </Grid>
+                                    ))}
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </PaddedPaper>
+                    </PaddedPaper>
+                </Grid>
             </Grid>
-        </Grid>
-    );
+        );
+    }
 }
