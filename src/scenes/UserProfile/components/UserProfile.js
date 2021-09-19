@@ -84,8 +84,6 @@ export default function UserProfile(props) {
             </Grid>
         </div>
     );
-    console.log(props.user);
-    console.log(state);
     return (
         <Grid
             container
