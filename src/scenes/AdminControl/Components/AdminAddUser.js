@@ -5,9 +5,8 @@ import { TextField, Grid, Button } from "@material-ui/core";
 
 const initialState = {
     username: "",
-    name: "",
     password: "",
-    attributes: { email: "" },
+    attributes: { name: "", email: "" },
 };
 
 function AdminAddUser(props) {
