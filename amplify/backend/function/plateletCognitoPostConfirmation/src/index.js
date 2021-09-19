@@ -10,18 +10,22 @@ var aws = require("aws-sdk");
 var ddb = new aws.DynamoDB();
 
 exports.handler = async (event, context) => {
-    let date = new Date();
+    const date = new Date();
+    console.log(event);
+    console.log(event.request);
 
     if (event.request.userAttributes.sub) {
-        let params = {
+        const params = {
             Item: {
                 id: { S: event.request.userAttributes.sub },
                 __typename: { S: "User" },
                 name: { S: event.request.userAttributes.name },
-                active: 1,
-                //       'email': {S: event.request.userAttributes.email},
-                // createdAt: { S: date.toISOString() },
-                // updatedAt: { S: date.toISOString() },
+                displayName: { S: event.request.userAttributes.name },
+                active: { N: "1" },
+                roles: { SS: ["COORDINATOR"] },
+                username: { S: event.userName },
+                createdAt: { S: date.toISOString() },
+                updatedAt: { S: date.toISOString() },
             },
             TableName: process.env.API_PLATELET_USERTABLE_NAME,
         };
