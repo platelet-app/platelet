@@ -12,6 +12,9 @@ import { contextDots, PaddedPaper } from "../styles/common";
 import { createPostingSelector } from "../redux/LoadingSelectors";
 import { sortByCreatedTime } from "../utilities";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
+import { Button } from "@material-ui/core";
+import { getWhoami } from "../redux/Selectors";
+import { Link } from "react-router-dom";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -43,19 +46,12 @@ function filterUsers(users, search) {
     }
 }
 
-const initialSnack = { snack: () => {} };
-
 export default function UsersList(props) {
     const contextClass = contextDots();
-    const dispatch = useDispatch();
     const [users, setUsers] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
-    const postingSelector = createPostingSelector(["ADD_USER"]);
-    const deletingSelector = createPostingSelector(["DELETE_USER"]);
-    const isPosting = useSelector((state) => postingSelector(state));
-    const isDeleting = useSelector((state) => deletingSelector(state));
+    const whoami = useSelector(getWhoami);
     //useEffect(() => setFilteredUsers(users), [users]);
-    const [snack, setSnack] = React.useState(initialSnack);
 
     async function getUsers() {
         setIsFetching(true);
@@ -74,21 +70,14 @@ export default function UsersList(props) {
 
     useEffect(() => getUsers(), []);
 
-    function dispatchSnack() {
-        if (!isDeleting) {
-            snack.snack();
-            setSnack(initialSnack);
-        }
-    }
-    useEffect(dispatchSnack, [isDeleting]);
-
-    const circleAdd = (
-        <AddCircleButton
-            onClick={() => {
-                dispatch(addUserRequest({}));
-            }}
-        />
+    const addButton = whoami.roles.includes("ADMIN") ? (
+        <Button component={Link} to={`/admin/adduser`}>
+            Add user
+        </Button>
+    ) : (
+        <></>
     );
+
     if (isFetching) {
         return <CardsGridSkeleton />;
     } else {
@@ -100,6 +89,7 @@ export default function UsersList(props) {
                 alignItems={"flex-start"}
                 justify={"center"}
             >
+                <Grid item>{addButton}</Grid>
                 <Grid item>
                     <PaddedPaper width={"800px"}>
                         <Grid
