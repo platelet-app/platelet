@@ -27,11 +27,10 @@ const initialUserState = {
     },
     displayName: "",
     name: "",
-    roles: "",
-    dateOfBirth: "",
-    patch: "",
-    profilePictureURL: "",
-    profilePictureThumbnailURL: "",
+    dateOfBirth: null,
+    patch: null,
+    profilePictureURL: null,
+    profilePictureThumbnailURL: null,
     active: 1,
 };
 
