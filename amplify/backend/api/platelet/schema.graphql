@@ -4,7 +4,7 @@ type User @model {
   contact: AddressAndContactDetails @connection
   displayName: String!
   name: String
-  roles: [Role]
+  roles: [Role!]!
   dateOfBirth: AWSDateTime
   vehicles: [Vehicle] @connection(keyName: "byAssignedUser", fields: ["id"])
   patch: [Patch]
