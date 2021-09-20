@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import { Auth } from "aws-amplify";
 import { TextField, Grid, Button } from "@material-ui/core";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models/index";
 
 const initialState = {
     username: "",
@@ -16,7 +18,16 @@ function AdminAddUser(props) {
             const { user } = await Auth.signUp({
                 ...state,
             });
-            console.log(user);
+            // DataStore.save(
+            //     new models.User({
+            //         name: state.attributes.name,
+            //         displayName: state.attributes.name,
+            //         active: 1,
+            //         username: state.username,
+            //         email: state.attributes.email,
+            //     })
+            // );
+            // console.log(user);
         } catch (error) {
             console.log("error signing up:", error);
         }

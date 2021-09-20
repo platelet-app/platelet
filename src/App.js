@@ -13,7 +13,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Moment from "react-moment";
 import Button from "@material-ui/core/Button";
-import Amplify, { Auth } from "aws-amplify";
+import Amplify, { Auth, DataStore } from "aws-amplify";
 import config from "../src/aws-exports.js";
 
 import { getServerSettingsRequest } from "./redux/ServerSettings/ServerSettingsActions";
@@ -243,6 +243,7 @@ const taskStatus = {
 function App(props) {
     const darkMode = useSelector((state) => state.darkMode);
     let theme;
+    //useEffect(() => DataStore.start(), []);
     if (darkMode) {
         theme = createMuiTheme({
             palette: {

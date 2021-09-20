@@ -3,7 +3,7 @@ import uuidBase62 from "uuid-base62";
 import { v4 as uuidv4 } from "uuid";
 
 export function sortByCreatedTime(items, order = "newest") {
-    if (!items) return [];
+    if (!items || items.length === 0) return [];
     if (order !== "newest")
         return items.sort((a, b) => {
             return (

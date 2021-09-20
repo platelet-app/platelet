@@ -3,22 +3,18 @@ import { decodeUUID } from "../../utilities";
 import API from "@aws-amplify/api";
 import _ from "lodash";
 
-import { useDispatch, useSelector } from "react-redux";
-import { getUserRequest } from "../../redux/users/UsersActions";
+import { useSelector } from "react-redux";
 import * as queries from "./queries";
 import UserProfile from "./components/UserProfile";
-import {
-    createLoadingSelector,
-    createNotFoundSelector,
-} from "../../redux/LoadingSelectors";
+import { createNotFoundSelector } from "../../redux/LoadingSelectors";
 import Grid from "@material-ui/core/Grid";
 import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
-import Button from "@material-ui/core/Button";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
-import Typography from "@material-ui/core/Typography";
 import { getWhoami } from "../../redux/Selectors";
+import { DataStore } from "@aws-amplify/datastore";
+import * as models from "../../models/index";
 
 const initialUserState = {
     id: "",
@@ -38,21 +34,17 @@ const initialUserState = {
 export default function UserDetail(props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
     const whoami = useSelector(getWhoami);
-    const notFoundSelector = createNotFoundSelector(["GET_USER"]);
-    const notFound = useSelector((state) => notFoundSelector(state));
     const [isFetching, setIsFetching] = useState(false);
     const [user, setUser] = useState(initialUserState);
+    const [notFound, setNotFound] = useState(false);
 
     async function newUserProfile() {
         setIsFetching(true);
         try {
-            const userData = await API.graphql({
-                query: queries.getUserQuery,
-                variables: { id: userUUID },
-            });
+            const user = await DataStore.query(models.User, userUUID);
             setIsFetching(false);
-            const user = userData.data.getUser;
-            setUser(user);
+            if (user) setUser(user);
+            else setNotFound(true);
         } catch (error) {
             setIsFetching(false);
             console.log("Request failed", error);
@@ -63,7 +55,7 @@ export default function UserDetail(props) {
     async function onUpdate(value) {
         const input = _.omit(value, "contact");
         try {
-            const result = await API.graphql({
+            await API.graphql({
                 query: queries.updateUser,
                 variables: { id: userUUID, input },
             });
@@ -86,11 +78,11 @@ export default function UserDetail(props) {
                 </Grid>
                 <Grid item>
                     <ProfilePicture
-                        pictureURL={user.profile_picture_url}
-                        userUUID={user.uuid}
-                        altText={user.display_name}
+                        pictureURL={user.profilePictureURL}
+                        userUUID={user.id}
+                        altText={user.displayName}
                         editable={
-                            user.uuid === whoami.id ||
+                            user.id === whoami.id ||
                             whoami.roles.includes("ADMIN")
                         }
                     />

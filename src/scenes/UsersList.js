@@ -15,6 +15,8 @@ import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
 import { Button } from "@material-ui/core";
 import { getWhoami } from "../redux/Selectors";
 import { Link } from "react-router-dom";
+import { DataStore, Hub } from "aws-amplify";
+import * as models from "../models/index";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -53,22 +55,37 @@ export default function UsersList(props) {
     const whoami = useSelector(getWhoami);
     //useEffect(() => setFilteredUsers(users), [users]);
 
+    const [dataStoreReady, setDataStoreReady] = useState(false);
+    // Create listener
+    // const listener = Hub.listen("datastore", async (hubData) => {
+    //     debugger;
+    //     const { event, data } = hubData.payload;
+    //     if (event === "ready") {
+    //         setDataStoreReady(true);
+    //         // do something here once the data is synced from the cloud
+    //     }
+    // });
+
     async function getUsers() {
         setIsFetching(true);
         try {
-            const usersData = await API.graphql({
-                query: queries.listUsers,
-            });
+            // const usersData = await API.graphql({
+            //     query: queries.listUsers,
+            // });
+            //const users = usersData.data.listUsers.items;
+            const users = await DataStore.query(models.User);
             setIsFetching(false);
-            const users = usersData.data.listUsers.items;
             setUsers(users);
+            // Remove listener
+            //listener();
         } catch (error) {
+            throw error;
             setIsFetching(false);
             console.log("Request failed", error);
         }
     }
 
-    useEffect(() => getUsers(), []);
+    useEffect(() => getUsers(), [dataStoreReady]);
 
     const addButton = whoami.roles.includes("ADMIN") ? (
         <Button component={Link} to={`/admin/adduser`}>

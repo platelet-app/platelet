@@ -36,6 +36,7 @@ import {
 } from "../sockets/SocketActions";
 import { getApiURL, getDashboardRoleMode } from "../../utilities";
 import { useSelector } from "react-redux";
+import { DataStore } from "aws-amplify";
 // function loginCheck() {
 //     if (whoami && whoami.login_expiry) {
 //         // if the login is going to expire in 3 days, log out the user
