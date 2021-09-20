@@ -50,7 +50,6 @@ export default function UserProfile(props) {
                             : "Edit this user"
                     }
                     value={editMode}
-                    //TODO: should be a proper event object?
                     onChange={(v) => {
                         setEditMode(v);
                         if (!v) setState(oldState);
