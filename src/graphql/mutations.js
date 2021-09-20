@@ -71,6 +71,18 @@ export const createUser = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -122,6 +134,18 @@ export const createUser = /* GraphQL */ `
         startedAt
       }
       active
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       _version
       _deleted
       _lastChangedAt
@@ -200,6 +224,18 @@ export const updateUser = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -251,6 +287,18 @@ export const updateUser = /* GraphQL */ `
         startedAt
       }
       active
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       _version
       _deleted
       _lastChangedAt
@@ -329,6 +377,18 @@ export const deleteUser = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -380,6 +440,18 @@ export const deleteUser = /* GraphQL */ `
         startedAt
       }
       active
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       _version
       _deleted
       _lastChangedAt
@@ -408,6 +480,18 @@ export const createGroup = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -445,6 +529,18 @@ export const updateGroup = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -482,6 +578,18 @@ export const deleteGroup = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -577,6 +685,18 @@ export const createVehicle = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -598,6 +718,18 @@ export const createVehicle = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -697,6 +829,18 @@ export const updateVehicle = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -718,6 +862,18 @@ export const updateVehicle = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -817,6 +973,18 @@ export const deleteVehicle = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -838,6 +1006,18 @@ export const deleteVehicle = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -905,6 +1085,18 @@ export const createLocation = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -972,6 +1164,18 @@ export const updateLocation = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -1039,6 +1243,18 @@ export const deleteLocation = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -1180,6 +1396,18 @@ export const createDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -1234,6 +1462,18 @@ export const updateDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -1288,6 +1528,18 @@ export const deleteDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -1381,6 +1633,18 @@ export const createUserTasks = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -1401,6 +1665,18 @@ export const createUserTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -1627,6 +1903,18 @@ export const updateUserTasks = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -1647,6 +1935,18 @@ export const updateUserTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -1873,6 +2173,18 @@ export const deleteUserTasks = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -1893,6 +2205,18 @@ export const deleteUserTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -2119,6 +2443,18 @@ export const createCoordinatorTasks = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -2139,6 +2475,18 @@ export const createCoordinatorTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -2365,6 +2713,18 @@ export const updateCoordinatorTasks = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -2385,6 +2745,18 @@ export const updateCoordinatorTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -2611,6 +2983,18 @@ export const deleteCoordinatorTasks = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -2631,6 +3015,18 @@ export const deleteCoordinatorTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -2858,6 +3254,18 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -3005,6 +3413,18 @@ export const createTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -3165,6 +3585,18 @@ export const createTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -3421,6 +3853,18 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -3568,6 +4012,18 @@ export const updateTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -3728,6 +4184,18 @@ export const updateTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -3984,6 +4452,18 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -4131,6 +4611,18 @@ export const deleteTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -4291,6 +4783,18 @@ export const deleteTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
@@ -4548,6 +5052,18 @@ export const createComment = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -4637,6 +5153,18 @@ export const updateComment = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
@@ -4726,6 +5254,18 @@ export const deleteComment = /* GraphQL */ `
           startedAt
         }
         active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt

@@ -21,6 +21,7 @@ exports.handler = async (event, context) => {
                 __typename: { S: "User" },
                 name: { S: event.request.userAttributes.name },
                 displayName: { S: event.request.userAttributes.name },
+                emailAddress: { S: event.request.userAttributes.email },
                 active: { N: "1" },
                 roles: { SS: ["COORDINATOR"] },
                 username: { S: event.userName },
