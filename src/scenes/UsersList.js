@@ -73,13 +73,13 @@ export default function UsersList(props) {
             //     query: queries.listUsers,
             // });
             //const users = usersData.data.listUsers.items;
+            debugger;
             const users = await DataStore.query(models.User);
             setIsFetching(false);
             setUsers(users);
             // Remove listener
             //listener();
         } catch (error) {
-            throw error;
             setIsFetching(false);
             console.log("Request failed", error);
         }
