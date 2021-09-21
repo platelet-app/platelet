@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Divider from "@material-ui/core/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
+import _ from "lodash";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 export const initialUserState = {
     id: null,
@@ -24,6 +26,7 @@ export default function UserProfile(props) {
     const [editMode, setEditMode] = useState(false);
     const [state, setState] = useState(initialUserState);
     const [oldState, setOldState] = useState({ ...props.user });
+    const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
 
     function updateStateFromProps() {
@@ -59,14 +62,35 @@ export default function UserProfile(props) {
         }
     }
 
+    function verifyUpdate(value) {
+        debugger;
+        const existing = props.displayNames.find(
+            (u) => u.displayName === value.displayName
+        );
+        if (existing) {
+            if (state.id !== existing.id) {
+                dispatch(
+                    displayErrorNotification("Display name is already in use.")
+                );
+                return false;
+            }
+        }
+        return true;
+    }
+
     const saveButtons = !editMode ? (
         <></>
     ) : (
         <SaveCancelButtons
             onSave={() => {
-                props.onUpdate(state);
-                setEditMode(false);
-                setOldState(state);
+                debugger;
+                if (verifyUpdate(state)) {
+                    props.onUpdate(
+                        _.omit(state, "_deleted", "_lastChangedAt", "_version")
+                    );
+                    setEditMode(false);
+                    setOldState(state);
+                }
             }}
             onCancel={() => {
                 setEditMode(false);
@@ -147,9 +171,7 @@ export default function UserProfile(props) {
                     {divider}
                     <Grid item>
                         <TextFieldUncontrolled
-                            value={
-                                state.contact ? state.contact.emailAddress : ""
-                            }
+                            value={state.emailAddress}
                             InputProps={{
                                 readOnly: !editMode,
                                 disableUnderline: !editMode,
@@ -159,10 +181,7 @@ export default function UserProfile(props) {
                             onChange={(e) => {
                                 setState({
                                     ...state,
-                                    contact: {
-                                        ...state.contact,
-                                        emailAddress: e.target.value,
-                                    },
+                                    emailAddress: e.target.value,
                                 });
                             }}
                         />
@@ -170,11 +189,7 @@ export default function UserProfile(props) {
                     {divider}
                     <Grid item>
                         <TextFieldUncontrolled
-                            value={
-                                state.contact
-                                    ? state.contact.telephoneNumber
-                                    : ""
-                            }
+                            value={state.telephoneNumber}
                             InputProps={{
                                 readOnly: !editMode,
                                 disableUnderline: !editMode,
@@ -184,10 +199,7 @@ export default function UserProfile(props) {
                             onChange={(e) => {
                                 setState({
                                     ...state,
-                                    contact: {
-                                        ...state.contact,
-                                        telephoneNumber: e.target.value,
-                                    },
+                                    telephoneNumber: e.target.value,
                                 });
                             }}
                         />

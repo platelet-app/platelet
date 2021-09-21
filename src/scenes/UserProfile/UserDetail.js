@@ -37,7 +37,9 @@ export default function UserDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [user, setUser] = useState(initialUserState);
     const [notFound, setNotFound] = useState(false);
+    const [usersDisplayNames, setUsersDisplayNames] = useState([]);
     const dispatch = useDispatch();
+    console.log(user);
 
     async function newUserProfile() {
         const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
@@ -49,18 +51,43 @@ export default function UserDetail(props) {
             else setNotFound(true);
         } catch (error) {
             setIsFetching(false);
+            dispatch(
+                displayErrorNotification(`Failed to get user: ${error.message}`)
+            );
             console.log("Request failed", error);
         }
     }
     useEffect(() => newUserProfile(), [props.location.key]);
 
-    async function onUpdate(value) {
-        const input = _.omit(value, "contact");
+    async function getDisplayNames() {
         try {
-            await API.graphql({
-                query: queries.updateUser,
-                variables: { id: userUUID, input },
-            });
+            const users = await DataStore.query(models.User);
+            const displayNames = users.map((u) => ({
+                displayName: u.displayName,
+                id: u.id,
+            }));
+            setUsersDisplayNames(displayNames);
+        } catch (error) {
+            dispatch(
+                displayErrorNotification(
+                    `Failed to get users lists: ${error.message}`
+                )
+            );
+        }
+    }
+    useEffect(() => getDisplayNames(), []);
+
+    async function onUpdate(value) {
+        debugger;
+        try {
+            await DataStore.save(
+                models.User.copyOf(user, (updated) => {
+                    // There is probably a better way of doing this?
+                    for (const [key, newValue] of Object.entries(value)) {
+                        if (key !== "id") updated[key] = newValue;
+                    }
+                })
+            );
         } catch (error) {
             console.log("Update request failed", error);
             dispatch(displayErrorNotification(error.message));
@@ -77,7 +104,11 @@ export default function UserDetail(props) {
             <Grid container direction={"row"} spacing={4}>
                 <Grid item>
                     <PaddedPaper width={"600px"}>
-                        <UserProfile user={user} onUpdate={onUpdate} />
+                        <UserProfile
+                            displayNames={usersDisplayNames}
+                            user={user}
+                            onUpdate={onUpdate}
+                        />
                     </PaddedPaper>
                 </Grid>
                 <Grid item>
