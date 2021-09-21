@@ -172,6 +172,7 @@ export default function UserProfile(props) {
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.emailAddress}
+                            email
                             InputProps={{
                                 readOnly: !editMode,
                                 disableUnderline: !editMode,
@@ -190,6 +191,7 @@ export default function UserProfile(props) {
                     <Grid item>
                         <TextFieldUncontrolled
                             value={state.telephoneNumber}
+                            tel
                             InputProps={{
                                 readOnly: !editMode,
                                 disableUnderline: !editMode,
