@@ -3,10 +3,9 @@ import { decodeUUID } from "../../utilities";
 import API from "@aws-amplify/api";
 import _ from "lodash";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as queries from "./queries";
 import UserProfile from "./components/UserProfile";
-import { createNotFoundSelector } from "../../redux/LoadingSelectors";
 import Grid from "@material-ui/core/Grid";
 import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
@@ -15,6 +14,7 @@ import NotFound from "../../ErrorComponents/NotFound";
 import { getWhoami } from "../../redux/Selectors";
 import { DataStore } from "@aws-amplify/datastore";
 import * as models from "../../models/index";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 
 const initialUserState = {
     id: "",
@@ -37,11 +37,13 @@ export default function UserDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [user, setUser] = useState(initialUserState);
     const [notFound, setNotFound] = useState(false);
+    const dispatch = useDispatch();
 
     async function newUserProfile() {
-        setIsFetching(true);
+        const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
         try {
             const user = await DataStore.query(models.User, userUUID);
+            clearTimeout(fetchingTimer);
             setIsFetching(false);
             if (user) setUser(user);
             else setNotFound(true);
@@ -61,6 +63,8 @@ export default function UserDetail(props) {
             });
         } catch (error) {
             console.log("Update request failed", error);
+            dispatch(displayErrorNotification(error.message));
+            setIsFetching(false);
         }
     }
 

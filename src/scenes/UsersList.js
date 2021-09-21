@@ -17,6 +17,7 @@ import { getWhoami } from "../redux/Selectors";
 import { Link } from "react-router-dom";
 import { DataStore, Hub } from "aws-amplify";
 import * as models from "../models/index";
+import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -53,9 +54,11 @@ export default function UsersList(props) {
     const [users, setUsers] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
+    const dispatch = useDispatch();
     //useEffect(() => setFilteredUsers(users), [users]);
 
     const [dataStoreReady, setDataStoreReady] = useState(false);
+    // TODO: See if this is necessary to wait for the datastore to be ready before getting data from it
     // Create listener
     // const listener = Hub.listen("datastore", async (hubData) => {
     //     debugger;
@@ -67,24 +70,26 @@ export default function UsersList(props) {
     // });
 
     async function getUsers() {
-        setIsFetching(true);
+        const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
         try {
             // const usersData = await API.graphql({
             //     query: queries.listUsers,
             // });
             //const users = usersData.data.listUsers.items;
-            debugger;
             const users = await DataStore.query(models.User);
+            clearTimeout(fetchingTimer);
             setIsFetching(false);
             setUsers(users);
             // Remove listener
             //listener();
         } catch (error) {
-            setIsFetching(false);
             console.log("Request failed", error);
+            dispatch(displayErrorNotification(error.message));
+            setIsFetching(false);
         }
     }
 
+    // TODO: Not sure if needed yet
     useEffect(() => getUsers(), [dataStoreReady]);
 
     const addButton = whoami.roles.includes("ADMIN") ? (
