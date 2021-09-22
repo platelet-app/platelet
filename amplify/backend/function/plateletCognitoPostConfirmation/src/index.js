@@ -27,6 +27,8 @@ exports.handler = async (event, context) => {
                 username: { S: event.userName },
                 createdAt: { S: date.toISOString() },
                 updatedAt: { S: date.toISOString() },
+                _lastChangedAt: { N: date.getTime().toString() },
+                _version: { N: "1" },
             },
             TableName: process.env.API_PLATELET_USERTABLE_NAME,
         };

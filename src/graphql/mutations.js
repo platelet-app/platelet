@@ -98,6 +98,7 @@ export const createUser = /* GraphQL */ `
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -251,6 +252,7 @@ export const updateUser = /* GraphQL */ `
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -404,6 +406,7 @@ export const deleteUser = /* GraphQL */ `
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -467,6 +470,7 @@ export const createGroup = /* GraphQL */ `
   ) {
     createGroup(input: $input, condition: $condition) {
       id
+      taskGroupId
       name
       users {
         items {
@@ -516,6 +520,7 @@ export const updateGroup = /* GraphQL */ `
   ) {
     updateGroup(input: $input, condition: $condition) {
       id
+      taskGroupId
       name
       users {
         items {
@@ -565,6 +570,7 @@ export const deleteGroup = /* GraphQL */ `
   ) {
     deleteGroup(input: $input, condition: $condition) {
       id
+      taskGroupId
       name
       users {
         items {
@@ -669,6 +675,7 @@ export const createVehicle = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -813,6 +820,7 @@ export const updateVehicle = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -957,6 +965,7 @@ export const deleteVehicle = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -1617,6 +1626,7 @@ export const createUserTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -1887,6 +1897,7 @@ export const updateUserTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2157,6 +2168,7 @@ export const deleteUserTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2427,6 +2439,7 @@ export const createCoordinatorTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2697,6 +2710,7 @@ export const updateCoordinatorTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2967,6 +2981,7 @@ export const deleteCoordinatorTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -3238,6 +3253,7 @@ export const createTask = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -3746,6 +3762,7 @@ export const createTask = /* GraphQL */ `
       group {
         items {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -3837,6 +3854,7 @@ export const updateTask = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -4345,6 +4363,7 @@ export const updateTask = /* GraphQL */ `
       group {
         items {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -4436,6 +4455,7 @@ export const deleteTask = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -4944,6 +4964,7 @@ export const deleteTask = /* GraphQL */ `
       group {
         items {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -5036,6 +5057,7 @@ export const createComment = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -5137,6 +5159,7 @@ export const updateComment = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -5238,6 +5261,7 @@ export const deleteComment = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted

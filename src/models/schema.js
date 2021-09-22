@@ -574,6 +574,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "taskGroupId": {
+                    "name": "taskGroupId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "name": {
                     "name": "name",
                     "isArray": false,
@@ -610,13 +617,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "taskGroupId": {
-                    "name": "taskGroupId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,

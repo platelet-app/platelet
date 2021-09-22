@@ -95,6 +95,7 @@ export const onCreateUser = /* GraphQL */ `
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -245,6 +246,7 @@ export const onUpdateUser = /* GraphQL */ `
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -395,6 +397,7 @@ export const onDeleteUser = /* GraphQL */ `
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -455,6 +458,7 @@ export const onCreateGroup = /* GraphQL */ `
   subscription OnCreateGroup {
     onCreateGroup {
       id
+      taskGroupId
       name
       users {
         items {
@@ -501,6 +505,7 @@ export const onUpdateGroup = /* GraphQL */ `
   subscription OnUpdateGroup {
     onUpdateGroup {
       id
+      taskGroupId
       name
       users {
         items {
@@ -547,6 +552,7 @@ export const onDeleteGroup = /* GraphQL */ `
   subscription OnDeleteGroup {
     onDeleteGroup {
       id
+      taskGroupId
       name
       users {
         items {
@@ -648,6 +654,7 @@ export const onCreateVehicle = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -789,6 +796,7 @@ export const onUpdateVehicle = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -930,6 +938,7 @@ export const onDeleteVehicle = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -1560,6 +1569,7 @@ export const onCreateUserTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -1827,6 +1837,7 @@ export const onUpdateUserTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2094,6 +2105,7 @@ export const onDeleteUserTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2361,6 +2373,7 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2628,6 +2641,7 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2895,6 +2909,7 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -3163,6 +3178,7 @@ export const onCreateTask = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -3671,6 +3687,7 @@ export const onCreateTask = /* GraphQL */ `
       group {
         items {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -3759,6 +3776,7 @@ export const onUpdateTask = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -4267,6 +4285,7 @@ export const onUpdateTask = /* GraphQL */ `
       group {
         items {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -4355,6 +4374,7 @@ export const onDeleteTask = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -4863,6 +4883,7 @@ export const onDeleteTask = /* GraphQL */ `
       group {
         items {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -4952,6 +4973,7 @@ export const onCreateComment = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -5050,6 +5072,7 @@ export const onUpdateComment = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -5148,6 +5171,7 @@ export const onDeleteComment = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted

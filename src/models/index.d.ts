@@ -168,11 +168,11 @@ export declare class Comment {
 
 export declare class Group {
   readonly id: string;
+  readonly taskGroupId?: string;
   readonly name?: string;
   readonly users?: (User | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
-  readonly taskGroupId?: string;
   constructor(init: ModelInit<Group, GroupMetaData>);
   static copyOf(source: Group, mutator: (draft: MutableModel<Group, GroupMetaData>) => MutableModel<Group, GroupMetaData> | void): Group;
 }

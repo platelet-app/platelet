@@ -63,6 +63,7 @@ export const syncUsers = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -196,6 +197,7 @@ export const getUser = /* GraphQL */ `
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -308,6 +310,7 @@ export const listUsers = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -362,6 +365,7 @@ export const syncGroups = /* GraphQL */ `
     ) {
       items {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -382,6 +386,7 @@ export const getGroup = /* GraphQL */ `
   query GetGroup($id: ID!) {
     getGroup(id: $id) {
       id
+      taskGroupId
       name
       users {
         items {
@@ -433,6 +438,7 @@ export const listGroups = /* GraphQL */ `
     listGroups(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        taskGroupId
         name
         users {
           nextToken
@@ -580,6 +586,7 @@ export const getVehicle = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -1565,6 +1572,7 @@ export const getTask = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2073,6 +2081,7 @@ export const getTask = /* GraphQL */ `
       group {
         items {
           id
+          taskGroupId
           name
           _version
           _deleted
@@ -2404,6 +2413,7 @@ export const getComment = /* GraphQL */ `
         }
         group {
           id
+          taskGroupId
           name
           _version
           _deleted
