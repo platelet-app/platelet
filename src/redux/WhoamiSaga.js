@@ -14,7 +14,8 @@ import {
 } from "./Actions";
 import { getApiControl } from "./Selectors";
 import API from "@aws-amplify/api";
-import { Auth } from "aws-amplify";
+import { Auth, DataStore } from "aws-amplify";
+import * as models from "../models/index";
 import * as queries from "../graphql/queries";
 import { NotFound } from "http-errors";
 
@@ -31,13 +32,22 @@ function* agetWhoami() {
 function* getWhoami() {
     try {
         const loggedInUser = yield call([Auth, Auth.currentAuthenticatedUser]);
+        let result;
         if (loggedInUser) {
-            const result = yield call([API, API.graphql], {
-                query: queries.getUser,
-                variables: { id: loggedInUser.attributes.sub },
-            });
-            yield put(getWhoamiSuccess(result.data.getUser));
-            console.log(result);
+            result = yield call(
+                [DataStore, DataStore.query],
+                models.User,
+                loggedInUser.attributes.sub
+            );
+            if (!result) {
+                result = yield call([API, API.graphql], {
+                    query: queries.getUser,
+                    variables: { id: loggedInUser.attributes.sub },
+                });
+                yield put(getWhoamiSuccess(result.data.getUser));
+            } else {
+                yield put(getWhoamiSuccess(result));
+            }
         } else {
             yield put(
                 getWhoamiFailure(new NotFound("Could not find logged in user"))
