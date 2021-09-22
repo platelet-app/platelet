@@ -72,18 +72,19 @@ function AdminAddUser() {
             const { userSub } = await Auth.signUp({
                 ...state,
             });
-            debugger;
             //TODO: remove this after DataStore sync is fixed up because we want the user to only be syncd after postconfirmation trigger
-            DataStore.save(
-                new models.User({
-                    name: state.attributes.name,
-                    id: userSub,
-                    displayName: state.attributes.name,
-                    active: 1,
-                    username: state.username,
-                    emailAddress: state.attributes.email,
-                })
-            );
+            // DataStore.save(
+            //     new models.User({
+            //         name: state.attributes.name,
+            //         id: userSub,
+            //         displayName: state.attributes.name,
+            //         active: 1,
+            //         username: state.username,
+            //         emailAddress: state.attributes.email,
+            //         _version: 1,
+            //         _lastUpdatedAt: new Date().getTime().toString(),
+            //     })
+            // );
             setState(initialState);
             setIsPosting(false);
             setMessage(
