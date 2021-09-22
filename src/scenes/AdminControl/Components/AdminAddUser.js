@@ -87,7 +87,7 @@ function AdminAddUser() {
             setState(initialState);
             setIsPosting(false);
             setMessage(
-                "User was signed up. They will be made available after email confirmation."
+                "User was signed up. They will be made available after they confirm their email address."
             );
         } catch (error) {
             console.log("error signing up:", error);
