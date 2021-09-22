@@ -13,7 +13,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Moment from "react-moment";
 import Button from "@material-ui/core/Button";
-import Amplify, { Auth, DataStore } from "aws-amplify";
+import Amplify, { Logger, Auth, DataStore } from "aws-amplify";
 import config from "../src/aws-exports.js";
 
 import { getServerSettingsRequest } from "./redux/ServerSettings/ServerSettingsActions";
@@ -26,14 +26,18 @@ import { DismissButton, showHide } from "./styles/common";
 import { Link } from "react-router-dom";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
+import PubSub from "@aws-amplify/pubsub";
+import API from "@aws-amplify/api";
 
-// configure amplify and set up authentication
 Amplify.configure({
     ...config,
     ssr: true,
 });
-
+API.configure(config);
 Auth.configure(config);
+PubSub.configure(config);
+DataStore.configure(config);
+Logger.LOG_LEVEL = "ERROR";
 
 const useStyles = makeStyles((theme) => ({
     centeredDiv: {
