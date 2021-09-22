@@ -61,7 +61,6 @@ export default function UsersList(props) {
     // TODO: See if this is necessary to wait for the datastore to be ready before getting data from it
     // Create listener
     // const listener = Hub.listen("datastore", async (hubData) => {
-    //     debugger;
     //     const { event, data } = hubData.payload;
     //     if (event === "ready") {
     //         setDataStoreReady(true);
@@ -84,7 +83,8 @@ export default function UsersList(props) {
             //listener();
         } catch (error) {
             console.log("Request failed", error);
-            dispatch(displayErrorNotification(error.message));
+            if (error && error.message)
+                dispatch(displayErrorNotification(error.message));
             setIsFetching(false);
         }
     }

@@ -63,7 +63,6 @@ export default function UserProfile(props) {
     }
 
     function verifyUpdate(value) {
-        debugger;
         const existing = props.displayNames.find(
             (u) => u.displayName === value.displayName
         );
@@ -83,7 +82,6 @@ export default function UserProfile(props) {
     ) : (
         <SaveCancelButtons
             onSave={() => {
-                debugger;
                 if (verifyUpdate(state)) {
                     props.onUpdate(
                         _.omit(state, "_deleted", "_lastChangedAt", "_version")

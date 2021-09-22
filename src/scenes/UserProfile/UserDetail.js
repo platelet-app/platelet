@@ -78,7 +78,6 @@ export default function UserDetail(props) {
     useEffect(() => getDisplayNames(), []);
 
     async function onUpdate(value) {
-        debugger;
         try {
             await DataStore.save(
                 models.User.copyOf(user, (updated) => {
