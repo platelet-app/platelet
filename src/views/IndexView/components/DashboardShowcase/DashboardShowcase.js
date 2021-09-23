@@ -1,58 +1,21 @@
 import React from "react";
-import dashboard_dark from '../../../../assets/images/dashboard-dark.png'
-import dashboard_light from '../../../../assets/images/dashboard-light.png'
 import {Grid, Typography} from "@material-ui/core";
-import {makeStyles} from "@material-ui/core/styles";
-
-const useStyles = makeStyles(theme => ({
-    root: {
-        height: 600
-    },
-    right: {
-        [theme.breakpoints.down('sm')]: {
-            height: 400,
-            width: 250,
-        },
-        height: 700,
-        width: 400,
-        display: "flex"
-    },
-    item: {
-        width: 500
-    },
-    background: {
-        [theme.breakpoints.down('sm')]: {
-            height: 530,
-            width: 380,
-        },
-        backgroundImage: `url(${dashboard_light})`,
-        height: 700,
-        backgroundRepeat: "no-repeat",
-        width: 550,
-        backgroundSize: 'contain',
-    },
-    backgroundDark: {
-        [theme.breakpoints.down('sm')]: {
-            height: 530,
-            width: 380,
-        },
-        backgroundImage: `url(${dashboard_dark})`,
-        height: 700,
-        backgroundRepeat: "no-repeat",
-        width: 550,
-        backgroundSize: 'contain',
-    }
-}))
+import {useTheme} from "@material-ui/core/styles";
+import showCaseStyles from "../../styles";
+import clsx from "clsx";
 
 const DashboardShowcase = ({themeMode = 'light', ...rest}) => {
-    const classes = useStyles();
+    const classes = showCaseStyles();
+    const theme = useTheme();
+    const dashboardClass = themeMode === "dark" ? classes.dashboardBackDark : classes.dashboardBack
+    const isSm = theme.breakpoints.down("sm");
     return (
-        <Grid container spacing={3} direction={"row"} justify={"space-between"} alignItems={"center"}>
-            <Grid item>
-                <div className={themeMode === "dark" ? classes.backgroundDark : classes.background}/>
+        <Grid container spacing={isSm ? 0 : 3} direction={"row"} justify={"space-between"} alignItems={"center"}>
+            <Grid className={classes.item} item>
+                <div className={clsx(classes.background, dashboardClass)}/>
             </Grid>
-            <Grid container data-aos={'fade-right'} item alignItems={"center"} justify={"center"} spacing={2}
-                  direction={"column"} className={classes.right}>
+            <Grid container data-aos={'fade-right'} item alignItems={"center"} justify={"center"} spacing={isSm ? 0 : 2}
+                  direction={"column"} className={classes.text}>
                 <Grid item>
                     <Typography variant={"h4"}>
                         Tailored dashboards for coordinators and riders

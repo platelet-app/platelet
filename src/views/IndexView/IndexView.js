@@ -1,5 +1,5 @@
 import React from 'react';
-import {makeStyles, Divider} from '@material-ui/core';
+import {makeStyles, Divider, Container} from '@material-ui/core';
 import {Section, SectionAlternate} from 'components/organisms';
 import {GetStarted, Features, Hero, DialogShowcase} from './components';
 import DashboardShowcase from "./components/DashboardShowcase";
@@ -18,9 +18,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 const IndexView = ({themeMode}) => {
-    const classes = useStyles();
     return (
-        <div>
+        <div style={{width: "100%"}}>
             <Hero themeMode={themeMode}/>
             <SectionAlternate>
                 <DashboardShowcase themeMode={themeMode}/>
