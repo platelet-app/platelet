@@ -1,7 +1,7 @@
 import * as actions from "./awsHubListenerActions";
 
 const initialState = {
-    network: false,
+    network: true,
     ready: false,
 };
 

@@ -20,20 +20,14 @@ function* initialiseDataStoreListener(action) {
         while (true) {
             const hubData = yield take(channel);
             const { event, data } = hubData.payload;
-            switch (event) {
-                case "networkStatus":
-                    yield put(actions.setNetworkStatus(data.active));
-                    console.log(
-                        `User has a network connection: ${data.active}`
-                    );
-                    break;
-                case "ready":
-                    yield put(actions.setReadyStatus(true));
-                    console.log("DataStore is ready");
-                    break;
-
-                default:
-                    break;
+            console.log(event);
+            if (event === "networkStatus") {
+                // TODO: Why doesn't this work in chrome but is fine in firefox?
+                yield put(actions.setNetworkStatus(data.active));
+                console.log(`User has a network connection: ${data.active}`);
+            } else if (event === "ready") {
+                yield put(actions.setReadyStatus(true));
+                console.log("DataStore is ready");
             }
         }
     } finally {
