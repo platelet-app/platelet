@@ -41,7 +41,10 @@ export default function VehicleDetail(props) {
     const assignedUser = false;
 
     async function newVehicleProfile() {
+        // TODO: maybe wait until sync has ocured here before looking up the vehicle
+        // set up hub listeners in redux saga?
         const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
+        setNotFound(false);
         try {
             const vehicle = await DataStore.query(models.Vehicle, vehicleUUID);
             clearTimeout(fetchingTimer);

@@ -15,6 +15,10 @@ import Typography from "@material-ui/core/Typography";
 import UserAvatar from "../../components/UserAvatar";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
+import { Auth } from "aws-amplify";
+import SignalWifiOff from "@material-ui/icons/SignalWifiOff";
+import { showHide } from "../../styles/common";
+import { networkStatusSelector } from "../../redux/Selectors";
 
 function LightToggleProfileMenu(props) {
     const whoami = useSelector(getWhoami);
@@ -22,6 +26,8 @@ function LightToggleProfileMenu(props) {
     const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
     const dispatch = useDispatch();
     const history = useHistory();
+    const networkStatus = useSelector(networkStatusSelector);
+    const { show, hide } = showHide();
     return (
         <Grid
             container
@@ -62,8 +68,9 @@ function LightToggleProfileMenu(props) {
                         <MenuItem
                             onClick={() => {
                                 setAnchorElProfileMenu(null);
-                                dispatch(logoutUser());
+                                //dispatch(logoutUser());
                                 history.push("/dashboard");
+                                Auth.signOut();
                             }}
                         >
                             Logout
@@ -79,6 +86,13 @@ function LightToggleProfileMenu(props) {
                     alignItems={"center"}
                     spacing={1}
                 >
+                    <Grid item className={networkStatus ? hide : show}>
+                        <Tooltip title={"You are working offline"}>
+                            <IconButton color="inherit">
+                                <SignalWifiOff />
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
                     <Grid item>
                         <Tooltip title={"Toggle dark/light mode"}>
                             <IconButton
