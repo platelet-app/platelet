@@ -14,7 +14,7 @@ import VehicleCard from "../components/VehicleCard";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
-import { getWhoami } from "../redux/Selectors";
+import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
 
 function VehicleList() {
     const contextClass = contextDots();
@@ -22,6 +22,7 @@ function VehicleList() {
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
     const [vehicles, setVehicles] = useState([]);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
 
     const addButton = whoami.roles.includes("ADMIN") ? (
         <Button component={Link} to={`/admin/add-vehicle`}>
@@ -31,21 +32,23 @@ function VehicleList() {
         <></>
     );
     async function getVehicles() {
-        const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
-        try {
-            const vehicles = await DataStore.query(models.Vehicle);
-            clearTimeout(fetchingTimer);
-            setIsFetching(false);
-            setVehicles(vehicles);
-        } catch (error) {
-            console.log("Request failed", error);
-            if (error && error.message)
-                dispatch(displayErrorNotification(error.message));
-            setIsFetching(false);
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
+        } else {
+            try {
+                const vehicles = await DataStore.query(models.Vehicle);
+                setIsFetching(false);
+                setVehicles(vehicles);
+            } catch (error) {
+                console.log("Request failed", error);
+                if (error && error.message)
+                    dispatch(displayErrorNotification(error.message));
+                setIsFetching(false);
+            }
         }
     }
 
-    useEffect(() => getVehicles(), []);
+    useEffect(() => getVehicles(), [dataStoreReadyStatus]);
 
     if (isFetching) {
         return <CardsGridSkeleton />;
