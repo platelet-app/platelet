@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import VehicleProfile from "./components/VehicleProfile";
 import { decodeUUID } from "../../utilities";
 import {
@@ -19,24 +19,46 @@ import CommentsSection from "../Comments/CommentsSection";
 import UserCard from "../../components/UserCard";
 import Button from "@material-ui/core/Button";
 import { getWhoami } from "../../redux/Selectors";
+import * as models from "../../models/index";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import { DataStore } from "@aws-amplify/datastore";
+
+const initialVehicleState = {
+    name: "",
+    manufacturer: "",
+    model: "",
+    dateOfManufacture: null,
+    dateOfRegistration: null,
+};
 
 export default function VehicleDetail(props) {
     const dispatch = useDispatch();
-    const loadingSelector = createLoadingSelector(["GET_VEHICLE"]);
-    const isFetching = useSelector((state) => loadingSelector(state));
-    const notFoundSelector = createNotFoundSelector(["GET_VEHICLE"]);
-    const notFound = useSelector((state) => notFoundSelector(state));
+    const [isFetching, setIsFetching] = useState(false);
+    const [notFound, setNotFound] = useState(false);
+    const [vehicle, setVehicle] = useState(initialVehicleState);
     const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
-    const vehicle = useSelector((state) => state.vehicle.vehicle);
-    const assignedUser = useSelector(
-        (state) => state.vehicle.vehicle.assigned_user
-    );
     const whoami = useSelector(getWhoami);
+    const assignedUser = false;
 
-    function componentDidMount() {
-        dispatch(getVehicleRequest(vehicleUUID));
+    async function newVehicleProfile() {
+        const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
+        try {
+            const vehicle = await DataStore.query(models.Vehicle, vehicleUUID);
+            clearTimeout(fetchingTimer);
+            setIsFetching(false);
+            if (vehicle) setVehicle(vehicle);
+            else setNotFound(true);
+        } catch (error) {
+            setIsFetching(false);
+            dispatch(
+                displayErrorNotification(
+                    `Failed to get vehicle: ${error.message}`
+                )
+            );
+            console.log("Request failed", error);
+        }
     }
-    useEffect(componentDidMount, [props.location.key]);
+    useEffect(() => newVehicleProfile(), [props.location.key]);
 
     function onAssignUser(user) {
         if (user)

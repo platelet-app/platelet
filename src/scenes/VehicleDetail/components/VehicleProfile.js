@@ -26,8 +26,12 @@ export default function VehicleProfile(props) {
             setEditMode(false);
         }
     }
-
     useEffect(resetAfterPost, [isPosting]);
+
+    function copyVehicleToState() {
+        setState({ ...props.vehicle });
+    }
+    useEffect(copyVehicleToState, [props.vehicle]);
 
     function onAssignUser(selectedUser) {
         if (selectedUser)
@@ -198,7 +202,7 @@ export default function VehicleProfile(props) {
                                     {divider}
                                     <Grid item>
                                         <TextFieldUncontrolled
-                                            value={state.registration_number}
+                                            value={state.registrationNumber}
                                             label={"Registration"}
                                             id={"vehicle-registration"}
                                             InputProps={{
@@ -209,7 +213,7 @@ export default function VehicleProfile(props) {
                                             onChange={(e) => {
                                                 setState({
                                                     ...state,
-                                                    registration_number:
+                                                    registrationNumber:
                                                         e.target.value.toUpperCase(),
                                                 });
                                             }}
