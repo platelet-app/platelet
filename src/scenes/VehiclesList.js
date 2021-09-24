@@ -80,7 +80,7 @@ function VehicleList() {
                                         Object.values(vehicles),
                                         "newest"
                                     ).map((vehicle) => (
-                                        <Grid item key={vehicle.uuid}>
+                                        <Grid item key={vehicle.id}>
                                             <div
                                                 style={{
                                                     cursor: "context-menu",
@@ -90,7 +90,7 @@ function VehicleList() {
                                                 <Link
                                                     to={
                                                         "/vehicle/" +
-                                                        encodeUUID(vehicle.uuid)
+                                                        encodeUUID(vehicle.id)
                                                     }
                                                     style={{
                                                         textDecoration: "none",
@@ -106,9 +106,7 @@ function VehicleList() {
                                                     }
                                                 >
                                                     <VehicleContextMenu
-                                                        vehicleUUID={
-                                                            vehicle.uuid
-                                                        }
+                                                        vehicleUUID={vehicle.id}
                                                     />
                                                 </div>
                                             </div>
