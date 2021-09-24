@@ -7,6 +7,7 @@ import {
     select,
     delay,
 } from "redux-saga/effects";
+import { initialiseAwsDataStoreListener } from "../awsHubListener/awsHubListenerActions";
 import { INITIALISE_APP } from "./initialiseActions";
 import moment from "moment-timezone";
 import { logoutUser } from "../login/LoginActions";
@@ -82,6 +83,7 @@ export function* watchInitialiseApp() {
 function* getStaticData() {
     const whoami = yield select(getWhoami);
     yield all([
+        put(initialiseAwsDataStoreListener()),
         put(connectSocket()),
         put(connectCommentsSocket()),
         put(connectAssignmentsSocket()),
