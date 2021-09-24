@@ -38,8 +38,8 @@ const data = [{
 }, {
   icon: 'fas fa-code',
   color: colors.indigo,
-  title: 'As a platform',
-  subtitle: 'platelet uses a REST API at its core. Create API keys and make use of the platelet API in your own scripts and tools.',
+  title: 'Serverless architecture',
+  subtitle: 'Platelet uses AWS serverless technologies and GraphQL to provide a reliable service.',
 }];
 
 const Features = ({ className, ...rest }) => {
