@@ -130,15 +130,36 @@ const Topbar = ({themeMode, themeToggler, onSidebarOpen, pages, className, ...re
                     </div>
                 </Grid>
                 <Grid item>
+                    <Link to={"/"}>
+                        <Typography
+                            component={'a'}
+                            className={clsx(classes.navLink, 'submenu-item')}
+                            color="textSecondary"
+                        >
+                            Home
+                        </Typography>
+                    </Link>
+                </Grid>
+                <Grid item>
                     <Link to={"/about-platelet"}>
                     <Typography
-                        variant="h6"
                         component={'a'}
                         className={clsx(classes.navLink, 'submenu-item')}
                         color="textSecondary"
                     >
-                        About
+                        About Platelet
                     </Typography>
+                    </Link>
+                </Grid>
+                <Grid style={{display: "none"}} item>
+                    <Link to={"/about-blood-bikes"}>
+                        <Typography
+                            component={'a'}
+                            className={clsx(classes.navLink, 'submenu-item')}
+                            color="textSecondary"
+                        >
+                            About the blood bikes
+                        </Typography>
                     </Link>
                 </Grid>
             </Grid>

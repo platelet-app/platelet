@@ -12,7 +12,8 @@ import {
     IndexView,
     NotFound as NotFoundView,
     NotFoundCover as NotFoundCoverView,
-    AboutPlatelet as AboutPlateletView
+    AboutPlatelet as AboutPlateletView,
+    AboutBloodBikes as AboutBloodBikesView
 } from './views';
 
 const Routes = () => {
@@ -36,6 +37,17 @@ const Routes = () => {
                     <WithLayout
                         {...matchProps}
                         component={AboutPlateletView}
+                        layout={MainLayout}
+                    />
+                )}
+            />
+            <Route
+                exact
+                path="/about-blood-bikes"
+                render={matchProps => (
+                    <WithLayout
+                        {...matchProps}
+                        component={AboutBloodBikesView}
                         layout={MainLayout}
                     />
                 )}

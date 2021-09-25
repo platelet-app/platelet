@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function AboutPlatelet() {
+function AboutBloodBikes() {
     const classes = useStyles();
     const theme = useTheme();
     return (
@@ -88,4 +88,4 @@ function AboutPlatelet() {
     )
 }
 
-export default AboutPlatelet;
+export default AboutBloodBikes;
