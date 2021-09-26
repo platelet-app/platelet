@@ -70,17 +70,22 @@ function AboutPlatelet() {
                 </Grid>
                 <Grid item>
                     <Typography>
-
                         Apart from its core goals, the Platelet project aims to place more research and development into
-                        making the lives easier of all volunteers in healthcare and logistics.
+                        making the lives easier of volunteers in healthcare.
                     </Typography>
                 </Grid>
                 <Grid item>
                     <Typography>
-
-                        Platelet is open sourced under the Apache license and is hosted on github at
+                        Platelet is open sourced under the Apache license and is hosted on github at:
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <Typography
+                        component={'a'}
+                        color="textSecondary"
+                        href={"https://github.com/platelet-app/platelet-web/"}
+                    >
                         https://github.com/platelet-app/platelet-web/
-
                     </Typography>
                 </Grid>
             </Grid>

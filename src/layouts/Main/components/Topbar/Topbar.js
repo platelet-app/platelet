@@ -151,7 +151,7 @@ const Topbar = ({themeMode, themeToggler, onSidebarOpen, pages, className, ...re
                     </Typography>
                     </Link>
                 </Grid>
-                <Grid style={{display: "none"}} item>
+                <Grid item>
                     <Link to={"/about-blood-bikes"}>
                         <Typography
                             component={'a'}
