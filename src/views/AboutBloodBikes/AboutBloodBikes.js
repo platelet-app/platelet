@@ -33,7 +33,7 @@ function AboutBloodBikes() {
         <div className={classes.root}>
             <Grid container direction={"column"} spacing={3} className={classes.inner}>
                 <Grid item>
-                    <Typography variant={"h3"}>About Platelet</Typography>
+                    <Typography variant={"h3"}>About the blood bikes</Typography>
                 </Grid>
                 <Grid item>
                     <Typography>
@@ -46,7 +46,6 @@ function AboutBloodBikes() {
                 </Grid>
                 <Grid item>
                     <Typography>
-
                         Run 100% by volunteers, the blood bikes receive over 100,000 requests each year from the NHS.
                         They also deliver to different air ambulances around the country, restocking them with new blood
                         and returning with unused blood.
@@ -54,7 +53,6 @@ function AboutBloodBikes() {
                 </Grid>
                 <Grid item>
                     <Typography>
-
                         There are 43 charities, managed by the Nationwide Association of Blood Bikes (NABB) who provide
                         the service. Together they form a network of volunteers, working with each other to transport
                         vital items across the country.
