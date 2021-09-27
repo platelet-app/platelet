@@ -20,6 +20,7 @@ import Container from "@material-ui/core/Container";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
+import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";
 
 function MainWindowContainer(props) {
     const styles = makeStyles((theme) => ({
@@ -119,6 +120,14 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("admin"));
                             return <AdminAddVehicle {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/admin/add-location"
+                        render={(props) => {
+                            dispatch(setMenuIndex("admin"));
+                            return <AdminAddLocation {...props} />;
                         }}
                     />
                     <Route
