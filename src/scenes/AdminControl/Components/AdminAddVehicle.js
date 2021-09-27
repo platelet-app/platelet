@@ -78,10 +78,6 @@ function AdminAddVehicle() {
     }
     useEffect(verifyInput, [state]);
 
-    // useEffect(() => {
-    //     if (message) setMessage("");
-    // }, [state]);
-
     return (
         <PaddedPaper>
             <Grid
