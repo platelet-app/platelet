@@ -1026,29 +1026,21 @@ export const onCreateLocation = /* GraphQL */ `
     onCreateLocation {
       id
       name
-      address {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       listed
+      contact
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       comments {
         id
         parentID
@@ -1102,29 +1094,21 @@ export const onUpdateLocation = /* GraphQL */ `
     onUpdateLocation {
       id
       name
-      address {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       listed
+      contact
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       comments {
         id
         parentID
@@ -1178,29 +1162,21 @@ export const onDeleteLocation = /* GraphQL */ `
     onDeleteLocation {
       id
       name
-      address {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       listed
+      contact
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       comments {
         id
         parentID
