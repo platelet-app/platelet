@@ -62,9 +62,9 @@ export default function LocationsList() {
                         <Grid container direction={"row"} spacing={3}>
                             {Object.values(locations).map((loc) => {
                                 return (
-                                    <Grid item key={loc.uuid}>
+                                    <Grid item key={loc.id}>
                                         <LocationCard
-                                            uuid={loc.uuid}
+                                            uuid={loc.id}
                                             name={loc.name}
                                         />
                                     </Grid>
