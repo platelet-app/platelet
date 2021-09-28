@@ -102,6 +102,32 @@
             },
             "API_PLATELET_GRAPHQLAPIIDOUTPUT": {
               "Ref": "apiplateletGraphQLAPIIdOutput"
+            },
+            "API_PLATELET_ADDRESSANDCONTACTDETAILSTABLE_NAME": {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:AddressAndContactDetailsTable:Name"
+              }
+            },
+            "API_PLATELET_ADDRESSANDCONTACTDETAILSTABLE_ARN": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:aws:dynamodb:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":table/",
+                  {
+                    "Fn::ImportValue": {
+                      "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:AddressAndContactDetailsTable:Name"
+                    }
+                  }
+                ]
+              ]
             }
           }
         },
@@ -267,6 +293,68 @@
                       {
                         "Fn::ImportValue": {
                           "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
+                        }
+                      },
+                      "/index/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Put*",
+                "dynamodb:Create*",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:Update*",
+                "dynamodb:RestoreTable*",
+                "dynamodb:Delete*"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:dynamodb:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":table/",
+                      {
+                        "Fn::ImportValue": {
+                          "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:AddressAndContactDetailsTable:Name"
+                        }
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:dynamodb:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":table/",
+                      {
+                        "Fn::ImportValue": {
+                          "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:AddressAndContactDetailsTable:Name"
                         }
                       },
                       "/index/*"

@@ -100,18 +100,6 @@ export declare class User {
   readonly tasks?: (UserTasks | null)[];
   readonly tasksCoordinator?: (CoordinatorTasks | null)[];
   readonly active: number;
-  readonly telephoneNumber?: string;
-  readonly mobileNumber?: string;
-  readonly emailAddress?: string;
-  readonly line1?: string;
-  readonly line2?: string;
-  readonly line3?: string;
-  readonly town?: string;
-  readonly county?: string;
-  readonly state?: string;
-  readonly country?: string;
-  readonly postcode?: string;
-  readonly what3words?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<User, UserMetaData>);

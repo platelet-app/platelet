@@ -6,6 +6,12 @@
         "read",
         "update",
         "delete"
+      ],
+      "AddressAndContactDetails:@model(appsync)": [
+        "create",
+        "read",
+        "update",
+        "delete"
       ]
     }
   },
