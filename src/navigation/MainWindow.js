@@ -108,7 +108,7 @@ export default function MainWindow(_props) {
                     />
                     <Route
                         exact
-                        path="/admin/adduser"
+                        path="/admin/add-user"
                         render={(props) => {
                             dispatch(setMenuIndex("admin"));
                             return <AdminAddUser {...props} />;

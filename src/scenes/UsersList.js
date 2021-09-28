@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserCard from "../components/UserCard";
 import Grid from "@material-ui/core/Grid";
@@ -57,6 +57,8 @@ export default function UsersList(props) {
     const dispatch = useDispatch();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     //useEffect(() => setFilteredUsers(users), [users]);
+    //const fetchTimer = useRef();
+    //const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
 
     async function getUsers() {
         if (!dataStoreReadyStatus) {
@@ -78,7 +80,7 @@ export default function UsersList(props) {
     useEffect(() => getUsers(), [dataStoreReadyStatus]);
 
     const addButton = whoami.roles.includes("ADMIN") ? (
-        <Button component={Link} to={`/admin/adduser`}>
+        <Button component={Link} to={`/admin/add-user`}>
             Add user
         </Button>
     ) : (
