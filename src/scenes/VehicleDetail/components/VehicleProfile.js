@@ -12,6 +12,14 @@ import Divider from "@material-ui/core/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
 
+const fields = {
+    name: "Name",
+    manufacturer: "Manufacturer",
+    model: "Model",
+    dateOfManufacture: "Manufacture date",
+    dateOfRegistration: "Registration date",
+};
+
 export default function VehicleProfile(props) {
     const dispatch = useDispatch();
     const postingSelector = createPostingSelector(["UPDATE_VEHICLE"]);
@@ -136,101 +144,39 @@ export default function VehicleProfile(props) {
                                 <Grid item>{editToggle}</Grid>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid item>
-                                <Grid
-                                    container
-                                    direction={"column"}
-                                    justify={"flex-start"}
-                                    alignItems={"flex-start"}
-                                    spacing={1}
-                                >
-                                    <Grid item>
-                                        <TextFieldUncontrolled
-                                            value={state.name}
-                                            label={"Name"}
-                                            id={"vehicle-name"}
-                                            InputProps={{
-                                                readOnly: !editMode,
-                                                disableUnderline: !editMode,
-                                            }}
-                                            onChange={(e) => {
-                                                setState({
-                                                    ...state,
-                                                    name: e.target.value,
-                                                });
-                                            }}
-                                        />
-                                    </Grid>
-                                    {divider}
-                                    <Grid item>
-                                        <TextFieldUncontrolled
-                                            value={state.manufacturer}
-                                            label={"Manufacturer"}
-                                            id={"vehicle-manufacturer"}
-                                            InputProps={{
-                                                readOnly: !editMode,
-                                                disableUnderline: !editMode,
-                                            }}
-                                            onChange={(e) => {
-                                                setState({
-                                                    ...state,
-                                                    manufacturer:
-                                                        e.target.value,
-                                                });
-                                            }}
-                                        />
-                                    </Grid>
-                                    {divider}
-                                    <Grid item>
-                                        <TextFieldUncontrolled
-                                            value={state.model}
-                                            label={"Model"}
-                                            id={"vehicle-model"}
-                                            InputProps={{
-                                                readOnly: !editMode,
-                                                disableUnderline: !editMode,
-                                            }}
-                                            onChange={(e) => {
-                                                setState({
-                                                    ...state,
-                                                    model: e.target.value,
-                                                });
-                                            }}
-                                        />
-                                    </Grid>
-                                    {divider}
-                                    <Grid item>
-                                        <TextFieldUncontrolled
-                                            value={state.registrationNumber}
-                                            label={"Registration"}
-                                            id={"vehicle-registration"}
-                                            InputProps={{
-                                                readOnly: !editMode,
-                                                disableUnderline: !editMode,
-                                                maxLength: 10,
-                                            }}
-                                            onChange={(e) => {
-                                                setState({
-                                                    ...state,
-                                                    registrationNumber:
-                                                        e.target.value.toUpperCase(),
-                                                });
-                                            }}
-                                        />
-                                    </Grid>
+
+                        {Object.keys(fields).map((key) => {
+                            return (
+                                <Grid key={key} style={{ width: "50%" }} item>
+                                    <TextFieldUncontrolled
+                                        value={state[key]}
+                                        InputProps={{
+                                            readOnly: !editMode,
+                                            disableUnderline: !editMode,
+                                        }}
+                                        fullWidth
+                                        label={fields[key]}
+                                        id={key}
+                                        onChange={(e) => {
+                                            setState({
+                                                ...state,
+                                                [key]: e.target.value,
+                                            });
+                                        }}
+                                    />
                                     {divider}
                                 </Grid>
-                            </Grid>
-                            <Grid
-                                container
-                                direction={"row"}
-                                justify={"space-between"}
-                                alignItems={"flex-end"}
-                                spacing={3}
-                            >
-                                <Grid item>{userAssign}</Grid>
-                            </Grid>
+                            );
+                        })}
+
+                        <Grid
+                            container
+                            direction={"row"}
+                            justify={"space-between"}
+                            alignItems={"flex-end"}
+                            spacing={3}
+                        >
+                            <Grid item>{userAssign}</Grid>
                         </Grid>
                         <Grid item>{saveButtons}</Grid>
                     </Grid>
