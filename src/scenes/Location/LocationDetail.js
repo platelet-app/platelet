@@ -17,6 +17,8 @@ import { displayErrorNotification } from "../../redux/notifications/Notification
 import { Divider, Grid, makeStyles, Typography } from "@material-ui/core";
 import { TextFieldUncontrolled } from "../../components/TextFields";
 import { EditModeToggleButton } from "../../components/EditModeToggleButton";
+import SaveCancelButtons from "../../components/SaveCancelButtons";
+import _ from "lodash";
 
 const initialLocationState = {
     name: null,
@@ -68,7 +70,7 @@ export default function LocationDetail(props) {
     const [location, setLocation] = useState(initialLocationState);
     const [oldState, setOldState] = useState(initialLocationState);
     const [editMode, setEditMode] = useState(false);
-    const classes = useStyles();
+    const [isPosting, setIsPosting] = useState(false);
 
     async function newLocationProfile() {
         if (!dataStoreReadyStatus) {
@@ -90,7 +92,7 @@ export default function LocationDetail(props) {
                 setIsFetching(false);
                 dispatch(
                     displayErrorNotification(
-                        `Failed to get user: ${error.message}`
+                        `Failed to get location: ${error.message}`
                     )
                 );
                 console.log("Request failed", error);
@@ -100,6 +102,59 @@ export default function LocationDetail(props) {
     useEffect(
         () => newLocationProfile(),
         [props.location.key, dataStoreReadyStatus]
+    );
+
+    function verifyUpdate() {
+        // TODO: verify name is unique
+        return true;
+    }
+
+    async function onUpdate(value) {
+        debugger;
+        try {
+            await DataStore.save(
+                models.Location.copyOf(location, (updated) => {
+                    // There is probably a better way of doing this?
+                    debugger;
+                    for (const [key, newValue] of Object.entries(value)) {
+                        if (key !== "id") updated[key] = newValue;
+                    }
+                })
+            );
+            setIsPosting(false);
+        } catch (error) {
+            throw error;
+            console.log("Update request failed", error);
+            dispatch(displayErrorNotification(error.message));
+            setIsPosting(false);
+        }
+    }
+
+    const saveButtons = !editMode ? (
+        <></>
+    ) : (
+        <SaveCancelButtons
+            onSave={async () => {
+                if (verifyUpdate(location)) {
+                    await onUpdate(
+                        _.omit(
+                            location,
+                            "_deleted",
+                            "_lastChangedAt",
+                            "_version",
+                            "createdAt",
+                            "updatedAt"
+                        )
+                    );
+                    setEditMode(false);
+                    setOldState(location);
+                }
+            }}
+            onCancel={() => {
+                setEditMode(false);
+                setLocation(oldState);
+            }}
+        />
     );
 
     let editToggle = <></>;
@@ -183,6 +238,7 @@ export default function LocationDetail(props) {
                             );
                         })}
                     </Grid>
+                    {saveButtons}
                 </PaddedPaper>
                 <CommentsSection parentUUID={locationUUID} />
             </React.Fragment>
