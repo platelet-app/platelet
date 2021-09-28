@@ -87,6 +87,19 @@ export default function UserDetail(props) {
                     }
                 })
             );
+            await DataStore.save(
+                models.AddressAndContactDetails.copyOf(
+                    user.contact,
+                    (updated) => {
+                        // There is probably a better way of doing this?
+                        for (const [key, newValue] of Object.entries(
+                            value.contact
+                        )) {
+                            if (key !== "id") updated[key] = newValue;
+                        }
+                    }
+                )
+            );
         } catch (error) {
             console.log("Update request failed", error);
             dispatch(displayErrorNotification(error.message));

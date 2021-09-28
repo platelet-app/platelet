@@ -22,6 +22,18 @@ export const initialUserState = {
     profilePictureThumbnailURL: "",
 };
 
+const fields = {
+    username: "Username",
+    name: "Name",
+    displayName: "Display Name",
+};
+
+const contactFields = {
+    emailAddress: "Email Address",
+    telephoneNumber: "Telephone",
+    mobileNumber: "Mobile",
+};
+
 export default function UserProfile(props) {
     const [editMode, setEditMode] = useState(false);
     const [state, setState] = useState(initialUserState);
@@ -107,107 +119,75 @@ export default function UserProfile(props) {
         </div>
     );
     return (
-        <Grid
-            container
-            direction={"column"}
-            justify={"flex-start"}
-            alignItems={"top"}
-            spacing={3}
-        >
-            <Grid item>
-                <Grid
-                    container
-                    direction={"row"}
-                    justify={"space-between"}
-                    alignItems={"top"}
-                    spacing={3}
-                >
-                    <Grid item>{header}</Grid>
-                    <Grid item>{editToggle}</Grid>
-                </Grid>
+        <>
+            <Grid
+                container
+                direction={"row"}
+                justify={"space-between"}
+                alignItems={"top"}
+                spacing={3}
+            >
+                <Grid item>{header}</Grid>
+                <Grid item>{editToggle}</Grid>
             </Grid>
-            <Grid item>
-                <Grid
-                    container
-                    direction={"column"}
-                    justify={"flex-start"}
-                    alignItems={"flex-start"}
-                    spacing={1}
-                >
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            value={state.name}
-                            InputProps={{
-                                readOnly: !editMode,
-                                disableUnderline: !editMode,
-                            }}
-                            label={"Name"}
-                            id={"users-name"}
-                            onChange={(e) => {
-                                setState({ ...state, name: e.target.value });
-                            }}
-                        />
-                    </Grid>
-                    {divider}
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            value={state.displayName}
-                            InputProps={{
-                                readOnly: !editMode,
-                                disableUnderline: !editMode,
-                            }}
-                            label={"Display Name"}
-                            id={"display-name"}
-                            onChange={(e) => {
-                                setState({
-                                    ...state,
-                                    displayName: e.target.value,
-                                });
-                            }}
-                        />
-                    </Grid>
-                    {divider}
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            value={state.emailAddress}
-                            email
-                            InputProps={{
-                                readOnly: !editMode,
-                                disableUnderline: !editMode,
-                            }}
-                            label={"Email Address"}
-                            id={"email-address"}
-                            onChange={(e) => {
-                                setState({
-                                    ...state,
-                                    emailAddress: e.target.value,
-                                });
-                            }}
-                        />
-                    </Grid>
-                    {divider}
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            value={state.telephoneNumber}
-                            tel
-                            InputProps={{
-                                readOnly: !editMode,
-                                disableUnderline: !editMode,
-                            }}
-                            label={"Contact Number"}
-                            id={"contact-number"}
-                            onChange={(e) => {
-                                setState({
-                                    ...state,
-                                    telephoneNumber: e.target.value,
-                                });
-                            }}
-                        />
-                    </Grid>
-                    {divider}
-                </Grid>
+            <Grid
+                container
+                direction={"column"}
+                justify={"space-between"}
+                alignItems={"flex-start"}
+                spacing={1}
+            >
+                {Object.keys(fields).map((key) => {
+                    return (
+                        <Grid key={key} style={{ width: "50%" }} item>
+                            <TextFieldUncontrolled
+                                value={state[key]}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                    disableUnderline: !editMode,
+                                }}
+                                fullWidth
+                                label={fields[key]}
+                                id={key}
+                                onChange={(e) => {
+                                    setState({
+                                        ...state,
+                                        [key]: e.target.value,
+                                    });
+                                }}
+                            />
+                            {divider}
+                        </Grid>
+                    );
+                })}
+                {Object.keys(contactFields).map((key) => {
+                    return (
+                        <Grid key={key} style={{ width: "50%" }} item>
+                            <TextFieldUncontrolled
+                                value={state.contact[key]}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                    disableUnderline: !editMode,
+                                }}
+                                fullWidth
+                                label={contactFields[key]}
+                                id={key}
+                                onChange={(e) => {
+                                    setState({
+                                        ...state,
+                                        contact: {
+                                            ...state.contact,
+                                            [key]: e.target.value,
+                                        },
+                                    });
+                                }}
+                            />
+                            {divider}
+                        </Grid>
+                    );
+                })}
             </Grid>
-            <Grid item>{saveButtons}</Grid>
-        </Grid>
+            {saveButtons}
+        </>
     );
 }
