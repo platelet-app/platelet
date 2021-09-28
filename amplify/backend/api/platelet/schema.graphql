@@ -15,18 +15,6 @@ type User @model {
   tasks: [UserTasks] @connection(name: "UserTasks")
   tasksCoordinator: [CoordinatorTasks] @connection(name: "CoordinatorTasks")
   active: Int!
-  telephoneNumber: String
-  mobileNumber: String
-  emailAddress: String
-  line1: String
-  line2: String
-  line3: String
-  town: String
-  county: String
-  state: String
-  country: String
-  postcode: String
-  what3words: String
 }
 
 type Group @model {
