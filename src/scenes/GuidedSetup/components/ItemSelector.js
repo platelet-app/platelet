@@ -115,7 +115,6 @@ export default function ItemSelector(props) {
     if (isFetching) {
         return <DeliverablesSkeleton/>
     } else {
-        let count = 0;
         return (
             <Paper className={
                 cardClasses.root
@@ -130,15 +129,11 @@ export default function ItemSelector(props) {
                                       direction={"column"}
                                 >
                                     {deliverablesSorted[key].map(deliverable => {
-                                        count++;
                                         return (
                                             <Grid item key={deliverable.id || deliverable.uuid}>
-                                                {count > 5 && truncated ?
-                                                    <></> :
-                                                    <EditableDeliverable
-                                                        onChange={onChange}
-                                                        deliverable={deliverable}/>
-                                                }
+                                                <EditableDeliverable
+                                                    onChange={onChange}
+                                                    deliverable={deliverable}/>
                                             </Grid>
                                         )
                                     })
@@ -147,16 +142,6 @@ export default function ItemSelector(props) {
                             </Grid>
                         )
                     })}
-                    <Grid item>
-                        <Link href="#" onClick={e => {
-                            setTruncated(!truncated)
-                            e.preventDefault();
-                        }} color="inherit">
-                            {truncated ? "More..." : "Less..."}
-                        </Link>
-                        <Typography>
-                        </Typography>
-                    </Grid>
                 </Grid>
             </Paper>
         )

@@ -35,9 +35,9 @@ function FavouriteLocationsSelect(props) {
                 options={filteredLocationSuggestions}
                 getOptionLabel={(option) => option.name}
                 size={"small"}
-                style={{width: 230}}
+                style={{width: props.customWidth ? props.customWidth : 230}}
                 renderInput={(params) => (
-                    <TextField {...params} label={props.label || "Select"} variant="outlined" margin="none"/>
+                    <TextField {...params} label={props.label || "Locations"} variant="outlined" margin="none"/>
                 )}
                 onChange={onSelect}
                 renderOption={(option, {inputValue}) => {

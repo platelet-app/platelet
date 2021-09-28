@@ -32,6 +32,7 @@ import {useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
 import {getTasksSelector} from "../../../redux/Selectors";
 import { GuidedSetup } from '../../GuidedSetup/GuidedSetup'
+import { CoordinatorSetup } from '../../CoordinatorSetup/CoordinatorSetup'
 
 const getColumnTitle = key => {
     switch (key) {
@@ -380,7 +381,8 @@ function TasksGrid(props) {
                         )
                     })}
                 </Grid>
-                <GuidedSetup show={showGuidedSetup} onClose={() => setShowGuidedSetup(false)}/>
+                {/* <GuidedSetup show={showGuidedSetup} onClose={() => setShowGuidedSetup(false)}/> */}
+                <CoordinatorSetup show={showGuidedSetup} onClose={() => setShowGuidedSetup(false)}/>
             </>
         )
     }
