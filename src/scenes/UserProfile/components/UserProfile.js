@@ -9,19 +9,6 @@ import { getWhoami } from "../../../redux/Selectors";
 import _ from "lodash";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
-export const initialUserState = {
-    id: null,
-    username: "",
-    contact: { emailAddress: "", telephoneNumber: "" },
-    name: null,
-    dateOfBirth: null,
-    patch: "",
-    roles: "",
-    displayName: null,
-    profilePictureURL: "",
-    profilePictureThumbnailURL: "",
-};
-
 const fields = {
     username: "Username",
     name: "Name",
@@ -36,7 +23,7 @@ const contactFields = {
 
 export default function UserProfile(props) {
     const [editMode, setEditMode] = useState(false);
-    const [state, setState] = useState(initialUserState);
+    const [state, setState] = useState({ ...props.user });
     const [oldState, setOldState] = useState({ ...props.user });
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
@@ -93,6 +80,7 @@ export default function UserProfile(props) {
         <></>
     ) : (
         <SaveCancelButtons
+            disabled={props.isPosting}
             onSave={() => {
                 if (verifyUpdate(state)) {
                     props.onUpdate(

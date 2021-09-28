@@ -35,7 +35,8 @@ export default function UserDetail(props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
     const whoami = useSelector(getWhoami);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    const [isFetching, setIsFetching] = useState(true);
+    const [isFetching, setIsFetching] = useState(false);
+    const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
     const [notFound, setNotFound] = useState(false);
     const [usersDisplayNames, setUsersDisplayNames] = useState([]);
@@ -85,6 +86,7 @@ export default function UserDetail(props) {
     useEffect(() => getDisplayNames(), []);
 
     async function onUpdate(value) {
+        setIsPosting(true);
         try {
             await DataStore.save(
                 models.User.copyOf(user, (updated) => {
@@ -94,23 +96,26 @@ export default function UserDetail(props) {
                     }
                 })
             );
-            await DataStore.save(
-                models.AddressAndContactDetails.copyOf(
-                    user.contact,
-                    (updated) => {
-                        // There is probably a better way of doing this?
-                        for (const [key, newValue] of Object.entries(
-                            value.contact
-                        )) {
-                            if (key !== "id") updated[key] = newValue;
+            if (user.contact) {
+                await DataStore.save(
+                    models.AddressAndContactDetails.copyOf(
+                        user.contact,
+                        (updated) => {
+                            // There is probably a better way of doing this?
+                            for (const [key, newValue] of Object.entries(
+                                value.contact
+                            )) {
+                                if (key !== "id") updated[key] = newValue;
+                            }
                         }
-                    }
-                )
-            );
+                    )
+                );
+            }
+            setIsPosting(false);
         } catch (error) {
             console.log("Update request failed", error);
             dispatch(displayErrorNotification(error.message));
-            setIsFetching(false);
+            setIsPosting(false);
         }
     }
 
@@ -127,6 +132,7 @@ export default function UserDetail(props) {
                             displayNames={usersDisplayNames}
                             user={user}
                             onUpdate={onUpdate}
+                            isPosting={isPosting}
                         />
                     </PaddedPaper>
                 </Grid>
