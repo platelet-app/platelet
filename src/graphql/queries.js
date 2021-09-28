@@ -644,10 +644,28 @@ export const syncLocations = /* GraphQL */ `
         id
         name
         listed
-        contact
-        telephoneNumber
-        mobileNumber
-        emailAddress
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         ward
         line1
         line2
@@ -686,10 +704,28 @@ export const getLocation = /* GraphQL */ `
       id
       name
       listed
-      contact
-      telephoneNumber
-      mobileNumber
-      emailAddress
+      contact {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       ward
       line1
       line2
@@ -747,10 +783,28 @@ export const listLocations = /* GraphQL */ `
         id
         name
         listed
-        contact
-        telephoneNumber
-        mobileNumber
-        emailAddress
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         ward
         line1
         line2

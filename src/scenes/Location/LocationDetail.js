@@ -22,9 +22,7 @@ import _ from "lodash";
 
 const initialLocationState = {
     name: null,
-    contact: null,
-    telephoneNumber: null,
-    emailAddress: null,
+    contact: { name: null, telephoneNumber: null, emailAddress: null },
     ward: null,
     line1: null,
     line2: null,
@@ -49,7 +47,10 @@ const fields = {
     state: "State",
     postcode: "Postcode",
     what3words: "What 3 Words",
-    contact: "Contact name",
+};
+
+const contactFields = {
+    name: "Contact name",
     emailAddress: "Contact email",
     telephoneNumber: "Contact telephone",
 };
@@ -67,7 +68,7 @@ export default function LocationDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
-    const [location, setLocation] = useState(initialLocationState);
+    const [state, setState] = useState(initialLocationState);
     const [oldState, setOldState] = useState(initialLocationState);
     const [editMode, setEditMode] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
@@ -83,7 +84,7 @@ export default function LocationDetail(props) {
                 );
                 setIsFetching(false);
                 if (location) {
-                    setLocation(location);
+                    setState(location);
                     setOldState(location);
                 } else {
                     setNotFound(true);
@@ -111,12 +112,18 @@ export default function LocationDetail(props) {
 
     async function onUpdate(value) {
         debugger;
+        const { contact, ...rest } = value;
         try {
             await DataStore.save(
-                models.Location.copyOf(location, (updated) => {
-                    // There is probably a better way of doing this?
-                    debugger;
-                    for (const [key, newValue] of Object.entries(value)) {
+                models.Location.copyOf(rest, (updated) => {
+                    for (const [key, newValue] of Object.entries(rest)) {
+                        if (key !== "id") updated[key] = newValue;
+                    }
+                })
+            );
+            await DataStore.save(
+                models.AddressAndContactDetails.copyOf(contact, (updated) => {
+                    for (const [key, newValue] of Object.entries(contact)) {
                         if (key !== "id") updated[key] = newValue;
                     }
                 })
@@ -134,11 +141,12 @@ export default function LocationDetail(props) {
         <></>
     ) : (
         <SaveCancelButtons
+            disabled={isPosting}
             onSave={async () => {
-                if (verifyUpdate(location)) {
+                if (verifyUpdate(state)) {
                     await onUpdate(
                         _.omit(
-                            location,
+                            state,
                             "_deleted",
                             "_lastChangedAt",
                             "_version",
@@ -147,12 +155,12 @@ export default function LocationDetail(props) {
                         )
                     );
                     setEditMode(false);
-                    setOldState(location);
+                    setOldState(state);
                 }
             }}
             onCancel={() => {
                 setEditMode(false);
-                setLocation(oldState);
+                setState(oldState);
             }}
         />
     );
@@ -166,7 +174,7 @@ export default function LocationDetail(props) {
                     value={editMode}
                     onChange={(v) => {
                         setEditMode(v);
-                        if (!v) setLocation(oldState);
+                        if (!v) setState(oldState);
                     }}
                 />
             );
@@ -174,9 +182,7 @@ export default function LocationDetail(props) {
     }
 
     const header = (
-        <Typography variant={"h4"}>
-            Directory location: {location.name}
-        </Typography>
+        <Typography variant={"h4"}>Directory location: {state.name}</Typography>
     );
 
     const divider = editMode ? (
@@ -218,7 +224,7 @@ export default function LocationDetail(props) {
                             return (
                                 <Grid key={key} style={{ width: "50%" }} item>
                                     <TextFieldUncontrolled
-                                        value={location[key]}
+                                        value={state[key]}
                                         InputProps={{
                                             readOnly: !editMode,
                                             disableUnderline: !editMode,
@@ -227,9 +233,35 @@ export default function LocationDetail(props) {
                                         label={fields[key]}
                                         id={key}
                                         onChange={(e) => {
-                                            setLocation({
-                                                ...location,
+                                            setState({
+                                                ...state,
                                                 [key]: e.target.value,
+                                            });
+                                        }}
+                                    />
+                                    {divider}
+                                </Grid>
+                            );
+                        })}
+                        {Object.keys(contactFields).map((key) => {
+                            return (
+                                <Grid key={key} style={{ width: "50%" }} item>
+                                    <TextFieldUncontrolled
+                                        value={state.contact[key]}
+                                        InputProps={{
+                                            readOnly: !editMode,
+                                            disableUnderline: !editMode,
+                                        }}
+                                        fullWidth
+                                        label={contactFields[key]}
+                                        id={key}
+                                        onChange={(e) => {
+                                            setState({
+                                                ...state,
+                                                contact: {
+                                                    ...state.contact,
+                                                    [key]: e.target.value,
+                                                },
                                             });
                                         }}
                                     />

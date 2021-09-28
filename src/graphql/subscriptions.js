@@ -847,10 +847,28 @@ export const onCreateLocation = /* GraphQL */ `
       id
       name
       listed
-      contact
-      telephoneNumber
-      mobileNumber
-      emailAddress
+      contact {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       ward
       line1
       line2
@@ -903,10 +921,28 @@ export const onUpdateLocation = /* GraphQL */ `
       id
       name
       listed
-      contact
-      telephoneNumber
-      mobileNumber
-      emailAddress
+      contact {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       ward
       line1
       line2
@@ -959,10 +995,28 @@ export const onDeleteLocation = /* GraphQL */ `
       id
       name
       listed
-      contact
-      telephoneNumber
-      mobileNumber
-      emailAddress
+      contact {
+        id
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       ward
       line1
       line2

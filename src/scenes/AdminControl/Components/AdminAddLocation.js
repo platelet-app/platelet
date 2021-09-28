@@ -15,9 +15,11 @@ import { getWhoami } from "../../../redux/Selectors";
 
 const initialLocationState = {
     name: null,
-    contact: null,
-    telephoneNumber: null,
-    emailAddress: null,
+    contact: {
+        name: null,
+        telephoneNumber: null,
+        emailAddress: null,
+    },
     ward: null,
     line1: null,
     line2: null,
@@ -52,7 +54,10 @@ const fields = {
     state: "State",
     postcode: "Postcode",
     what3words: "What 3 Words",
-    contact: "Contact name",
+};
+
+const contactFields = {
+    name: "Contact name",
     emailAddress: "Contact email",
     telephoneNumber: "Contact telephone",
 };
@@ -73,8 +78,15 @@ function AdminAddLocation() {
     async function addNewVehicle() {
         try {
             setIsPosting(true);
+            const { contact, ...rest } = state;
+            const newContact = await DataStore.save(
+                new models.AddressAndContactDetails(contact)
+            );
             const newLocation = await DataStore.save(
-                new models.Location(state)
+                new models.Location({
+                    locationContactId: newContact.id,
+                    ...rest,
+                })
             );
             setState(initialLocationState);
             setIsPosting(false);
@@ -122,6 +134,27 @@ function AdminAddLocation() {
                                         setState({
                                             ...state,
                                             [key]: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </Grid>
+                        );
+                    })}
+                    {Object.keys(contactFields).map((key) => {
+                        return (
+                            <Grid key={key} item>
+                                <TextFieldUncontrolled
+                                    value={state.contact[key]}
+                                    fullWidth
+                                    label={contactFields[key]}
+                                    id={key}
+                                    onChange={(e) => {
+                                        setState({
+                                            ...state,
+                                            contact: {
+                                                ...state.contact,
+                                                [key]: e.target.value,
+                                            },
                                         });
                                     }}
                                 />

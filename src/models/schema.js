@@ -1030,30 +1030,15 @@ export const schema = {
                 "contact": {
                     "name": "contact",
                     "isArray": false,
-                    "type": "String",
+                    "type": {
+                        "model": "AddressAndContactDetails"
+                    },
                     "isRequired": false,
-                    "attributes": []
-                },
-                "telephoneNumber": {
-                    "name": "telephoneNumber",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "mobileNumber": {
-                    "name": "mobileNumber",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "emailAddress": {
-                    "name": "emailAddress",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "locationContactId"
+                    }
                 },
                 "ward": {
                     "name": "ward",
@@ -1203,5 +1188,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "c20696663052f9e41ba6c463213947da"
+    "version": "4e2fec69dcca656c30dd0d5a5f059c1f"
 };

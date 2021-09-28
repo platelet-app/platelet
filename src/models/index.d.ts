@@ -234,10 +234,7 @@ export declare class Location {
   readonly id: string;
   readonly name?: string;
   readonly listed?: number;
-  readonly contact?: string;
-  readonly telephoneNumber?: string;
-  readonly mobileNumber?: string;
-  readonly emailAddress?: string;
+  readonly contact?: AddressAndContactDetails;
   readonly ward?: string;
   readonly line1?: string;
   readonly line2?: string;
