@@ -1,7 +1,7 @@
 import { DataStore } from "@aws-amplify/datastore";
 import { Button, Grid, makeStyles, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import {
     displayErrorNotification,
@@ -10,6 +10,8 @@ import {
 import { PaddedPaper } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import * as models from "../../../models/index";
+import Forbidden from "../../../ErrorComponents/Forbidden";
+import { getWhoami } from "../../../redux/Selectors";
 
 const initialLocationState = {
     name: null,
@@ -57,6 +59,7 @@ const fields = {
 
 function AdminAddLocation() {
     const [state, setState] = useState(initialLocationState);
+    const whoami = useSelector(getWhoami);
     const [isPosting, setIsPosting] = useState(false);
     const [inputVerified, setInputVerified] = useState(false);
     const dispatch = useDispatch();
@@ -89,48 +92,54 @@ function AdminAddLocation() {
         }
     }
 
-    return (
-        <PaddedPaper>
-            <Grid
-                container
-                className={classes.root}
-                direction={"column"}
-                justify={"flex-start"}
-                alignItems={"top"}
-                spacing={3}
-            >
-                <Grid item>
-                    <Typography variant={"h5"}>Add a new location</Typography>
+    if (!whoami.roles.includes("ADMIN")) {
+        return <Forbidden />;
+    } else {
+        return (
+            <PaddedPaper>
+                <Grid
+                    container
+                    className={classes.root}
+                    direction={"column"}
+                    justify={"flex-start"}
+                    alignItems={"top"}
+                    spacing={3}
+                >
+                    <Grid item>
+                        <Typography variant={"h5"}>
+                            Add a new location
+                        </Typography>
+                    </Grid>
+                    {Object.keys(fields).map((key) => {
+                        return (
+                            <Grid key={key} item>
+                                <TextFieldUncontrolled
+                                    value={state[key]}
+                                    fullWidth
+                                    label={fields[key]}
+                                    id={key}
+                                    onChange={(e) => {
+                                        setState({
+                                            ...state,
+                                            [key]: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </Grid>
+                        );
+                    })}
+                    <Grid item>
+                        <Button
+                            disabled={!inputVerified || isPosting}
+                            onClick={addNewVehicle}
+                        >
+                            Add location
+                        </Button>
+                    </Grid>
                 </Grid>
-                {Object.keys(fields).map((key) => {
-                    return (
-                        <Grid key={key} item>
-                            <TextFieldUncontrolled
-                                value={state[key]}
-                                fullWidth
-                                label={fields[key]}
-                                id={key}
-                                onChange={(e) => {
-                                    setState({
-                                        ...state,
-                                        [key]: e.target.value,
-                                    });
-                                }}
-                            />
-                        </Grid>
-                    );
-                })}
-                <Grid item>
-                    <Button
-                        disabled={!inputVerified || isPosting}
-                        onClick={addNewVehicle}
-                    >
-                        Add location
-                    </Button>
-                </Grid>
-            </Grid>
-        </PaddedPaper>
-    );
+            </PaddedPaper>
+        );
+    }
 }
 
 export default AdminAddLocation;

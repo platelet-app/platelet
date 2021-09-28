@@ -14,11 +14,13 @@ import {
     TextFieldControlled,
 } from "../../../components/TextFields";
 import { PaddedPaper, showHide } from "../../../styles/common";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     displayErrorNotification,
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
+import Forbidden from "../../../ErrorComponents/Forbidden";
+import { getWhoami } from "../../../redux/Selectors";
 
 const useStyles = makeStyles({
     root: {
@@ -39,6 +41,7 @@ const initialState = {
 function AdminAddUser() {
     const [state, setState] = useState(initialState);
     //TODO: eventually want to make signup only with email address unless chosen otherwise
+    const whoami = useSelector(getWhoami);
     const [usernameMode, setUsernameMode] = useState(true);
     const [passwordVerified, setPasswordVerified] = useState(true);
     const [inputVerified, setInputVerified] = useState(false);
@@ -97,120 +100,132 @@ function AdminAddUser() {
         }
     }
     const { show, hide } = showHide();
-    return (
-        <PaddedPaper>
-            <Grid
-                container
-                className={classes.root}
-                direction={"column"}
-                justify={"flex-start"}
-                alignItems={"top"}
-                spacing={3}
-            >
-                <Grid item>
-                    <Typography variant={"h5"}>Add a new user</Typography>
+    if (!whoami.roles.includes("ADMIN")) {
+        return <Forbidden />;
+    } else {
+        return (
+            <PaddedPaper>
+                <Grid
+                    container
+                    className={classes.root}
+                    direction={"column"}
+                    justify={"flex-start"}
+                    alignItems={"top"}
+                    spacing={3}
+                >
+                    <Grid item>
+                        <Typography variant={"h5"}>Add a new user</Typography>
+                    </Grid>
+                    <Grid item>
+                        <TextFieldUncontrolled
+                            className={usernameMode ? show : hide}
+                            value={state.username}
+                            fullWidth
+                            label={"Username"}
+                            id={"username"}
+                            onChange={(e) => {
+                                setState({
+                                    ...state,
+                                    username: e.target.value,
+                                });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <TextFieldUncontrolled
+                            fullWidth
+                            label={"Email address"}
+                            id={"email"}
+                            onChange={(e) =>
+                                setState({
+                                    ...state,
+                                    username: usernameMode
+                                        ? state.username
+                                        : e.target.value,
+                                    attributes: {
+                                        ...state.attributes,
+                                        email: e.target.value,
+                                    },
+                                })
+                            }
+                            value={state.attributes.email}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <TextFieldUncontrolled
+                            fullWidth
+                            label={"Name"}
+                            id={"name"}
+                            onChange={(e) =>
+                                setState({
+                                    ...state,
+                                    attributes: {
+                                        ...state.attributes,
+                                        name: e.target.value,
+                                    },
+                                })
+                            }
+                            value={state.attributes.name}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <TextFieldUncontrolled
+                            value={state.password}
+                            inputProps={{
+                                type: "password",
+                            }}
+                            fullWidth
+                            label={"Password"}
+                            id={"password"}
+                            autoComplete="new-password"
+                            onChange={(e) => {
+                                setState({
+                                    ...state,
+                                    password: e.target.value,
+                                });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <TextField
+                            margin="dense"
+                            id={"password-confirm"}
+                            error={!passwordVerified}
+                            helperText={
+                                !passwordVerified
+                                    ? "Passwords do not match"
+                                    : ""
+                            }
+                            label={"Password confirm"}
+                            value={state.passwordCheck}
+                            inputProps={{
+                                type: "password",
+                            }}
+                            fullWidth
+                            autoComplete="new-password"
+                            onChange={(e) => {
+                                setState({
+                                    ...state,
+                                    passwordCheck: e.target.value,
+                                });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            disabled={!inputVerified || isPosting}
+                            onClick={signUp}
+                        >
+                            Add user
+                        </Button>
+                    </Grid>
+                    <Grid className={classes.message} item>
+                        <Typography>{message}</Typography>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <TextFieldUncontrolled
-                        className={usernameMode ? show : hide}
-                        value={state.username}
-                        fullWidth
-                        label={"Username"}
-                        id={"username"}
-                        onChange={(e) => {
-                            setState({ ...state, username: e.target.value });
-                        }}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextFieldUncontrolled
-                        fullWidth
-                        label={"Email address"}
-                        id={"email"}
-                        onChange={(e) =>
-                            setState({
-                                ...state,
-                                username: usernameMode
-                                    ? state.username
-                                    : e.target.value,
-                                attributes: {
-                                    ...state.attributes,
-                                    email: e.target.value,
-                                },
-                            })
-                        }
-                        value={state.attributes.email}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextFieldUncontrolled
-                        fullWidth
-                        label={"Name"}
-                        id={"name"}
-                        onChange={(e) =>
-                            setState({
-                                ...state,
-                                attributes: {
-                                    ...state.attributes,
-                                    name: e.target.value,
-                                },
-                            })
-                        }
-                        value={state.attributes.name}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextFieldUncontrolled
-                        value={state.password}
-                        inputProps={{
-                            type: "password",
-                        }}
-                        fullWidth
-                        label={"Password"}
-                        id={"password"}
-                        autoComplete="new-password"
-                        onChange={(e) => {
-                            setState({ ...state, password: e.target.value });
-                        }}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextField
-                        margin="dense"
-                        id={"password-confirm"}
-                        error={!passwordVerified}
-                        helperText={
-                            !passwordVerified ? "Passwords do not match" : ""
-                        }
-                        label={"Password confirm"}
-                        value={state.passwordCheck}
-                        inputProps={{
-                            type: "password",
-                        }}
-                        fullWidth
-                        autoComplete="new-password"
-                        onChange={(e) => {
-                            setState({
-                                ...state,
-                                passwordCheck: e.target.value,
-                            });
-                        }}
-                    />
-                </Grid>
-                <Grid item>
-                    <Button
-                        disabled={!inputVerified || isPosting}
-                        onClick={signUp}
-                    >
-                        Add user
-                    </Button>
-                </Grid>
-                <Grid className={classes.message} item>
-                    <Typography>{message}</Typography>
-                </Grid>
-            </Grid>
-        </PaddedPaper>
-    );
+            </PaddedPaper>
+        );
+    }
 }
 
 export default AdminAddUser;

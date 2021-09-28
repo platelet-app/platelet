@@ -9,8 +9,10 @@ import {
     displayErrorNotification,
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { encodeUUID } from "../../../utilities";
+import { getWhoami } from "../../../redux/Selectors";
+import Forbidden from "../../../ErrorComponents/Forbidden";
 
 const initialVehicleState = {
     name: "",
@@ -37,6 +39,7 @@ function AdminAddVehicle() {
     const [inputVerified, setInputVerified] = useState(false);
     const dispatch = useDispatch();
     const classes = useStyles();
+    const whoami = useSelector(getWhoami);
 
     async function addVehicleToStore() {
         try {
@@ -78,90 +81,102 @@ function AdminAddVehicle() {
     }
     useEffect(verifyInput, [state]);
 
-    return (
-        <PaddedPaper>
-            <Grid
-                container
-                className={classes.root}
-                direction={"column"}
-                justify={"flex-start"}
-                alignItems={"top"}
-                spacing={3}
-            >
-                <Grid item>
-                    <Typography variant={"h5"}>Add a new vehicle</Typography>
+    if (!whoami.roles.includes("ADMIN")) {
+        return <Forbidden />;
+    } else {
+        return (
+            <PaddedPaper>
+                <Grid
+                    container
+                    className={classes.root}
+                    direction={"column"}
+                    justify={"flex-start"}
+                    alignItems={"top"}
+                    spacing={3}
+                >
+                    <Grid item>
+                        <Typography variant={"h5"}>
+                            Add a new vehicle
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <TextFieldUncontrolled
+                            value={state.name}
+                            fullWidth
+                            label={"Name"}
+                            id={"name"}
+                            onChange={(e) => {
+                                setState({ ...state, name: e.target.value });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <TextFieldUncontrolled
+                            value={state.manufacturer}
+                            fullWidth
+                            label={"Manufacturer"}
+                            id={"manufacturer"}
+                            onChange={(e) => {
+                                setState({
+                                    ...state,
+                                    manufacturer: e.target.value,
+                                });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <TextFieldUncontrolled
+                            value={state.model}
+                            fullWidth
+                            label={"Model"}
+                            id={"model"}
+                            onChange={(e) => {
+                                setState({
+                                    ...state,
+                                    model: e.target.value,
+                                });
+                            }}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <DatePicker
+                            label={"Date of registration"}
+                            onChange={(value) => {
+                                setState({
+                                    ...state,
+                                    dateOfRegistration: value,
+                                });
+                            }}
+                            value={state.dateOfRegistration}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <DatePicker
+                            label={"Date of manufacture"}
+                            onChange={(value) => {
+                                setState({
+                                    ...state,
+                                    dateOfManufacture: value,
+                                });
+                            }}
+                            value={state.dateOfManufacture}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            disabled={!inputVerified || isPosting}
+                            onClick={addVehicleToStore}
+                        >
+                            Add vehicle
+                        </Button>
+                    </Grid>
+                    <Grid className={classes.message} item>
+                        <Typography>{message}</Typography>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <TextFieldUncontrolled
-                        value={state.name}
-                        fullWidth
-                        label={"Name"}
-                        id={"name"}
-                        onChange={(e) => {
-                            setState({ ...state, name: e.target.value });
-                        }}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextFieldUncontrolled
-                        value={state.manufacturer}
-                        fullWidth
-                        label={"Manufacturer"}
-                        id={"manufacturer"}
-                        onChange={(e) => {
-                            setState({
-                                ...state,
-                                manufacturer: e.target.value,
-                            });
-                        }}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextFieldUncontrolled
-                        value={state.model}
-                        fullWidth
-                        label={"Model"}
-                        id={"model"}
-                        onChange={(e) => {
-                            setState({
-                                ...state,
-                                model: e.target.value,
-                            });
-                        }}
-                    />
-                </Grid>
-                <Grid item>
-                    <DatePicker
-                        label={"Date of registration"}
-                        onChange={(value) => {
-                            setState({ ...state, dateOfRegistration: value });
-                        }}
-                        value={state.dateOfRegistration}
-                    />
-                </Grid>
-                <Grid item>
-                    <DatePicker
-                        label={"Date of manufacture"}
-                        onChange={(value) => {
-                            setState({ ...state, dateOfManufacture: value });
-                        }}
-                        value={state.dateOfManufacture}
-                    />
-                </Grid>
-                <Grid item>
-                    <Button
-                        disabled={!inputVerified || isPosting}
-                        onClick={addVehicleToStore}
-                    >
-                        Add vehicle
-                    </Button>
-                </Grid>
-                <Grid className={classes.message} item>
-                    <Typography>{message}</Typography>
-                </Grid>
-            </Grid>
-        </PaddedPaper>
-    );
+            </PaddedPaper>
+        );
+    }
 }
 
 export default AdminAddVehicle;
