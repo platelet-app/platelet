@@ -160,7 +160,7 @@ export default function UserProfile(props) {
                         </Grid>
                     );
                 })}
-                {Object.keys(contactFields).map((key) => {
+                {Object.keys(state.contact ? contactFields : []).map((key) => {
                     return (
                         <Grid key={key} style={{ width: "50%" }} item>
                             <TextFieldUncontrolled
