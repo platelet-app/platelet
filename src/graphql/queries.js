@@ -643,29 +643,21 @@ export const syncLocations = /* GraphQL */ `
       items {
         id
         name
-        address {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         listed
+        contact
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         comments {
           id
           parentID
@@ -693,29 +685,21 @@ export const getLocation = /* GraphQL */ `
     getLocation(id: $id) {
       id
       name
-      address {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       listed
+      contact
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       comments {
         id
         parentID
@@ -762,29 +746,21 @@ export const listLocations = /* GraphQL */ `
       items {
         id
         name
-        address {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         listed
+        contact
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         comments {
           id
           parentID

@@ -39,8 +39,21 @@ type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
 type Location @model {
   id: ID!
   name: String
-  address: AddressAndContactDetails @connection
   listed: Int
+  contact: String
+  telephoneNumber: String
+  mobileNumber: String
+  emailAddress: String
+  ward: String
+  line1: String
+  line2: String
+  line3: String
+  town: String
+  county: String
+  state: String
+  country: String
+  postcode: String
+  what3words: String
   comments: [Comment]
 }
 
