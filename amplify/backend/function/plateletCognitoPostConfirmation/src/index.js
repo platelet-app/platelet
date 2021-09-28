@@ -29,7 +29,6 @@ exports.handler = async (event, context) => {
             },
             TableName:
                 process.env.API_PLATELET_ADDRESSANDCONTACTDETAILSTABLE_NAME,
-            ReturnValues: "ALL_OLD",
         };
 
         const userParams = {

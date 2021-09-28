@@ -22,7 +22,7 @@
         },
         "plateletCognitoPostConfirmation": {
           "deploymentBucketName": "amplify-platelet-dev-165046-deployment",
-          "s3Key": "amplify-builds/plateletCognitoPostConfirmation-537035754a717a345556-build.zip"
+          "s3Key": "amplify-builds/plateletCognitoPostConfirmation-772b4e4c396b335a4b69-build.zip"
         }
       }
     }
