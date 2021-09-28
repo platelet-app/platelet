@@ -1,8 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 
-import { ContactForm } from '../../components/ContactForm'
-import LocationDetailAndSelector from '../../scenes/Task/components/LocationDetailAndSelector'
+import LocationSelector from './components/LocationSelector'
 
 import { Styles } from './styles'
 
@@ -11,12 +10,12 @@ export const Step3 = ({ values, onChange, onSelect }) => {
     return (
         <div className={classes.columnWrapper}>
             <div classes={classes.block}>
-                <Typography variant="h6" gutterBottom >{"Where is it being picked up from?"}</Typography>
-                <LocationDetailAndSelector displayPresets onSelectPreset={onSelect} location={values.pickUpLocation} />
+                <Typography variant="h6" gutterBottom >{"Pick-up"}</Typography>
+                <LocationSelector displayPresets onSelectPreset={onSelect} location={values.pickUpLocation} />
             </div>
             <div classes={classes.block}>
-                <Typography variant="h6" gutterBottom >{"Where is it being delivered?"}</Typography>
-                <LocationDetailAndSelector displayPresets onSelectPreset={onSelect} location={values.dropOffLocation} />
+                <Typography variant="h6" gutterBottom >{"Drop-off"}</Typography>
+                <LocationSelector displayPresets onSelectPreset={onSelect} location={values.dropOffLocation} />
             </div>
         </div>
     )

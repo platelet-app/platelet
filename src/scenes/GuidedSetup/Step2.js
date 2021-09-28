@@ -1,7 +1,8 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 
-import DeliverableGridSelect from '../../scenes/Deliverables/DeliverableGridSelect'
+import ItemSelector from './components/ItemSelector'
+import PrioritySelect from "../../scenes/Task/components/PrioritySelect";
 
 import { Styles } from './styles'
 
@@ -11,7 +12,11 @@ export const Step2 = ({ values, onChange, onSelect, taskUUID }) => {
       <div className={classes.columnWrapper}>
         <div classes={classes.block}>
           <Typography variant="h6" gutterBottom >{"Select number of items and priority"}</Typography>
-          <DeliverableGridSelect taskUUID={taskUUID}/>
+          <ItemSelector taskUUID={taskUUID}/>
+
+          <div>
+            <PrioritySelect />
+          </div>
         </div>
       </div>
     )
