@@ -13,7 +13,7 @@ import { createPostingSelector } from "../redux/LoadingSelectors";
 import { sortByCreatedTime } from "../utilities";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
 import { Button } from "@material-ui/core";
-import { getWhoami } from "../redux/Selectors";
+import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
 import { Link } from "react-router-dom";
 import { DataStore, Hub } from "aws-amplify";
 import * as models from "../models/index";
@@ -55,42 +55,27 @@ export default function UsersList(props) {
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     //useEffect(() => setFilteredUsers(users), [users]);
 
-    const [dataStoreReady, setDataStoreReady] = useState(false);
-    // TODO: See if this is necessary to wait for the datastore to be ready before getting data from it
-    // Create listener
-    // const listener = Hub.listen("datastore", async (hubData) => {
-    //     const { event, data } = hubData.payload;
-    //     if (event === "ready") {
-    //         setDataStoreReady(true);
-    //         // do something here once the data is synced from the cloud
-    //     }
-    // });
-
     async function getUsers() {
-        const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
-        try {
-            // const usersData = await API.graphql({
-            //     query: queries.listUsers,
-            // });
-            //const users = usersData.data.listUsers.items;
-            const users = await DataStore.query(models.User);
-            clearTimeout(fetchingTimer);
-            setIsFetching(false);
-            setUsers(users);
-            // Remove listener
-            //listener();
-        } catch (error) {
-            console.log("Request failed", error);
-            if (error && error.message)
-                dispatch(displayErrorNotification(error.message));
-            setIsFetching(false);
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
+        } else {
+            try {
+                const users = await DataStore.query(models.User);
+                setIsFetching(false);
+                setUsers(users);
+            } catch (error) {
+                console.log("Request failed", error);
+                if (error && error.message)
+                    dispatch(displayErrorNotification(error.message));
+                setIsFetching(false);
+            }
         }
     }
 
-    // TODO: Not sure if needed yet
-    useEffect(() => getUsers(), [dataStoreReady]);
+    useEffect(() => getUsers(), [dataStoreReadyStatus]);
 
     const addButton = whoami.roles.includes("ADMIN") ? (
         <Button component={Link} to={`/admin/adduser`}>
