@@ -32,6 +32,7 @@ const initialLocationState = {
     state: null,
     postcode: null,
     what3words: null,
+    listed: 1,
 };
 
 const useStyles = makeStyles({
