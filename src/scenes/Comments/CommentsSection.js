@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     clearComments,
@@ -17,41 +17,42 @@ import {
     unsubscribeFromComments,
 } from "../../redux/sockets/SocketActions";
 import PropTypes from "prop-types";
+import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
+import { DataStore } from "aws-amplify";
+import * as models from "../../models/index";
 
 function CommentsSection(props) {
-    const dispatch = useDispatch();
-    const loadingSelector = createLoadingSelector([getCommentsPrefix]);
-    const isFetching = useSelector((state) => loadingSelector(state));
+    const [isFetching, setIsFetching] = useState(false);
     const notFoundSelector = createNotFoundSelector([getCommentsPrefix]);
-    const notFound = useSelector((state) => notFoundSelector(state));
-    const comments = useSelector((state) => state.comments.comments);
-    function updateComments() {
-        if (props.parentUUID) {
-            dispatch(getCommentsRequest(props.parentUUID));
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const [comments, setComments] = useState([]);
+
+    async function getComments() {
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
         } else {
-            dispatch(clearComments());
+            const commentsResult = await DataStore.query(models.Comment, (c) =>
+                c.or((c) =>
+                    c
+                        .vehicleCommentsId("eq", props.parentUUID)
+                        .userCommentsId("eq", props.parentUUID)
+                        .locationCommentsId("eq", props.parentUUID)
+                        .taskCommentsId("eq", props.parentUUID)
+                        .deliverableCommentsId("eq", props.parentUUID)
+                )
+            );
+            setComments(commentsResult);
         }
     }
-    useEffect(updateComments, [props.parentUUID]);
-
-    function componentDidMount() {
-        dispatch(subscribeToComments(props.parentUUID));
-        return function cleanup() {
-            dispatch(unsubscribeFromComments(props.parentUUID));
-        };
-    }
-    useEffect(componentDidMount, [props.parentUUID]);
+    useEffect(() => getComments(), [props.parentUUID, dataStoreReadyStatus]);
 
     if (isFetching) {
         return <CommentsSkeleton />;
-    } else if (notFound) {
+    } else if (false) {
         return <NotFound>Comments section could not found.</NotFound>;
     } else {
         return (
-            <CommentsMain
-                parentUUID={props.parentUUID}
-                comments={Object.values(comments)}
-            />
+            <CommentsMain parentUUID={props.parentUUID} comments={comments} />
         );
     }
 }
