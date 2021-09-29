@@ -99,6 +99,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userCommentsId"
+                    }
+                },
                 "group": {
                     "name": "group",
                     "isArray": false,
@@ -365,6 +379,20 @@ export const schema = {
                         "targetName": "assignedUserID"
                     }
                 },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "vehicleCommentsId"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -441,6 +469,41 @@ export const schema = {
                     "name": "publiclyVisible",
                     "isArray": false,
                     "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "userCommentsId": {
+                    "name": "userCommentsId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "vehicleCommentsId": {
+                    "name": "vehicleCommentsId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "taskCommentsId": {
+                    "name": "taskCommentsId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "deliverableCommentsId": {
+                    "name": "deliverableCommentsId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "locationCommentsId": {
+                    "name": "locationCommentsId",
+                    "isArray": false,
+                    "type": "ID",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -796,7 +859,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "parentID"
+                        "associatedWith": "taskCommentsId"
                     }
                 },
                 "status": {
@@ -933,6 +996,20 @@ export const schema = {
                     },
                     "isRequired": false,
                     "attributes": []
+                },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "deliverableCommentsId"
+                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -1110,6 +1187,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "locationCommentsId"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1189,5 +1280,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "4e2fec69dcca656c30dd0d5a5f059c1f"
+    "version": "3e87af61376bd1402ba432c2706113ba"
 };

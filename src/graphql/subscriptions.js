@@ -54,32 +54,24 @@ export const onCreateUser = /* GraphQL */ `
       profilePictureURL
       profilePictureThumbnailURL
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       group {
         id
@@ -181,32 +173,24 @@ export const onUpdateUser = /* GraphQL */ `
       profilePictureURL
       profilePictureThumbnailURL
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       group {
         id
@@ -308,32 +292,24 @@ export const onDeleteUser = /* GraphQL */ `
       profilePictureURL
       profilePictureThumbnailURL
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       group {
         id
@@ -534,15 +510,8 @@ export const onCreateVehicle = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -570,32 +539,24 @@ export const onCreateVehicle = /* GraphQL */ `
         updatedAt
       }
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -652,15 +613,8 @@ export const onUpdateVehicle = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -688,32 +642,24 @@ export const onUpdateVehicle = /* GraphQL */ `
         updatedAt
       }
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -770,15 +716,8 @@ export const onDeleteVehicle = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -806,32 +745,24 @@ export const onDeleteVehicle = /* GraphQL */ `
         updatedAt
       }
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -880,32 +811,24 @@ export const onCreateLocation = /* GraphQL */ `
       postcode
       what3words
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -954,32 +877,24 @@ export const onUpdateLocation = /* GraphQL */ `
       postcode
       what3words
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -1028,32 +943,24 @@ export const onDeleteLocation = /* GraphQL */ `
       postcode
       what3words
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -1157,32 +1064,24 @@ export const onCreateDeliverable = /* GraphQL */ `
       count
       unit
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -1208,32 +1107,24 @@ export const onUpdateDeliverable = /* GraphQL */ `
       count
       unit
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -1259,32 +1150,24 @@ export const onDeleteDeliverable = /* GraphQL */ `
       count
       unit
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -1335,15 +1218,8 @@ export const onCreateUserTasks = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -1579,15 +1455,8 @@ export const onUpdateUserTasks = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -1823,15 +1692,8 @@ export const onDeleteUserTasks = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -2067,15 +1929,8 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -2311,15 +2166,8 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -2555,15 +2403,8 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -2800,15 +2641,8 @@ export const onCreateTask = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -2946,15 +2780,8 @@ export const onCreateTask = /* GraphQL */ `
         count
         unit
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -3302,6 +3129,11 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -3362,15 +3194,8 @@ export const onUpdateTask = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -3508,15 +3333,8 @@ export const onUpdateTask = /* GraphQL */ `
         count
         unit
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -3864,6 +3682,11 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -3924,15 +3747,8 @@ export const onDeleteTask = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -4070,15 +3886,8 @@ export const onDeleteTask = /* GraphQL */ `
         count
         unit
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -4426,6 +4235,11 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -4487,15 +4301,8 @@ export const onCreateComment = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -4523,6 +4330,11 @@ export const onCreateComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
+      userCommentsId
+      vehicleCommentsId
+      taskCommentsId
+      deliverableCommentsId
+      locationCommentsId
       _version
       _deleted
       _lastChangedAt
@@ -4574,15 +4386,8 @@ export const onUpdateComment = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -4610,6 +4415,11 @@ export const onUpdateComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
+      userCommentsId
+      vehicleCommentsId
+      taskCommentsId
+      deliverableCommentsId
+      locationCommentsId
       _version
       _deleted
       _lastChangedAt
@@ -4661,15 +4471,8 @@ export const onDeleteComment = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -4697,6 +4500,11 @@ export const onDeleteComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
+      userCommentsId
+      vehicleCommentsId
+      taskCommentsId
+      deliverableCommentsId
+      locationCommentsId
       _version
       _deleted
       _lastChangedAt

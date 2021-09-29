@@ -97,6 +97,7 @@ export declare class User {
   readonly patch?: (Patch | null)[] | keyof typeof Patch;
   readonly profilePictureURL?: string;
   readonly profilePictureThumbnailURL?: string;
+  readonly comments?: Comment[];
   readonly group?: Group;
   readonly tasks?: (UserTasks | null)[];
   readonly tasksCoordinator?: (CoordinatorTasks | null)[];
@@ -137,6 +138,7 @@ export declare class Vehicle {
   readonly dateOfManufacture?: string;
   readonly dateOfRegistration?: string;
   readonly assignedUser?: User;
+  readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Vehicle, VehicleMetaData>);
@@ -149,6 +151,11 @@ export declare class Comment {
   readonly body: string;
   readonly author?: User;
   readonly publiclyVisible?: boolean;
+  readonly userCommentsId?: string;
+  readonly vehicleCommentsId?: string;
+  readonly taskCommentsId?: string;
+  readonly deliverableCommentsId?: string;
+  readonly locationCommentsId?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Comment, CommentMetaData>);
@@ -216,6 +223,7 @@ export declare class Deliverable {
   readonly id: string;
   readonly count: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
+  readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Deliverable, DeliverableMetaData>);
@@ -246,6 +254,7 @@ export declare class Location {
   readonly country?: string;
   readonly postcode?: string;
   readonly what3words?: string;
+  readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Location, LocationMetaData>);

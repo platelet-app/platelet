@@ -51,15 +51,8 @@ export const syncUsers = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -144,32 +137,24 @@ export const getUser = /* GraphQL */ `
       profilePictureURL
       profilePictureThumbnailURL
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       group {
         id
@@ -262,15 +247,8 @@ export const listUsers = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -434,15 +412,8 @@ export const syncVehicles = /* GraphQL */ `
           updatedAt
         }
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -502,15 +473,8 @@ export const getVehicle = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -538,32 +502,24 @@ export const getVehicle = /* GraphQL */ `
         updatedAt
       }
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -606,15 +562,8 @@ export const listVehicles = /* GraphQL */ `
           updatedAt
         }
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -677,15 +626,8 @@ export const syncLocations = /* GraphQL */ `
         postcode
         what3words
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -737,32 +679,24 @@ export const getLocation = /* GraphQL */ `
       postcode
       what3words
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -816,15 +750,8 @@ export const listLocations = /* GraphQL */ `
         postcode
         what3words
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -968,15 +895,8 @@ export const syncDeliverables = /* GraphQL */ `
         count
         unit
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -1005,32 +925,24 @@ export const getDeliverable = /* GraphQL */ `
       count
       unit
       comments {
-        id
-        parentID
-        body
-        author {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          patch
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentID
+          body
+          publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        publiclyVisible
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -1061,15 +973,8 @@ export const listDeliverables = /* GraphQL */ `
         count
         unit
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -1422,15 +1327,8 @@ export const getTask = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -1568,15 +1466,8 @@ export const getTask = /* GraphQL */ `
         count
         unit
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -1924,6 +1815,11 @@ export const getTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          userCommentsId
+          vehicleCommentsId
+          taskCommentsId
+          deliverableCommentsId
+          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -2149,6 +2045,11 @@ export const syncComments = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
+        userCommentsId
+        vehicleCommentsId
+        taskCommentsId
+        deliverableCommentsId
+        locationCommentsId
         _version
         _deleted
         _lastChangedAt
@@ -2203,15 +2104,8 @@ export const getComment = /* GraphQL */ `
         profilePictureURL
         profilePictureThumbnailURL
         comments {
-          id
-          parentID
-          body
-          publiclyVisible
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         group {
           id
@@ -2239,6 +2133,11 @@ export const getComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
+      userCommentsId
+      vehicleCommentsId
+      taskCommentsId
+      deliverableCommentsId
+      locationCommentsId
       _version
       _deleted
       _lastChangedAt
@@ -2276,6 +2175,11 @@ export const listComments = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
+        userCommentsId
+        vehicleCommentsId
+        taskCommentsId
+        deliverableCommentsId
+        locationCommentsId
         _version
         _deleted
         _lastChangedAt
