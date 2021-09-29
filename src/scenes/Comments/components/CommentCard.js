@@ -41,9 +41,9 @@ const CommentCard = React.memo((props) => {
         >
             <Grid item className={props.showAuthor ? show : hide}>
                 <CommentAuthor
-                    uuid={props.author.uuid}
-                    displayName={props.author.display_name}
-                    avatarURL={props.author.profile_picture_thumbnail_url}
+                    uuid={props.author.id}
+                    displayName={props.author.displayName}
+                    avatarURL={props.author.profilePictureThumbnailURL}
                 />
             </Grid>
             <Grid item>
