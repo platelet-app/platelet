@@ -243,32 +243,38 @@ export default function LocationDetail(props) {
                                 </Grid>
                             );
                         })}
-                        {Object.keys(contactFields).map((key) => {
-                            return (
-                                <Grid key={key} style={{ width: "50%" }} item>
-                                    <TextFieldUncontrolled
-                                        value={state.contact[key]}
-                                        InputProps={{
-                                            readOnly: !editMode,
-                                            disableUnderline: !editMode,
-                                        }}
-                                        fullWidth
-                                        label={contactFields[key]}
-                                        id={key}
-                                        onChange={(e) => {
-                                            setState({
-                                                ...state,
-                                                contact: {
-                                                    ...state.contact,
-                                                    [key]: e.target.value,
-                                                },
-                                            });
-                                        }}
-                                    />
-                                    {divider}
-                                </Grid>
-                            );
-                        })}
+                        {Object.keys(state.contact ? contactFields : []).map(
+                            (key) => {
+                                return (
+                                    <Grid
+                                        key={key}
+                                        style={{ width: "50%" }}
+                                        item
+                                    >
+                                        <TextFieldUncontrolled
+                                            value={state.contact[key]}
+                                            InputProps={{
+                                                readOnly: !editMode,
+                                                disableUnderline: !editMode,
+                                            }}
+                                            fullWidth
+                                            label={contactFields[key]}
+                                            id={key}
+                                            onChange={(e) => {
+                                                setState({
+                                                    ...state,
+                                                    contact: {
+                                                        ...state.contact,
+                                                        [key]: e.target.value,
+                                                    },
+                                                });
+                                            }}
+                                        />
+                                        {divider}
+                                    </Grid>
+                                );
+                            }
+                        )}
                     </Grid>
                     {saveButtons}
                 </PaddedPaper>
