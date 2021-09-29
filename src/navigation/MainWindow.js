@@ -10,7 +10,7 @@ import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
 import { AdminControl } from "../scenes/AdminControl/AdminControl";
 import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
-import LocationDetail from "../scenes/Location/LocationDetail";
+import LocationDetail from "../scenes/LocationDetail/LocationDetail";
 import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { useDispatch } from "react-redux";
