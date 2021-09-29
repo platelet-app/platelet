@@ -168,6 +168,7 @@ enum DeliverableUnit {
 }
 
 enum Role {
+  USER
   COORDINATOR
   RIDER
   ADMIN
