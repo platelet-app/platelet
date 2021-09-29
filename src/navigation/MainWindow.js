@@ -5,7 +5,7 @@ import { Route, Switch, useLocation } from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
 import VehicleList from "../scenes/VehiclesList";
 import UsersList from "../scenes/UsersList";
-import UserDetail from "../scenes/UserProfile/UserDetail";
+import UserDetail from "../scenes/UserDetail/UserDetail";
 import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
 import { AdminControl } from "../scenes/AdminControl/AdminControl";
 import NotFound from "../ErrorComponents/NotFound";
