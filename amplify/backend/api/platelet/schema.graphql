@@ -40,10 +40,7 @@ type Location @model {
   id: ID!
   name: String
   listed: Int
-  contact: String
-  telephoneNumber: String
-  mobileNumber: String
-  emailAddress: String
+  contact: AddressAndContactDetails @connection
   ward: String
   line1: String
   line2: String
