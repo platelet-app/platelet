@@ -18,7 +18,7 @@ import { Divider, Grid, makeStyles, Typography } from "@material-ui/core";
 import { TextFieldUncontrolled } from "../../components/TextFields";
 import { EditModeToggleButton } from "../../components/EditModeToggleButton";
 import SaveCancelButtons from "../../components/SaveCancelButtons";
-import _ from "lodash";
+import LocationProfile from "./components/LocationProfile";
 
 const initialLocationState = {
     name: null,
@@ -35,57 +35,28 @@ const initialLocationState = {
     what3words: null,
 };
 
-const fields = {
-    name: "Name",
-    ward: "Ward",
-    line1: "Line 1",
-    line2: "Line 2",
-    line3: "Line 3",
-    town: "Town",
-    county: "County",
-    country: "Country",
-    state: "State",
-    postcode: "Postcode",
-    what3words: "What 3 Words",
-};
-
-const contactFields = {
-    name: "Contact name",
-    emailAddress: "Contact email",
-    telephoneNumber: "Contact telephone",
-};
-
-const useStyles = makeStyles({
-    root: {
-        width: 600,
-    },
-});
-
 export default function LocationDetail(props) {
     const locationUUID = decodeUUID(props.match.params.location_uuid_b62);
-    const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
+    const [location, setLocation] = useState(initialLocationState);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
-    const [state, setState] = useState(initialLocationState);
-    const [oldState, setOldState] = useState(initialLocationState);
-    const [editMode, setEditMode] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
+    console.log(location);
 
     async function newLocationProfile() {
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
         } else {
             try {
-                const location = await DataStore.query(
+                const locationResult = await DataStore.query(
                     models.Location,
                     locationUUID
                 );
                 setIsFetching(false);
-                if (location) {
-                    setState(location);
-                    setOldState(location);
+                if (locationResult) {
+                    setLocation(locationResult);
                 } else {
                     setNotFound(true);
                 }
@@ -105,13 +76,7 @@ export default function LocationDetail(props) {
         [props.location.key, dataStoreReadyStatus]
     );
 
-    function verifyUpdate() {
-        // TODO: verify name is unique
-        return true;
-    }
-
     async function onUpdate(value) {
-        debugger;
         const { contact, ...rest } = value;
         try {
             await DataStore.save(
@@ -137,64 +102,6 @@ export default function LocationDetail(props) {
         }
     }
 
-    const saveButtons = !editMode ? (
-        <></>
-    ) : (
-        <SaveCancelButtons
-            disabled={isPosting}
-            onSave={async () => {
-                if (verifyUpdate(state)) {
-                    await onUpdate(
-                        _.omit(
-                            state,
-                            "_deleted",
-                            "_lastChangedAt",
-                            "_version",
-                            "createdAt",
-                            "updatedAt"
-                        )
-                    );
-                    setEditMode(false);
-                    setOldState(state);
-                }
-            }}
-            onCancel={() => {
-                setEditMode(false);
-                setState(oldState);
-            }}
-        />
-    );
-
-    let editToggle = <></>;
-    if (whoami.roles) {
-        if (whoami.roles.includes("ADMIN")) {
-            editToggle = (
-                <EditModeToggleButton
-                    tooltipDefault={"Edit this location"}
-                    value={editMode}
-                    onChange={(v) => {
-                        setEditMode(v);
-                        if (!v) setState(oldState);
-                    }}
-                />
-            );
-        }
-    }
-
-    const header = (
-        <Typography variant={"h4"}>Directory location: {state.name}</Typography>
-    );
-
-    const divider = editMode ? (
-        <></>
-    ) : (
-        <div style={{ width: "80%" }}>
-            <Grid item>
-                <Divider />
-            </Grid>
-        </div>
-    );
-
     if (isFetching) {
         return <FormSkeleton />;
     } else if (notFound) {
@@ -203,80 +110,7 @@ export default function LocationDetail(props) {
         return (
             <React.Fragment>
                 <PaddedPaper>
-                    <Grid
-                        container
-                        direction={"row"}
-                        justify={"space-between"}
-                        alignItems={"top"}
-                        spacing={3}
-                    >
-                        <Grid item>{header}</Grid>
-                        <Grid item>{editToggle}</Grid>
-                    </Grid>
-                    <Grid
-                        container
-                        direction={"row"}
-                        justify={"space-between"}
-                        alignItems={"flex-start"}
-                        spacing={1}
-                    >
-                        {Object.keys(fields).map((key) => {
-                            return (
-                                <Grid key={key} style={{ width: "50%" }} item>
-                                    <TextFieldUncontrolled
-                                        value={state[key]}
-                                        InputProps={{
-                                            readOnly: !editMode,
-                                            disableUnderline: !editMode,
-                                        }}
-                                        fullWidth
-                                        label={fields[key]}
-                                        id={key}
-                                        onChange={(e) => {
-                                            setState({
-                                                ...state,
-                                                [key]: e.target.value,
-                                            });
-                                        }}
-                                    />
-                                    {divider}
-                                </Grid>
-                            );
-                        })}
-                        {Object.keys(state.contact ? contactFields : []).map(
-                            (key) => {
-                                return (
-                                    <Grid
-                                        key={key}
-                                        style={{ width: "50%" }}
-                                        item
-                                    >
-                                        <TextFieldUncontrolled
-                                            value={state.contact[key]}
-                                            InputProps={{
-                                                readOnly: !editMode,
-                                                disableUnderline: !editMode,
-                                            }}
-                                            fullWidth
-                                            label={contactFields[key]}
-                                            id={key}
-                                            onChange={(e) => {
-                                                setState({
-                                                    ...state,
-                                                    contact: {
-                                                        ...state.contact,
-                                                        [key]: e.target.value,
-                                                    },
-                                                });
-                                            }}
-                                        />
-                                        {divider}
-                                    </Grid>
-                                );
-                            }
-                        )}
-                    </Grid>
-                    {saveButtons}
+                    <LocationProfile onUpdate={onUpdate} location={location} />
                 </PaddedPaper>
                 <CommentsSection parentUUID={locationUUID} />
             </React.Fragment>
