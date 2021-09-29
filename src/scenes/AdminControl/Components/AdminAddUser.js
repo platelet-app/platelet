@@ -21,6 +21,8 @@ import {
 } from "../../../redux/notifications/NotificationsActions";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { getWhoami } from "../../../redux/Selectors";
+import { createLoadingSelector } from "../../../redux/LoadingSelectors";
+import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 
 const useStyles = makeStyles({
     root: {
@@ -42,6 +44,8 @@ function AdminAddUser() {
     const [state, setState] = useState(initialState);
     //TODO: eventually want to make signup only with email address unless chosen otherwise
     const whoami = useSelector(getWhoami);
+    const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
+    const whoamiFetching = useSelector(loadingSelector);
     const [usernameMode, setUsernameMode] = useState(true);
     const [passwordVerified, setPasswordVerified] = useState(true);
     const [inputVerified, setInputVerified] = useState(false);
@@ -100,7 +104,9 @@ function AdminAddUser() {
         }
     }
     const { show, hide } = showHide();
-    if (!whoami.roles.includes("ADMIN")) {
+    if (whoamiFetching) {
+        return <FormSkeleton />;
+    } else if (!whoami.roles.includes("ADMIN")) {
         return <Forbidden />;
     } else {
         return (

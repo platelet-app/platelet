@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { encodeUUID } from "../../../utilities";
 import { getWhoami } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
+import { createLoadingSelector } from "../../../redux/LoadingSelectors";
+import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 
 const initialVehicleState = {
     name: "",
@@ -35,6 +37,8 @@ const useStyles = makeStyles({
 function AdminAddVehicle() {
     const [state, setState] = useState(initialVehicleState);
     const [message, setMessage] = useState("");
+    const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
+    const whoamiFetching = useSelector(loadingSelector);
     const [isPosting, setIsPosting] = useState(false);
     const [inputVerified, setInputVerified] = useState(false);
     const dispatch = useDispatch();
@@ -81,7 +85,9 @@ function AdminAddVehicle() {
     }
     useEffect(verifyInput, [state]);
 
-    if (!whoami.roles.includes("ADMIN")) {
+    if (whoamiFetching) {
+        return <FormSkeleton />;
+    } else if (!whoami.roles.includes("ADMIN")) {
         return <Forbidden />;
     } else {
         return (

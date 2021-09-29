@@ -12,6 +12,8 @@ import { encodeUUID } from "../../../utilities";
 import * as models from "../../../models/index";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { getWhoami } from "../../../redux/Selectors";
+import { createLoadingSelector } from "../../../redux/LoadingSelectors";
+import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 
 const initialLocationState = {
     name: null,
@@ -66,6 +68,8 @@ function AdminAddLocation() {
     const [state, setState] = useState(initialLocationState);
     const whoami = useSelector(getWhoami);
     const [isPosting, setIsPosting] = useState(false);
+    const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
+    const whoamiFetching = useSelector(loadingSelector);
     const [inputVerified, setInputVerified] = useState(false);
     const dispatch = useDispatch();
     const classes = useStyles();
@@ -104,7 +108,9 @@ function AdminAddLocation() {
         }
     }
 
-    if (!whoami.roles.includes("ADMIN")) {
+    if (whoamiFetching) {
+        return <FormSkeleton />;
+    } else if (!whoami.roles.includes("ADMIN")) {
         return <Forbidden />;
     } else {
         return (
