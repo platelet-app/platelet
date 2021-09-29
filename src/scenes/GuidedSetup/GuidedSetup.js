@@ -216,108 +216,77 @@ export const GuidedSetup = ({ show, onClose }) => {
         }
     };
 
-    const onShowTaskOverview = () =>
-        history.push(`/task/${encodeUUID(task.uuid)}`);
-
-    return (
-        <>
-            <CustomizedDialogs
-                open={show}
-                onClose={() => {
-                    onClose();
-                    setFormValues(defaultValues);
-                    setValue(0);
-                }}
-            >
-                <div className={classes.tabContent}>
-                    <AppBar position="static">
-                        <Tabs
-                            value={value}
-                            onChange={handleChange}
-                            aria-label="simple tabs example"
-                        >
-                            <Tab label="Step 1" {...a11yProps(0)} />
-                            <Tab label="Step 2" {...a11yProps(1)} />
-                            <Tab label="Step 3" {...a11yProps(2)} />
-                            <Tab label="Step 4" {...a11yProps(3)} />
-                            <Tab label="Step 5" {...a11yProps(4)} />
-                        </Tabs>
-                    </AppBar>
-                    <TabPanel value={value} index={0}>
-                        <Step1
-                            values={formValues}
-                            onChange={handleCallerContactChange}
-                        />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <Step2
-                            values={formValues}
-                            onChange={handleSenderContactChange}
-                            onSelect={onPickUpLocationSaved}
-                        />
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
-                        <Step3
-                            values={formValues}
-                            onChange={handleReceiverContactChange}
-                            onSelect={onSelectDropoffFromSaved}
-                        />
-                    </TabPanel>
-                    <TabPanel value={value} index={3}>
-                        <Step4 values={formValues} onChange={() => {}} />
-                    </TabPanel>
-                    <TabPanel value={value} index={4}>
-                        <Step5
-                            values={formValues}
-                            taskUUID={task.uuid}
-                            onChange={handleDeliverablesChange}
-                        />
-                    </TabPanel>
-                </div>
-                <div className={classes.btnWrapper}>
-                    <Button
-                        autoFocus
-                        onClick={onShowTaskOverview}
-                        color="primary"
-                    >
-                        Skip to overview
-                    </Button>
-                    <div>
-                        {value > 0 && (
-                            <Button
-                                autoFocus
-                                onClick={() => setValue((value) => value - 1)}
-                                color="primary"
-                            >
-                                Previous
-                            </Button>
-                        )}
-                        {value < 4 ? (
-                            <Button
-                                autoFocus
-                                onClick={() => setValue((value) => value + 1)}
-                                color="primary"
-                            >
-                                Next
-                            </Button>
-                        ) : (
-                            <Button
-                                autoFocus
-                                onClick={() => {
-                                    onShowTaskOverview();
-                                    onClose();
-                                }}
-                                color="primary"
-                            >
-                                Finish
-                            </Button>
-                        )}
-                    </div>
-                </div>
-            </CustomizedDialogs>
-        </>
-    );
-};
+  const onShowTaskOverview = () => history.push(`/task/${encodeUUID(task.uuid)}`);
+  
+  const onCloseForm = () => {
+    onClose()
+    setFormValues(defaultValues)
+    setValue(0)
+  }
+  
+  return (
+    <>
+      <CustomizedDialogs  open={show} onClose={onCloseForm} >
+          <div className={classes.tabContent}>
+              <AppBar position="static">
+                  <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+                      <Tab label="Step 1" {...a11yProps(0)} />
+                      <Tab label="Step 2" {...a11yProps(1)} />
+                      <Tab label="Step 3" {...a11yProps(2)} />
+                      <Tab label="Step 4" {...a11yProps(3)} />
+                      <Tab label="Step 5" {...a11yProps(4)} />
+                  </Tabs>
+              </AppBar>
+              <TabPanel value={value} index={0}>
+                  <Step1 values={formValues} onChange={handleCallerContactChange} />
+              </TabPanel>
+              <TabPanel value={value} index={1}>
+                  <Step2 
+                    values={formValues} 
+                    onChange={handleSenderContactChange} 
+                    onSelect={onPickUpLocationSaved} />
+              </TabPanel>
+              <TabPanel value={value} index={2}>
+                  <Step3 
+                    values={formValues} 
+                    onChange={handleReceiverContactChange}
+                    onSelect={onSelectDropoffFromSaved} />
+              </TabPanel>
+              <TabPanel value={value} index={3}>
+                  <Step4 values={formValues} onChange={() => {}} />
+              </TabPanel>
+              <TabPanel value={value} index={4}>
+                  <Step5 values={formValues} taskUUID={task.uuid} onChange={handleDeliverablesChange} />
+              </TabPanel>
+          </div>
+          <div className={classes.btnWrapper}>
+              <Button autoFocus onClick={onShowTaskOverview} color="primary">
+                  Skip to overview
+              </Button>
+              <div>
+              {value > 0 && (
+                  <Button autoFocus onClick={() => setValue(value => value -1)} color="primary">
+                      Previous
+                  </Button>)}
+              {value < 4 
+              ? (<Button autoFocus onClick={() => setValue(value => value +1)} color="primary">
+                      Next
+                  </Button>)
+              : (<Button 
+                  autoFocus 
+                  onClick={() => {
+                    onShowTaskOverview()
+                    onCloseForm()
+                  }} 
+                  color="primary">
+                      Finish
+                  </Button>)}
+              </div>
+          </div>
+      </CustomizedDialogs>
+    </>
+  );
+}
 
 GuidedSetup.propTypes = {
     open: PropTypes.bool,
