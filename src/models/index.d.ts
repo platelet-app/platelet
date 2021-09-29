@@ -1,6 +1,7 @@
 import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplify/datastore";
 
 export enum Role {
+  USER = "USER",
   COORDINATOR = "COORDINATOR",
   RIDER = "RIDER",
   ADMIN = "ADMIN"

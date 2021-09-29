@@ -3,6 +3,7 @@ import { initSchema } from '@aws-amplify/datastore';
 import { schema } from './schema';
 
 const Role = {
+  "USER": "USER",
   "COORDINATOR": "COORDINATOR",
   "RIDER": "RIDER",
   "ADMIN": "ADMIN"

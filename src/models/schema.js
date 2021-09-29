@@ -1141,6 +1141,7 @@ export const schema = {
         "Role": {
             "name": "Role",
             "values": [
+                "USER",
                 "COORDINATOR",
                 "RIDER",
                 "ADMIN"
