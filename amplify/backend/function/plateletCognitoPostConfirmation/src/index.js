@@ -39,7 +39,7 @@ exports.handler = async (event, context) => {
                 name: { S: event.request.userAttributes.name },
                 displayName: { S: event.request.userAttributes.name },
                 active: { N: "1" },
-                roles: { SS: ["COORDINATOR"] },
+                roles: { SS: ["USER"] },
                 username: { S: event.userName },
                 createdAt: { S: date.toISOString() },
                 updatedAt: { S: date.toISOString() },
