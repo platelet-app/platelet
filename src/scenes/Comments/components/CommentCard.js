@@ -15,12 +15,13 @@ import { showHide } from "../../../styles/common";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
 import PropTypes from "prop-types";
+import { getWhoami } from "../../../redux/Selectors";
 
 const CommentCard = React.memo((props) => {
     const { show, hide } = showHide();
     const classes = commentStyles();
     const timeCreatedString = moment(props.timeCreated).calendar();
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
     const Card = props.public
         ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
         : (props) => (
@@ -34,7 +35,7 @@ const CommentCard = React.memo((props) => {
             direction={"column"}
             wrap={"nowrap"}
             alignItems={
-                whoami.uuid === props.author.uuid ? "flex-end" : "flex-start"
+                whoami.id === props.author.uuid ? "flex-end" : "flex-start"
             }
             spacing={1}
         >

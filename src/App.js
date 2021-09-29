@@ -13,7 +13,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Moment from "react-moment";
 import Button from "@material-ui/core/Button";
-import Amplify, { Auth } from "aws-amplify";
+import Amplify, { Logger } from "aws-amplify";
 import config from "../src/aws-exports.js";
 
 import { getServerSettingsRequest } from "./redux/ServerSettings/ServerSettingsActions";
@@ -27,13 +27,11 @@ import { Link } from "react-router-dom";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 
-// configure amplify and set up authentication
 Amplify.configure({
     ...config,
     ssr: true,
 });
-
-Auth.configure(config);
+Logger.LOG_LEVEL = "ERROR";
 
 const useStyles = makeStyles((theme) => ({
     centeredDiv: {
@@ -243,6 +241,7 @@ const taskStatus = {
 function App(props) {
     const darkMode = useSelector((state) => state.darkMode);
     let theme;
+    //useEffect(() => DataStore.start(), []);
     if (darkMode) {
         theme = createMuiTheme({
             palette: {

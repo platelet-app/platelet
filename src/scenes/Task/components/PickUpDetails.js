@@ -47,7 +47,6 @@ function PickUpDetails(props) {
     function onChangePickupLocation(value, makeNew = false) {
         if (props.location) {
             if (makeNew) {
-                debugger;
                 dispatch(
                     addNewPickupLocationAndSetTaskRequest(props.taskUUID, value)
                 );

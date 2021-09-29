@@ -22,7 +22,7 @@ import {
     displayErrorNotification,
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
-import { getTasksSelector } from "../../redux/Selectors";
+import { getTasksSelector, getWhoami } from "../../redux/Selectors";
 
 const initialState = {
     mouseX: null,
@@ -33,7 +33,7 @@ function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const [state, setState] = React.useState(initialState);
     const roleView = useSelector((state) => state.roleView);
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
     const deleteButtonClasses = deleteButtonStyles();
     const useStyles = makeStyles({
         button: {
@@ -99,7 +99,7 @@ function TaskContextMenu(props) {
 
     const addRelay = (e) => {
         handleClose(e);
-        dispatch(addTaskRelayRequest(props.taskUUID, roleView, whoami.uuid));
+        dispatch(addTaskRelayRequest(props.taskUUID, roleView, whoami.id));
     };
 
     const handleClick = (event) => {

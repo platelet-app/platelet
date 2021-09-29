@@ -13,6 +13,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
+import { getWhoami } from "../../../redux/Selectors";
 
 const colourBarPercent = "90%";
 
@@ -58,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TaskCard = React.memo((props) => {
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
     const classes = useStyles();
     const roleView = useSelector((state) => state.roleView);
     let pickupTitle = "";
@@ -91,12 +92,12 @@ const TaskCard = React.memo((props) => {
 
     const coordAvatars = props.assignedCoordinators
         ? ["coordinator", "all"].includes(roleView)
-            ? props.assignedCoordinators.filter((u) => u.uuid !== whoami.uuid)
+            ? props.assignedCoordinators.filter((u) => u.uuid !== whoami.id)
             : props.assignedCoordinators
         : [];
     const riderAvatars = props.assignedRiders
         ? roleView === "rider"
-            ? props.assignedRiders.filter((u) => u.uuid !== whoami.uuid)
+            ? props.assignedRiders.filter((u) => u.uuid !== whoami.id)
             : props.assignedRiders
         : [];
     const cardInnerContent = (

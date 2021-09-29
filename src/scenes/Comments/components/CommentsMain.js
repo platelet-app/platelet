@@ -9,6 +9,7 @@ import Linkify from "react-linkify";
 import { makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
 import PropTypes from "prop-types";
+import { getWhoami } from "../../../redux/Selectors";
 
 const contextCreateStyles = makeStyles((theme) => ({
     root: (props) => ({
@@ -117,7 +118,7 @@ function CommentsMain(props) {
         },
     }));
     const classes = useStyles();
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
 
     return (
         <Grid
@@ -141,7 +142,7 @@ function CommentsMain(props) {
                             </Grid>
                             <Grid
                                 className={clsx(
-                                    whoami.uuid === comment.author.uuid
+                                    whoami.id === comment.author.uuid
                                         ? classes.right
                                         : "",
                                     classes.item
@@ -153,7 +154,7 @@ function CommentsMain(props) {
                                     showContextMenu={
                                         // TODO: eventually let admins delete comments too
                                         //whoami.roles.includes("admin") ||
-                                        whoami.uuid === comment.author.uuid
+                                        whoami.id === comment.author.uuid
                                     }
                                     author={comment.author}
                                     showAuthor={

@@ -1,3 +1,4 @@
+import * as awsHubSagas from "./awsHubListener/awsHubListenerSagas";
 import {
     watchPostNewTask,
     watchPostNewTaskRelay,
@@ -12,32 +13,36 @@ import {
     watchUpdateTaskPatch,
     watchUpdateTaskRequesterContact,
     watchSetRoleViewAndGetTasks,
-    watchRefreshTasksFromSocket, watchUpdateTaskTimeOfCall, watchUpdateTaskTimeCancelled
-} from "./tasks/TasksRequestSagas"
-import * as taskProcessingSagas from "./tasks/TaskProcessingSagas"
+    watchRefreshTasksFromSocket,
+    watchUpdateTaskTimeOfCall,
+    watchUpdateTaskTimeCancelled,
+} from "./tasks/TasksRequestSagas";
+import * as taskProcessingSagas from "./tasks/TaskProcessingSagas";
 import {
     watchAddNewDropoffLocationAndSetTask,
     watchAddNewPickupLocationAndSetTask,
     watchSetTaskDropoffDestination,
     watchSetTaskPickupDestination,
     watchUnsetTaskDropoffDestination,
-    watchUnsetTaskPickupDestination, watchUpdateDropoffLocationAndUpdateTask,
-    watchUpdatePickupLocationAndUpdateTask
-} from "./taskDestinations/TaskDestinationsSagas"
+    watchUnsetTaskPickupDestination,
+    watchUpdateDropoffLocationAndUpdateTask,
+    watchUpdatePickupLocationAndUpdateTask,
+} from "./taskDestinations/TaskDestinationsSagas";
 import {
     watchDeleteDeliverable,
     watchGetAvailableDeliverables,
     watchGetDeliverables,
-    watchPostNewDeliverable, watchSetDeliverablesSorted,
-    watchUpdateDeliverable, watchUpdateDeliverableCount
-} from "./deliverables/DeliverablesSagas"
+    watchPostNewDeliverable,
+    watchSetDeliverablesSorted,
+    watchUpdateDeliverable,
+    watchUpdateDeliverableCount,
+} from "./deliverables/DeliverablesSagas";
 import {
     watchDeleteComment,
     watchGetComments,
     watchPostNewComment,
     watchRestoreComment,
     watchUpdateComment,
-
 } from "./comments/CommentsSagas";
 import {
     watchPostNewVehicle,
@@ -46,46 +51,59 @@ import {
     watchVehicle,
     watchDeleteVehicle,
     watchRestoreVehicle,
-} from "./vehicles/VehiclesSagas"
+} from "./vehicles/VehiclesSagas";
 
-import { all, call } from 'redux-saga/effects'
-import {watchGetAvailablePriorities} from "./priorities/PrioritiesSagas";
-import {watchGetAvailableLocations, watchGetLocation, watchUpdateLocation, watchAddNewLocation} from "./locations/LocationsSagas";
+import { all, call } from "redux-saga/effects";
+import { watchGetAvailablePriorities } from "./priorities/PrioritiesSagas";
+import {
+    watchGetAvailableLocations,
+    watchGetLocation,
+    watchUpdateLocation,
+    watchAddNewLocation,
+} from "./locations/LocationsSagas";
 import {
     watchGetUsers,
     watchGetUser,
     watchAddUser,
     watchDeleteUser,
     watchRestoreUser,
-    watchUpdateUser, watchUpdateUserPassword, watchUploadUserProfilePicture
+    watchUpdateUser,
+    watchUpdateUserPassword,
+    watchUploadUserProfilePicture,
 } from "./users/UsersSagas";
-import {watchGetWhoami, watchRefreshWhoami} from "./WhoamiSaga";
-import {watchLogin, watchLogout, watchRefreshToken} from "./login/LoginSagas"
-import {watchGetAvailablePatches} from "./patches/PatchesSagas";
-import {watchGetServerSettings} from "./ServerSettings/ServerSettingsSagas";
+import { watchGetWhoami, watchRefreshWhoami } from "./WhoamiSaga";
+import { watchLogin, watchLogout, watchRefreshToken } from "./login/LoginSagas";
+import { watchGetAvailablePatches } from "./patches/PatchesSagas";
+import { watchGetServerSettings } from "./ServerSettings/ServerSettingsSagas";
 import {
-    watchGetTaskAssignedRiders, watchUpdateTaskAddAssignedCoordinator,
-    watchUpdateTaskAddAssignedRider, watchUpdateTaskRemoveCoordinator,
-    watchUpdateTaskRemoveRider
+    watchGetTaskAssignedRiders,
+    watchUpdateTaskAddAssignedCoordinator,
+    watchUpdateTaskAddAssignedRider,
+    watchUpdateTaskRemoveCoordinator,
+    watchUpdateTaskRemoveRider,
 } from "./taskAssignees/TaskAssigneesSagas";
 import {
     watchGetActionsRecord,
     watchGetTasksActionsRecord,
 } from "./actionsRecord/ActionsRecordSagas";
-import {watchGetUserStatistics} from "./statistics/statisticsSagas";
+import { watchGetUserStatistics } from "./statistics/statisticsSagas";
 import {
     watchAppendTasksCancelled,
     watchAppendTasksDelivered,
-    watchAppendTasksRejected
+    watchAppendTasksRejected,
 } from "./tasks/TaskWaypointSagas";
-import {watchInitialiseApp, watchInitialWhoamiCompleted} from "./initialise/initialiseSagas";
+import {
+    watchInitialiseApp,
+    watchInitialWhoamiCompleted,
+} from "./initialise/initialiseSagas";
 import authenticationMonitor from "./login/AuthenticationMonitor";
-import updateActiveTaskMonitor from "./activeTask/ActiveTaskMonitors"
-import {watchGetTask} from "./activeTask/ActiveTaskSagas"
-import {watchDebounceDashboardFilter} from "./dashboardFilter/DashboardFilterSagas";
+import updateActiveTaskMonitor from "./activeTask/ActiveTaskMonitors";
+import { watchGetTask } from "./activeTask/ActiveTaskSagas";
+import { watchDebounceDashboardFilter } from "./dashboardFilter/DashboardFilterSagas";
 
 export default function* rootSaga() {
     yield all([
+        call(awsHubSagas.watchInitialiseDataStoreListener),
         call(watchPostNewTask),
         call(watchPostNewTaskRelay),
         call(watchDeleteTask),
@@ -176,8 +194,10 @@ export default function* rootSaga() {
         call(taskProcessingSagas.watchUpdateTaskSuccess),
         call(taskProcessingSagas.watchPutTaskSuccess),
         call(taskProcessingSagas.watchAddTaskAssignedRiderSuccess),
-        call(taskProcessingSagas.watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess),
+        call(
+            taskProcessingSagas.watchUpdateTaskTimeCancelledRejectedDeliveredPickedUpSuccess
+        ),
         call(taskProcessingSagas.watchAddTaskAssignedCoordinatorSuccess),
         call(taskProcessingSagas.watchAppendTasksCancelledDeliveredRejected),
-    ])
+    ]);
 }

@@ -1,57 +1,153 @@
-import React, {useEffect} from "react";
-import {decodeUUID} from "../../utilities";
-import {useDispatch, useSelector} from "react-redux";
-import {getUserRequest} from "../../redux/users/UsersActions";
+import React, { useEffect, useRef, useState } from "react";
+import { decodeUUID } from "../../utilities";
+import API from "@aws-amplify/api";
+import _ from "lodash";
+
+import { useDispatch, useSelector } from "react-redux";
+import * as queries from "./queries";
 import UserProfile from "./components/UserProfile";
-import {createLoadingSelector, createNotFoundSelector} from "../../redux/LoadingSelectors";
 import Grid from "@material-ui/core/Grid";
-import {PaddedPaper} from "../../styles/common";
+import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
-import Button from "@material-ui/core/Button";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
-import Typography from "@material-ui/core/Typography";
+import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import { DataStore } from "@aws-amplify/datastore";
+import * as models from "../../models/index";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+
+const initialUserState = {
+    id: "",
+    username: "",
+    contact: {
+        emailAddress: "",
+    },
+    displayName: "",
+    name: "",
+    dateOfBirth: null,
+    patch: null,
+    profilePictureURL: null,
+    profilePictureThumbnailURL: null,
+    active: 1,
+};
 
 export default function UserDetail(props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
-    const user = useSelector(state => state.user.user);
-    const whoami = useSelector(state => state.whoami.user);
-    const notFoundSelector = createNotFoundSelector(["GET_USER"]);
-    const notFound = useSelector(state => notFoundSelector(state));
+    const whoami = useSelector(getWhoami);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const [isFetching, setIsFetching] = useState(false);
+    const [isPosting, setIsPosting] = useState(false);
+    const [user, setUser] = useState(initialUserState);
+    const [notFound, setNotFound] = useState(false);
+    const [usersDisplayNames, setUsersDisplayNames] = useState([]);
     const dispatch = useDispatch();
 
-    const loadingSelector = createLoadingSelector(["GET_USER"]);
-    const isFetching = useSelector(state => loadingSelector(state));
+    async function newUserProfile() {
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
+        } else {
+            try {
+                const user = await DataStore.query(models.User, userUUID);
+                setIsFetching(false);
+                if (user) setUser(user);
+                else setNotFound(true);
+            } catch (error) {
+                setIsFetching(false);
+                dispatch(
+                    displayErrorNotification(
+                        `Failed to get user: ${error.message}`
+                    )
+                );
+                console.log("Request failed", error);
+            }
+        }
+    }
+    useEffect(
+        () => newUserProfile(),
+        [props.location.key, dataStoreReadyStatus]
+    );
 
-    function newUserProfile() {
-        dispatch(getUserRequest(userUUID));
+    async function getDisplayNames() {
+        try {
+            const users = await DataStore.query(models.User);
+            const displayNames = users.map((u) => ({
+                displayName: u.displayName,
+                id: u.id,
+            }));
+            setUsersDisplayNames(displayNames);
+        } catch (error) {
+            dispatch(
+                displayErrorNotification(
+                    `Failed to get users lists: ${error.message}`
+                )
+            );
+        }
+    }
+    useEffect(() => getDisplayNames(), []);
+
+    async function onUpdate(value) {
+        setIsPosting(true);
+        try {
+            await DataStore.save(
+                models.User.copyOf(user, (updated) => {
+                    // There is probably a better way of doing this?
+                    for (const [key, newValue] of Object.entries(value)) {
+                        if (key !== "id") updated[key] = newValue;
+                    }
+                })
+            );
+            if (user.contact) {
+                await DataStore.save(
+                    models.AddressAndContactDetails.copyOf(
+                        user.contact,
+                        (updated) => {
+                            // There is probably a better way of doing this?
+                            for (const [key, newValue] of Object.entries(
+                                value.contact
+                            )) {
+                                if (key !== "id") updated[key] = newValue;
+                            }
+                        }
+                    )
+                );
+            }
+            setIsPosting(false);
+        } catch (error) {
+            console.log("Update request failed", error);
+            dispatch(displayErrorNotification(error.message));
+            setIsPosting(false);
+        }
     }
 
-    useEffect(newUserProfile, [props.location.key]);
-
     if (isFetching) {
-        return (
-            <DetailSkeleton/>
-        )
+        return <DetailSkeleton />;
     } else if (notFound) {
-        return <NotFound>User {userUUID} could not be found.</NotFound>
+        return <NotFound>User {userUUID} could not be found.</NotFound>;
     } else {
         return (
             <Grid container direction={"row"} spacing={4}>
                 <Grid item>
                     <PaddedPaper width={"600px"}>
-                        <UserProfile user={user}/>
+                        <UserProfile
+                            displayNames={usersDisplayNames}
+                            user={user}
+                            onUpdate={onUpdate}
+                            isPosting={isPosting}
+                        />
                     </PaddedPaper>
                 </Grid>
                 <Grid item>
                     <ProfilePicture
-                        pictureURL={user.profile_picture_url}
-                        userUUID={user.uuid}
-                        altText={user.display_name}
-                        editable={user.uuid === whoami.uuid || whoami.roles.includes("admin")}
+                        pictureURL={user.profilePictureURL}
+                        userUUID={user.id}
+                        altText={user.displayName}
+                        editable={
+                            user.id === whoami.id ||
+                            whoami.roles.includes("ADMIN")
+                        }
                     />
                 </Grid>
             </Grid>
-        )
+        );
     }
 }

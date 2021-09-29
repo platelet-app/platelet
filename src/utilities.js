@@ -1,16 +1,23 @@
-import React from 'react';
-import uuidBase62 from 'uuid-base62';
-import { v4 as uuidv4 } from 'uuid';
+import React from "react";
+import uuidBase62 from "uuid-base62";
+import { v4 as uuidv4 } from "uuid";
 
-export function sortByCreatedTime(items, order="newest") {
+export function sortByCreatedTime(items, order = "newest") {
+    if (!items || items.length === 0) return [];
     if (order !== "newest")
         return items.sort((a, b) => {
-          return new Date(a.time_created) - new Date(b.time_created);
-        })
+            return (
+                new Date(a.time_created || a.createdAt) -
+                new Date(b.time_created || b.createdAt)
+            );
+        });
     else
         return items.sort((a, b) => {
-            return new Date(b.time_created) - new Date(a.time_created);
-        })
+            return (
+                new Date(b.time_created || b.createdAt) -
+                new Date(a.time_created || a.createdAt)
+            );
+        });
 }
 
 export function encodeUUID(uuid) {
@@ -46,17 +53,16 @@ export function getLogin() {
 
 export function createTabIdentifier() {
     const tabUUID = uuidv4();
-    sessionStorage.setItem("tabUUID", tabUUID)
+    sessionStorage.setItem("tabUUID", tabUUID);
     return tabUUID;
 }
 
 export function getTabIdentifier() {
-    return sessionStorage.getItem("tabUUID")
+    return sessionStorage.getItem("tabUUID");
 }
 
 export function saveApiURL(apiURL) {
     localStorage.setItem("apiURL", apiURL);
-
 }
 
 export function getApiURL() {
@@ -68,11 +74,11 @@ export function getSocketApiURL() {
 }
 
 export function deleteLogin() {
-    localStorage.removeItem("apiBearer")
+    localStorage.removeItem("apiBearer");
 }
 
 export function deleteApiURL() {
-    localStorage.removeItem("apiURL")
+    localStorage.removeItem("apiURL");
 }
 
 export function saveLocalStorageViewMode(status) {
@@ -83,42 +89,42 @@ export function getLocalStorageViewMode() {
     return localStorage.getItem("viewMode");
 }
 
-
-export function debounce (func, delay) {
-    let inDebounce
+export function debounce(func, delay) {
+    let inDebounce;
     let result;
-    return function() {
-        const context = this
-        const args = arguments
-        clearTimeout(inDebounce)
-        inDebounce = setTimeout(() =>
-                result = func.apply(context, args)
-            , delay)
+    return function () {
+        const context = this;
+        const args = arguments;
+        clearTimeout(inDebounce);
+        inDebounce = setTimeout(
+            () => (result = func.apply(context, args)),
+            delay
+        );
         return result;
-    }
+    };
 }
 
 export function throttle(func, limit) {
-    let lastFunc
-    let lastRan
+    let lastFunc;
+    let lastRan;
     let result;
-    return function() {
-        const context = this
-        const args = arguments
+    return function () {
+        const context = this;
+        const args = arguments;
         if (!lastRan) {
-            result = func.apply(context, args)
-            lastRan = Date.now()
+            result = func.apply(context, args);
+            lastRan = Date.now();
         } else {
-            clearTimeout(lastFunc)
-            lastFunc = setTimeout(function() {
-                if ((Date.now() - lastRan) >= limit) {
-                    result = func.apply(context, args)
-                    lastRan = Date.now()
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(function () {
+                if (Date.now() - lastRan >= limit) {
+                    result = func.apply(context, args);
+                    lastRan = Date.now();
                 }
-            }, limit - (Date.now() - lastRan))
+            }, limit - (Date.now() - lastRan));
         }
         return result;
-    }
+    };
 }
 
 export function orderTaskList(tasks) {
@@ -128,9 +134,14 @@ export function orderTaskList(tasks) {
     let tasksCancelled = [];
     let tasksRejected = [];
     if (!tasks)
-        return {tasksNew: [], tasksActive: [], tasksPickedUp: [], tasksDelivered: []}
+        return {
+            tasksNew: [],
+            tasksActive: [],
+            tasksPickedUp: [],
+            tasksDelivered: [],
+        };
     tasks.forEach((task) => {
-        if (typeof (task.time_of_call) === "string") {
+        if (typeof task.time_of_call === "string") {
             task.time_of_call = new Date(task.time_of_call);
         }
         if (task.time_cancelled) {
@@ -139,7 +150,10 @@ export function orderTaskList(tasks) {
             tasksRejected.unshift(task);
         } else if (!task.assigned_riders || !task.assigned_riders.length) {
             tasksNew.unshift(task);
-        } else if ((task.assigned_riders.length || task.time_picked_up) && !task.time_dropped_off) {
+        } else if (
+            (task.assigned_riders.length || task.time_picked_up) &&
+            !task.time_dropped_off
+        ) {
             tasksActivePickedUp.unshift(task);
         } else if (task.time_dropped_off) {
             tasksDelivered.unshift(task);
@@ -149,44 +163,66 @@ export function orderTaskList(tasks) {
     });
 
     tasksNew.sort(function (a, b) {
-        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
+        return a.time_of_call > b.time_of_call
+            ? -1
+            : a.time_of_call < b.time_of_call
+            ? 1
+            : 0;
     });
     tasksCancelled.sort(function (a, b) {
-        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
+        return a.time_of_call > b.time_of_call
+            ? -1
+            : a.time_of_call < b.time_of_call
+            ? 1
+            : 0;
     });
     tasksRejected.sort(function (a, b) {
-        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
+        return a.time_of_call > b.time_of_call
+            ? -1
+            : a.time_of_call < b.time_of_call
+            ? 1
+            : 0;
     });
     tasksActivePickedUp.sort(function (b, a) {
-        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
+        return a.time_of_call > b.time_of_call
+            ? -1
+            : a.time_of_call < b.time_of_call
+            ? 1
+            : 0;
     });
     tasksDelivered.sort(function (b, a) {
-        return a.time_of_call > b.time_of_call ? -1 : a.time_of_call < b.time_of_call ? 1 : 0;
+        return a.time_of_call > b.time_of_call
+            ? -1
+            : a.time_of_call < b.time_of_call
+            ? 1
+            : 0;
     });
-    const tasksRejectedCancelled = tasksCancelled.concat(tasksRejected)
-    return {tasksNew, tasksActivePickedUp, tasksDelivered, tasksRejectedCancelled}
+    const tasksRejectedCancelled = tasksCancelled.concat(tasksRejected);
+    return {
+        tasksNew,
+        tasksActivePickedUp,
+        tasksDelivered,
+        tasksRejectedCancelled,
+    };
 }
 
 function determineTaskFinishedState(task) {
     if (task.relay_next) {
-        return determineTaskFinishedState(task.relay_next)
+        return determineTaskFinishedState(task.relay_next);
     } else {
-        return !!task.time_dropped_off
+        return !!task.time_dropped_off;
     }
 }
-
-
 
 function recursiveRelaySearch(uuidToFind, task) {
     if (task.uuid === uuidToFind) {
-        return true
+        return true;
     } else if (task.relay_next) {
-        return recursiveRelaySearch(uuidToFind, task.relay_next)
+        return recursiveRelaySearch(uuidToFind, task.relay_next);
     } else {
-        return false
+        return false;
     }
 }
-
 
 export function spliceExistingTask(tasks, uuid) {
     let result = {};
@@ -194,10 +230,10 @@ export function spliceExistingTask(tasks, uuid) {
     let index = undefined;
     let task = undefined;
     for (const [type, value] of Object.entries(tasks)) {
-        result = value.find(task => task.uuid === uuid);
+        result = value.find((task) => task.uuid === uuid);
         if (result) {
             index = value.indexOf(result);
-            task = value.splice(index, 1)[0]
+            task = value.splice(index, 1)[0];
             listType = type;
         }
     }

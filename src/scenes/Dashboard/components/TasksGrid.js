@@ -205,7 +205,6 @@ function TasksGrid(props) {
 
     const tasks = useSelector(getTasksSelector);
     const roleView = useSelector((state) => state.roleView);
-    const whoami = useSelector((state) => state.whoami.user);
     const dispatch = useDispatch();
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const { show, hide } = showHide();

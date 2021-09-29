@@ -22,6 +22,9 @@ export const onCreateUser = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -38,10 +41,14 @@ export const onCreateUser = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       patch
       profilePictureURL
@@ -61,39 +68,61 @@ export const onCreateUser = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
+          startedAt
         }
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       tasks {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       tasksCoordinator {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       active
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -120,6 +149,9 @@ export const onUpdateUser = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -136,10 +168,14 @@ export const onUpdateUser = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       patch
       profilePictureURL
@@ -159,39 +195,61 @@ export const onUpdateUser = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
+          startedAt
         }
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       tasks {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       tasksCoordinator {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       active
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -218,6 +276,9 @@ export const onDeleteUser = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -234,10 +295,14 @@ export const onDeleteUser = /* GraphQL */ `
           model
           dateOfManufacture
           dateOfRegistration
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       patch
       profilePictureURL
@@ -257,39 +322,61 @@ export const onDeleteUser = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       group {
         id
+        taskGroupId
         name
         users {
           nextToken
+          startedAt
         }
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       tasks {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       tasksCoordinator {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       active
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -299,6 +386,7 @@ export const onCreateGroup = /* GraphQL */ `
   subscription OnCreateGroup {
     onCreateGroup {
       id
+      taskGroupId
       name
       users {
         items {
@@ -312,11 +400,18 @@ export const onCreateGroup = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -326,6 +421,7 @@ export const onUpdateGroup = /* GraphQL */ `
   subscription OnUpdateGroup {
     onUpdateGroup {
       id
+      taskGroupId
       name
       users {
         items {
@@ -339,11 +435,18 @@ export const onUpdateGroup = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -353,6 +456,7 @@ export const onDeleteGroup = /* GraphQL */ `
   subscription OnDeleteGroup {
     onDeleteGroup {
       id
+      taskGroupId
       name
       users {
         items {
@@ -366,11 +470,18 @@ export const onDeleteGroup = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -405,6 +516,9 @@ export const onCreateVehicle = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -414,6 +528,7 @@ export const onCreateVehicle = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -423,22 +538,34 @@ export const onCreateVehicle = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -457,13 +584,22 @@ export const onCreateVehicle = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -498,6 +634,9 @@ export const onUpdateVehicle = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -507,6 +646,7 @@ export const onUpdateVehicle = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -516,22 +656,34 @@ export const onUpdateVehicle = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -550,13 +702,22 @@ export const onUpdateVehicle = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -591,6 +752,9 @@ export const onDeleteVehicle = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -600,6 +764,7 @@ export const onDeleteVehicle = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -609,22 +774,34 @@ export const onDeleteVehicle = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -643,13 +820,22 @@ export const onDeleteVehicle = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -660,7 +846,8 @@ export const onCreateLocation = /* GraphQL */ `
     onCreateLocation {
       id
       name
-      address {
+      listed
+      contact {
         id
         name
         telephoneNumber
@@ -676,10 +863,22 @@ export const onCreateLocation = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
-      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       comments {
         id
         parentID
@@ -695,13 +894,22 @@ export const onCreateLocation = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -712,7 +920,8 @@ export const onUpdateLocation = /* GraphQL */ `
     onUpdateLocation {
       id
       name
-      address {
+      listed
+      contact {
         id
         name
         telephoneNumber
@@ -728,10 +937,22 @@ export const onUpdateLocation = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
-      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       comments {
         id
         parentID
@@ -747,13 +968,22 @@ export const onUpdateLocation = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -764,7 +994,8 @@ export const onDeleteLocation = /* GraphQL */ `
     onDeleteLocation {
       id
       name
-      address {
+      listed
+      contact {
         id
         name
         telephoneNumber
@@ -780,10 +1011,22 @@ export const onDeleteLocation = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
-      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
       comments {
         id
         parentID
@@ -799,13 +1042,22 @@ export const onDeleteLocation = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -829,6 +1081,9 @@ export const onCreateAddressAndContactDetails = /* GraphQL */ `
       country
       postcode
       what3words
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -852,6 +1107,9 @@ export const onUpdateAddressAndContactDetails = /* GraphQL */ `
       country
       postcode
       what3words
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -875,6 +1133,9 @@ export const onDeleteAddressAndContactDetails = /* GraphQL */ `
       country
       postcode
       what3words
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -887,6 +1148,9 @@ export const onCreateDeliverable = /* GraphQL */ `
       type {
         id
         name
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -907,13 +1171,22 @@ export const onCreateDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -926,6 +1199,9 @@ export const onUpdateDeliverable = /* GraphQL */ `
       type {
         id
         name
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -946,13 +1222,22 @@ export const onUpdateDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -965,6 +1250,9 @@ export const onDeleteDeliverable = /* GraphQL */ `
       type {
         id
         name
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -985,13 +1273,22 @@ export const onDeleteDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         publiclyVisible
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -1020,6 +1317,9 @@ export const onCreateUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1029,6 +1329,7 @@ export const onCreateUserTasks = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -1038,22 +1339,34 @@ export const onCreateUserTasks = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -1071,6 +1384,9 @@ export const onCreateUserTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1095,6 +1411,9 @@ export const onCreateUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1114,6 +1433,9 @@ export const onCreateUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1133,21 +1455,29 @@ export const onCreateUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1162,6 +1492,9 @@ export const onCreateUserTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1176,19 +1509,30 @@ export const onCreateUserTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -1217,6 +1561,9 @@ export const onUpdateUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1226,6 +1573,7 @@ export const onUpdateUserTasks = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -1235,22 +1583,34 @@ export const onUpdateUserTasks = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -1268,6 +1628,9 @@ export const onUpdateUserTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1292,6 +1655,9 @@ export const onUpdateUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1311,6 +1677,9 @@ export const onUpdateUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1330,21 +1699,29 @@ export const onUpdateUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1359,6 +1736,9 @@ export const onUpdateUserTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1373,19 +1753,30 @@ export const onUpdateUserTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -1414,6 +1805,9 @@ export const onDeleteUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1423,6 +1817,7 @@ export const onDeleteUserTasks = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -1432,22 +1827,34 @@ export const onDeleteUserTasks = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -1465,6 +1872,9 @@ export const onDeleteUserTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1489,6 +1899,9 @@ export const onDeleteUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1508,6 +1921,9 @@ export const onDeleteUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1527,21 +1943,29 @@ export const onDeleteUserTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1556,6 +1980,9 @@ export const onDeleteUserTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1570,19 +1997,30 @@ export const onDeleteUserTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -1611,6 +2049,9 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1620,6 +2061,7 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -1629,22 +2071,34 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -1662,6 +2116,9 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1686,6 +2143,9 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1705,6 +2165,9 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1724,21 +2187,29 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1753,6 +2224,9 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1767,19 +2241,30 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -1808,6 +2293,9 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1817,6 +2305,7 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -1826,22 +2315,34 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -1859,6 +2360,9 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1883,6 +2387,9 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1902,6 +2409,9 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1921,21 +2431,29 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1950,6 +2468,9 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -1964,19 +2485,30 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -2005,6 +2537,9 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2014,6 +2549,7 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -2023,22 +2559,34 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2056,6 +2604,9 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2080,6 +2631,9 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2099,6 +2653,9 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2118,21 +2675,29 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2147,6 +2712,9 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2161,19 +2729,30 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -2203,6 +2782,9 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2212,6 +2794,7 @@ export const onCreateTask = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -2221,22 +2804,34 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2261,6 +2856,9 @@ export const onCreateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2280,6 +2878,9 @@ export const onCreateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2299,6 +2900,9 @@ export const onCreateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2306,18 +2910,26 @@ export const onCreateTask = /* GraphQL */ `
       coordinators {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       riders {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       priority
       deliverables {
@@ -2325,6 +2937,9 @@ export const onCreateTask = /* GraphQL */ `
         type {
           id
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2335,9 +2950,15 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2355,6 +2976,9 @@ export const onCreateTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2379,6 +3003,9 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2398,6 +3025,9 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2417,21 +3047,29 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2446,6 +3084,9 @@ export const onCreateTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2460,16 +3101,24 @@ export const onCreateTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2487,6 +3136,9 @@ export const onCreateTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2511,6 +3163,9 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2530,6 +3185,9 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2549,21 +3207,29 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2578,6 +3244,9 @@ export const onCreateTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2592,27 +3261,40 @@ export const onCreateTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       group {
         items {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       comments {
         items {
@@ -2620,12 +3302,19 @@ export const onCreateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       status
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -2655,6 +3344,9 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2664,6 +3356,7 @@ export const onUpdateTask = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -2673,22 +3366,34 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2713,6 +3418,9 @@ export const onUpdateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2732,6 +3440,9 @@ export const onUpdateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2751,6 +3462,9 @@ export const onUpdateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2758,18 +3472,26 @@ export const onUpdateTask = /* GraphQL */ `
       coordinators {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       riders {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       priority
       deliverables {
@@ -2777,6 +3499,9 @@ export const onUpdateTask = /* GraphQL */ `
         type {
           id
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2787,9 +3512,15 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2807,6 +3538,9 @@ export const onUpdateTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2831,6 +3565,9 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2850,6 +3587,9 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2869,21 +3609,29 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2898,6 +3646,9 @@ export const onUpdateTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2912,16 +3663,24 @@ export const onUpdateTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -2939,6 +3698,9 @@ export const onUpdateTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2963,6 +3725,9 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -2982,6 +3747,9 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3001,21 +3769,29 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3030,6 +3806,9 @@ export const onUpdateTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3044,27 +3823,40 @@ export const onUpdateTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       group {
         items {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       comments {
         items {
@@ -3072,12 +3864,19 @@ export const onUpdateTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       status
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -3107,6 +3906,9 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3116,6 +3918,7 @@ export const onDeleteTask = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -3125,22 +3928,34 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -3165,6 +3980,9 @@ export const onDeleteTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -3184,6 +4002,9 @@ export const onDeleteTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -3203,6 +4024,9 @@ export const onDeleteTask = /* GraphQL */ `
         country
         postcode
         what3words
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -3210,18 +4034,26 @@ export const onDeleteTask = /* GraphQL */ `
       coordinators {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       riders {
         items {
           id
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       priority
       deliverables {
@@ -3229,6 +4061,9 @@ export const onDeleteTask = /* GraphQL */ `
         type {
           id
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3239,9 +4074,15 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -3259,6 +4100,9 @@ export const onDeleteTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3283,6 +4127,9 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3302,6 +4149,9 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3321,21 +4171,29 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3350,6 +4208,9 @@ export const onDeleteTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3364,16 +4225,24 @@ export const onDeleteTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
@@ -3391,6 +4260,9 @@ export const onDeleteTask = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3415,6 +4287,9 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3434,6 +4309,9 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3453,21 +4331,29 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         patch
         coordinators {
           nextToken
+          startedAt
         }
         riders {
           nextToken
+          startedAt
         }
         priority
         deliverables {
           id
           count
           unit
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3482,6 +4368,9 @@ export const onDeleteTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3496,27 +4385,40 @@ export const onDeleteTask = /* GraphQL */ `
           patch
           priority
           status
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           nextToken
+          startedAt
         }
         comments {
           nextToken
+          startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       group {
         items {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       comments {
         items {
@@ -3524,12 +4426,19 @@ export const onDeleteTask = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         nextToken
+        startedAt
       }
       status
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -3560,6 +4469,9 @@ export const onCreateComment = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3569,6 +4481,7 @@ export const onCreateComment = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -3578,26 +4491,41 @@ export const onCreateComment = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       publiclyVisible
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -3628,6 +4556,9 @@ export const onUpdateComment = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3637,6 +4568,7 @@ export const onUpdateComment = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -3646,26 +4578,41 @@ export const onUpdateComment = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       publiclyVisible
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -3696,6 +4643,9 @@ export const onDeleteComment = /* GraphQL */ `
           country
           postcode
           what3words
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -3705,6 +4655,7 @@ export const onDeleteComment = /* GraphQL */ `
         dateOfBirth
         vehicles {
           nextToken
+          startedAt
         }
         patch
         profilePictureURL
@@ -3714,26 +4665,41 @@ export const onDeleteComment = /* GraphQL */ `
           parentID
           body
           publiclyVisible
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         group {
           id
+          taskGroupId
           name
+          _version
+          _deleted
+          _lastChangedAt
           createdAt
           updatedAt
         }
         tasks {
           nextToken
+          startedAt
         }
         tasksCoordinator {
           nextToken
+          startedAt
         }
         active
+        _version
+        _deleted
+        _lastChangedAt
         createdAt
         updatedAt
       }
       publiclyVisible
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -3744,6 +4710,9 @@ export const onCreateDeliverableType = /* GraphQL */ `
     onCreateDeliverableType {
       id
       name
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -3754,6 +4723,9 @@ export const onUpdateDeliverableType = /* GraphQL */ `
     onUpdateDeliverableType {
       id
       name
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -3764,6 +4736,9 @@ export const onDeleteDeliverableType = /* GraphQL */ `
     onDeleteDeliverableType {
       id
       name
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }

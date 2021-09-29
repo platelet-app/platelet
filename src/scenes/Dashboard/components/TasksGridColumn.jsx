@@ -28,6 +28,7 @@ import clsx from "clsx";
 import { API } from "aws-amplify";
 import { makeStyles } from "@material-ui/core";
 import columns from "./tasksGridColumns";
+import { getWhoami } from "../../../redux/Selectors";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -70,7 +71,7 @@ function TasksGridColumn(props) {
     const dispatch = useDispatch();
     //const tasks = useSelector(getTasksSelector)[props.taskKey];
     const [tasks, setTasks] = useState([]);
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
     let selectorsString = "";
     if (props.taskKey === "tasksDelivered")
         selectorsString = "APPEND_TASKS_DELIVERED";
@@ -254,7 +255,7 @@ function TasksGridColumn(props) {
                                         if (false) {
                                             dispatch(
                                                 appendFunction(
-                                                    whoami.uuid,
+                                                    whoami.id,
                                                     1,
                                                     roleView,
                                                     props.taskKey,
