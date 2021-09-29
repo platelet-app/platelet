@@ -36,6 +36,7 @@ export default function VehicleDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
+    const [isPosting, setIsPosting] = useState(false);
     const [vehicle, setVehicle] = useState(initialVehicleState);
     const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
     const whoami = useSelector(getWhoami);
@@ -69,6 +70,25 @@ export default function VehicleDetail(props) {
         [props.location.key, dataStoreReadyStatus]
     );
 
+    async function onUpdate(value) {
+        setIsPosting(true);
+        try {
+            await DataStore.save(
+                models.Location.copyOf(vehicle, (updated) => {
+                    // There is probably a better way of doing this?
+                    for (const [key, newValue] of Object.entries(value)) {
+                        if (key !== "id") updated[key] = newValue;
+                    }
+                })
+            );
+            setIsPosting(false);
+        } catch (error) {
+            console.log("Update request failed", error);
+            dispatch(displayErrorNotification(error.message));
+            setIsPosting(false);
+        }
+    }
+
     function onAssignUser(user) {
         if (user)
             dispatch(
@@ -98,7 +118,7 @@ export default function VehicleDetail(props) {
         return (
             <Grid container spacing={3} direction={"column"}>
                 <Grid item>
-                    <VehicleProfile vehicle={vehicle} />
+                    <VehicleProfile onUpdate={onUpdate} vehicle={vehicle} />
                 </Grid>
                 <Grid item>
                     <PaddedPaper width={"400px"}>

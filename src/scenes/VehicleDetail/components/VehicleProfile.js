@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { updateVehicleRequest } from "../../../redux/vehicles/VehiclesActions";
+import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
@@ -20,8 +21,7 @@ const fields = {
     dateOfRegistration: "Registration date",
 };
 
-export default function VehicleProfile(props) {
-    const dispatch = useDispatch();
+function VehicleProfile(props) {
     const postingSelector = createPostingSelector(["UPDATE_VEHICLE"]);
     const isPosting = useSelector((state) => postingSelector(state));
     const [editMode, setEditMode] = useState(false);
@@ -38,6 +38,7 @@ export default function VehicleProfile(props) {
 
     function copyVehicleToState() {
         setState({ ...props.vehicle });
+        setOldState({ ...props.vehicle });
     }
     useEffect(copyVehicleToState, [props.vehicle]);
 
@@ -97,8 +98,9 @@ export default function VehicleProfile(props) {
         <SaveCancelButtons
             disabled={isPosting}
             onSave={() => {
-                dispatch(updateVehicleRequest(state.uuid, state));
+                props.onUpdate(state);
                 setOldState(state);
+                setEditMode(false);
             }}
             onCancel={() => {
                 setEditMode(false);
@@ -185,3 +187,14 @@ export default function VehicleProfile(props) {
         </Grid>
     );
 }
+
+VehicleProfile.propTypes = {
+    onUpdate: PropTypes.func,
+    location: PropTypes.object,
+};
+
+VehicleProfile.defaultProps = {
+    onUpdate: () => {},
+};
+
+export default VehicleProfile;
