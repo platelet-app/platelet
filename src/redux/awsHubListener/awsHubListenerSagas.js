@@ -20,7 +20,6 @@ function* initialiseDataStoreListener(action) {
         while (true) {
             const hubData = yield take(channel);
             const { event, data } = hubData.payload;
-            console.log(event);
             if (event === "networkStatus") {
                 // TODO: Why doesn't this work in chrome but is fine in firefox?
                 yield put(actions.setNetworkStatus(data.active));
