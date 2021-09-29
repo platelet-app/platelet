@@ -62,7 +62,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
     </Typography>
   );
 
-  const subtitle = 'Connect from anywhere to coordinate fleets and record deliveries. Coming later this summer.';
+  const subtitle = 'Connect from anywhere to coordinate fleets and record deliveries.';
 
   const findOutMore = (
     <Button
