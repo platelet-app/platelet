@@ -22,7 +22,7 @@ const CommentCard = React.memo((props) => {
     const classes = commentStyles();
     const timeCreatedString = moment(props.timeCreated).calendar();
     const whoami = useSelector(getWhoami);
-    const Card = props.public
+    const Card = props.publiclyVisible
         ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
         : (props) => (
               <PrivateCommentCardStyled>

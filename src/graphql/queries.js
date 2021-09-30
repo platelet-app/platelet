@@ -139,7 +139,7 @@ export const getUser = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -504,7 +504,7 @@ export const getVehicle = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -681,7 +681,7 @@ export const getLocation = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -927,7 +927,7 @@ export const getDeliverable = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -1812,7 +1812,7 @@ export const getTask = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -2025,7 +2025,7 @@ export const syncComments = /* GraphQL */ `
     ) {
       items {
         id
-        parentID
+        parentId
         body
         author {
           id
@@ -2065,7 +2065,7 @@ export const getComment = /* GraphQL */ `
   query GetComment($id: ID!) {
     getComment(id: $id) {
       id
-      parentID
+      parentId
       body
       author {
         id
@@ -2155,7 +2155,7 @@ export const listComments = /* GraphQL */ `
     listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        parentID
+        parentId
         body
         author {
           id

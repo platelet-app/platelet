@@ -56,7 +56,7 @@ export const onCreateUser = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -175,7 +175,7 @@ export const onUpdateUser = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -294,7 +294,7 @@ export const onDeleteUser = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -541,7 +541,7 @@ export const onCreateVehicle = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -644,7 +644,7 @@ export const onUpdateVehicle = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -747,7 +747,7 @@ export const onDeleteVehicle = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -813,7 +813,7 @@ export const onCreateLocation = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -879,7 +879,7 @@ export const onUpdateLocation = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -945,7 +945,7 @@ export const onDeleteLocation = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -1066,7 +1066,7 @@ export const onCreateDeliverable = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -1109,7 +1109,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -1152,7 +1152,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -3126,7 +3126,7 @@ export const onCreateTask = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -3679,7 +3679,7 @@ export const onUpdateTask = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -4232,7 +4232,7 @@ export const onDeleteTask = /* GraphQL */ `
       comments {
         items {
           id
-          parentID
+          parentId
           body
           publiclyVisible
           userCommentsId
@@ -4262,7 +4262,7 @@ export const onCreateComment = /* GraphQL */ `
   subscription OnCreateComment {
     onCreateComment {
       id
-      parentID
+      parentId
       body
       author {
         id
@@ -4347,7 +4347,7 @@ export const onUpdateComment = /* GraphQL */ `
   subscription OnUpdateComment {
     onUpdateComment {
       id
-      parentID
+      parentId
       body
       author {
         id
@@ -4432,7 +4432,7 @@ export const onDeleteComment = /* GraphQL */ `
   subscription OnDeleteComment {
     onDeleteComment {
       id
-      parentID
+      parentId
       body
       author {
         id

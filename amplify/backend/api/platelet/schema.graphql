@@ -10,7 +10,7 @@ type User @model {
   patch: [Patch]
   profilePictureURL: String
   profilePictureThumbnailURL: String
-  comments: [Comment!] @connection
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
   group: Group @connection(name: "GroupMembers")
   tasks: [UserTasks] @connection(name: "UserTasks")
   tasksCoordinator: [CoordinatorTasks] @connection(name: "CoordinatorTasks")
@@ -33,7 +33,7 @@ type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   dateOfManufacture: AWSDateTime
   dateOfRegistration: AWSDateTime
   assignedUser: User @connection(fields: ["assignedUserID"])
-  comments: [Comment!] @connection
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
 type Location @model {
@@ -51,7 +51,7 @@ type Location @model {
   country: String
   postcode: String
   what3words: String
-  comments: [Comment!] @connection
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
 type AddressAndContactDetails @model {
@@ -76,7 +76,7 @@ type Deliverable @model {
   type: DeliverableType!
   count: Int!
   unit: DeliverableUnit
-  comments: [Comment!] @connection
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
 type UserTasks @model(queries: null) {
@@ -117,21 +117,16 @@ type Task
   relayPrevious: Task @connection
   relayNext: Task @connection
   group: [Group] @connection
-  comments: [Comment!] @connection
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
   status: TaskStatus!
 }
 
-type Comment @model @key(name: "byParent", fields: ["parentID", "body"]) {
+type Comment @model @key(name: "byParent", fields: ["parentId"]) {
   id: ID!
-  parentID: ID!
+  parentId: ID!
   body: String!
-  author: User @connection
-  publiclyVisible: Boolean
-  userCommentsId: ID
-  vehicleCommentsId: ID
-  taskCommentsId: ID
-  deliverableCommentsId: ID
-  locationCommentsId: ID
+  author: User! @connection
+  publiclyVisible: Boolean!
 }
 
 type DeliverableType @model {

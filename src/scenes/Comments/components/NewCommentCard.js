@@ -14,18 +14,33 @@ import CommentAuthor from "./CommentAuthor";
 import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
 import clsx from "clsx";
 import PropTypes from "prop-types";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models/index";
+
+const initialCommentState = {
+    body: "",
+    publiclyVisible: true,
+};
 
 function NewCommentCard(props) {
-    const dispatch = useDispatch();
-    const [publicComment, setPublicComment] = useState(true);
-    const [commentContents, setCommentContents] = useState("");
+    const [state, setState] = useState(initialCommentState);
     const postingSelector = createPostingSelector(["ADD_COMMENT"]);
     const isPosting = useSelector((state) => postingSelector(state));
     const classes = commentStyles();
 
+    async function addComment() {
+        const newComment = await DataStore.save(
+            new models.Comment({
+                ...state,
+                parentId: props.parentUUID,
+                commentAuthorId: props.author.id,
+            })
+        );
+    }
+
     function clearCommentOnPost() {
         if (!isPosting) {
-            setCommentContents("");
+            setState({ ...state, body: "" });
         }
     }
 
@@ -49,17 +64,17 @@ function NewCommentCard(props) {
                     >
                         <Grid item>
                             <CommentAuthor
-                                uuid={props.author.uuid}
-                                displayName={props.author.display_name}
+                                uuid={props.author.id}
+                                displayName={props.author.displayName}
                                 avatarURL={
-                                    props.author.profile_picture_thumbnail_url
+                                    props.author.profilePictureThumbnailURL
                                 }
                             />
                         </Grid>
                         <Grid item>
                             <Tooltip
                                 title={
-                                    publicComment
+                                    state.publiclyVisible
                                         ? "Visible to everyone"
                                         : "Only visible to you"
                                 }
@@ -67,10 +82,14 @@ function NewCommentCard(props) {
                                 <IconButton
                                     disabled={isPosting}
                                     onClick={() => {
-                                        setPublicComment(!publicComment);
+                                        setState({
+                                            ...state,
+                                            publiclyVisible:
+                                                !state.publiclyVisible,
+                                        });
                                     }}
                                 >
-                                    {publicComment ? (
+                                    {state.publiclyVisible ? (
                                         <LockOpenIcon
                                             className={classes.icon}
                                         />
@@ -96,9 +115,12 @@ function NewCommentCard(props) {
                         id={"new-comment-field"}
                         multiline
                         disabled={isPosting}
-                        value={commentContents}
+                        value={state.body}
                         onChange={(e) => {
-                            setCommentContents(e.target.value.slice(0, 10000));
+                            setState({
+                                ...state,
+                                body: e.target.value.slice(0, 10000),
+                            });
                         }}
                     />
                 </Grid>
@@ -106,28 +128,16 @@ function NewCommentCard(props) {
                     <Grid container direction={"row"} justify={"space-between"}>
                         <Grid item>
                             <Button
-                                disabled={
-                                    commentContents.length === 0 || isPosting
-                                }
-                                onClick={() => {
-                                    dispatch(
-                                        addCommentRequest(props.parentUUID, {
-                                            author: props.author,
-                                            publicly_visible: publicComment,
-                                            body: commentContents,
-                                        })
-                                    );
-                                }}
+                                disabled={state.body.length === 0 || isPosting}
+                                onClick={addComment}
                             >
                                 Post
                             </Button>
                         </Grid>
                         <Grid item>
                             <Button
-                                disabled={
-                                    commentContents.length === 0 || isPosting
-                                }
-                                onClick={() => setCommentContents("")}
+                                disabled={state.body.length === 0 || isPosting}
+                                onClick={() => setState({ ...state, body: "" })}
                             >
                                 Discard
                             </Button>

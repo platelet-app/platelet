@@ -134,7 +134,7 @@ function CommentsMain(props) {
                 )
                 .map((comment, index, array) => {
                     const prevAuthorUUID =
-                        index > 0 ? array[index - 1].author.uuid : null;
+                        index > 0 ? array[index - 1].author.id : null;
                     return (
                         <>
                             <Grid item>
@@ -142,7 +142,7 @@ function CommentsMain(props) {
                             </Grid>
                             <Grid
                                 className={clsx(
-                                    whoami.id === comment.author.uuid
+                                    whoami.id === comment.author.id
                                         ? classes.right
                                         : "",
                                     classes.item
@@ -154,15 +154,15 @@ function CommentsMain(props) {
                                     showContextMenu={
                                         // TODO: eventually let admins delete comments too
                                         //whoami.roles.includes("admin") ||
-                                        whoami.id === comment.author.uuid
+                                        whoami.id === comment.author.id
                                     }
                                     author={comment.author}
                                     showAuthor={
-                                        comment.author.uuid !== prevAuthorUUID
+                                        comment.author.id !== prevAuthorUUID
                                     }
-                                    timeCreated={comment.time_created}
+                                    timeCreated={comment.createdAt}
                                     numEdits={comment.num_edits}
-                                    public={comment.publicly_visible}
+                                    public={comment.publiclyVisible}
                                     uuid={comment.uuid}
                                     body={comment.body}
                                 />

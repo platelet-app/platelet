@@ -32,14 +32,7 @@ function CommentsSection(props) {
             setIsFetching(true);
         } else {
             const commentsResult = await DataStore.query(models.Comment, (c) =>
-                c.or((c) =>
-                    c
-                        .vehicleCommentsId("eq", props.parentUUID)
-                        .userCommentsId("eq", props.parentUUID)
-                        .locationCommentsId("eq", props.parentUUID)
-                        .taskCommentsId("eq", props.parentUUID)
-                        .deliverableCommentsId("eq", props.parentUUID)
-                )
+                c.parentId("eq", props.parentUUID)
             );
             setComments(commentsResult);
         }

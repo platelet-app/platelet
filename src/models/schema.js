@@ -110,7 +110,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "userCommentsId"
+                        "associatedWith": "parentId"
                     }
                 },
                 "group": {
@@ -390,7 +390,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "vehicleCommentsId"
+                        "associatedWith": "parentId"
                     }
                 },
                 "createdAt": {
@@ -438,8 +438,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "parentID": {
-                    "name": "parentID",
+                "parentId": {
+                    "name": "parentId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
@@ -458,7 +458,7 @@ export const schema = {
                     "type": {
                         "model": "User"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -469,42 +469,7 @@ export const schema = {
                     "name": "publiclyVisible",
                     "isArray": false,
                     "type": "Boolean",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "userCommentsId": {
-                    "name": "userCommentsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "vehicleCommentsId": {
-                    "name": "vehicleCommentsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "taskCommentsId": {
-                    "name": "taskCommentsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "deliverableCommentsId": {
-                    "name": "deliverableCommentsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "locationCommentsId": {
-                    "name": "locationCommentsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "createdAt": {
@@ -536,8 +501,7 @@ export const schema = {
                     "properties": {
                         "name": "byParent",
                         "fields": [
-                            "parentID",
-                            "body"
+                            "parentId"
                         ]
                     }
                 }
@@ -859,7 +823,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "taskCommentsId"
+                        "associatedWith": "parentId"
                     }
                 },
                 "status": {
@@ -1008,7 +972,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "deliverableCommentsId"
+                        "associatedWith": "parentId"
                     }
                 },
                 "createdAt": {
@@ -1198,7 +1162,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "locationCommentsId"
+                        "associatedWith": "parentId"
                     }
                 },
                 "createdAt": {
@@ -1280,5 +1244,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "3e87af61376bd1402ba432c2706113ba"
+    "version": "5c10261d93b9fb78601d4792e9fd1cad"
 };

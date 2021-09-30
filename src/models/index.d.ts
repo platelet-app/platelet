@@ -147,15 +147,10 @@ export declare class Vehicle {
 
 export declare class Comment {
   readonly id: string;
-  readonly parentID: string;
+  readonly parentId: string;
   readonly body: string;
-  readonly author?: User;
-  readonly publiclyVisible?: boolean;
-  readonly userCommentsId?: string;
-  readonly vehicleCommentsId?: string;
-  readonly taskCommentsId?: string;
-  readonly deliverableCommentsId?: string;
-  readonly locationCommentsId?: string;
+  readonly author: User;
+  readonly publiclyVisible: boolean;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Comment, CommentMetaData>);
