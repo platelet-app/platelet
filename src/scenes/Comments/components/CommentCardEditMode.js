@@ -6,6 +6,8 @@ import { updateCommentRequest } from "../../../redux/comments/CommentsActions";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
 import PropTypes from "prop-types";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models/index";
 
 const TextFieldSaveButtons = (props) => {
     const [body, setBody] = useState(props.body);
@@ -23,9 +25,18 @@ const TextFieldSaveButtons = (props) => {
             <SaveCancelButtons
                 onCancel={props.onReset}
                 disabled={props.isPosting || !!!body}
-                onSave={() =>
-                    dispatch(updateCommentRequest(props.uuid, { body }))
-                }
+                onSave={async () => {
+                    const existing = await DataStore.query(
+                        models.Comment,
+                        props.uuid
+                    );
+                    await DataStore.save(
+                        models.Comment.copyOf(existing, (updated) => {
+                            updated.body = body;
+                        })
+                    );
+                    props.onReset();
+                }}
             />
         </React.Fragment>
     );
