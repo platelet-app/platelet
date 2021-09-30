@@ -180,7 +180,11 @@ function CommentsMain(props) {
                 <div className={classes.tallSpacer} />
             </Grid>
             <Grid item className={classes.item}>
-                <NewCommentCard parentUUID={props.parentUUID} author={whoami} />
+                <NewCommentCard
+                    parentUUID={props.parentUUID}
+                    onNewComment={props.onNewComment}
+                    author={whoami}
+                />
             </Grid>
         </Grid>
     );

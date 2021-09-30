@@ -30,6 +30,28 @@ function CommentsSection(props) {
         unsubscribe: () => {},
     });
 
+    async function addCommentToState(comment) {
+        debugger;
+        if (comment) {
+            let author = comment.author;
+            if (!author) {
+                author = await DataStore.query(
+                    models.User,
+                    comment.commentAuthorId
+                );
+            }
+            setComments((prevState) => {
+                return {
+                    ...prevState,
+                    [comment.id]: {
+                        ...comment,
+                        author,
+                    },
+                };
+            });
+        }
+    }
+
     async function getComments() {
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
@@ -44,24 +66,7 @@ function CommentsSection(props) {
                 models.Comment,
                 (c) => c.parentId("eq", props.parentUUID)
             ).subscribe(async (comment) => {
-                if (comment.element && comment.element._version) {
-                    let author = comment.element.author;
-                    if (!author) {
-                        author = await DataStore.query(
-                            models.User,
-                            comment.element.commentAuthorId
-                        );
-                    }
-                    setComments((prevState) => {
-                        return {
-                            ...prevState,
-                            [comment.element.id]: {
-                                ...comment.element,
-                                author,
-                            },
-                        };
-                    });
-                }
+                addCommentToState(comment.element);
             });
         }
     }
@@ -81,6 +86,7 @@ function CommentsSection(props) {
     } else {
         return (
             <CommentsMain
+                onNewComment={addCommentToState}
                 parentUUID={props.parentUUID}
                 comments={Object.values(comments)}
             />

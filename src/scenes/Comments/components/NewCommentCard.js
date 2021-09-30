@@ -41,6 +41,7 @@ function NewCommentCard(props) {
         );
         setState((prevState) => ({ ...prevState, body: "" }));
         setIsPosting(false);
+        props.onNewComment(newComment);
     }
 
     function clearCommentOnPost() {
@@ -161,13 +162,14 @@ function NewCommentCard(props) {
 NewCommentCard.propTypes = {
     author: PropTypes.object,
     parentUUID: PropTypes.string,
+    onNewComment: PropTypes.func,
 };
 
 NewCommentCard.defaultProps = {
     author: {
-        display_name: "",
-        uuid: "",
-        profile_picture_thumbnail_url: "",
+        displayName: "",
+        id: "",
+        profilePictureThumbnailURL: "",
     },
     parentUUID: "",
 };
