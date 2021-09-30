@@ -118,7 +118,9 @@ export default function VehicleDetail(props) {
         return (
             <Grid container spacing={3} direction={"column"}>
                 <Grid item>
-                    <VehicleProfile onUpdate={onUpdate} vehicle={vehicle} />
+                    <PaddedPaper>
+                        <VehicleProfile onUpdate={onUpdate} vehicle={vehicle} />
+                    </PaddedPaper>
                 </Grid>
                 <Grid item>
                     <PaddedPaper width={"400px"}>
@@ -144,9 +146,7 @@ export default function VehicleDetail(props) {
                     </PaddedPaper>
                 </Grid>
                 <Grid item>
-                    <PaddedPaper width={"400px"}>
-                        <CommentsSection parentUUID={vehicleUUID} />
-                    </PaddedPaper>
+                    <CommentsSection parentUUID={vehicleUUID} />
                 </Grid>
             </Grid>
         );

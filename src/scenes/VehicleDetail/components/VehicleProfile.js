@@ -127,50 +127,13 @@ function VehicleProfile(props) {
             spacing={4}
         >
             <Grid item>
-                <PaddedPaper width={"600px"}>
-                    <Grid
-                        container
-                        direction={"column"}
-                        justify={"flex-start"}
-                        spacing={3}
-                    >
-                        <Grid item>
-                            <Grid
-                                container
-                                direction={"row"}
-                                justify={"space-between"}
-                                alignItems={"flex-end"}
-                                spacing={3}
-                            >
-                                <Grid item>{header}</Grid>
-                                <Grid item>{editToggle}</Grid>
-                            </Grid>
-                        </Grid>
-
-                        {Object.keys(fields).map((key) => {
-                            return (
-                                <Grid key={key} style={{ width: "50%" }} item>
-                                    <TextFieldUncontrolled
-                                        value={state[key]}
-                                        InputProps={{
-                                            readOnly: !editMode,
-                                            disableUnderline: !editMode,
-                                        }}
-                                        fullWidth
-                                        label={fields[key]}
-                                        id={key}
-                                        onChange={(e) => {
-                                            setState({
-                                                ...state,
-                                                [key]: e.target.value,
-                                            });
-                                        }}
-                                    />
-                                    {divider}
-                                </Grid>
-                            );
-                        })}
-
+                <Grid
+                    container
+                    direction={"column"}
+                    justify={"flex-start"}
+                    spacing={3}
+                >
+                    <Grid item>
                         <Grid
                             container
                             direction={"row"}
@@ -178,11 +141,46 @@ function VehicleProfile(props) {
                             alignItems={"flex-end"}
                             spacing={3}
                         >
-                            <Grid item>{userAssign}</Grid>
+                            <Grid item>{header}</Grid>
+                            <Grid item>{editToggle}</Grid>
                         </Grid>
-                        <Grid item>{saveButtons}</Grid>
                     </Grid>
-                </PaddedPaper>
+
+                    {Object.keys(fields).map((key) => {
+                        return (
+                            <Grid key={key} style={{ width: "50%" }} item>
+                                <TextFieldUncontrolled
+                                    value={state[key]}
+                                    InputProps={{
+                                        readOnly: !editMode,
+                                        disableUnderline: !editMode,
+                                    }}
+                                    fullWidth
+                                    label={fields[key]}
+                                    id={key}
+                                    onChange={(e) => {
+                                        setState({
+                                            ...state,
+                                            [key]: e.target.value,
+                                        });
+                                    }}
+                                />
+                                {divider}
+                            </Grid>
+                        );
+                    })}
+
+                    <Grid
+                        container
+                        direction={"row"}
+                        justify={"space-between"}
+                        alignItems={"flex-end"}
+                        spacing={3}
+                    >
+                        <Grid item>{userAssign}</Grid>
+                    </Grid>
+                    <Grid item>{saveButtons}</Grid>
+                </Grid>
             </Grid>
         </Grid>
     );
