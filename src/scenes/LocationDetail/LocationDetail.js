@@ -79,20 +79,35 @@ export default function LocationDetail(props) {
     async function onUpdate(value) {
         const { contact, ...rest } = value;
         try {
+            const existingLocation = await DataStore.query(
+                models.Location,
+                rest.id
+            );
             await DataStore.save(
-                models.Location.copyOf(rest, (updated) => {
+                models.Location.copyOf(existingLocation, (updated) => {
                     for (const [key, newValue] of Object.entries(rest)) {
                         if (key !== "id") updated[key] = newValue;
                     }
                 })
             );
-            await DataStore.save(
-                models.AddressAndContactDetails.copyOf(contact, (updated) => {
-                    for (const [key, newValue] of Object.entries(contact)) {
-                        if (key !== "id") updated[key] = newValue;
-                    }
-                })
-            );
+            if (contact) {
+                const existingContact = await DataStore.query(
+                    models.AddressAndContactDetails,
+                    contact.id
+                );
+                await DataStore.save(
+                    models.AddressAndContactDetails.copyOf(
+                        existingContact,
+                        (updated) => {
+                            for (const [key, newValue] of Object.entries(
+                                contact
+                            )) {
+                                if (key !== "id") updated[key] = newValue;
+                            }
+                        }
+                    )
+                );
+            }
             setIsPosting(false);
         } catch (error) {
             throw error;
