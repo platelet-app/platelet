@@ -19,6 +19,7 @@ import { TextFieldUncontrolled } from "../../components/TextFields";
 import { EditModeToggleButton } from "../../components/EditModeToggleButton";
 import SaveCancelButtons from "../../components/SaveCancelButtons";
 import LocationProfile from "./components/LocationProfile";
+import { protectedFields } from "../../apiConsts";
 
 const initialLocationState = {
     name: null,
@@ -86,7 +87,8 @@ export default function LocationDetail(props) {
             await DataStore.save(
                 models.Location.copyOf(existingLocation, (updated) => {
                     for (const [key, newValue] of Object.entries(rest)) {
-                        if (key !== "id") updated[key] = newValue;
+                        if (!protectedFields.includes(key))
+                            updated[key] = newValue;
                     }
                 })
             );
@@ -102,7 +104,8 @@ export default function LocationDetail(props) {
                             for (const [key, newValue] of Object.entries(
                                 contact
                             )) {
-                                if (key !== "id") updated[key] = newValue;
+                                if (!protectedFields.includes(key))
+                                    updated[key] = newValue;
                             }
                         }
                     )
@@ -110,7 +113,6 @@ export default function LocationDetail(props) {
             }
             setIsPosting(false);
         } catch (error) {
-            throw error;
             console.log("Update request failed", error);
             dispatch(displayErrorNotification(error.message));
             setIsPosting(false);

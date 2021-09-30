@@ -22,6 +22,7 @@ import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "@aws-amplify/datastore";
+import { protectedFields } from "../../apiConsts";
 
 const initialVehicleState = {
     name: "",
@@ -73,11 +74,15 @@ export default function VehicleDetail(props) {
     async function onUpdate(value) {
         setIsPosting(true);
         try {
+            const existingVehicle = await DataStore.query(
+                models.Vehicle,
+                vehicle.id
+            );
             await DataStore.save(
-                models.Location.copyOf(vehicle, (updated) => {
-                    // There is probably a better way of doing this?
+                models.Vehicle.copyOf(existingVehicle, (updated) => {
                     for (const [key, newValue] of Object.entries(value)) {
-                        if (key !== "id") updated[key] = newValue;
+                        if (!protectedFields.includes(key))
+                            updated[key] = newValue;
                     }
                 })
             );
