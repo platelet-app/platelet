@@ -2,6 +2,14 @@ import React from "react";
 import uuidBase62 from "uuid-base62";
 import { v4 as uuidv4 } from "uuid";
 
+export function convertListDataToObject(list) {
+    const result = {};
+    for (const item of list) {
+        result[item.id] = item;
+    }
+    return result;
+}
+
 export function sortByCreatedTime(items, order = "newest") {
     if (!items || items.length === 0) return [];
     if (order !== "newest")

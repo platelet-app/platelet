@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     clearComments,
@@ -20,12 +20,15 @@ import PropTypes from "prop-types";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
+import { convertListDataToObject } from "../../utilities";
 
 function CommentsSection(props) {
     const [isFetching, setIsFetching] = useState(false);
-    const notFoundSelector = createNotFoundSelector([getCommentsPrefix]);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    const [comments, setComments] = useState([]);
+    const [comments, setComments] = useState({});
+    const commentsSubscription = useRef({
+        unsubscribe: () => {},
+    });
 
     async function getComments() {
         if (!dataStoreReadyStatus) {
@@ -34,10 +37,42 @@ function CommentsSection(props) {
             const commentsResult = await DataStore.query(models.Comment, (c) =>
                 c.parentId("eq", props.parentUUID)
             );
-            setComments(commentsResult);
+            const commentsObject = convertListDataToObject(commentsResult);
+            setComments(commentsObject);
+            commentsSubscription.current.unsubscribe();
+            commentsSubscription.current = DataStore.observe(
+                models.Comment,
+                (c) => c.parentId("eq", props.parentUUID)
+            ).subscribe(async (comment) => {
+                if (comment.element && comment.element._version) {
+                    let author = comment.element.author;
+                    if (!author) {
+                        author = await DataStore.query(
+                            models.User,
+                            comment.element.commentAuthorId
+                        );
+                    }
+                    setComments((prevState) => {
+                        return {
+                            ...prevState,
+                            [comment.element.id]: {
+                                ...comment.element,
+                                author,
+                            },
+                        };
+                    });
+                }
+            });
         }
     }
     useEffect(() => getComments(), [props.parentUUID, dataStoreReadyStatus]);
+
+    useEffect(() => {
+        return () => {
+            if (commentsSubscription.current)
+                commentsSubscription.current.unsubscribe();
+        };
+    }, []);
 
     if (isFetching) {
         return <CommentsSkeleton />;
@@ -45,7 +80,10 @@ function CommentsSection(props) {
         return <NotFound>Comments section could not found.</NotFound>;
     } else {
         return (
-            <CommentsMain parentUUID={props.parentUUID} comments={comments} />
+            <CommentsMain
+                parentUUID={props.parentUUID}
+                comments={Object.values(comments)}
+            />
         );
     }
 }

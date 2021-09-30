@@ -16,6 +16,7 @@ import clsx from "clsx";
 import PropTypes from "prop-types";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
+import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 
 const initialCommentState = {
     body: "",
@@ -24,11 +25,13 @@ const initialCommentState = {
 
 function NewCommentCard(props) {
     const [state, setState] = useState(initialCommentState);
-    const postingSelector = createPostingSelector(["ADD_COMMENT"]);
-    const isPosting = useSelector((state) => postingSelector(state));
+    const [isPosting, setIsPosting] = useState(false);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+
     const classes = commentStyles();
 
     async function addComment() {
+        setIsPosting(true);
         const newComment = await DataStore.save(
             new models.Comment({
                 ...state,
@@ -36,6 +39,8 @@ function NewCommentCard(props) {
                 commentAuthorId: props.author.id,
             })
         );
+        setState((prevState) => ({ ...prevState, body: "" }));
+        setIsPosting(false);
     }
 
     function clearCommentOnPost() {
@@ -128,7 +133,11 @@ function NewCommentCard(props) {
                     <Grid container direction={"row"} justify={"space-between"}>
                         <Grid item>
                             <Button
-                                disabled={state.body.length === 0 || isPosting}
+                                disabled={
+                                    state.body.length === 0 ||
+                                    isPosting ||
+                                    !dataStoreReadyStatus
+                                }
                                 onClick={addComment}
                             >
                                 Post

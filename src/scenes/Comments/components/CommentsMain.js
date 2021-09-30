@@ -131,7 +131,9 @@ function CommentsMain(props) {
                 .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
                 .map((comment, index, array) => {
                     const prevAuthorUUID =
-                        index > 0 ? array[index - 1].author.id : null;
+                        index > 0 && array[index - 1].author
+                            ? array[index - 1].author.id
+                            : null;
                     return (
                         <>
                             <Grid item>
@@ -139,7 +141,8 @@ function CommentsMain(props) {
                             </Grid>
                             <Grid
                                 className={clsx(
-                                    whoami.id === comment.author.id
+                                    comment.author &&
+                                        whoami.id === comment.author.id
                                         ? classes.right
                                         : "",
                                     classes.item
@@ -151,10 +154,12 @@ function CommentsMain(props) {
                                     showContextMenu={
                                         // TODO: eventually let admins delete comments too
                                         //whoami.roles.includes("admin") ||
+                                        comment.author &&
                                         whoami.id === comment.author.id
                                     }
                                     author={comment.author}
                                     showAuthor={
+                                        comment.author &&
                                         comment.author.id !== prevAuthorUUID
                                     }
                                     timeCreated={comment.createdAt}
