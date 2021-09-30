@@ -22,7 +22,7 @@ const CommentCard = React.memo((props) => {
     const classes = commentStyles();
     const timeCreatedString = moment(props.timeCreated).calendar();
     const whoami = useSelector(getWhoami);
-    const Card = props.publiclyVisible
+    const Card = props.public
         ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
         : (props) => (
               <PrivateCommentCardStyled>
@@ -35,7 +35,7 @@ const CommentCard = React.memo((props) => {
             direction={"column"}
             wrap={"nowrap"}
             alignItems={
-                whoami.id === props.author.uuid ? "flex-end" : "flex-start"
+                whoami.id === props.author.id ? "flex-end" : "flex-start"
             }
             spacing={1}
         >

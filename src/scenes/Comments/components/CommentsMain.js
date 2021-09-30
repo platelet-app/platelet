@@ -128,10 +128,7 @@ function CommentsMain(props) {
             alignItems={"center"}
         >
             {props.comments
-                .sort(
-                    (a, b) =>
-                        new Date(a.time_created) - new Date(b.time_created)
-                )
+                .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
                 .map((comment, index, array) => {
                     const prevAuthorUUID =
                         index > 0 ? array[index - 1].author.id : null;
@@ -148,7 +145,7 @@ function CommentsMain(props) {
                                     classes.item
                                 )}
                                 item
-                                key={comment.uuid}
+                                key={comment.id}
                             >
                                 <CommentCollection
                                     showContextMenu={
@@ -161,9 +158,13 @@ function CommentsMain(props) {
                                         comment.author.id !== prevAuthorUUID
                                     }
                                     timeCreated={comment.createdAt}
-                                    numEdits={comment.num_edits}
+                                    numEdits={
+                                        comment._version
+                                            ? comment._version - 1
+                                            : 0
+                                    }
                                     public={comment.publiclyVisible}
-                                    uuid={comment.uuid}
+                                    uuid={comment.id}
                                     body={comment.body}
                                 />
                             </Grid>
