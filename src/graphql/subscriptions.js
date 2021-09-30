@@ -59,11 +59,6 @@ export const onCreateUser = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -178,11 +173,6 @@ export const onUpdateUser = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -297,11 +287,6 @@ export const onDeleteUser = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -544,11 +529,6 @@ export const onCreateVehicle = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -647,11 +627,6 @@ export const onUpdateVehicle = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -750,11 +725,6 @@ export const onDeleteVehicle = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -816,11 +786,6 @@ export const onCreateLocation = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -882,11 +847,6 @@ export const onUpdateLocation = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -948,11 +908,6 @@ export const onDeleteLocation = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -1069,11 +1024,6 @@ export const onCreateDeliverable = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -1112,11 +1062,6 @@ export const onUpdateDeliverable = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -1155,11 +1100,6 @@ export const onDeleteDeliverable = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -3129,11 +3069,6 @@ export const onCreateTask = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -3682,11 +3617,6 @@ export const onUpdateTask = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -4235,11 +4165,6 @@ export const onDeleteTask = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -4330,11 +4255,6 @@ export const onCreateComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
-      userCommentsId
-      vehicleCommentsId
-      taskCommentsId
-      deliverableCommentsId
-      locationCommentsId
       _version
       _deleted
       _lastChangedAt
@@ -4415,11 +4335,6 @@ export const onUpdateComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
-      userCommentsId
-      vehicleCommentsId
-      taskCommentsId
-      deliverableCommentsId
-      locationCommentsId
       _version
       _deleted
       _lastChangedAt
@@ -4500,11 +4415,6 @@ export const onDeleteComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
-      userCommentsId
-      vehicleCommentsId
-      taskCommentsId
-      deliverableCommentsId
-      locationCommentsId
       _version
       _deleted
       _lastChangedAt

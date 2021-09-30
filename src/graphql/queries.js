@@ -142,11 +142,6 @@ export const getUser = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -507,11 +502,6 @@ export const getVehicle = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -684,11 +674,6 @@ export const getLocation = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -930,11 +915,6 @@ export const getDeliverable = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -1815,11 +1795,6 @@ export const getTask = /* GraphQL */ `
           parentId
           body
           publiclyVisible
-          userCommentsId
-          vehicleCommentsId
-          taskCommentsId
-          deliverableCommentsId
-          locationCommentsId
           _version
           _deleted
           _lastChangedAt
@@ -2045,11 +2020,6 @@ export const syncComments = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        userCommentsId
-        vehicleCommentsId
-        taskCommentsId
-        deliverableCommentsId
-        locationCommentsId
         _version
         _deleted
         _lastChangedAt
@@ -2133,11 +2103,6 @@ export const getComment = /* GraphQL */ `
         updatedAt
       }
       publiclyVisible
-      userCommentsId
-      vehicleCommentsId
-      taskCommentsId
-      deliverableCommentsId
-      locationCommentsId
       _version
       _deleted
       _lastChangedAt
@@ -2175,11 +2140,6 @@ export const listComments = /* GraphQL */ `
           updatedAt
         }
         publiclyVisible
-        userCommentsId
-        vehicleCommentsId
-        taskCommentsId
-        deliverableCommentsId
-        locationCommentsId
         _version
         _deleted
         _lastChangedAt
