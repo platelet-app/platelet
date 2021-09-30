@@ -15,6 +15,7 @@ import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import { DataStore } from "@aws-amplify/datastore";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import { protectedFields } from "../../apiConsts";
 
 const initialUserState = {
     id: "",
@@ -88,24 +89,28 @@ export default function UserDetail(props) {
     async function onUpdate(value) {
         setIsPosting(true);
         try {
+            const existingUser = await DataStore.query(models.User, user.id);
+            debugger;
             await DataStore.save(
-                models.User.copyOf(user, (updated) => {
+                models.User.copyOf(existingUser, (updated) => {
                     // There is probably a better way of doing this?
                     for (const [key, newValue] of Object.entries(value)) {
-                        if (key !== "id") updated[key] = newValue;
+                        if (!protectedFields.includes(key))
+                            updated[key] = newValue;
                     }
                 })
             );
-            if (user.contact) {
+            if (existingUser.contact) {
                 await DataStore.save(
                     models.AddressAndContactDetails.copyOf(
-                        user.contact,
+                        existingUser.contact,
                         (updated) => {
                             // There is probably a better way of doing this?
                             for (const [key, newValue] of Object.entries(
                                 value.contact
                             )) {
-                                if (key !== "id") updated[key] = newValue;
+                                if (!protectedFields.includes(key))
+                                    updated[key] = newValue;
                             }
                         }
                     )

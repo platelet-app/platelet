@@ -83,9 +83,7 @@ export default function UserProfile(props) {
             disabled={props.isPosting}
             onSave={() => {
                 if (verifyUpdate(state)) {
-                    props.onUpdate(
-                        _.omit(state, "_deleted", "_lastChangedAt", "_version")
-                    );
+                    props.onUpdate(state);
                     setEditMode(false);
                     setOldState(state);
                 }
