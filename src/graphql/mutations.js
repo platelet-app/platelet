@@ -61,7 +61,7 @@ export const createUser = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -178,7 +178,7 @@ export const updateUser = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -295,7 +295,7 @@ export const deleteUser = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -549,7 +549,7 @@ export const createVehicle = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -650,7 +650,7 @@ export const updateVehicle = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -751,7 +751,7 @@ export const deleteVehicle = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -815,7 +815,7 @@ export const createLocation = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -879,7 +879,7 @@ export const updateLocation = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -943,7 +943,7 @@ export const deleteLocation = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -1071,7 +1071,7 @@ export const createDeliverable = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -1112,7 +1112,7 @@ export const updateDeliverable = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -1153,7 +1153,7 @@ export const deleteDeliverable = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -3143,7 +3143,7 @@ export const createTask = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -3694,7 +3694,7 @@ export const updateTask = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -4245,7 +4245,7 @@ export const deleteTask = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -4338,7 +4338,7 @@ export const createComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      publiclyVisible
+      visibility
       _version
       _deleted
       _lastChangedAt
@@ -4421,7 +4421,7 @@ export const updateComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      publiclyVisible
+      visibility
       _version
       _deleted
       _lastChangedAt
@@ -4504,7 +4504,7 @@ export const deleteComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      publiclyVisible
+      visibility
       _version
       _deleted
       _lastChangedAt

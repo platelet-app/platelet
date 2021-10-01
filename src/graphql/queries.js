@@ -141,7 +141,7 @@ export const getUser = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -501,7 +501,7 @@ export const getVehicle = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -673,7 +673,7 @@ export const getLocation = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -914,7 +914,7 @@ export const getDeliverable = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -1794,7 +1794,7 @@ export const getTask = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -2019,7 +2019,7 @@ export const syncComments = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        publiclyVisible
+        visibility
         _version
         _deleted
         _lastChangedAt
@@ -2102,7 +2102,7 @@ export const getComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      publiclyVisible
+      visibility
       _version
       _deleted
       _lastChangedAt
@@ -2139,7 +2139,7 @@ export const listComments = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        publiclyVisible
+        visibility
         _version
         _deleted
         _lastChangedAt

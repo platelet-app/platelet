@@ -7,6 +7,11 @@ export enum Role {
   ADMIN = "ADMIN"
 }
 
+export enum CommentVisibility {
+  EVERYONE = "EVERYONE",
+  ME = "ME"
+}
+
 export enum Patch {
   NORTH = "NORTH",
   WEST = "WEST",
@@ -150,7 +155,7 @@ export declare class Comment {
   readonly parentId: string;
   readonly body: string;
   readonly author: User;
-  readonly publiclyVisible: boolean;
+  readonly visibility?: CommentVisibility | keyof typeof CommentVisibility;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Comment, CommentMetaData>);

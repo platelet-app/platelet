@@ -58,7 +58,7 @@ export const onCreateUser = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -172,7 +172,7 @@ export const onUpdateUser = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -286,7 +286,7 @@ export const onDeleteUser = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -528,7 +528,7 @@ export const onCreateVehicle = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -626,7 +626,7 @@ export const onUpdateVehicle = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -724,7 +724,7 @@ export const onDeleteVehicle = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -785,7 +785,7 @@ export const onCreateLocation = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -846,7 +846,7 @@ export const onUpdateLocation = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -907,7 +907,7 @@ export const onDeleteLocation = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -1023,7 +1023,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -1061,7 +1061,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -1099,7 +1099,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -3068,7 +3068,7 @@ export const onCreateTask = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -3616,7 +3616,7 @@ export const onUpdateTask = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -4164,7 +4164,7 @@ export const onDeleteTask = /* GraphQL */ `
           id
           parentId
           body
-          publiclyVisible
+          visibility
           _version
           _deleted
           _lastChangedAt
@@ -4254,7 +4254,7 @@ export const onCreateComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      publiclyVisible
+      visibility
       _version
       _deleted
       _lastChangedAt
@@ -4334,7 +4334,7 @@ export const onUpdateComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      publiclyVisible
+      visibility
       _version
       _deleted
       _lastChangedAt
@@ -4414,7 +4414,7 @@ export const onDeleteComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      publiclyVisible
+      visibility
       _version
       _deleted
       _lastChangedAt

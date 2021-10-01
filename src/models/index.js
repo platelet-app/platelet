@@ -9,6 +9,11 @@ const Role = {
   "ADMIN": "ADMIN"
 };
 
+const CommentVisibility = {
+  "EVERYONE": "EVERYONE",
+  "ME": "ME"
+};
+
 const Patch = {
   "NORTH": "NORTH",
   "WEST": "WEST",
@@ -56,6 +61,7 @@ export {
   DeliverableType,
   Location,
   Role,
+  CommentVisibility,
   Patch,
   Priority,
   DeliverableUnit,

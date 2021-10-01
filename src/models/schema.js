@@ -465,11 +465,13 @@ export const schema = {
                         "targetName": "commentAuthorId"
                     }
                 },
-                "publiclyVisible": {
-                    "name": "publiclyVisible",
+                "visibility": {
+                    "name": "visibility",
                     "isArray": false,
-                    "type": "Boolean",
-                    "isRequired": true,
+                    "type": {
+                        "enum": "CommentVisibility"
+                    },
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -1202,6 +1204,13 @@ export const schema = {
                 "ADMIN"
             ]
         },
+        "CommentVisibility": {
+            "name": "CommentVisibility",
+            "values": [
+                "EVERYONE",
+                "ME"
+            ]
+        },
         "Patch": {
             "name": "Patch",
             "values": [
@@ -1244,5 +1253,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "5c10261d93b9fb78601d4792e9fd1cad"
+    "version": "bb58f8e9667b624db5ed59dcb895dca0"
 };

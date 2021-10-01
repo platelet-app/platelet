@@ -126,7 +126,7 @@ type Comment @model @key(name: "byParent", fields: ["parentId"]) {
   parentId: ID!
   body: String!
   author: User! @connection
-  publiclyVisible: Boolean!
+  visibility: CommentVisibility
 }
 
 type DeliverableType @model {
@@ -172,4 +172,9 @@ enum Role {
   COORDINATOR
   RIDER
   ADMIN
+}
+
+enum CommentVisibility {
+  EVERYONE
+  ME
 }

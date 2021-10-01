@@ -12,3 +12,8 @@ export const userRoles = {
     coordinator: "COORDINATOR",
     rider: "RIDER",
 };
+
+export const commentVisibility = {
+    everyone: "EVERYONE",
+    me: "ME",
+};
