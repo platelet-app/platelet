@@ -16,19 +16,21 @@ import { useSelector } from "react-redux";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { getWhoami } from "../../../redux/Selectors";
+import { commentVisibility } from "../../../apiConsts";
 
 const CommentCard = React.memo((props) => {
     const { show, hide } = showHide();
     const classes = commentStyles();
     const timeCreatedString = moment(props.timeCreated).calendar();
     const whoami = useSelector(getWhoami);
-    const Card = props.public
-        ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
-        : (props) => (
-              <PrivateCommentCardStyled>
-                  {props.children}
-              </PrivateCommentCardStyled>
-          );
+    const Card =
+        props.visibility === commentVisibility.everyone
+            ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
+            : (props) => (
+                  <PrivateCommentCardStyled>
+                      {props.children}
+                  </PrivateCommentCardStyled>
+              );
     return (
         <Grid
             container
@@ -83,7 +85,12 @@ const CommentCard = React.memo((props) => {
                                 </Grid>
                                 <Grid item>
                                     <Tooltip
-                                        className={props.public ? hide : show}
+                                        className={
+                                            props.visibility ===
+                                            commentVisibility.everyone
+                                                ? hide
+                                                : show
+                                        }
                                         title="Only visible to you"
                                     >
                                         <LockIcon
@@ -118,7 +125,7 @@ const CommentCard = React.memo((props) => {
 
 CommentCard.PropTypes = {
     author: PropTypes.object,
-    public: PropTypes.bool,
+    visibility: PropTypes.oneOf(Object.values(commentVisibility)),
     showAuthor: PropTypes.bool,
     numEdits: PropTypes.number,
     timeCreated: PropTypes.string,
@@ -126,13 +133,13 @@ CommentCard.PropTypes = {
 
 CommentCard.defaultProps = {
     author: {
-        display_name: "",
-        uuid: "",
-        profile_picture_thumbnail_url: "",
+        displayName: "",
+        id: "",
+        profilePictureThumbnailURL: "",
     },
     numEdits: 0,
     showAuthor: true,
-    public: false,
+    visibility: commentVisibility.me,
     timeCreated: undefined,
 };
 

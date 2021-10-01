@@ -1,101 +1,12 @@
 import Grid from "@material-ui/core/Grid";
-import CommentCard from "./CommentCard";
 import React, { useState } from "react";
 import NewCommentCard from "./NewCommentCard";
 import { useSelector } from "react-redux";
-import CommentContextMenu from "../../../components/ContextMenus/CommentContextMenu";
-import CommentCardEditMode from "./CommentCardEditMode";
-import Linkify from "react-linkify";
 import { makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { getWhoami } from "../../../redux/Selectors";
-
-const contextCreateStyles = makeStyles((theme) => ({
-    root: (props) => ({
-        position: "relative",
-        "&:hover": {
-            "& $dots": {
-                display:
-                    props.showContextMenu && !props.editMode
-                        ? "inline"
-                        : "none",
-            },
-        },
-    }),
-    dots: (props) => ({
-        background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, ${theme.palette.background.paper} 33%, ${theme.palette.background.paper} 100%)`,
-        borderRadius: "1em",
-        position: "absolute",
-        bottom: 4,
-        right: 4,
-        display: "none",
-        zIndex: 1000,
-        "&::before": !props.public
-            ? {
-                  pointerEvents: "none",
-                  borderRadius: "1em",
-                  content: '""',
-                  position: "absolute",
-                  background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, black 33%, black 100%)`,
-                  opacity: 0.15,
-                  width: "100%",
-                  height: "100%",
-              }
-            : {},
-    }),
-}));
-
-function CommentCollection(props) {
-    const [editMode, setEditMode] = useState(false);
-    const classes = contextCreateStyles({ ...props, editMode: editMode });
-    return (
-        <div className={classes.root}>
-            {editMode ? (
-                <CommentCardEditMode
-                    {...props}
-                    onReset={() => setEditMode(false)}
-                />
-            ) : (
-                <CommentCard {...props}>
-                    <Linkify>{props.body}</Linkify>
-                </CommentCard>
-            )}
-            <div className={classes.dots}>
-                <CommentContextMenu
-                    commentUUID={props.uuid}
-                    onSetEditMode={() => setEditMode(true)}
-                />
-            </div>
-        </div>
-    );
-}
-
-CommentCollection.propTypes = {
-    showContextMenu: PropTypes.bool,
-    author: PropTypes.object,
-    showAuthor: PropTypes.bool,
-    timeCreated: PropTypes.string,
-    numEdits: PropTypes.number,
-    public: PropTypes.bool,
-    uuid: PropTypes.string,
-    body: PropTypes.string,
-};
-
-CommentCollection.defaultProps = {
-    showContextMenu: false,
-    author: {
-        display_name: "",
-        uuid: "",
-        profile_picture_thumbnail_url: "",
-    },
-    showAuthor: true,
-    timeCreated: undefined,
-    numEdits: 0,
-    public: false,
-    uuid: "",
-    body: "",
-};
+import Comment from "./Comment";
 
 function CommentsMain(props) {
     const useStyles = makeStyles(() => ({
@@ -150,27 +61,14 @@ function CommentsMain(props) {
                                 item
                                 key={comment.id}
                             >
-                                <CommentCollection
+                                <Comment
                                     showContextMenu={
-                                        // TODO: eventually let admins delete comments too
-                                        //whoami.roles.includes("admin") ||
-                                        comment.author &&
-                                        whoami.id === comment.author.id
+                                        comment.author.id === whoami.id
                                     }
-                                    author={comment.author}
                                     showAuthor={
-                                        comment.author &&
-                                        comment.author.id !== prevAuthorUUID
+                                        prevAuthorUUID !== comment.author.id
                                     }
-                                    timeCreated={comment.createdAt}
-                                    numEdits={
-                                        comment._version
-                                            ? comment._version - 1
-                                            : 0
-                                    }
-                                    public={comment.publiclyVisible}
-                                    uuid={comment.id}
-                                    body={comment.body}
+                                    comment={comment}
                                 />
                             </Grid>
                         </>

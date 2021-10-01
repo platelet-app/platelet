@@ -7,9 +7,7 @@ import LockOpenIcon from "@material-ui/icons/LockOpen";
 import IconButton from "@material-ui/core/IconButton";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import Button from "@material-ui/core/Button";
-import { useDispatch, useSelector } from "react-redux";
-import { addCommentRequest } from "../../../redux/comments/CommentsActions";
-import { createPostingSelector } from "../../../redux/LoadingSelectors";
+import { useSelector } from "react-redux";
 import CommentAuthor from "./CommentAuthor";
 import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
 import clsx from "clsx";
@@ -17,10 +15,11 @@ import PropTypes from "prop-types";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import { commentVisibility } from "../../../apiConsts";
 
 const initialCommentState = {
     body: "",
-    publiclyVisible: true,
+    visibility: commentVisibility.everyone,
 };
 
 function NewCommentCard(props) {
@@ -80,7 +79,8 @@ function NewCommentCard(props) {
                         <Grid item>
                             <Tooltip
                                 title={
-                                    state.publiclyVisible
+                                    state.visibility ===
+                                    commentVisibility.everyone
                                         ? "Visible to everyone"
                                         : "Only visible to you"
                                 }
@@ -88,14 +88,18 @@ function NewCommentCard(props) {
                                 <IconButton
                                     disabled={isPosting}
                                     onClick={() => {
-                                        setState({
-                                            ...state,
-                                            publiclyVisible:
-                                                !state.publiclyVisible,
-                                        });
+                                        setState((prevState) => ({
+                                            ...prevState,
+                                            visibility:
+                                                prevState.visibility ===
+                                                commentVisibility.me
+                                                    ? commentVisibility.everyone
+                                                    : commentVisibility.me,
+                                        }));
                                     }}
                                 >
-                                    {state.publiclyVisible ? (
+                                    {state.visibility ===
+                                    commentVisibility.everyone ? (
                                         <LockOpenIcon
                                             className={classes.icon}
                                         />
@@ -147,7 +151,12 @@ function NewCommentCard(props) {
                         <Grid item>
                             <Button
                                 disabled={state.body.length === 0 || isPosting}
-                                onClick={() => setState({ ...state, body: "" })}
+                                onClick={() =>
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        body: "",
+                                    }))
+                                }
                             >
                                 Discard
                             </Button>

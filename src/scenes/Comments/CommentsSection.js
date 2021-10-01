@@ -31,7 +31,6 @@ function CommentsSection(props) {
     });
 
     async function addCommentToState(comment) {
-        debugger;
         if (comment) {
             let author = comment.author;
             if (!author) {
