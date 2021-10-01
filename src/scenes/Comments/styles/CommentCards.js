@@ -8,10 +8,12 @@ export const CommentCardStyled = styled(Paper)({
     maxWidth: 850,
     minHeight: 20,
     borderRadius: "1em",
+    padding: 14,
 });
 
 export const PrivateCommentCardStyled = styled(Paper)({
     position: "relative",
+    padding: 14,
     minWidth: 220,
     maxWidth: 850,
     minHeight: 20,
@@ -32,7 +34,6 @@ export const commentStyles = makeStyles((theme) => ({
     newComment: {
         width: "100%",
         minWidth: 350,
-        padding: 14,
     },
     newCommentTextField: {
         width: "100%",
@@ -47,7 +48,6 @@ export const commentStyles = makeStyles((theme) => ({
     },
     body: {
         whiteSpace: "pre-line",
-        padding: 14,
         color: theme.palette.text.primary,
     },
     icon: {

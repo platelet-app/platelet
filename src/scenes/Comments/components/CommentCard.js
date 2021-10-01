@@ -51,14 +51,7 @@ const CommentCard = React.memo((props) => {
             <Grid item>
                 <Card>
                     <Grid container direction={"row"} justify={"space-between"}>
-                        <Grid item>
-                            <Typography
-                                className={classes.body}
-                                align={"justify"}
-                            >
-                                {props.children}
-                            </Typography>
-                        </Grid>
+                        <Grid item>{props.children}</Grid>
                         <Grid item>
                             <Grid
                                 container

@@ -1,9 +1,8 @@
 import Grid from "@material-ui/core/Grid";
-import React, { useState } from "react";
+import React from "react";
 import NewCommentCard from "./NewCommentCard";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/styles";
-import clsx from "clsx";
 import PropTypes from "prop-types";
 import { getWhoami } from "../../../redux/Selectors";
 import Comment from "./Comment";
@@ -14,9 +13,6 @@ function CommentsMain(props) {
             flexGrow: 1,
             width: "100%",
             maxWidth: 1000,
-        },
-        right: {
-            marginLeft: "auto",
         },
         item: {
             width: "100%",
@@ -51,13 +47,7 @@ function CommentsMain(props) {
                                 <div className={classes.shortSpacer} />
                             </Grid>
                             <Grid
-                                className={clsx(
-                                    comment.author &&
-                                        whoami.id === comment.author.id
-                                        ? classes.right
-                                        : "",
-                                    classes.item
-                                )}
+                                className={classes.item}
                                 item
                                 key={comment.id}
                             >

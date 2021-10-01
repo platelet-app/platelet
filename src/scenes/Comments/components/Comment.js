@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Typography } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Linkify from "react-linkify";
 import { CommentCardStyled, commentStyles } from "../styles/CommentCards";
@@ -12,20 +12,17 @@ import * as models from "../../../models/index";
 import { commentVisibility } from "../../../apiConsts";
 
 const contextCreateStyles = makeStyles((theme) => ({
-    root: (props) => {
-        console.log(props);
-        return {
-            position: "relative",
-            "&:hover": {
-                "& $dots": {
-                    display:
-                        true || (props.showContextMenu && !props.editMode)
-                            ? "inline"
-                            : "none",
-                },
+    root: (props) => ({
+        position: "relative",
+        "&:hover": {
+            "& $dots": {
+                display:
+                    true || (props.showContextMenu && !props.editMode)
+                        ? "inline"
+                        : "none",
             },
-        };
-    },
+        },
+    }),
     dots: (props) => ({
         background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, ${theme.palette.background.paper} 33%, ${theme.palette.background.paper} 100%)`,
         borderRadius: "1em",
@@ -82,47 +79,57 @@ function Comment(props) {
         return <></>;
     } else if (editMode) {
         return (
-            <CommentCardStyled>
-                <div className={classes.newComment}>
-                    <TextFieldUncontrolled
-                        value={state.body}
-                        className={classes.newCommentTextField}
-                        multiline
-                        disabled={isPosting}
-                        onChange={(e) =>
-                            setState((prevState) => ({
-                                ...prevState,
-                                body: e.target.value,
-                            }))
-                        }
-                    />
-                    <SaveCancelButtons
-                        disabled={isPosting || !!!state.body}
-                        onCancel={() => {
-                            setState(oldState);
-                            setEditMode(false);
-                        }}
-                        onSave={async () => {
-                            setIsPosting(true);
-                            const existing = await DataStore.query(
-                                models.Comment,
-                                state.id
-                            );
-                            await DataStore.save(
-                                models.Comment.copyOf(existing, (updated) => {
-                                    updated.body = state.body;
-                                })
-                            );
-                            setEditMode(false);
-                            setState((prevState) => ({
-                                ...prevState,
-                                _version: prevState._version + 1,
-                            }));
-                            setIsPosting(false);
-                        }}
-                    />
-                </div>
-            </CommentCardStyled>
+            <CommentCard
+                author={state.author}
+                numEdits={state._version - 1}
+                showAuthor={props.showAuthor}
+                timeCreated={state.createdAt}
+                visibility={state.visibility}
+            >
+                <TextFieldUncontrolled
+                    value={state.body}
+                    InputProps={{
+                        style: {
+                            minWidth: 400,
+                        },
+                    }}
+                    className={classes.newCommentTextField}
+                    multiline
+                    fullWidth
+                    disabled={isPosting}
+                    onChange={(e) =>
+                        setState((prevState) => ({
+                            ...prevState,
+                            body: e.target.value,
+                        }))
+                    }
+                />
+                <SaveCancelButtons
+                    disabled={isPosting || !!!state.body}
+                    onCancel={() => {
+                        setState(oldState);
+                        setEditMode(false);
+                    }}
+                    onSave={async () => {
+                        setIsPosting(true);
+                        const existing = await DataStore.query(
+                            models.Comment,
+                            state.id
+                        );
+                        await DataStore.save(
+                            models.Comment.copyOf(existing, (updated) => {
+                                updated.body = state.body;
+                            })
+                        );
+                        setEditMode(false);
+                        setState((prevState) => ({
+                            ...prevState,
+                            _version: prevState._version + 1,
+                        }));
+                        setIsPosting(false);
+                    }}
+                />
+            </CommentCard>
         );
     } else {
         return (
@@ -134,7 +141,9 @@ function Comment(props) {
                     timeCreated={state.createdAt}
                     visibility={state.visibility}
                 >
-                    <Linkify>{state.body}</Linkify>
+                    <Typography className={classes.body} align={"justify"}>
+                        <Linkify>{state.body}</Linkify>
+                    </Typography>
                 </CommentCard>
                 <div className={contextClasses.dots}>
                     <CommentContextMenu
