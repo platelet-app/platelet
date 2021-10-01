@@ -21,6 +21,7 @@ import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { convertListDataToObject } from "../../utilities";
+import _ from "lodash";
 
 function CommentsSection(props) {
     const [isFetching, setIsFetching] = useState(false);
@@ -32,6 +33,12 @@ function CommentsSection(props) {
 
     async function addCommentToState(comment) {
         if (comment) {
+            if (comment._deleted) {
+                setComments((prevState) => {
+                    return _.omit(prevState, comment.id);
+                });
+                return;
+            }
             let author = comment.author;
             if (!author) {
                 author = await DataStore.query(
@@ -88,6 +95,9 @@ function CommentsSection(props) {
                 onNewComment={addCommentToState}
                 parentUUID={props.parentUUID}
                 comments={Object.values(comments)}
+                onDelete={(commentId) =>
+                    setComments((prevState) => _.omit(prevState, commentId))
+                }
             />
         );
     }

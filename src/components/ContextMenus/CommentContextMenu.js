@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import {
@@ -10,6 +10,9 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import IconButton from "@material-ui/core/IconButton";
 import { createPostingSelector } from "../../redux/LoadingSelectors";
 import { deleteButtonStyles } from "./contextMenuCSS";
+import { DataStore } from "aws-amplify";
+import * as models from "../../models/index";
+import { displayInfoNotification } from "../../redux/notifications/NotificationsActions";
 
 const initialState = {
     mouseX: null,
@@ -19,13 +22,8 @@ const initialState = {
 export default function CommentContextMenu(props) {
     const classes = deleteButtonStyles();
     const [state, setState] = React.useState(initialState);
-    const postingSelector = createPostingSelector([
-        "DELETE_COMMENT",
-        "RESTORE_COMMENT",
-        "EDIT_COMMENT",
-    ]);
-    const isPosting = useSelector((state) => postingSelector(state));
-
+    const [isPosting, setIsPosting] = useState(false);
+    const deleteTimer = useRef();
     const dispatch = useDispatch();
 
     const handleClick = (event) => {
@@ -35,9 +33,19 @@ export default function CommentContextMenu(props) {
         });
     };
 
-    function onDelete() {
+    async function deleteComment() {
+        const existingComment = await DataStore.query(
+            models.Comment,
+            props.commentUUID
+        );
+        await DataStore.delete(existingComment);
+    }
+
+    async function onDelete() {
         handleClose();
-        dispatch(deleteCommentRequest(props.commentUUID));
+        dispatch(displayInfoNotification("Comment deleted"));
+        deleteTimer.current = setTimeout(() => deleteComment(), 4000);
+        props.onDelete(props.commentUUID);
     }
 
     function onEdit() {

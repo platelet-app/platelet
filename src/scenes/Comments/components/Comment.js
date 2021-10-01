@@ -149,6 +149,7 @@ function Comment(props) {
                     <CommentContextMenu
                         commentUUID={comment.id}
                         onSetEditMode={() => setEditMode(true)}
+                        onDelete={props.onDelete}
                     />
                 </div>
             </div>
@@ -160,11 +161,13 @@ Comment.propTypes = {
     showContextMenu: PropTypes.bool,
     comment: PropTypes.object,
     showAuthor: PropTypes.bool,
+    onDelete: PropTypes.func,
 };
 
 Comment.defaultProps = {
     showContextMenu: false,
     showAuthor: true,
+    onDelete: () => {},
 };
 
 export default Comment;
