@@ -44,7 +44,6 @@ export default function LocationDetail(props) {
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
-    console.log(location);
 
     async function newLocationProfile() {
         if (!dataStoreReadyStatus) {

@@ -17,7 +17,7 @@ const contextCreateStyles = makeStyles((theme) => ({
         "&:hover": {
             "& $dots": {
                 display:
-                    true || (props.showContextMenu && !props.editMode)
+                    props.showContextMenu && !props.editMode
                         ? "inline"
                         : "none",
             },
@@ -32,7 +32,7 @@ const contextCreateStyles = makeStyles((theme) => ({
         display: "none",
         zIndex: 1000,
         "&::before":
-            props.visibility === commentVisibility.me
+            props.comment && props.comment.visibility === commentVisibility.me
                 ? {
                       pointerEvents: "none",
                       borderRadius: "1em",
