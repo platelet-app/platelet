@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles, Typography } from "@material-ui/core";
+import { Grid, makeStyles, Typography } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Linkify from "react-linkify";
 import { CommentCardStyled, commentStyles } from "../styles/CommentCards";
@@ -10,6 +10,8 @@ import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { commentVisibility } from "../../../apiConsts";
+import { useSelector } from "react-redux";
+import { getWhoami } from "../../../redux/Selectors";
 
 const contextCreateStyles = makeStyles((theme) => ({
     root: (props) => ({
@@ -60,6 +62,7 @@ const initialCommentState = {
 
 function Comment(props) {
     const { comment } = props;
+    const whoami = useSelector(getWhoami);
     const [state, setState] = useState(initialCommentState);
     const [oldState, setOldState] = useState(initialCommentState);
     const [editMode, setEditMode] = useState(false);
@@ -79,57 +82,68 @@ function Comment(props) {
         return <></>;
     } else if (editMode) {
         return (
-            <CommentCard
-                author={state.author}
-                numEdits={state._version - 1}
-                showAuthor={props.showAuthor}
-                timeCreated={state.createdAt}
-                visibility={state.visibility}
+            <Grid
+                container
+                direction={"column"}
+                wrap={"nowrap"}
+                alignItems={
+                    state.author && whoami.id === state.author.id
+                        ? "flex-end"
+                        : "flex-start"
+                }
+                spacing={1}
             >
-                <TextFieldUncontrolled
-                    value={state.body}
-                    InputProps={{
-                        style: {
-                            minWidth: 400,
-                        },
-                    }}
-                    className={classes.newCommentTextField}
-                    multiline
-                    fullWidth
-                    disabled={isPosting}
-                    onChange={(e) =>
-                        setState((prevState) => ({
-                            ...prevState,
-                            body: e.target.value,
-                        }))
-                    }
-                />
-                <SaveCancelButtons
-                    disabled={isPosting || !!!state.body}
-                    onCancel={() => {
-                        setState(oldState);
-                        setEditMode(false);
-                    }}
-                    onSave={async () => {
-                        setIsPosting(true);
-                        const existing = await DataStore.query(
-                            models.Comment,
-                            state.id
-                        );
-                        await DataStore.save(
-                            models.Comment.copyOf(existing, (updated) => {
-                                updated.body = state.body;
-                            })
-                        );
-                        setEditMode(false);
-                        setState((prevState) => ({
-                            ...prevState,
-                            _version: prevState._version + 1,
-                        }));
-                        setIsPosting(false);
-                    }}
-                />
-            </CommentCard>
+                <Grid item>
+                    <CommentCardStyled>
+                        <TextFieldUncontrolled
+                            value={state.body}
+                            InputProps={{
+                                style: {
+                                    minWidth: 400,
+                                },
+                            }}
+                            className={classes.editTextField}
+                            multiline
+                            fullWidth
+                            disabled={isPosting}
+                            onChange={(e) =>
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    body: e.target.value,
+                                }))
+                            }
+                        />
+                        <SaveCancelButtons
+                            disabled={isPosting || !!!state.body}
+                            onCancel={() => {
+                                setState(oldState);
+                                setEditMode(false);
+                            }}
+                            onSave={async () => {
+                                setIsPosting(true);
+                                const existing = await DataStore.query(
+                                    models.Comment,
+                                    state.id
+                                );
+                                await DataStore.save(
+                                    models.Comment.copyOf(
+                                        existing,
+                                        (updated) => {
+                                            updated.body = state.body;
+                                        }
+                                    )
+                                );
+                                setEditMode(false);
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    _version: prevState._version + 1,
+                                }));
+                                setIsPosting(false);
+                            }}
+                        />
+                    </CommentCardStyled>
+                </Grid>
+            </Grid>
         );
     } else {
         return (

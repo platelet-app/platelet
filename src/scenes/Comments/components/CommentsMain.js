@@ -42,7 +42,7 @@ function CommentsMain(props) {
                             ? array[index - 1].author.id
                             : null;
                     return (
-                        <>
+                        <React.Fragment key={comment.id}>
                             <Grid item>
                                 <div className={classes.shortSpacer} />
                             </Grid>
@@ -62,7 +62,7 @@ function CommentsMain(props) {
                                     onDelete={props.onDelete}
                                 />
                             </Grid>
-                        </>
+                        </React.Fragment>
                     );
                 })}
             <Grid item>

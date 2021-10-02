@@ -45,6 +45,9 @@ export const commentStyles = makeStyles((theme) => ({
         opacity: 0.3,
         color: theme.palette.text.primary,
     },
+    editTextField: {
+        padding: 14,
+    },
     body: {
         whiteSpace: "pre-line",
         padding: 14,
