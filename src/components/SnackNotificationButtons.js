@@ -9,7 +9,7 @@ function SnackNotificationButtons(props) {
     const [showUndo, setShowUndo] = useState(!!props.restoreCallback);
     const { restoreCallback, viewLink, snackKey } = props;
     useEffect(() => {
-        setTimeout(() => setShowUndo(false), 8000);
+        setTimeout(() => setShowUndo(false), 4000);
     }, []);
     return (
         <React.Fragment>
