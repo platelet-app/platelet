@@ -35,10 +35,15 @@ export default function CommentContextMenu(props) {
         await DataStore.delete(existingComment);
     }
 
+    function onUndo() {
+        clearTimeout(deleteTimer.current);
+        props.onRestore(props.commentUUID);
+    }
+
     async function onDelete() {
         handleClose();
-        dispatch(displayInfoNotification("Comment deleted"));
-        deleteTimer.current = setTimeout(() => deleteComment(), 4000);
+        dispatch(displayInfoNotification("Comment deleted", onUndo));
+        deleteTimer.current = setTimeout(() => deleteComment(), 8000);
         props.onDelete(props.commentUUID);
     }
 

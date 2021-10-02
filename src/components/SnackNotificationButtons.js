@@ -1,0 +1,54 @@
+import { Button } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { showHide, DismissButton } from "../styles/common";
+
+function SnackNotificationButtons(props) {
+    const { show, hide } = showHide();
+    const [showUndo, setShowUndo] = useState(!!props.restoreCallback);
+    const { restoreCallback, viewLink, snackKey } = props;
+    useEffect(() => {
+        setTimeout(() => setShowUndo(false), 8000);
+    }, []);
+    return (
+        <React.Fragment>
+            <Button
+                className={showUndo ? show : hide}
+                color="secondary"
+                size="small"
+                onClick={() => {
+                    props.closeSnackbar(snackKey);
+                    restoreCallback();
+                }}
+            >
+                UNDO
+            </Button>
+            <Button
+                className={viewLink ? show : hide}
+                color="secondary"
+                size="small"
+                component={Link}
+                to={viewLink || "/"}
+            >
+                VIEW
+            </Button>
+            <DismissButton onClick={() => props.closeSnackbar(snackKey)} />
+        </React.Fragment>
+    );
+}
+
+SnackNotificationButtons.propTypes = {
+    restoreCallback: PropTypes.func,
+    closeSnackbar: PropTypes.func,
+    viewLink: PropTypes.string,
+    snackKey: PropTypes.string,
+};
+
+SnackNotificationButtons.defaultProps = {
+    restoreCallback: () => {},
+    closeSnackbar: () => {},
+    snackKey: "",
+};
+
+export default SnackNotificationButtons;

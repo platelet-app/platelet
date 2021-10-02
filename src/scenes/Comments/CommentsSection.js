@@ -1,21 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-    clearComments,
-    getCommentsPrefix,
-    getCommentsRequest,
-} from "../../redux/comments/CommentsActions";
+import { useSelector } from "react-redux";
 import CommentsMain from "./components/CommentsMain";
-import {
-    createLoadingSelector,
-    createNotFoundSelector,
-} from "../../redux/LoadingSelectors";
 import CommentsSkeleton from "./components/CommentsSkeleton";
-import NotFound from "../../ErrorComponents/NotFound";
-import {
-    subscribeToComments,
-    unsubscribeFromComments,
-} from "../../redux/sockets/SocketActions";
 import PropTypes from "prop-types";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
@@ -34,23 +20,11 @@ function CommentsSection(props) {
     });
 
     async function addCommentToState(comment) {
-        console.log(Object.values(commentsRef.current).length);
-        console.log(
-            commentsRef.current[comment.id] &&
-                comment._version === commentsRef.current[comment.id]._version
-        );
         if (comment) {
             if (
                 !commentsRef.current[comment.id] ||
                 comment._version !== commentsRef.current[comment.id]._version
             ) {
-                console.log("we are goo");
-                if (comment._deleted) {
-                    setComments((prevState) => {
-                        return _.omit(prevState, comment.id);
-                    });
-                    return;
-                }
                 let author = comment.author;
                 if (!author) {
                     author = await DataStore.query(
@@ -100,14 +74,23 @@ function CommentsSection(props) {
 
     if (isFetching) {
         return <CommentsSkeleton />;
-    } else if (false) {
-        return <NotFound>Comments section could not found.</NotFound>;
     } else {
         return (
             <CommentsMain
                 onNewComment={addCommentToState}
                 parentUUID={props.parentUUID}
                 comments={Object.values(comments).filter((c) => !c._deleted)}
+                onRestore={(commentId) => {
+                    setComments((prevState) => {
+                        return {
+                            ...prevState,
+                            [commentId]: {
+                                ...prevState[commentId],
+                                _deleted: false,
+                            },
+                        };
+                    });
+                }}
                 onDelete={(commentId) => {
                     setComments((prevState) => {
                         return {

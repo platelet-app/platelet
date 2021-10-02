@@ -26,6 +26,7 @@ import { DismissButton, showHide } from "./styles/common";
 import { Link } from "react-router-dom";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
+import SnackNotificationButtons from "./components/SnackNotificationButtons";
 
 Amplify.configure({
     ...config,
@@ -145,38 +146,15 @@ function AppContents(props) {
 
     function showNotification() {
         if (incomingNotification) {
-            const { message, options, restoreActions, viewLink } =
+            const { message, options, restoreCallback, viewLink } =
                 incomingNotification;
             options.action = (key) => (
-                <React.Fragment>
-                    <Button
-                        className={
-                            restoreActions && restoreActions().length !== 0
-                                ? show
-                                : hide
-                        }
-                        color="secondary"
-                        size="small"
-                        onClick={() => {
-                            props.closeSnackbar(key);
-                            for (const dispatchAction of restoreActions()) {
-                                dispatch(dispatchAction);
-                            }
-                        }}
-                    >
-                        UNDO
-                    </Button>
-                    <Button
-                        className={viewLink ? show : hide}
-                        color="secondary"
-                        size="small"
-                        component={Link}
-                        to={viewLink || "/"}
-                    >
-                        VIEW
-                    </Button>
-                    <DismissButton onClick={() => props.closeSnackbar(key)} />
-                </React.Fragment>
+                <SnackNotificationButtons
+                    restoreCallback={restoreCallback}
+                    viewLink={viewLink}
+                    snackKey={key}
+                    closeSnackbar={props.closeSnackbar}
+                />
             );
             props.enqueueSnackbar(message, options);
         }
