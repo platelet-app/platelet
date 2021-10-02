@@ -53,9 +53,11 @@ function CommentsMain(props) {
                             >
                                 <Comment
                                     showContextMenu={
+                                        comment.author &&
                                         comment.author.id === whoami.id
                                     }
                                     showAuthor={
+                                        comment.author &&
                                         prevAuthorUUID !== comment.author.id
                                     }
                                     comment={comment}

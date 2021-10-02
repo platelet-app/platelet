@@ -1,14 +1,9 @@
 import React, { useRef, useState } from "react";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import {
-    deleteCommentRequest,
-    deleteSidebarCommentRequest,
-} from "../../redux/comments/CommentsActions";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import IconButton from "@material-ui/core/IconButton";
-import { createPostingSelector } from "../../redux/LoadingSelectors";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
@@ -22,7 +17,6 @@ const initialState = {
 export default function CommentContextMenu(props) {
     const classes = deleteButtonStyles();
     const [state, setState] = React.useState(initialState);
-    const [isPosting, setIsPosting] = useState(false);
     const deleteTimer = useRef();
     const dispatch = useDispatch();
 
@@ -64,7 +58,6 @@ export default function CommentContextMenu(props) {
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}
-                disabled={isPosting}
             >
                 <MoreVertIcon />
             </IconButton>

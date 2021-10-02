@@ -27,34 +27,47 @@ function CommentsSection(props) {
     const [isFetching, setIsFetching] = useState(false);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [comments, setComments] = useState({});
+    const commentsRef = useRef({});
+    commentsRef.current = comments;
     const commentsSubscription = useRef({
         unsubscribe: () => {},
     });
 
     async function addCommentToState(comment) {
+        console.log(Object.values(commentsRef.current).length);
+        console.log(
+            commentsRef.current[comment.id] &&
+                comment._version === commentsRef.current[comment.id]._version
+        );
         if (comment) {
-            if (comment._deleted) {
+            if (
+                !commentsRef.current[comment.id] ||
+                comment._version !== commentsRef.current[comment.id]._version
+            ) {
+                console.log("we are goo");
+                if (comment._deleted) {
+                    setComments((prevState) => {
+                        return _.omit(prevState, comment.id);
+                    });
+                    return;
+                }
+                let author = comment.author;
+                if (!author) {
+                    author = await DataStore.query(
+                        models.User,
+                        comment.commentAuthorId
+                    );
+                }
                 setComments((prevState) => {
-                    return _.omit(prevState, comment.id);
+                    return {
+                        ...prevState,
+                        [comment.id]: {
+                            ...comment,
+                            author,
+                        },
+                    };
                 });
-                return;
             }
-            let author = comment.author;
-            if (!author) {
-                author = await DataStore.query(
-                    models.User,
-                    comment.commentAuthorId
-                );
-            }
-            setComments((prevState) => {
-                return {
-                    ...prevState,
-                    [comment.id]: {
-                        ...comment,
-                        author,
-                    },
-                };
-            });
         }
     }
 
@@ -94,10 +107,18 @@ function CommentsSection(props) {
             <CommentsMain
                 onNewComment={addCommentToState}
                 parentUUID={props.parentUUID}
-                comments={Object.values(comments)}
-                onDelete={(commentId) =>
-                    setComments((prevState) => _.omit(prevState, commentId))
-                }
+                comments={Object.values(comments).filter((c) => !c._deleted)}
+                onDelete={(commentId) => {
+                    setComments((prevState) => {
+                        return {
+                            ...prevState,
+                            [commentId]: {
+                                ...prevState[commentId],
+                                _deleted: true,
+                            },
+                        };
+                    });
+                }}
             />
         );
     }
