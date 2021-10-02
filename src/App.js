@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { MenuMainContainer } from "./navigation/MenuMainContainer";
-import Login from "./scenes/Login/Login";
 import "./index.css";
 import "./App.css";
 import "typeface-roboto";
@@ -12,18 +11,14 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Moment from "react-moment";
-import Button from "@material-ui/core/Button";
 import Amplify, { Logger } from "aws-amplify";
 import config from "../src/aws-exports.js";
 
-import { getServerSettingsRequest } from "./redux/ServerSettings/ServerSettingsActions";
 import { SnackbarProvider, withSnackbar } from "notistack";
-import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
 import "moment/locale/en-gb";
-import { DismissButton, showHide } from "./styles/common";
-import { Link } from "react-router-dom";
+import { DismissButton } from "./styles/common";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
@@ -34,47 +29,17 @@ Amplify.configure({
 });
 Logger.LOG_LEVEL = "ERROR";
 
-const useStyles = makeStyles((theme) => ({
-    centeredDiv: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        textAlign: "center",
-    },
-    login: {
-        height: "100%",
-        margin: "auto",
-        paddingTop: 70,
-    },
-}));
-
 function AppContents(props) {
-    const forceResetPassword = useSelector(
-        (state) => state.whoami.user.password_reset_on_login
-    );
-    const isInitialised = useSelector((state) => state.apiControl.initialised);
     const incomingNotification = useSelector((state) => state.notification);
-    const apiURL = useSelector((state) => state.apiControl.api_url);
     const serverSettings = useSelector((state) => state.serverSettings);
     const error = useSelector((state) => state.error);
     const dispatch = useDispatch();
-    const classes = useStyles();
-    const { show, hide } = showHide();
-
-    const [headerSettings, setHeaderSettings] = useState({
-        title: "Bloodbike Dispatch",
-        favicon: "",
-    });
-
-    useEffect(() => dispatch(getServerSettingsRequest()), []);
 
     function initialise() {
         // this gets priorities, deliverable types, users, patches from the api and connects sockets
-        if (isInitialised) dispatch(initialiseApp());
+        dispatch(initialiseApp());
     }
-
-    useEffect(initialise, [isInitialised]);
+    useEffect(initialise, []);
 
     const handleOnIdle = (event) => {
         dispatch(setIdleStatus(true));
@@ -162,12 +127,6 @@ function AppContents(props) {
 
     useEffect(showNotification, [incomingNotification]);
 
-    let helmet = (
-        <Helmet>
-            <title>Bloodbike Dispatch</title>
-        </Helmet>
-    );
-
     function checkServerSettings() {
         Moment.globalMoment = moment;
         Moment.globalLocale = serverSettings.locale.code;
@@ -178,31 +137,14 @@ function AppContents(props) {
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
 
-    let appContents;
-
-    if (forceResetPassword || (serverSettings && !isInitialised)) {
-        appContents = (
-            <div className={classes.login}>
-                <Login apiUrl={apiURL} />
-            </div>
-        );
-    } else if (isInitialised) {
-        appContents = (
-            <React.Fragment>
-                <Helmet>
-                    <title>platelet</title>
-                </Helmet>
-                <MenuMainContainer />
-            </React.Fragment>
-        );
-    } else {
-        appContents = (
-            <div className={classes.login}>
-                <LoginSkeleton />
-            </div>
-        );
-    }
-    return <React.Fragment>{appContents}</React.Fragment>;
+    return (
+        <React.Fragment>
+            <Helmet>
+                <title>platelet</title>
+            </Helmet>
+            <MenuMainContainer />
+        </React.Fragment>
+    );
 }
 
 const AppMain = withSnackbar(AppContents);
