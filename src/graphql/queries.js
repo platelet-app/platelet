@@ -47,7 +47,15 @@ export const syncUsers = /* GraphQL */ `
           nextToken
           startedAt
         }
-        patch
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -64,7 +72,7 @@ export const syncUsers = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasks {
+        tasksRider {
           nextToken
           startedAt
         }
@@ -133,7 +141,15 @@ export const getUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      patch
+      riderResponsibility {
+        id
+        name
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       profilePictureURL
       profilePictureThumbnailURL
       comments {
@@ -165,7 +181,7 @@ export const getUser = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      tasks {
+      tasksRider {
         items {
           id
           _version
@@ -238,7 +254,15 @@ export const listUsers = /* GraphQL */ `
           nextToken
           startedAt
         }
-        patch
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -255,7 +279,7 @@ export const listUsers = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasks {
+        tasksRider {
           nextToken
           startedAt
         }
@@ -321,7 +345,6 @@ export const getGroup = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -396,7 +419,6 @@ export const syncVehicles = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -464,7 +486,15 @@ export const getVehicle = /* GraphQL */ `
           nextToken
           startedAt
         }
-        patch
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -481,7 +511,7 @@ export const getVehicle = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasks {
+        tasksRider {
           nextToken
           startedAt
         }
@@ -541,7 +571,6 @@ export const listVehicles = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -868,7 +897,7 @@ export const syncDeliverables = /* GraphQL */ `
     ) {
       items {
         id
-        type {
+        deliverableType {
           id
           name
           _version
@@ -898,7 +927,7 @@ export const getDeliverable = /* GraphQL */ `
   query GetDeliverable($id: ID!) {
     getDeliverable(id: $id) {
       id
-      type {
+      deliverableType {
         id
         name
         _version
@@ -941,7 +970,7 @@ export const listDeliverables = /* GraphQL */ `
     listDeliverables(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        type {
+        deliverableType {
           id
           name
           _version
@@ -967,14 +996,14 @@ export const listDeliverables = /* GraphQL */ `
     }
   }
 `;
-export const syncUserTasks = /* GraphQL */ `
-  query SyncUserTasks(
-    $filter: ModelUserTasksFilterInput
+export const syncRiderTasks = /* GraphQL */ `
+  query SyncRiderTasks(
+    $filter: ModelRiderTasksFilterInput
     $limit: Int
     $nextToken: String
     $lastSync: AWSTimestamp
   ) {
-    syncUserTasks(
+    syncRiderTasks(
       filter: $filter
       limit: $limit
       nextToken: $nextToken
@@ -989,7 +1018,6 @@ export const syncUserTasks = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -1007,7 +1035,6 @@ export const syncUserTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1049,7 +1076,6 @@ export const syncCoordinatorTasks = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -1067,7 +1093,6 @@ export const syncCoordinatorTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1110,7 +1135,6 @@ export const syncTasks = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -1147,12 +1171,10 @@ export const syncTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        pickupLocation {
+        pickUpLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -1169,12 +1191,10 @@ export const syncTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        dropoffLocation {
+        dropOffLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -1191,12 +1211,20 @@ export const syncTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        patch
-        coordinators {
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignedCoordinators {
           nextToken
           startedAt
         }
-        riders {
+        assignedRiders {
           nextToken
           startedAt
         }
@@ -1219,7 +1247,6 @@ export const syncTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1236,7 +1263,6 @@ export const syncTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1303,7 +1329,15 @@ export const getTask = /* GraphQL */ `
           nextToken
           startedAt
         }
-        patch
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -1320,7 +1354,7 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasks {
+        tasksRider {
           nextToken
           startedAt
         }
@@ -1362,12 +1396,32 @@ export const getTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      pickupLocation {
+      pickUpLocation {
         id
         name
-        telephoneNumber
-        mobileNumber
-        emailAddress
+        listed
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         ward
         line1
         line2
@@ -1378,18 +1432,42 @@ export const getTask = /* GraphQL */ `
         country
         postcode
         what3words
+        comments {
+          nextToken
+          startedAt
+        }
         _version
         _deleted
         _lastChangedAt
         createdAt
         updatedAt
       }
-      dropoffLocation {
+      dropOffLocation {
         id
         name
-        telephoneNumber
-        mobileNumber
-        emailAddress
+        listed
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         ward
         line1
         line2
@@ -1400,14 +1478,26 @@ export const getTask = /* GraphQL */ `
         country
         postcode
         what3words
+        comments {
+          nextToken
+          startedAt
+        }
         _version
         _deleted
         _lastChangedAt
         createdAt
         updatedAt
       }
-      patch
-      coordinators {
+      riderResponsibility {
+        id
+        name
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      assignedCoordinators {
         items {
           id
           _version
@@ -1419,7 +1509,7 @@ export const getTask = /* GraphQL */ `
         nextToken
         startedAt
       }
-      riders {
+      assignedRiders {
         items {
           id
           _version
@@ -1434,7 +1524,7 @@ export const getTask = /* GraphQL */ `
       priority
       deliverables {
         id
-        type {
+        deliverableType {
           id
           name
           _version
@@ -1465,7 +1555,6 @@ export const getTask = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -1502,12 +1591,10 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        pickupLocation {
+        pickUpLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -1524,12 +1611,10 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        dropoffLocation {
+        dropOffLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -1546,12 +1631,20 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        patch
-        coordinators {
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignedCoordinators {
           nextToken
           startedAt
         }
-        riders {
+        assignedRiders {
           nextToken
           startedAt
         }
@@ -1574,7 +1667,6 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1591,7 +1683,6 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1625,7 +1716,6 @@ export const getTask = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -1662,12 +1752,10 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        pickupLocation {
+        pickUpLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -1684,12 +1772,10 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        dropoffLocation {
+        dropOffLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -1706,12 +1792,20 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        patch
-        coordinators {
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignedCoordinators {
           nextToken
           startedAt
         }
-        riders {
+        assignedRiders {
           nextToken
           startedAt
         }
@@ -1734,7 +1828,6 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1751,7 +1844,6 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1830,7 +1922,6 @@ export const listTasks = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -1867,12 +1958,10 @@ export const listTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        pickupLocation {
+        pickUpLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -1889,12 +1978,10 @@ export const listTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        dropoffLocation {
+        dropOffLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -1911,12 +1998,20 @@ export const listTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        patch
-        coordinators {
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignedCoordinators {
           nextToken
           startedAt
         }
-        riders {
+        assignedRiders {
           nextToken
           startedAt
         }
@@ -1939,7 +2034,6 @@ export const listTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -1956,7 +2050,6 @@ export const listTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -2009,7 +2102,6 @@ export const syncComments = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -2070,7 +2162,15 @@ export const getComment = /* GraphQL */ `
           nextToken
           startedAt
         }
-        patch
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         comments {
@@ -2087,7 +2187,7 @@ export const getComment = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasks {
+        tasksRider {
           nextToken
           startedAt
         }
@@ -2129,7 +2229,6 @@ export const listComments = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -2216,6 +2315,71 @@ export const listDeliverableTypes = /* GraphQL */ `
     }
   }
 `;
+export const syncRiderResponsibilities = /* GraphQL */ `
+  query SyncRiderResponsibilities(
+    $filter: ModelRiderResponsibilityFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncRiderResponsibilities(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        name
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const getRiderResponsibility = /* GraphQL */ `
+  query GetRiderResponsibility($id: ID!) {
+    getRiderResponsibility(id: $id) {
+      id
+      name
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listRiderResponsibilities = /* GraphQL */ `
+  query ListRiderResponsibilities(
+    $filter: ModelRiderResponsibilityFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listRiderResponsibilities(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        name
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const tasksByStatus = /* GraphQL */ `
   query TasksByStatus(
     $status: TaskStatus
@@ -2241,7 +2405,6 @@ export const tasksByStatus = /* GraphQL */ `
           name
           roles
           dateOfBirth
-          patch
           profilePictureURL
           profilePictureThumbnailURL
           active
@@ -2278,12 +2441,10 @@ export const tasksByStatus = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        pickupLocation {
+        pickUpLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -2300,12 +2461,10 @@ export const tasksByStatus = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        dropoffLocation {
+        dropOffLocation {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
+          listed
           ward
           line1
           line2
@@ -2322,12 +2481,20 @@ export const tasksByStatus = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        patch
-        coordinators {
+        riderResponsibility {
+          id
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignedCoordinators {
           nextToken
           startedAt
         }
-        riders {
+        assignedRiders {
           nextToken
           startedAt
         }
@@ -2350,7 +2517,6 @@ export const tasksByStatus = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version
@@ -2367,7 +2533,6 @@ export const tasksByStatus = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
-          patch
           priority
           status
           _version

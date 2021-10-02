@@ -7,12 +7,12 @@ type User @model {
   roles: [Role!]!
   dateOfBirth: AWSDateTime
   vehicles: [Vehicle] @connection(keyName: "byAssignedUser", fields: ["id"])
-  patch: [Patch]
+  riderResponsibility: RiderResponsibility @connection
   profilePictureURL: String
   profilePictureThumbnailURL: String
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
   group: Group @connection(name: "GroupMembers")
-  tasks: [UserTasks] @connection(name: "UserTasks")
+  tasksRider: [RiderTasks] @connection(name: "RiderTasks")
   tasksCoordinator: [CoordinatorTasks] @connection(name: "CoordinatorTasks")
   active: Int!
 }
@@ -73,16 +73,16 @@ type AddressAndContactDetails @model {
 }
 type Deliverable @model {
   id: ID!
-  type: DeliverableType!
-  count: Int!
+  deliverableType: DeliverableType!
+  count: Int
   unit: DeliverableUnit
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type UserTasks @model(queries: null) {
+type RiderTasks @model(queries: null) {
   id: ID!
-  user: User @connection(name: "UserTasks")
-  task: Task @connection(name: "TaskUsers")
+  user: User @connection(name: "RiderTasks")
+  task: Task @connection(name: "TaskRiders")
 }
 type CoordinatorTasks @model(queries: null) {
   id: ID!
@@ -106,12 +106,12 @@ type Task
   timeDroppedOff: AWSDateTime
   timeCancelled: AWSDateTime
   timeRejected: AWSDateTime
-  requesterContact: AddressAndContactDetails
-  pickupLocation: AddressAndContactDetails @connection
-  dropoffLocation: AddressAndContactDetails @connection
-  patch: Patch
-  coordinators: [CoordinatorTasks] @connection(name: "TaskCoordinators")
-  riders: [UserTasks] @connection(name: "TaskUsers")
+  requesterContact: AddressAndContactDetails @connection
+  pickUpLocation: Location @connection
+  dropOffLocation: Location @connection
+  riderResponsibility: RiderResponsibility @connection
+  assignedCoordinators: [CoordinatorTasks] @connection(name: "TaskCoordinators")
+  assignedRiders: [RiderTasks] @connection(name: "TaskRiders")
   priority: Priority
   deliverables: [Deliverable!]
   relayPrevious: Task @connection
@@ -130,6 +130,11 @@ type Comment @model @key(name: "byParent", fields: ["parentId"]) {
 }
 
 type DeliverableType @model {
+  id: ID!
+  name: String!
+}
+
+type RiderResponsibility @model {
   id: ID!
   name: String!
 }

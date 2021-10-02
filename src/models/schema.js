@@ -75,15 +75,18 @@ export const schema = {
                         "associatedWith": "assignedUser"
                     }
                 },
-                "patch": {
-                    "name": "patch",
-                    "isArray": true,
+                "riderResponsibility": {
+                    "name": "riderResponsibility",
+                    "isArray": false,
                     "type": {
-                        "enum": "Patch"
+                        "model": "RiderResponsibility"
                     },
                     "isRequired": false,
                     "attributes": [],
-                    "isArrayNullable": true
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userRiderResponsibilityId"
+                    }
                 },
                 "profilePictureURL": {
                     "name": "profilePictureURL",
@@ -126,11 +129,11 @@ export const schema = {
                         "targetName": "userGroupId"
                     }
                 },
-                "tasks": {
-                    "name": "tasks",
+                "tasksRider": {
+                    "name": "tasksRider",
                     "isArray": true,
                     "type": {
-                        "model": "UserTasks"
+                        "model": "RiderTasks"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -509,6 +512,49 @@ export const schema = {
                 }
             ]
         },
+        "RiderResponsibility": {
+            "name": "RiderResponsibility",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "RiderResponsibilities",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                }
+            ]
+        },
         "Group": {
             "name": "Group",
             "fields": {
@@ -573,8 +619,8 @@ export const schema = {
                 }
             ]
         },
-        "UserTasks": {
-            "name": "UserTasks",
+        "RiderTasks": {
+            "name": "RiderTasks",
             "fields": {
                 "id": {
                     "name": "id",
@@ -593,7 +639,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "userTasksUserId"
+                        "targetName": "riderTasksUserId"
                     }
                 },
                 "task": {
@@ -606,7 +652,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "userTasksTaskId"
+                        "targetName": "riderTasksTaskId"
                     }
                 },
                 "createdAt": {
@@ -627,7 +673,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "UserTasks",
+            "pluralName": "RiderTasks",
             "attributes": [
                 {
                     "type": "model",
@@ -702,8 +748,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "pickupLocation": {
-                    "name": "pickupLocation",
+                "requesterContact": {
+                    "name": "requesterContact",
                     "isArray": false,
                     "type": {
                         "model": "AddressAndContactDetails"
@@ -712,33 +758,50 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "taskPickupLocationId"
+                        "targetName": "taskRequesterContactId"
                     }
                 },
-                "dropoffLocation": {
-                    "name": "dropoffLocation",
+                "pickUpLocation": {
+                    "name": "pickUpLocation",
                     "isArray": false,
                     "type": {
-                        "model": "AddressAndContactDetails"
+                        "model": "Location"
                     },
                     "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "taskDropoffLocationId"
+                        "targetName": "taskPickUpLocationId"
                     }
                 },
-                "patch": {
-                    "name": "patch",
+                "dropOffLocation": {
+                    "name": "dropOffLocation",
                     "isArray": false,
                     "type": {
-                        "enum": "Patch"
+                        "model": "Location"
                     },
                     "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "taskDropOffLocationId"
+                    }
                 },
-                "coordinators": {
-                    "name": "coordinators",
+                "riderResponsibility": {
+                    "name": "riderResponsibility",
+                    "isArray": false,
+                    "type": {
+                        "model": "RiderResponsibility"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "taskRiderResponsibilityId"
+                    }
+                },
+                "assignedCoordinators": {
+                    "name": "assignedCoordinators",
                     "isArray": true,
                     "type": {
                         "model": "CoordinatorTasks"
@@ -751,11 +814,11 @@ export const schema = {
                         "associatedWith": "task"
                     }
                 },
-                "riders": {
-                    "name": "riders",
+                "assignedRiders": {
+                    "name": "assignedRiders",
                     "isArray": true,
                     "type": {
-                        "model": "UserTasks"
+                        "model": "RiderTasks"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -870,179 +933,6 @@ export const schema = {
                         ],
                         "queryField": "tasksByStatus"
                     }
-                }
-            ]
-        },
-        "CoordinatorTasks": {
-            "name": "CoordinatorTasks",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "coordinator": {
-                    "name": "coordinator",
-                    "isArray": false,
-                    "type": {
-                        "model": "User"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "coordinatorTasksCoordinatorId"
-                    }
-                },
-                "task": {
-                    "name": "task",
-                    "isArray": false,
-                    "type": {
-                        "model": "Task"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "coordinatorTasksTaskId"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "CoordinatorTasks",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {
-                        "queries": null
-                    }
-                }
-            ]
-        },
-        "Deliverable": {
-            "name": "Deliverable",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "count": {
-                    "name": "count",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "unit": {
-                    "name": "unit",
-                    "isArray": false,
-                    "type": {
-                        "enum": "DeliverableUnit"
-                    },
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "comments": {
-                    "name": "comments",
-                    "isArray": true,
-                    "type": {
-                        "model": "Comment"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "parentId"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Deliverables",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                }
-            ]
-        },
-        "DeliverableType": {
-            "name": "DeliverableType",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "name": {
-                    "name": "name",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "DeliverableTypes",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
                 }
             ]
         },
@@ -1192,6 +1082,179 @@ export const schema = {
                     "properties": {}
                 }
             ]
+        },
+        "CoordinatorTasks": {
+            "name": "CoordinatorTasks",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "coordinator": {
+                    "name": "coordinator",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "coordinatorTasksCoordinatorId"
+                    }
+                },
+                "task": {
+                    "name": "task",
+                    "isArray": false,
+                    "type": {
+                        "model": "Task"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "coordinatorTasksTaskId"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "CoordinatorTasks",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {
+                        "queries": null
+                    }
+                }
+            ]
+        },
+        "Deliverable": {
+            "name": "Deliverable",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "count": {
+                    "name": "count",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "unit": {
+                    "name": "unit",
+                    "isArray": false,
+                    "type": {
+                        "enum": "DeliverableUnit"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "parentId"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Deliverables",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                }
+            ]
+        },
+        "DeliverableType": {
+            "name": "DeliverableType",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "DeliverableTypes",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                }
+            ]
         }
     },
     "enums": {
@@ -1209,17 +1272,6 @@ export const schema = {
             "values": [
                 "EVERYONE",
                 "ME"
-            ]
-        },
-        "Patch": {
-            "name": "Patch",
-            "values": [
-                "NORTH",
-                "WEST",
-                "EAST",
-                "SOUTH",
-                "RELIEF",
-                "AIR_AMBULANCE"
             ]
         },
         "Priority": {
@@ -1250,8 +1302,19 @@ export const schema = {
                 "CANCELLED",
                 "REJECTED"
             ]
+        },
+        "Patch": {
+            "name": "Patch",
+            "values": [
+                "NORTH",
+                "WEST",
+                "EAST",
+                "SOUTH",
+                "RELIEF",
+                "AIR_AMBULANCE"
+            ]
         }
     },
     "nonModels": {},
-    "version": "bb58f8e9667b624db5ed59dcb895dca0"
+    "version": "450c209b1b92bf0fc6d0f036bc938aed"
 };

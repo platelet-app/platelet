@@ -14,15 +14,6 @@ const CommentVisibility = {
   "ME": "ME"
 };
 
-const Patch = {
-  "NORTH": "NORTH",
-  "WEST": "WEST",
-  "EAST": "EAST",
-  "SOUTH": "SOUTH",
-  "RELIEF": "RELIEF",
-  "AIR_AMBULANCE": "AIR_AMBULANCE"
-};
-
 const Priority = {
   "HIGH": "HIGH",
   "MEDIUM": "MEDIUM",
@@ -46,24 +37,34 @@ const TaskStatus = {
   "REJECTED": "REJECTED"
 };
 
-const { User, AddressAndContactDetails, Vehicle, Comment, Group, UserTasks, Task, CoordinatorTasks, Deliverable, DeliverableType, Location } = initSchema(schema);
+const Patch = {
+  "NORTH": "NORTH",
+  "WEST": "WEST",
+  "EAST": "EAST",
+  "SOUTH": "SOUTH",
+  "RELIEF": "RELIEF",
+  "AIR_AMBULANCE": "AIR_AMBULANCE"
+};
+
+const { User, AddressAndContactDetails, Vehicle, Comment, RiderResponsibility, Group, RiderTasks, Task, Location, CoordinatorTasks, Deliverable, DeliverableType } = initSchema(schema);
 
 export {
   User,
   AddressAndContactDetails,
   Vehicle,
   Comment,
+  RiderResponsibility,
   Group,
-  UserTasks,
+  RiderTasks,
   Task,
+  Location,
   CoordinatorTasks,
   Deliverable,
   DeliverableType,
-  Location,
   Role,
   CommentVisibility,
-  Patch,
   Priority,
   DeliverableUnit,
-  TaskStatus
+  TaskStatus,
+  Patch
 };
