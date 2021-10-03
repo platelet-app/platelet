@@ -10,6 +10,25 @@ export function convertListDataToObject(list) {
     return result;
 }
 
+export function taskStatusHumanReadable(status) {
+    switch (status) {
+        case "NEW":
+            return "New";
+        case "ACTIVE":
+            return "Active";
+        case "PICKED_UP":
+            return "Picked up";
+        case "DROPPED_OFF":
+            return "Delivered";
+        case "REJECTED":
+            return "Rejected";
+        case "CANCELLED":
+            return "Cancelled";
+        default:
+            return "Unknown status";
+    }
+}
+
 export function sortByCreatedTime(items, order = "newest") {
     if (!items || items.length === 0) return [];
     if (order !== "newest")

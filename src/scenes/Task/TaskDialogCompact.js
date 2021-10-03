@@ -116,7 +116,6 @@ const initialState = {
 
 function TaskDialogCompact(props) {
     const dispatch = useDispatch();
-    const [taskStatus, setTaskStatus] = useState("No status");
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
     const history = useHistory();
@@ -149,12 +148,6 @@ function TaskDialogCompact(props) {
     }
     useEffect(() => getTask(), [dataStoreReadyStatus, props.location.key]);
 
-    function componentDidMount() {
-        //dispatch(getTaskRequest(taskUUID));
-    }
-
-    useEffect(componentDidMount, [props.location.key]);
-
     const handleClose = (e) => {
         e.stopPropagation();
         if (props.location.state) history.goBack();
@@ -167,7 +160,7 @@ function TaskDialogCompact(props) {
         ) : (
             <StatusBar
                 handleClose={handleClose}
-                status={task.statusHumanReadable}
+                status={task.status}
                 taskUUID={taskUUID}
             />
         );

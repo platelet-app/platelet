@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import { AppBar, Hidden } from "@material-ui/core";
 import { ArrowButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
-import { encodeUUID } from "../../../utilities";
+import { encodeUUID, taskStatusHumanReadable } from "../../../utilities";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
@@ -18,16 +18,17 @@ import clsx from "clsx";
 const colourBarPercent = "90%";
 
 const generateClass = (theme, status) => {
-    return {
-        padding: 2,
-        display: "flex",
-        width: "100%",
-        paddingLeft: 15,
-        paddingRight: 15,
-        italic: {
-            fontStyle: "italic",
-        },
-        background: `linear-gradient(0deg,
+    if (status) {
+        return {
+            padding: 2,
+            display: "flex",
+            width: "100%",
+            paddingLeft: 15,
+            paddingRight: 15,
+            italic: {
+                fontStyle: "italic",
+            },
+            background: `linear-gradient(0deg,
         ${theme.palette.background.paper}
         ${colourBarPercent},
         ${theme.palette.background.paper}
@@ -35,9 +36,26 @@ const generateClass = (theme, status) => {
         ${theme.palette.taskStatus[status]}
         ${colourBarPercent},
         ${theme.palette.taskStatus[status]} 100%)`,
-    };
+        };
+    } else {
+        return {
+            padding: 2,
+            display: "flex",
+            width: "100%",
+            paddingLeft: 15,
+            paddingRight: 15,
+            italic: {
+                fontStyle: "italic",
+            },
+            background:
+                theme.palette.type === "dark"
+                    ? theme.palette.background.paper
+                    : theme.palette.primary.main,
+        };
+    }
 };
-export const dialogComponent = (props) =>
+
+const dialogComponent = (props) =>
     makeStyles((theme) => {
         return {
             root: generateClass(theme, props.status),
@@ -57,6 +75,7 @@ function StatusBar(props) {
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const task = useSelector((state) => state.task.task);
     const roleView = useSelector((state) => state.roleView);
+    const statusHumanReadable = taskStatusHumanReadable(props.status);
     // don't change container to container item, it breaks the layout for some reason
     return (
         <AppBar
@@ -102,7 +121,7 @@ function StatusBar(props) {
                                 </Grid>
                                 <Grid item>
                                     <Typography className={classes.text}>
-                                        {props.status}
+                                        {statusHumanReadable}
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -185,7 +204,7 @@ StatusBar.propTypes = {
 StatusBar.defaultProps = {
     assignedCoordinators: [],
     assignedRiders: [],
-    status: "No Status",
+    status: null,
 };
 
 export default StatusBar;
