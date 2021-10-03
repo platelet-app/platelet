@@ -7,7 +7,7 @@ import { showHide, DismissButton } from "../styles/common";
 function SnackNotificationButtons(props) {
     const { show, hide } = showHide();
     const [showUndo, setShowUndo] = useState(!!props.restoreCallback);
-    const { restoreCallback, viewLink, snackKey } = props;
+    const { restoreCallback, viewLink, snackKey, closeSnackbar } = props;
     useEffect(() => {
         setTimeout(() => setShowUndo(false), 4000);
     }, []);
@@ -33,7 +33,11 @@ function SnackNotificationButtons(props) {
             >
                 VIEW
             </Button>
-            <DismissButton onClick={() => props.closeSnackbar(snackKey)} />
+            {closeSnackbar ? (
+                <DismissButton onClick={() => closeSnackbar(snackKey)} />
+            ) : (
+                <></>
+            )}
         </React.Fragment>
     );
 }
@@ -46,8 +50,6 @@ SnackNotificationButtons.propTypes = {
 };
 
 SnackNotificationButtons.defaultProps = {
-    restoreCallback: () => {},
-    closeSnackbar: () => {},
     snackKey: "",
 };
 
