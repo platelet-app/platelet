@@ -171,7 +171,7 @@ function Dashboard() {
                                           roleView === "rider"
                                               ? "tasksNew"
                                               : "",
-                                          "tasksDelivered",
+                                          "tasksDroppedOff",
                                           "tasksCancelled",
                                           "tasksRejected",
                                       ]

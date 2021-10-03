@@ -80,7 +80,7 @@ function TasksGridColumn(props) {
     //const tasks = useSelector(getTasksSelector)[props.taskKey];
     const whoami = useSelector(getWhoami);
     let selectorsString = "";
-    if (props.taskKey === "tasksDelivered")
+    if (props.taskKey === "tasksDroppedOff")
         selectorsString = "APPEND_TASKS_DELIVERED";
     else if (props.taskKey === "tasksCancelled")
         selectorsString = "APPEND_TASKS_CANCELLED";
@@ -102,7 +102,7 @@ function TasksGridColumn(props) {
             endlessLoadEnd || endlessLoadIsFetching
                 ? () => ({ type: "IGNORE" })
                 : appendTasksCancelledRequest,
-        tasksDelivered:
+        tasksDroppedOff:
             endlessLoadEnd || endlessLoadIsFetching
                 ? () => ({ type: "IGNORE" })
                 : appendTasksDeliveredRequest,
@@ -242,7 +242,7 @@ function TasksGridColumn(props) {
                                 );
                             })}
                         {[
-                            "tasksDelivered",
+                            "tasksDroppedOff",
                             "tasksRejected",
                             "tasksCancelled",
                         ].includes(props.taskKey) ? (
