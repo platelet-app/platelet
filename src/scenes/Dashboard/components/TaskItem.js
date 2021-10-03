@@ -9,16 +9,18 @@ import { contextDots } from "../../../styles/common";
 
 const TaskItem = React.memo(function TaskItem(props) {
     const classes = contextDots();
-    const assignedCoordinators = props.assignees.items
-        ? props.assignees.items
-              .filter((i) => i.role === "COORDINATOR")
-              .map((i) => i.assignee)
-        : [];
-    const assignedRiders = props.assignees.items
-        ? props.assignees.items
-              .filter((i) => i.role === "RIDER")
-              .map((i) => i.assignee)
-        : [];
+    const assignedCoordinators =
+        props.assignees && props.assignees.items
+            ? props.assignees.items
+                  .filter((i) => i.role === "COORDINATOR")
+                  .map((i) => i.assignee)
+            : [];
+    const assignedRiders =
+        props.assignees && props.assignees.items
+            ? props.assignees.items
+                  .filter((i) => i.role === "RIDER")
+                  .map((i) => i.assignee)
+            : [];
     const assignedCoordinatorsDisplayString = assignedCoordinators
         .map((i) => i.displayName)
         .join(", ");

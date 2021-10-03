@@ -17,3 +17,12 @@ export const commentVisibility = {
     everyone: "EVERYONE",
     me: "ME",
 };
+
+export const tasksStatus = {
+    new: "NEW",
+    active: "ACTIVE",
+    pickedUp: "PICKED_UP",
+    droppedOff: "DROPPED_OFF",
+    rejected: "REJECTED",
+    cancelled: "CANCELLED",
+};

@@ -97,29 +97,6 @@ const TaskGroup = (props) => {
         <></>
     ) : (
         taskArr.map((task, i, arr) => {
-            const {
-                assigned_riders_display_string,
-                time_picked_up,
-                time_dropped_off,
-                time_rejected,
-                time_cancelled,
-                time_of_call,
-                priority,
-                patch,
-                uuid,
-                assigned_riders,
-                parent_id,
-                relay_next,
-                assigned_coordinators,
-                assigned_coordinators_display_string,
-            } = task;
-            const dropoff_address = task.dropoff_location
-                ? task.dropoff_location.address
-                : null;
-            const pickup_address = task.pickup_location
-                ? task.pickup_location.address
-                : null;
-
             return (
                 <div
                     className={clsx(
@@ -248,10 +225,11 @@ function TasksGrid(props) {
                             <TasksGridColumn
                                 title={title}
                                 classes={classes}
-                                onAddTaskClick={() => setShowGuidedSetup(true)}
+                                onAddTaskClick={props.onAddTaskClick}
                                 onAddRelayClick={addRelay}
                                 disableAddButton={isPosting}
                                 taskKey={taskKey}
+                                tasks={props.tasks[taskKey]}
                                 showTasks={filteredTasksUUIDs}
                                 key={title}
                             />

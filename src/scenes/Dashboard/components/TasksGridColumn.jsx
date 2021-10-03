@@ -64,13 +64,20 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+function tasksNewSort(a, b) {
+    return a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0;
+}
+
+function tasksEverythingElseSort(b, a) {
+    return a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0;
+}
+
 function TasksGridColumn(props) {
     const classes = useStyles();
     const loaderClass = loaderStyles();
     const { show, hide } = showHide();
     const dispatch = useDispatch();
     //const tasks = useSelector(getTasksSelector)[props.taskKey];
-    const [tasks, setTasks] = useState([]);
     const whoami = useSelector(getWhoami);
     let selectorsString = "";
     if (props.taskKey === "tasksDelivered")
@@ -87,6 +94,9 @@ function TasksGridColumn(props) {
     );
     const roleView = useSelector((state) => state.roleView);
     const [isFetching, setIsFetching] = useState(false);
+
+    const sortFunction =
+        props.taskKey === "tasksNew" ? tasksNewSort : tasksEverythingElseSort;
     const dispatchAppendFunctions = {
         tasksCancelled:
             endlessLoadEnd || endlessLoadIsFetching
@@ -103,23 +113,6 @@ function TasksGridColumn(props) {
     };
     let appendFunction = () => {};
     appendFunction = dispatchAppendFunctions[props.taskKey];
-
-    async function getTasks() {
-        setIsFetching(true);
-        try {
-            const tasksData = await API.graphql({
-                query: dashboardQuery,
-                variables: { status: columns[props.taskKey] },
-            });
-            setIsFetching(false);
-            const tasks = tasksData.data.tasksByStatus.items;
-            setTasks(tasks);
-        } catch (error) {
-            setIsFetching(false);
-            console.log("Request failed", error);
-        }
-    }
-    useEffect(() => getTasks(), []);
 
     const header =
         props.taskKey === "tasksNew" &&
@@ -191,58 +184,63 @@ function TasksGridColumn(props) {
                         alignItems={"center"}
                         key={props.title + "column"}
                     >
-                        {tasks.map((task) => {
-                            return (
-                                <div
-                                    className={clsx(
-                                        classes.taskItem,
-                                        props.showTasks === null ||
-                                            props.showTasks.includes(task.id)
-                                            ? show
-                                            : hide
-                                    )}
-                                    key={task.id}
-                                >
-                                    <Grid item className={classes.gridItem}>
-                                        <TaskItem
-                                            animate={animate}
-                                            {...task}
-                                            taskUUID={task.id}
-                                            view={props.modalView}
-                                            deleteDisabled={
-                                                props.deleteDisabled
-                                            }
-                                        />
-                                        <Grid
-                                            container
-                                            alignItems={"center"}
-                                            justify={"center"}
-                                            className={classes.spacer}
-                                        >
-                                            <Grid
-                                                className={
-                                                    !!task.relayNext &&
-                                                    props.showTasks === null &&
-                                                    !props.hideRelayIcons &&
-                                                    roleView !== "rider"
-                                                        ? show
-                                                        : hide
+                        {Object.values(props.tasks)
+                            .sort(sortFunction)
+                            .map((task) => {
+                                return (
+                                    <div
+                                        className={clsx(
+                                            classes.taskItem,
+                                            props.showTasks === null ||
+                                                props.showTasks.includes(
+                                                    task.id
+                                                )
+                                                ? show
+                                                : hide
+                                        )}
+                                        key={task.id}
+                                    >
+                                        <Grid item className={classes.gridItem}>
+                                            <TaskItem
+                                                animate={animate}
+                                                {...task}
+                                                taskUUID={task.id}
+                                                view={props.modalView}
+                                                deleteDisabled={
+                                                    props.deleteDisabled
                                                 }
-                                                item
+                                            />
+                                            <Grid
+                                                container
+                                                alignItems={"center"}
+                                                justify={"center"}
+                                                className={classes.spacer}
                                             >
-                                                <Tooltip title="Relay">
-                                                    <ArrowDownwardIcon
-                                                        style={{
-                                                            height: "35px",
-                                                        }}
-                                                    />
-                                                </Tooltip>
+                                                <Grid
+                                                    className={
+                                                        !!task.relayNext &&
+                                                        props.showTasks ===
+                                                            null &&
+                                                        !props.hideRelayIcons &&
+                                                        roleView !== "rider"
+                                                            ? show
+                                                            : hide
+                                                    }
+                                                    item
+                                                >
+                                                    <Tooltip title="Relay">
+                                                        <ArrowDownwardIcon
+                                                            style={{
+                                                                height: "35px",
+                                                            }}
+                                                        />
+                                                    </Tooltip>
+                                                </Grid>
                                             </Grid>
                                         </Grid>
-                                    </Grid>
-                                </div>
-                            );
-                        })}
+                                    </div>
+                                );
+                            })}
                         {[
                             "tasksDelivered",
                             "tasksRejected",
@@ -291,6 +289,11 @@ TasksGridColumn.propTypes = {
     disableAddButton: PropTypes.bool,
     taskKey: PropTypes.string,
     showTasks: PropTypes.arrayOf(PropTypes.string),
+    tasks: PropTypes.array,
+};
+
+TasksGridColumn.defaultProps = {
+    tasks: [],
 };
 
 export default TasksGridColumn;
