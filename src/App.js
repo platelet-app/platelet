@@ -12,7 +12,6 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Moment from "react-moment";
 import Amplify, { Logger } from "aws-amplify";
-import config from "../src/aws-exports.js";
 
 import { SnackbarProvider, withSnackbar } from "notistack";
 import { Helmet } from "react-helmet";
@@ -22,12 +21,15 @@ import { DismissButton } from "./styles/common";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
+import config from "../src/aws-exports.js";
 
-Amplify.configure({
-    ...config,
-    ssr: true,
-});
-Logger.LOG_LEVEL = "ERROR";
+if (process.env.REACT_APP_OFFLINE_ONLY === "false") {
+    Amplify.configure({
+        ...config,
+        ssr: true,
+    });
+    Logger.LOG_LEVEL = "ERROR";
+}
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);

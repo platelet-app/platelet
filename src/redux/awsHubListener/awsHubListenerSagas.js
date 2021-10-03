@@ -15,6 +15,11 @@ function listener() {
     });
 }
 function* initialiseDataStoreListener(action) {
+    if (process.env.REACT_APP_OFFLINE_ONLY === "true") {
+        yield put(actions.setNetworkStatus(true));
+        yield put(actions.setReadyStatus(true));
+        return;
+    }
     const channel = yield call(listener);
     try {
         while (true) {
