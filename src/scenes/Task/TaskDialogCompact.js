@@ -140,6 +140,7 @@ function TaskDialogCompact(props) {
                 const taskData = await DataStore.query(models.Task, taskUUID);
                 if (taskData) setTask(taskData);
                 else setNotFound(true);
+                setIsFetching(false);
             } catch (error) {
                 setIsFetching(false);
                 console.log("Request failed", error);
@@ -165,13 +166,13 @@ function TaskDialogCompact(props) {
             />
         );
 
-    if (!task) {
+    if (isFetching) {
         return (
             <Dialog open={true}>
                 <FormSkeleton />
             </Dialog>
         );
-    } else if (false) {
+    } else if (notFound) {
         return (
             <DialogWrapper handleClose={handleClose}>
                 {statusBar}
