@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { encodeUUID } from "../../../utilities";
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DateTimePicker from '@mui/lab/DateTimePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import TextField from '@mui/material/TextField';
 
 const useStyles = makeStyles({
     root: {
         maxWidth: "350px",
+        marginBottom: "50px",
     },
     button: {
         height: 9,
@@ -24,14 +21,8 @@ const useStyles = makeStyles({
     },
 });
 
-function LocationDropdownSelector(props) {
+export const LocationDropdownSelector = (props) => {
     const classes = useStyles();
-
-    const [value, setValue] = React.useState(new Date(Date.now()));
-
-    const handleDateChange = (newValue) => {
-        setValue(newValue);
-    };
 
     const presetName =
         props.location && props.location.name ? props.location.name : "";
@@ -53,19 +44,9 @@ function LocationDropdownSelector(props) {
                 <Grid item>
                     <FavouriteLocationsSelect
                         label={props.label}
-                        onSelect={(value) => props.onSelectPreset(value)}
+                        onSelect={(value) => props.onSelectLocation(value)}
                         customWidth={"380px"}
                     />
-                </Grid>
-                <Grid item>
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DateTimePicker
-                            label={"Date&Time picker"}
-                            value={value}
-                            onChange={handleDateChange}
-                            renderInput={(params) => <TextField {...params} />}
-                            />
-                    </LocalizationProvider>
                 </Grid>
             </Grid>
         </Grid>
@@ -76,7 +57,8 @@ function LocationDropdownSelector(props) {
 LocationDropdownSelector.propTypes = {
     label: PropTypes.string,
     location: PropTypes.object,
-    onSelectPreset: PropTypes.func,
+    onSelectLocation: PropTypes.func,
+    onSelectTime: PropTypes.func,
     className: PropTypes.string,
 };
 
@@ -98,7 +80,5 @@ LocationDropdownSelector.defaultProps = {
             email_address: null,
         },
     },
-    onSelectPreset: () => {},
+    onSelectLocation: () => {},
 };
-
-export default LocationDropdownSelector;
