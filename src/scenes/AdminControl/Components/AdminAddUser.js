@@ -23,6 +23,7 @@ import Forbidden from "../../../ErrorComponents/Forbidden";
 import { getWhoami } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
+import { encodeUUID } from "../../../utilities";
 
 const useStyles = makeStyles({
     root: {
@@ -76,27 +77,36 @@ function AdminAddUser() {
     async function signUp() {
         try {
             setIsPosting(true);
-            const { userSub } = await Auth.signUp({
-                ...state,
-            });
-            //TODO: remove this after DataStore sync is fixed up because we want the user to only be syncd after postconfirmation trigger
-            // DataStore.save(
-            //     new models.User({
-            //         name: state.attributes.name,
-            //         id: userSub,
-            //         displayName: state.attributes.name,
-            //         active: 1,
-            //         username: state.username,
-            //         emailAddress: state.attributes.email,
-            //         _version: 1,
-            //         _lastUpdatedAt: new Date().getTime().toString(),
-            //     })
-            // );
+            if (process.env.REACT_APP_OFFLINE_ONLY === "false") {
+                const { userSub } = await Auth.signUp({
+                    ...state,
+                });
+                setMessage(
+                    "User was signed up. They will be made available after they confirm their email address."
+                );
+            } else {
+                // Only add the user to DataStore if we're working offline, otherwise get it from amplify once user is confirmed
+                const newUser = await DataStore.save(
+                    new models.User({
+                        name: state.attributes.name,
+                        displayName: state.attributes.name,
+                        active: 1,
+                        username: state.username,
+                        emailAddress: state.attributes.email,
+                        _version: 1,
+                        _lastUpdatedAt: new Date().getTime().toString(),
+                    })
+                );
+                dispatch(
+                    displayInfoNotification(
+                        "User added",
+                        undefined,
+                        `/user/${encodeUUID(newUser.id)}`
+                    )
+                );
+            }
             setState(initialState);
             setIsPosting(false);
-            setMessage(
-                "User was signed up. They will be made available after they confirm their email address."
-            );
         } catch (error) {
             console.log("error signing up:", error);
             setIsPosting(false);
