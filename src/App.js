@@ -43,17 +43,13 @@ function AppContents(props) {
 
     const handleOnIdle = (event) => {
         dispatch(setIdleStatus(true));
-        console.log("user is idle", event);
-        console.log("last active", getLastActiveTime());
     };
 
     const handleOnActive = (event) => {
         dispatch(setIdleStatus(false));
-        console.log("user is active", event);
-        console.log("time remaining", getRemainingTime());
     };
 
-    const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    useIdleTimer({
         timeout: 1000 * 60 * 5,
         onIdle: handleOnIdle,
         onActive: handleOnActive,
@@ -158,7 +154,7 @@ const taskStatus = {
     REJECTED: "grey",
 };
 
-function App(props) {
+function AppDefault(props) {
     const darkMode = useSelector((state) => state.darkMode);
     let theme;
     //useEffect(() => DataStore.start(), []);
@@ -211,4 +207,8 @@ function App(props) {
     );
 }
 
-export default withAuthenticator(App);
+const App =
+    process.env.REACT_APP_OFFLINE_ONLY === "true"
+        ? AppDefault
+        : withAuthenticator(AppDefault);
+export default App;
