@@ -31,7 +31,6 @@ export function taskStatusHumanReadable(status) {
 
 export function sortByCreatedTime(items, order = "newest") {
     if (!items || items.length === 0) return [];
-    debugger;
     if (order !== "newest")
         return items.sort((a, b) => {
             return new Date(a.createdAt) - new Date(b.createdAt);

@@ -90,7 +90,6 @@ export default function UserDetail(props) {
         setIsPosting(true);
         try {
             const existingUser = await DataStore.query(models.User, user.id);
-            debugger;
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
                     // There is probably a better way of doing this?
