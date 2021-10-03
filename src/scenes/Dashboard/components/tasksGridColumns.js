@@ -2,7 +2,7 @@ const tasksGridColumns = {
     tasksNew: "NEW",
     tasksActive: "ACTIVE",
     tasksPickedUp: "PICKED_UP",
-    tasksDelivered: "DROPPED_OFF",
+    tasksDroppedOff: "DROPPED_OFF",
     tasksCancelled: "CANCELLED",
     tasksRejected: "REJECTED",
 };

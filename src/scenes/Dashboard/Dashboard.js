@@ -3,62 +3,42 @@ import "../../App.css";
 import "typeface-roboto";
 import * as models from "../../models/index";
 import Paper from "@material-ui/core/Paper";
-import {
-    setRoleViewAndGetTasks,
-    startRefreshTasksLoopFromSocket,
-} from "../../redux/tasks/TasksActions";
-import { setNewTaskAddedView, setRoleView } from "../../redux/Actions";
+import { setRoleView } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    createLoadingSelector,
-    createPostingSelector,
-} from "../../redux/LoadingSelectors";
 import {
     DashboardDetailTabs,
     TabPanel,
 } from "./components/DashboardDetailTabs";
-import {
-    refreshTaskAssignmentsSocket,
-    refreshTasksDataSocket,
-    subscribeToCoordinatorAssignments,
-    subscribeToRiderAssignments,
-    subscribeToUUIDs,
-    unsubscribeFromCoordinatorAssignments,
-    unsubscribeFromRiderAssignments,
-    unsubscribeFromUUIDs,
-} from "../../redux/sockets/SocketActions";
-import { getTaskUUIDEtags } from "./utilities";
 import {
     convertListDataToObject,
     getDashboardRoleMode,
     saveDashboardRoleMode,
 } from "../../utilities";
 import {
+    dataStoreReadyStatusSelector,
     getTasksInitialisedStatus,
-    getTasksSelector,
     getWhoami,
 } from "../../redux/Selectors";
 import { tasksStatus } from "../../apiConsts";
 import { DataStore } from "aws-amplify";
+import TasksGridSkeleton from "./components/TasksGridSkeleton";
 
 const initialTasksState = {
-    tasksNew: [],
-    tasksActive: [],
-    tasksPickedUp: [],
-    tasksDroppedOff: [],
-    tasksRejected: [],
-    tasksCancelled: [],
+    tasksNew: {},
+    tasksActive: {},
+    tasksPickedUp: {},
+    tasksDroppedOff: {},
+    tasksRejected: {},
+    tasksCancelled: {},
 };
 
 function Dashboard() {
     const dispatch = useDispatch();
-    const tasksInitialised = useSelector(getTasksInitialisedStatus);
     const mobileView = useSelector((state) => state.mobileView);
-    const firstTaskSubscribeCompleted = useRef(false);
-    const currentlySubscribedUUIDs = useRef([]);
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [viewMode, setViewMode] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
     const roleView = useSelector((state) => state.roleView);
@@ -85,14 +65,68 @@ function Dashboard() {
     useEffect(setInitialRoleView, [whoami]);
 
     function getTasks() {
-        DataStore.query(models.Task, (task) => {
-            task.status("eq", tasksStatus.new);
-        }).then((result) => {
-            const resultObject = convertListDataToObject(result);
-            setTasks((prevState) => ({ ...prevState, tasksNew: resultObject }));
-        });
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
+            return;
+        } else {
+            DataStore.query(models.Task, (task) =>
+                task.status("eq", tasksStatus.new)
+            ).then((result) => {
+                const resultObject = convertListDataToObject(result);
+                setTasks((prevState) => ({
+                    ...prevState,
+                    tasksNew: resultObject,
+                }));
+            });
+            DataStore.query(models.Task, (task) =>
+                task.status("eq", tasksStatus.active)
+            ).then((result) => {
+                const resultObject = convertListDataToObject(result);
+                setTasks((prevState) => ({
+                    ...prevState,
+                    tasksActive: resultObject,
+                }));
+            });
+            DataStore.query(models.Task, (task) =>
+                task.status("eq", tasksStatus.pickedUp)
+            ).then((result) => {
+                const resultObject = convertListDataToObject(result);
+                setTasks((prevState) => ({
+                    ...prevState,
+                    tasksPickedUp: resultObject,
+                }));
+            });
+            DataStore.query(models.Task, (task) =>
+                task.status("eq", tasksStatus.droppedOff)
+            ).then((result) => {
+                const resultObject = convertListDataToObject(result);
+                setTasks((prevState) => ({
+                    ...prevState,
+                    tasksDroppedOff: resultObject,
+                }));
+            });
+            DataStore.query(models.Task, (task) =>
+                task.status("eq", tasksStatus.cancelled)
+            ).then((result) => {
+                const resultObject = convertListDataToObject(result);
+                setTasks((prevState) => ({
+                    ...prevState,
+                    tasksCancelled: resultObject,
+                }));
+            });
+            DataStore.query(models.Task, (task) =>
+                task.status("eq", tasksStatus.rejected)
+            ).then((result) => {
+                const resultObject = convertListDataToObject(result);
+                setTasks((prevState) => ({
+                    ...prevState,
+                    tasksRejected: resultObject,
+                }));
+            });
+            setIsFetching(false);
+        }
     }
-    useEffect(() => getTasks(), [roleView]);
+    useEffect(() => getTasks(), [roleView, dataStoreReadyStatus]);
 
     async function addTask() {
         const date = new Date();
@@ -109,36 +143,45 @@ function Dashboard() {
             },
         }));
     }
-
-    return (
-        <Paper elevation={3}>
-            <DashboardDetailTabs
-                value={viewMode}
-                onChange={(event, newValue) => setViewMode(newValue)}
-            >
-                <TabPanel value={0} index={0}>
-                    <TasksGrid
-                        tasks={tasks}
-                        onAddTaskClick={addTask}
-                        fullScreenModal={mobileView}
-                        modalView={"edit"}
-                        hideRelayIcons={roleView === "rider"}
-                        hideAddButton={!postPermission}
-                        excludeColumnList={
-                            viewMode === 1
-                                ? ["tasksNew", "tasksActive", "tasksPickedUp"]
-                                : [
-                                      roleView === "rider" ? "tasksNew" : "",
-                                      "tasksDelivered",
-                                      "tasksCancelled",
-                                      "tasksRejected",
-                                  ]
-                        }
-                    />
-                </TabPanel>
-            </DashboardDetailTabs>
-        </Paper>
-    );
+    if (isFetching) {
+        return <TasksGridSkeleton />;
+    } else {
+        return (
+            <Paper elevation={3}>
+                <DashboardDetailTabs
+                    value={viewMode}
+                    onChange={(event, newValue) => setViewMode(newValue)}
+                >
+                    <TabPanel value={0} index={0}>
+                        <TasksGrid
+                            tasks={tasks}
+                            onAddTaskClick={addTask}
+                            fullScreenModal={mobileView}
+                            modalView={"edit"}
+                            hideRelayIcons={roleView === "rider"}
+                            hideAddButton={!postPermission}
+                            excludeColumnList={
+                                viewMode === 1
+                                    ? [
+                                          "tasksNew",
+                                          "tasksActive",
+                                          "tasksPickedUp",
+                                      ]
+                                    : [
+                                          roleView === "rider"
+                                              ? "tasksNew"
+                                              : "",
+                                          "tasksDelivered",
+                                          "tasksCancelled",
+                                          "tasksRejected",
+                                      ]
+                            }
+                        />
+                    </TabPanel>
+                </DashboardDetailTabs>
+            </Paper>
+        );
+    }
 }
 
 export default Dashboard;

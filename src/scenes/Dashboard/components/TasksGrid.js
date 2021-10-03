@@ -2,10 +2,6 @@ import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import Grid from "@material-ui/core/Grid";
 import TaskItem from "./TaskItem";
-import {
-    createLoadingSelector,
-    createPostingSelector,
-} from "../../../redux/LoadingSelectors";
 import { useDispatch, useSelector } from "react-redux";
 import { addTaskRelayRequest } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -30,7 +26,7 @@ const getColumnTitle = (key) => {
             return "Active".toUpperCase();
         case "tasksPickedUp":
             return "Picked Up".toUpperCase();
-        case "tasksDelivered":
+        case "tasksDroppedOff":
             return "Delivered".toUpperCase();
         case "tasksRejected":
             return "Rejected".toUpperCase();
@@ -173,15 +169,10 @@ TaskGroup.propTypes = {
 
 function TasksGrid(props) {
     const classes = useStyles();
-    const postingSelector = createPostingSelector(["ADD_TASK"]);
-    const isPosting = useSelector((state) => postingSelector(state));
-    const loadingSelector = createLoadingSelector(["GET_TASKS"]);
-    const isFetching = useSelector((state) => loadingSelector(state));
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
     const [showGuidedSetup, setShowGuidedSetup] = useState(false);
 
     const tasks = useSelector(getTasksSelector);
-    const roleView = useSelector((state) => state.roleView);
     const dispatch = useDispatch();
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const { show, hide } = showHide();
@@ -227,7 +218,6 @@ function TasksGrid(props) {
                                 classes={classes}
                                 onAddTaskClick={props.onAddTaskClick}
                                 onAddRelayClick={addRelay}
-                                disableAddButton={isPosting}
                                 taskKey={taskKey}
                                 tasks={props.tasks[taskKey]}
                                 showTasks={filteredTasksUUIDs}
@@ -251,6 +241,7 @@ TasksGrid.propTypes = {
     hideRelayIcons: PropTypes.bool,
     hideAddButton: PropTypes.bool,
     excludeColumnList: PropTypes.arrayOf(PropTypes.string),
+    isFetching: PropTypes.bool,
 };
 
 export default TasksGrid;
