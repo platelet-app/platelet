@@ -66,11 +66,6 @@ export default function SideInfoSection(props) {
         (state) => state.tasksActionsRecord.actionsRecord
     );
 
-    function getActions() {
-        if (whoami.id) dispatch(getTasksActionsRecordRequest(whoami.id));
-    }
-    useEffect(getActions, [whoami]);
-
     return (
         <div className={classes.root}>
             <CssBaseline />
