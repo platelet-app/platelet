@@ -29,6 +29,7 @@ import { API } from "aws-amplify";
 import { makeStyles } from "@material-ui/core";
 import columns from "./tasksGridColumns";
 import { getWhoami } from "../../../redux/Selectors";
+import { sortByCreatedTime } from "../../../utilities";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -64,14 +65,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function tasksNewSort(a, b) {
-    return a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0;
-}
-
-function tasksEverythingElseSort(b, a) {
-    return a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0;
-}
-
 function TasksGridColumn(props) {
     const classes = useStyles();
     const loaderClass = loaderStyles();
@@ -95,8 +88,6 @@ function TasksGridColumn(props) {
     const roleView = useSelector((state) => state.roleView);
     const [isFetching, setIsFetching] = useState(false);
 
-    const sortFunction =
-        props.taskKey === "tasksNew" ? tasksNewSort : tasksEverythingElseSort;
     const dispatchAppendFunctions = {
         tasksCancelled:
             endlessLoadEnd || endlessLoadIsFetching
@@ -184,63 +175,61 @@ function TasksGridColumn(props) {
                         alignItems={"center"}
                         key={props.title + "column"}
                     >
-                        {Object.values(props.tasks)
-                            .sort(sortFunction)
-                            .map((task) => {
-                                return (
-                                    <div
-                                        className={clsx(
-                                            classes.taskItem,
-                                            props.showTasks === null ||
-                                                props.showTasks.includes(
-                                                    task.id
-                                                )
-                                                ? show
-                                                : hide
-                                        )}
-                                        key={task.id}
-                                    >
-                                        <Grid item className={classes.gridItem}>
-                                            <TaskItem
-                                                animate={animate}
-                                                {...task}
-                                                taskUUID={task.id}
-                                                view={props.modalView}
-                                                deleteDisabled={
-                                                    props.deleteDisabled
-                                                }
-                                            />
+                        {sortByCreatedTime(
+                            Object.values(props.tasks),
+                            props.taskKey === "tasksNew" ? "newest" : "oldest"
+                        ).map((task) => {
+                            return (
+                                <div
+                                    className={clsx(
+                                        classes.taskItem,
+                                        props.showTasks === null ||
+                                            props.showTasks.includes(task.id)
+                                            ? show
+                                            : hide
+                                    )}
+                                    key={task.id}
+                                >
+                                    <Grid item className={classes.gridItem}>
+                                        <TaskItem
+                                            animate={animate}
+                                            {...task}
+                                            taskUUID={task.id}
+                                            view={props.modalView}
+                                            deleteDisabled={
+                                                props.deleteDisabled
+                                            }
+                                        />
+                                        <Grid
+                                            container
+                                            alignItems={"center"}
+                                            justify={"center"}
+                                            className={classes.spacer}
+                                        >
                                             <Grid
-                                                container
-                                                alignItems={"center"}
-                                                justify={"center"}
-                                                className={classes.spacer}
+                                                className={
+                                                    !!task.relayNext &&
+                                                    props.showTasks === null &&
+                                                    !props.hideRelayIcons &&
+                                                    roleView !== "rider"
+                                                        ? show
+                                                        : hide
+                                                }
+                                                item
                                             >
-                                                <Grid
-                                                    className={
-                                                        !!task.relayNext &&
-                                                        props.showTasks ===
-                                                            null &&
-                                                        !props.hideRelayIcons &&
-                                                        roleView !== "rider"
-                                                            ? show
-                                                            : hide
-                                                    }
-                                                    item
-                                                >
-                                                    <Tooltip title="Relay">
-                                                        <ArrowDownwardIcon
-                                                            style={{
-                                                                height: "35px",
-                                                            }}
-                                                        />
-                                                    </Tooltip>
-                                                </Grid>
+                                                <Tooltip title="Relay">
+                                                    <ArrowDownwardIcon
+                                                        style={{
+                                                            height: "35px",
+                                                        }}
+                                                    />
+                                                </Tooltip>
                                             </Grid>
                                         </Grid>
-                                    </div>
-                                );
-                            })}
+                                    </Grid>
+                                </div>
+                            );
+                        })}
                         {[
                             "tasksDroppedOff",
                             "tasksRejected",
