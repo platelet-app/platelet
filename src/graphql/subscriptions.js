@@ -52,7 +52,7 @@ export const onCreateUser = /* GraphQL */ `
       }
       riderResponsibility {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
@@ -174,7 +174,7 @@ export const onUpdateUser = /* GraphQL */ `
       }
       riderResponsibility {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
@@ -296,7 +296,7 @@ export const onDeleteUser = /* GraphQL */ `
       }
       riderResponsibility {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
@@ -514,7 +514,7 @@ export const onCreateVehicle = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -620,7 +620,7 @@ export const onUpdateVehicle = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -726,7 +726,7 @@ export const onDeleteVehicle = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -1054,13 +1054,14 @@ export const onCreateDeliverable = /* GraphQL */ `
       id
       deliverableType {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
         createdAt
         updatedAt
       }
+      taskDeliverablesId
       count
       unit
       comments {
@@ -1092,13 +1093,14 @@ export const onUpdateDeliverable = /* GraphQL */ `
       id
       deliverableType {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
         createdAt
         updatedAt
       }
+      taskDeliverablesId
       count
       unit
       comments {
@@ -1130,13 +1132,14 @@ export const onDeleteDeliverable = /* GraphQL */ `
       id
       deliverableType {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
         createdAt
         updatedAt
       }
+      taskDeliverablesId
       count
       unit
       comments {
@@ -1201,7 +1204,7 @@ export const onCreateRiderTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -1327,7 +1330,7 @@ export const onCreateRiderTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -1344,14 +1347,8 @@ export const onCreateRiderTasks = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -1447,7 +1444,7 @@ export const onUpdateRiderTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -1573,7 +1570,7 @@ export const onUpdateRiderTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -1590,14 +1587,8 @@ export const onUpdateRiderTasks = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -1693,7 +1684,7 @@ export const onDeleteRiderTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -1819,7 +1810,7 @@ export const onDeleteRiderTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -1836,14 +1827,8 @@ export const onDeleteRiderTasks = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -1939,7 +1924,7 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -2065,7 +2050,7 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -2082,14 +2067,8 @@ export const onCreateCoordinatorTasks = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -2185,7 +2164,7 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -2311,7 +2290,7 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -2328,14 +2307,8 @@ export const onUpdateCoordinatorTasks = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -2431,7 +2404,7 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -2557,7 +2530,7 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -2574,14 +2547,8 @@ export const onDeleteCoordinatorTasks = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -2678,7 +2645,7 @@ export const onCreateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -2837,7 +2804,7 @@ export const onCreateTask = /* GraphQL */ `
       }
       riderResponsibility {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
@@ -2870,27 +2837,19 @@ export const onCreateTask = /* GraphQL */ `
       }
       priority
       deliverables {
-        id
-        deliverableType {
+        items {
           id
-          name
+          taskDeliverablesId
+          count
+          unit
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        count
-        unit
-        comments {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       relayPrevious {
         id
@@ -2980,7 +2939,7 @@ export const onCreateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -2997,14 +2956,8 @@ export const onCreateTask = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -3141,7 +3094,7 @@ export const onCreateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -3158,14 +3111,8 @@ export const onCreateTask = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -3292,7 +3239,7 @@ export const onUpdateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -3451,7 +3398,7 @@ export const onUpdateTask = /* GraphQL */ `
       }
       riderResponsibility {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
@@ -3484,27 +3431,19 @@ export const onUpdateTask = /* GraphQL */ `
       }
       priority
       deliverables {
-        id
-        deliverableType {
+        items {
           id
-          name
+          taskDeliverablesId
+          count
+          unit
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        count
-        unit
-        comments {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       relayPrevious {
         id
@@ -3594,7 +3533,7 @@ export const onUpdateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -3611,14 +3550,8 @@ export const onUpdateTask = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -3755,7 +3688,7 @@ export const onUpdateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -3772,14 +3705,8 @@ export const onUpdateTask = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -3906,7 +3833,7 @@ export const onDeleteTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -4065,7 +3992,7 @@ export const onDeleteTask = /* GraphQL */ `
       }
       riderResponsibility {
         id
-        name
+        label
         _version
         _deleted
         _lastChangedAt
@@ -4098,27 +4025,19 @@ export const onDeleteTask = /* GraphQL */ `
       }
       priority
       deliverables {
-        id
-        deliverableType {
+        items {
           id
-          name
+          taskDeliverablesId
+          count
+          unit
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        count
-        unit
-        comments {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       relayPrevious {
         id
@@ -4208,7 +4127,7 @@ export const onDeleteTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -4225,14 +4144,8 @@ export const onDeleteTask = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -4369,7 +4282,7 @@ export const onDeleteTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -4386,14 +4299,8 @@ export const onDeleteTask = /* GraphQL */ `
         }
         priority
         deliverables {
-          id
-          count
-          unit
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+          nextToken
+          startedAt
         }
         relayPrevious {
           id
@@ -4521,7 +4428,7 @@ export const onCreateComment = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -4609,7 +4516,7 @@ export const onUpdateComment = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -4697,7 +4604,7 @@ export const onDeleteComment = /* GraphQL */ `
         }
         riderResponsibility {
           id
-          name
+          label
           _version
           _deleted
           _lastChangedAt
@@ -4748,7 +4655,7 @@ export const onCreateDeliverableType = /* GraphQL */ `
   subscription OnCreateDeliverableType {
     onCreateDeliverableType {
       id
-      name
+      label
       _version
       _deleted
       _lastChangedAt
@@ -4761,7 +4668,7 @@ export const onUpdateDeliverableType = /* GraphQL */ `
   subscription OnUpdateDeliverableType {
     onUpdateDeliverableType {
       id
-      name
+      label
       _version
       _deleted
       _lastChangedAt
@@ -4774,7 +4681,7 @@ export const onDeleteDeliverableType = /* GraphQL */ `
   subscription OnDeleteDeliverableType {
     onDeleteDeliverableType {
       id
-      name
+      label
       _version
       _deleted
       _lastChangedAt
@@ -4787,7 +4694,7 @@ export const onCreateRiderResponsibility = /* GraphQL */ `
   subscription OnCreateRiderResponsibility {
     onCreateRiderResponsibility {
       id
-      name
+      label
       _version
       _deleted
       _lastChangedAt
@@ -4800,7 +4707,7 @@ export const onUpdateRiderResponsibility = /* GraphQL */ `
   subscription OnUpdateRiderResponsibility {
     onUpdateRiderResponsibility {
       id
-      name
+      label
       _version
       _deleted
       _lastChangedAt
@@ -4813,7 +4720,7 @@ export const onDeleteRiderResponsibility = /* GraphQL */ `
   subscription OnDeleteRiderResponsibility {
     onDeleteRiderResponsibility {
       id
-      name
+      label
       _version
       _deleted
       _lastChangedAt

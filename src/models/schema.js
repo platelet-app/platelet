@@ -522,8 +522,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "name": {
-                    "name": "name",
+                "label": {
+                    "name": "label",
                     "isArray": false,
                     "type": "String",
                     "isRequired": true,
@@ -836,6 +836,20 @@ export const schema = {
                     },
                     "isRequired": false,
                     "attributes": []
+                },
+                "deliverables": {
+                    "name": "deliverables",
+                    "isArray": true,
+                    "type": {
+                        "model": "Deliverable"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "taskDeliverablesId"
+                    }
                 },
                 "relayPrevious": {
                     "name": "relayPrevious",
@@ -1157,6 +1171,26 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "deliverableType": {
+                    "name": "deliverableType",
+                    "isArray": false,
+                    "type": {
+                        "model": "DeliverableType"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "deliverableDeliverableTypeId"
+                    }
+                },
+                "taskDeliverablesId": {
+                    "name": "taskDeliverablesId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "count": {
                     "name": "count",
                     "isArray": false,
@@ -1223,8 +1257,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "name": {
-                    "name": "name",
+                "label": {
+                    "name": "label",
                     "isArray": false,
                     "type": "String",
                     "isRequired": true,
@@ -1316,5 +1350,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "450c209b1b92bf0fc6d0f036bc938aed"
+    "version": "fd8b7d3c97da457322a79a8d13ca845a"
 };

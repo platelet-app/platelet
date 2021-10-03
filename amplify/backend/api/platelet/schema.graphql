@@ -73,7 +73,8 @@ type AddressAndContactDetails @model {
 }
 type Deliverable @model {
   id: ID!
-  deliverableType: DeliverableType!
+  deliverableType: DeliverableType! @connection
+  taskDeliverablesId: ID!
   count: Int
   unit: DeliverableUnit
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
@@ -113,7 +114,7 @@ type Task
   assignedCoordinators: [CoordinatorTasks] @connection(name: "TaskCoordinators")
   assignedRiders: [RiderTasks] @connection(name: "TaskRiders")
   priority: Priority
-  deliverables: [Deliverable!]
+  deliverables: [Deliverable!] @connection
   relayPrevious: Task @connection
   relayNext: Task @connection
   group: [Group] @connection
@@ -131,12 +132,12 @@ type Comment @model @key(name: "byParent", fields: ["parentId"]) {
 
 type DeliverableType @model {
   id: ID!
-  name: String!
+  label: String!
 }
 
 type RiderResponsibility @model {
   id: ID!
-  name: String!
+  label: String!
 }
 
 #TODO: Need to understand more of the context around statuses available, discuss with group

@@ -168,7 +168,7 @@ export declare class Comment {
 
 export declare class RiderResponsibility {
   readonly id: string;
-  readonly name: string;
+  readonly label: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<RiderResponsibility, RiderResponsibilityMetaData>);
@@ -212,6 +212,7 @@ export declare class Task {
   readonly assignedCoordinators?: (CoordinatorTasks | null)[];
   readonly assignedRiders?: (RiderTasks | null)[];
   readonly priority?: Priority | keyof typeof Priority;
+  readonly deliverables?: Deliverable[];
   readonly relayPrevious?: Task;
   readonly relayNext?: Task;
   readonly group?: (Group | null)[];
@@ -257,6 +258,8 @@ export declare class CoordinatorTasks {
 
 export declare class Deliverable {
   readonly id: string;
+  readonly deliverableType: DeliverableType;
+  readonly taskDeliverablesId: string;
   readonly count?: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
   readonly comments?: Comment[];
@@ -268,7 +271,7 @@ export declare class Deliverable {
 
 export declare class DeliverableType {
   readonly id: string;
-  readonly name: string;
+  readonly label: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);
