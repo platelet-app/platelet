@@ -31,19 +31,14 @@ export function taskStatusHumanReadable(status) {
 
 export function sortByCreatedTime(items, order = "newest") {
     if (!items || items.length === 0) return [];
+    debugger;
     if (order !== "newest")
         return items.sort((a, b) => {
-            return (
-                new Date(a.createdAt || a.createdAt) -
-                new Date(b.createdAt || b.createdAt)
-            );
+            return new Date(a.createdAt) - new Date(b.createdAt);
         });
     else
         return items.sort((a, b) => {
-            return (
-                new Date(b.createdAt || b.createdAt) -
-                new Date(a.createdAt || a.createdAt)
-            );
+            return new Date(b.createdAt) - new Date(a.createdAt);
         });
 }
 
