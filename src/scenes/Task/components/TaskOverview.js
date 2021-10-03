@@ -94,29 +94,10 @@ const initialState = {
 };
 
 function TaskOverview(props) {
-    const { taskUUID } = props;
+    const { taskUUID, task } = props;
     const classes = useStyles();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("xs"));
-    const [isFetching, setIsFetching] = useState(false);
-    const [task, setTask] = useState(initialState);
-
-    async function getTasks() {
-        setIsFetching(true);
-        try {
-            const taskData = await API.graphql({
-                query: queries.getTask,
-                variables: { id: taskUUID },
-            });
-            setIsFetching(false);
-            const task = taskData.data.task;
-            setTask(task);
-        } catch (error) {
-            setIsFetching(false);
-            console.log("Request failed", error);
-        }
-    }
-    useEffect(() => getTasks(), []);
 
     return (
         <Container className={classes.root} maxWidth={true}>
@@ -147,7 +128,7 @@ function TaskOverview(props) {
                     />
                 </Grid>
                 <Grid className={classes.item} item>
-                    <TaskDetailsPanel />
+                    <TaskDetailsPanel task={task} />
                 </Grid>
                 <Grid className={classes.item} item>
                     <DeliverableGridSelect taskUUID={taskUUID} />

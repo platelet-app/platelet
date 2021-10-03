@@ -39,32 +39,25 @@ const rejectedPostingSelector = createPostingSelector([
 ]);
 
 function extractTaskData(task) {
-    let {
-        reference,
-        time_of_call,
-        patch,
-        assigned_riders_display_string,
-        uuid,
-        requester_contact,
-    } = task;
-    if (requester_contact === null) {
-        requester_contact = {
+    let { reference, timeOfCall, riderResponsibility, id, requesterContact } =
+        task;
+    if (requesterContact === null) {
+        requesterContact = {
             name: null,
-            telephone_number: null,
+            telephoneNumber: null,
         };
     }
     return {
         reference,
-        time_of_call,
-        patch,
-        assigned_riders_display_string,
-        uuid,
-        requester_contact,
+        timeOfCall,
+        riderResponsibility,
+        id,
+        requesterContact,
     };
 }
 
-function TaskDetailsPanel() {
-    const task = useSelector((state) => state.task.task);
+function TaskDetailsPanel(props) {
+    const { task } = props;
     const tocPosting = useSelector((state) => tocPostingSelector(state));
     const isPostingCancelTime = useSelector((state) =>
         cancelledPostingSelector(state)
@@ -75,19 +68,18 @@ function TaskDetailsPanel() {
     const cardClasses = dialogCardStyles();
     const [state, setState] = useState({
         reference: null,
-        time_of_call: null,
-        patch: null,
-        assigned_riders_display_string: "",
-        uuid: null,
-        requester_contact: {
+        timeOfCall: null,
+        riderResponsibility: null,
+        id: null,
+        requesterContact: {
             name: null,
-            telephone_number: null,
+            telephoneNumber: null,
         },
     });
     const dispatch = useDispatch();
     const classes = useStyles();
 
-    useEffect(() => setState(extractTaskData(task)), [task]);
+    useEffect(() => setState(extractTaskData(props.task)), [props.task]);
 
     let priority_id;
     try {
@@ -150,7 +142,7 @@ function TaskDetailsPanel() {
                             disableClear={true}
                             disabled={tocPosting}
                             label={"TOC"}
-                            time={state.time_of_call}
+                            time={state.timeOfCall}
                         />
                     </LabelItemPair>
                     <Typography>Requester contact:</Typography>
@@ -162,7 +154,11 @@ function TaskDetailsPanel() {
                                         name: value,
                                     })
                                 }
-                                value={state.requester_contact.name}
+                                value={
+                                    state.requesterContact
+                                        ? state.requesterContact.name
+                                        : null
+                                }
                             />
                         </LabelItemPair>
                         <LabelItemPair label={"Tel"}>
@@ -173,7 +169,11 @@ function TaskDetailsPanel() {
                                         telephone_number: value,
                                     })
                                 }
-                                value={state.requester_contact.telephone_number}
+                                value={
+                                    state.requesterContact
+                                        ? state.requesterContact.telephoneNumber
+                                        : null
+                                }
                             />
                         </LabelItemPair>
                     </div>
@@ -197,7 +197,7 @@ function TaskDetailsPanel() {
                     <Grid container direction={"column"}>
                         <Grid item>
                             <LabelItemPair label={""}>
-                                <ActivityPopover parentUUID={task.uuid} />
+                                <ActivityPopover parentUUID={task.id} />
                             </LabelItemPair>
                         </Grid>
                         <Grid item>
@@ -206,11 +206,11 @@ function TaskDetailsPanel() {
                                     onChange={onChangeTimeCancelled}
                                     disabled={
                                         isPostingCancelTime ||
-                                        !!task.time_dropped_off ||
-                                        !!task.time_rejected
+                                        !!task.timeDroppedOff ||
+                                        !!task.timeRejected
                                     }
                                     label={"Mark cancelled"}
-                                    time={task.time_cancelled}
+                                    time={task.timeCancelled}
                                 />
                             </LabelItemPair>
                         </Grid>
@@ -220,11 +220,11 @@ function TaskDetailsPanel() {
                                     onChange={onChangeTimeRejected}
                                     disabled={
                                         isPostingRejectedTime ||
-                                        !!task.time_dropped_off ||
-                                        !!task.time_cancelled
+                                        !!task.timeDroppedOff ||
+                                        !!task.timeCancelled
                                     }
                                     label={"Mark rejected"}
-                                    time={task.time_rejected}
+                                    time={task.timeRejected}
                                 />
                             </LabelItemPair>
                         </Grid>

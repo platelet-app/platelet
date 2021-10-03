@@ -6,20 +6,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { decodeUUID } from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
-import { getTaskRequest } from "../../redux/activeTask/ActiveTaskActions";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { createNotFoundSelector } from "../../redux/LoadingSelectors";
 import { getTaskPrefix } from "../../redux/activeTask/ActiveTaskActions";
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
-import { determineTaskType } from "../../redux/tasks/task_redux_utilities";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
 import { Button, Hidden } from "@material-ui/core";
 import CommentsSection from "../Comments/CommentsSection";
-import * as queries from "../../graphql/queries";
-import API from "@aws-amplify/api";
+import * as models from "../../models/index";
+import { DataStore } from "aws-amplify";
+import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -117,10 +116,9 @@ const initialState = {
 
 function TaskDialogCompact(props) {
     const dispatch = useDispatch();
-    //const task = useSelector((state) => state.task.task);
     const [taskStatus, setTaskStatus] = useState("No status");
-    const notFoundSelector = createNotFoundSelector([getTaskPrefix]);
-    const notFound = useSelector((state) => notFoundSelector(state));
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const [notFound, setNotFound] = useState(false);
     const history = useHistory();
     const classes = useStyles();
     const theme = useTheme();
@@ -135,22 +133,21 @@ function TaskDialogCompact(props) {
     } else {
         taskUUID = task.id;
     }
-    async function getTasks() {
-        setIsFetching(true);
-        try {
-            const taskData = await API.graphql({
-                query: queries.getTask,
-                variables: { id: taskUUID },
-            });
-            setIsFetching(false);
-            const task = taskData.data.getTask;
-            setTask(task);
-        } catch (error) {
-            setIsFetching(false);
-            console.log("Request failed", error);
+    async function getTask() {
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
+        } else {
+            try {
+                const taskData = await DataStore.query(models.Task, taskUUID);
+                if (taskData) setTask(taskData);
+                else setNotFound(true);
+            } catch (error) {
+                setIsFetching(false);
+                console.log("Request failed", error);
+            }
         }
     }
-    useEffect(() => getTasks(), []);
+    useEffect(() => getTask(), [dataStoreReadyStatus, props.location.key]);
 
     function componentDidMount() {
         //dispatch(getTaskRequest(taskUUID));
