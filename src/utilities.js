@@ -34,15 +34,15 @@ export function sortByCreatedTime(items, order = "newest") {
     if (order !== "newest")
         return items.sort((a, b) => {
             return (
-                new Date(a.time_created || a.createdAt) -
-                new Date(b.time_created || b.createdAt)
+                new Date(a.createdAt || a.createdAt) -
+                new Date(b.createdAt || b.createdAt)
             );
         });
     else
         return items.sort((a, b) => {
             return (
-                new Date(b.time_created || b.createdAt) -
-                new Date(a.time_created || a.createdAt)
+                new Date(b.createdAt || b.createdAt) -
+                new Date(a.createdAt || a.createdAt)
             );
         });
 }
