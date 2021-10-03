@@ -27,8 +27,6 @@ yarn-debug.log*
 yarn-error.log*
 src/wdyr.js
 
-.prettierrc
-
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
