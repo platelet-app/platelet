@@ -15,11 +15,7 @@ import {
     getDashboardRoleMode,
     saveDashboardRoleMode,
 } from "../../utilities";
-import {
-    dataStoreReadyStatusSelector,
-    getTasksInitialisedStatus,
-    getWhoami,
-} from "../../redux/Selectors";
+import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import { tasksStatus } from "../../apiConsts";
 import { DataStore } from "aws-amplify";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
