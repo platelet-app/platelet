@@ -31,16 +31,12 @@ function* agetWhoami() {
 }
 
 const fakeUser = {
-    id: "someId",
+    id: "cc18f261-f764-4cdf-a4f5-4883cf6b236d",
     username: "offline",
-    contact: {
-        emailAddress: "fake@email.com",
-    },
     displayName: "Offline User",
     roles: Object.values(userRoles),
     name: "Offline User",
     dateOfBirth: null,
-    patch: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
     active: 1,
@@ -48,7 +44,9 @@ const fakeUser = {
 
 function* getWhoami() {
     if (process.env.REACT_APP_OFFLINE_ONLY === "true") {
-        yield put(getWhoamiSuccess(fakeUser));
+        const userModel = yield new models.User(fakeUser);
+        const newFakeUser = yield call([DataStore, DataStore.save], userModel);
+        yield put(getWhoamiSuccess(newFakeUser));
     } else {
         try {
             const loggedInUser = yield call([
