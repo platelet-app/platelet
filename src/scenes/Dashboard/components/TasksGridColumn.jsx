@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 function TasksGridColumn(props) {
     const classes = useStyles();
+    const [state, setState] = useState([]);
     const loaderClass = loaderStyles();
     const { show, hide } = showHide();
     const dispatch = useDispatch();
@@ -87,6 +88,21 @@ function TasksGridColumn(props) {
     );
     const roleView = useSelector((state) => state.roleView);
     const [isFetching, setIsFetching] = useState(false);
+
+    function updateStateFromTaskProp() {
+        if (props.taskKey === "tasksNew") {
+            const listReversed = Object.values(props.tasks).reverse();
+            const listSorted = sortByCreatedTime(listReversed, "newest");
+            setState(listSorted);
+        } else {
+            const listSorted = sortByCreatedTime(
+                Object.values(props.tasks),
+                "oldest"
+            );
+            setState(listSorted);
+        }
+    }
+    useEffect(updateStateFromTaskProp, [props.tasks]);
 
     const dispatchAppendFunctions = {
         tasksCancelled:
@@ -175,10 +191,7 @@ function TasksGridColumn(props) {
                         alignItems={"center"}
                         key={props.title + "column"}
                     >
-                        {sortByCreatedTime(
-                            Object.values(props.tasks),
-                            props.taskKey === "tasksNew" ? "newest" : "oldest"
-                        ).map((task) => {
+                        {state.map((task) => {
                             return (
                                 <div
                                     className={clsx(
