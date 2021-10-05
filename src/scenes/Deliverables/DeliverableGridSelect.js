@@ -58,7 +58,10 @@ function DeliverableGridSelect(props) {
         }
         setDeliverables(result);
     }
-    useEffect(convertExistingDeliverablesToState, [props.deliverables]);
+    useEffect(convertExistingDeliverablesToState, [
+        props.deliverables,
+        availableDeliverables,
+    ]);
 
     function sortDeliverables() {
         const result = {
@@ -105,7 +108,6 @@ function DeliverableGridSelect(props) {
     }
 
     const onChangeCount = (deliverableId, count) => {
-        console.log(deliverableId, count);
         const existing = deliverables[deliverableId];
         if (existing) {
             setDeliverables((prevState) => ({
