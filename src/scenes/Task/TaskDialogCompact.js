@@ -138,7 +138,12 @@ function TaskDialogCompact(props) {
         } else {
             try {
                 const taskData = await DataStore.query(models.Task, taskUUID);
-                if (taskData) setTask(taskData);
+                const deliverables = await DataStore.query(
+                    models.Deliverable,
+                    (t) => t.taskDeliverablesId("eq", taskUUID)
+                );
+                if (taskData)
+                    setTask({ ...taskData, deliverables: deliverables || [] });
                 else setNotFound(true);
                 setIsFetching(false);
             } catch (error) {
