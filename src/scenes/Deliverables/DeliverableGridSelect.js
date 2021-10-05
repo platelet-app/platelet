@@ -49,11 +49,11 @@ function DeliverableGridSelect(props) {
         for (const d of props.deliverables) {
             const deliverableType =
                 availableDeliverables[d.deliverableTypeDeliverableTypeId];
-            console.log(deliverableType);
             result[d.deliverableTypeDeliverableTypeId] = {
                 count: d.count,
                 id: d.deliverableTypeDeliverableTypeId,
                 label: deliverableType ? deliverableType.label : "",
+                createdAt: d.createdAt,
             };
         }
         setDeliverables(result);
@@ -76,6 +76,7 @@ function DeliverableGridSelect(props) {
                 result.defaults.push(i);
             }
         }
+        result.deliverables = sortByCreatedTime(result.deliverables, "oldest");
         setDeliverablesSorted(result);
     }
     useEffect(sortDeliverables, [availableDeliverables, deliverables]);
