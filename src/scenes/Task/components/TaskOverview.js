@@ -131,7 +131,10 @@ function TaskOverview(props) {
                     <TaskDetailsPanel task={task} />
                 </Grid>
                 <Grid className={classes.item} item>
-                    <DeliverableGridSelect taskUUID={taskUUID} />
+                    <DeliverableGridSelect
+                        deliverables={task.deliverables}
+                        taskUUID={taskUUID}
+                    />
                 </Grid>
                 <Grid className={classes.item} item>
                     <TaskAssignmentsPanel />

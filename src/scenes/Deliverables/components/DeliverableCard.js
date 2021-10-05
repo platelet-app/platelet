@@ -1,29 +1,34 @@
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography"
+import Typography from "@material-ui/core/Typography";
 import React from "react";
-import {red, lightGreen, pink, deepPurple, deepOrange} from "@material-ui/core/colors"
-import {makeStyles} from "@material-ui/core/styles"
-import Avatar from "@material-ui/core/Avatar"
-import BugReportIcon from "@material-ui/icons/BugReport"
-import ChildCareIcon from "@material-ui/icons/ChildCare"
-import DescriptionIcon from "@material-ui/icons/Description"
-import AcUnitIcon from "@material-ui/icons/AcUnit"
-import ClearIcon from "@material-ui/icons/Clear"
-import IconButton from "@material-ui/core/IconButton"
+import {
+    red,
+    lightGreen,
+    pink,
+    deepPurple,
+    deepOrange,
+} from "@material-ui/core/colors";
+import { makeStyles } from "@material-ui/core/styles";
+import Avatar from "@material-ui/core/Avatar";
+import BugReportIcon from "@material-ui/icons/BugReport";
+import ChildCareIcon from "@material-ui/icons/ChildCare";
+import DescriptionIcon from "@material-ui/icons/Description";
+import AcUnitIcon from "@material-ui/icons/AcUnit";
+import ClearIcon from "@material-ui/icons/Clear";
+import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
-import {Tooltip} from "@material-ui/core";
-
+import { Tooltip } from "@material-ui/core";
 
 function getIcon(typeID) {
     switch (typeID) {
         case 1:
-            return <BugReportIcon/>
+            return <BugReportIcon />;
         case 2:
-            return <DescriptionIcon/>
+            return <DescriptionIcon />;
         case 3:
-            return <ChildCareIcon/>
+            return <ChildCareIcon />;
         default:
-            return <AcUnitIcon/>
+            return <AcUnitIcon />;
     }
 }
 
@@ -32,87 +37,104 @@ function DeliverableCard(props) {
     const useStyles = makeStyles((theme) => ({
         root: {
             width: "100%",
-            margin: props.compact ? 3 : 10
+            margin: props.compact ? 3 : 10,
         },
         label: {
-            maxWidth: 120
+            maxWidth: 120,
         },
         sample: {
             color: theme.palette.getContrastText(red[500]),
             backgroundColor: red[500],
             width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue)
+            height: theme.spacing(spacingValue),
         },
         milk: {
             color: theme.palette.getContrastText(pink[500]),
             backgroundColor: pink[500],
             width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue)
+            height: theme.spacing(spacingValue),
         },
         document: {
             color: theme.palette.getContrastText(deepPurple[500]),
             backgroundColor: deepPurple[500],
             width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue)
+            height: theme.spacing(spacingValue),
         },
         other: {
             color: theme.palette.getContrastText(deepOrange[500]),
             backgroundColor: lightGreen[500],
             width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue)
-        }
-    }))
+            height: theme.spacing(spacingValue),
+        },
+    }));
 
     const classes = useStyles();
     function getClass(typeID) {
         switch (typeID) {
             case 1:
-                return classes.sample
+                return classes.sample;
             case 2:
-                return classes.document
+                return classes.document;
             case 3:
-                return classes.milk
+                return classes.milk;
             default:
-                return classes.other
+                return classes.other;
         }
     }
 
     return (
-            <Grid className={classes.root} container spacing={1} justify={"space-between"} alignItems={"center"} direction={"row"}>
-                <Grid item>
-                    <Grid container spacing={2} justify={"flex-start"} alignItems={"center"} direction={"row"}>
-                        <Grid item>
-                            <Avatar className={getClass(props.typeID)}>
-                                {getIcon(props.typeID)}
-                            </Avatar>
-                        </Grid>
-                        <Grid item>
-                            <Tooltip title={props.label && props.label.length > 14 ? props.label : ""}>
-                                <Typography noWrap className={classes.label}>
-                                    {props.label}
-                                </Typography>
-                            </Tooltip>
-                        </Grid>
+        <Grid
+            className={classes.root}
+            container
+            spacing={1}
+            justify={"space-between"}
+            alignItems={"center"}
+            direction={"row"}
+        >
+            <Grid item>
+                <Grid
+                    container
+                    spacing={2}
+                    justify={"flex-start"}
+                    alignItems={"center"}
+                    direction={"row"}
+                >
+                    <Grid item>
+                        <Avatar className={getClass(props.typeID)}>
+                            {getIcon(props.typeID)}
+                        </Avatar>
+                    </Grid>
+                    <Grid item>
+                        <Tooltip
+                            title={
+                                props.label && props.label.length > 14
+                                    ? props.label
+                                    : ""
+                            }
+                        >
+                            <Typography noWrap className={classes.label}>
+                                {props.label}
+                            </Typography>
+                        </Tooltip>
                     </Grid>
                 </Grid>
-                <Grid item>
-                    {props.children}
-                </Grid>
             </Grid>
-    )
+            <Grid item>{props.children}</Grid>
+        </Grid>
+    );
 }
 
 DeliverableCard.propTypes = {
-    typeID: PropTypes.number,
+    typeID: PropTypes.string,
     label: PropTypes.string,
     onDelete: PropTypes.func,
-    compact: PropTypes.bool
-}
+    compact: PropTypes.bool,
+};
 
 DeliverableCard.defaultProps = {
     onDelete: () => {},
     compact: false,
-    label: "Unknown"
-}
+    label: "Unknown",
+};
 
 export default DeliverableCard;
