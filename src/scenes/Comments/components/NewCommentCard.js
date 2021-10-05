@@ -16,11 +16,28 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
+import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 
 const initialCommentState = {
     body: "",
     visibility: commentVisibility.everyone,
 };
+
+function VisibilityMenu(props) {
+    return (
+        <FormControl fullWidth>
+            <Select
+                id="demo-simple-select"
+                value={props.value}
+                label="Visibility"
+                onChange={props.onChange}
+            >
+                <MenuItem value={commentVisibility.everyone}>EVERYONE</MenuItem>
+                <MenuItem value={commentVisibility.me}>ONLY ME</MenuItem>
+            </Select>
+        </FormControl>
+    );
+}
 
 function NewCommentCard(props) {
     const [state, setState] = useState(initialCommentState);
@@ -60,7 +77,7 @@ function NewCommentCard(props) {
                 alignItems={"flex-start"}
                 spacing={1}
             >
-                <Grid item>
+                <Grid style={{ width: "100%" }} item>
                     <Grid
                         container
                         direction={"row"}
@@ -77,42 +94,15 @@ function NewCommentCard(props) {
                             />
                         </Grid>
                         <Grid item>
-                            <Tooltip
-                                title={
-                                    state.visibility ===
-                                    commentVisibility.everyone
-                                        ? "Visible to everyone"
-                                        : "Only visible to you"
-                                }
-                            >
-                                <IconButton
-                                    disabled={isPosting}
-                                    onClick={() => {
-                                        setState((prevState) => ({
-                                            ...prevState,
-                                            visibility:
-                                                prevState.visibility ===
-                                                commentVisibility.me
-                                                    ? commentVisibility.everyone
-                                                    : commentVisibility.me,
-                                        }));
-                                    }}
-                                >
-                                    {state.visibility ===
-                                    commentVisibility.everyone ? (
-                                        <LockOpenIcon
-                                            className={classes.icon}
-                                        />
-                                    ) : (
-                                        <LockIcon
-                                            className={clsx(
-                                                classes.icon,
-                                                classes.lockIcon
-                                            )}
-                                        />
-                                    )}
-                                </IconButton>
-                            </Tooltip>
+                            <VisibilityMenu
+                                value={state.visibility}
+                                onChange={(e) => {
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        visibility: e.target.value,
+                                    }));
+                                }}
+                            />
                         </Grid>
                     </Grid>
                 </Grid>

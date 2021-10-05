@@ -116,7 +116,7 @@ const CommentCard = React.memo((props) => {
     );
 });
 
-CommentCard.PropTypes = {
+CommentCard.propTypes = {
     author: PropTypes.object,
     visibility: PropTypes.oneOf(Object.values(commentVisibility)),
     showAuthor: PropTypes.bool,
