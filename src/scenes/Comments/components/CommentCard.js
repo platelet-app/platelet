@@ -68,7 +68,11 @@ const CommentCard = React.memo((props) => {
                                                 ? show
                                                 : hide
                                         }
-                                        title={`Edited ${props.numEdits} times.`}
+                                        title={`Edited ${props.numEdits} ${
+                                            props.numEdits === 1
+                                                ? "time"
+                                                : "times"
+                                        }.`}
                                     >
                                         <EditIcon
                                             className={classes.icon}
