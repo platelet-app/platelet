@@ -106,6 +106,7 @@ function DeliverableGridSelect(props) {
             ...prevState,
             [deliverable.id]: deliverable,
         }));
+        props.onChange(deliverable);
     }
 
     const onChangeCount = (deliverableId, count) => {
@@ -116,7 +117,7 @@ function DeliverableGridSelect(props) {
                 [deliverableId]: { ...prevState[deliverableId], count },
             }));
         }
-        console.log(existing);
+        props.onChange({ id: deliverableId, count });
     };
 
     function onDelete(deliverableId) {
@@ -127,8 +128,6 @@ function DeliverableGridSelect(props) {
         () => setTruncated(availableDeliverables.length > 6),
         [availableDeliverables]
     );
-
-    console.log(deliverablesSorted);
 
     if (isFetching) {
         return <DeliverablesSkeleton />;

@@ -3,7 +3,7 @@ import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import { useHistory } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { decodeUUID } from "../../utilities";
+import { convertListDataToObject, decodeUUID } from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -115,7 +115,6 @@ const initialState = {
 };
 
 function TaskDialogCompact(props) {
-    const dispatch = useDispatch();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
     const history = useHistory();
@@ -143,7 +142,11 @@ function TaskDialogCompact(props) {
                     (t) => t.taskDeliverablesId("eq", taskUUID)
                 );
                 if (taskData)
-                    setTask({ ...taskData, deliverables: deliverables || [] });
+                    setTask({
+                        ...taskData,
+                        deliverables:
+                            convertListDataToObject(deliverables) || {},
+                    });
                 else setNotFound(true);
                 setIsFetching(false);
             } catch (error) {
@@ -153,6 +156,66 @@ function TaskDialogCompact(props) {
         }
     }
     useEffect(() => getTask(), [dataStoreReadyStatus, props.location.key]);
+
+    async function updateDeliverables(value) {
+        debugger;
+        const existing = Object.values(task.deliverables).find(
+            (d) => d.deliverableTypeDeliverableTypeId === value.id
+        );
+        if (existing) {
+            const existingDeliverable = await DataStore.query(
+                models.Deliverable,
+                existing.id
+            );
+            const updatedDeliverable = await DataStore.save(
+                models.Deliverable.copyOf(existingDeliverable, (updated) => {
+                    updated.count = value.count;
+                })
+            );
+            setTask((prevState) => ({
+                ...prevState,
+                deliverables: {
+                    ...prevState.deliverables,
+                    [updatedDeliverable.id]: updatedDeliverable,
+                },
+            }));
+        } else {
+            const newDeliverable = await DataStore.save(
+                new models.Deliverable({
+                    taskDeliverablesId: taskUUID,
+                    count: value.count,
+                    deliverableTypeDeliverableTypeId: value.id,
+                })
+            );
+
+            const deliverableType = await DataStore.query(
+                models.Deliverable,
+                value.id
+            );
+            setTask((prevState) => {
+                console.log({
+                    ...prevState,
+                    deliverables: {
+                        ...prevState.deliverables,
+                        [newDeliverable.id]: {
+                            ...newDeliverable,
+                            deliverableType,
+                        },
+                    },
+                });
+                return {
+                    ...prevState,
+                    deliverables: {
+                        ...prevState.deliverables,
+                        [newDeliverable.id]: {
+                            ...newDeliverable,
+                            deliverableType,
+                        },
+                    },
+                };
+            });
+        }
+    }
 
     const handleClose = (e) => {
         e.stopPropagation();
@@ -193,7 +256,11 @@ function TaskDialogCompact(props) {
             <DialogWrapper handleClose={handleClose}>
                 <div className={classes.overview}>
                     {statusBar}
-                    <TaskOverview task={task} taskUUID={taskUUID} />
+                    <TaskOverview
+                        task={task}
+                        taskUUID={taskUUID}
+                        onUpdateDeliverable={updateDeliverables}
+                    />
                 </div>
                 <Hidden smDown>
                     <CommentsSideBar

@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { PropTypes } from "prop-types";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import PickUpDetails from "./PickUpDetails";
 import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
-import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
-import * as queries from "../../../graphql/queries";
-import API from "@aws-amplify/api";
+import DeliverableDetails from "./DeliverableDetails";
 
 const useStyles = makeStyles((theme) => ({
     dialogContent: {
@@ -52,47 +50,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const initialLocationState = {
-    address: null,
-    contact: { name: null, telephone_number: null },
-    protected: false,
-    listed: false,
-};
-const initialState = {
-    task: {
-        uuid: null,
-        reference: "",
-        etag: "",
-        author: null,
-        author_uuid: null,
-        pickupLocation: initialLocationState,
-        dropoffLocation: initialLocationState,
-        patch: null,
-        requesterContact: {
-            name: null,
-            telephoneNumber: null,
-        },
-        priority: null,
-        timeOfCall: null,
-        deliverables: null,
-        comments: null,
-        links: null,
-        timePickedUp: null,
-        timeDroppedOff: null,
-        rider: null,
-        assignedRiders: [],
-        assignedCoordinators: [],
-        timeCancelled: null,
-        timeRejected: null,
-        createdAt: null,
-        updatedAt: null,
-        orderInRelay: 0,
-        assignedRidersDisplayString: "",
-        assignedCoordinatorsDisplayString: "",
-    },
-    error: null,
-};
-
 function TaskOverview(props) {
     const { taskUUID, task } = props;
     const classes = useStyles();
@@ -131,9 +88,14 @@ function TaskOverview(props) {
                     <TaskDetailsPanel task={task} />
                 </Grid>
                 <Grid className={classes.item} item>
-                    <DeliverableGridSelect
-                        deliverables={task.deliverables}
+                    <DeliverableDetails
+                        deliverables={
+                            task.deliverables
+                                ? Object.values(task.deliverables)
+                                : []
+                        }
                         taskUUID={taskUUID}
+                        onChange={props.onUpdateDeliverable}
                     />
                 </Grid>
                 <Grid className={classes.item} item>
