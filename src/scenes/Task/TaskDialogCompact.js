@@ -195,30 +195,13 @@ function TaskDialogCompact(props) {
                 },
             }));
         } else {
-            const newDeliverable = await DataStore.save(
+            await DataStore.save(
                 new models.Deliverable({
                     taskDeliverablesId: taskUUID,
                     count: value.count,
                     deliverableTypeDeliverableTypeId: value.id,
                 })
             );
-
-            const deliverableType = await DataStore.query(
-                models.Deliverable,
-                value.id
-            );
-            setTask((prevState) => {
-                return {
-                    ...prevState,
-                    deliverables: {
-                        ...prevState.deliverables,
-                        [newDeliverable.id]: {
-                            ...newDeliverable,
-                            deliverableType,
-                        },
-                    },
-                };
-            });
         }
     }
 
