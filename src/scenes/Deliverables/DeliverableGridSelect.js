@@ -58,10 +58,7 @@ function DeliverableGridSelect(props) {
         }
         setDeliverables(result);
     }
-    useEffect(convertExistingDeliverablesToState, [
-        props.deliverables,
-        availableDeliverables,
-    ]);
+    useEffect(convertExistingDeliverablesToState, [availableDeliverables]);
 
     function sortDeliverables() {
         const result = {
