@@ -39,6 +39,9 @@ function Dashboard() {
     const [isFetching, setIsFetching] = useState(false);
     const roleView = useSelector((state) => state.roleView);
     const [tasks, setTasks] = useState(initialTasksState);
+    const tasksSubscription = useRef({
+        unsubscribe: () => {},
+    });
 
     function setInitialRoleView() {
         if (whoami.id) {
@@ -119,25 +122,73 @@ function Dashboard() {
                     tasksRejected: resultObject,
                 }));
             });
+            tasksSubscription.current.unsubscribe();
+            tasksSubscription.current = DataStore.observe(
+                models.Task
+            ).subscribe(async (newTask) => {
+                debugger;
+                const task = newTask.element;
+                addTaskToState(task);
+            });
             setIsFetching(false);
         }
     }
     useEffect(() => getTasks(), [roleView, dataStoreReadyStatus]);
 
+    useEffect(() => {
+        return () => {
+            if (tasksSubscription.current)
+                tasksSubscription.current.unsubscribe();
+        };
+    }, []);
+
+    function addTaskToState(task) {
+        let key;
+        switch (task.status) {
+            case tasksStatus.new:
+                key = "tasksNew";
+                break;
+            case tasksStatus.active:
+                key = "tasksActive";
+                break;
+            case tasksStatus.pickedUp:
+                key = "tasksPickedUp";
+                break;
+            case tasksStatus.droppedOff:
+                key = "tasksDroppedOff";
+                break;
+            case tasksStatus.cancelled:
+                key = "tasksCancelled";
+                break;
+            case tasksStatus.rejected:
+                key = "tasksRejected";
+                break;
+            default:
+                return;
+        }
+        let taskResult;
+        if (!!!task.createdAt) {
+            const d = new Date();
+            taskResult = { ...task, createdAt: d.toISOString() };
+        } else {
+            taskResult = task;
+        }
+        setTasks((prevState) => ({
+            ...prevState,
+            [key]: {
+                ...prevState.tasksNew,
+                [taskResult.id]: taskResult,
+            },
+        }));
+    }
+
     async function addTask() {
         const date = new Date();
         const timeOfCall = date.toISOString();
-        const createdAt = timeOfCall;
         const newTask = await DataStore.save(
             new models.Task({ status: tasksStatus.new, timeOfCall })
         );
-        setTasks((prevState) => ({
-            ...prevState,
-            tasksNew: {
-                ...prevState.tasksNew,
-                [newTask.id]: { ...newTask, timeOfCall, createdAt },
-            },
-        }));
+        addTaskToState(newTask);
     }
     if (isFetching) {
         return <TasksGridSkeleton />;
