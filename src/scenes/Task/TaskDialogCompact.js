@@ -224,9 +224,9 @@ function TaskDialogCompact(props) {
 
     if (isFetching) {
         return (
-            <Dialog open={true}>
+            <DialogWrapper handleClose={handleClose}>
                 <FormSkeleton />
-            </Dialog>
+            </DialogWrapper>
         );
     } else if (notFound) {
         return (
