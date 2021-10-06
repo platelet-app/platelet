@@ -96,6 +96,7 @@ function TaskOverview(props) {
                         }
                         taskUUID={taskUUID}
                         onChange={props.onUpdateDeliverable}
+                        onDelete={props.onDeleteDeliverable}
                     />
                 </Grid>
                 <Grid className={classes.item} item>
@@ -109,6 +110,13 @@ function TaskOverview(props) {
 TaskOverview.propTypes = {
     task: PropTypes.object,
     taskUUID: PropTypes.string,
+    onUpdateDeliverable: PropTypes.func,
+    onDeleteDeliverable: PropTypes.func,
+};
+
+TaskOverview.defaultProps = {
+    onUpdateDeliverable: () => {},
+    onDeleteDeliverable: () => {},
 };
 
 export default TaskOverview;

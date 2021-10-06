@@ -157,8 +157,23 @@ function TaskDialogCompact(props) {
     }
     useEffect(() => getTask(), [dataStoreReadyStatus, props.location.key]);
 
+    async function deleteDeliverable(deliverableTypeId) {
+        const existing = Object.values(task.deliverables).filter(
+            (d) => d.deliverableTypeDeliverableTypeId === deliverableTypeId
+        );
+        if (existing && existing.length > 0) {
+            for (const d of existing) {
+                const existingDeliverable = await DataStore.query(
+                    models.Deliverable,
+                    d.id
+                );
+                if (existingDeliverable)
+                    await DataStore.delete(existingDeliverable);
+            }
+        }
+    }
+
     async function updateDeliverables(value) {
-        debugger;
         const existing = Object.values(task.deliverables).find(
             (d) => d.deliverableTypeDeliverableTypeId === value.id
         );
@@ -193,16 +208,6 @@ function TaskDialogCompact(props) {
                 value.id
             );
             setTask((prevState) => {
-                console.log({
-                    ...prevState,
-                    deliverables: {
-                        ...prevState.deliverables,
-                        [newDeliverable.id]: {
-                            ...newDeliverable,
-                            deliverableType,
-                        },
-                    },
-                });
                 return {
                     ...prevState,
                     deliverables: {
@@ -260,6 +265,7 @@ function TaskDialogCompact(props) {
                         task={task}
                         taskUUID={taskUUID}
                         onUpdateDeliverable={updateDeliverables}
+                        onDeleteDeliverable={deleteDeliverable}
                     />
                 </div>
                 <Hidden smDown>

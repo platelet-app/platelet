@@ -122,6 +122,7 @@ function DeliverableGridSelect(props) {
 
     function onDelete(deliverableId) {
         setDeliverables((prevState) => _.omit(prevState, deliverableId));
+        props.onDelete(deliverableId);
     }
 
     useEffect(
@@ -219,9 +220,13 @@ function DeliverableGridSelect(props) {
 
 DeliverableGridSelect.propTypes = {
     deliverables: PropTypes.arrayOf(PropTypes.object),
+    onChange: PropTypes.func,
+    onDelete: PropTypes.func,
 };
 DeliverableGridSelect.defaultProps = {
     deliverables: [],
+    onChange: () => {},
+    onDelete: () => {},
 };
 
 export default DeliverableGridSelect;
