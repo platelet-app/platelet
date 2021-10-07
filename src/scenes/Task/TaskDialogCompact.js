@@ -157,6 +157,16 @@ function TaskDialogCompact(props) {
     }
     useEffect(() => getTask(), [dataStoreReadyStatus, props.location.key]);
 
+    function selectPriority(priority) {
+        DataStore.query(models.Task, taskUUID).then((result) => {
+            DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.priority = priority;
+                })
+            );
+        });
+    }
+
     async function deleteDeliverable(deliverableTypeId) {
         const existing = Object.values(task.deliverables).filter(
             (d) => d.deliverableTypeDeliverableTypeId === deliverableTypeId
@@ -247,6 +257,7 @@ function TaskDialogCompact(props) {
                     <TaskOverview
                         task={task}
                         taskUUID={taskUUID}
+                        onSelectPriority={selectPriority}
                         onUpdateDeliverable={updateDeliverables}
                         onDeleteDeliverable={deleteDeliverable}
                     />

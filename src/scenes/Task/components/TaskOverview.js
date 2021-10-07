@@ -70,22 +70,25 @@ function TaskOverview(props) {
                 <Grid className={classes.item} item>
                     <PickUpDetails
                         taskUUID={taskUUID}
-                        location={task.pickup_location}
-                        time={task.time_picked_up}
+                        location={task.pickupLocation}
+                        time={task.timePickedUp}
                         showContact
                     />
                 </Grid>
                 <Grid className={classes.item} item>
                     <DropOffDetails
-                        disableTimeButton={!!!task.time_picked_up}
+                        disableTimeButton={!!!task.timePickedUp}
                         taskUUID={taskUUID}
-                        location={task.dropoff_location}
-                        time={task.time_dropped_off}
+                        location={task.dropOffLocation}
+                        time={task.timeDroppedOff}
                         showContact
                     />
                 </Grid>
                 <Grid className={classes.item} item>
-                    <TaskDetailsPanel task={task} />
+                    <TaskDetailsPanel
+                        onSelectPriority={props.onSelectPriority}
+                        task={task}
+                    />
                 </Grid>
                 <Grid className={classes.item} item>
                     <DeliverableDetails

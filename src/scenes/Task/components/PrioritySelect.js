@@ -1,61 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from '@material-ui/core/FormControl';
+import FormControl from "@material-ui/core/FormControl";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import Radio from "@material-ui/core/Radio"
-import {useSelector} from "react-redux";
-import {useEffect} from 'react'
-import PropTypes from "prop-types"
+import Radio from "@material-ui/core/Radio";
+import PropTypes from "prop-types";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
+import { priorities } from "../../../apiConsts";
 
 const useStyles = makeStyles({
     label: {
-        fontSize: 14
-    }
+        fontSize: 14,
+    },
 });
 
-
 function PrioritySelect(props) {
-    const [value, setValue] = React.useState(props.priorityID || null);
     const classes = useStyles();
-    const availablePriorities = useSelector(state => state.availablePriorities.priorities);
+    const [state, setState] = useState(null);
 
-    const handleChange = event => {
-        let result = availablePriorities.find(item => item.id == event.target.value);
-        if (result) {
-            props.onSelect(event.target.value, result.label);
-            setValue(result.id)
-        }
+    const handleChange = (event) => {
+        setState(event.target.value);
+        props.onSelect(event.target.value);
     };
-    useEffect(() => {
-        if (props.priorityID)
-                setValue(parseInt(props.priorityID))
-    }, [props.priorityID])
+
+    useEffect(() => setState(props.priority), [props.priority]);
 
     return (
         <FormControl component="fieldset">
-            <RadioGroup row aria-label="priority" name="priority" value={value} onChange={handleChange}>
-                {availablePriorities.map((priority) =>
-                    (
-                        <FormControlLabel
-                            key={priority.id}
-                            value={priority.id}
-                            control={<Radio/>}
-                            label={<Typography className={classes.label}>{priority.label}</Typography>}/>)
-                )}
+            <RadioGroup
+                row
+                aria-label="priority"
+                name="priority"
+                value={state}
+                onChange={handleChange}
+            >
+                {Object.values(priorities).map((priority) => (
+                    <FormControlLabel
+                        key={priority}
+                        value={priority}
+                        control={<Radio />}
+                        label={
+                            <Typography className={classes.label}>
+                                {priority}
+                            </Typography>
+                        }
+                    />
+                ))}
             </RadioGroup>
         </FormControl>
-        )
+    );
 }
 
 PrioritySelect.propTypes = {
-    priorityID: PropTypes.number,
-    onSelect: PropTypes.func
+    priority: PropTypes.number,
+    onSelect: PropTypes.func,
 };
 
 PrioritySelect.defaultProps = {
-    onSelect: () => {}
+    priority: null,
+    onSelect: () => {},
 };
 
 export default PrioritySelect;

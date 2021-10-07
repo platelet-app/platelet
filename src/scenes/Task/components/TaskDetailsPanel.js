@@ -20,6 +20,7 @@ import TimePicker from "./TimePicker";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
+import { priorities } from "../../../apiConsts";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -39,8 +40,14 @@ const rejectedPostingSelector = createPostingSelector([
 ]);
 
 function extractTaskData(task) {
-    let { reference, timeOfCall, riderResponsibility, id, requesterContact } =
-        task;
+    let {
+        reference,
+        timeOfCall,
+        riderResponsibility,
+        id,
+        requesterContact,
+        priority,
+    } = task;
     if (requesterContact === null) {
         requesterContact = {
             name: null,
@@ -53,6 +60,7 @@ function extractTaskData(task) {
         riderResponsibility,
         id,
         requesterContact,
+        priority,
     };
 }
 
@@ -79,14 +87,8 @@ function TaskDetailsPanel(props) {
     const dispatch = useDispatch();
     const classes = useStyles();
 
+    console.log(state);
     useEffect(() => setState(extractTaskData(props.task)), [props.task]);
-
-    let priority_id;
-    try {
-        priority_id = parseInt(task.priority_id);
-    } catch {
-        priority_id = null;
-    }
 
     function onChangeTimeOfCall(value) {
         const payload = { time_of_call: value };
@@ -111,9 +113,9 @@ function TaskDetailsPanel(props) {
             );
     }
 
-    function onSelectPriority(priority_id, priority) {
-        const payload = { priority_id, priority };
-        dispatch(updateTaskPriorityRequest(state.uuid, payload));
+    function onSelectPriority(priority) {
+        //setState((prevState) => ({ ...prevState, priority }));
+        props.onSelectPriority(priority);
     }
 
     function onChangeRequesterContact(value) {
@@ -181,7 +183,7 @@ function TaskDetailsPanel(props) {
                     <div className={classes.priority}>
                         <PrioritySelect
                             onSelect={onSelectPriority}
-                            priorityID={parseInt(priority_id)}
+                            priority={state.priority}
                         />
                     </div>
                     <LabelItemPair label={"Patch"}>
