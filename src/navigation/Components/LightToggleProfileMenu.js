@@ -19,6 +19,7 @@ import { Auth } from "aws-amplify";
 import SignalWifiOff from "@material-ui/icons/SignalWifiOff";
 import { showHide } from "../../styles/common";
 import { networkStatusSelector } from "../../redux/Selectors";
+import { DataStore } from "@aws-amplify/datastore";
 
 function LightToggleProfileMenu(props) {
     const whoami = useSelector(getWhoami);
@@ -28,6 +29,23 @@ function LightToggleProfileMenu(props) {
     const history = useHistory();
     const networkStatus = useSelector(networkStatusSelector);
     const { show, hide } = showHide();
+
+    const clearDataMenuItem =
+        process.env.REACT_APP_OFFLINE_ONLY === "true" &&
+        process.env.REACT_APP_POPULATE_FAKE_DATA === "true" ? (
+            <MenuItem
+                onClick={() => {
+                    setAnchorElProfileMenu(null);
+                    DataStore.clear();
+                    window.location = "/";
+                }}
+            >
+                Clear Saved Data
+            </MenuItem>
+        ) : (
+            <></>
+        );
+
     return (
         <Grid
             container
@@ -75,6 +93,7 @@ function LightToggleProfileMenu(props) {
                         >
                             Logout
                         </MenuItem>
+                        {clearDataMenuItem}
                     </Menu>
                 </div>
             </Grid>
