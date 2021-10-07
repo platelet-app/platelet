@@ -151,7 +151,7 @@ function TaskDetailsPanel(props) {
                         <LabelItemPair label={"Name"}>
                             <ClickableTextField
                                 onFinished={(value) =>
-                                    sendRequesterContactData({
+                                    onChangeRequesterContact({
                                         name: value,
                                     })
                                 }
