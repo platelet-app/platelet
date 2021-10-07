@@ -63,26 +63,26 @@ function ClickableTextField(props) {
     }, [props.value]);
 
     const stuff = props.disabled ? (
-        props.value ? (
+        value ? (
             <Typography
                 noWrap
                 className={classes.text}
                 onClick={toggleEditMode}
                 align={"right"}
             >
-                {props.value}
+                {value}
             </Typography>
         ) : (
             <></>
         )
-    ) : props.value ? (
+    ) : value ? (
         <Typography
             noWrap
             className={clsx(classes.hoverHighlight, classes.text)}
             align={"right"}
             onClick={toggleEditMode}
         >
-            {props.value}
+            {value}
         </Typography>
     ) : (
         <Typography
