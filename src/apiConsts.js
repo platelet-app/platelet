@@ -26,3 +26,9 @@ export const tasksStatus = {
     rejected: "REJECTED",
     cancelled: "CANCELLED",
 };
+
+export const priorities = {
+    high: "HIGH",
+    medium: "MEDIUM",
+    low: "LOW",
+};
