@@ -157,14 +157,33 @@ function TaskDialogCompact(props) {
     }
     useEffect(() => getTask(), [dataStoreReadyStatus, props.location.key]);
 
-    function selectPriority(priority) {
-        DataStore.query(models.Task, taskUUID).then((result) => {
-            DataStore.save(
+    async function selectPriority(priority) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result) {
+            await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
                     updated.priority = priority;
                 })
             );
-        });
+        }
+    }
+
+    async function updateRequesterContact(requesterValue) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result && result.requesterContact) {
+            await DataStore.save(
+                models.AddressAndContactDetails.copyOf(
+                    result.requesterContact,
+                    (updated) => {
+                        for (const [key, value] of Object.entries(
+                            requesterValue
+                        )) {
+                            updated[key] = value;
+                        }
+                    }
+                )
+            );
+        }
     }
 
     async function deleteDeliverable(deliverableTypeId) {
@@ -258,6 +277,7 @@ function TaskDialogCompact(props) {
                         task={task}
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}
+                        onChangeRequesterContact={updateRequesterContact}
                         onUpdateDeliverable={updateDeliverables}
                         onDeleteDeliverable={deleteDeliverable}
                     />

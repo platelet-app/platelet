@@ -119,8 +119,7 @@ function TaskDetailsPanel(props) {
     }
 
     function onChangeRequesterContact(value) {
-        const result = { ...state.requester_contact, ...value };
-        setState({ ...state, requester_contact: result });
+        props.onChangeRequesterContact(value);
     }
 
     function sendRequesterContactData(value) {
@@ -167,8 +166,8 @@ function TaskDetailsPanel(props) {
                             <ClickableTextField
                                 tel
                                 onFinished={(value) =>
-                                    sendRequesterContactData({
-                                        telephone_number: value,
+                                    onChangeRequesterContact({
+                                        telephoneNumber: value,
                                     })
                                 }
                                 value={

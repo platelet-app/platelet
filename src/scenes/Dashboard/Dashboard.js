@@ -184,8 +184,15 @@ function Dashboard() {
     async function addTask() {
         const date = new Date();
         const timeOfCall = date.toISOString();
+        const newRequesterContact = await DataStore.save(
+            new models.AddressAndContactDetails({})
+        );
         const newTask = await DataStore.save(
-            new models.Task({ status: tasksStatus.new, timeOfCall })
+            new models.Task({
+                status: tasksStatus.new,
+                timeOfCall,
+                taskRequesterContactId: newRequesterContact.id,
+            })
         );
         addTaskToState(newTask);
     }
