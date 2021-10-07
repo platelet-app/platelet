@@ -126,7 +126,6 @@ function Dashboard() {
             tasksSubscription.current = DataStore.observe(
                 models.Task
             ).subscribe(async (newTask) => {
-                debugger;
                 const task = newTask.element;
                 addTaskToState(task);
             });
@@ -176,7 +175,7 @@ function Dashboard() {
         setTasks((prevState) => ({
             ...prevState,
             [key]: {
-                ...prevState.tasksNew,
+                ...prevState[key],
                 [taskResult.id]: taskResult,
             },
         }));
