@@ -4,7 +4,6 @@ import DeliverableCard from "./DeliverableCard";
 import styled from "@material-ui/core/styles/styled";
 import Box from "@material-ui/core/Box";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";
-import { SmallCirclePlusButton } from "../../../components/Buttons";
 
 const DeliverableBox = styled(Box)({
     backgroundColor: "rgba(180, 180, 180, 0.1)",
@@ -13,20 +12,12 @@ const DeliverableBox = styled(Box)({
 
 function EditableDeliverable(props) {
     const deliverable = props.deliverable;
-    function makeNewDeliverable() {
-        let newDeliverable = {
-            count: 1,
-            deliverableTypeDeliverableTypeId: deliverable.id,
-        };
-        props.onAdd(newDeliverable);
-    }
-
     return (
         <DeliverableBox>
             <DeliverableCard
                 compact
                 label={deliverable.label}
-                typeID={deliverable.id}
+                icon={deliverable.icon}
             >
                 <IncreaseDecreaseCounter
                     value={deliverable.count || 0}
@@ -53,7 +44,7 @@ EditableDeliverable.defaultProps = {
     onChangeCount: () => {},
     isDeleting: false,
     isPosting: false,
-    deliverable: { id: "", label: "None" },
+    deliverable: { id: "", label: "None", deliverableType: { icon: "" } },
     onDelete: () => {},
 };
 

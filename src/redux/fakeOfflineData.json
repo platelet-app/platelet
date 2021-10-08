@@ -214,22 +214,28 @@
     ],
     "deliverables": [
         {
-            "label": "Sample"
+            "label": "Sample",
+            "icon": "BUG"
         },
         {
-            "label": "Covid sample"
+            "label": "Covid sample",
+            "icon": "BUG"
         },
         {
-            "label": "Document"
+            "label": "Document",
+            "icon": "DOCUMENT"
         },
         {
-            "label": "Milk"
+            "label": "Milk",
+            "icon": "CHILD"
         },
         {
-            "label": "Equipment"
+            "label": "Equipment",
+            "icon": "EQUIPMENT"
         },
         {
-            "label": "Other"
+            "label": "Other",
+            "icon": "OTHER"
         }
     ],
     "vehicles": [

@@ -28,6 +28,14 @@ const DeliverableUnit = {
   "BOX": "BOX"
 };
 
+const DeliverableTypeIcon = {
+  "BUG": "BUG",
+  "CHILD": "CHILD",
+  "DOCUMENT": "DOCUMENT",
+  "EQUIPMENT": "EQUIPMENT",
+  "OTHER": "OTHER"
+};
+
 const TaskStatus = {
   "NEW": "NEW",
   "ACTIVE": "ACTIVE",
@@ -65,6 +73,7 @@ export {
   CommentVisibility,
   Priority,
   DeliverableUnit,
+  DeliverableTypeIcon,
   TaskStatus,
   Patch
 };

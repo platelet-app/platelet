@@ -71,6 +71,7 @@ type AddressAndContactDetails @model {
   postcode: String
   what3words: String
 }
+
 type Deliverable @model {
   id: ID!
   deliverableType: DeliverableType! @connection
@@ -78,7 +79,16 @@ type Deliverable @model {
   count: Int
   unit: DeliverableUnit
   orderInGrid: Int
+  icon: DeliverableTypeIcon
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
+}
+
+enum DeliverableTypeIcon {
+  BUG
+  CHILD
+  DOCUMENT
+  EQUIPMENT
+  OTHER
 }
 
 type RiderTasks @model(queries: null) {

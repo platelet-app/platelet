@@ -28,7 +28,7 @@ function AddableDeliverable(props) {
             <DeliverableCard
                 compact
                 label={deliverableType.label}
-                typeID={deliverableType.id}
+                icon={deliverableType.icon}
             >
                 <SmallCirclePlusButton
                     onClick={makeNewDeliverable}

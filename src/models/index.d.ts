@@ -26,6 +26,14 @@ export enum DeliverableUnit {
   BOX = "BOX"
 }
 
+export enum DeliverableTypeIcon {
+  BUG = "BUG",
+  CHILD = "CHILD",
+  DOCUMENT = "DOCUMENT",
+  EQUIPMENT = "EQUIPMENT",
+  OTHER = "OTHER"
+}
+
 export enum TaskStatus {
   NEW = "NEW",
   ACTIVE = "ACTIVE",
@@ -263,6 +271,7 @@ export declare class Deliverable {
   readonly count?: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
   readonly orderInGrid?: number;
+  readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
   readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;

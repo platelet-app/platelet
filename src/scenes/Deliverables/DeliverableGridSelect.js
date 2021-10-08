@@ -55,6 +55,7 @@ function DeliverableGridSelect(props) {
                 label: deliverableType ? deliverableType.label : "",
                 createdAt: d.createdAt,
                 orderInGrid: d.orderInGrid,
+                icon: deliverableType ? deliverableType.icon : "",
             };
         }
         setState(result);
@@ -116,7 +117,6 @@ function DeliverableGridSelect(props) {
             [deliverable.id]: {
                 ...deliverable,
                 orderInGrid,
-                createdAt: new Date().toISOString(),
             },
         }));
         props.onChange({ ...deliverable, orderInGrid });

@@ -7,26 +7,29 @@ import {
     pink,
     deepPurple,
     deepOrange,
+    blue,
 } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import BugReportIcon from "@material-ui/icons/BugReport";
+import BuildIcon from "@material-ui/icons/Build";
 import ChildCareIcon from "@material-ui/icons/ChildCare";
 import DescriptionIcon from "@material-ui/icons/Description";
 import AcUnitIcon from "@material-ui/icons/AcUnit";
-import ClearIcon from "@material-ui/icons/Clear";
-import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 import { Tooltip } from "@material-ui/core";
+import { deliverableIcons } from "../../../apiConsts";
 
 function getIcon(typeID) {
     switch (typeID) {
-        case 1:
+        case deliverableIcons.bug:
             return <BugReportIcon />;
-        case 2:
+        case deliverableIcons.document:
             return <DescriptionIcon />;
-        case 3:
+        case deliverableIcons.child:
             return <ChildCareIcon />;
+        case deliverableIcons.equipment:
+            return <BuildIcon />;
         default:
             return <AcUnitIcon />;
     }
@@ -42,25 +45,31 @@ function DeliverableCard(props) {
         label: {
             maxWidth: 120,
         },
-        sample: {
+        [deliverableIcons.bug]: {
             color: theme.palette.getContrastText(red[500]),
             backgroundColor: red[500],
             width: theme.spacing(spacingValue),
             height: theme.spacing(spacingValue),
         },
-        milk: {
-            color: theme.palette.getContrastText(pink[500]),
-            backgroundColor: pink[500],
+        [deliverableIcons.child]: {
+            color: theme.palette.getContrastText(pink[400]),
+            backgroundColor: pink[400],
             width: theme.spacing(spacingValue),
             height: theme.spacing(spacingValue),
         },
-        document: {
+        [deliverableIcons.document]: {
             color: theme.palette.getContrastText(deepPurple[500]),
             backgroundColor: deepPurple[500],
             width: theme.spacing(spacingValue),
             height: theme.spacing(spacingValue),
         },
-        other: {
+        [deliverableIcons.equipment]: {
+            color: theme.palette.getContrastText(blue[500]),
+            backgroundColor: blue[500],
+            width: theme.spacing(spacingValue),
+            height: theme.spacing(spacingValue),
+        },
+        [deliverableIcons.other]: {
             color: theme.palette.getContrastText(deepOrange[500]),
             backgroundColor: lightGreen[500],
             width: theme.spacing(spacingValue),
@@ -69,19 +78,6 @@ function DeliverableCard(props) {
     }));
 
     const classes = useStyles();
-    function getClass(typeID) {
-        switch (typeID) {
-            case 1:
-                return classes.sample;
-            case 2:
-                return classes.document;
-            case 3:
-                return classes.milk;
-            default:
-                return classes.other;
-        }
-    }
-
     return (
         <Grid
             className={classes.root}
@@ -100,8 +96,8 @@ function DeliverableCard(props) {
                     direction={"row"}
                 >
                     <Grid item>
-                        <Avatar className={getClass(props.typeID)}>
-                            {getIcon(props.typeID)}
+                        <Avatar className={classes[props.icon]}>
+                            {getIcon(props.icon)}
                         </Avatar>
                     </Grid>
                     <Grid item>
@@ -125,13 +121,14 @@ function DeliverableCard(props) {
 }
 
 DeliverableCard.propTypes = {
-    typeID: PropTypes.string,
+    icon: PropTypes.string,
     label: PropTypes.string,
     onDelete: PropTypes.func,
     compact: PropTypes.bool,
 };
 
 DeliverableCard.defaultProps = {
+    icon: deliverableIcons.other,
     onDelete: () => {},
     compact: false,
     label: "Unknown",

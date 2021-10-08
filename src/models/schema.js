@@ -1214,6 +1214,15 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "icon": {
+                    "name": "icon",
+                    "isArray": false,
+                    "type": {
+                        "enum": "DeliverableTypeIcon"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "comments": {
                     "name": "comments",
                     "isArray": true,
@@ -1333,6 +1342,16 @@ export const schema = {
                 "BOX"
             ]
         },
+        "DeliverableTypeIcon": {
+            "name": "DeliverableTypeIcon",
+            "values": [
+                "BUG",
+                "CHILD",
+                "DOCUMENT",
+                "EQUIPMENT",
+                "OTHER"
+            ]
+        },
         "TaskStatus": {
             "name": "TaskStatus",
             "values": [
@@ -1357,5 +1376,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "ddfc99f35a8d74f0fa61745057bd9a51"
+    "version": "c1fdc1851df3370035e5a6b0da67b431"
 };

@@ -6,6 +6,14 @@ export const protectedFields = [
     "createdAt",
 ];
 
+export const deliverableIcons = {
+    bug: "BUG",
+    child: "CHILD",
+    document: "DOCUMENT",
+    equipment: "EQUIPMENT",
+    other: "OTHER",
+};
+
 export const userRoles = {
     admin: "ADMIN",
     user: "USER",
