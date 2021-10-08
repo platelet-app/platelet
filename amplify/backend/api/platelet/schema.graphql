@@ -77,6 +77,7 @@ type Deliverable @model {
   taskDeliverablesId: ID!
   count: Int
   unit: DeliverableUnit
+  orderInGrid: Int
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 

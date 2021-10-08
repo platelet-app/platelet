@@ -1207,6 +1207,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "orderInGrid": {
+                    "name": "orderInGrid",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "comments": {
                     "name": "comments",
                     "isArray": true,
@@ -1350,5 +1357,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "fd8b7d3c97da457322a79a8d13ca845a"
+    "version": "ddfc99f35a8d74f0fa61745057bd9a51"
 };

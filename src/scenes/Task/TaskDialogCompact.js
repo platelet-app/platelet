@@ -258,11 +258,12 @@ function TaskDialogCompact(props) {
                 );
             }
         } else {
-            console.log(Object.values(taskDeliverablesRef.current).length);
+            console.log(value.orderInGrid);
             const newDeliverable = await DataStore.save(
                 new models.Deliverable({
                     taskDeliverablesId: taskUUID,
                     count: value.count,
+                    orderInGrid: value.orderInGrid,
                     deliverableTypeDeliverableTypeId: value.id,
                 })
             );

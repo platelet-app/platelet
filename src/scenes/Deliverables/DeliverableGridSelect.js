@@ -54,6 +54,7 @@ function DeliverableGridSelect(props) {
                 id: d.deliverableTypeDeliverableTypeId,
                 label: deliverableType ? deliverableType.label : "",
                 createdAt: d.createdAt,
+                orderInGrid: d.orderInGrid,
             };
         }
         setDeliverables(result);
@@ -76,8 +77,11 @@ function DeliverableGridSelect(props) {
                 result.defaults.push(i);
             }
         }
-        result.deliverables = sortByCreatedTime(result.deliverables, "oldest");
+        result.deliverables = result.deliverables.sort(
+            (a, b) => parseInt(a.orderInGrid) - parseInt(b.orderInGrid)
+        );
         setDeliverablesSorted(result);
+        console.log(result);
     }
     useEffect(sortDeliverables, [availableDeliverables, deliverables]);
 
@@ -102,11 +106,20 @@ function DeliverableGridSelect(props) {
     useEffect(() => getAvailableDeliverables(), []);
 
     function onAddNewDeliverable(deliverable) {
+        let orderInGrid = 0;
+        for (const d of Object.values(deliverables)) {
+            if (d.orderInGrid > orderInGrid);
+            orderInGrid = parseInt(d.orderInGrid) + 1;
+        }
         setDeliverables((prevState) => ({
             ...prevState,
-            [deliverable.id]: deliverable,
+            [deliverable.id]: {
+                ...deliverable,
+                orderInGrid,
+                createdAt: new Date().toISOString(),
+            },
         }));
-        props.onChange(deliverable);
+        props.onChange({ ...deliverable, orderInGrid });
     }
 
     const onChangeCount = (deliverableId, count) => {

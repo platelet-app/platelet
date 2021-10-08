@@ -262,6 +262,7 @@ export declare class Deliverable {
   readonly taskDeliverablesId: string;
   readonly count?: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
+  readonly orderInGrid?: number;
   readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
