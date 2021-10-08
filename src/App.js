@@ -28,8 +28,8 @@ if (process.env.REACT_APP_OFFLINE_ONLY === "false") {
         ...config,
         ssr: true,
     });
-    Logger.LOG_LEVEL = "ERROR";
 }
+Logger.LOG_LEVEL = "ERROR";
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
