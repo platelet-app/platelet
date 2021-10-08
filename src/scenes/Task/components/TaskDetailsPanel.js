@@ -20,7 +20,6 @@ import TimePicker from "./TimePicker";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
-import { priorities } from "../../../apiConsts";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -106,16 +105,13 @@ function TaskDetailsPanel(props) {
     }
 
     function onChangeTimeRejected(value) {
-        if (value || value === null)
-            dispatch(
-                updateTaskRejectedTimeRequest(task.uuid, {
-                    time_rejected: value,
-                })
-            );
+        if (value || value === null) {
+            setState((prevState) => ({ ...prevState, timeRejected: value }));
+            props.onChangeTimeRejected(value);
+        }
     }
 
     function onSelectPriority(priority) {
-        //setState((prevState) => ({ ...prevState, priority }));
         props.onSelectPriority(priority);
     }
 

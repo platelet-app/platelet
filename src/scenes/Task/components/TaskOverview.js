@@ -88,6 +88,7 @@ function TaskOverview(props) {
                     <TaskDetailsPanel
                         onSelectPriority={props.onSelectPriority}
                         onChangeTimeCancelled={props.onChangeTimeCancelled}
+                        onChangeTimeRejected={props.onChangeTimeRejected}
                         onChangeRequesterContact={
                             props.onChangeRequesterContact
                         }
@@ -119,11 +120,15 @@ TaskOverview.propTypes = {
     taskUUID: PropTypes.string,
     onUpdateDeliverable: PropTypes.func,
     onDeleteDeliverable: PropTypes.func,
+    onChangeTimeCancelled: PropTypes.func,
+    onChangeTimeRejected: PropTypes.func,
 };
 
 TaskOverview.defaultProps = {
     onUpdateDeliverable: () => {},
     onDeleteDeliverable: () => {},
+    onChangeTimeCancelled: () => {},
+    onChangeTimeRejected: () => {},
 };
 
 export default TaskOverview;

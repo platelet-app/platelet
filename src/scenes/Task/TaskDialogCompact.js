@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import { useHistory } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
     convertListDataToObject,
     decodeUUID,
@@ -12,8 +12,6 @@ import {
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { createNotFoundSelector } from "../../redux/LoadingSelectors";
-import { getTaskPrefix } from "../../redux/activeTask/ActiveTaskActions";
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
 import TaskOverview from "./components/TaskOverview";
@@ -54,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
 
 const DialogWrapper = (props) => {
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("xs"));
     const { handleClose } = props;
     const classes = useStyles();
     return (
@@ -170,7 +167,6 @@ function TaskDialogCompact(props) {
     async function setTimeCancelled(value) {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
-            debugger;
             let status;
             if (value) {
                 status = tasksStatus.cancelled;
@@ -180,6 +176,24 @@ function TaskDialogCompact(props) {
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
                     updated.timeCancelled = value;
+                    updated.status = status;
+                })
+            );
+        }
+    }
+
+    async function setTimeRejected(value) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result) {
+            let status;
+            if (value) {
+                status = tasksStatus.rejected;
+            } else {
+                status = determineTaskStatus({ ...task, timeRejected: value });
+            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.timeRejected = value;
                     updated.status = status;
                 })
             );
@@ -317,6 +331,7 @@ function TaskDialogCompact(props) {
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}
                         onChangeTimeCancelled={setTimeCancelled}
+                        onChangeTimeRejected={setTimeRejected}
                         onChangeRequesterContact={updateRequesterContact}
                         onUpdateDeliverable={updateDeliverables}
                         onDeleteDeliverable={deleteDeliverable}
