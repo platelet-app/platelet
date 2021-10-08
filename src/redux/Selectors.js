@@ -17,3 +17,4 @@ export const networkStatusSelector = (state) =>
     state.awsHubDataStoreEventsReducer.network;
 export const dataStoreReadyStatusSelector = (state) =>
     state.awsHubDataStoreEventsReducer.ready;
+export const onChangeTaskSelector = (state) => state.onChangeTask;

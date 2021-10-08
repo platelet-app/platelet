@@ -16,7 +16,7 @@ import {
     SET_DARK_MODE,
 } from "./Actions";
 import { dashboardFilter } from "./dashboardFilter/DashboardFilterReducers";
-import { tasks } from "./tasks/TasksReducers";
+import { tasks, onChangeTask } from "./tasks/TasksReducers";
 import { task } from "./activeTask/ActiveTaskReducer";
 import { userStatistics } from "./statistics/statisticsReducers";
 import {
@@ -317,6 +317,7 @@ const appReducer = combineReducers({
     userStatistics,
     darkMode,
     awsHubDataStoreEventsReducer,
+    onChangeTask,
 });
 
 const rootReducer = (state, action) => {

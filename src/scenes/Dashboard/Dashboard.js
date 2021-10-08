@@ -12,13 +12,20 @@ import {
 } from "./components/DashboardDetailTabs";
 import {
     convertListDataToObject,
+    determineTaskStatus,
     getDashboardRoleMode,
     saveDashboardRoleMode,
 } from "../../utilities";
-import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    getWhoami,
+    networkStatusSelector,
+    onChangeTaskSelector,
+} from "../../redux/Selectors";
 import { tasksStatus } from "../../apiConsts";
 import { DataStore } from "aws-amplify";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
+import _ from "lodash";
 
 const initialTasksState = {
     tasksNew: {},
@@ -32,6 +39,8 @@ const initialTasksState = {
 function Dashboard() {
     const dispatch = useDispatch();
     const mobileView = useSelector((state) => state.mobileView);
+    const networkStatus = useSelector(networkStatusSelector);
+    const onChangeTaskValue = useSelector(onChangeTaskSelector);
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
@@ -42,6 +51,46 @@ function Dashboard() {
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
+
+    function findTask(taskId) {
+        for (const taskKey of Object.keys(initialTasksState)) {
+            if (tasks[taskKey][taskId])
+                return { task: tasks[taskKey][taskId], key: taskKey };
+        }
+    }
+
+    async function updateStateOnChange() {
+        if (onChangeTaskValue.taskId && !isFetching) {
+            const result = findTask(onChangeTaskValue.taskId);
+            const existingTask = await DataStore.query(
+                models.Task,
+                onChangeTaskSelector.taskId
+            );
+            if (result && existingTask) {
+                setTasks((prevState) => ({
+                    ...prevState,
+                    [result.key]: _.omit(
+                        prevState[result.key],
+                        onChangeTaskValue.taskId
+                    ),
+                }));
+            }
+            if (existingTask) {
+                const key = determineTaskStatus(existingTask);
+                setTasks((prevState) => ({
+                    ...prevState,
+                    [key]: {
+                        ...prevState[key],
+                        [onChangeTaskValue.taskId]: {
+                            existingTask,
+                        },
+                    },
+                }));
+            }
+        }
+    }
+
+    useEffect(() => updateStateOnChange(), [onChangeTaskValue]);
 
     function setInitialRoleView() {
         if (whoami.id) {
@@ -133,6 +182,11 @@ function Dashboard() {
         }
     }
     useEffect(() => getTasks(), [roleView, dataStoreReadyStatus]);
+    useEffect(() => {
+        if (networkStatus && dataStoreReadyStatus && !isFetching) {
+            getTasks();
+        }
+    }, [networkStatus]);
 
     useEffect(() => {
         return () => {

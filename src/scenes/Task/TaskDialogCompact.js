@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import { useHistory } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     convertListDataToObject,
     decodeUUID,
@@ -23,6 +23,7 @@ import { DataStore } from "aws-amplify";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import _ from "lodash";
 import { tasksStatus } from "../../apiConsts";
+import { onChangeTask } from "../../redux/tasks/TasksActions";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -123,6 +124,7 @@ function TaskDialogCompact(props) {
     const history = useHistory();
     const classes = useStyles();
     const theme = useTheme();
+    const dispatch = useDispatch();
     const isMd = useMediaQuery(theme.breakpoints.down("md"));
     const [isFetching, setIsFetching] = useState(false);
     const [task, setTask] = useState(initialState);
@@ -130,6 +132,8 @@ function TaskDialogCompact(props) {
     // have been added or removed without resending data to DeliverableGridSelect props by updating state
     const taskDeliverablesRef = useRef({});
     taskDeliverablesRef.current = task.deliverables;
+    const taskRef = useRef();
+    taskRef.current = task;
 
     let taskUUID = null;
 
@@ -171,7 +175,10 @@ function TaskDialogCompact(props) {
             if (value) {
                 status = tasksStatus.cancelled;
             } else {
-                status = determineTaskStatus({ ...task, timeCancelled: value });
+                status = determineTaskStatus({
+                    ...result,
+                    timeCancelled: value,
+                });
             }
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
@@ -179,7 +186,9 @@ function TaskDialogCompact(props) {
                     updated.status = status;
                 })
             );
+            taskRef.current = { ...taskRef.current, timeCancelled: value };
         }
+        dispatch(onChangeTask(taskUUID));
     }
 
     async function setTimeRejected(value) {
@@ -189,7 +198,10 @@ function TaskDialogCompact(props) {
             if (value) {
                 status = tasksStatus.rejected;
             } else {
-                status = determineTaskStatus({ ...task, timeRejected: value });
+                status = determineTaskStatus({
+                    ...result,
+                    timeRejected: value,
+                });
             }
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
@@ -197,7 +209,9 @@ function TaskDialogCompact(props) {
                     updated.status = status;
                 })
             );
+            taskRef.current = { ...taskRef.current, timeRejected: value };
         }
+        dispatch(onChangeTask(taskUUID));
     }
 
     async function selectPriority(priority) {
@@ -209,6 +223,7 @@ function TaskDialogCompact(props) {
                 })
             );
         }
+        dispatch(onChangeTask(taskUUID));
     }
 
     async function updateRequesterContact(requesterValue) {
@@ -227,6 +242,14 @@ function TaskDialogCompact(props) {
                 )
             );
         }
+        taskRef.current = {
+            ...taskRef.current,
+            requesterContact: {
+                ...taskRef.current.requesterContact,
+                ...requesterValue,
+            },
+        };
+        dispatch(onChangeTask(taskUUID));
     }
 
     async function deleteDeliverable(deliverableTypeId) {
@@ -285,7 +308,6 @@ function TaskDialogCompact(props) {
             taskDeliverablesRef.current[newDeliverable.id] = newDeliverable;
         }
     }
-    console.log(task.deliverables);
 
     const handleClose = (e) => {
         e.stopPropagation();
