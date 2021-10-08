@@ -13,12 +13,9 @@ const DeliverableBox = styled(Box)({
 function AddableDeliverable(props) {
     const deliverableType = props.deliverableType;
     function makeNewDeliverable() {
-        const d = new Date();
         let newDeliverable = {
+            ...deliverableType,
             count: 1,
-            id: deliverableType.id,
-            label: deliverableType.label,
-            createdAt: d.toISOString(),
         };
         props.onAdd(newDeliverable);
     }
