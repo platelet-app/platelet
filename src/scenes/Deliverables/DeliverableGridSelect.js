@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
-import { updateDeliverableRequest } from "../../redux/deliverables/DeliverablesActions";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Paper } from "@material-ui/core";
@@ -11,7 +10,7 @@ import Link from "@material-ui/core/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
-import { convertListDataToObject, sortByCreatedTime } from "../../utilities";
+import { convertListDataToObject } from "../../utilities";
 import PropTypes from "prop-types";
 import EditableDeliverable from "./components/EditableDeliverable";
 import AddableDeliverable from "./components/AddableDeliverable";
@@ -82,7 +81,6 @@ function DeliverableGridSelect(props) {
             (a, b) => parseInt(a.orderInGrid) - parseInt(b.orderInGrid)
         );
         setDeliverablesSorted(result);
-        console.log(result);
     }
     useEffect(sortDeliverables, [availableDeliverables, state]);
 

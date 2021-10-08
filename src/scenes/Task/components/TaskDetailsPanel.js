@@ -3,22 +3,12 @@ import Typography from "@material-ui/core/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import Grid from "@material-ui/core/Grid";
 import PrioritySelect from "./PrioritySelect";
-import {
-    updateTaskCancelledTimePrefix,
-    updateTaskCancelledTimeRequest,
-    updateTaskPriorityRequest,
-    updateTaskRejectedTimeRequest,
-    updateTaskRequesterContactRequest,
-    updateTaskTimeOfCallPrefix,
-    updateTaskTimeOfCallRequest,
-} from "../../../redux/tasks/TasksActions";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
 import ActivityPopover from "./ActivityPopover";
 import TimePicker from "./TimePicker";
-import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 
@@ -30,14 +20,6 @@ const useStyles = makeStyles({
         paddingLeft: "20px",
     },
 });
-
-const tocPostingSelector = createPostingSelector([updateTaskTimeOfCallPrefix]);
-const cancelledPostingSelector = createPostingSelector([
-    updateTaskCancelledTimePrefix,
-]);
-const rejectedPostingSelector = createPostingSelector([
-    "UPDATE_TASK_TIME_REJECTED",
-]);
 
 function extractTaskData(task) {
     let {
@@ -70,13 +52,6 @@ function extractTaskData(task) {
 
 function TaskDetailsPanel(props) {
     const { task } = props;
-    const tocPosting = useSelector((state) => tocPostingSelector(state));
-    const isPostingCancelTime = useSelector((state) =>
-        cancelledPostingSelector(state)
-    );
-    const isPostingRejectedTime = useSelector((state) =>
-        rejectedPostingSelector(state)
-    );
     const cardClasses = dialogCardStyles();
     const [state, setState] = useState({
         reference: null,
@@ -120,14 +95,6 @@ function TaskDetailsPanel(props) {
         props.onChangeRequesterContact(value);
     }
 
-    function sendRequesterContactData(value) {
-        const payload = {
-            requester_contact: { ...state.requester_contact, ...value },
-        };
-        dispatch(updateTaskRequesterContactRequest(state.uuid, payload));
-        setState({ ...state, ...payload });
-    }
-
     return (
         <Paper className={cardClasses.root}>
             <Grid container direction={"column"} spacing={3}>
@@ -139,7 +106,6 @@ function TaskDetailsPanel(props) {
                         <TimePicker
                             onChange={onChangeTimeOfCall}
                             disableClear={true}
-                            disabled={tocPosting}
                             label={"TOC"}
                             time={state.timeOfCall}
                         />
@@ -204,7 +170,6 @@ function TaskDetailsPanel(props) {
                                 <TimePicker
                                     onChange={onChangeTimeCancelled}
                                     disabled={
-                                        isPostingCancelTime ||
                                         !!state.timeDroppedOff ||
                                         !!state.timeRejected
                                     }
@@ -218,7 +183,6 @@ function TaskDetailsPanel(props) {
                                 <TimePicker
                                     onChange={onChangeTimeRejected}
                                     disabled={
-                                        isPostingRejectedTime ||
                                         !!state.timeDroppedOff ||
                                         !!state.timeCancelled
                                     }
