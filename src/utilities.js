@@ -1,6 +1,7 @@
 import React from "react";
 import uuidBase62 from "uuid-base62";
 import { v4 as uuidv4 } from "uuid";
+import { tasksStatus } from "./apiConsts";
 
 export function convertListDataToObject(list) {
     const result = {};
@@ -8,6 +9,37 @@ export function convertListDataToObject(list) {
         result[item.id] = item;
     }
     return result;
+}
+
+export function determineTaskStatus(task) {
+    // sort out cancelled and rejected first
+    if (!!task.timeCancelled) {
+        return tasksStatus.cancelled;
+    } else if (!!task.timeRejected) {
+        return tasksStatus.rejected;
+    } else if (!task.assignedRiders || task.assignedRiders.length === 0) {
+        return tasksStatus.new;
+    } else if (
+        task.assignedRiders &&
+        task.assignedRiders.length > 0 &&
+        !!!task.timePickedUp
+    ) {
+        return tasksStatus.active;
+    } else if (
+        task.assignedRiders &&
+        task.assignedRiders.length > 0 &&
+        !!task.timePickedUp &&
+        !!!task.timeDroppedOff
+    ) {
+        return tasksStatus.pickedUp;
+    } else if (
+        task.assignedRiders &&
+        task.assignedRiders.length > 0 &&
+        !!task.timePickedUp &&
+        !!task.timeDroppedOff
+    ) {
+        return tasksStatus.droppedOff;
+    }
 }
 
 export function taskStatusHumanReadable(status) {
