@@ -12,6 +12,7 @@ import {
     updateTaskTimeOfCallPrefix,
     updateTaskTimeOfCallRequest,
 } from "../../../redux/tasks/TasksActions";
+import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
@@ -232,5 +233,20 @@ function TaskDetailsPanel(props) {
         </Paper>
     );
 }
+
+TaskDetailsPanel.propTypes = {
+    task: PropTypes.object,
+    onChangeTimeRejected: PropTypes.func,
+    onChangeTimeCancelled: PropTypes.func,
+    onSelectPriority: PropTypes.func,
+    onChangeRequesterContact: PropTypes.func,
+};
+
+TaskDetailsPanel.defaultProps = {
+    onChangeTimeRejected: () => {},
+    onChangeTimeCancelled: () => {},
+    onSelectPriority: () => {},
+    onChangeRequesterContact: () => {},
+};
 
 export default TaskDetailsPanel;
