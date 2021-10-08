@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import { useHistory } from "react-router";
@@ -19,6 +19,7 @@ import CommentsSection from "../Comments/CommentsSection";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
+import _ from "lodash";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -123,6 +124,10 @@ function TaskDialogCompact(props) {
     const isMd = useMediaQuery(theme.breakpoints.down("md"));
     const [isFetching, setIsFetching] = useState(false);
     const [task, setTask] = useState(initialState);
+    // taskDeliverablesRef exists to keep track of which deliverables
+    // have been added or removed without resending data to DeliverableGridSelect props by updating state
+    const taskDeliverablesRef = useRef({});
+    taskDeliverablesRef.current = task.deliverables;
 
     let taskUUID = null;
 
@@ -187,23 +192,30 @@ function TaskDialogCompact(props) {
     }
 
     async function deleteDeliverable(deliverableTypeId) {
-        const existing = Object.values(task.deliverables).filter(
+        // receive DeliverableTypeId only from selector component
+        // check if one of this DeliverableType has already been saved so we can delete it
+        const existing = Object.values(taskDeliverablesRef.current).find(
             (d) => d.deliverableTypeDeliverableTypeId === deliverableTypeId
         );
-        if (existing && existing.length > 0) {
-            for (const d of existing) {
-                const existingDeliverable = await DataStore.query(
-                    models.Deliverable,
-                    d.id
-                );
-                if (existingDeliverable)
-                    await DataStore.delete(existingDeliverable);
-            }
+        if (existing) {
+            const existingDeliverable = await DataStore.query(
+                models.Deliverable,
+                existing.id
+            );
+            if (existingDeliverable)
+                await DataStore.delete(existingDeliverable);
+            // remove it from the tracking reference
+            taskDeliverablesRef.current = _.omit(
+                taskDeliverablesRef.current,
+                existing.id
+            );
         }
     }
 
     async function updateDeliverables(value) {
-        const existing = Object.values(task.deliverables).find(
+        // receive DeliverableType from selector component
+        // check if one of this DeliverableType has already been saved
+        const existing = Object.values(taskDeliverablesRef.current).find(
             (d) => d.deliverableTypeDeliverableTypeId === value.id
         );
         if (existing) {
@@ -211,28 +223,30 @@ function TaskDialogCompact(props) {
                 models.Deliverable,
                 existing.id
             );
-            const updatedDeliverable = await DataStore.save(
-                models.Deliverable.copyOf(existingDeliverable, (updated) => {
-                    updated.count = value.count;
-                })
-            );
-            setTask((prevState) => ({
-                ...prevState,
-                deliverables: {
-                    ...prevState.deliverables,
-                    [updatedDeliverable.id]: updatedDeliverable,
-                },
-            }));
+            if (existingDeliverable) {
+                await DataStore.save(
+                    models.Deliverable.copyOf(
+                        existingDeliverable,
+                        (updated) => {
+                            updated.count = value.count;
+                        }
+                    )
+                );
+            }
         } else {
-            await DataStore.save(
+            console.log(Object.values(taskDeliverablesRef.current).length);
+            const newDeliverable = await DataStore.save(
                 new models.Deliverable({
                     taskDeliverablesId: taskUUID,
                     count: value.count,
                     deliverableTypeDeliverableTypeId: value.id,
                 })
             );
+            // add it to the tracking reference
+            taskDeliverablesRef.current[newDeliverable.id] = newDeliverable;
         }
     }
+    console.log(task.deliverables);
 
     const handleClose = (e) => {
         e.stopPropagation();
