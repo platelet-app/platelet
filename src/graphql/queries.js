@@ -909,6 +909,8 @@ export const syncDeliverables = /* GraphQL */ `
         taskDeliverablesId
         count
         unit
+        orderInGrid
+        icon
         comments {
           nextToken
           startedAt
@@ -940,6 +942,8 @@ export const getDeliverable = /* GraphQL */ `
       taskDeliverablesId
       count
       unit
+      orderInGrid
+      icon
       comments {
         items {
           id
@@ -984,6 +988,8 @@ export const listDeliverables = /* GraphQL */ `
         taskDeliverablesId
         count
         unit
+        orderInGrid
+        icon
         comments {
           nextToken
           startedAt
@@ -1525,6 +1531,8 @@ export const getTask = /* GraphQL */ `
           taskDeliverablesId
           count
           unit
+          orderInGrid
+          icon
           _version
           _deleted
           _lastChangedAt
