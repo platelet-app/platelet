@@ -47,6 +47,8 @@ function extractTaskData(task) {
         id,
         requesterContact,
         priority,
+        timeRejected,
+        timeCancelled,
     } = task;
     if (requesterContact === null) {
         requesterContact = {
@@ -61,6 +63,8 @@ function extractTaskData(task) {
         id,
         requesterContact,
         priority,
+        timeRejected,
+        timeCancelled,
     };
 }
 
@@ -77,6 +81,8 @@ function TaskDetailsPanel(props) {
     const [state, setState] = useState({
         reference: null,
         timeOfCall: null,
+        timeCancelled: null,
+        timeRejected: null,
         riderResponsibility: null,
         id: null,
         requesterContact: {
@@ -90,18 +96,13 @@ function TaskDetailsPanel(props) {
     console.log(state);
     useEffect(() => setState(extractTaskData(props.task)), [props.task]);
 
-    function onChangeTimeOfCall(value) {
-        const payload = { time_of_call: value };
-        dispatch(updateTaskTimeOfCallRequest(state.uuid, payload));
-    }
+    function onChangeTimeOfCall(value) {}
 
     function onChangeTimeCancelled(value) {
-        if (value || value === null)
-            dispatch(
-                updateTaskCancelledTimeRequest(task.uuid, {
-                    time_cancelled: value,
-                })
-            );
+        if (value || value === null) {
+            setState((prevState) => ({ ...prevState, timeCancelled: value }));
+            props.onChangeTimeCancelled(value);
+        }
     }
 
     function onChangeTimeRejected(value) {
@@ -207,11 +208,11 @@ function TaskDetailsPanel(props) {
                                     onChange={onChangeTimeCancelled}
                                     disabled={
                                         isPostingCancelTime ||
-                                        !!task.timeDroppedOff ||
-                                        !!task.timeRejected
+                                        !!state.timeDroppedOff ||
+                                        !!state.timeRejected
                                     }
                                     label={"Mark cancelled"}
-                                    time={task.timeCancelled}
+                                    time={state.timeCancelled}
                                 />
                             </LabelItemPair>
                         </Grid>
@@ -221,11 +222,11 @@ function TaskDetailsPanel(props) {
                                     onChange={onChangeTimeRejected}
                                     disabled={
                                         isPostingRejectedTime ||
-                                        !!task.timeDroppedOff ||
-                                        !!task.timeCancelled
+                                        !!state.timeDroppedOff ||
+                                        !!state.timeCancelled
                                     }
                                     label={"Mark rejected"}
-                                    time={task.timeRejected}
+                                    time={state.timeRejected}
                                 />
                             </LabelItemPair>
                         </Grid>

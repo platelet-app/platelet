@@ -87,6 +87,7 @@ function TaskOverview(props) {
                 <Grid className={classes.item} item>
                     <TaskDetailsPanel
                         onSelectPriority={props.onSelectPriority}
+                        onChangeTimeCancelled={props.onChangeTimeCancelled}
                         onChangeRequesterContact={
                             props.onChangeRequesterContact
                         }

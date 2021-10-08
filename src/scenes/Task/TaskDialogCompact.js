@@ -3,7 +3,11 @@ import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import { useHistory } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { convertListDataToObject, decodeUUID } from "../../utilities";
+import {
+    convertListDataToObject,
+    decodeUUID,
+    determineTaskStatus,
+} from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -20,6 +24,7 @@ import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import _ from "lodash";
+import { tasksStatus } from "../../apiConsts";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -162,6 +167,25 @@ function TaskDialogCompact(props) {
     }
     useEffect(() => getTask(), [dataStoreReadyStatus, props.location.key]);
 
+    async function setTimeCancelled(value) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result) {
+            debugger;
+            let status;
+            if (value) {
+                status = tasksStatus.cancelled;
+            } else {
+                status = determineTaskStatus({ ...task, timeCancelled: value });
+            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.timeCancelled = value;
+                    updated.status = status;
+                })
+            );
+        }
+    }
+
     async function selectPriority(priority) {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
@@ -291,6 +315,7 @@ function TaskDialogCompact(props) {
                         task={task}
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}
+                        onChangeTimeCancelled={setTimeCancelled}
                         onChangeRequesterContact={updateRequesterContact}
                         onUpdateDeliverable={updateDeliverables}
                         onDeleteDeliverable={deleteDeliverable}
