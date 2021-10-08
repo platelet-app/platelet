@@ -36,7 +36,7 @@ function DeliverableGridSelect(props) {
     const [deliverablesSorted, setDeliverablesSorted] = useState(
         initialDeliverablesSortedState
     );
-    const [deliverables, setDeliverables] = useState({});
+    const [state, setState] = useState({});
     const [truncated, setTruncated] = useState(false);
     const [availableDeliverables, setAvailableDeliverables] = useState({});
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
@@ -57,7 +57,7 @@ function DeliverableGridSelect(props) {
                 orderInGrid: d.orderInGrid,
             };
         }
-        setDeliverables(result);
+        setState(result);
     }
     useEffect(convertExistingDeliverablesToState, [
         props.deliverables,
@@ -70,7 +70,7 @@ function DeliverableGridSelect(props) {
             defaults: [],
         };
         for (const i of Object.values(availableDeliverables)) {
-            const value = deliverables[i.id];
+            const value = state[i.id];
             if (value) {
                 result.deliverables.push(value);
             } else {
@@ -83,7 +83,7 @@ function DeliverableGridSelect(props) {
         setDeliverablesSorted(result);
         console.log(result);
     }
-    useEffect(sortDeliverables, [availableDeliverables, deliverables]);
+    useEffect(sortDeliverables, [availableDeliverables, state]);
 
     async function getAvailableDeliverables() {
         if (!dataStoreReadyStatus) {
@@ -107,11 +107,11 @@ function DeliverableGridSelect(props) {
 
     function onAddNewDeliverable(deliverable) {
         let orderInGrid = 0;
-        for (const d of Object.values(deliverables)) {
+        for (const d of Object.values(state)) {
             if (d.orderInGrid > orderInGrid);
             orderInGrid = parseInt(d.orderInGrid) + 1;
         }
-        setDeliverables((prevState) => ({
+        setState((prevState) => ({
             ...prevState,
             [deliverable.id]: {
                 ...deliverable,
@@ -123,9 +123,9 @@ function DeliverableGridSelect(props) {
     }
 
     const onChangeCount = (deliverableId, count) => {
-        const existing = deliverables[deliverableId];
+        const existing = state[deliverableId];
         if (existing) {
-            setDeliverables((prevState) => ({
+            setState((prevState) => ({
                 ...prevState,
                 [deliverableId]: { ...prevState[deliverableId], count },
             }));
@@ -134,7 +134,7 @@ function DeliverableGridSelect(props) {
     };
 
     function onDelete(deliverableId) {
-        setDeliverables((prevState) => _.omit(prevState, deliverableId));
+        setState((prevState) => _.omit(prevState, deliverableId));
         props.onDelete(deliverableId);
     }
 
