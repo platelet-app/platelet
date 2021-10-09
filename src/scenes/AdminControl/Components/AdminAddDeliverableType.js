@@ -10,7 +10,6 @@ import {
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch, useSelector } from "react-redux";
-import { encodeUUID } from "../../../utilities";
 import { getWhoami } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
@@ -107,7 +106,15 @@ function AdminAddDeliverableType() {
                         );
                     })}
                     <Grid item>
-                        <DeliverableIconPicker />
+                        <DeliverableIconPicker
+                            value={state.icon}
+                            onChange={(icon) =>
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    icon,
+                                }))
+                            }
+                        />
                     </Grid>
                     <Grid item>
                         <Button
