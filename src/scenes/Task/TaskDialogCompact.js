@@ -179,6 +179,11 @@ function TaskDialogCompact(props) {
                 })
             );
             taskRef.current = { ...taskRef.current, timeCancelled: value };
+            setTask((prevState) => ({
+                ...prevState,
+                status,
+                timeCancelled: value,
+            }));
         }
     }
 
@@ -201,6 +206,11 @@ function TaskDialogCompact(props) {
                 })
             );
             taskRef.current = { ...taskRef.current, timeRejected: value };
+            setTask((prevState) => ({
+                ...prevState,
+                status,
+                timeRejected: value,
+            }));
         }
     }
 
