@@ -1103,6 +1103,7 @@ export const createDeliverable = /* GraphQL */ `
       deliverableType {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt
@@ -1113,7 +1114,6 @@ export const createDeliverable = /* GraphQL */ `
       count
       unit
       orderInGrid
-      icon
       comments {
         items {
           id
@@ -1147,6 +1147,7 @@ export const updateDeliverable = /* GraphQL */ `
       deliverableType {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt
@@ -1157,7 +1158,6 @@ export const updateDeliverable = /* GraphQL */ `
       count
       unit
       orderInGrid
-      icon
       comments {
         items {
           id
@@ -1191,6 +1191,7 @@ export const deleteDeliverable = /* GraphQL */ `
       deliverableType {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt
@@ -1201,7 +1202,6 @@ export const deleteDeliverable = /* GraphQL */ `
       count
       unit
       orderInGrid
-      icon
       comments {
         items {
           id
@@ -2924,7 +2924,6 @@ export const createTask = /* GraphQL */ `
           count
           unit
           orderInGrid
-          icon
           _version
           _deleted
           _lastChangedAt
@@ -3523,7 +3522,6 @@ export const updateTask = /* GraphQL */ `
           count
           unit
           orderInGrid
-          icon
           _version
           _deleted
           _lastChangedAt
@@ -4122,7 +4120,6 @@ export const deleteTask = /* GraphQL */ `
           count
           unit
           orderInGrid
-          icon
           _version
           _deleted
           _lastChangedAt
@@ -4761,6 +4758,7 @@ export const createDeliverableType = /* GraphQL */ `
     createDeliverableType(input: $input, condition: $condition) {
       id
       label
+      icon
       _version
       _deleted
       _lastChangedAt
@@ -4777,6 +4775,7 @@ export const updateDeliverableType = /* GraphQL */ `
     updateDeliverableType(input: $input, condition: $condition) {
       id
       label
+      icon
       _version
       _deleted
       _lastChangedAt
@@ -4793,6 +4792,7 @@ export const deleteDeliverableType = /* GraphQL */ `
     deleteDeliverableType(input: $input, condition: $condition) {
       id
       label
+      icon
       _version
       _deleted
       _lastChangedAt

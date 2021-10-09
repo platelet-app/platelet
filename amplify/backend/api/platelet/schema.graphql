@@ -79,17 +79,10 @@ type Deliverable @model {
   count: Int
   unit: DeliverableUnit
   orderInGrid: Int
-  icon: DeliverableTypeIcon
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-enum DeliverableTypeIcon {
-  BUG
-  CHILD
-  DOCUMENT
-  EQUIPMENT
-  OTHER
-}
+
 
 type RiderTasks @model(queries: null) {
   id: ID!
@@ -144,6 +137,15 @@ type Comment @model @key(name: "byParent", fields: ["parentId"]) {
 type DeliverableType @model {
   id: ID!
   label: String!
+  icon: DeliverableTypeIcon
+}
+
+enum DeliverableTypeIcon {
+  BUG
+  CHILD
+  DOCUMENT
+  EQUIPMENT
+  OTHER
 }
 
 type RiderResponsibility @model {

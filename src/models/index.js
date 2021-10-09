@@ -20,20 +20,20 @@ const Priority = {
   "LOW": "LOW"
 };
 
-const DeliverableUnit = {
-  "LITRE": "LITRE",
-  "MILLILITRES": "MILLILITRES",
-  "GRAMS": "GRAMS",
-  "COUNT": "COUNT",
-  "BOX": "BOX"
-};
-
 const DeliverableTypeIcon = {
   "BUG": "BUG",
   "CHILD": "CHILD",
   "DOCUMENT": "DOCUMENT",
   "EQUIPMENT": "EQUIPMENT",
   "OTHER": "OTHER"
+};
+
+const DeliverableUnit = {
+  "LITRE": "LITRE",
+  "MILLILITRES": "MILLILITRES",
+  "GRAMS": "GRAMS",
+  "COUNT": "COUNT",
+  "BOX": "BOX"
 };
 
 const TaskStatus = {
@@ -72,8 +72,8 @@ export {
   Role,
   CommentVisibility,
   Priority,
-  DeliverableUnit,
   DeliverableTypeIcon,
+  DeliverableUnit,
   TaskStatus,
   Patch
 };

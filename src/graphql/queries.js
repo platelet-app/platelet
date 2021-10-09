@@ -900,6 +900,7 @@ export const syncDeliverables = /* GraphQL */ `
         deliverableType {
           id
           label
+          icon
           _version
           _deleted
           _lastChangedAt
@@ -910,7 +911,6 @@ export const syncDeliverables = /* GraphQL */ `
         count
         unit
         orderInGrid
-        icon
         comments {
           nextToken
           startedAt
@@ -933,6 +933,7 @@ export const getDeliverable = /* GraphQL */ `
       deliverableType {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt
@@ -943,7 +944,6 @@ export const getDeliverable = /* GraphQL */ `
       count
       unit
       orderInGrid
-      icon
       comments {
         items {
           id
@@ -979,6 +979,7 @@ export const listDeliverables = /* GraphQL */ `
         deliverableType {
           id
           label
+          icon
           _version
           _deleted
           _lastChangedAt
@@ -989,7 +990,6 @@ export const listDeliverables = /* GraphQL */ `
         count
         unit
         orderInGrid
-        icon
         comments {
           nextToken
           startedAt
@@ -1532,7 +1532,6 @@ export const getTask = /* GraphQL */ `
           count
           unit
           orderInGrid
-          icon
           _version
           _deleted
           _lastChangedAt
@@ -2245,6 +2244,7 @@ export const syncDeliverableTypes = /* GraphQL */ `
       items {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt
@@ -2261,6 +2261,7 @@ export const getDeliverableType = /* GraphQL */ `
     getDeliverableType(id: $id) {
       id
       label
+      icon
       _version
       _deleted
       _lastChangedAt
@@ -2283,6 +2284,7 @@ export const listDeliverableTypes = /* GraphQL */ `
       items {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt

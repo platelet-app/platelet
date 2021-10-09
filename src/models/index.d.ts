@@ -18,20 +18,20 @@ export enum Priority {
   LOW = "LOW"
 }
 
-export enum DeliverableUnit {
-  LITRE = "LITRE",
-  MILLILITRES = "MILLILITRES",
-  GRAMS = "GRAMS",
-  COUNT = "COUNT",
-  BOX = "BOX"
-}
-
 export enum DeliverableTypeIcon {
   BUG = "BUG",
   CHILD = "CHILD",
   DOCUMENT = "DOCUMENT",
   EQUIPMENT = "EQUIPMENT",
   OTHER = "OTHER"
+}
+
+export enum DeliverableUnit {
+  LITRE = "LITRE",
+  MILLILITRES = "MILLILITRES",
+  GRAMS = "GRAMS",
+  COUNT = "COUNT",
+  BOX = "BOX"
 }
 
 export enum TaskStatus {
@@ -271,7 +271,6 @@ export declare class Deliverable {
   readonly count?: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
   readonly orderInGrid?: number;
-  readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
   readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
@@ -282,6 +281,7 @@ export declare class Deliverable {
 export declare class DeliverableType {
   readonly id: string;
   readonly label: string;
+  readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);

@@ -1214,15 +1214,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "icon": {
-                    "name": "icon",
-                    "isArray": false,
-                    "type": {
-                        "enum": "DeliverableTypeIcon"
-                    },
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "comments": {
                     "name": "comments",
                     "isArray": true,
@@ -1280,6 +1271,15 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "icon": {
+                    "name": "icon",
+                    "isArray": false,
+                    "type": {
+                        "enum": "DeliverableTypeIcon"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1332,16 +1332,6 @@ export const schema = {
                 "LOW"
             ]
         },
-        "DeliverableUnit": {
-            "name": "DeliverableUnit",
-            "values": [
-                "LITRE",
-                "MILLILITRES",
-                "GRAMS",
-                "COUNT",
-                "BOX"
-            ]
-        },
         "DeliverableTypeIcon": {
             "name": "DeliverableTypeIcon",
             "values": [
@@ -1350,6 +1340,16 @@ export const schema = {
                 "DOCUMENT",
                 "EQUIPMENT",
                 "OTHER"
+            ]
+        },
+        "DeliverableUnit": {
+            "name": "DeliverableUnit",
+            "values": [
+                "LITRE",
+                "MILLILITRES",
+                "GRAMS",
+                "COUNT",
+                "BOX"
             ]
         },
         "TaskStatus": {
@@ -1376,5 +1376,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "c1fdc1851df3370035e5a6b0da67b431"
+    "version": "d74acdd41cd474fe30c2ff75c07b08f2"
 };

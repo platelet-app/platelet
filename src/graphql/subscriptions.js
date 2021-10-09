@@ -1055,6 +1055,7 @@ export const onCreateDeliverable = /* GraphQL */ `
       deliverableType {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt
@@ -1065,7 +1066,6 @@ export const onCreateDeliverable = /* GraphQL */ `
       count
       unit
       orderInGrid
-      icon
       comments {
         items {
           id
@@ -1096,6 +1096,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
       deliverableType {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt
@@ -1106,7 +1107,6 @@ export const onUpdateDeliverable = /* GraphQL */ `
       count
       unit
       orderInGrid
-      icon
       comments {
         items {
           id
@@ -1137,6 +1137,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
       deliverableType {
         id
         label
+        icon
         _version
         _deleted
         _lastChangedAt
@@ -1147,7 +1148,6 @@ export const onDeleteDeliverable = /* GraphQL */ `
       count
       unit
       orderInGrid
-      icon
       comments {
         items {
           id
@@ -2849,7 +2849,6 @@ export const onCreateTask = /* GraphQL */ `
           count
           unit
           orderInGrid
-          icon
           _version
           _deleted
           _lastChangedAt
@@ -3445,7 +3444,6 @@ export const onUpdateTask = /* GraphQL */ `
           count
           unit
           orderInGrid
-          icon
           _version
           _deleted
           _lastChangedAt
@@ -4041,7 +4039,6 @@ export const onDeleteTask = /* GraphQL */ `
           count
           unit
           orderInGrid
-          icon
           _version
           _deleted
           _lastChangedAt
@@ -4668,6 +4665,7 @@ export const onCreateDeliverableType = /* GraphQL */ `
     onCreateDeliverableType {
       id
       label
+      icon
       _version
       _deleted
       _lastChangedAt
@@ -4681,6 +4679,7 @@ export const onUpdateDeliverableType = /* GraphQL */ `
     onUpdateDeliverableType {
       id
       label
+      icon
       _version
       _deleted
       _lastChangedAt
@@ -4694,6 +4693,7 @@ export const onDeleteDeliverableType = /* GraphQL */ `
     onDeleteDeliverableType {
       id
       label
+      icon
       _version
       _deleted
       _lastChangedAt
