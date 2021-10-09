@@ -90,7 +90,14 @@ function TasksGridColumn(props) {
     const [isFetching, setIsFetching] = useState(false);
 
     function updateStateFromTaskProp() {
-        if (props.taskKey === "tasksNew") {
+        if (
+            [
+                "tasksNew",
+                "tasksDroppedOff",
+                "tasksCancelled",
+                "tasksRejected",
+            ].includes(props.taskKey)
+        ) {
             const listReversed = Object.values(props.tasks).reverse();
             const listSorted = sortByCreatedTime(listReversed, "newest");
             setState(listSorted);
