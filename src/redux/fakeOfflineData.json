@@ -215,23 +215,28 @@
     "deliverables": [
         {
             "label": "Sample",
-            "icon": "BUG"
+            "icon": "BUG",
+            "defaultUnit": "ITEM"
         },
         {
             "label": "Covid sample",
-            "icon": "BUG"
+            "icon": "BUG",
+            "defaultUnit": "ITEM"
         },
         {
             "label": "Document",
-            "icon": "DOCUMENT"
+            "icon": "DOCUMENT",
+            "defaultUnit": "ITEM"
         },
         {
             "label": "Milk",
-            "icon": "CHILD"
+            "icon": "CHILD",
+            "defaultUnit": "LITRE"
         },
         {
             "label": "Equipment",
-            "icon": "EQUIPMENT"
+            "icon": "EQUIPMENT",
+            "defaultUnit": "ITEM"
         },
         {
             "label": "Other",
