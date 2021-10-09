@@ -1,83 +1,26 @@
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
-import {
-    red,
-    lightGreen,
-    pink,
-    deepPurple,
-    deepOrange,
-    blue,
-} from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
-import BugReportIcon from "@material-ui/icons/BugReport";
-import BuildIcon from "@material-ui/icons/Build";
-import ChildCareIcon from "@material-ui/icons/ChildCare";
-import DescriptionIcon from "@material-ui/icons/Description";
-import AcUnitIcon from "@material-ui/icons/AcUnit";
 import PropTypes from "prop-types";
 import { Tooltip } from "@material-ui/core";
 import { deliverableIcons } from "../../../apiConsts";
+import { getDeliverableIconByEnum } from "../../../utilities";
 
-function getIcon(typeID) {
-    switch (typeID) {
-        case deliverableIcons.bug:
-            return <BugReportIcon />;
-        case deliverableIcons.document:
-            return <DescriptionIcon />;
-        case deliverableIcons.child:
-            return <ChildCareIcon />;
-        case deliverableIcons.equipment:
-            return <BuildIcon />;
-        default:
-            return <AcUnitIcon />;
-    }
-}
+const useStyles = makeStyles(() => ({
+    root: (props) => ({
+        width: "100%",
+        margin: props.compact ? 3 : 10,
+    }),
+    label: {
+        maxWidth: 120,
+    },
+}));
 
 function DeliverableCard(props) {
-    const spacingValue = props.compact ? 3 : 6;
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            width: "100%",
-            margin: props.compact ? 3 : 10,
-        },
-        label: {
-            maxWidth: 120,
-        },
-        [deliverableIcons.bug]: {
-            color: theme.palette.getContrastText(red[500]),
-            backgroundColor: red[500],
-            width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue),
-        },
-        [deliverableIcons.child]: {
-            color: theme.palette.getContrastText(pink[400]),
-            backgroundColor: pink[400],
-            width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue),
-        },
-        [deliverableIcons.document]: {
-            color: theme.palette.getContrastText(deepPurple[500]),
-            backgroundColor: deepPurple[500],
-            width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue),
-        },
-        [deliverableIcons.equipment]: {
-            color: theme.palette.getContrastText(blue[500]),
-            backgroundColor: blue[500],
-            width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue),
-        },
-        [deliverableIcons.other]: {
-            color: theme.palette.getContrastText(deepOrange[500]),
-            backgroundColor: lightGreen[500],
-            width: theme.spacing(spacingValue),
-            height: theme.spacing(spacingValue),
-        },
-    }));
-
-    const classes = useStyles();
+    const spacingValue = props.compact ? 4 : 6;
+    const classes = useStyles(props);
     return (
         <Grid
             className={classes.root}
@@ -96,9 +39,7 @@ function DeliverableCard(props) {
                     direction={"row"}
                 >
                     <Grid item>
-                        <Avatar className={classes[props.icon]}>
-                            {getIcon(props.icon)}
-                        </Avatar>
+                        {getDeliverableIconByEnum(props.icon, spacingValue)}
                     </Grid>
                     <Grid item>
                         <Tooltip

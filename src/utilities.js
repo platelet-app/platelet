@@ -1,7 +1,12 @@
 import React from "react";
 import uuidBase62 from "uuid-base62";
 import { v4 as uuidv4 } from "uuid";
-import { tasksStatus } from "./apiConsts";
+import { deliverableIcons, tasksStatus } from "./apiConsts";
+import BugIcon from "./components/deliverableIcons/BugIcon";
+import ChildIcon from "./components/deliverableIcons/ChildIcon";
+import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
+import OtherIcon from "./components/deliverableIcons/OtherIcon";
+import DocumentIcon from "./components/deliverableIcons/DocumentIcon";
 
 export function convertListDataToObject(list) {
     const result = {};
@@ -9,6 +14,20 @@ export function convertListDataToObject(list) {
         result[item.id] = item;
     }
     return result;
+}
+export function getDeliverableIconByEnum(deliverableType, size) {
+    switch (deliverableType) {
+        case deliverableIcons.bug:
+            return <BugIcon size={size} />;
+        case deliverableIcons.document:
+            return <DocumentIcon size={size} />;
+        case deliverableIcons.child:
+            return <ChildIcon size={size} />;
+        case deliverableIcons.equipment:
+            return <EquipmentIcon size={size} />;
+        default:
+            return <OtherIcon size={size} />;
+    }
 }
 
 export function determineTaskStatus(task) {
