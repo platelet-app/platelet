@@ -137,7 +137,7 @@ function DeliverableGridSelect(props) {
     }
 
     useEffect(
-        () => setTruncated(availableDeliverables.length > 6),
+        () => setTruncated(Object.values(availableDeliverables).length > 6),
         [availableDeliverables]
     );
 
