@@ -4,6 +4,7 @@ import DeliverableCard from "./DeliverableCard";
 import styled from "@material-ui/core/styles/styled";
 import Box from "@material-ui/core/Box";
 import { SmallCirclePlusButton } from "../../../components/Buttons";
+import { deliverableUnits } from "../../../apiConsts";
 
 const DeliverableBox = styled(Box)({
     backgroundColor: "rgba(180, 180, 180, 0.1)",
@@ -13,9 +14,11 @@ const DeliverableBox = styled(Box)({
 function AddableDeliverable(props) {
     const deliverableType = props.deliverableType;
     function makeNewDeliverable() {
+        const { defaultUnit, ...rest } = deliverableType;
         let newDeliverable = {
-            ...deliverableType,
+            unit: defaultUnit || deliverableUnits.none,
             count: 1,
+            ...rest,
         };
         props.onAdd(newDeliverable);
     }

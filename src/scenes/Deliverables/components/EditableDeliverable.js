@@ -4,6 +4,7 @@ import DeliverableCard from "./DeliverableCard";
 import styled from "@material-ui/core/styles/styled";
 import Box from "@material-ui/core/Box";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";
+import UnitSelector from "../../../components/UnitSelector";
 
 const DeliverableBox = styled(Box)({
     backgroundColor: "rgba(180, 180, 180, 0.1)",
@@ -26,6 +27,12 @@ function EditableDeliverable(props) {
                         props.onChangeCount(deliverable.id, count)
                     }
                     onDelete={() => props.onDelete(deliverable.id)}
+                />
+                <UnitSelector
+                    value={deliverable.unit}
+                    onChange={(unit) =>
+                        props.onChangeUnit(deliverable.id, unit.target.value)
+                    }
                 />
             </DeliverableCard>
         </DeliverableBox>

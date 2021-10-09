@@ -138,6 +138,7 @@ type DeliverableType @model {
   id: ID!
   label: String!
   icon: DeliverableTypeIcon
+  defaultUnit: DeliverableUnit
 }
 
 enum DeliverableTypeIcon {
@@ -179,10 +180,11 @@ enum Patch {
 }
 
 enum DeliverableUnit {
+  NONE
   LITRE
-  MILLILITRES
-  GRAMS
-  COUNT
+  MILLILITRE
+  GRAM
+  ITEM
   BOX
 }
 

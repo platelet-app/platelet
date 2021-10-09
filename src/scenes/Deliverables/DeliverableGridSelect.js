@@ -53,6 +53,7 @@ function DeliverableGridSelect(props) {
                 id: d.deliverableTypeDeliverableTypeId,
                 label: deliverableType ? deliverableType.label : "",
                 createdAt: d.createdAt,
+                unit: d.unit,
                 orderInGrid: d.orderInGrid,
                 icon: deliverableType ? deliverableType.icon : "",
             };
@@ -120,6 +121,16 @@ function DeliverableGridSelect(props) {
         props.onChange({ ...deliverable, orderInGrid });
     }
 
+    function onChangeUnit(deliverableId, unit) {
+        const existing = state[deliverableId];
+        if (existing) {
+            setState((prevState) => ({
+                ...prevState,
+                [deliverableId]: { ...prevState[deliverableId], unit },
+            }));
+        }
+        props.onChange({ id: deliverableId, unit });
+    }
     const onChangeCount = (deliverableId, count) => {
         const existing = state[deliverableId];
         if (existing) {
@@ -172,6 +183,7 @@ function DeliverableGridSelect(props) {
                                                     onChangeCount={
                                                         onChangeCount
                                                     }
+                                                    onChangeUnit={onChangeUnit}
                                                     onDelete={onDelete}
                                                     deliverable={deliverable}
                                                 />

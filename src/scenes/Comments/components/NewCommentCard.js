@@ -10,13 +10,12 @@ import Button from "@material-ui/core/Button";
 import { useSelector } from "react-redux";
 import CommentAuthor from "./CommentAuthor";
 import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
-import clsx from "clsx";
 import PropTypes from "prop-types";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
-import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import { FormControl, Select, MenuItem } from "@material-ui/core";
 
 const initialCommentState = {
     body: "",
@@ -27,7 +26,7 @@ function VisibilityMenu(props) {
     return (
         <FormControl fullWidth>
             <Select
-                id="demo-simple-select"
+                id="visibility-menu"
                 value={props.value}
                 label="Visibility"
                 onChange={props.onChange}

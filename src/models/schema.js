@@ -1280,6 +1280,15 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "defaultUnit": {
+                    "name": "defaultUnit",
+                    "isArray": false,
+                    "type": {
+                        "enum": "DeliverableUnit"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1346,9 +1355,9 @@ export const schema = {
             "name": "DeliverableUnit",
             "values": [
                 "LITRE",
-                "MILLILITRES",
-                "GRAMS",
-                "COUNT",
+                "MILLILITRE",
+                "GRAM",
+                "ITEM",
                 "BOX"
             ]
         },
@@ -1376,5 +1385,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "d74acdd41cd474fe30c2ff75c07b08f2"
+    "version": "16ef27798b66a6ef50a14f1c23f87ea3"
 };

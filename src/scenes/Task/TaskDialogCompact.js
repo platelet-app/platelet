@@ -287,19 +287,20 @@ function TaskDialogCompact(props) {
                     models.Deliverable.copyOf(
                         existingDeliverable,
                         (updated) => {
-                            updated.count = value.count;
+                            for (const [key, v] of Object.entries(value)) {
+                                updated[key] = v;
+                            }
                         }
                     )
                 );
             }
         } else {
-            console.log(value.orderInGrid);
+            const { id, ...rest } = value;
             const newDeliverable = await DataStore.save(
                 new models.Deliverable({
                     taskDeliverablesId: taskUUID,
-                    count: value.count,
-                    orderInGrid: value.orderInGrid,
-                    deliverableTypeDeliverableTypeId: value.id,
+                    deliverableTypeDeliverableTypeId: id,
+                    ...rest,
                 })
             );
             // add it to the tracking reference

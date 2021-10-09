@@ -1,5 +1,4 @@
 import { Button, Grid, makeStyles, Typography } from "@material-ui/core";
-import { DatePicker } from "@material-ui/pickers";
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
@@ -14,12 +13,14 @@ import { getWhoami } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
-import { deliverableIcons } from "../../../apiConsts";
+import { deliverableIcons, deliverableUnits } from "../../../apiConsts";
 import DeliverableIconPicker from "./DeliverableIconPicker";
+import UnitSelector from "../../../components/UnitSelector";
 
 const initialDeliverableTypeState = {
     label: "",
     icon: deliverableIcons.other,
+    defaultUnit: deliverableUnits.none,
 };
 
 const useStyles = makeStyles({
@@ -112,6 +113,18 @@ function AdminAddDeliverableType() {
                                 setState((prevState) => ({
                                     ...prevState,
                                     icon,
+                                }))
+                            }
+                        />
+                    </Grid>
+                    <Grid item>
+                        <UnitSelector
+                            value={state.defaultUnit}
+                            label={"Default unit"}
+                            onChange={(e) =>
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    defaultUnit: e.target.value,
                                 }))
                             }
                         />

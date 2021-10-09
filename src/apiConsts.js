@@ -40,3 +40,12 @@ export const priorities = {
     medium: "MEDIUM",
     low: "LOW",
 };
+
+export const deliverableUnits = {
+    none: "NONE",
+    litre: "LITRE",
+    millilitre: "MILLILITRE",
+    gram: "GRAM",
+    item: "ITEM",
+    box: "BOX",
+};

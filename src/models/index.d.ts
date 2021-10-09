@@ -28,9 +28,9 @@ export enum DeliverableTypeIcon {
 
 export enum DeliverableUnit {
   LITRE = "LITRE",
-  MILLILITRES = "MILLILITRES",
-  GRAMS = "GRAMS",
-  COUNT = "COUNT",
+  MILLILITRE = "MILLILITRE",
+  GRAM = "GRAM",
+  ITEM = "ITEM",
   BOX = "BOX"
 }
 
@@ -282,6 +282,7 @@ export declare class DeliverableType {
   readonly id: string;
   readonly label: string;
   readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
+  readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);
