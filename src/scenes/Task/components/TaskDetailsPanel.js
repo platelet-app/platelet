@@ -65,10 +65,8 @@ function TaskDetailsPanel(props) {
             telephoneNumber: null,
         },
     });
-    const dispatch = useDispatch();
     const classes = useStyles();
 
-    console.log(state);
     useEffect(() => setState(extractTaskData(props.task)), [props.task]);
 
     function onChangeTimeOfCall(value) {}

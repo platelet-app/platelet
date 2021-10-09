@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../../App.css";
+import { useHistory } from "react-router";
 import "typeface-roboto";
 import * as models from "../../models/index";
 import Paper from "@material-ui/core/Paper";
@@ -12,20 +13,17 @@ import {
 } from "./components/DashboardDetailTabs";
 import {
     convertListDataToObject,
+    decodeUUID,
     determineTaskStatus,
     getDashboardRoleMode,
     saveDashboardRoleMode,
 } from "../../utilities";
-import {
-    dataStoreReadyStatusSelector,
-    getWhoami,
-    networkStatusSelector,
-    onChangeTaskSelector,
-} from "../../redux/Selectors";
+import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import { tasksStatus } from "../../apiConsts";
 import { DataStore } from "aws-amplify";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import _ from "lodash";
+import TaskDialogCompact from "../Task/TaskDialogCompact";
 
 const initialTasksState = {
     tasksNew: {},
@@ -35,12 +33,36 @@ const initialTasksState = {
     tasksRejected: {},
     tasksCancelled: {},
 };
+function findTask(tasks, taskId) {
+    for (const taskKey of Object.keys(initialTasksState)) {
+        if (tasks[taskKey][taskId])
+            return { task: tasks[taskKey][taskId], key: taskKey };
+    }
+    return { task: undefined, key: undefined };
+}
 
-function Dashboard() {
+function getKeyFromEnum(value) {
+    switch (value) {
+        case tasksStatus.new:
+            return "tasksNew";
+        case tasksStatus.active:
+            return "tasksActive";
+        case tasksStatus.pickedUp:
+            return "tasksPickedUp";
+        case tasksStatus.droppedOff:
+            return "tasksDroppedOff";
+        case tasksStatus.cancelled:
+            return "tasksCancelled";
+        case tasksStatus.rejected:
+            return "tasksRejected";
+        default:
+            return "";
+    }
+}
+
+function Dashboard(props) {
     const dispatch = useDispatch();
     const mobileView = useSelector((state) => state.mobileView);
-    const networkStatus = useSelector(networkStatusSelector);
-    const onChangeTaskValue = useSelector(onChangeTaskSelector);
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
@@ -48,49 +70,10 @@ function Dashboard() {
     const [isFetching, setIsFetching] = useState(false);
     const roleView = useSelector((state) => state.roleView);
     const [tasks, setTasks] = useState(initialTasksState);
+    const history = useHistory();
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
-
-    function findTask(taskId) {
-        for (const taskKey of Object.keys(initialTasksState)) {
-            if (tasks[taskKey][taskId])
-                return { task: tasks[taskKey][taskId], key: taskKey };
-        }
-    }
-
-    async function updateStateOnChange() {
-        if (onChangeTaskValue.taskId && !isFetching) {
-            const result = findTask(onChangeTaskValue.taskId);
-            const existingTask = await DataStore.query(
-                models.Task,
-                onChangeTaskSelector.taskId
-            );
-            if (result && existingTask) {
-                setTasks((prevState) => ({
-                    ...prevState,
-                    [result.key]: _.omit(
-                        prevState[result.key],
-                        onChangeTaskValue.taskId
-                    ),
-                }));
-            }
-            if (existingTask) {
-                const key = determineTaskStatus(existingTask);
-                setTasks((prevState) => ({
-                    ...prevState,
-                    [key]: {
-                        ...prevState[key],
-                        [onChangeTaskValue.taskId]: {
-                            existingTask,
-                        },
-                    },
-                }));
-            }
-        }
-    }
-
-    useEffect(() => updateStateOnChange(), [onChangeTaskValue]);
 
     function setInitialRoleView() {
         if (whoami.id) {
@@ -181,12 +164,8 @@ function Dashboard() {
             setIsFetching(false);
         }
     }
+
     useEffect(() => getTasks(), [roleView, dataStoreReadyStatus]);
-    useEffect(() => {
-        if (networkStatus && dataStoreReadyStatus && !isFetching) {
-            getTasks();
-        }
-    }, [networkStatus]);
 
     useEffect(() => {
         return () => {
@@ -196,43 +175,62 @@ function Dashboard() {
     }, []);
 
     function addTaskToState(task) {
-        let key;
-        switch (task.status) {
-            case tasksStatus.new:
-                key = "tasksNew";
-                break;
-            case tasksStatus.active:
-                key = "tasksActive";
-                break;
-            case tasksStatus.pickedUp:
-                key = "tasksPickedUp";
-                break;
-            case tasksStatus.droppedOff:
-                key = "tasksDroppedOff";
-                break;
-            case tasksStatus.cancelled:
-                key = "tasksCancelled";
-                break;
-            case tasksStatus.rejected:
-                key = "tasksRejected";
-                break;
-            default:
-                return;
-        }
-        let taskResult;
-        if (!!!task.createdAt) {
-            const d = new Date();
-            taskResult = { ...task, createdAt: d.toISOString() };
-        } else {
-            taskResult = task;
-        }
-        setTasks((prevState) => ({
-            ...prevState,
-            [key]: {
-                ...prevState[key],
-                [taskResult.id]: taskResult,
-            },
-        }));
+        setTasks((prevState) => {
+            debugger;
+            let key;
+            if (task.status) {
+                switch (task.status) {
+                    case tasksStatus.new:
+                        key = "tasksNew";
+                        break;
+                    case tasksStatus.active:
+                        key = "tasksActive";
+                        break;
+                    case tasksStatus.pickedUp:
+                        key = "tasksPickedUp";
+                        break;
+                    case tasksStatus.droppedOff:
+                        key = "tasksDroppedOff";
+                        break;
+                    case tasksStatus.cancelled:
+                        key = "tasksCancelled";
+                        break;
+                    case tasksStatus.rejected:
+                        key = "tasksRejected";
+                        break;
+                    default:
+                        key = undefined;
+                }
+            }
+            let taskResult;
+            if (!!!task.createdAt) {
+                const d = new Date();
+                taskResult = { ...task, createdAt: d.toISOString() };
+            } else {
+                taskResult = task;
+            }
+            const current = findTask(prevState, task.id);
+            if (task.status) {
+                const omitted = _.omit(prevState[current.key], task.id);
+                const newList = {
+                    ...prevState[key],
+                    [task.id]: { ...current.task, ...task },
+                };
+                return {
+                    ...prevState,
+                    [current.key]: omitted,
+                    [key]: newList,
+                };
+            } else {
+                return {
+                    ...prevState,
+                    [current.key]: {
+                        ...prevState[current.key],
+                        [taskResult.id]: { ...current.task, ...taskResult },
+                    },
+                };
+            }
+        });
     }
 
     async function addTask() {
@@ -250,43 +248,61 @@ function Dashboard() {
         );
         addTaskToState(newTask);
     }
+    function handleDialogClose(e) {
+        e.stopPropagation();
+        if (props.location.state) history.goBack();
+        else history.push("/dashboard");
+    }
+
+    const dialog = props.match.params.task_uuid_b62 ? (
+        <TaskDialogCompact
+            onClose={handleDialogClose}
+            location={props.location}
+            taskId={decodeUUID(props.match.params.task_uuid_b62)}
+        />
+    ) : (
+        <></>
+    );
     if (isFetching) {
         return <TasksGridSkeleton />;
     } else {
         return (
-            <Paper elevation={3}>
-                <DashboardDetailTabs
-                    value={viewMode}
-                    onChange={(event, newValue) => setViewMode(newValue)}
-                >
-                    <TabPanel value={0} index={0}>
-                        <TasksGrid
-                            tasks={tasks}
-                            onAddTaskClick={addTask}
-                            fullScreenModal={mobileView}
-                            modalView={"edit"}
-                            hideRelayIcons={roleView === "rider"}
-                            hideAddButton={!postPermission}
-                            excludeColumnList={
-                                viewMode === 1
-                                    ? [
-                                          "tasksNew",
-                                          "tasksActive",
-                                          "tasksPickedUp",
-                                      ]
-                                    : [
-                                          roleView === "rider"
-                                              ? "tasksNew"
-                                              : "",
-                                          "tasksDroppedOff",
-                                          "tasksCancelled",
-                                          "tasksRejected",
-                                      ]
-                            }
-                        />
-                    </TabPanel>
-                </DashboardDetailTabs>
-            </Paper>
+            <>
+                <Paper elevation={3}>
+                    <DashboardDetailTabs
+                        value={viewMode}
+                        onChange={(event, newValue) => setViewMode(newValue)}
+                    >
+                        <TabPanel value={0} index={0}>
+                            <TasksGrid
+                                tasks={tasks}
+                                onAddTaskClick={addTask}
+                                fullScreenModal={mobileView}
+                                modalView={"edit"}
+                                hideRelayIcons={roleView === "rider"}
+                                hideAddButton={!postPermission}
+                                excludeColumnList={
+                                    viewMode === 1
+                                        ? [
+                                              "tasksNew",
+                                              "tasksActive",
+                                              "tasksPickedUp",
+                                          ]
+                                        : [
+                                              roleView === "rider"
+                                                  ? "tasksNew"
+                                                  : "",
+                                              "tasksDroppedOff",
+                                              "tasksCancelled",
+                                              "tasksRejected",
+                                          ]
+                                }
+                            />
+                        </TabPanel>
+                    </DashboardDetailTabs>
+                </Paper>
+                {dialog}
+            </>
         );
     }
 }

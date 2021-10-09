@@ -151,15 +151,7 @@ export default function MainWindow(_props) {
                         path="/task/:task_uuid_b62"
                         render={(props) => {
                             dispatch(setMenuIndex("dashboard"));
-                            return (
-                                <>
-                                    <Dashboard {...props} />
-                                    <TaskDialogCompact
-                                        {...props}
-                                        modal={true}
-                                    />
-                                </>
-                            );
+                            return <Dashboard {...props} />;
                         }}
                     />
                     <Route component={NotFound} />

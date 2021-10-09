@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
-import { useHistory } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
     convertListDataToObject,
     decodeUUID,
@@ -23,7 +22,6 @@ import { DataStore } from "aws-amplify";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import _ from "lodash";
 import { tasksStatus } from "../../apiConsts";
-import { onChangeTask } from "../../redux/tasks/TasksActions";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -121,10 +119,8 @@ const initialState = {
 function TaskDialogCompact(props) {
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
-    const history = useHistory();
     const classes = useStyles();
     const theme = useTheme();
-    const dispatch = useDispatch();
     const isMd = useMediaQuery(theme.breakpoints.down("md"));
     const [isFetching, setIsFetching] = useState(false);
     const [task, setTask] = useState(initialState);
@@ -135,14 +131,10 @@ function TaskDialogCompact(props) {
     const taskRef = useRef();
     taskRef.current = task;
 
-    let taskUUID = null;
+    const taskUUID = props.taskId;
 
-    if (props.match) {
-        taskUUID = decodeUUID(props.match.params.task_uuid_b62);
-    } else {
-        taskUUID = task.id;
-    }
     async function getTask() {
+        debugger;
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
         } else {
@@ -166,7 +158,7 @@ function TaskDialogCompact(props) {
             }
         }
     }
-    useEffect(() => getTask(), [dataStoreReadyStatus, props.location.key]);
+    useEffect(() => getTask(), [dataStoreReadyStatus, props.taskId]);
 
     async function setTimeCancelled(value) {
         const result = await DataStore.query(models.Task, taskUUID);
@@ -188,7 +180,6 @@ function TaskDialogCompact(props) {
             );
             taskRef.current = { ...taskRef.current, timeCancelled: value };
         }
-        dispatch(onChangeTask(taskUUID));
     }
 
     async function setTimeRejected(value) {
@@ -211,7 +202,6 @@ function TaskDialogCompact(props) {
             );
             taskRef.current = { ...taskRef.current, timeRejected: value };
         }
-        dispatch(onChangeTask(taskUUID));
     }
 
     async function selectPriority(priority) {
@@ -223,7 +213,6 @@ function TaskDialogCompact(props) {
                 })
             );
         }
-        dispatch(onChangeTask(taskUUID));
     }
 
     async function updateRequesterContact(requesterValue) {
@@ -249,7 +238,6 @@ function TaskDialogCompact(props) {
                 ...requesterValue,
             },
         };
-        dispatch(onChangeTask(taskUUID));
     }
 
     async function deleteDeliverable(deliverableTypeId) {
@@ -309,18 +297,12 @@ function TaskDialogCompact(props) {
         }
     }
 
-    const handleClose = (e) => {
-        e.stopPropagation();
-        if (props.location.state) history.goBack();
-        else history.push("/dashboard");
-    };
-
     const statusBar =
         !task || notFound ? (
-            <Button onClick={handleClose}>Close</Button>
+            <Button onClick={props.onClose}>Close</Button>
         ) : (
             <StatusBar
-                handleClose={handleClose}
+                handleClose={props.onClose}
                 status={task.status}
                 taskUUID={taskUUID}
             />
@@ -328,13 +310,13 @@ function TaskDialogCompact(props) {
 
     if (isFetching) {
         return (
-            <DialogWrapper handleClose={handleClose}>
+            <DialogWrapper handleClose={props.onClose}>
                 <FormSkeleton />
             </DialogWrapper>
         );
     } else if (notFound) {
         return (
-            <DialogWrapper handleClose={handleClose}>
+            <DialogWrapper handleClose={props.onClose}>
                 {statusBar}
                 <NotFound>
                     <Typography>
@@ -345,7 +327,7 @@ function TaskDialogCompact(props) {
         );
     } else {
         return (
-            <DialogWrapper handleClose={handleClose}>
+            <DialogWrapper handleClose={props.onClose}>
                 <div className={classes.overview}>
                     {statusBar}
                     <TaskOverview
