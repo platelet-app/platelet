@@ -21,29 +21,30 @@ function CommentsSection(props) {
         unsubscribe: () => {},
     });
 
+    function removeCommentFromState(commentId) {
+        if (commentId) {
+            setComments((prevState) => _.omit(prevState, commentId));
+        }
+    }
+
     async function addCommentToState(comment) {
         if (comment) {
-            if (
-                !commentsRef.current[comment.id] ||
-                comment._version !== commentsRef.current[comment.id]._version
-            ) {
-                let author = comment.author;
-                if (!author) {
-                    author = await DataStore.query(
-                        models.User,
-                        comment.commentAuthorId
-                    );
-                }
-                setComments((prevState) => {
-                    return {
-                        ...prevState,
-                        [comment.id]: {
-                            ...comment,
-                            author,
-                        },
-                    };
-                });
+            let author = comment.author;
+            if (!author) {
+                author = await DataStore.query(
+                    models.User,
+                    comment.commentAuthorId
+                );
             }
+            setComments((prevState) => {
+                return {
+                    ...prevState,
+                    [comment.id]: {
+                        ...comment,
+                        author,
+                    },
+                };
+            });
         }
     }
 
@@ -70,13 +71,19 @@ function CommentsSection(props) {
                 (c) => c.parentId("eq", props.parentUUID)
             ).subscribe(async (newComment) => {
                 const comment = newComment.element;
+                debugger;
+                if (newComment.opType === "DELETE") {
+                    debugger;
+                    removeCommentFromState(comment.id);
+                    return;
+                }
                 if (
                     !comment.commentAuthorId ||
                     (comment.commentAuthorId !== whoami.id &&
                         comment.visibility === commentVisibility.me)
                 ) {
                     return;
-                } else {
+                } else if (["UPDATE", "INSERT"].includes(newComment.opType)) {
                     addCommentToState(comment);
                 }
             });
