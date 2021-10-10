@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, makeStyles } from "@material-ui/core";
-import DescriptionIcon from "@material-ui/icons/Description";
+import DescriptionIcon from "@mui/icons-material/Description";
 import { deepPurple } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 

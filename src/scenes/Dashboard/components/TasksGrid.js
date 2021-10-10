@@ -5,7 +5,7 @@ import TaskItem from "./TaskItem";
 import { useDispatch, useSelector } from "react-redux";
 import { addTaskRelayRequest } from "../../../redux/tasks/TasksActions";
 import Tooltip from "@material-ui/core/Tooltip";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { filterTasks } from "../utilities/functions";
 import PropTypes from "prop-types";

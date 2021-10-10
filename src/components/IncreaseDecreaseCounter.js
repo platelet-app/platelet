@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import IconButton from "@material-ui/core/IconButton";
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
-import ClearIcon from '@material-ui/icons/Clear';
+import ClearIcon from '@mui/icons-material/Clear';
 import {makeStyles} from "@material-ui/core/styles";
 
 function IncreaseDecreaseCounter(props) {

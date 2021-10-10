@@ -9,11 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import TimelineIcon from "@material-ui/icons/Timeline";
+import TimelineIcon from "@mui/icons-material/Timeline";
 import Grid from "@material-ui/core/Grid";
 import SideInfoSection from "./SideInfoSection";
 import Toolbar from "@material-ui/core/Toolbar";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { saveDashboardRoleMode } from "../../../utilities";
@@ -22,11 +22,11 @@ import { showHide } from "../../../styles/common";
 import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import { Hidden } from "@material-ui/core";
-import MotorcycleIcon from "@material-ui/icons/Motorcycle";
-import CallIcon from "@material-ui/icons/Call";
+import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
+import CallIcon from "@mui/icons-material/Call";
 import { useTheme, useMediaQuery } from "@material-ui/core";
-import DoneIcon from "@material-ui/icons/Done";
-import ExploreIcon from "@material-ui/icons/Explore";
+import DoneIcon from "@mui/icons-material/Done";
+import ExploreIcon from "@mui/icons-material/Explore";
 import { getWhoami } from "../../../redux/Selectors";
 
 export function TabPanel(props) {
@@ -178,7 +178,7 @@ export function DashboardDetailTabs(props) {
                                             </Hidden>
                                             <Hidden mdUp>
                                                 {roleView === "rider" ? (
-                                                    <MotorcycleIcon />
+                                                    <TwoWheelerIcon />
                                                 ) : (
                                                     <CallIcon />
                                                 )}

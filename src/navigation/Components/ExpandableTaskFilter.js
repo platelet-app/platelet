@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import TaskFilterTextField from "../../components/TaskFilterTextfield";
 import {showHide} from "../../styles/common";
-import SearchIcon from "@material-ui/icons/Search";
+import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@material-ui/core/IconButton";
 
 function ExpandableTaskFilter(props) {

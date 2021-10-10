@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import UserAvatar from "./UserAvatar";
 import IconButton from "@material-ui/core/IconButton";
-import ClearIcon from "@material-ui/icons/Clear";
+import ClearIcon from "@mui/icons-material/Clear";
 import { Box, styled, makeStyles } from "@material-ui/core";
 import { ThemedLink, showHide } from "../styles/common";
 

@@ -4,7 +4,7 @@ import { Hidden } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Menu from "@material-ui/core/Menu";
 import MobileNavigationDrawer from "../MobileNavigationDrawer";
 import { useSelector } from "react-redux";

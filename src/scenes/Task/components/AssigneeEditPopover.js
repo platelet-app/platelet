@@ -1,5 +1,5 @@
 import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@mui/icons-material/Edit";
 import React from "react";
 import { Popover, makeStyles } from "@material-ui/core";
 import TaskAssignees from "./TaskAssignees";

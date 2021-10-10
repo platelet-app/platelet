@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
-import MotorcycleIcon from "@material-ui/icons/Motorcycle";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
-import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
+import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import { Link } from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import PropTypes from "prop-types";
-import DashboardIcon from "@material-ui/icons/Dashboard";
-import LocationCityIcon from "@material-ui/icons/LocationCity";
-import BarChartIcon from "@material-ui/icons/BarChart";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import { getWhoami } from "../redux/Selectors";
 
 function NavDrawerItems(props) {
@@ -73,7 +73,7 @@ function NavDrawerItems(props) {
                     button
                 >
                     <ListItemIcon>
-                        <MotorcycleIcon />
+                        <TwoWheelerIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Vehicles"} />
                 </ListItem>

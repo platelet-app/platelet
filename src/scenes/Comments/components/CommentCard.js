@@ -6,11 +6,11 @@ import {
     CommentCardStyled,
     PrivateCommentCardStyled,
 } from "../styles/CommentCards";
-import LockIcon from "@material-ui/icons/Lock";
+import LockIcon from "@mui/icons-material/Lock";
 import Tooltip from "@material-ui/core/Tooltip";
 import moment from "moment";
 import CommentAuthor from "./CommentAuthor";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@mui/icons-material/Edit";
 import { showHide } from "../../../styles/common";
 import { useSelector } from "react-redux";
 import clsx from "clsx";

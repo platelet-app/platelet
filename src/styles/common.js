@@ -10,7 +10,7 @@ import {Paper} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import {Link} from "react-router-dom"
 import IconButton from "@material-ui/core/IconButton";
-import ClearIcon from "@material-ui/icons/Clear";
+import ClearIcon from "@mui/icons-material/Clear";
 
 export const showHide = makeStyles({
     // not using display none because it lags horribly on mobile chrome for some reason

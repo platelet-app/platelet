@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, makeStyles } from "@material-ui/core";
-import ChildCareIcon from "@material-ui/icons/ChildCare";
+import ChildCareIcon from "@mui/icons-material/ChildCare";
 import { pink } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 

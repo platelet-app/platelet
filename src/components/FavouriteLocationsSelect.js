@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 import {useSelector} from "react-redux";
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 import {matchSorter} from "match-sorter"
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';

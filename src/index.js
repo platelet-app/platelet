@@ -3,22 +3,22 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { BrowserRouter } from "react-router-dom";
+import {BrowserRouter} from "react-router-dom";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
-import { Provider } from "react-redux";
+import {Provider} from "react-redux";
 import store from "./redux/Store";
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import "typeface-roboto";
 
 ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <ReactNotification />
-                <App />
-            </MuiPickersUtilsProvider>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <ReactNotification/>
+                <App/>
+            </LocalizationProvider>
         </BrowserRouter>
     </Provider>,
     document.getElementById("root")

@@ -6,7 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Moment from "react-moment";
 import Grid from "@material-ui/core/Grid";
 import CardItem from "../../../components/CardItem";
-import AvatarGroup from "@material-ui/lab/AvatarGroup";
+import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import { Tooltip } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";

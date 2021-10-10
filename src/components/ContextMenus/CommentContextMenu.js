@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useDispatch } from "react-redux";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IconButton from "@material-ui/core/IconButton";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import { DataStore } from "aws-amplify";

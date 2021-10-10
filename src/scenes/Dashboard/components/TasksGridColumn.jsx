@@ -12,7 +12,7 @@ import { TasksKanbanColumn } from "../styles/TaskColumns";
 import Button from "@material-ui/core/Button";
 import { Waypoint } from "react-waypoint";
 import Tooltip from "@material-ui/core/Tooltip";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { CircularProgress, Typography } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import TasksGridSkeleton from "./TasksGridSkeleton";

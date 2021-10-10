@@ -3,7 +3,7 @@ import { Tooltip } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import AssigneeEditPopover from "./AssigneeEditPopover";
-import { AvatarGroup } from "@material-ui/lab";
+import AvatarGroup from '@mui/material/AvatarGroup';
 import UserAvatar from "../../../components/UserAvatar";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
 import { makeStyles } from "@material-ui/core";

@@ -6,7 +6,7 @@ import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import UsersSelect from "../../../components/UsersSelect";
 import { PaddedPaper } from "../../../styles/common";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@mui/icons-material/Edit";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import Divider from "@material-ui/core/Divider";

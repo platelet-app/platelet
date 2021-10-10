@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types'
 import Grid from "@material-ui/core/Grid";
-import AvatarGroup from "@material-ui/lab/AvatarGroup";
+import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import CollaboratorPickerPopover from "./CollaboratorPickerPopover";
 

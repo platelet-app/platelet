@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import TextField from "@material-ui/core/TextField";
 import { useSelector } from "react-redux";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
 import Divider from "@material-ui/core/Divider";
 

@@ -3,7 +3,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover';
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
+import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
 import Grid from "@material-ui/core/Grid";
 import UserCard from "../../../components/UserCard";
 import UsersSelect from "../../../components/UsersSelect";

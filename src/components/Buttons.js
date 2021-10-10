@@ -3,11 +3,11 @@ import React from "react";
 import {StyledAddCircleOutlineDisabled, StyledAddCircleOutline} from "../styles/Buttons";
 import {StyledAddCircleOutlineSmallDisabled, StyledAddCircleOutlineSmall} from "../styles/Buttons";
 import Tooltip from "@material-ui/core/Tooltip";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
 import {makeStyles} from "@material-ui/core/styles";
 import PropTypes from "prop-types"
 import {Link} from "react-router-dom";

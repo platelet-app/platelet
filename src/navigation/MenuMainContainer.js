@@ -12,8 +12,8 @@ import {Hidden} from "@material-ui/core";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
 import NavMenuSearch from "./Components/NavMenuSearch";
 import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
-import SearchIcon from "@material-ui/icons/Search";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import SearchIcon from "@mui/icons-material/Search";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {clearDashboardFilter} from "../redux/dashboardFilter/DashboardFilterActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 

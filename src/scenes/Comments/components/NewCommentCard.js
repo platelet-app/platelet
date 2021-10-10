@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
-import LockIcon from "@material-ui/icons/Lock";
+import LockIcon from "@mui/icons-material/Lock";
 import Tooltip from "@material-ui/core/Tooltip";
-import LockOpenIcon from "@material-ui/icons/LockOpen";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import IconButton from "@material-ui/core/IconButton";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import Button from "@material-ui/core/Button";

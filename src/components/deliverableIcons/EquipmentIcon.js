@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, makeStyles } from "@material-ui/core";
-import BuildIcon from "@material-ui/icons/Build";
+import BuildIcon from "@mui/icons-material/Build";
 import { blue } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 

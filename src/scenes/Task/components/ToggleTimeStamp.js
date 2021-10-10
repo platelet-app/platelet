@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButton from '@mui/material/ToggleButton';
 
 export default function ToggleTimeStamp(props) {
     const [selected, setSelected] = useState(props.status);

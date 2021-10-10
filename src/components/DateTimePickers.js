@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-    DateTimePicker,
-    KeyboardDatePicker,
-    KeyboardDateTimePicker,
-} from "@material-ui/pickers";
+import { DateTimePicker, DatePicker } from "@mui/lab";
 
 export function DateAndTimePicker(props) {
     function handleDateChange(value) {
@@ -11,7 +7,7 @@ export function DateAndTimePicker(props) {
     }
 
     return (
-        <KeyboardDateTimePicker
+        <DateTimePicker
             disabled={props.disabled}
             variant="inline"
             ampm={false}
@@ -24,9 +20,9 @@ export function DateAndTimePicker(props) {
     );
 }
 
-export function DatePicker(props) {
+export function DatePickerNope(props) {
     return (
-        <KeyboardDatePicker
+        <DatePicker
             disabled={props.disabled}
             variant="inline"
             ampm={false}
@@ -47,7 +43,7 @@ export function CustomDateTimePicker(props) {
 
     return (
         <>
-            <KeyboardDateTimePicker
+            <DateTimePicker
                 value={selectedDate}
                 onChange={handleDateChange}
                 label="Keyboard with error handler"

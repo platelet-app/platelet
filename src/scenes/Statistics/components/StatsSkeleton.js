@@ -1,5 +1,5 @@
 import React from "react";
-import {Skeleton} from "@material-ui/lab";
+import Skeleton from '@mui/material/Skeleton';
 import Grid from "@material-ui/core/Grid";
 
 export default function StatsSkeleton(props) {

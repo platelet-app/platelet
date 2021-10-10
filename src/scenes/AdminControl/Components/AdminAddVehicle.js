@@ -1,5 +1,5 @@
 import { Button, Grid, makeStyles, Typography } from "@material-ui/core";
-import { DatePicker } from "@material-ui/pickers";
+import DatePicker from '@mui/lab/DatePicker';
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";

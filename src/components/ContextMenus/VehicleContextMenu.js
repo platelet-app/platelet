@@ -3,7 +3,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { deleteVehicleRequest } from "../../redux/vehicles/VehiclesActions";
 import { useDispatch, useSelector } from "react-redux";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IconButton from "@material-ui/core/IconButton";
 import { createPostingSelector } from "../../redux/LoadingSelectors";
 import { deleteButtonStyles, contextDots } from "./contextMenuCSS";

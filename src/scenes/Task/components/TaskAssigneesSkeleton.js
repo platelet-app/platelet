@@ -1,6 +1,6 @@
 import React from "react";
-import {Skeleton} from "@material-ui/lab";
 import Grid from "@material-ui/core/Grid";
+import {Skeleton} from "@mui/material";
 
 export default function TaskAssigneesSkeleton(props) {
     return (

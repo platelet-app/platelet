@@ -1,5 +1,5 @@
 import React from "react";
-import {Skeleton} from "@material-ui/lab";
+import Skeleton from '@mui/material/Skeleton';
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types"
 function TasksGridSkeleton(props) {

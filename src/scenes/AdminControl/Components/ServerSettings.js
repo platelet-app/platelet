@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {setCommentsObjectUUID} from "../../../redux/Actions";
 import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@mui/icons-material/Edit";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import {updateUserRequest} from "../../../redux/users/UsersActions";
 import Grid from "@material-ui/core/Grid";

@@ -10,11 +10,11 @@ import PropTypes from "prop-types";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import { showHide } from "../../../styles/common";
 import Grid from "@material-ui/core/Grid";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, Tooltip } from "@material-ui/core";
 import clsx from "clsx";
-import { AddCircleOutline } from "@material-ui/icons";
+import { AddCircleOutline } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
     button: (props) => ({
