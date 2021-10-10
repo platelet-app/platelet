@@ -70,6 +70,7 @@ function TaskOverview(props) {
                 <Grid className={classes.item} item>
                     <PickUpDetails
                         taskUUID={taskUUID}
+                        onChangeTimePickedUp={props.onChangeTimePickedUp}
                         location={task.pickupLocation}
                         time={task.timePickedUp}
                         showContact
@@ -79,6 +80,7 @@ function TaskOverview(props) {
                     <DropOffDetails
                         disableTimeButton={!!!task.timePickedUp}
                         taskUUID={taskUUID}
+                        onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
                         location={task.dropOffLocation}
                         time={task.timeDroppedOff}
                         showContact

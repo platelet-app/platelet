@@ -134,7 +134,6 @@ function TaskDialogCompact(props) {
     const taskUUID = props.taskId;
 
     async function getTask() {
-        debugger;
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
         } else {
@@ -159,6 +158,51 @@ function TaskDialogCompact(props) {
         }
     }
     useEffect(() => getTask(), [dataStoreReadyStatus, props.taskId]);
+
+    async function setTimeDroppedOff(value) {
+        console.log(value);
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result) {
+            const status = determineTaskStatus({
+                ...result,
+                timeDroppedOff: value,
+            });
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.timeDroppedOff = value;
+                    updated.status = status;
+                })
+            );
+            taskRef.current = { ...taskRef.current, timeDroppedOff: value };
+            setTask((prevState) => ({
+                ...prevState,
+                status,
+                timeDroppedOff: value,
+            }));
+        }
+    }
+
+    async function setTimePickedUp(value) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result) {
+            const status = determineTaskStatus({
+                ...result,
+                timePickedUp: value,
+            });
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.timePickedUp = value;
+                    updated.status = status;
+                })
+            );
+            taskRef.current = { ...taskRef.current, timePickedUp: value };
+            setTask((prevState) => ({
+                ...prevState,
+                status,
+                timePickedUp: value,
+            }));
+        }
+    }
 
     async function setTimeCancelled(value) {
         const result = await DataStore.query(models.Task, taskUUID);
@@ -345,6 +389,8 @@ function TaskDialogCompact(props) {
                         task={task}
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}
+                        onChangeTimePickedUp={setTimePickedUp}
+                        onChangeTimeDroppedOff={setTimeDroppedOff}
                         onChangeTimeCancelled={setTimeCancelled}
                         onChangeTimeRejected={setTimeRejected}
                         onChangeRequesterContact={updateRequesterContact}

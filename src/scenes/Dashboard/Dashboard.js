@@ -176,7 +176,6 @@ function Dashboard(props) {
 
     function addTaskToState(task) {
         setTasks((prevState) => {
-            debugger;
             let key;
             if (task.status) {
                 switch (task.status) {

@@ -31,15 +31,6 @@ function DropOffDetails(props) {
 
     const classes = dialogCardStyles();
 
-    function onChangeTimeDropoff(value) {
-        if (value || value === null)
-            dispatch(
-                updateTaskDropoffTimeRequest(props.taskUUID, {
-                    time_dropped_off: value,
-                })
-            );
-    }
-
     function onChangeDropoffLocation(value, makeNew = false) {
         if (props.location) {
             if (makeNew) {
@@ -103,7 +94,7 @@ function DropOffDetails(props) {
                 <Grid item>
                     <LabelItemPair label={"Time delivered"}>
                         <TimePicker
-                            onChange={onChangeTimeDropoff}
+                            onChange={props.onChangeTimeDroppedOff}
                             disabled={
                                 isPostingDropoffTime || props.disableTimeButton
                             }
@@ -122,11 +113,13 @@ DropOffDetails.propTypes = {
     location: PropTypes.object,
     taskUUID: PropTypes.string.isRequired,
     disableTimeButton: PropTypes.bool,
+    onChangeTimeDroppedOff: PropTypes.func,
 };
 
 DropOffDetails.defaultProps = {
     time: "",
     disableTimeButton: false,
+    onChangeTimeDroppedOff: () => {},
 };
 
 export default DropOffDetails;

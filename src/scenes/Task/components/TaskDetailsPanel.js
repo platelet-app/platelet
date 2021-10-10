@@ -57,6 +57,7 @@ function TaskDetailsPanel(props) {
         reference: null,
         timeOfCall: null,
         timeCancelled: null,
+        priority: null,
         timeRejected: null,
         riderResponsibility: null,
         id: null,
@@ -73,14 +74,12 @@ function TaskDetailsPanel(props) {
 
     function onChangeTimeCancelled(value) {
         if (value || value === null) {
-            setState((prevState) => ({ ...prevState, timeCancelled: value }));
             props.onChangeTimeCancelled(value);
         }
     }
 
     function onChangeTimeRejected(value) {
         if (value || value === null) {
-            setState((prevState) => ({ ...prevState, timeRejected: value }));
             props.onChangeTimeRejected(value);
         }
     }
@@ -158,11 +157,6 @@ function TaskDetailsPanel(props) {
                 </Grid>
                 <Grid item>
                     <Grid container direction={"column"}>
-                        <Grid item>
-                            <LabelItemPair label={""}>
-                                <ActivityPopover parentUUID={task.id} />
-                            </LabelItemPair>
-                        </Grid>
                         <Grid item>
                             <LabelItemPair label={"Time cancelled"}>
                                 <TimePicker

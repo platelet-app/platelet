@@ -65,15 +65,6 @@ function PickUpDetails(props) {
         }
     }
 
-    function onChangeTimePickedUp(value) {
-        if (value || value === null)
-            dispatch(
-                updateTaskPickupTimeRequest(props.taskUUID, {
-                    time_picked_up: value,
-                })
-            );
-    }
-
     return (
         <Paper className={classes.root}>
             <Grid
@@ -99,7 +90,7 @@ function PickUpDetails(props) {
                 <Grid item>
                     <LabelItemPair label={"Time picked up"}>
                         <TimePicker
-                            onChange={onChangeTimePickedUp}
+                            onChange={props.onChangeTimePickedUp}
                             disabled={isPostingPickupTime}
                             label={"Mark picked up"}
                             time={props.time}
