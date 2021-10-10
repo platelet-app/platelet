@@ -118,7 +118,16 @@ function DeliverableGridSelect(props) {
                 orderInGrid,
             },
         }));
-        props.onChange({ ...deliverable, orderInGrid });
+        const {
+            createdAt,
+            updatedAt,
+            icon,
+            _lastChangedAt,
+            _deleted,
+            _version,
+            ...rest
+        } = deliverable;
+        props.onChange({ ...rest, orderInGrid });
     }
 
     function onChangeUnit(deliverableId, unit) {

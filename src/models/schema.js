@@ -1354,6 +1354,7 @@ export const schema = {
         "DeliverableUnit": {
             "name": "DeliverableUnit",
             "values": [
+                "NONE",
                 "LITRE",
                 "MILLILITRE",
                 "GRAM",

@@ -901,6 +901,7 @@ export const syncDeliverables = /* GraphQL */ `
           id
           label
           icon
+          defaultUnit
           _version
           _deleted
           _lastChangedAt
@@ -934,6 +935,7 @@ export const getDeliverable = /* GraphQL */ `
         id
         label
         icon
+        defaultUnit
         _version
         _deleted
         _lastChangedAt
@@ -980,6 +982,7 @@ export const listDeliverables = /* GraphQL */ `
           id
           label
           icon
+          defaultUnit
           _version
           _deleted
           _lastChangedAt
@@ -2245,6 +2248,7 @@ export const syncDeliverableTypes = /* GraphQL */ `
         id
         label
         icon
+        defaultUnit
         _version
         _deleted
         _lastChangedAt
@@ -2262,6 +2266,7 @@ export const getDeliverableType = /* GraphQL */ `
       id
       label
       icon
+      defaultUnit
       _version
       _deleted
       _lastChangedAt
@@ -2285,6 +2290,7 @@ export const listDeliverableTypes = /* GraphQL */ `
         id
         label
         icon
+        defaultUnit
         _version
         _deleted
         _lastChangedAt

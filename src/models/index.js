@@ -29,6 +29,7 @@ const DeliverableTypeIcon = {
 };
 
 const DeliverableUnit = {
+  "NONE": "NONE",
   "LITRE": "LITRE",
   "MILLILITRE": "MILLILITRE",
   "GRAM": "GRAM",

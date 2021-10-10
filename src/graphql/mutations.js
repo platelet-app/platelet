@@ -1104,6 +1104,7 @@ export const createDeliverable = /* GraphQL */ `
         id
         label
         icon
+        defaultUnit
         _version
         _deleted
         _lastChangedAt
@@ -1148,6 +1149,7 @@ export const updateDeliverable = /* GraphQL */ `
         id
         label
         icon
+        defaultUnit
         _version
         _deleted
         _lastChangedAt
@@ -1192,6 +1194,7 @@ export const deleteDeliverable = /* GraphQL */ `
         id
         label
         icon
+        defaultUnit
         _version
         _deleted
         _lastChangedAt
@@ -4759,6 +4762,7 @@ export const createDeliverableType = /* GraphQL */ `
       id
       label
       icon
+      defaultUnit
       _version
       _deleted
       _lastChangedAt
@@ -4776,6 +4780,7 @@ export const updateDeliverableType = /* GraphQL */ `
       id
       label
       icon
+      defaultUnit
       _version
       _deleted
       _lastChangedAt
@@ -4793,6 +4798,7 @@ export const deleteDeliverableType = /* GraphQL */ `
       id
       label
       icon
+      defaultUnit
       _version
       _deleted
       _lastChangedAt

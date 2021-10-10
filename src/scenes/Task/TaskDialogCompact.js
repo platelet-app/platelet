@@ -130,6 +130,8 @@ function TaskDialogCompact(props) {
     taskDeliverablesRef.current = task.deliverables;
     const taskRef = useRef();
     taskRef.current = task;
+    const taskObserver = useRef({ unsubscribe: () => {} });
+    const deliverablesObserver = useRef({ unsubscribe: () => {} });
 
     const taskUUID = props.taskId;
 
@@ -143,13 +145,66 @@ function TaskDialogCompact(props) {
                     models.Deliverable,
                     (t) => t.taskDeliverablesId("eq", taskUUID)
                 );
-                if (taskData)
+                if (taskData) {
                     setTask({
                         ...taskData,
-                        deliverables:
-                            convertListDataToObject(deliverables) || {},
+                        deliverables: deliverables
+                            ? convertListDataToObject(deliverables)
+                            : {},
                     });
-                else setNotFound(true);
+                    taskObserver.current.unsubscribe();
+                    taskObserver.current = DataStore.observe(
+                        models.Task,
+                        taskUUID
+                    ).subscribe((observeResult) => {
+                        const task = observeResult.element;
+                        setTask((prevState) => ({ ...prevState, ...task }));
+                    });
+
+                    if (deliverables) {
+                        deliverablesObserver.current.unsubscribe();
+                        deliverablesObserver.current = DataStore.observe(
+                            models.Deliverable,
+                            (t) => t.taskDeliverablesId("eq", taskUUID)
+                        ).subscribe((observeResult) => {
+                            console.log(observeResult);
+                            const deliverable = observeResult.element;
+                            if (observeResult.opType === "INSERT") {
+                                setTask((prevState) => ({
+                                    ...prevState,
+                                    deliverables: {
+                                        ...prevState.deliverables,
+                                        [deliverable.id]: deliverable,
+                                    },
+                                }));
+                            } else if (observeResult.opType === "UPDATE") {
+                                setTask((prevState) => ({
+                                    ...prevState,
+                                    deliverables: {
+                                        ...prevState.deliverables,
+                                        [deliverable.id]: {
+                                            ...prevState.deliverables[
+                                                deliverable.id
+                                            ],
+                                            ...deliverables,
+                                        },
+                                    },
+                                }));
+                            }
+                            if (observeResult.opType === "DELETE") {
+                                setTask((prevState) => ({
+                                    ...prevState,
+                                    deliverables: _.omit(
+                                        prevState.deliverables,
+                                        deliverable.id
+                                    ),
+                                }));
+                            }
+                        });
+                    }
+                } else {
+                    setNotFound(true);
+                }
                 setIsFetching(false);
             } catch (error) {
                 setIsFetching(false);
@@ -158,6 +213,9 @@ function TaskDialogCompact(props) {
         }
     }
     useEffect(() => getTask(), [dataStoreReadyStatus, props.taskId]);
+
+    useEffect(() => () => taskObserver.current.unsubscribe(), []);
+    useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
 
     async function setTimeDroppedOff(value) {
         console.log(value);
