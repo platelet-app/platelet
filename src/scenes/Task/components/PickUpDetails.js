@@ -11,32 +11,13 @@ import {
 } from "../../../redux/taskDestinations/TaskDestinationsActions";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
-import {
-    updateTaskPickupTimePrefix,
-    updateTaskPickupTimeRequest,
-} from "../../../redux/tasks/TasksActions";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 
 function PickUpDetails(props) {
     const dispatch = useDispatch();
-    const pickupPostingSelector = createPostingSelector([
-        updateTaskPickupTimePrefix,
-    ]);
-    const isPostingPickupTime = useSelector((state) =>
-        pickupPostingSelector(state)
-    );
     const classes = dialogCardStyles();
-
-    function onSelectPickupFromSaved(location) {
-        const locationUUID = location.uuid;
-        if (locationUUID) {
-            dispatch(
-                setTaskPickupDestinationRequest(props.taskUUID, locationUUID)
-            );
-        }
-    }
 
     function onClearPickupLocation() {
         if (props.location) {
@@ -75,11 +56,9 @@ function PickUpDetails(props) {
             >
                 <Grid item>
                     <LocationDetailAndSelector
-                        onSelectPreset={onSelectPickupFromSaved}
-                        onChange={onChangePickupLocation}
-                        onEditPreset={(value) =>
-                            onChangePickupLocation(value, true)
-                        }
+                        onSelectPreset={props.onSelectPickupPreset}
+                        onChange={props.onChange}
+                        onEditPreset={props.onEditPreset}
                         onClear={onClearPickupLocation}
                         location={props.location}
                         displayPresets={true}
@@ -91,7 +70,6 @@ function PickUpDetails(props) {
                     <LabelItemPair label={"Time picked up"}>
                         <TimePicker
                             onChange={props.onChangeTimePickedUp}
-                            disabled={isPostingPickupTime}
                             label={"Mark picked up"}
                             time={props.time}
                         />

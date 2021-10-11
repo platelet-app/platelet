@@ -1,71 +1,57 @@
-import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
-import TextField from '@material-ui/core/TextField';
-import {useSelector} from "react-redux";
-import Autocomplete from '@mui/material/Autocomplete';
-import {matchSorter} from "match-sorter"
-import parse from 'autosuggest-highlight/parse';
-import match from 'autosuggest-highlight/match';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import { matchSorter } from "match-sorter";
+import { DataStore } from "aws-amplify";
+import * as models from "../models/index";
 
-const filterOptions = (options, {inputValue}) => {
-    return matchSorter(options, inputValue, {keys: ['name']});
-}
-
+const filterOptions = (options, { inputValue }) => {
+    return matchSorter(options, inputValue, { keys: ["name"] });
+};
 
 function FavouriteLocationsSelect(props) {
-    const availableLocations = useSelector(state => state.availableLocations.locations);
-    const [filteredLocationSuggestions, setFilteredLocationSuggestions] = useState([]);
+    const [availableLocations, setAvailableLocations] = useState([]);
     const onSelect = (event, selectedItem) => {
-        if (selectedItem)
-            props.onSelect(selectedItem);
+        if (selectedItem) props.onSelect(selectedItem);
     };
 
-    useEffect(() => {
-        const filteredSuggestions = Object.values(availableLocations).map((location) => {
-            if (location.name != null)
-                return location
-        });
-        setFilteredLocationSuggestions(filteredSuggestions);
-    }, [availableLocations]);
+    async function getLocations() {
+        const locations = await DataStore.query(models.Location, (l) =>
+            l.listed("eq", 1)
+        );
+        console.log(locations);
+        setAvailableLocations(locations);
+    }
+
+    useEffect(() => getLocations(), []);
 
     return (
-        <div>
-            <Autocomplete
-                filterOptions={filterOptions}
-                options={filteredLocationSuggestions}
-                getOptionLabel={(option) => option.name}
-                size={"small"}
-                style={{width: 230}}
-                renderInput={(params) => (
-                    <TextField {...params} label={props.label || "Select"} variant="outlined" margin="none"/>
-                )}
-                onChange={onSelect}
-                renderOption={(option, {inputValue}) => {
-                    const matches = match(option.name, inputValue);
-                    const parts = parse(option.name, matches);
-
-                    return (
-                        <div>
-                            {parts.map((part, index) => (
-                                <span key={index} style={{fontWeight: part.highlight ? 700 : 400}}>
-                {part.text}
-              </span>
-                            ))}
-                        </div>
-                    );
-                }}
-            />
-        </div>
+        <Autocomplete
+            disablePortal
+            options={availableLocations}
+            getOptionLabel={(option) => option.name}
+            size={"small"}
+            style={{ width: 230 }}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    label={props.label || "Select"}
+                    variant="outlined"
+                    margin="none"
+                />
+            )}
+            onChange={onSelect}
+        />
     );
 }
 
 FavouriteLocationsSelect.propTypes = {
     onSelect: PropTypes.func,
-    label: PropTypes.string
-}
+    label: PropTypes.string,
+};
 FavouriteLocationsSelect.defaultProps = {
-    onSelect: () => {
-    }
-}
+    onSelect: () => {},
+};
 
 export default FavouriteLocationsSelect;

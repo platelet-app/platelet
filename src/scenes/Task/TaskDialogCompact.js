@@ -82,38 +82,35 @@ const initialLocationState = {
     listed: false,
 };
 const initialState = {
-    task: {
-        id: null,
-        reference: "",
-        etag: "",
-        author: null,
-        author_uuid: null,
-        pickupLocation: initialLocationState,
-        dropoffLocation: initialLocationState,
-        patch: null,
-        requesterContact: {
-            name: null,
-            telephoneNumber: null,
-        },
-        priority: null,
-        timeOfCall: null,
-        deliverables: null,
-        comments: null,
-        links: null,
-        timePickedUp: null,
-        timeDroppedOff: null,
-        rider: null,
-        assignedRiders: [],
-        assignedCoordinators: [],
-        timeCancelled: null,
-        timeRejected: null,
-        createdAt: null,
-        updatedAt: null,
-        orderInRelay: 0,
-        assignedRidersDisplayString: "",
-        assignedCoordinatorsDisplayString: "",
+    id: null,
+    reference: "",
+    etag: "",
+    author: null,
+    author_uuid: null,
+    pickUpLocation: null,
+    dropOffLocation: null,
+    patch: null,
+    requesterContact: {
+        name: null,
+        telephoneNumber: null,
     },
-    error: null,
+    priority: null,
+    timeOfCall: null,
+    deliverables: null,
+    comments: null,
+    links: null,
+    timePickedUp: null,
+    timeDroppedOff: null,
+    rider: null,
+    assignedRiders: [],
+    assignedCoordinators: [],
+    timeCancelled: null,
+    timeRejected: null,
+    createdAt: null,
+    updatedAt: null,
+    orderInRelay: 0,
+    assignedRidersDisplayString: "",
+    assignedCoordinatorsDisplayString: "",
 };
 
 function TaskDialogCompact(props) {
@@ -145,9 +142,23 @@ function TaskDialogCompact(props) {
                     models.Deliverable,
                     (t) => t.taskDeliverablesId("eq", taskUUID)
                 );
+                const pickUpLocation = taskData.pickUpLocationId
+                    ? await DataStore.query(
+                          models.Location,
+                          taskData.pickUpLocationId
+                      )
+                    : null;
+                const dropOffLocation = taskData.dropOffLocationId
+                    ? await DataStore.query(
+                          models.Location,
+                          taskData.dropOffLocationId
+                      )
+                    : null;
                 if (taskData) {
                     setTask({
                         ...taskData,
+                        pickUpLocation: pickUpLocation,
+                        dropOffLocation: dropOffLocation,
                         deliverables: deliverables
                             ? convertListDataToObject(deliverables)
                             : {},
@@ -167,7 +178,6 @@ function TaskDialogCompact(props) {
                             models.Deliverable,
                             (t) => t.taskDeliverablesId("eq", taskUUID)
                         ).subscribe((observeResult) => {
-                            console.log(observeResult);
                             const deliverable = observeResult.element;
                             if (observeResult.opType === "INSERT") {
                                 setTask((prevState) => ({
@@ -218,7 +228,6 @@ function TaskDialogCompact(props) {
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
 
     async function setTimeDroppedOff(value) {
-        console.log(value);
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
             const status = determineTaskStatus({
@@ -351,6 +360,108 @@ function TaskDialogCompact(props) {
             },
         };
     }
+    async function editDropOffPreset(currentState) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        const {
+            createdAt,
+            updatedAt,
+            id,
+            name,
+            contact,
+            _version,
+            _lastChangedAt,
+            _deleted,
+            ...rest
+        } = currentState;
+        if (result && rest) {
+            const newContact = await DataStore.save(
+                new models.AddressAndContactDetails(contact)
+            );
+            const newLocation = await DataStore.save(
+                new models.Location({
+                    ...rest,
+                    listed: 0,
+                    locationContactId: newContact.id,
+                    name: `Copy of ${name}`,
+                })
+            );
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.dropOffLocationId = newLocation.id;
+                })
+            );
+            setTask((prevState) => ({
+                ...prevState,
+                dropOffLocation: newLocation,
+            }));
+        }
+    }
+
+    async function editPickUpPreset(currentState) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        const {
+            createdAt,
+            updatedAt,
+            id,
+            name,
+            contact,
+            _version,
+            _lastChangedAt,
+            _deleted,
+            ...rest
+        } = currentState;
+        if (result && rest) {
+            const newContact = await DataStore.save(
+                new models.AddressAndContactDetails(contact)
+            );
+            const newLocation = await DataStore.save(
+                new models.Location({
+                    ...rest,
+                    listed: 0,
+                    locationContactId: newContact.id,
+                    name: `Copy of ${name}`,
+                })
+            );
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.pickUpLocationId = newLocation.id;
+                })
+            );
+            setTask((prevState) => ({
+                ...prevState,
+                pickUpLocation: newLocation,
+            }));
+        }
+    }
+    async function selectPickUpPreset(location) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result && location) {
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.pickUpLocationId = location.id;
+                })
+            );
+            setTask((prevState) => ({
+                ...prevState,
+                pickUpLocation: location,
+            }));
+        }
+    }
+
+    async function selectDropOffPreset(location) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result && location) {
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.dropOffLocationId = location.id;
+                })
+            );
+            setTask((prevState) => ({
+                ...prevState,
+                dropOffLocation: location,
+            }));
+        }
+    }
 
     async function deleteDeliverable(deliverableTypeId) {
         // receive DeliverableTypeId only from selector component
@@ -447,6 +558,10 @@ function TaskDialogCompact(props) {
                         task={task}
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}
+                        onSelectPickUpPreset={selectPickUpPreset}
+                        onSelectDropOffPreset={selectDropOffPreset}
+                        onEditPickUpPreset={editPickUpPreset}
+                        onEditDropOffPreset={editDropOffPreset}
                         onChangeTimePickedUp={setTimePickedUp}
                         onChangeTimeDroppedOff={setTimeDroppedOff}
                         onChangeTimeCancelled={setTimeCancelled}

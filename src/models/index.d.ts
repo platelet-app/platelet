@@ -87,10 +87,6 @@ type TaskMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type LocationMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
 type CoordinatorTasksMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -100,6 +96,10 @@ type DeliverableMetaData = {
 }
 
 type DeliverableTypeMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+type LocationMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
@@ -215,8 +215,8 @@ export declare class Task {
   readonly timeCancelled?: string;
   readonly timeRejected?: string;
   readonly requesterContact?: AddressAndContactDetails;
-  readonly pickUpLocation?: Location;
-  readonly dropOffLocation?: Location;
+  readonly pickUpLocationId?: string;
+  readonly dropOffLocationId?: string;
   readonly riderResponsibility?: RiderResponsibility;
   readonly assignedCoordinators?: (CoordinatorTasks | null)[];
   readonly assignedRiders?: (RiderTasks | null)[];
@@ -231,28 +231,6 @@ export declare class Task {
   readonly updatedAt?: string;
   constructor(init: ModelInit<Task, TaskMetaData>);
   static copyOf(source: Task, mutator: (draft: MutableModel<Task, TaskMetaData>) => MutableModel<Task, TaskMetaData> | void): Task;
-}
-
-export declare class Location {
-  readonly id: string;
-  readonly name?: string;
-  readonly listed?: number;
-  readonly contact?: AddressAndContactDetails;
-  readonly ward?: string;
-  readonly line1?: string;
-  readonly line2?: string;
-  readonly line3?: string;
-  readonly town?: string;
-  readonly county?: string;
-  readonly state?: string;
-  readonly country?: string;
-  readonly postcode?: string;
-  readonly what3words?: string;
-  readonly comments?: Comment[];
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
-  constructor(init: ModelInit<Location, LocationMetaData>);
-  static copyOf(source: Location, mutator: (draft: MutableModel<Location, LocationMetaData>) => MutableModel<Location, LocationMetaData> | void): Location;
 }
 
 export declare class CoordinatorTasks {
@@ -288,4 +266,26 @@ export declare class DeliverableType {
   readonly updatedAt?: string;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);
   static copyOf(source: DeliverableType, mutator: (draft: MutableModel<DeliverableType, DeliverableTypeMetaData>) => MutableModel<DeliverableType, DeliverableTypeMetaData> | void): DeliverableType;
+}
+
+export declare class Location {
+  readonly id: string;
+  readonly name?: string;
+  readonly listed?: number;
+  readonly contact?: AddressAndContactDetails;
+  readonly ward?: string;
+  readonly line1?: string;
+  readonly line2?: string;
+  readonly line3?: string;
+  readonly town?: string;
+  readonly county?: string;
+  readonly state?: string;
+  readonly country?: string;
+  readonly postcode?: string;
+  readonly what3words?: string;
+  readonly comments?: Comment[];
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  constructor(init: ModelInit<Location, LocationMetaData>);
+  static copyOf(source: Location, mutator: (draft: MutableModel<Location, LocationMetaData>) => MutableModel<Location, LocationMetaData> | void): Location;
 }

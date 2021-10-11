@@ -79,12 +79,10 @@ function DropOffDetails(props) {
             >
                 <Grid item>
                     <LocationDetailAndSelector
-                        onSelectPreset={onSelectDropoffFromSaved}
-                        onChange={onChangeDropoffLocation}
+                        onSelectPreset={props.onSelectDropOffPreset}
                         onClear={onClearDropoffLocation}
-                        onEditPreset={(value) =>
-                            onChangeDropoffLocation(value, true)
-                        }
+                        onChange={props.onChange}
+                        onEditPreset={props.onEditPreset}
                         location={props.location}
                         displayPresets={true}
                         label={"Deliver"}

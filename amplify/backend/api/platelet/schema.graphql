@@ -97,7 +97,10 @@ type CoordinatorTasks @model(queries: null) {
 
 type Task
   @model
-  @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus") {
+  @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
+  @key(name: "byPickUpLocation", fields: ["pickUpLocationId",])
+  @key(name: "byDropOffLocation", fields: ["dropOffLocationId",])
+  {
   #   @key(
   #     name: "byStatusbyGroup"
   #     fields: ["status", "group"]
@@ -112,8 +115,8 @@ type Task
   timeCancelled: AWSDateTime
   timeRejected: AWSDateTime
   requesterContact: AddressAndContactDetails @connection
-  pickUpLocation: Location @connection
-  dropOffLocation: Location @connection
+  pickUpLocationId: ID
+  dropOffLocationId: ID
   riderResponsibility: RiderResponsibility @connection
   assignedCoordinators: [CoordinatorTasks] @connection(name: "TaskCoordinators")
   assignedRiders: [RiderTasks] @connection(name: "TaskRiders")

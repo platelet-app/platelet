@@ -41,8 +41,8 @@ const initialState = {
         postcode: "",
     },
     contact: {
-        telephone_number: "",
-        email_address: "",
+        telephoneNumber: "",
+        emailAddress: "",
         name: "",
     },
 };
@@ -57,10 +57,10 @@ function LocationDetailAndSelector(props) {
     function updateStateFromProps() {
         if (props.location) {
             let result = { ...initialState };
-            if (props.location.address) {
+            if (props.location) {
                 result = {
                     ...result,
-                    address: { ...result.address, ...props.location.address },
+                    address: { ...props.location },
                 };
             }
             setProtectedLocation(
@@ -72,8 +72,8 @@ function LocationDetailAndSelector(props) {
                     contact: { ...result.contact, ...props.location.contact },
                 };
             }
-            console.log(result);
             setState(result);
+            setProtectedLocation(!!props.location.listed);
         } else {
             setState(initialState);
             setProtectedLocation(false);
@@ -92,7 +92,7 @@ function LocationDetailAndSelector(props) {
     }
 
     function onClickEditButton() {
-        props.onEditPreset(state);
+        props.onEditPreset({ ...state.address, contact: state.contact });
     }
     function onClickClearButton() {
         props.onClear();
@@ -101,9 +101,26 @@ function LocationDetailAndSelector(props) {
     const presetName =
         props.location && props.location.name ? props.location.name : "";
     const locationLink =
-        props.location && props.location.uuid
-            ? `/location/${encodeUUID(props.location.uuid)}`
+        props.location && props.location.id
+            ? `/location/${encodeUUID(props.location.id)}`
             : "";
+
+    let locationTitle = <></>;
+    if (props.location && props.location.listed) {
+        locationTitle = (
+            <ThemedLink to={locationLink}>
+                <Typography noWrap className={classes.label}>
+                    {presetName}
+                </Typography>
+            </ThemedLink>
+        );
+    } else if (props.location && !!!props.location.listed) {
+        locationTitle = (
+            <Typography noWrap className={classes.label}>
+                {presetName}
+            </Typography>
+        );
+    }
 
     const presetSelect = props.displayPresets ? (
         <Grid item>
@@ -121,11 +138,7 @@ function LocationDetailAndSelector(props) {
                             onSelect={onSelectPreset}
                         />
                     ) : (
-                        <ThemedLink to={locationLink}>
-                            <Typography noWrap className={classes.label}>
-                                {presetName}
-                            </Typography>
-                        </ThemedLink>
+                        locationTitle
                     )}
                 </Grid>
                 <Grid item>
@@ -137,7 +150,7 @@ function LocationDetailAndSelector(props) {
                     >
                         <Grid
                             className={
-                                props.location && props.location.protected
+                                props.location && props.location.listed
                                     ? show
                                     : hide
                             }
@@ -376,22 +389,7 @@ LocationDetailAndSelector.defaultProps = {
     label: "",
     displayPresets: true,
     disableClear: false,
-    location: {
-        address: {
-            what3words: null,
-            ward: null,
-            line1: null,
-            line2: null,
-            town: null,
-            county: null,
-            postcode: null,
-        },
-        contact: {
-            name: null,
-            telephone_number: null,
-            email_address: null,
-        },
-    },
+    location: null,
     onSelectPreset: () => {},
     onChange: () => {},
     onClear: () => {},

@@ -71,7 +71,10 @@ function TaskOverview(props) {
                     <PickUpDetails
                         taskUUID={taskUUID}
                         onChangeTimePickedUp={props.onChangeTimePickedUp}
-                        location={task.pickupLocation}
+                        onSelectPickupPreset={props.onSelectPickUpPreset}
+                        onEditPreset={props.onEditPickUpPreset}
+                        onChange={props.onChangePickUpLocation}
+                        location={task.pickUpLocation}
                         time={task.timePickedUp}
                         showContact
                     />
@@ -80,6 +83,8 @@ function TaskOverview(props) {
                     <DropOffDetails
                         disableTimeButton={!!!task.timePickedUp}
                         taskUUID={taskUUID}
+                        onSelectDropOffPreset={props.onSelectDropOffPreset}
+                        onEditPreset={props.onEditDropOffPreset}
                         onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
                         location={task.dropOffLocation}
                         time={task.timeDroppedOff}

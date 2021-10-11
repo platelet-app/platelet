@@ -761,31 +761,19 @@ export const schema = {
                         "targetName": "taskRequesterContactId"
                     }
                 },
-                "pickUpLocation": {
-                    "name": "pickUpLocation",
+                "pickUpLocationId": {
+                    "name": "pickUpLocationId",
                     "isArray": false,
-                    "type": {
-                        "model": "Location"
-                    },
+                    "type": "ID",
                     "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "taskPickUpLocationId"
-                    }
+                    "attributes": []
                 },
-                "dropOffLocation": {
-                    "name": "dropOffLocation",
+                "dropOffLocationId": {
+                    "name": "dropOffLocationId",
                     "isArray": false,
-                    "type": {
-                        "model": "Location"
-                    },
+                    "type": "ID",
                     "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "taskDropOffLocationId"
-                    }
+                    "attributes": []
                 },
                 "riderResponsibility": {
                     "name": "riderResponsibility",
@@ -947,153 +935,24 @@ export const schema = {
                         ],
                         "queryField": "tasksByStatus"
                     }
-                }
-            ]
-        },
-        "Location": {
-            "name": "Location",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
                 },
-                "name": {
-                    "name": "name",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "listed": {
-                    "name": "listed",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "contact": {
-                    "name": "contact",
-                    "isArray": false,
-                    "type": {
-                        "model": "AddressAndContactDetails"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "locationContactId"
-                    }
-                },
-                "ward": {
-                    "name": "ward",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "line1": {
-                    "name": "line1",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "line2": {
-                    "name": "line2",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "line3": {
-                    "name": "line3",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "town": {
-                    "name": "town",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "county": {
-                    "name": "county",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "state": {
-                    "name": "state",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "country": {
-                    "name": "country",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "postcode": {
-                    "name": "postcode",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "what3words": {
-                    "name": "what3words",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "comments": {
-                    "name": "comments",
-                    "isArray": true,
-                    "type": {
-                        "model": "Comment"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "parentId"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Locations",
-            "attributes": [
                 {
-                    "type": "model",
-                    "properties": {}
+                    "type": "key",
+                    "properties": {
+                        "name": "byPickUpLocation",
+                        "fields": [
+                            "pickUpLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byDropOffLocation",
+                        "fields": [
+                            "dropOffLocationId"
+                        ]
+                    }
                 }
             ]
         },
@@ -1314,6 +1173,153 @@ export const schema = {
                     "properties": {}
                 }
             ]
+        },
+        "Location": {
+            "name": "Location",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "listed": {
+                    "name": "listed",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "contact": {
+                    "name": "contact",
+                    "isArray": false,
+                    "type": {
+                        "model": "AddressAndContactDetails"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "locationContactId"
+                    }
+                },
+                "ward": {
+                    "name": "ward",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line1": {
+                    "name": "line1",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line2": {
+                    "name": "line2",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line3": {
+                    "name": "line3",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "town": {
+                    "name": "town",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "county": {
+                    "name": "county",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "state": {
+                    "name": "state",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "country": {
+                    "name": "country",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "postcode": {
+                    "name": "postcode",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "what3words": {
+                    "name": "what3words",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "parentId"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Locations",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                }
+            ]
         }
     },
     "enums": {
@@ -1386,5 +1392,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "16ef27798b66a6ef50a14f1c23f87ea3"
+    "version": "f6f992da1bce324d5378b4b32fefae4a"
 };
