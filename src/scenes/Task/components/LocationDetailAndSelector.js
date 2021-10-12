@@ -126,7 +126,7 @@ function LocationDetailAndSelector(props) {
             : "";
 
     let locationTitle = <></>;
-    if (props.location && props.location.listed) {
+    if (props.location && !!props.location.listed) {
         locationTitle = (
             <ThemedLink to={locationLink}>
                 <Typography noWrap className={classes.label}>
@@ -140,6 +140,10 @@ function LocationDetailAndSelector(props) {
                 {presetName}
             </Typography>
         );
+    }
+
+    if (presetName.length > 30) {
+        locationTitle = <Tooltip title={presetName}>{locationTitle}</Tooltip>;
     }
 
     const presetSelect = props.displayPresets ? (
