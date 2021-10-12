@@ -5,7 +5,6 @@ import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../Task/styles/DialogCompactStyles";
-import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
@@ -36,7 +35,7 @@ function DeliverableGridSelect(props) {
         initialDeliverablesSortedState
     );
     const [state, setState] = useState({});
-    const [truncated, setTruncated] = useState(false);
+    const [truncated, setTruncated] = useState(true);
     const [availableDeliverables, setAvailableDeliverables] = useState({});
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
@@ -157,7 +156,7 @@ function DeliverableGridSelect(props) {
     }
 
     useEffect(
-        () => setTruncated(Object.values(availableDeliverables).length > 6),
+        () => setTruncated(Object.values(availableDeliverables).length > 5),
         [availableDeliverables]
     );
 
@@ -235,14 +234,13 @@ function DeliverableGridSelect(props) {
                         <Link
                             href="#"
                             onClick={(e) => {
-                                setTruncated(!truncated);
+                                setTruncated((prevState) => !prevState);
                                 e.preventDefault();
                             }}
                             color="inherit"
                         >
                             {truncated ? "More..." : "Less..."}
                         </Link>
-                        <Typography></Typography>
                     </Grid>
                 </Grid>
             </Paper>

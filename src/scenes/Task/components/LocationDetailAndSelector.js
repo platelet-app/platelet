@@ -14,6 +14,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { showHide, ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Link from "@material-ui/core/Link";
 
 const useStyles = makeStyles({
     root: {
@@ -47,12 +49,30 @@ const initialState = {
     },
 };
 
+const addressFields = {
+    what3words: "what3words",
+    ward: "Ward",
+    line1: "Line one",
+    line2: "Line two",
+    town: "Town",
+    county: "County",
+    country: "Country",
+    postcode: "Postcode",
+};
+
+const contactFields = {
+    telephoneNumber: "Tel",
+    emailAddress: "Email",
+    name: "Name",
+};
+
 function LocationDetailAndSelector(props) {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
     const [protectedLocation, setProtectedLocation] = useState(false);
     const [presetMode, setPresetMode] = useState(false);
     const { show, hide } = showHide();
+    const [collapsed, setCollapsed] = useState(true);
 
     function updateStateFromProps() {
         if (props.location) {
@@ -200,6 +220,8 @@ function LocationDetailAndSelector(props) {
         <></>
     );
 
+    const collapsedShowFields = ["ward", "what3words", "postcode", "line1"];
+
     return (
         <div className={classes.root}>
             <Grid
@@ -221,151 +243,94 @@ function LocationDetailAndSelector(props) {
                     <Divider />
                 </Grid>
                 {presetSelect}
-
                 <Grid item>
-                    <LabelItemPair label={"w3w"}>
-                        <ClickableTextField
-                            label={"w3w"}
-                            disabled={protectedLocation}
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    address: {
-                                        ...state.address,
-                                        what3words: v,
-                                    },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.address.what3words}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"Ward"}>
-                        <ClickableTextField
-                            label="ward"
-                            disabled={protectedLocation}
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    address: { ...state.address, ward: v },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.address.ward}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"Line1"}>
-                        <ClickableTextField
-                            label={"line1"}
-                            disabled={protectedLocation}
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    address: { ...state.address, line1: v },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.address.line1}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"Line2"}>
-                        <ClickableTextField
-                            label={"line2"}
-                            disabled={protectedLocation}
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    address: { ...state.address, line2: v },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.address.line2}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"Town"}>
-                        <ClickableTextField
-                            label={"town"}
-                            disabled={protectedLocation}
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    address: { ...state.address, town: v },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.address.town}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"County"}>
-                        <ClickableTextField
-                            label={"county"}
-                            disabled={protectedLocation}
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    address: { ...state.address, county: v },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.address.county}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"Postcode"}>
-                        <ClickableTextField
-                            label={"postcode"}
-                            disabled={protectedLocation}
-                            onFinished={(v) => {
-                                const result = {
-                                    ...state,
-                                    address: { ...state.address, postcode: v },
-                                };
-                                setState(result);
-                                props.onChange(result);
-                            }}
-                            value={state.address.postcode}
-                        />
-                    </LabelItemPair>
+                    {Object.entries(addressFields).map(([key, label]) => {
+                        if (collapsedShowFields.includes(key) || !collapsed) {
+                            return (
+                                <LabelItemPair label={label}>
+                                    <ClickableTextField
+                                        label={label}
+                                        disabled={protectedLocation}
+                                        onFinished={(v) => {
+                                            setState((prevState) => ({
+                                                ...prevState,
+                                                address: {
+                                                    ...state.address,
+                                                    [key]: v,
+                                                },
+                                            }));
+                                            props.onChange({ [key]: v });
+                                        }}
+                                        value={state.address[key]}
+                                    />
+                                </LabelItemPair>
+                            );
+                        } else {
+                            return <></>;
+                        }
+                    })}
+
                     <div className={classes.separator} />
                     <div className={props.showContact ? show : hide}>
-                        <LabelItemPair label={"Name"}>
-                            <ClickableTextField
-                                disabled={protectedLocation}
-                                onFinished={(v) => {
-                                    const result = {
-                                        ...state,
-                                        contact: { ...state.contact, name: v },
-                                    };
-                                    setState(result);
-                                    props.onChange(result);
-                                }}
-                                value={state.contact.name}
-                            />
-                        </LabelItemPair>
-                        <LabelItemPair label={"Telephone"}>
-                            <ClickableTextField
-                                disabled={protectedLocation}
-                                tel
-                                onFinished={(v) => {
-                                    const result = {
-                                        ...state,
-                                        contact: {
-                                            ...state.contact,
-                                            telephone_number: v,
-                                        },
-                                    };
-                                    setState(result);
-                                    props.onChange(result);
-                                }}
-                                value={state.contact.telephone_number}
-                            />
-                        </LabelItemPair>
+                        {Object.entries(contactFields).map(([key, label]) => {
+                            if (!collapsed) {
+                                return (
+                                    <LabelItemPair label={label}>
+                                        <ClickableTextField
+                                            label={label}
+                                            disabled={protectedLocation}
+                                            onFinished={(v) => {
+                                                setState((prevState) => ({
+                                                    ...prevState,
+                                                    contact: {
+                                                        ...state.contact,
+                                                        [key]: v,
+                                                    },
+                                                }));
+                                                props.onChange({ [key]: v });
+                                            }}
+                                            value={state.contact[key]}
+                                        />
+                                    </LabelItemPair>
+                                );
+                            } else {
+                                return <></>;
+                            }
+                        })}
                     </div>
+                </Grid>
+                <Grid item>
+                    <Divider />
+                </Grid>
+                <Grid item>
+                    <Grid
+                        container
+                        alignItems={"center"}
+                        justify={"flex-start"}
+                        direction={"row"}
+                    >
+                        <Grid item>
+                            <IconButton
+                                onClick={() =>
+                                    setCollapsed((prevState) => !prevState)
+                                }
+                            >
+                                <ExpandMoreIcon />
+                            </IconButton>
+                        </Grid>
+                        <Grid item>
+                            <Link
+                                href="#"
+                                onClick={(e) => {
+                                    setCollapsed((prevState) => !prevState);
+                                    e.preventDefault();
+                                }}
+                                color="inherit"
+                            >
+                                {collapsed ? "Expand to see more" : "Show less"}
+                            </Link>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </div>
