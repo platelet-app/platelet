@@ -3,47 +3,15 @@ import LocationDetailAndSelector from "./LocationDetailAndSelector";
 import LabelItemPair from "../../../components/LabelItemPair";
 import TimePicker from "./TimePicker";
 import React from "react";
-import {
-    addNewPickupLocationAndSetTaskRequest,
-    setTaskPickupDestinationRequest,
-    unsetTaskPickupDestinationRequest,
-    updatePickupLocationAndUpdateTaskRequest,
-} from "../../../redux/taskDestinations/TaskDestinationsActions";
-import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
-import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 
 function PickUpDetails(props) {
-    const dispatch = useDispatch();
     const classes = dialogCardStyles();
 
-    function onClearPickupLocation() {
-        if (props.location) {
-            dispatch(unsetTaskPickupDestinationRequest(props.taskUUID));
-        }
-    }
-
-    function onChangePickupLocation(value, makeNew = false) {
-        if (props.location) {
-            if (makeNew) {
-                dispatch(
-                    addNewPickupLocationAndSetTaskRequest(props.taskUUID, value)
-                );
-            } else {
-                dispatch(
-                    updatePickupLocationAndUpdateTaskRequest(
-                        props.taskUUID,
-                        value
-                    )
-                );
-            }
-        } else {
-            dispatch(
-                addNewPickupLocationAndSetTaskRequest(props.taskUUID, value)
-            );
-        }
+    function onClearPickUpLocation() {
+        props.onClearPickUpLocation();
     }
 
     return (
@@ -59,7 +27,7 @@ function PickUpDetails(props) {
                         onSelectPreset={props.onSelectPickupPreset}
                         onChange={props.onChange}
                         onEditPreset={props.onEditPreset}
-                        onClear={onClearPickupLocation}
+                        onClear={onClearPickUpLocation}
                         location={props.location}
                         displayPresets={true}
                         label={"Pick up"}

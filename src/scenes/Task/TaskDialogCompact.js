@@ -448,6 +448,21 @@ function TaskDialogCompact(props) {
         }
     }
 
+    async function clearPickUpLocation() {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result) {
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.pickUpLocationId = null;
+                })
+            );
+        }
+        setTask((prevState) => ({
+            ...prevState,
+            pickUpLocation: null,
+        }));
+    }
+
     async function selectDropOffPreset(location) {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result && location) {
@@ -482,6 +497,21 @@ function TaskDialogCompact(props) {
                 existing.id
             );
         }
+    }
+
+    async function clearDropOffLocation() {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result) {
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.dropOffLocationId = null;
+                })
+            );
+        }
+        setTask((prevState) => ({
+            ...prevState,
+            dropOffLocation: null,
+        }));
     }
 
     async function updateDeliverables(value) {
@@ -562,6 +592,8 @@ function TaskDialogCompact(props) {
                         onSelectDropOffPreset={selectDropOffPreset}
                         onEditPickUpPreset={editPickUpPreset}
                         onEditDropOffPreset={editDropOffPreset}
+                        onClearPickUpLocation={clearPickUpLocation}
+                        onClearDropOffLocation={clearDropOffLocation}
                         onChangeTimePickedUp={setTimePickedUp}
                         onChangeTimeDroppedOff={setTimeDroppedOff}
                         onChangeTimeCancelled={setTimeCancelled}

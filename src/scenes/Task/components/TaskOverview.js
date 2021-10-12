@@ -71,6 +71,7 @@ function TaskOverview(props) {
                     <PickUpDetails
                         taskUUID={taskUUID}
                         onChangeTimePickedUp={props.onChangeTimePickedUp}
+                        onClearPickUpLocation={props.onClearPickUpLocation}
                         onSelectPickupPreset={props.onSelectPickUpPreset}
                         onEditPreset={props.onEditPickUpPreset}
                         onChange={props.onChangePickUpLocation}
@@ -84,6 +85,7 @@ function TaskOverview(props) {
                         disableTimeButton={!!!task.timePickedUp}
                         taskUUID={taskUUID}
                         onSelectDropOffPreset={props.onSelectDropOffPreset}
+                        onClearDropOffLocation={props.onClearDropOffLocation}
                         onEditPreset={props.onEditDropOffPreset}
                         onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
                         location={task.dropOffLocation}
