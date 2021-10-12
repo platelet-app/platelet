@@ -23,7 +23,12 @@ function DropOffDetails(props) {
                     <LocationDetailAndSelector
                         onSelectPreset={props.onSelectDropOffPreset}
                         onClear={props.onClearDropOffLocation}
-                        onChange={props.onChange}
+                        onChange={(v) =>
+                            props.onChange(
+                                props.location ? props.location.id : null,
+                                v
+                            )
+                        }
                         onEditPreset={props.onEditPreset}
                         location={props.location}
                         displayPresets={true}

@@ -87,6 +87,7 @@ function TaskOverview(props) {
                         onSelectDropOffPreset={props.onSelectDropOffPreset}
                         onClearDropOffLocation={props.onClearDropOffLocation}
                         onEditPreset={props.onEditDropOffPreset}
+                        onChange={props.onChangeDropOffLocation}
                         onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
                         location={task.dropOffLocation}
                         time={task.timeDroppedOff}

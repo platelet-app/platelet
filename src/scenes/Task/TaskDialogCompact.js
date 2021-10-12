@@ -514,6 +514,37 @@ function TaskDialogCompact(props) {
         }));
     }
 
+    async function changeDropOffLocation(locationId, values) {
+        let locationResult;
+        if (locationId) {
+            locationResult = await DataStore.query(models.Location, locationId);
+            if (locationResult) {
+                await DataStore.save(
+                    models.Location.copyOf(locationResult, (updated) => {
+                        for (const [key, v] of Object.entries(values)) {
+                            updated[key] = v;
+                        }
+                    })
+                );
+            }
+        } else {
+            locationResult = await DataStore.save(new models.Location(values));
+            const taskResult = await DataStore.query(models.Task, taskUUID);
+            if (taskResult) {
+                await DataStore.save(
+                    models.Task.copyOf(taskResult, (updated) => {
+                        updated.dropOffLocationId = locationResult.id;
+                    })
+                );
+            }
+        }
+        const locationFinal = { ...locationResult, ...values };
+        setTask((prevState) => ({
+            ...prevState,
+            dropOffLocation: locationFinal,
+        }));
+    }
+
     async function updateDeliverables(value) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
@@ -589,11 +620,12 @@ function TaskDialogCompact(props) {
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}
                         onSelectPickUpPreset={selectPickUpPreset}
-                        onSelectDropOffPreset={selectDropOffPreset}
                         onEditPickUpPreset={editPickUpPreset}
-                        onEditDropOffPreset={editDropOffPreset}
                         onClearPickUpLocation={clearPickUpLocation}
+                        onSelectDropOffPreset={selectDropOffPreset}
+                        onEditDropOffPreset={editDropOffPreset}
                         onClearDropOffLocation={clearDropOffLocation}
+                        onChangeDropOffLocation={changeDropOffLocation}
                         onChangeTimePickedUp={setTimePickedUp}
                         onChangeTimeDroppedOff={setTimeDroppedOff}
                         onChangeTimeCancelled={setTimeCancelled}
