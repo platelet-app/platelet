@@ -72,6 +72,7 @@ function TaskOverview(props) {
                         taskUUID={taskUUID}
                         onChangeTimePickedUp={props.onChangeTimePickedUp}
                         onClearPickUpLocation={props.onClearPickUpLocation}
+                        onChange={props.onChangePickUpLocation}
                         onSelectPickupPreset={props.onSelectPickUpPreset}
                         onEditPreset={props.onEditPickUpPreset}
                         onChange={props.onChangePickUpLocation}

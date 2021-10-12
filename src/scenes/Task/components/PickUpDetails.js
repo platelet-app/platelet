@@ -25,7 +25,12 @@ function PickUpDetails(props) {
                 <Grid item>
                     <LocationDetailAndSelector
                         onSelectPreset={props.onSelectPickupPreset}
-                        onChange={props.onChange}
+                        onChange={(v) =>
+                            props.onChange(
+                                props.location ? props.location.id : null,
+                                v
+                            )
+                        }
                         onEditPreset={props.onEditPreset}
                         onClear={onClearPickUpLocation}
                         location={props.location}
