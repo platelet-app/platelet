@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     convertListDataToObject,
     decodeUUID,
@@ -22,6 +22,10 @@ import { DataStore } from "aws-amplify";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import _ from "lodash";
 import { tasksStatus } from "../../apiConsts";
+import {
+    displayErrorNotification,
+    displayWarningNotification,
+} from "../../redux/notifications/NotificationsActions";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -129,6 +133,7 @@ function TaskDialogCompact(props) {
     taskRef.current = task;
     const taskObserver = useRef({ unsubscribe: () => {} });
     const deliverablesObserver = useRef({ unsubscribe: () => {} });
+    const dispatch = useDispatch();
 
     const taskUUID = props.taskId;
 
@@ -513,66 +518,109 @@ function TaskDialogCompact(props) {
             dropOffLocation: null,
         }));
     }
-    async function changePickUpLocation(locationId, values) {
-        let locationResult;
-        if (locationId) {
-            locationResult = await DataStore.query(models.Location, locationId);
-            if (locationResult) {
-                await DataStore.save(
-                    models.Location.copyOf(locationResult, (updated) => {
-                        for (const [key, v] of Object.entries(values)) {
-                            updated[key] = v;
-                        }
-                    })
-                );
-            }
-        } else {
-            locationResult = await DataStore.save(new models.Location(values));
-            const taskResult = await DataStore.query(models.Task, taskUUID);
-            if (taskResult) {
-                await DataStore.save(
-                    models.Task.copyOf(taskResult, (updated) => {
-                        updated.pickUpLocationId = locationResult.id;
-                    })
-                );
-            }
-        }
-        const locationFinal = { ...locationResult, ...values };
-        setTask((prevState) => ({
-            ...prevState,
-            pickUpLocation: locationFinal,
-        }));
-    }
 
-    async function changeDropOffLocation(locationId, values) {
+    async function changeLocationDetails(locationId, values, key) {
+        // display error if some location that doesn't exist is attempted to be created
+        if (!["dropOffLocation", "pickUpLocation"].includes(key)) {
+            dispatch(
+                displayErrorNotification(
+                    "An error has occurred while updating the location"
+                )
+            );
+            return;
+        }
+
+        //seperate any contact details with location details
+        const { contact, ...rest } = values;
         let locationResult;
+        let contactResult;
+        // if we are updating an existing location
         if (locationId) {
-            locationResult = await DataStore.query(models.Location, locationId);
-            if (locationResult) {
-                await DataStore.save(
-                    models.Location.copyOf(locationResult, (updated) => {
-                        for (const [key, v] of Object.entries(values)) {
+            const existingLocation = await DataStore.query(
+                models.Location,
+                locationId
+            );
+            if (!!existingLocation.listed) {
+                // can't edit a location if it's from the directory
+                dispatch(
+                    displayWarningNotification(
+                        "You can't edit listed locations in this way."
+                    )
+                );
+                return;
+            }
+            // if rest is empty, only contact data was sent
+            if (!_.isEmpty(rest) && existingLocation) {
+                // update the location and get the updated version back to locationResult
+                locationResult = await DataStore.save(
+                    models.Location.copyOf(existingLocation, (updated) => {
+                        for (const [key, v] of Object.entries(rest)) {
                             updated[key] = v;
                         }
                     })
                 );
             }
+            // if contact is undefined, no contact data was sent
+            if (contact && existingLocation) {
+                // get the existing contact model
+                const existingContact = await DataStore.query(
+                    models.AddressAndContactDetails,
+                    existingLocation.contact.id
+                );
+                // update the existing contact model and save the final version to contactResult
+                contactResult = await DataStore.save(
+                    models.AddressAndContactDetails.copyOf(
+                        existingContact,
+                        (updated) => {
+                            for (const [key, v] of Object.entries(contact)) {
+                                updated[key] = v;
+                            }
+                        }
+                    )
+                );
+            }
         } else {
-            locationResult = await DataStore.save(new models.Location(values));
-            const taskResult = await DataStore.query(models.Task, taskUUID);
-            if (taskResult) {
+            // if no location exists yet
+            // create a contact model
+            contactResult = await DataStore.save(
+                new models.AddressAndContactDetails(contact || {})
+            );
+            // create a new location and link it to the new contact model
+            locationResult = await DataStore.save(
+                new models.Location({
+                    ...rest,
+                    locationContactId: contactResult.id,
+                })
+            );
+            // find the existing task
+            const existingTask = await DataStore.query(models.Task, taskUUID);
+            if (existingTask) {
+                // find the id that we want to link to the new location
+                const idName =
+                    key === "dropOffLocation"
+                        ? "dropOffLocationId"
+                        : "pickUpLocationId";
                 await DataStore.save(
-                    models.Task.copyOf(taskResult, (updated) => {
-                        updated.dropOffLocationId = locationResult.id;
+                    models.Task.copyOf(existingTask, (updated) => {
+                        updated[idName] = locationResult.id;
                     })
                 );
             }
         }
-        const locationFinal = { ...locationResult, ...values };
-        setTask((prevState) => ({
-            ...prevState,
-            dropOffLocation: locationFinal,
-        }));
+
+        // update local state, but find data from prevState to fill contactResult or locationResult if they are undefined
+        setTask((prevState) => {
+            if (!contactResult)
+                contactResult = prevState[key] ? prevState[key].contact : null;
+            if (!locationResult) locationResult = prevState[key];
+            return {
+                ...prevState,
+                [key]: {
+                    ...locationResult,
+                    contact: contactResult,
+                },
+            };
+        });
     }
 
     async function updateDeliverables(value) {
@@ -652,11 +700,23 @@ function TaskDialogCompact(props) {
                         onSelectPickUpPreset={selectPickUpPreset}
                         onEditPickUpPreset={editPickUpPreset}
                         onClearPickUpLocation={clearPickUpLocation}
-                        onChangePickUpLocation={changePickUpLocation}
+                        onChangePickUpLocation={(locationId, values) =>
+                            changeLocationDetails(
+                                locationId,
+                                values,
+                                "pickUpLocation"
+                            )
+                        }
                         onSelectDropOffPreset={selectDropOffPreset}
                         onEditDropOffPreset={editDropOffPreset}
                         onClearDropOffLocation={clearDropOffLocation}
-                        onChangeDropOffLocation={changeDropOffLocation}
+                        onChangeDropOffLocation={(locationId, values) =>
+                            changeLocationDetails(
+                                locationId,
+                                values,
+                                "dropOffLocation"
+                            )
+                        }
                         onChangeTimePickedUp={setTimePickedUp}
                         onChangeTimeDroppedOff={setTimeDroppedOff}
                         onChangeTimeCancelled={setTimeCancelled}

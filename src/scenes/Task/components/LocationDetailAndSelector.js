@@ -291,7 +291,9 @@ function LocationDetailAndSelector(props) {
                                                         [key]: v,
                                                     },
                                                 }));
-                                                props.onChange({ [key]: v });
+                                                props.onChange({
+                                                    contact: { [key]: v },
+                                                });
                                             }}
                                             value={state.contact[key]}
                                         />
