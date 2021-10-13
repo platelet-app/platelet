@@ -62,26 +62,27 @@ const TaskCard = React.memo((props) => {
     const whoami = useSelector(getWhoami);
     const classes = useStyles();
     const roleView = useSelector((state) => state.roleView);
-    let pickupTitle = "";
-    if (props.pickupAddress) {
-        pickupTitle = props.pickupAddress.line1
-            ? props.pickupAddress.line1
+    console.log(props.pickUpLocation);
+    let pickUpTitle = "";
+    if (props.pickUpLocation) {
+        pickUpTitle = props.pickUpLocation.line1
+            ? props.pickUpLocation.line1
             : "";
     }
-    let pickupWard = "";
-    if (props.pickupAddress) {
-        pickupWard = props.pickupAddress.ward ? props.pickupAddress.ward : "";
+    let pickUpWard = "";
+    if (props.pickUpLocation) {
+        pickUpWard = props.pickUpLocation.ward ? props.pickUpLocation.ward : "";
     }
-    let dropoffTitle = "";
-    if (props.dropoffAddress) {
-        dropoffTitle = props.dropoffAddress.line1
-            ? props.dropoffAddress.line1
+    let dropOffTitle = "";
+    if (props.dropOffLocation) {
+        dropOffTitle = props.dropOffLocation.line1
+            ? props.dropOffLocation.line1
             : "";
     }
-    let dropoffWard = "";
-    if (props.dropoffAddress) {
-        dropoffWard = props.dropoffAddress.ward
-            ? props.dropoffAddress.ward
+    let dropOffWard = "";
+    if (props.dropOffLocation) {
+        dropOffWard = props.dropOffLocation.ward
+            ? props.dropOffLocation.ward
             : "";
     }
     const hasRider = props.assignedRiders
@@ -151,19 +152,21 @@ const TaskCard = React.memo((props) => {
                     </Grid>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"Patch"}>{props.patch}</CardItem>
+                    <CardItem label={"Responsibility"}>
+                        {props.riderResponsibility}
+                    </CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"From"}>{pickupTitle}</CardItem>
+                    <CardItem label={"From"}>{pickUpTitle}</CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"Ward"}>{pickupWard}</CardItem>
+                    <CardItem label={"Ward"}>{pickUpWard}</CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"To"}>{dropoffTitle}</CardItem>
+                    <CardItem label={"To"}>{dropOffTitle}</CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"Ward"}>{dropoffWard}</CardItem>
+                    <CardItem label={"Ward"}>{dropOffWard}</CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
                     <CardItem label={"TOC"}>
@@ -183,8 +186,8 @@ const TaskCard = React.memo((props) => {
 });
 
 TaskCard.propTypes = {
-    pickupAddress: PropTypes.object,
-    dropoffAddress: PropTypes.object,
+    pickUpAddress: PropTypes.object,
+    dropOffAddress: PropTypes.object,
     assignedRiders: PropTypes.arrayOf(PropTypes.object),
     assignedCoordinators: PropTypes.arrayOf(PropTypes.object),
     timePickedUp: PropTypes.string,

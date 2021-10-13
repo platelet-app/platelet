@@ -240,4 +240,8 @@ TaskContextMenu.propTypes = {
     assignedRiders: PropTypes.arrayOf(PropTypes.object),
 };
 
+TaskContextMenu.defaultProps = {
+    assignedRiders: [],
+};
+
 export default TaskContextMenu;

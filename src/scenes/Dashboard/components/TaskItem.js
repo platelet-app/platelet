@@ -9,15 +9,16 @@ import { contextDots } from "../../../styles/common";
 
 const TaskItem = React.memo(function TaskItem(props) {
     const classes = contextDots();
+    const { task } = props;
     const assignedCoordinators =
-        props.assignees && props.assignees.items
-            ? props.assignees.items
+        task.assignees && task.assignees.items
+            ? task.assignees.items
                   .filter((i) => i.role === "COORDINATOR")
                   .map((i) => i.assignee)
             : [];
     const assignedRiders =
-        props.assignees && props.assignees.items
-            ? props.assignees.items
+        task.assignees && task.assignees.items
+            ? task.assignees.items
                   .filter((i) => i.role === "RIDER")
                   .map((i) => i.assignee)
             : [];
@@ -27,6 +28,8 @@ const TaskItem = React.memo(function TaskItem(props) {
     const assignedRidersDisplayString = assignedRiders
         .map((i) => i.displayName)
         .join(", ");
+
+    console.log(task);
     return (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <div style={{ cursor: "context-menu", position: "relative" }}>
@@ -39,7 +42,9 @@ const TaskItem = React.memo(function TaskItem(props) {
                 >
                     <TaskCard
                         title={"Task"}
-                        {...props}
+                        status={task.status}
+                        pickUpLocation={task.pickUpLocation}
+                        dropOffLocation={task.dropOffLocation}
                         assignedRiders={assignedRiders}
                         assignedCoordinators={assignedCoordinators}
                         assignedRidersDisplayString={
@@ -54,7 +59,7 @@ const TaskItem = React.memo(function TaskItem(props) {
                     <TaskContextMenu
                         disableDeleted={props.deleteDisabled}
                         disableRelay={!!props.relayNext}
-                        {...props}
+                        {...task}
                     />
                 </div>
             </div>
@@ -67,26 +72,13 @@ TaskItem.defaultProps = {
     assignedCoordinators: [],
     animate: true,
 };
+
 TaskItem.propTypes = {
-    pickupAddress: PropTypes.object,
-    assignedCoordinatorsDisplayString: PropTypes.string,
-    assignedRidersDisplayString: PropTypes.string,
-    dropoffAddress: PropTypes.object,
-    timePickedUp: PropTypes.string,
-    timeDroppedOff: PropTypes.string,
-    timeRejected: PropTypes.string,
-    timeCancelled: PropTypes.string,
-    timeOfCall: PropTypes.string,
-    priority: PropTypes.string,
-    patch: PropTypes.string,
-    relayNext: PropTypes.object,
+    task: PropTypes.object,
     taskUUID: PropTypes.string,
-    parentID: PropTypes.number,
     view: PropTypes.string,
     deleteDisabled: PropTypes.bool,
     animate: PropTypes.bool,
 };
-
-TaskItem.whyDidYouRender = true;
 
 export default TaskItem;

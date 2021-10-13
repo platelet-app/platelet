@@ -36,24 +36,6 @@ type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type Location @model {
-  id: ID!
-  name: String
-  listed: Int
-  contact: AddressAndContactDetails @connection
-  ward: String
-  line1: String
-  line2: String
-  line3: String
-  town: String
-  county: String
-  state: String
-  country: String
-  postcode: String
-  what3words: String
-  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
-}
-
 type AddressAndContactDetails @model {
   id: ID!
   name: String
@@ -95,6 +77,26 @@ type CoordinatorTasks @model(queries: null) {
   task: Task @connection(name: "TaskCoordinators")
 }
 
+type Location @model {
+  id: ID!
+  name: String
+  listed: Int
+  contact: AddressAndContactDetails @connection
+  ward: String
+  line1: String
+  line2: String
+  line3: String
+  town: String
+  county: String
+  state: String
+  country: String
+  postcode: String
+  what3words: String
+  tasksAsPickUp: [Task!] @connection (keyName: "byPickUpLocation", fields: ["id"])
+  tasksAsDropOff: [Task!] @connection (keyName: "byDropOffLocation", fields: ["id"])
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
+}
+
 type Task
   @model
   @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
@@ -117,6 +119,8 @@ type Task
   requesterContact: AddressAndContactDetails @connection
   pickUpLocationId: ID
   dropOffLocationId: ID
+  pickUpLocation: Location @connection(fields: ["pickUpLocationId"])
+  dropOffLocation: Location @connection(fields: ["dropOffLocationId"])
   riderResponsibility: RiderResponsibility @connection
   assignedCoordinators: [CoordinatorTasks] @connection(name: "TaskCoordinators")
   assignedRiders: [RiderTasks] @connection(name: "TaskRiders")

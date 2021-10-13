@@ -148,22 +148,8 @@ function TaskDialogCompact(props) {
                         models.Deliverable,
                         (t) => t.taskDeliverablesId("eq", taskUUID)
                     );
-                    const pickUpLocation = taskData.pickUpLocationId
-                        ? await DataStore.query(
-                              models.Location,
-                              taskData.pickUpLocationId
-                          )
-                        : null;
-                    const dropOffLocation = taskData.dropOffLocationId
-                        ? await DataStore.query(
-                              models.Location,
-                              taskData.dropOffLocationId
-                          )
-                        : null;
                     setTask({
                         ...taskData,
-                        pickUpLocation: pickUpLocation,
-                        dropOffLocation: dropOffLocation,
                         deliverables: deliverables
                             ? convertListDataToObject(deliverables)
                             : {},
@@ -439,13 +425,18 @@ function TaskDialogCompact(props) {
         }
     }
     async function selectPickUpPreset(location) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result && location) {
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.pickUpLocationId = location.id;
-                })
-            );
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (result && location) {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.pickUpLocationId = location.id;
+                    })
+                );
+            }
+        } catch (e) {
+            console.log("dumb error");
+            console.log(e);
             setTask((prevState) => ({
                 ...prevState,
                 pickUpLocation: location,
@@ -469,13 +460,18 @@ function TaskDialogCompact(props) {
     }
 
     async function selectDropOffPreset(location) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result && location) {
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.dropOffLocationId = location.id;
-                })
-            );
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (result && location) {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.dropOffLocationId = location.id;
+                    })
+                );
+            }
+        } catch (e) {
+            console.log("dumb error");
+            console.log(e);
             setTask((prevState) => ({
                 ...prevState,
                 dropOffLocation: location,
@@ -530,7 +526,7 @@ function TaskDialogCompact(props) {
             return;
         }
 
-        //seperate any contact details with location details
+        //separate any contact details with location details
         const { contact, ...rest } = values;
         let locationResult;
         let contactResult;
@@ -600,11 +596,16 @@ function TaskDialogCompact(props) {
                     key === "dropOffLocation"
                         ? "dropOffLocationId"
                         : "pickUpLocationId";
-                await DataStore.save(
-                    models.Task.copyOf(existingTask, (updated) => {
-                        updated[idName] = locationResult.id;
-                    })
-                );
+                try {
+                    await DataStore.save(
+                        models.Task.copyOf(existingTask, (updated) => {
+                            updated[idName] = locationResult.id;
+                        })
+                    );
+                } catch (e) {
+                    console.log("dumb error");
+                    console.log(e);
+                }
             }
         }
 

@@ -213,7 +213,7 @@ function TasksGridColumn(props) {
                                     <Grid item className={classes.gridItem}>
                                         <TaskItem
                                             animate={animate}
-                                            {...task}
+                                            task={task}
                                             taskUUID={task.id}
                                             view={props.modalView}
                                             deleteDisabled={

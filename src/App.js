@@ -159,7 +159,6 @@ const taskStatus = {
 function AppDefault(props) {
     const darkMode = useSelector((state) => state.darkMode);
     let theme;
-    //useEffect(() => DataStore.start(), []);
     if (darkMode) {
         theme = createMuiTheme({
             palette: {
