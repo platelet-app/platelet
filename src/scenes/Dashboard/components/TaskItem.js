@@ -29,7 +29,6 @@ const TaskItem = React.memo(function TaskItem(props) {
         .map((i) => i.displayName)
         .join(", ");
 
-    console.log(task);
     return (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <div style={{ cursor: "context-menu", position: "relative" }}>
@@ -43,6 +42,7 @@ const TaskItem = React.memo(function TaskItem(props) {
                     <TaskCard
                         title={"Task"}
                         status={task.status}
+                        priority={task.priority}
                         pickUpLocation={task.pickUpLocation}
                         dropOffLocation={task.dropOffLocation}
                         assignedRiders={assignedRiders}
