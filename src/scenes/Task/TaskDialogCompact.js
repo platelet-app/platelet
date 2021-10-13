@@ -209,7 +209,7 @@ function TaskDialogCompact(props) {
                 setIsFetching(false);
             } catch (error) {
                 setIsFetching(false);
-                console.log("Request failed", error);
+                console.error("Request failed", error);
             }
         }
     }
@@ -435,8 +435,8 @@ function TaskDialogCompact(props) {
                 );
             }
         } catch (e) {
-            console.log("dumb error");
-            console.log(e);
+            console.error("dumb error");
+            console.error(e);
             setTask((prevState) => ({
                 ...prevState,
                 pickUpLocation: location,
@@ -447,16 +447,21 @@ function TaskDialogCompact(props) {
     async function clearPickUpLocation() {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.pickUpLocationId = null;
-                })
-            );
+            try {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.pickUpLocationId = null;
+                    })
+                );
+            } catch (e) {
+                console.error("dumb error");
+                console.error(e);
+                setTask((prevState) => ({
+                    ...prevState,
+                    pickUpLocation: null,
+                }));
+            }
         }
-        setTask((prevState) => ({
-            ...prevState,
-            pickUpLocation: null,
-        }));
     }
 
     async function selectDropOffPreset(location) {
@@ -470,8 +475,8 @@ function TaskDialogCompact(props) {
                 );
             }
         } catch (e) {
-            console.log("dumb error");
-            console.log(e);
+            console.error("dumb error");
+            console.error(e);
             setTask((prevState) => ({
                 ...prevState,
                 dropOffLocation: location,
@@ -501,18 +506,23 @@ function TaskDialogCompact(props) {
     }
 
     async function clearDropOffLocation() {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result) {
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.dropOffLocationId = null;
-                })
-            );
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (result) {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.dropOffLocationId = null;
+                    })
+                );
+            }
+        } catch (e) {
+            console.error("dumb error");
+            console.error(e);
+            setTask((prevState) => ({
+                ...prevState,
+                dropOffLocation: null,
+            }));
         }
-        setTask((prevState) => ({
-            ...prevState,
-            dropOffLocation: null,
-        }));
     }
 
     async function changeLocationDetails(locationId, values, key) {
@@ -603,8 +613,8 @@ function TaskDialogCompact(props) {
                         })
                     );
                 } catch (e) {
-                    console.log("dumb error");
-                    console.log(e);
+                    console.error("dumb error");
+                    console.error(e);
                 }
             }
         }
