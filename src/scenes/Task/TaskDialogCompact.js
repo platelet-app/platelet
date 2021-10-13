@@ -148,8 +148,13 @@ function TaskDialogCompact(props) {
                         models.Deliverable,
                         (t) => t.taskDeliverablesId("eq", taskUUID)
                     );
+                    const assignees = (
+                        await DataStore.query(models.TaskAssignee)
+                    ).filter((a) => a.task.id === taskUUID);
+                    console.log(assignees);
                     setTask({
                         ...taskData,
+                        assignees: convertListDataToObject(assignees),
                         deliverables: deliverables
                             ? convertListDataToObject(deliverables)
                             : {},
@@ -217,6 +222,18 @@ function TaskDialogCompact(props) {
 
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
+
+    async function addAssignee(user, role) {
+        const result = await DataStore.save(
+            new models.TaskAssignee({
+                assigneeId: user.id,
+                taskId: taskUUID,
+                role,
+            })
+        );
+        console.log(user, role);
+        console.log(result);
+    }
 
     async function setTimeDroppedOff(value) {
         const result = await DataStore.query(models.Task, taskUUID);
@@ -707,6 +724,7 @@ function TaskDialogCompact(props) {
                     <TaskOverview
                         task={task}
                         taskUUID={taskUUID}
+                        onSelectAssignee={addAssignee}
                         onSelectPriority={selectPriority}
                         onSelectPickUpPreset={selectPickUpPreset}
                         onEditPickUpPreset={editPickUpPreset}

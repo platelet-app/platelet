@@ -158,6 +158,7 @@ function Dashboard(props) {
             tasksSubscription.current = DataStore.observe(
                 models.Task
             ).subscribe(async (newTask) => {
+                console.log(newTask.element);
                 const task = newTask.element;
                 addTaskToState(task);
             });

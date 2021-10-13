@@ -79,7 +79,7 @@ type GroupMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type RiderTasksMetaData = {
+type TaskAssigneeMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
@@ -88,10 +88,6 @@ type TaskMetaData = {
 }
 
 type LocationMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type CoordinatorTasksMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
@@ -117,8 +113,7 @@ export declare class User {
   readonly profilePictureThumbnailURL?: string;
   readonly comments?: Comment[];
   readonly group?: Group;
-  readonly tasksRider?: (RiderTasks | null)[];
-  readonly tasksCoordinator?: (CoordinatorTasks | null)[];
+  readonly assignments?: (TaskAssignee | null)[];
   readonly active: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
@@ -195,14 +190,15 @@ export declare class Group {
   static copyOf(source: Group, mutator: (draft: MutableModel<Group, GroupMetaData>) => MutableModel<Group, GroupMetaData> | void): Group;
 }
 
-export declare class RiderTasks {
+export declare class TaskAssignee {
   readonly id: string;
-  readonly user?: User;
-  readonly task?: Task;
+  readonly role: Role | keyof typeof Role;
+  readonly task: Task;
+  readonly assignee: User;
   readonly createdAt?: string;
   readonly updatedAt?: string;
-  constructor(init: ModelInit<RiderTasks, RiderTasksMetaData>);
-  static copyOf(source: RiderTasks, mutator: (draft: MutableModel<RiderTasks, RiderTasksMetaData>) => MutableModel<RiderTasks, RiderTasksMetaData> | void): RiderTasks;
+  constructor(init: ModelInit<TaskAssignee, TaskAssigneeMetaData>);
+  static copyOf(source: TaskAssignee, mutator: (draft: MutableModel<TaskAssignee, TaskAssigneeMetaData>) => MutableModel<TaskAssignee, TaskAssigneeMetaData> | void): TaskAssignee;
 }
 
 export declare class Task {
@@ -218,8 +214,7 @@ export declare class Task {
   readonly pickUpLocation?: Location;
   readonly dropOffLocation?: Location;
   readonly riderResponsibility?: RiderResponsibility;
-  readonly assignedCoordinators?: (CoordinatorTasks | null)[];
-  readonly assignedRiders?: (RiderTasks | null)[];
+  readonly assignees?: (TaskAssignee | null)[];
   readonly priority?: Priority | keyof typeof Priority;
   readonly deliverables?: Deliverable[];
   readonly relayPrevious?: Task;
@@ -255,16 +250,6 @@ export declare class Location {
   readonly updatedAt?: string;
   constructor(init: ModelInit<Location, LocationMetaData>);
   static copyOf(source: Location, mutator: (draft: MutableModel<Location, LocationMetaData>) => MutableModel<Location, LocationMetaData> | void): Location;
-}
-
-export declare class CoordinatorTasks {
-  readonly id: string;
-  readonly coordinator?: User;
-  readonly task?: Task;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
-  constructor(init: ModelInit<CoordinatorTasks, CoordinatorTasksMetaData>);
-  static copyOf(source: CoordinatorTasks, mutator: (draft: MutableModel<CoordinatorTasks, CoordinatorTasksMetaData>) => MutableModel<CoordinatorTasks, CoordinatorTasksMetaData> | void): CoordinatorTasks;
 }
 
 export declare class Deliverable {

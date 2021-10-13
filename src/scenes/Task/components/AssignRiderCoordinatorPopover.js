@@ -1,11 +1,5 @@
 import React from "react";
 import RiderPicker from "../../../components/RiderPicker";
-import { SmallCirclePlusButton } from "../../../components/Buttons";
-import { useDispatch } from "react-redux";
-import {
-    addTaskAssignedCoordinatorRequest,
-    addTaskAssignedRiderRequest,
-} from "../../../redux/taskAssignees/TaskAssigneesActions";
 import PropTypes from "prop-types";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import { showHide } from "../../../styles/common";
@@ -15,6 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, Tooltip } from "@material-ui/core";
 import clsx from "clsx";
 import { AddCircleOutline } from "@mui/icons-material";
+import { userRoles } from "../../../apiConsts";
 
 const useStyles = makeStyles((theme) => ({
     button: (props) => ({
@@ -25,25 +20,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AssignRiderCoordinatorPopover(props) {
-    const dispatch = useDispatch();
     const { show, hide } = showHide();
     const [open, setOpen] = React.useState(false);
     const classes = useStyles(props);
     const onSelect = (user) => {
-        if (user) {
-            if (props.rider)
-                dispatch(
-                    addTaskAssignedRiderRequest(
-                        props.taskUUID,
-                        user.uuid,
-                        user.patch_id
-                    )
-                );
-            else if (props.coordinator)
-                dispatch(
-                    addTaskAssignedCoordinatorRequest(props.taskUUID, user.uuid)
-                );
-        }
+        props.onSelect(
+            user,
+            props.rider ? userRoles.rider : userRoles.coordinator
+        );
         handleClose();
     };
 
@@ -120,6 +104,7 @@ function AssignRiderCoordinatorPopover(props) {
 
 AssignRiderCoordinatorPopover.propTypes = {
     iconColor: PropTypes.string,
+    onSelect: PropTypes.func,
     taskUUID: PropTypes.string,
     exclude: PropTypes.arrayOf(PropTypes.string),
     coordinator: PropTypes.bool,
@@ -128,6 +113,7 @@ AssignRiderCoordinatorPopover.propTypes = {
 
 AssignRiderCoordinatorPopover.defaultProps = {
     iconColor: "primary",
+    onSelect: () => {},
     exclude: [],
 };
 

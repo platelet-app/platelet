@@ -119,7 +119,10 @@ function TaskOverview(props) {
                     />
                 </Grid>
                 <Grid className={classes.item} item>
-                    <TaskAssignmentsPanel />
+                    <TaskAssignmentsPanel
+                        onSelect={props.onSelectAssignee}
+                        task={props.task}
+                    />
                 </Grid>
             </Grid>
         </Container>
@@ -133,6 +136,7 @@ TaskOverview.propTypes = {
     onDeleteDeliverable: PropTypes.func,
     onChangeTimeCancelled: PropTypes.func,
     onChangeTimeRejected: PropTypes.func,
+    onSelectAssignee: PropTypes.func,
 };
 
 TaskOverview.defaultProps = {
@@ -140,6 +144,7 @@ TaskOverview.defaultProps = {
     onDeleteDeliverable: () => {},
     onChangeTimeCancelled: () => {},
     onChangeTimeRejected: () => {},
+    onSelectAssignee: () => {},
 };
 
 export default TaskOverview;

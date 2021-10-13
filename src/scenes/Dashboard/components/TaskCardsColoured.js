@@ -62,7 +62,6 @@ const TaskCard = React.memo((props) => {
     const whoami = useSelector(getWhoami);
     const classes = useStyles();
     const roleView = useSelector((state) => state.roleView);
-    console.log(props.pickUpLocation);
     let pickUpTitle = "";
     if (props.pickUpLocation) {
         pickUpTitle = props.pickUpLocation.line1

@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Tooltip } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import AssigneeEditPopover from "./AssigneeEditPopover";
-import AvatarGroup from '@mui/material/AvatarGroup';
+import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
 import { makeStyles } from "@material-ui/core";
@@ -12,6 +12,7 @@ import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { Paper } from "@material-ui/core";
 import { getActiveTaskSelector } from "../../../redux/Selectors";
 import { useSelector } from "react-redux";
+import { userRoles } from "../../../apiConsts";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -19,11 +20,29 @@ export const useStyles = makeStyles(() => ({
     },
 }));
 
-function TaskAssignmentsPanel() {
-    const task = useSelector(getActiveTaskSelector);
-    const classes = useStyles();
+function TaskAssignmentsPanel(props) {
+    const { task } = props;
+
+    const [assignedRiders, setAssignedRiders] = useState([]);
+    const [assignedCoordinators, setAssignedCoordinators] = useState([]);
     const cardClasses = dialogCardStyles();
     const { show, hide } = showHide();
+
+    function sortAssignees() {
+        console.log(task.assignees);
+        if (task.assignees && Object.values(task.assignees).length > 0) {
+            const riders = Object.values(task.assignees).filter(
+                (assignment) => assignment.role === userRoles.rider
+            );
+            setAssignedRiders(riders);
+            const coordinators = Object.values(task.assignees).filter(
+                (assignment) => assignment.role === userRoles.coordinator
+            );
+            setAssignedCoordinators(coordinators);
+        }
+    }
+
+    useEffect(sortAssignees, [props.task]);
     return (
         <Paper className={cardClasses.root}>
             <Grid container justify={"center"} direction={"column"} spacing={3}>
@@ -48,9 +67,10 @@ function TaskAssignmentsPanel() {
                                 <Grid item>
                                     <AssigneeEditPopover
                                         rider
-                                        assignees={task.assigned_riders}
+                                        assignees={assignedRiders}
                                         className={
-                                            task.assigned_riders.length > 0
+                                            assignedRiders &&
+                                            assignedRiders.length > 0
                                                 ? show
                                                 : hide
                                         }
@@ -64,7 +84,7 @@ function TaskAssignmentsPanel() {
                                         }
                                     >
                                         <AvatarGroup>
-                                            {task.assigned_riders.map((u) => (
+                                            {assignedRiders.map((u) => (
                                                 <UserAvatar
                                                     key={u.uuid}
                                                     size={5}
@@ -81,7 +101,8 @@ function TaskAssignmentsPanel() {
                                 <Grid item>
                                     <AssignRiderCoordinatorPopover
                                         rider
-                                        exclude={task.assigned_riders.map(
+                                        onSelect={props.onSelect}
+                                        exclude={assignedRiders.map(
                                             (u) => u.uuid
                                         )}
                                         taskUUID={task.uuid}
@@ -112,10 +133,10 @@ function TaskAssignmentsPanel() {
                                 <Grid item>
                                     <AssigneeEditPopover
                                         coordinator
-                                        assignees={task.assigned_coordinators}
+                                        assignees={assignedCoordinators}
                                         className={
-                                            task.assigned_coordinators.length >
-                                            0
+                                            assignedCoordinators &&
+                                            assignedCoordinators.length > 0
                                                 ? show
                                                 : hide
                                         }
@@ -129,31 +150,27 @@ function TaskAssignmentsPanel() {
                                         }
                                     >
                                         <AvatarGroup>
-                                            {task.assigned_coordinators.map(
-                                                (u) => (
-                                                    <UserAvatar
-                                                        key={u.uuid}
-                                                        size={5}
-                                                        userUUID={u.uuid}
-                                                        displayName={
-                                                            u.display_name
-                                                        }
-                                                        avatarURL={
-                                                            u.profile_picture_thumbnail_url
-                                                        }
-                                                    />
-                                                )
-                                            )}
+                                            {assignedCoordinators.map((u) => (
+                                                <UserAvatar
+                                                    key={u.id}
+                                                    size={5}
+                                                    userUUID={u.id}
+                                                    displayName={u.displayName}
+                                                    avatarURL={
+                                                        u.profilePictureThumbnailURL
+                                                    }
+                                                />
+                                            ))}
                                         </AvatarGroup>
                                     </Tooltip>
                                 </Grid>
                                 <Grid item>
                                     <AssignRiderCoordinatorPopover
-                                        exclude={task.assigned_coordinators.map(
-                                            (u) => u.uuid
+                                        exclude={assignedCoordinators.map(
+                                            (u) => u.id
                                         )}
                                         coordinator
-                                        taskUUID={task.uuid}
+                                        taskUUID={task.id}
                                     />
                                 </Grid>
                             </Grid>

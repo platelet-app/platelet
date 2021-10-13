@@ -129,32 +129,18 @@ export const schema = {
                         "targetName": "userGroupId"
                     }
                 },
-                "tasksRider": {
-                    "name": "tasksRider",
+                "assignments": {
+                    "name": "assignments",
                     "isArray": true,
                     "type": {
-                        "model": "RiderTasks"
+                        "model": "TaskAssignee"
                     },
                     "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "user"
-                    }
-                },
-                "tasksCoordinator": {
-                    "name": "tasksCoordinator",
-                    "isArray": true,
-                    "type": {
-                        "model": "CoordinatorTasks"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "coordinator"
+                        "associatedWith": "assignee"
                     }
                 },
                 "active": {
@@ -619,8 +605,8 @@ export const schema = {
                 }
             ]
         },
-        "RiderTasks": {
-            "name": "RiderTasks",
+        "TaskAssignee": {
+            "name": "TaskAssignee",
             "fields": {
                 "id": {
                     "name": "id",
@@ -629,18 +615,14 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "user": {
-                    "name": "user",
+                "role": {
+                    "name": "role",
                     "isArray": false,
                     "type": {
-                        "model": "User"
+                        "enum": "Role"
                     },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "riderTasksUserId"
-                    }
+                    "isRequired": true,
+                    "attributes": []
                 },
                 "task": {
                     "name": "task",
@@ -648,11 +630,24 @@ export const schema = {
                     "type": {
                         "model": "Task"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "riderTasksTaskId"
+                        "targetName": "taskId"
+                    }
+                },
+                "assignee": {
+                    "name": "assignee",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "assigneeId"
                     }
                 },
                 "createdAt": {
@@ -673,12 +668,32 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "RiderTasks",
+            "pluralName": "TaskAssignees",
             "attributes": [
                 {
                     "type": "model",
                     "properties": {
                         "queries": null
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTask",
+                        "fields": [
+                            "taskId",
+                            "assigneeId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byAssignee",
+                        "fields": [
+                            "assigneeId",
+                            "taskId"
+                        ]
                     }
                 }
             ]
@@ -800,32 +815,18 @@ export const schema = {
                         "targetName": "taskRiderResponsibilityId"
                     }
                 },
-                "assignedCoordinators": {
-                    "name": "assignedCoordinators",
+                "assignees": {
+                    "name": "assignees",
                     "isArray": true,
                     "type": {
-                        "model": "CoordinatorTasks"
+                        "model": "TaskAssignee"
                     },
                     "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "task"
-                    }
-                },
-                "assignedRiders": {
-                    "name": "assignedRiders",
-                    "isArray": true,
-                    "type": {
-                        "model": "RiderTasks"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "task"
+                        "associatedWith": "assignee"
                     }
                 },
                 "priority": {
@@ -1143,70 +1144,6 @@ export const schema = {
                 }
             ]
         },
-        "CoordinatorTasks": {
-            "name": "CoordinatorTasks",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "coordinator": {
-                    "name": "coordinator",
-                    "isArray": false,
-                    "type": {
-                        "model": "User"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "coordinatorTasksCoordinatorId"
-                    }
-                },
-                "task": {
-                    "name": "task",
-                    "isArray": false,
-                    "type": {
-                        "model": "Task"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "coordinatorTasksTaskId"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "CoordinatorTasks",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {
-                        "queries": null
-                    }
-                }
-            ]
-        },
         "Deliverable": {
             "name": "Deliverable",
             "fields": {
@@ -1432,5 +1369,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "2101c96a9d5fd703aa3b0335a25ea4b2"
+    "version": "417283654f712c30bfb9165e77f8f61d"
 };

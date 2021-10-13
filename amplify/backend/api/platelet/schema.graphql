@@ -12,8 +12,7 @@ type User @model {
   profilePictureThumbnailURL: String
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
   group: Group @connection(name: "GroupMembers")
-  tasksRider: [RiderTasks] @connection(name: "RiderTasks")
-  tasksCoordinator: [CoordinatorTasks] @connection(name: "CoordinatorTasks")
+  assignments: [TaskAssignee] @connection(keyName: "byAssignee", fields: ["id"])
   active: Int!
 }
 
@@ -64,19 +63,6 @@ type Deliverable @model {
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-
-
-type RiderTasks @model(queries: null) {
-  id: ID!
-  user: User @connection(name: "RiderTasks")
-  task: Task @connection(name: "TaskRiders")
-}
-type CoordinatorTasks @model(queries: null) {
-  id: ID!
-  coordinator: User @connection(name: "CoordinatorTasks")
-  task: Task @connection(name: "TaskCoordinators")
-}
-
 type Location @model {
   id: ID!
   name: String
@@ -122,8 +108,7 @@ type Task
   pickUpLocation: Location @connection(fields: ["pickUpLocationId"])
   dropOffLocation: Location @connection(fields: ["dropOffLocationId"])
   riderResponsibility: RiderResponsibility @connection
-  assignedCoordinators: [CoordinatorTasks] @connection(name: "TaskCoordinators")
-  assignedRiders: [RiderTasks] @connection(name: "TaskRiders")
+  assignees: [TaskAssignee] @connection(keyName: "byAssignee", fields: ["id"])
   priority: Priority
   deliverables: [Deliverable!] @connection
   relayPrevious: Task @connection
@@ -131,6 +116,19 @@ type Task
   group: [Group] @connection
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
   status: TaskStatus!
+}
+
+type TaskAssignee
+@model(queries: null)
+@key(name: "byTask", fields: ["taskId", "assigneeId"])
+@key(name: "byAssignee", fields: ["assigneeId", "taskId"])
+{
+  id: ID!
+  taskId: ID!
+  assigneeId: ID!
+  role: Role!
+  task: Task! @connection(fields: ["taskId"])
+  assignee: User! @connection(fields: ["assigneeId"])
 }
 
 type Comment @model @key(name: "byParent", fields: ["parentId"]) {
