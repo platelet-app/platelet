@@ -143,23 +143,23 @@ function TaskDialogCompact(props) {
         } else {
             try {
                 const taskData = await DataStore.query(models.Task, taskUUID);
-                const deliverables = await DataStore.query(
-                    models.Deliverable,
-                    (t) => t.taskDeliverablesId("eq", taskUUID)
-                );
-                const pickUpLocation = taskData.pickUpLocationId
-                    ? await DataStore.query(
-                          models.Location,
-                          taskData.pickUpLocationId
-                      )
-                    : null;
-                const dropOffLocation = taskData.dropOffLocationId
-                    ? await DataStore.query(
-                          models.Location,
-                          taskData.dropOffLocationId
-                      )
-                    : null;
                 if (taskData) {
+                    const deliverables = await DataStore.query(
+                        models.Deliverable,
+                        (t) => t.taskDeliverablesId("eq", taskUUID)
+                    );
+                    const pickUpLocation = taskData.pickUpLocationId
+                        ? await DataStore.query(
+                              models.Location,
+                              taskData.pickUpLocationId
+                          )
+                        : null;
+                    const dropOffLocation = taskData.dropOffLocationId
+                        ? await DataStore.query(
+                              models.Location,
+                              taskData.dropOffLocationId
+                          )
+                        : null;
                     setTask({
                         ...taskData,
                         pickUpLocation: pickUpLocation,
