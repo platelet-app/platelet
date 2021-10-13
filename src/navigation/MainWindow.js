@@ -55,7 +55,7 @@ export default function MainWindow(_props) {
                 <Switch location={location}>
                     <Route
                         exact
-                        path="/dashboard"
+                        path="/"
                         render={(props) => {
                             dispatch(setMenuIndex("dashboard"));
                             return <Dashboard {...props} />;

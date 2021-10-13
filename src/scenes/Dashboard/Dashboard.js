@@ -250,7 +250,7 @@ function Dashboard(props) {
     function handleDialogClose(e) {
         e.stopPropagation();
         if (props.location.state) history.goBack();
-        else history.push("/dashboard");
+        else history.push("/");
     }
 
     const dialog = props.match.params.task_uuid_b62 ? (

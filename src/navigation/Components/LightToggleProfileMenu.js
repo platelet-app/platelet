@@ -87,7 +87,7 @@ function LightToggleProfileMenu(props) {
                             onClick={() => {
                                 setAnchorElProfileMenu(null);
                                 //dispatch(logoutUser());
-                                history.push("/dashboard");
+                                history.push("/");
                                 Auth.signOut();
                             }}
                         >

@@ -109,7 +109,7 @@ function NavMenuSearch() {
                         <Grid item>
                             <Typography variant="h6">
                                 <Link
-                                    to={"/dashboard"}
+                                    to={"/"}
                                     style={{
                                         textDecoration: "none",
                                         color: "white",
