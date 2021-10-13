@@ -5,59 +5,58 @@ import { useSelector } from "react-redux";
 import Autocomplete from "@mui/material/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
 import Divider from "@material-ui/core/Divider";
+import { DataStore } from "aws-amplify";
+import { userRoles } from "../apiConsts";
+import * as models from "../models/index";
+import { Box } from "@material-ui/core";
 
 function CoordinatorPicker(props) {
-    const availableUsers = useSelector((state) => state.users.users);
-    const [textBoxValue, setTextBoxValue] = useState(null);
+    const [availableCoordinators, setAvailableCoordinators] = useState([]);
     const [filteredCoordinatorSuggestions, setFilteredCoordinatorSuggestions] =
         useState([]);
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
-        setTextBoxValue(null);
     };
-
-    useEffect(() => {
-        const filteredSuggestions = Object.values(availableUsers).filter(
+    async function getCoordinators() {
+        const coords = (await DataStore.query(models.User)).filter(
             (u) =>
-                u.roles.includes("coordinator") &&
-                !props.exclude.includes(u.uuid)
+                u.roles.includes(userRoles.coordinator) &&
+                !props.exclude.includes(u.id)
         );
-        setFilteredCoordinatorSuggestions(filteredSuggestions);
-    }, [availableUsers, props.exclude]);
+        setAvailableCoordinators(coords);
+    }
 
+    useEffect(() => getCoordinators(), []);
     return (
         <div>
             <Autocomplete
+                disablePortal
                 id="combo-box-coordinators"
-                options={filteredCoordinatorSuggestions}
-                value={textBoxValue}
-                className={props.className}
+                options={availableCoordinators}
+                getOptionLabel={(option) => option.displayName}
                 size={props.size}
-                getOptionLabel={(option) => option.display_name}
-                style={{ width: 200 }}
+                style={{ width: 230 }}
+                onChange={onSelect}
                 renderInput={(params) => (
                     <TextField
-                        autoFocus
                         {...params}
-                        label={props.label}
+                        label={props.label || "Select"}
                         variant="outlined"
                         margin="none"
                     />
                 )}
-                onChange={onSelect}
-                renderOption={(option, { inputValue }) => {
+                renderOption={(props, option) => {
                     return (
-                        <div style={{ width: "100%" }}>
+                        <Box component="li" {...props}>
                             <CompactUserCard
-                                userUUID={option.uuid}
-                                displayName={option.display_name}
+                                userUUID={option.id}
+                                displayName={option.displayName}
+                                patch={option.riderResponsibility}
                                 profilePictureURL={
-                                    option.profile_picture_thumbnail_url
+                                    option.profilePictureThumbnailURL
                                 }
                             />
-
-                            <Divider />
-                        </div>
+                        </Box>
                     );
                 }}
             />

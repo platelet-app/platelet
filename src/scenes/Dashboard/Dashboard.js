@@ -167,6 +167,7 @@ function Dashboard(props) {
     }
 
     useEffect(() => getTasks(), [roleView, dataStoreReadyStatus]);
+    console.log(tasks);
 
     useEffect(() => {
         return () => {

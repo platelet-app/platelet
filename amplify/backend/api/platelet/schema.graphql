@@ -89,11 +89,6 @@ type Task
   @key(name: "byPickUpLocation", fields: ["pickUpLocationId",])
   @key(name: "byDropOffLocation", fields: ["dropOffLocationId",])
   {
-  #   @key(
-  #     name: "byStatusbyGroup"
-  #     fields: ["status", "group"]
-  #     queryField: "tasksByStatusbyGroup"
-  #   )
   id: ID!
   name: String
   createdBy: User @connection

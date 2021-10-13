@@ -1,7 +1,7 @@
 import React from "react";
 import uuidBase62 from "uuid-base62";
 import { v4 as uuidv4 } from "uuid";
-import { deliverableIcons, tasksStatus } from "./apiConsts";
+import { deliverableIcons, tasksStatus, userRoles } from "./apiConsts";
 import BugIcon from "./components/deliverableIcons/BugIcon";
 import ChildIcon from "./components/deliverableIcons/ChildIcon";
 import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
@@ -36,24 +36,31 @@ export function determineTaskStatus(task) {
         return tasksStatus.cancelled;
     } else if (!!task.timeRejected) {
         return tasksStatus.rejected;
-    } else if (!task.assignedRiders || task.assignedRiders.length === 0) {
+    }
+    if (!task.assignees) {
+        return tasksStatus.new;
+    }
+    const assignedRiders = Object.values(task.assignees).filter(
+        (a) => a.role === userRoles.rider
+    );
+    if (!assignedRiders || assignedRiders.length === 0) {
         return tasksStatus.new;
     } else if (
-        task.assignedRiders &&
-        task.assignedRiders.length > 0 &&
+        assignedRiders &&
+        assignedRiders.length > 0 &&
         !!!task.timePickedUp
     ) {
         return tasksStatus.active;
     } else if (
-        task.assignedRiders &&
-        task.assignedRiders.length > 0 &&
+        assignedRiders &&
+        assignedRiders.length > 0 &&
         !!task.timePickedUp &&
         !!!task.timeDroppedOff
     ) {
         return tasksStatus.pickedUp;
     } else if (
-        task.assignedRiders &&
-        task.assignedRiders.length > 0 &&
+        assignedRiders &&
+        assignedRiders.length > 0 &&
         !!task.timePickedUp &&
         !!task.timeDroppedOff
     ) {

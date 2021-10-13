@@ -13,15 +13,15 @@ function RiderPicker(props) {
     const [filteredRiderSuggestions, setFilteredRiderSuggestions] = useState(
         []
     );
-    const [textBoxValue, setTextBoxValue] = useState(null);
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
-        setTextBoxValue(null);
     };
 
     async function getRiders() {
-        const riders = (await DataStore.query(models.User)).filter((u) =>
-            u.roles.includes(userRoles.rider)
+        const riders = (await DataStore.query(models.User)).filter(
+            (u) =>
+                u.roles.includes(userRoles.rider) &&
+                !props.exclude.includes(u.id)
         );
         setAvailableRiders(riders);
     }
@@ -30,7 +30,7 @@ function RiderPicker(props) {
 
     useEffect(() => {
         const filteredSuggestions = availableUsers.filter(
-            (u) => !props.exclude.includes(u.uuid)
+            (u) => !props.exclude.includes(u.id)
         );
         // const vehicleUsers = filteredSuggestions.filter(
         //     (user) => user.assigned_vehicles.length !== 0
@@ -47,7 +47,7 @@ function RiderPicker(props) {
             <Autocomplete
                 disablePortal
                 id="combo-box-riders"
-                options={availableUsers}
+                options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.displayName}
                 size={props.size}
                 style={{ width: 230 }}

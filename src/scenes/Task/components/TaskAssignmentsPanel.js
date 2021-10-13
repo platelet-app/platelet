@@ -10,8 +10,6 @@ import { makeStyles } from "@material-ui/core";
 import { showHide } from "../../../styles/common";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { Paper } from "@material-ui/core";
-import { getActiveTaskSelector } from "../../../redux/Selectors";
-import { useSelector } from "react-redux";
 import { userRoles } from "../../../apiConsts";
 
 export const useStyles = makeStyles(() => ({
@@ -25,18 +23,33 @@ function TaskAssignmentsPanel(props) {
 
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [assignedCoordinators, setAssignedCoordinators] = useState([]);
+    const [assignedRidersDisplayString, setAssignedRidersDisplayString] =
+        useState("");
+    const [
+        assignedCoordinatorsDisplayString,
+        setAssignedCoordinatorsDisplayString,
+    ] = useState("");
     const cardClasses = dialogCardStyles();
     const { show, hide } = showHide();
 
     function sortAssignees() {
         console.log(task.assignees);
         if (task.assignees && Object.values(task.assignees).length > 0) {
-            const riders = Object.values(task.assignees).filter(
-                (assignment) => assignment.role === userRoles.rider
+            const riders = Object.values(task.assignees)
+                .filter((assignment) => assignment.role === userRoles.rider)
+                .map((a) => a.assignee);
+            setAssignedRidersDisplayString(
+                riders.map((u) => u.displayName).join(", ")
             );
             setAssignedRiders(riders);
-            const coordinators = Object.values(task.assignees).filter(
-                (assignment) => assignment.role === userRoles.coordinator
+            const coordinators = Object.values(task.assignees)
+                .filter(
+                    (assignment) => assignment.role === userRoles.coordinator
+                )
+                .map((a) => a.assignee);
+
+            setAssignedCoordinatorsDisplayString(
+                coordinators.map((u) => u.displayName).join(", ")
             );
             setAssignedCoordinators(coordinators);
         }
@@ -79,19 +92,17 @@ function TaskAssignmentsPanel(props) {
                                 </Grid>
                                 <Grid item>
                                     <Tooltip
-                                        title={
-                                            task.assigned_riders_display_string
-                                        }
+                                        title={assignedRidersDisplayString}
                                     >
                                         <AvatarGroup>
                                             {assignedRiders.map((u) => (
                                                 <UserAvatar
-                                                    key={u.uuid}
+                                                    key={u.id}
                                                     size={5}
-                                                    userUUID={u.uuid}
-                                                    displayName={u.display_name}
+                                                    userUUID={u.id}
+                                                    displayName={u.displayName}
                                                     avatarURL={
-                                                        u.profile_picture_thumbnail_url
+                                                        u.profilePictureThumbnailURL
                                                     }
                                                 />
                                             ))}
@@ -133,6 +144,7 @@ function TaskAssignmentsPanel(props) {
                                 <Grid item>
                                     <AssigneeEditPopover
                                         coordinator
+                                        onSelect={props.onSelect}
                                         assignees={assignedCoordinators}
                                         className={
                                             assignedCoordinators &&
@@ -146,7 +158,7 @@ function TaskAssignmentsPanel(props) {
                                 <Grid item>
                                     <Tooltip
                                         title={
-                                            task.assigned_coordinators_display_string
+                                            assignedCoordinatorsDisplayString
                                         }
                                     >
                                         <AvatarGroup>
@@ -169,6 +181,7 @@ function TaskAssignmentsPanel(props) {
                                         exclude={assignedCoordinators.map(
                                             (u) => u.id
                                         )}
+                                        onSelect={props.onSelect}
                                         coordinator
                                         taskUUID={task.id}
                                     />

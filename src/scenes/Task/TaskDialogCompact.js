@@ -21,7 +21,7 @@ import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import _ from "lodash";
-import { tasksStatus } from "../../apiConsts";
+import { tasksStatus, userRoles } from "../../apiConsts";
 import {
     displayErrorNotification,
     displayWarningNotification,
@@ -231,16 +231,30 @@ function TaskDialogCompact(props) {
                 role,
             })
         );
-        console.log(user, role);
-        console.log(result);
+        if (role === userRoles.rider) {
+            const taskResult = await DataStore.query(models.Task, taskUUID);
+            const status = determineTaskStatus({
+                ...taskResult,
+                assignees: [result],
+            });
+            await DataStore.save(
+                models.Task.copyOf(taskResult, (updated) => {
+                    updated.status = status;
+                })
+            );
+        }
     }
 
     async function setTimeDroppedOff(value) {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
+            const assignees = (
+                await DataStore.query(models.TaskAssignee)
+            ).filter((a) => a.task.id === taskUUID);
             const status = determineTaskStatus({
                 ...result,
                 timeDroppedOff: value,
+                assignees,
             });
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
@@ -260,9 +274,13 @@ function TaskDialogCompact(props) {
     async function setTimePickedUp(value) {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
+            const assignees = (
+                await DataStore.query(models.TaskAssignee)
+            ).filter((a) => a.task.id === taskUUID);
             const status = determineTaskStatus({
                 ...result,
                 timePickedUp: value,
+                assignees,
             });
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
