@@ -45,7 +45,7 @@ function NavDrawerItems(props) {
                     onClick={onSelect}
                     selected={menuIndex === "dashboard"}
                     component={Link}
-                    to="/dashboard"
+                    to="/"
                     button
                 >
                     <ListItemIcon>
