@@ -42,14 +42,26 @@ const fakeUser = {
 };
 
 function* getWhoami() {
-    if (process.env.REACT_APP_OFFLINE_ONLY === "true") {
+    if (
+        process.env.REACT_APP_DEMO_MODE === "true" ||
+        process.env.REACT_APP_OFFLINE_ONLY === "true"
+    ) {
         const existingUser = yield call(
             [DataStore, DataStore.query],
             models.User,
             (u) => u.username("eq", "offline")
         );
         if (existingUser.length === 0) {
-            const userModel = yield new models.User(fakeUser);
+            let userResult = fakeUser;
+            if (process.env.REACT_APP_DEMO_MODE === "true") {
+                userResult = {
+                    ...fakeUser,
+                    name: "Demo User",
+                    username: "demo",
+                    displayName: "Demo User",
+                };
+            }
+            const userModel = yield new models.User(userResult);
             const newFakeUser = yield call(
                 [DataStore, DataStore.save],
                 userModel

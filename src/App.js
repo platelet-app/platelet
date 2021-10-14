@@ -23,7 +23,10 @@ import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
 import config from "../src/aws-exports.js";
 
-if (process.env.REACT_APP_OFFLINE_ONLY === "false") {
+if (
+    process.env.REACT_APP_OFFLINE_ONLY === "false" &&
+    process.env.REACT_APP_DEMO_MODE === "false"
+) {
     Amplify.configure({
         ...config,
         ssr: true,

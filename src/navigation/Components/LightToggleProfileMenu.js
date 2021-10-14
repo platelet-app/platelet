@@ -31,6 +31,7 @@ function LightToggleProfileMenu(props) {
     const { show, hide } = showHide();
 
     const clearDataMenuItem =
+        process.env.REACT_APP_DEMO_MODE !== "true" &&
         process.env.REACT_APP_OFFLINE_ONLY === "true" &&
         process.env.REACT_APP_POPULATE_FAKE_DATA === "true" ? (
             <MenuItem

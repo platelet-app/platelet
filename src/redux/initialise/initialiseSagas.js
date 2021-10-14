@@ -7,10 +7,14 @@ import * as models from "../../models/index";
 import { DataStore } from "@aws-amplify/datastore";
 
 function* initialiseApp() {
+    if (process.env.REACT_APP_DEMO_MODE === "true") {
+        yield call([DataStore, DataStore.clear]);
+    }
     yield put(getWhoamiRequest());
     if (
-        process.env.REACT_APP_OFFLINE_ONLY === "true" &&
-        process.env.REACT_APP_POPULATE_FAKE_DATA === "true"
+        process.env.REACT_APP_DEMO_MODE === "true" ||
+        (process.env.REACT_APP_OFFLINE_ONLY === "true" &&
+            process.env.REACT_APP_POPULATE_FAKE_DATA === "true")
     ) {
         if (fakeData.users) {
             const checker = yield call(

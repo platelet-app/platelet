@@ -15,7 +15,11 @@ function listener() {
     });
 }
 function* initialiseDataStoreListener(action) {
-    if (process.env.REACT_APP_OFFLINE_ONLY === "true") {
+    if (process.env.REACT_APP_DEMO_MODE === "true") {
+        yield put(actions.setNetworkStatus(true));
+        yield put(actions.setReadyStatus(true));
+        return;
+    } else if (process.env.REACT_APP_OFFLINE_ONLY === "true") {
         yield put(actions.setNetworkStatus(false));
         yield put(actions.setReadyStatus(true));
         return;
