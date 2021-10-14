@@ -3,26 +3,18 @@ import moment from "moment";
 import Menu from "@material-ui/core/Menu";
 import { makeStyles } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
-import {
-    addTaskRelayRequest,
-    deleteTaskRequest,
-    updateTaskDropoffTimeRequest,
-    updateTaskPickupTimeRequest,
-    updateTaskRejectedTimeRequest,
-    updateTaskCancelledTimeRequest,
-} from "../../redux/tasks/TasksActions";
 import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IconButton from "@material-ui/core/IconButton";
 import { createPostingSelector } from "../../redux/LoadingSelectors";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import PropTypes from "prop-types";
-import { findExistingTask } from "../../redux/tasks/task_redux_utilities";
+import * as models from "../../models/index";
 import {
     displayErrorNotification,
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
-import { getTasksSelector, getWhoami } from "../../redux/Selectors";
+import { DataStore } from "aws-amplify";
 
 const initialState = {
     mouseX: null,
@@ -33,8 +25,6 @@ function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const { task } = props;
     const [state, setState] = React.useState(initialState);
-    const roleView = useSelector((state) => state.roleView);
-    const whoami = useSelector(getWhoami);
     const deleteButtonClasses = deleteButtonStyles();
     const useStyles = makeStyles({
         button: {
@@ -42,7 +32,6 @@ function TaskContextMenu(props) {
         },
     });
     const classes = useStyles();
-    const tasks = useSelector(getTasksSelector);
     const postingSelector = createPostingSelector([
         "DELETE_TASK",
         "ADD_TASK_RELAY",
@@ -55,24 +44,30 @@ function TaskContextMenu(props) {
     ]);
     const isPosting = useSelector((state) => postingSelector(state));
 
-    function copyTaskDataToClipboard(e) {
+    async function copyTaskDataToClipboard(e) {
         handleClose(e);
-        const taskData = findExistingTask(tasks, props.taskUUID);
-        if (taskData) {
+        if (!props.task || !props.task.id) {
+            dispatch(displayErrorNotification("Copy failed."));
+            return;
+        }
+        const taskResult = await DataStore.query(models.Task, props.task.id);
+        if (taskResult) {
+            const { pickUpLocation, priority, dropOffLocation, timeOfCall } =
+                taskResult;
             const data = {
-                FROM: taskData.pickup_location
-                    ? `${taskData.pickup_location.address.ward || ""} - ${
-                          taskData.pickup_location.address.line1 || ""
+                FROM: pickUpLocation
+                    ? `${pickUpLocation.ward || ""} - ${
+                          pickUpLocation.line1 || ""
                       }`
                     : undefined,
-                TO: taskData.dropoff_location
-                    ? `${taskData.dropoff_location.address.ward || ""} - ${
-                          taskData.dropoff_location.address.line1 || ""
+                TO: dropOffLocation
+                    ? `${dropOffLocation.ward || ""} - ${
+                          dropOffLocation.line1 || ""
                       }`
                     : undefined,
-                PRIORITY: taskData.priority || undefined,
-                TOC: taskData.time_of_call
-                    ? moment(taskData.time_of_call).format("HH:mm")
+                PRIORITY: priority || undefined,
+                TOC: timeOfCall
+                    ? moment(timeOfCall).format("HH:mm")
                     : undefined,
             };
 
@@ -100,7 +95,6 @@ function TaskContextMenu(props) {
 
     const addRelay = (e) => {
         handleClose(e);
-        dispatch(addTaskRelayRequest(props.taskUUID, roleView, whoami.id));
     };
 
     const handleClick = (event) => {
@@ -261,7 +255,6 @@ function TaskContextMenu(props) {
 TaskContextMenu.propTypes = {
     task: PropTypes.object,
     iconColor: PropTypes.string,
-    taskUUID: PropTypes.string,
     disableDeleted: PropTypes.bool,
     disableRelay: PropTypes.bool,
     assignedRiders: PropTypes.arrayOf(PropTypes.object),
