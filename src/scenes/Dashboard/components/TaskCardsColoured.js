@@ -12,7 +12,6 @@ import { Tooltip } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
-import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { getWhoami } from "../../../redux/Selectors";
 
 const colourBarPercent = "90%";

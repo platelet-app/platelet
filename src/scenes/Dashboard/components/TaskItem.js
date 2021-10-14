@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import TaskCard from "./TaskCardsColoured";
-import { encodeUUID } from "../../../utilities";
+import {
+    convertListDataToObject,
+    determineTaskStatus,
+    encodeUUID,
+} from "../../../utilities";
 import PropTypes from "prop-types";
 import { Grow } from "@material-ui/core";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
@@ -28,7 +32,6 @@ function TaskItem(props) {
         const assignees = (await DataStore.query(models.TaskAssignee)).filter(
             (a) => a.task.id === props.task.id
         );
-        console.log(assignees);
         const riders = assignees
             .filter((assignment) => assignment.role === userRoles.rider)
             .map((a) => a.assignee);
@@ -45,6 +48,25 @@ function TaskItem(props) {
 
     useEffect(() => sortAssignees(), [props.task]);
 
+    async function setTimePickedUp(value) {
+        debugger;
+        const result = await DataStore.query(models.Task, props.taskUUID);
+        const assignees = (await DataStore.query(models.TaskAssignee)).filter(
+            (a) => a.task.id === props.taskUUID
+        );
+        const status = determineTaskStatus({
+            ...result,
+            timePickedUp: value,
+            assignees: convertListDataToObject(assignees),
+        });
+        await DataStore.save(
+            models.Task.copyOf(result, (updated) => {
+                updated.timePickedUp = value;
+                updated.status = status;
+            })
+        );
+    }
+
     return (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <div style={{ cursor: "context-menu", position: "relative" }}>
@@ -58,6 +80,7 @@ function TaskItem(props) {
                     <TaskCard
                         title={"Task"}
                         status={task.status}
+                        timeOfCall={task.timeOfCall}
                         priority={task.priority}
                         pickUpLocation={task.pickUpLocation}
                         dropOffLocation={task.dropOffLocation}
@@ -75,7 +98,9 @@ function TaskItem(props) {
                     <TaskContextMenu
                         disableDeleted={props.deleteDisabled}
                         disableRelay={!!props.relayNext}
-                        {...task}
+                        onSetTimePickedUp={setTimePickedUp}
+                        assignedRiders={assignedRiders}
+                        task={task}
                     />
                 </div>
             </div>

@@ -31,6 +31,7 @@ const initialState = {
 
 function TaskContextMenu(props) {
     const dispatch = useDispatch();
+    const { task } = props;
     const [state, setState] = React.useState(initialState);
     const roleView = useSelector((state) => state.roleView);
     const whoami = useSelector(getWhoami);
@@ -112,8 +113,8 @@ function TaskContextMenu(props) {
 
     function onSelectPickedUp(e) {
         handleClose(e);
-        const payload = { time_picked_up: new Date().toISOString() };
-        dispatch(updateTaskPickupTimeRequest(props.taskUUID, payload));
+        const payload = new Date().toISOString();
+        props.onSetTimePickedUp(payload);
     }
 
     function onSelectDroppedOff(e) {
@@ -167,11 +168,11 @@ function TaskContextMenu(props) {
             >
                 <MenuItem
                     disabled={
-                        !!props.timePickedUp ||
-                        props.assignedRiders === null ||
-                        !props.assignedRiders.length ||
-                        !!props.timeRejected ||
-                        !!props.timeCancelled
+                        task === null ||
+                        !!task.timePickedUp ||
+                        !props.assignedRiders.length > 0 ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
                     }
                     onClick={onSelectPickedUp}
                 >
@@ -179,23 +180,32 @@ function TaskContextMenu(props) {
                 </MenuItem>
                 <MenuItem
                     disabled={
-                        !!props.timeDroppedOff ||
-                        !!!props.timePickedUp ||
-                        !!props.timeRejected ||
-                        !!props.timeCancelled
+                        task === null ||
+                        !!task.timeDroppedOff ||
+                        !!!task.timePickedUp ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
                     }
                     onClick={onSelectDroppedOff}
                 >
                     Mark delivered
                 </MenuItem>
                 <MenuItem
-                    disabled={!!props.timeRejected || !!props.timeCancelled}
+                    disabled={
+                        task === null ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
+                    }
                     onClick={onSelectRejected}
                 >
                     Mark rejected
                 </MenuItem>
                 <MenuItem
-                    disabled={!!props.timeCancelled || !!props.timeRejected}
+                    disabled={
+                        task === null ||
+                        !!task.timeCancelled ||
+                        !!task.timeRejected
+                    }
                     onClick={onSelectCancelled}
                 >
                     Mark cancelled
@@ -203,8 +213,9 @@ function TaskContextMenu(props) {
                 <MenuItem
                     disabled={
                         props.disableRelay ||
-                        !!props.timeCancelled ||
-                        !!props.timeRejected
+                        task === null ||
+                        !!task.timeCancelled ||
+                        !!task.timeRejected
                     }
                     onClick={addRelay}
                 >
@@ -229,11 +240,8 @@ function TaskContextMenu(props) {
 }
 
 TaskContextMenu.propTypes = {
+    task: PropTypes.object,
     iconColor: PropTypes.string,
-    timePickedUp: PropTypes.string,
-    timeDroppedOff: PropTypes.string,
-    timeRejected: PropTypes.string,
-    timeCancelled: PropTypes.string,
     taskUUID: PropTypes.string,
     disableDeleted: PropTypes.bool,
     disableRelay: PropTypes.bool,
@@ -242,6 +250,7 @@ TaskContextMenu.propTypes = {
 
 TaskContextMenu.defaultProps = {
     assignedRiders: [],
+    task: null,
 };
 
 export default TaskContextMenu;
