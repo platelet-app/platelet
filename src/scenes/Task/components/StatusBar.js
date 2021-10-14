@@ -174,18 +174,6 @@ function StatusBar(props) {
                         </Hidden>
                     </Grid>
                 </Grid>
-                <Grid item>
-                    <TaskContextMenu
-                        timeDroppedOff={task.time_dropped_off}
-                        timePickedUp={task.time_picked_up}
-                        assignedRiders={task.assigned_riders}
-                        disableDeleted={true}
-                        disableRelay={true}
-                        taskUUID={task.uuid}
-                        timeCancelled={task.time_cancelled}
-                        timeRejected={task.time_rejected}
-                    />
-                </Grid>
             </Grid>
         </AppBar>
     );

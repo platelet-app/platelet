@@ -91,12 +91,12 @@ const TaskCard = React.memo((props) => {
 
     const coordAvatars = props.assignedCoordinators
         ? ["coordinator", "all"].includes(roleView)
-            ? props.assignedCoordinators.filter((u) => u.uuid !== whoami.id)
+            ? props.assignedCoordinators.filter((u) => u.id !== whoami.id)
             : props.assignedCoordinators
         : [];
     const riderAvatars = props.assignedRiders
         ? roleView === "rider"
-            ? props.assignedRiders.filter((u) => u.uuid !== whoami.id)
+            ? props.assignedRiders.filter((u) => u.id !== whoami.id)
             : props.assignedRiders
         : [];
     const cardInnerContent = (

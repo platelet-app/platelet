@@ -19,7 +19,7 @@ import {
     saveDashboardRoleMode,
 } from "../../utilities";
 import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
-import { tasksStatus } from "../../apiConsts";
+import { tasksStatus, userRoles } from "../../apiConsts";
 import { DataStore } from "aws-amplify";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import _ from "lodash";
@@ -246,7 +246,17 @@ function Dashboard(props) {
                 taskRequesterContactId: newRequesterContact.id,
             })
         );
-        addTaskToState(newTask);
+        const assignment = await DataStore.save(
+            new models.TaskAssignee({
+                taskId: newTask.id,
+                assigneeId: whoami.id,
+                role: userRoles.coordinator,
+            })
+        );
+        addTaskToState({
+            ...newTask,
+            assignees: { [assignment.id]: assignment },
+        });
     }
     function handleDialogClose(e) {
         e.stopPropagation();
