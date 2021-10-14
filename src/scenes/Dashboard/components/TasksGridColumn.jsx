@@ -162,132 +162,124 @@ function TasksGridColumn(props) {
             <Typography className={classes.header}>{props.title}</Typography>
         );
 
-    // const tasksList = Object.entries(tasks)
-    //     .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
-    //     .reverse();
-    // const lastParent =
-    //     tasksList.length === 0 ? 0 : tasksList[tasksList.length - 1][0];
-
     const animate = useRef(false);
     useEffect(() => {
-        animate.current = !isFetching;
-    }, [isFetching]);
+        if (state.length === 0) {
+            setTimeout(() => (animate.current = true), 1000);
+            return;
+        }
+        animate.current = true;
+    }, [state]);
 
-    if (isFetching) {
-        return <TasksGridSkeleton />;
-    } else {
-        return (
-            <TasksKanbanColumn>
+    return (
+        <TasksKanbanColumn>
+            <Grid
+                container
+                direction={"column"}
+                spacing={2}
+                alignItems={"center"}
+                justify={"flex-start"}
+            >
+                <Grid item>{header}</Grid>
+                <Grid item>
+                    <Divider className={classes.divider} />
+                </Grid>
                 <Grid
                     container
+                    item
+                    spacing={0}
                     direction={"column"}
-                    spacing={2}
-                    alignItems={"center"}
                     justify={"flex-start"}
+                    alignItems={"center"}
+                    key={props.title + "column"}
                 >
-                    <Grid item>{header}</Grid>
-                    <Grid item>
-                        <Divider className={classes.divider} />
-                    </Grid>
-                    <Grid
-                        container
-                        item
-                        spacing={0}
-                        direction={"column"}
-                        justify={"flex-start"}
-                        alignItems={"center"}
-                        key={props.title + "column"}
-                    >
-                        {state.map((task) => {
-                            return (
-                                <div
-                                    className={clsx(
-                                        classes.taskItem,
-                                        props.showTasks === null ||
-                                            props.showTasks.includes(task.id)
-                                            ? show
-                                            : hide
-                                    )}
-                                    key={task.id}
-                                >
-                                    <Grid item className={classes.gridItem}>
-                                        <TaskItem
-                                            animate={animate}
-                                            task={task}
-                                            taskUUID={task.id}
-                                            view={props.modalView}
-                                            deleteDisabled={
-                                                props.deleteDisabled
-                                            }
-                                        />
+                    {state.map((task) => {
+                        return (
+                            <div
+                                className={clsx(
+                                    classes.taskItem,
+                                    props.showTasks === null ||
+                                        props.showTasks.includes(task.id)
+                                        ? show
+                                        : hide
+                                )}
+                                key={task.id}
+                            >
+                                <Grid item className={classes.gridItem}>
+                                    <TaskItem
+                                        animate={animate.current}
+                                        task={task}
+                                        taskUUID={task.id}
+                                        view={props.modalView}
+                                        deleteDisabled={props.deleteDisabled}
+                                    />
+                                    <Grid
+                                        container
+                                        alignItems={"center"}
+                                        justify={"center"}
+                                        className={classes.spacer}
+                                    >
                                         <Grid
-                                            container
-                                            alignItems={"center"}
-                                            justify={"center"}
-                                            className={classes.spacer}
+                                            className={
+                                                !!task.relayNext &&
+                                                props.showTasks === null &&
+                                                !props.hideRelayIcons &&
+                                                roleView !== "rider"
+                                                    ? show
+                                                    : hide
+                                            }
+                                            item
                                         >
-                                            <Grid
-                                                className={
-                                                    !!task.relayNext &&
-                                                    props.showTasks === null &&
-                                                    !props.hideRelayIcons &&
-                                                    roleView !== "rider"
-                                                        ? show
-                                                        : hide
-                                                }
-                                                item
-                                            >
-                                                <Tooltip title="Relay">
-                                                    <ArrowDownwardIcon
-                                                        style={{
-                                                            height: "35px",
-                                                        }}
-                                                    />
-                                                </Tooltip>
-                                            </Grid>
+                                            <Tooltip title="Relay">
+                                                <ArrowDownwardIcon
+                                                    style={{
+                                                        height: "35px",
+                                                    }}
+                                                />
+                                            </Tooltip>
                                         </Grid>
                                     </Grid>
+                                </Grid>
+                            </div>
+                        );
+                    })}
+                    {[
+                        "tasksDroppedOff",
+                        "tasksRejected",
+                        "tasksCancelled",
+                    ].includes(props.taskKey) ? (
+                        <React.Fragment>
+                            <Waypoint
+                                onEnter={() => {
+                                    if (props.showTasks) return;
+                                    if (false) {
+                                        dispatch(
+                                            appendFunction(
+                                                whoami.id,
+                                                1,
+                                                roleView,
+                                                props.taskKey,
+                                                null
+                                            )
+                                        );
+                                    }
+                                }}
+                            />
+                            {endlessLoadIsFetching ? (
+                                <div className={loaderClass.root}>
+                                    <CircularProgress color="secondary" />
                                 </div>
-                            );
-                        })}
-                        {[
-                            "tasksDroppedOff",
-                            "tasksRejected",
-                            "tasksCancelled",
-                        ].includes(props.taskKey) ? (
-                            <React.Fragment>
-                                <Waypoint
-                                    onEnter={() => {
-                                        if (props.showTasks) return;
-                                        if (false) {
-                                            dispatch(
-                                                appendFunction(
-                                                    whoami.id,
-                                                    1,
-                                                    roleView,
-                                                    props.taskKey,
-                                                    null
-                                                )
-                                            );
-                                        }
-                                    }}
-                                />
-                                {endlessLoadIsFetching ? (
-                                    <div className={loaderClass.root}>
-                                        <CircularProgress color="secondary" />
-                                    </div>
-                                ) : (
-                                    <></>
-                                )}
-                            </React.Fragment>
-                        ) : (
-                            <></>
-                        )}
-                    </Grid>
+                            ) : (
+                                <></>
+                            )}
+                        </React.Fragment>
+                    ) : (
+                        <></>
+                    )}
                 </Grid>
-            </TasksKanbanColumn>
-        );
-    }
+            </Grid>
+        </TasksKanbanColumn>
+    );
 }
 
 TasksGridColumn.propTypes = {
