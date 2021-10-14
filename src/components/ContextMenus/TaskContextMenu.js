@@ -115,28 +115,47 @@ function TaskContextMenu(props) {
         handleClose(e);
         const payload = new Date().toISOString();
         props.onSetTimePickedUp(payload);
+        dispatch(
+            displayInfoNotification("Task marked picked up", () => {
+                props.onSetTimePickedUp(null);
+            })
+        );
     }
 
     function onSelectDroppedOff(e) {
         handleClose(e);
-        const payload = { time_dropped_off: new Date().toISOString() };
-        dispatch(updateTaskDropoffTimeRequest(props.taskUUID, payload));
+        const payload = new Date().toISOString();
+        props.onSetTimeDroppedOff(payload);
+        dispatch(
+            displayInfoNotification("Task marked delivered", () => {
+                props.onSetTimeDroppedOff(null);
+            })
+        );
     }
     function onSelectCancelled(e) {
         handleClose(e);
-        const payload = { time_cancelled: new Date().toISOString() };
-        dispatch(updateTaskCancelledTimeRequest(props.taskUUID, payload));
+        const payload = new Date().toISOString();
+        props.onSetTimeCancelled(payload);
+        dispatch(
+            displayInfoNotification("Task marked cancelled", () => {
+                props.onSetTimeCancelled(null);
+            })
+        );
     }
 
     function onSelectRejected(e) {
         handleClose(e);
-        const payload = { time_rejected: new Date().toISOString() };
-        dispatch(updateTaskRejectedTimeRequest(props.taskUUID, payload));
+        const payload = new Date().toISOString();
+        props.onSetTimeRejected(payload);
+        dispatch(
+            displayInfoNotification("Task marked rejected", () => {
+                props.onSetTimeRejected(null);
+            })
+        );
     }
 
     function onDelete(e) {
         handleClose(e);
-        dispatch(deleteTaskRequest(props.taskUUID));
     }
 
     const handleClose = (e) => {
