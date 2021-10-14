@@ -24,7 +24,10 @@ export default function LocationsList() {
             setIsFetching(true);
         } else {
             try {
-                const locations = await DataStore.query(models.Location);
+                const locations = await DataStore.query(
+                    models.Location,
+                    (loc) => loc.listed("eq", 1)
+                );
                 setIsFetching(false);
                 setLocations(locations);
             } catch (error) {
