@@ -4,7 +4,7 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import TimePicker from "./TimePicker";
 import React from "react";
 import PropTypes from "prop-types";
-import { Paper } from "@material-ui/core";
+import { Divider, Paper, Typography } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 
 function PickUpDetails(props) {
@@ -20,8 +20,18 @@ function PickUpDetails(props) {
                 container
                 direction={"column"}
                 justify={"space-between"}
-                spacing={3}
+                spacing={1}
             >
+                <Grid item>
+                    <Grid container direction={"row"} justify={"space-between"}>
+                        <Grid item>
+                            <Typography variant={"h6"}>Collect from</Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item>
+                    <Divider />
+                </Grid>
                 <Grid item>
                     <LocationDetailAndSelector
                         onSelectPreset={props.onSelectPickupPreset}
@@ -38,15 +48,6 @@ function PickUpDetails(props) {
                         label={"Pick up"}
                         showContact={props.showContact}
                     />
-                </Grid>
-                <Grid item>
-                    <LabelItemPair label={"Time picked up"}>
-                        <TimePicker
-                            onChange={props.onChangeTimePickedUp}
-                            label={"Mark picked up"}
-                            time={props.time}
-                        />
-                    </LabelItemPair>
                 </Grid>
             </Grid>
         </Paper>

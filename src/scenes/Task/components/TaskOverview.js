@@ -68,44 +68,55 @@ function TaskOverview(props) {
                 justify={"flex-start"}
             >
                 <Grid className={classes.item} item>
-                    <PickUpDetails
-                        taskUUID={taskUUID}
-                        onChangeTimePickedUp={props.onChangeTimePickedUp}
-                        onClearPickUpLocation={props.onClearPickUpLocation}
-                        onChange={props.onChangePickUpLocation}
-                        onSelectPickupPreset={props.onSelectPickUpPreset}
-                        onEditPreset={props.onEditPickUpPreset}
-                        onChange={props.onChangePickUpLocation}
-                        location={task.pickUpLocation}
-                        time={task.timePickedUp}
-                        showContact
-                    />
-                </Grid>
-                <Grid className={classes.item} item>
-                    <DropOffDetails
-                        disableTimeButton={!!!task.timePickedUp}
-                        taskUUID={taskUUID}
-                        onSelectDropOffPreset={props.onSelectDropOffPreset}
-                        onClearDropOffLocation={props.onClearDropOffLocation}
-                        onEditPreset={props.onEditDropOffPreset}
-                        onChange={props.onChangeDropOffLocation}
-                        onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
-                        location={task.dropOffLocation}
-                        time={task.timeDroppedOff}
-                        showContact
-                    />
-                </Grid>
-                <Grid className={classes.item} item>
                     <TaskDetailsPanel
                         onSelectPriority={props.onSelectPriority}
                         onChangeTimeOfCall={props.onChangeTimeOfCall}
+                        onChangeTimePickedUp={props.onChangeTimePickedUp}
                         onChangeTimeCancelled={props.onChangeTimeCancelled}
+                        onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
                         onChangeTimeRejected={props.onChangeTimeRejected}
                         onChangeRequesterContact={
                             props.onChangeRequesterContact
                         }
                         task={task}
                     />
+                </Grid>
+                <Grid className={classes.item} item>
+                    <Grid container spacing={1} direction={"column"}>
+                        <Grid item>
+                            <PickUpDetails
+                                taskUUID={taskUUID}
+                                onClearPickUpLocation={
+                                    props.onClearPickUpLocation
+                                }
+                                onChange={props.onChangePickUpLocation}
+                                onSelectPickupPreset={
+                                    props.onSelectPickUpPreset
+                                }
+                                onEditPreset={props.onEditPickUpPreset}
+                                location={task.pickUpLocation}
+                                time={task.timePickedUp}
+                                showContact
+                            />
+                        </Grid>
+                        <Grid item>
+                            <DropOffDetails
+                                disableTimeButton={!!!task.timePickedUp}
+                                taskUUID={taskUUID}
+                                onSelectDropOffPreset={
+                                    props.onSelectDropOffPreset
+                                }
+                                onClearDropOffLocation={
+                                    props.onClearDropOffLocation
+                                }
+                                onEditPreset={props.onEditDropOffPreset}
+                                onChange={props.onChangeDropOffLocation}
+                                location={task.dropOffLocation}
+                                time={task.timeDroppedOff}
+                                showContact
+                            />
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid className={classes.item} item>
                     <DeliverableDetails

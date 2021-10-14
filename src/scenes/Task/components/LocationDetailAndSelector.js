@@ -234,18 +234,6 @@ function LocationDetailAndSelector(props) {
                 className={props.className}
                 direction={"column"}
             >
-                <Grid item>
-                    <Grid container direction={"row"} justify={"space-between"}>
-                        <Grid item>
-                            <Typography variant={"h6"}>
-                                {props.label}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item>
-                    <Divider />
-                </Grid>
                 {presetSelect}
                 <Grid item>
                     {Object.entries(addressFields).map(([key, label]) => {

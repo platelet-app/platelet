@@ -4,10 +4,8 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import Grid from "@material-ui/core/Grid";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
-import { useDispatch, useSelector } from "react-redux";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
-import ActivityPopover from "./ActivityPopover";
 import TimePicker from "./TimePicker";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
@@ -31,6 +29,8 @@ function extractTaskData(task) {
         priority,
         timeRejected,
         timeCancelled,
+        timePickedUp,
+        timeDroppedOff,
     } = task;
     if (requesterContact === null) {
         requesterContact = {
@@ -47,6 +47,8 @@ function extractTaskData(task) {
         priority,
         timeRejected,
         timeCancelled,
+        timePickedUp,
+        timeDroppedOff,
     };
 }
 
@@ -56,6 +58,8 @@ function TaskDetailsPanel(props) {
         reference: null,
         timeOfCall: null,
         timeCancelled: null,
+        timeDroppedOff: null,
+        timePickedUp: null,
         priority: null,
         timeRejected: null,
         riderResponsibility: null,
@@ -78,6 +82,16 @@ function TaskDetailsPanel(props) {
     function onChangeTimeCancelled(value) {
         if (value || value === null) {
             props.onChangeTimeCancelled(value);
+        }
+    }
+    function onChangeTimePickedUp(value) {
+        if (value || value === null) {
+            props.onChangeTimePickedUp(value);
+        }
+    }
+    function onChangeTimeDroppedOff(value) {
+        if (value || value === null) {
+            props.onChangeTimeDroppedOff(value);
         }
     }
 
@@ -159,7 +173,26 @@ function TaskDetailsPanel(props) {
                     </LabelItemPair>
                 </Grid>
                 <Grid item>
-                    <Grid container direction={"column"}>
+                    <Grid container spacing={1} direction={"column"}>
+                        <Grid item>
+                            <LabelItemPair label={"Time picked up"}>
+                                <TimePicker
+                                    onChange={onChangeTimePickedUp}
+                                    label={"Mark picked up"}
+                                    time={state.timePickedUp}
+                                />
+                            </LabelItemPair>
+                        </Grid>
+                        <Grid item>
+                            <LabelItemPair label={"Time delivered"}>
+                                <TimePicker
+                                    onChange={onChangeTimeDroppedOff}
+                                    disabled={props.disableTimeButton}
+                                    label={"Mark delivered"}
+                                    time={state.timeDroppedOff}
+                                />
+                            </LabelItemPair>
+                        </Grid>
                         <Grid item>
                             <LabelItemPair label={"Time cancelled"}>
                                 <TimePicker

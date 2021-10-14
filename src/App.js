@@ -24,8 +24,10 @@ import SnackNotificationButtons from "./components/SnackNotificationButtons";
 import config from "../src/aws-exports.js";
 
 if (
-    process.env.REACT_APP_OFFLINE_ONLY === "false" &&
-    process.env.REACT_APP_DEMO_MODE === "false"
+    (!process.env.REACT_APP_OFFLINE_ONLY ||
+        process.env.REACT_APP_OFFLINE_ONLY === "false") &&
+    (!process.env.REACT_APP_DEMO_MODE ||
+        process.env.REACT_APP_DEMO_MODE === "false")
 ) {
     Amplify.configure({
         ...config,

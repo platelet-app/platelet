@@ -1,11 +1,8 @@
-import { PaddedPaper } from "../../../styles/common";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
-import LabelItemPair from "../../../components/LabelItemPair";
-import TimePicker from "./TimePicker";
-import React from "react";
 import PropTypes from "prop-types";
-import { Paper } from "@material-ui/core";
+import { Divider, Paper, Typography } from "@material-ui/core";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 
 function DropOffDetails(props) {
@@ -17,8 +14,18 @@ function DropOffDetails(props) {
                 container
                 direction={"column"}
                 justify={"flex-start"}
-                spacing={3}
+                spacing={1}
             >
+                <Grid item>
+                    <Grid container direction={"row"} justify={"space-between"}>
+                        <Grid item>
+                            <Typography variant={"h6"}>Deliver to</Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item>
+                    <Divider />
+                </Grid>
                 <Grid item>
                     <LocationDetailAndSelector
                         onSelectPreset={props.onSelectDropOffPreset}
@@ -35,16 +42,6 @@ function DropOffDetails(props) {
                         label={"Deliver"}
                         showContact={props.showContact}
                     />
-                </Grid>
-                <Grid item>
-                    <LabelItemPair label={"Time delivered"}>
-                        <TimePicker
-                            onChange={props.onChangeTimeDroppedOff}
-                            disabled={props.disableTimeButton}
-                            label={"Mark delivered"}
-                            time={props.time}
-                        />
-                    </LabelItemPair>
                 </Grid>
             </Grid>
         </Paper>

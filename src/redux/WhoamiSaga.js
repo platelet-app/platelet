@@ -1,34 +1,16 @@
-import {
-    throttle,
-    call,
-    put,
-    takeEvery,
-    takeLatest,
-    select,
-} from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 import {
     GET_WHOAMI_REQUEST,
     getWhoamiFailure,
     getWhoamiSuccess,
     REFRESH_WHOAMI_REQUEST,
 } from "./Actions";
-import { getApiControl } from "./Selectors";
 import API from "@aws-amplify/api";
 import { Auth, DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import * as queries from "../graphql/queries";
 import { NotFound } from "http-errors";
 import { userRoles } from "../apiConsts";
-
-function* agetWhoami() {
-    try {
-        const api = yield select(getApiControl);
-        const result = yield call([api, api.users.whoami]);
-        yield put(getWhoamiSuccess(result));
-    } catch (error) {
-        yield put(getWhoamiFailure(error));
-    }
-}
 
 const fakeUser = {
     username: "offline",

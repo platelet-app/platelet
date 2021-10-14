@@ -77,12 +77,17 @@ function AdminAddUser() {
     async function signUp() {
         try {
             setIsPosting(true);
-            if (process.env.REACT_APP_OFFLINE_ONLY === "false") {
+            if (
+                !process.env.REACT_APP_OFFLINE_ONLY ||
+                process.env.REACT_APP_OFFLINE_ONLY === "false"
+            ) {
                 const { userSub } = await Auth.signUp({
                     ...state,
                 });
-                setMessage(
-                    "User was signed up. They will be made available after they confirm their email address."
+                dispatch(
+                    displayInfoNotification(
+                        "User registered and will be available after they confirm their account"
+                    )
                 );
             } else {
                 // Only add the user to DataStore if we're working offline, otherwise get it from amplify once user is confirmed

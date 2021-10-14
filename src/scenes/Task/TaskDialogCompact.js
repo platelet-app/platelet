@@ -261,7 +261,7 @@ function TaskDialogCompact(props) {
         }
     }
 
-    async function setTimePickedUpDroppedOff(value, key) {
+    async function setTimeWithKey(value, key) {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
             const assignees = (
@@ -272,33 +272,6 @@ function TaskDialogCompact(props) {
                 [key]: value,
                 assignees,
             });
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated[key] = value;
-                    updated.status = status;
-                })
-            );
-            taskRef.current = { ...taskRef.current, [key]: value };
-            setTask((prevState) => ({
-                ...prevState,
-                status,
-                [key]: value,
-            }));
-        }
-    }
-
-    async function setTimeRejectedCancelled(value, key) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result) {
-            let status;
-            if (value) {
-                status = tasksStatus.cancelled;
-            } else {
-                status = determineTaskStatus({
-                    ...result,
-                    [key]: value,
-                });
-            }
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
                     updated[key] = value;
@@ -728,16 +701,16 @@ function TaskDialogCompact(props) {
                             )
                         }
                         onChangeTimePickedUp={(value) =>
-                            setTimePickedUpDroppedOff(value, "timePickedUp")
+                            setTimeWithKey(value, "timePickedUp")
                         }
                         onChangeTimeDroppedOff={(value) =>
-                            setTimePickedUpDroppedOff(value, "timeDroppedOff")
+                            setTimeWithKey(value, "timeDroppedOff")
                         }
                         onChangeTimeCancelled={(value) =>
-                            setTimeRejectedCancelled(value, "timeCancelled")
+                            setTimeWithKey(value, "timeCancelled")
                         }
                         onChangeTimeRejected={(value) =>
-                            setTimeRejectedCancelled(value, "timeRejected")
+                            setTimeWithKey(value, "timeRejected")
                         }
                         onChangeTimeOfCall={setTimeOfCall}
                         onChangeRequesterContact={updateRequesterContact}
