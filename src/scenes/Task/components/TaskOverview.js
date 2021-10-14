@@ -98,6 +98,7 @@ function TaskOverview(props) {
                 <Grid className={classes.item} item>
                     <TaskDetailsPanel
                         onSelectPriority={props.onSelectPriority}
+                        onChangeTimeOfCall={props.onChangeTimeOfCall}
                         onChangeTimeCancelled={props.onChangeTimeCancelled}
                         onChangeTimeRejected={props.onChangeTimeRejected}
                         onChangeRequesterContact={
@@ -136,6 +137,7 @@ TaskOverview.propTypes = {
     onDeleteDeliverable: PropTypes.func,
     onChangeTimeCancelled: PropTypes.func,
     onChangeTimeRejected: PropTypes.func,
+    onChangeTimeOfCall: PropTypes.func,
     onSelectAssignee: PropTypes.func,
 };
 
@@ -144,6 +146,7 @@ TaskOverview.defaultProps = {
     onDeleteDeliverable: () => {},
     onChangeTimeCancelled: () => {},
     onChangeTimeRejected: () => {},
+    onChangeTimeOfCall: () => {},
     onSelectAssignee: () => {},
 };
 

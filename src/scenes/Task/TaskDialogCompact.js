@@ -245,7 +245,23 @@ function TaskDialogCompact(props) {
         }
     }
 
-    async function setTimeDroppedOff(value) {
+    async function setTimeOfCall(value) {
+        const result = await DataStore.query(models.Task, taskUUID);
+        if (result) {
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.timeOfCall = value;
+                })
+            );
+            taskRef.current = { ...taskRef.current, timeOfCall: value };
+            setTask((prevState) => ({
+                ...prevState,
+                timeOfCall: value,
+            }));
+        }
+    }
+
+    async function setTimePickedUpDroppedOff(value, key) {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
             const assignees = (
@@ -253,51 +269,25 @@ function TaskDialogCompact(props) {
             ).filter((a) => a.task.id === taskUUID);
             const status = determineTaskStatus({
                 ...result,
-                timeDroppedOff: value,
+                [key]: value,
                 assignees,
             });
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
-                    updated.timeDroppedOff = value;
+                    updated[key] = value;
                     updated.status = status;
                 })
             );
-            taskRef.current = { ...taskRef.current, timeDroppedOff: value };
+            taskRef.current = { ...taskRef.current, [key]: value };
             setTask((prevState) => ({
                 ...prevState,
                 status,
-                timeDroppedOff: value,
+                [key]: value,
             }));
         }
     }
 
-    async function setTimePickedUp(value) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result) {
-            const assignees = (
-                await DataStore.query(models.TaskAssignee)
-            ).filter((a) => a.task.id === taskUUID);
-            const status = determineTaskStatus({
-                ...result,
-                timePickedUp: value,
-                assignees,
-            });
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.timePickedUp = value;
-                    updated.status = status;
-                })
-            );
-            taskRef.current = { ...taskRef.current, timePickedUp: value };
-            setTask((prevState) => ({
-                ...prevState,
-                status,
-                timePickedUp: value,
-            }));
-        }
-    }
-
-    async function setTimeCancelled(value) {
+    async function setTimeRejectedCancelled(value, key) {
         const result = await DataStore.query(models.Task, taskUUID);
         if (result) {
             let status;
@@ -306,47 +296,20 @@ function TaskDialogCompact(props) {
             } else {
                 status = determineTaskStatus({
                     ...result,
-                    timeCancelled: value,
+                    [key]: value,
                 });
             }
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
-                    updated.timeCancelled = value;
+                    updated[key] = value;
                     updated.status = status;
                 })
             );
-            taskRef.current = { ...taskRef.current, timeCancelled: value };
+            taskRef.current = { ...taskRef.current, [key]: value };
             setTask((prevState) => ({
                 ...prevState,
                 status,
-                timeCancelled: value,
-            }));
-        }
-    }
-
-    async function setTimeRejected(value) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result) {
-            let status;
-            if (value) {
-                status = tasksStatus.rejected;
-            } else {
-                status = determineTaskStatus({
-                    ...result,
-                    timeRejected: value,
-                });
-            }
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.timeRejected = value;
-                    updated.status = status;
-                })
-            );
-            taskRef.current = { ...taskRef.current, timeRejected: value };
-            setTask((prevState) => ({
-                ...prevState,
-                status,
-                timeRejected: value,
+                [key]: value,
             }));
         }
     }
@@ -764,10 +727,19 @@ function TaskDialogCompact(props) {
                                 "dropOffLocation"
                             )
                         }
-                        onChangeTimePickedUp={setTimePickedUp}
-                        onChangeTimeDroppedOff={setTimeDroppedOff}
-                        onChangeTimeCancelled={setTimeCancelled}
-                        onChangeTimeRejected={setTimeRejected}
+                        onChangeTimePickedUp={(value) =>
+                            setTimePickedUpDroppedOff(value, "timePickedUp")
+                        }
+                        onChangeTimeDroppedOff={(value) =>
+                            setTimePickedUpDroppedOff(value, "timeDroppedOff")
+                        }
+                        onChangeTimeCancelled={(value) =>
+                            setTimeRejectedCancelled(value, "timeCancelled")
+                        }
+                        onChangeTimeRejected={(value) =>
+                            setTimeRejectedCancelled(value, "timeRejected")
+                        }
+                        onChangeTimeOfCall={setTimeOfCall}
                         onChangeRequesterContact={updateRequesterContact}
                         onUpdateDeliverable={updateDeliverables}
                         onDeleteDeliverable={deleteDeliverable}

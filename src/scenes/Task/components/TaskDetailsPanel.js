@@ -51,7 +51,6 @@ function extractTaskData(task) {
 }
 
 function TaskDetailsPanel(props) {
-    const { task } = props;
     const cardClasses = dialogCardStyles();
     const [state, setState] = useState({
         reference: null,
@@ -70,7 +69,11 @@ function TaskDetailsPanel(props) {
 
     useEffect(() => setState(extractTaskData(props.task)), [props.task]);
 
-    function onChangeTimeOfCall(value) {}
+    function onChangeTimeOfCall(value) {
+        if (value) {
+            props.onChangeTimeOfCall(value);
+        }
+    }
 
     function onChangeTimeCancelled(value) {
         if (value || value === null) {
