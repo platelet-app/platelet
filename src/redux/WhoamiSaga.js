@@ -57,8 +57,12 @@ function* getWhoami() {
                 userResult = {
                     ...fakeUser,
                     name: "Demo User",
-                    username: "demo",
                     displayName: "Demo User",
+                    roles: [
+                        userRoles.user,
+                        userRoles.coordinator,
+                        userRoles.user,
+                    ],
                 };
             }
             const userModel = yield new models.User(userResult);

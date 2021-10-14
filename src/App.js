@@ -41,7 +41,6 @@ function AppContents(props) {
     const dispatch = useDispatch();
 
     function initialise() {
-        // this gets priorities, deliverable types, users, patches from the api and connects sockets
         dispatch(initialiseApp());
     }
     useEffect(initialise, []);

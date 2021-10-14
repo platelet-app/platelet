@@ -6,7 +6,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Link, useHistory } from "react-router-dom";
 import { encodeUUID } from "../../utilities";
-import { logoutUser } from "../../redux/login/LoginActions";
 import { Hidden, Tooltip } from "@material-ui/core";
 import { setDarkMode } from "../../redux/Actions";
 import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
