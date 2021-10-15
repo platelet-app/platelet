@@ -6,7 +6,7 @@ import PickUpDetails from "./PickUpDetails";
 import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import DeliverableDetails from "./DeliverableDetails";

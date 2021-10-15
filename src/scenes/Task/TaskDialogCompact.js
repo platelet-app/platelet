@@ -6,7 +6,7 @@ import { convertListDataToObject, determineTaskStatus } from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@material-ui/core/Typography";
 import TaskOverview from "./components/TaskOverview";

@@ -15,7 +15,7 @@ import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {clearDashboardFilter} from "../redux/dashboardFilter/DashboardFilterActions";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const useStyles = makeStyles(theme => {
     const appBarBack = theme.palette.type === "dark" ? theme.palette.background.paper : theme.palette.primary.main;

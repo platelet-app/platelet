@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
 import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";

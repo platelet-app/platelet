@@ -10,7 +10,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { filterTasks } from "../utilities/functions";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { getTasksSelector } from "../../../redux/Selectors";

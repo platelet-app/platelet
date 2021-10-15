@@ -8,7 +8,7 @@ import { ArrowButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
 import { encodeUUID, taskStatusHumanReadable } from "../../../utilities";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { useSelector } from "react-redux";
