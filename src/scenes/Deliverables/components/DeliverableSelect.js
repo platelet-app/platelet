@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {useSelector} from "react-redux";
 import FormControl from "@material-ui/core/FormControl";
 import {InputLabel, MenuItem, Select} from "@material-ui/core";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 
 const useStyles = makeStyles(theme => ({
     formControl: {

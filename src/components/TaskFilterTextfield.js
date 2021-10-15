@@ -4,7 +4,7 @@ import {InputAdornment} from "@material-ui/core";
 import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles} from "@mui/material/styles";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => {

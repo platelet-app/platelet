@@ -8,7 +8,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles} from "@mui/material/styles";
 import PropTypes from "prop-types"
 import {Link} from "react-router-dom";
 import Button from "@material-ui/core/Button";

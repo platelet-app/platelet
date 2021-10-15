@@ -15,7 +15,7 @@ import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { useDispatch } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@mui/material/styles";
 import Container from "@material-ui/core/Container";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";

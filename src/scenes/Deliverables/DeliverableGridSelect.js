@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import { Paper } from "@material-ui/core";
 import { dialogCardStyles } from "../Task/styles/DialogCompactStyles";
 import Link from "@material-ui/core/Link";

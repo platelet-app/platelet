@@ -8,7 +8,7 @@ import {
     removeTaskAssignedRiderRequest,
 } from "../../../redux/taskAssignees/TaskAssigneesActions";
 import Divider from "@material-ui/core/Divider";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles({

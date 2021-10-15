@@ -7,7 +7,7 @@ import {PaddedPaper} from "../../styles/common";
 import Grid from "@material-ui/core/Grid";
 import LoginForm from "./components/LoginForm";
 import ResetPasswordForm from "./components/ResetPasswordForm";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 
 function getMessage(status) {
     switch (status) {

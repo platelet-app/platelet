@@ -6,7 +6,7 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 import Button from "@material-ui/core/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import Divider from "@material-ui/core/Divider";
 import { Tooltip } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";

@@ -5,7 +5,7 @@ import Card from '@material-ui/core/Card';
 import {styled} from '@material-ui/styles';
 import Container from "@material-ui/core/Container";
 
-import {makeStyles, withTheme} from '@material-ui/core/styles';
+import {makeStyles, withTheme} from '@mui/material/styles';
 import {Paper} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import {Link} from "react-router-dom"

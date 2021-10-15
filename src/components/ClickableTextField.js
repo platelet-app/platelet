@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import { TextField } from "@material-ui/core";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "./TextFields";
 import clsx from "clsx";

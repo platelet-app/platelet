@@ -8,7 +8,7 @@ import { getUserStatisticsRequest } from "../../redux/statistics/statisticsActio
 import { DateAndTimePicker } from "../../components/DateTimePickers";
 import Button from "@material-ui/core/Button";
 import RoleSelect from "../../components/RoleSelect";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import ToggleButton from '@mui/material/ToggleButton';
 import FormControl from "@material-ui/core/FormControl";
 import { InputLabel, MenuItem, Select } from "@material-ui/core";

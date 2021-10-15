@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
-import styled from "@material-ui/core/styles/styled";
+import styled from "@mui/material/styles/styled";
 import Box from "@material-ui/core/Box";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";
 import UnitSelector from "../../../components/UnitSelector";

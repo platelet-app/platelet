@@ -4,7 +4,7 @@ import FormControl from "@material-ui/core/FormControl";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import PropTypes from "prop-types";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import { priorities } from "../../../apiConsts";
 

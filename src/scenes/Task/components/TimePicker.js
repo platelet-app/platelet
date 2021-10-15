@@ -11,7 +11,7 @@ import { Tooltip } from "@material-ui/core";
 import EditIcon from "@mui/icons-material/Edit";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import { showHide } from "../../../styles/common";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import TextField from "@mui/material/TextField";
 
 const useStyles = makeStyles({

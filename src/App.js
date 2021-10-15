@@ -9,7 +9,7 @@ import { useIdleTimer } from "react-idle-timer";
 import { setIdleStatus, setMobileView } from "./redux/Actions";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
 import Amplify, { Logger } from "aws-amplify";
 
@@ -18,7 +18,7 @@ import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
 import "moment/locale/en-gb";
 import { DismissButton } from "./styles/common";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
 
@@ -164,14 +164,14 @@ function AppDefault(props) {
     const darkMode = useSelector((state) => state.darkMode);
     let theme;
     if (darkMode) {
-        theme = createMuiTheme({
+        theme = createTheme({
             palette: {
                 type: "dark",
                 taskStatus,
             },
         });
     } else {
-        theme = createMuiTheme({
+        theme = createTheme({
             palette: {
                 type: "light",
                 background: {
@@ -203,12 +203,12 @@ function AppDefault(props) {
     const classes = useStylesNotistack();
 
     return (
-        <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
             <CssBaseline />
             <SnackbarProvider classes={classes} maxSnack={1}>
                 <AppMain {...props} />
             </SnackbarProvider>
-        </MuiThemeProvider>
+        </ThemeProvider>
     );
 }
 

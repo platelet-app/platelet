@@ -5,9 +5,9 @@ import Grid from "@material-ui/core/Grid";
 import PickUpDetails from "./PickUpDetails";
 import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import { useTheme } from "@mui/material/styles";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import DeliverableDetails from "./DeliverableDetails";
 

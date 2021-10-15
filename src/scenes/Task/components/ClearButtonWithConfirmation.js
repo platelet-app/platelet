@@ -3,7 +3,7 @@ import {Tooltip} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import PropTypes from "prop-types";
 import {useHistory, useLocation} from "react-router-dom";
 

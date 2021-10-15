@@ -4,7 +4,7 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import Grid from "@material-ui/core/Grid";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/material/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
 import TimePicker from "./TimePicker";
 import { Paper } from "@material-ui/core";
