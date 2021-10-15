@@ -1,4 +1,4 @@
-import { Button, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Button, Grid, makeStyles, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";

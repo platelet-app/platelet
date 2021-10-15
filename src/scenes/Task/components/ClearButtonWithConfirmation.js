@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
-import {Tooltip} from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
+import {Tooltip} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import makeStyles from "@mui/material/styles/makeStyles";

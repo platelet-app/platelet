@@ -16,7 +16,7 @@ import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { useDispatch } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
 import { makeStyles, useTheme } from "@mui/material/styles";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";

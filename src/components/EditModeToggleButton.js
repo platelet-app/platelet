@@ -1,8 +1,8 @@
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import React from "react";
-import Tooltip from "@material-ui/core/Tooltip";
-import Grid from "@material-ui/core/Grid";
+import Tooltip from "@mui/material/Tooltip";
+import Grid from "@mui/material/Grid";
 
 export function EditModeToggleButton(props) {
     return (

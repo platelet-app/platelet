@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import NavDrawerItems from "./NavDrawerItems";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import MenuIcon from '@mui/icons-material/Menu';
 import {makeStyles} from "@mui/material/styles";
 

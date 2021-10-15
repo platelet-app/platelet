@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/material/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
 import TimePicker from "./TimePicker";
-import { Paper } from "@material-ui/core";
+import { Paper } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 
 const useStyles = makeStyles({

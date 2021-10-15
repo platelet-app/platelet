@@ -1,8 +1,8 @@
 import makeStyles from "@mui/material/styles/makeStyles";
-import Grid from "@material-ui/core/Grid";
-import {Typography} from "@material-ui/core";
+import Grid from "@mui/material/Grid";
+import {Typography} from "@mui/material";
 import React from "react";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import {showHide} from "../styles/common";
 import PropTypes from "prop-types"
 

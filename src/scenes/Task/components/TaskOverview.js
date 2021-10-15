@@ -1,7 +1,7 @@
 import React from "react";
 import { PropTypes } from "prop-types";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 import PickUpDetails from "./PickUpDetails";
 import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";

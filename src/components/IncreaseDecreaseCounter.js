@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import ClearIcon from '@mui/icons-material/Clear';
 import {makeStyles} from "@mui/material/styles";

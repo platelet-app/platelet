@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import Typography from "@material-ui/core/Typography";
-import { TextField } from "@material-ui/core";
+import Typography from "@mui/material/Typography";
+import { TextField } from "@mui/material";
 import makeStyles from "@mui/material/styles/makeStyles";
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "./TextFields";

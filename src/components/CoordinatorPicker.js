@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import TextField from "@material-ui/core/TextField";
+import TextField from "@mui/material/TextField";
 import { useSelector } from "react-redux";
 import Autocomplete from "@mui/material/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import { DataStore } from "aws-amplify";
 import { userRoles } from "../apiConsts";
 import * as models from "../models/index";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 
 function CoordinatorPicker(props) {
     const [availableCoordinators, setAvailableCoordinators] = useState([]);

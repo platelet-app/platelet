@@ -3,7 +3,7 @@ import "../../App.css";
 import { useHistory } from "react-router";
 import "typeface-roboto";
 import * as models from "../../models/index";
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import { setRoleView } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import { useDispatch, useSelector } from "react-redux";

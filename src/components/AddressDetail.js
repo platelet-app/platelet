@@ -1,14 +1,14 @@
 import React, {useEffect, useRef} from 'react';
-import Accordian from '@material-ui/core/Accordion';
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import Typography from '@material-ui/core/Typography';
+import Accordian from '@mui/material/Accordion';
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
 import { TextFieldUncontrolled }from "./TextFields";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { useState } from 'react';
-import Button from "@material-ui/core/Button"
+import Button from "@mui/material/Button"
 
 export default function AddressDetailsCollapsible(props){
     const [what3words, setWhat3words] = useState(props.address ? props.address.what3words || "" : "");

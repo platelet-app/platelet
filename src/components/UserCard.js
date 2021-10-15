@@ -1,11 +1,11 @@
 import React from "react";
 import { encodeUUID } from "../utilities";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, styled, makeStyles } from "@material-ui/core";
+import { Box, styled, makeStyles } from "@mui/material";
 import { ThemedLink, showHide } from "../styles/common";
 
 const UserBox = styled(Box)({

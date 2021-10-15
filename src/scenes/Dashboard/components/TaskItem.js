@@ -7,7 +7,7 @@ import {
     encodeUUID,
 } from "../../../utilities";
 import PropTypes from "prop-types";
-import { Grow } from "@material-ui/core";
+import { Grow } from "@mui/material";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { contextDots } from "../../../styles/common";
 import { userRoles } from "../../../apiConsts";

@@ -1,10 +1,10 @@
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import React from "react";
 import { makeStyles } from "@mui/material/styles";
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 import PropTypes from "prop-types";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 import { deliverableIcons } from "../../../apiConsts";
 import { getDeliverableIconByEnum } from "../../../utilities";
 

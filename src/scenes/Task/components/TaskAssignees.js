@@ -1,5 +1,5 @@
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import UserCard from "../../../components/UserCard";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -7,7 +7,7 @@ import {
     removeTaskAssignedCoordinatorRequest,
     removeTaskAssignedRiderRequest,
 } from "../../../redux/taskAssignees/TaskAssigneesActions";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import makeStyles from "@mui/material/styles/makeStyles";
 import PropTypes from "prop-types";
 

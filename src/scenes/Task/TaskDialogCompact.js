@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
-import Dialog from "@material-ui/core/Dialog";
+import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { convertListDataToObject, determineTaskStatus } from "../../utilities";
 
@@ -8,10 +8,10 @@ import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { makeStyles, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import NotFound from "../../ErrorComponents/NotFound";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
-import { Button, Hidden } from "@material-ui/core";
+import { Button, Hidden } from "@mui/material";
 import CommentsSection from "../Comments/CommentsSection";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";

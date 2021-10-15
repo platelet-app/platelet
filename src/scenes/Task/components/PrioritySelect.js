@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Radio from "@material-ui/core/Radio";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import RadioGroup from "@mui/material/RadioGroup";
+import Radio from "@mui/material/Radio";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/material/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { priorities } from "../../../apiConsts";
 
 const useStyles = makeStyles({

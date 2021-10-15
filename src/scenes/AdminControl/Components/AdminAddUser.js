@@ -6,7 +6,7 @@ import {
     makeStyles,
     TextField,
     Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import {

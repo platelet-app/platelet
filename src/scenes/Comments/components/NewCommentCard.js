@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
+import Grid from "@mui/material/Grid";
+import Divider from "@mui/material/Divider";
 import LockIcon from "@mui/icons-material/Lock";
-import Tooltip from "@material-ui/core/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 import CommentAuthor from "./CommentAuthor";
 import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
@@ -15,7 +15,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
-import { FormControl, Select, MenuItem } from "@material-ui/core";
+import { FormControl, Select, MenuItem } from "@mui/material";
 
 const initialCommentState = {
     body: "",

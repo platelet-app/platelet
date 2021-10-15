@@ -1,7 +1,7 @@
 import React from "react";
-import { Avatar, makeStyles } from "@material-ui/core";
+import { Avatar, makeStyles } from "@mui/material";
 import ChildCareIcon from "@mui/icons-material/ChildCare";
-import { pink } from "@material-ui/core/colors";
+import { pink } from "@mui/material/colors";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({

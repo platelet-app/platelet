@@ -3,13 +3,13 @@ import PropTypes from 'prop-types'
 
 import { withStyles } from '@mui/material/styles';
 import { makeStyles } from '@mui/material/styles';
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
+import Dialog from '@mui/material/Dialog';
+import MuiDialogTitle from '@mui/material/DialogTitle';
+import MuiDialogContent from '@mui/material/DialogContent';
+import MuiDialogActions from '@mui/material/DialogActions';
+import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 
 const styles = (theme) => ({
   root: {

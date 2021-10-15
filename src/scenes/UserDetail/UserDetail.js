@@ -6,7 +6,7 @@ import _ from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import * as queries from "./queries";
 import UserProfile from "./components/UserProfile";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";

@@ -4,7 +4,7 @@ import 'typeface-roboto'
 import {useSelector} from "react-redux";
 import {withSnackbar} from 'notistack';
 import {PaddedPaper} from "../../styles/common";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import LoginForm from "./components/LoginForm";
 import ResetPasswordForm from "./components/ResetPasswordForm";
 import makeStyles from "@mui/material/styles/makeStyles";

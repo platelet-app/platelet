@@ -14,7 +14,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import { Divider, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Divider, Grid, makeStyles, Typography } from "@mui/material";
 import { TextFieldUncontrolled } from "../../components/TextFields";
 import { EditModeToggleButton } from "../../components/EditModeToggleButton";
 import SaveCancelButtons from "../../components/SaveCancelButtons";

@@ -1,7 +1,7 @@
 import React from "react";
-import { Avatar, makeStyles } from "@material-ui/core";
+import { Avatar, makeStyles } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { deepPurple } from "@material-ui/core/colors";
+import { deepPurple } from "@mui/material/colors";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({

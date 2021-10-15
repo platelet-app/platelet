@@ -1,7 +1,7 @@
 import React from "react";
-import { Avatar, makeStyles } from "@material-ui/core";
+import { Avatar, makeStyles } from "@mui/material";
 import BuildIcon from "@mui/icons-material/Build";
-import { blue } from "@material-ui/core/colors";
+import { blue } from "@mui/material/colors";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({

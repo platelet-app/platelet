@@ -1,4 +1,4 @@
-import { Grid, IconButton, makeStyles } from "@material-ui/core";
+import { Grid, IconButton, makeStyles } from "@mui/material";
 import React from "react";
 import { deliverableIcons } from "../../../apiConsts";
 import { getDeliverableIconByEnum } from "../../../utilities";

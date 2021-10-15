@@ -1,7 +1,7 @@
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import React from "react";
-import { Popover, makeStyles } from "@material-ui/core";
+import { Popover, makeStyles } from "@mui/material";
 import TaskAssignees from "./TaskAssignees";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import _ from "lodash";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import TaskItem from "./TaskItem";
 import { useDispatch, useSelector } from "react-redux";
 import { addTaskRelayRequest } from "../../../redux/tasks/TasksActions";
-import Tooltip from "@material-ui/core/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import makeStyles from "@mui/material/styles/makeStyles";
 import { filterTasks } from "../utilities/functions";

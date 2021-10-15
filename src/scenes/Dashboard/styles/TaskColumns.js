@@ -1,6 +1,6 @@
 import {styled} from "@material-ui/styles";
 import {StyledColumn} from "../../../styles/common"
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import {withTheme} from "@mui/material/styles";
 
 export const TasksKanbanColumn = styled(withTheme(Box))(props => ({

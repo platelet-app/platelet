@@ -1,6 +1,6 @@
 import {TextFieldControlled} from "./TextFields";
 import {clearDashboardFilter, debounceDashboardFilter} from "../redux/dashboardFilter/DashboardFilterActions";
-import {InputAdornment} from "@material-ui/core";
+import {InputAdornment} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";

@@ -1,15 +1,15 @@
 import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
-import Card from '@material-ui/core/Card';
+import Card from '@mui/material/Card';
 import {styled} from '@material-ui/styles';
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 
 import {makeStyles, withTheme} from '@mui/material/styles';
-import {Paper} from "@material-ui/core";
-import Box from "@material-ui/core/Box";
+import {Paper} from "@mui/material";
+import Box from "@mui/material/Box";
 import {Link} from "react-router-dom"
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 
 export const showHide = makeStyles({

@@ -1,8 +1,8 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
 import PropTypes from "prop-types";
-import { Divider, Paper, Typography } from "@material-ui/core";
+import { Divider, Paper, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 
 function DropOffDetails(props) {

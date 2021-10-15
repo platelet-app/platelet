@@ -2,13 +2,13 @@ import React, {useState} from 'react';
 import 'typeface-roboto'
 import '../index.css'
 import {makeStyles, useTheme} from '@mui/material/styles';
-import AppBar from '@material-ui/core/AppBar';
-import IconButton from '@material-ui/core/IconButton';
-import Toolbar from '@material-ui/core/Toolbar';
-import Grid from "@material-ui/core/Grid";
+import AppBar from '@mui/material/AppBar';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import Grid from "@mui/material/Grid";
 import MainWindow from "./MainWindow";
 import {useDispatch} from "react-redux";
-import {Hidden} from "@material-ui/core";
+import {Hidden} from "@mui/material";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
 import NavMenuSearch from "./Components/NavMenuSearch";
 import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";

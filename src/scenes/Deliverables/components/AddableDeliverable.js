@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
 import styled from "@mui/material/styles/styled";
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import { SmallCirclePlusButton } from "../../../components/Buttons";
 import { deliverableUnits } from "../../../apiConsts";
 

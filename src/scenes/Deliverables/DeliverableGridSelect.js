@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import makeStyles from "@mui/material/styles/makeStyles";
-import { Paper } from "@material-ui/core";
+import { Paper } from "@mui/material";
 import { dialogCardStyles } from "../Task/styles/DialogCompactStyles";
-import Link from "@material-ui/core/Link";
+import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";

@@ -7,9 +7,9 @@ import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import UsersSelect from "../../../components/UsersSelect";
 import { PaddedPaper } from "../../../styles/common";
 import EditIcon from "@mui/icons-material/Edit";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import Divider from "@material-ui/core/Divider";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
 

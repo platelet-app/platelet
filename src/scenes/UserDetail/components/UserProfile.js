@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { useDispatch, useSelector } from "react-redux";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";

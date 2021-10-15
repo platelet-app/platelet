@@ -2,12 +2,12 @@ import React from 'react';
 import '../App.css';
 import 'typeface-roboto'
 import {TaskAdded, TaskNew, TaskDelivered, TaskAssigned, TaskActive} from '../scenes/Task/styles/TaskStrips';
-import CardContent from '@material-ui/core/CardContent';
+import CardContent from '@mui/material/CardContent';
 import Moment from "react-moment";
-import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
-import {Typography} from "@material-ui/core";
-import Box from "@material-ui/core/Box";
+import Grid from "@mui/material/Grid";
+import Divider from "@mui/material/Divider";
+import {Typography} from "@mui/material";
+import Box from "@mui/material/Box";
 
 // Not currently used in favour of cards/material table.
 export function TaskStrip(props) {

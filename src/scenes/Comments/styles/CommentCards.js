@@ -1,6 +1,6 @@
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import styled from "@mui/material/styles/styled";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/material";
 
 export const CommentCardStyled = styled(Paper)({
     position: "relative",

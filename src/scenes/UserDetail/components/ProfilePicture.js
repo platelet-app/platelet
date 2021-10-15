@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import Cropper from "react-cropper";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import {PaddedPaper} from "../../../styles/common";
 import "cropperjs/dist/cropper.css";
 import {uploadUserProfilePictureRequest} from "../../../redux/users/UsersActions";

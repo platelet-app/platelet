@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {setCommentsObjectUUID} from "../../../redux/Actions";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import {updateUserRequest} from "../../../redux/users/UsersActions";
-import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
-import Tooltip from "@material-ui/core/Tooltip";
+import Grid from "@mui/material/Grid";
+import Divider from "@mui/material/Divider";
+import Tooltip from "@mui/material/Tooltip";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
 import {useDispatch, useSelector} from "react-redux";
 import {createPostingSelector} from "../../../redux/LoadingSelectors";

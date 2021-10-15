@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {parsePhoneNumberFromString} from "libphonenumber-js";
-import TextField from "@material-ui/core/TextField";
+import TextField from "@mui/material/TextField";
 
 export default function TaskModalNameAndContactNumber(props) {
     const [name, setName] = useState(props.contactName)

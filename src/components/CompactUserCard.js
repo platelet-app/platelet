@@ -1,8 +1,8 @@
 import React from "react";
 import UserAvatar from "./UserAvatar";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 
 function CompactUserCard(props) {
     return (

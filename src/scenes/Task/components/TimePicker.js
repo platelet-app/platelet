@@ -1,13 +1,13 @@
 import React from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import Moment from "react-moment";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import CancelIcon from "@mui/icons-material/Cancel";
-import IconButton from "@material-ui/core/IconButton";
-import { Tooltip } from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import { Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import { showHide } from "../../../styles/common";

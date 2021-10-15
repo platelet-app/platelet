@@ -1,7 +1,7 @@
 import React from "react";
-import { Avatar, makeStyles } from "@material-ui/core";
+import { Avatar, makeStyles } from "@mui/material";
 import BugReportIcon from "@mui/icons-material/BugReport";
-import { red } from "@material-ui/core/colors";
+import { red } from "@mui/material/colors";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({

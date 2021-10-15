@@ -1,6 +1,6 @@
 import ToggleTimeStamp from "./ToggleTimeStamp";
 import {DateAndTimePicker} from "../../../components/DateTimePickers";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import React, {useState} from "react";
 
 export default function TaskModalTimePicker(props) {

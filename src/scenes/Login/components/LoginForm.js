@@ -1,9 +1,9 @@
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import React, {useState} from "react";
 import {loginRequest} from "../../../redux/login/LoginActions";
 import {useDispatch, useSelector} from "react-redux";
 import {TextFieldUncontrolled} from "../../../components/TextFields";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import PasswordField from "./PasswordField";
 

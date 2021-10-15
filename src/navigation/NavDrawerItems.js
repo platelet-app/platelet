@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
+import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import { Link } from "react-router-dom";
-import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List";
+import Divider from "@mui/material/Divider";
+import List from "@mui/material/List";
 import PropTypes from "prop-types";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LocationCityIcon from "@mui/icons-material/LocationCity";

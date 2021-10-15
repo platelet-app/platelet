@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import { AppBar, Hidden } from "@material-ui/core";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { AppBar, Hidden } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
 import { encodeUUID, taskStatusHumanReadable } from "../../../utilities";
@@ -12,7 +12,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { useSelector } from "react-redux";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import clsx from "clsx";
 
 const colourBarPercent = "90%";

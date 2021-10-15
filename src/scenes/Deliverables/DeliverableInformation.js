@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
-import Grid from "@material-ui/core/Grid";
-import DialogContentText from '@material-ui/core/DialogContentText';
+import Grid from "@mui/material/Grid";
+import DialogContentText from '@mui/material/DialogContentText';
 import {useDispatch, useSelector} from "react-redux";
 import {getDeliverablesRequest} from "../../redux/deliverables/DeliverablesActions";
 

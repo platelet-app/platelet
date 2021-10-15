@@ -1,5 +1,5 @@
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 import seedrandom from "seedrandom";
 import makeStyles from "@mui/material/styles/makeStyles";
 

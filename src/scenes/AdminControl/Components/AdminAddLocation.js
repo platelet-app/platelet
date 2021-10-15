@@ -1,5 +1,5 @@
 import { DataStore } from "@aws-amplify/datastore";
-import { Button, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Button, Grid, makeStyles, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldUncontrolled } from "../../../components/TextFields";

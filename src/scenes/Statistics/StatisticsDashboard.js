@@ -6,12 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import StatsSkeleton from "./components/StatsSkeleton";
 import { getUserStatisticsRequest } from "../../redux/statistics/statisticsActions";
 import { DateAndTimePicker } from "../../components/DateTimePickers";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import RoleSelect from "../../components/RoleSelect";
 import makeStyles from "@mui/material/styles/makeStyles";
 import ToggleButton from '@mui/material/ToggleButton';
-import FormControl from "@material-ui/core/FormControl";
-import { InputLabel, MenuItem, Select } from "@material-ui/core";
+import FormControl from "@mui/material/FormControl";
+import { InputLabel, MenuItem, Select } from "@mui/material";
 import { getWhoami } from "../../redux/Selectors";
 
 const useStyles = makeStyles((theme) => ({

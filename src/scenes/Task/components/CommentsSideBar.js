@@ -1,5 +1,5 @@
 import React from "react";
-import { Drawer, Hidden, makeStyles, useTheme } from "@material-ui/core";
+import { Drawer, Hidden, makeStyles, useTheme } from "@mui/material";
 import { useState } from "react";
 import CommentsSection from "../../Comments/CommentsSection";
 

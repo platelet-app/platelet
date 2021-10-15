@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import TextField from "@material-ui/core/TextField";
+import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { matchSorter } from "match-sorter";
 import { DataStore } from "aws-amplify";

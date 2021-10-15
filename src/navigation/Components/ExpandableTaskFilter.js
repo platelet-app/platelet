@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import TaskFilterTextField from "../../components/TaskFilterTextfield";
 import {showHide} from "../../styles/common";
 import SearchIcon from "@mui/icons-material/Search";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 
 function ExpandableTaskFilter(props) {
     const [open, setOpen] = useState(false);
