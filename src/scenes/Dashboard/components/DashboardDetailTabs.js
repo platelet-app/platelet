@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
-import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -20,19 +19,18 @@ import Typography from "@mui/material/Typography";
 import { showHide } from "../../../styles/common";
 import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Hidden } from "@mui/material";
+import { Divider, Hidden } from "@mui/material";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import CallIcon from "@mui/icons-material/Call";
 import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
 import { getWhoami } from "../../../redux/Selectors";
+import { userRoles } from "../../../apiConsts";
 
 export function TabPanel(props) {
     const { children, index, ...other } = props;
     const value = parseInt(props.value);
-    const theme = useTheme();
-    const isMd = useMediaQuery(theme.breakpoints.down("lg"));
 
     return (
         <div
@@ -42,7 +40,7 @@ export function TabPanel(props) {
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && <Box p={isMd ? 1 : 3}>{children}</Box>}
+            {value === index && <Box p={1}>{children}</Box>}
         </div>
     );
 }
@@ -68,7 +66,7 @@ const useStyles = makeStyles((theme) => {
     return {
         appBar: {
             width: "100%",
-            background: appBarBack,
+            background: theme.palette.background.paper,
         },
     };
 });
@@ -89,229 +87,225 @@ export function DashboardDetailTabs(props) {
         props.onChange(event, newValue);
     };
     const tabs = isXs ? (
-        <Tabs
-            value={parseInt(props.value)}
-            onChange={handleChange}
-            aria-label={"dashboard-tabs"}
-        >
-            <Tab icon={<ExploreIcon />} {...a11yProps(0)} />
-            <Tab icon={<DoneIcon />} {...a11yProps(1)} />
-        </Tabs>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+                value={parseInt(props.value)}
+                onChange={handleChange}
+                aria-label={"dashboard-tabs"}
+            >
+                <Tab icon={<ExploreIcon />} {...a11yProps(0)} />
+                <Tab icon={<DoneIcon />} {...a11yProps(1)} />
+            </Tabs>
+        </Box>
     ) : (
-        <Tabs
-            value={parseInt(props.value)}
-            onChange={handleChange}
-            aria-label={"dashboard-tabs"}
-        >
-            <Tab label="Active" {...a11yProps(0)} />
-            <Tab label="Completed" {...a11yProps(1)} />
-        </Tabs>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+                value={parseInt(props.value)}
+                onChange={handleChange}
+                aria-label={"dashboard-tabs"}
+            >
+                <Tab label="In Progress" {...a11yProps(0)} />
+                <Tab label="Completed" {...a11yProps(1)} />
+            </Tabs>
+        </Box>
     );
 
     return (
         <React.Fragment>
-            <AppBar className={classes.appBar} position="static">
-                <Toolbar variant="dense">
-                    <Grid
-                        container
-                        spacing={1}
-                        wrap={"nowrap"}
-                        direction={"row"}
-                        justifyContent={"space-between"}
-                        alignItems={"center"}
-                    >
-                        <Grid item>
-                            <Grid
-                                container
-                                spacing={2}
-                                direction={"row"}
-                                justifyContent={"flex-start"}
-                                alignItems={"center"}
-                            >
-                                <Grid item>{tabs}</Grid>
-                                <Hidden mdDown>
-                                    <Grid item>
-                                        <TaskFilterTextField />
-                                    </Grid>
-                                </Hidden>
+            <Toolbar className={classes.appBar} variant="dense">
+                <Grid
+                    container
+                    spacing={1}
+                    wrap={"nowrap"}
+                    direction={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                >
+                    <Grid item>
+                        <Grid
+                            container
+                            spacing={2}
+                            direction={"row"}
+                            justifyContent={"flex-start"}
+                            alignItems={"center"}
+                        >
+                            <Grid item>
+                                <Box sx={{ width: "100%" }}>{tabs}</Box>
                             </Grid>
-                        </Grid>
-                        <Grid item>
-                            <Grid
-                                container
-                                spacing={2}
-                                direction={"row"}
-                                justifyContent={"flex-start"}
-                                alignItems={"center"}
-                            >
+                            <Hidden mdDown>
                                 <Grid item>
-                                    <Grid
-                                        className={
-                                            whoami.roles.includes("RIDER") &&
-                                            !whoami.roles.includes(
-                                                "COORDINATOR"
-                                            )
-                                                ? hide
-                                                : show
-                                        }
-                                        container
-                                        direction={"row"}
-                                        justifyContent={"flex-start"}
-                                        alignItems={"center"}
-                                    >
-                                        <Grid item>
-                                            <Hidden mdDown>
-                                                <Typography>
-                                                    {`${roleView} view`.toUpperCase()}
-                                                </Typography>
-                                            </Hidden>
-                                            <Hidden mdUp>
-                                                {roleView === "rider" ? (
-                                                    <TwoWheelerIcon />
-                                                ) : (
-                                                    <CallIcon />
-                                                )}
-                                            </Hidden>
-                                        </Grid>
-                                        <Grid item>
-                                            <IconButton
-                                                color="inherit"
-                                                aria-controls="simple-menu"
-                                                aria-haspopup="true"
-                                                onClick={(event) => {
-                                                    setAnchorElRoleMenu(
-                                                        event.currentTarget
-                                                    );
-                                                }}
-                                                size="large"
-                                            >
-                                                <ArrowDropDownIcon />
-                                            </IconButton>
-                                            <Menu
-                                                id="profile-menu"
-                                                anchorEl={anchorElRoleMenu}
-                                                keepMounted
-                                                open={Boolean(anchorElRoleMenu)}
-                                                onClose={() => {
-                                                    setAnchorElRoleMenu(null);
-                                                }}
-                                            >
-                                                <MenuItem
-                                                    className={
-                                                        whoami.roles.includes(
-                                                            "COORDINATOR"
-                                                        )
-                                                            ? show
-                                                            : hide
-                                                    }
-                                                    onClick={() => {
-                                                        setAnchorElRoleMenu(
-                                                            null
-                                                        );
-                                                        if (
-                                                            roleView !== "all"
-                                                        ) {
-                                                            dispatch(
-                                                                setRoleViewAndGetTasks(
-                                                                    whoami.id,
-                                                                    "",
-                                                                    "all"
-                                                                )
-                                                            );
-                                                            saveDashboardRoleMode(
-                                                                "all"
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    All Tasks
-                                                </MenuItem>
-                                                <MenuItem
-                                                    className={
-                                                        whoami.roles.includes(
-                                                            "COORDINATOR"
-                                                        )
-                                                            ? show
-                                                            : hide
-                                                    }
-                                                    onClick={() => {
-                                                        setAnchorElRoleMenu(
-                                                            null
-                                                        );
-                                                        if (
-                                                            roleView !==
-                                                            "coordinator"
-                                                        ) {
-                                                            dispatch(
-                                                                setRoleViewAndGetTasks(
-                                                                    whoami.id,
-                                                                    "",
-                                                                    "coordinator"
-                                                                )
-                                                            );
-                                                            saveDashboardRoleMode(
-                                                                "coordinator"
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    Coordinator
-                                                </MenuItem>
-                                                <MenuItem
-                                                    className={
-                                                        whoami.roles.includes(
-                                                            "RIDER"
-                                                        )
-                                                            ? show
-                                                            : hide
-                                                    }
-                                                    onClick={() => {
-                                                        setAnchorElRoleMenu(
-                                                            null
-                                                        );
-                                                        if (
-                                                            roleView !== "rider"
-                                                        ) {
-                                                            dispatch(
-                                                                setRoleViewAndGetTasks(
-                                                                    whoami.id,
-                                                                    "",
-                                                                    "rider"
-                                                                )
-                                                            );
-                                                            saveDashboardRoleMode(
-                                                                "rider"
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    Rider
-                                                </MenuItem>
-                                            </Menu>
-                                        </Grid>
-                                    </Grid>
+                                    <TaskFilterTextField />
                                 </Grid>
-                                <Grid item>
-                                    <Tooltip title="Recent Activity">
+                            </Hidden>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid
+                            container
+                            spacing={2}
+                            direction={"row"}
+                            justifyContent={"flex-start"}
+                            alignItems={"center"}
+                        >
+                            <Grid item>
+                                <Grid
+                                    className={
+                                        whoami.roles.includes(
+                                            userRoles.rider
+                                        ) &&
+                                        !whoami.roles.includes(
+                                            userRoles.coordinator
+                                        )
+                                            ? hide
+                                            : show
+                                    }
+                                    container
+                                    direction={"row"}
+                                    justifyContent={"flex-start"}
+                                    alignItems={"center"}
+                                >
+                                    <Grid item>
+                                        <Hidden mdDown>
+                                            <Typography>
+                                                {`${roleView} view`.toUpperCase()}
+                                            </Typography>
+                                        </Hidden>
+                                        <Hidden mdUp>
+                                            {roleView === "rider" ? (
+                                                <TwoWheelerIcon />
+                                            ) : (
+                                                <CallIcon />
+                                            )}
+                                        </Hidden>
+                                    </Grid>
+                                    <Grid item>
                                         <IconButton
                                             color="inherit"
-                                            aria-label="open drawer"
-                                            onClick={() =>
-                                                setRightSideBarOpen(
-                                                    !rightSideBarOpen
-                                                )
-                                            }
+                                            aria-controls="simple-menu"
+                                            aria-haspopup="true"
+                                            onClick={(event) => {
+                                                setAnchorElRoleMenu(
+                                                    event.currentTarget
+                                                );
+                                            }}
                                             size="large"
                                         >
-                                            <TimelineIcon />
+                                            <ArrowDropDownIcon />
                                         </IconButton>
-                                    </Tooltip>
+                                        <Menu
+                                            id="profile-menu"
+                                            anchorEl={anchorElRoleMenu}
+                                            keepMounted
+                                            open={Boolean(anchorElRoleMenu)}
+                                            onClose={() => {
+                                                setAnchorElRoleMenu(null);
+                                            }}
+                                        >
+                                            <MenuItem
+                                                className={
+                                                    whoami.roles.includes(
+                                                        userRoles.coordinator
+                                                    )
+                                                        ? show
+                                                        : hide
+                                                }
+                                                onClick={() => {
+                                                    setAnchorElRoleMenu(null);
+                                                    if (roleView !== "all") {
+                                                        dispatch(
+                                                            setRoleViewAndGetTasks(
+                                                                whoami.id,
+                                                                "",
+                                                                "all"
+                                                            )
+                                                        );
+                                                        saveDashboardRoleMode(
+                                                            "all"
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                All Tasks
+                                            </MenuItem>
+                                            <MenuItem
+                                                className={
+                                                    whoami.roles.includes(
+                                                        userRoles.coordinator
+                                                    )
+                                                        ? show
+                                                        : hide
+                                                }
+                                                onClick={() => {
+                                                    setAnchorElRoleMenu(null);
+                                                    if (
+                                                        roleView !==
+                                                        "coordinator"
+                                                    ) {
+                                                        dispatch(
+                                                            setRoleViewAndGetTasks(
+                                                                whoami.id,
+                                                                "",
+                                                                "coordinator"
+                                                            )
+                                                        );
+                                                        saveDashboardRoleMode(
+                                                            "coordinator"
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                Coordinator
+                                            </MenuItem>
+                                            <MenuItem
+                                                className={
+                                                    whoami.roles.includes(
+                                                        userRoles.rider
+                                                    )
+                                                        ? show
+                                                        : hide
+                                                }
+                                                onClick={() => {
+                                                    setAnchorElRoleMenu(null);
+                                                    if (roleView !== "rider") {
+                                                        dispatch(
+                                                            setRoleViewAndGetTasks(
+                                                                whoami.id,
+                                                                "",
+                                                                "rider"
+                                                            )
+                                                        );
+                                                        saveDashboardRoleMode(
+                                                            "rider"
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                Rider
+                                            </MenuItem>
+                                        </Menu>
+                                    </Grid>
                                 </Grid>
+                            </Grid>
+                            <Grid item>
+                                <Tooltip title="Recent Activity">
+                                    <IconButton
+                                        color="inherit"
+                                        aria-label="open drawer"
+                                        onClick={() =>
+                                            setRightSideBarOpen(
+                                                !rightSideBarOpen
+                                            )
+                                        }
+                                        size="large"
+                                    >
+                                        <TimelineIcon />
+                                    </IconButton>
+                                </Tooltip>
                             </Grid>
                         </Grid>
                     </Grid>
-                </Toolbar>
-            </AppBar>
+                </Grid>
+            </Toolbar>
             <SideInfoSection
                 open={rightSideBarOpen}
                 handleDrawerToggle={() =>
@@ -319,6 +313,7 @@ export function DashboardDetailTabs(props) {
                 }
                 handleDrawerClose={() => setRightSideBarOpen(false)}
             >
+                <Divider />
                 {props.children}
             </SideInfoSection>
         </React.Fragment>

@@ -267,7 +267,6 @@ function Dashboard(props) {
     }
 
     const theme = useTheme();
-    console.log(theme);
 
     const dialog = props.match.params.task_uuid_b62 ? (
         <TaskDialogCompact

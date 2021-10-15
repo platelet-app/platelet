@@ -1,17 +1,16 @@
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import makeStyles from '@mui/styles/makeStyles';
-import Avatar from "@mui/material/Avatar";
+import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
-import { Tooltip } from "@mui/material";
+import { Stack, Tooltip } from "@mui/material";
 import { deliverableIcons } from "../../../apiConsts";
 import { getDeliverableIconByEnum } from "../../../utilities";
 
 const useStyles = makeStyles(() => ({
     root: (props) => ({
         width: "100%",
-        margin: props.compact ? 3 : 10,
+        backgroundColor: "rgba(180, 180, 180, 0.1)",
     }),
     label: {
         maxWidth: 120,
@@ -19,45 +18,37 @@ const useStyles = makeStyles(() => ({
 }));
 
 function DeliverableCard(props) {
-    const spacingValue = props.compact ? 4 : 6;
     const classes = useStyles(props);
     return (
-        <Grid
+        <Stack
             className={classes.root}
-            container
-            spacing={1}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            direction={"row"}
+            sx={{ padding: 1 }}
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={2}
         >
-            <Grid item>
-                <Grid
-                    container
-                    spacing={2}
-                    justifyContent={"flex-start"}
-                    alignItems={"center"}
-                    direction={"row"}
+            <Stack
+                spacing={2}
+                justifyContent={"center"}
+                alignItems={"center"}
+                direction={"row"}
+            >
+                {getDeliverableIconByEnum(props.icon, 4)}
+                <Tooltip
+                    title={
+                        props.label && props.label.length > 14
+                            ? props.label
+                            : ""
+                    }
                 >
-                    <Grid item>
-                        {getDeliverableIconByEnum(props.icon, spacingValue)}
-                    </Grid>
-                    <Grid item>
-                        <Tooltip
-                            title={
-                                props.label && props.label.length > 14
-                                    ? props.label
-                                    : ""
-                            }
-                        >
-                            <Typography noWrap className={classes.label}>
-                                {props.label}
-                            </Typography>
-                        </Tooltip>
-                    </Grid>
-                </Grid>
-            </Grid>
-            <Grid item>{props.children}</Grid>
-        </Grid>
+                    <Typography noWrap className={classes.label}>
+                        {props.label}
+                    </Typography>
+                </Tooltip>
+            </Stack>
+            {props.children}
+        </Stack>
     );
 }
 

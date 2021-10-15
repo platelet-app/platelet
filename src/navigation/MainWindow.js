@@ -12,13 +12,10 @@ import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
 import LocationDetail from "../scenes/LocationDetail/LocationDetail";
 import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
-import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { useDispatch } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
-import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import Container from "@mui/material/Container";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
 import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";
@@ -33,13 +30,10 @@ function MainWindowContainer(props) {
                 paddingTop: 5,
             },
         },
-        toolbar: theme.mixins.toolbar,
     }));
     const classes = styles();
-    const theme = useTheme();
-    const isMd = useMediaQuery(theme.breakpoints.down("lg"));
     return (
-        <Container disableGutters={isMd} className={classes.root}>
+        <Container maxWidth={"lg"} disableGutters className={classes.root}>
             {props.children}
         </Container>
     );

@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import makeStyles from '@mui/styles/makeStyles';
-import { Paper } from "@mui/material";
+import { Paper, Stack } from "@mui/material";
 import { dialogCardStyles } from "../Task/styles/DialogCompactStyles";
 import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
@@ -14,16 +13,6 @@ import PropTypes from "prop-types";
 import EditableDeliverable from "./components/EditableDeliverable";
 import AddableDeliverable from "./components/AddableDeliverable";
 import _ from "lodash";
-
-const useStyles = makeStyles({
-    root: {
-        width: "100%",
-        maxWidth: 350,
-    },
-    truncate: {
-        maxHeight: 410,
-    },
-});
 
 const initialDeliverablesSortedState = {
     deliverables: [],
@@ -39,7 +28,6 @@ function DeliverableGridSelect(props) {
     const [availableDeliverables, setAvailableDeliverables] = useState({});
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
-    const classes = useStyles();
     const cardClasses = dialogCardStyles();
 
     function convertExistingDeliverablesToState() {
@@ -166,83 +154,58 @@ function DeliverableGridSelect(props) {
         let count = 0;
         return (
             <Paper className={cardClasses.root}>
-                <Grid
-                    container
-                    spacing={2}
+                <Stack
+                    spacing={5}
                     justifyContent={"flex-start"}
                     direction={"column"}
                 >
-                    <Grid item>
-                        <Grid
-                            container
-                            spacing={1}
-                            className={classes.root}
-                            direction={"column"}
-                        >
-                            {deliverablesSorted.deliverables.map(
-                                (deliverable) => {
-                                    count++;
-                                    return (
-                                        <Grid item key={deliverable.id}>
-                                            {count > 5 && truncated ? (
-                                                <></>
-                                            ) : (
-                                                <EditableDeliverable
-                                                    onChangeCount={
-                                                        onChangeCount
-                                                    }
-                                                    onChangeUnit={onChangeUnit}
-                                                    onDelete={onDelete}
-                                                    deliverable={deliverable}
-                                                />
-                                            )}
-                                        </Grid>
-                                    );
-                                }
-                            )}
-                        </Grid>
-                    </Grid>
-                    <Grid item>
-                        <Grid
-                            container
-                            spacing={1}
-                            className={classes.root}
-                            direction={"column"}
-                        >
-                            {deliverablesSorted.defaults.map(
-                                (deliverableType) => {
-                                    count++;
-                                    return (
-                                        <Grid item key={deliverableType.id}>
-                                            {count > 5 && truncated ? (
-                                                <></>
-                                            ) : (
-                                                <AddableDeliverable
-                                                    onAdd={onAddNewDeliverable}
-                                                    deliverableType={
-                                                        deliverableType
-                                                    }
-                                                />
-                                            )}
-                                        </Grid>
-                                    );
-                                }
-                            )}
-                        </Grid>
-                    </Grid>
-                    <Grid item>
-                        <Link
-                            href="#"
-                            onClick={(e) => {
-                                setTruncated((prevState) => !prevState);
-                                e.preventDefault();
-                            }}
-                            color="inherit"
-                        >
-                            {truncated ? "More..." : "Less..."}
-                        </Link>
-                    </Grid>
-                </Grid>
+                    <Stack container spacing={1} direction={"column"}>
+                        {deliverablesSorted.deliverables.map((deliverable) => {
+                            count++;
+                            return (
+                                <Grid item key={deliverable.id}>
+                                    {count > 5 && truncated ? (
+                                        <></>
+                                    ) : (
+                                        <EditableDeliverable
+                                            onChangeCount={onChangeCount}
+                                            onChangeUnit={onChangeUnit}
+                                            onDelete={onDelete}
+                                            deliverable={deliverable}
+                                        />
+                                    )}
+                                </Grid>
+                            );
+                        })}
+                    </Stack>
+                    <Stack container spacing={1} direction={"column"}>
+                        {deliverablesSorted.defaults.map((deliverableType) => {
+                            count++;
+                            return (
+                                <Grid item key={deliverableType.id}>
+                                    {count > 5 && truncated ? (
+                                        <></>
+                                    ) : (
+                                        <AddableDeliverable
+                                            onAdd={onAddNewDeliverable}
+                                            deliverableType={deliverableType}
+                                        />
+                                    )}
+                                </Grid>
+                            );
+                        })}
+                    </Stack>
+                    <Link
+                        href="#"
+                        onClick={(e) => {
+                            setTruncated((prevState) => !prevState);
+                            e.preventDefault();
+                        }}
+                        color="inherit"
+                    >
+                        {truncated ? "More..." : "Less..."}
+                    </Link>
+                </Stack>
             </Paper>
         );
     }

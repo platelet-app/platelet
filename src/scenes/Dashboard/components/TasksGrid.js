@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import clsx from "clsx";
 import { getTasksSelector } from "../../../redux/Selectors";
 import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
     },
     column: {
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             width: "100%",
         },
     },
@@ -177,7 +177,7 @@ function TasksGrid(props) {
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const { show, hide } = showHide();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down('md'));
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
     const addRelay = React.useCallback((data) => {
         dispatch(addTaskRelayRequest(data));
@@ -190,47 +190,49 @@ function TasksGrid(props) {
 
     useEffect(doSearch, [dashboardFilter]);
 
-    return <>
-        <Grid
-            container
-            spacing={2}
-            direction={"row"}
-            justifyContent={isSm ? "center" : "flex-start"}
-            alignItems={"stretch"}
-        >
-            {Object.keys(columns).map((taskKey) => {
-                const title = getColumnTitle(taskKey);
-                return (
-                    <Grid
-                        item
-                        key={taskKey}
-                        className={clsx([
-                            props.excludeColumnList &&
-                            props.excludeColumnList.includes(taskKey)
-                                ? hide
-                                : show,
-                            classes.column,
-                        ])}
-                    >
-                        <TasksGridColumn
-                            title={title}
-                            classes={classes}
-                            onAddTaskClick={props.onAddTaskClick}
-                            onAddRelayClick={addRelay}
-                            taskKey={taskKey}
-                            tasks={props.tasks[taskKey]}
-                            showTasks={filteredTasksUUIDs}
-                            key={title}
-                        />
-                    </Grid>
-                );
-            })}
-        </Grid>
-        <GuidedSetup
-            show={showGuidedSetup}
-            onClose={() => setShowGuidedSetup(false)}
-        />
-    </>;
+    return (
+        <>
+            <Grid
+                container
+                spacing={2}
+                direction={"row"}
+                justifyContent={isSm ? "center" : "flex-start"}
+                alignItems={"stretch"}
+            >
+                {Object.keys(columns).map((taskKey) => {
+                    const title = getColumnTitle(taskKey);
+                    return (
+                        <Grid
+                            item
+                            key={taskKey}
+                            className={clsx([
+                                props.excludeColumnList &&
+                                props.excludeColumnList.includes(taskKey)
+                                    ? hide
+                                    : show,
+                                classes.column,
+                            ])}
+                        >
+                            <TasksGridColumn
+                                title={title}
+                                classes={classes}
+                                onAddTaskClick={props.onAddTaskClick}
+                                onAddRelayClick={addRelay}
+                                taskKey={taskKey}
+                                tasks={props.tasks[taskKey]}
+                                showTasks={filteredTasksUUIDs}
+                                key={title}
+                            />
+                        </Grid>
+                    );
+                })}
+            </Grid>
+            <GuidedSetup
+                show={showGuidedSetup}
+                onClose={() => setShowGuidedSetup(false)}
+            />
+        </>
+    );
 }
 
 TasksGrid.propTypes = {

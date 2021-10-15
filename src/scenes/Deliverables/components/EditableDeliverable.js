@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
-import { styled } from '@mui/material/styles';
-import Box from "@mui/material/Box";
+import { styled } from "@mui/material/styles";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";
 import UnitSelector from "../../../components/UnitSelector";
 import { showHide } from "../../../styles/common";
-import { ClickAwayListener, Grid, IconButton, Tooltip } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import {
+    ClickAwayListener,
+    Grid,
+    IconButton,
+    Stack,
+    Tooltip,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import ArchitectureIcon from "@mui/icons-material/Architecture";
 
-const DeliverableBox = styled(Box)({
-    backgroundColor: "rgba(180, 180, 180, 0.1)",
-    paddingLeft: 10,
-});
 const useStyles = makeStyles((theme) => ({
     button: {
         width: theme.spacing(4),
@@ -29,7 +30,16 @@ function EditableDeliverable(props) {
     const deliverable = props.deliverable;
     const [showUnit, setShowUnit] = useState(false);
     const classes = useStyles();
-    const { show, hide } = showHide();
+    const unitSelect = showUnit ? (
+        <UnitSelector
+            value={deliverable.unit}
+            onChange={(unit) =>
+                props.onChangeUnit(deliverable.id, unit.target.value)
+            }
+        />
+    ) : (
+        <></>
+    );
     function handleCloseUnit() {
         setShowUnit((prevState) => !prevState);
     }
@@ -38,57 +48,34 @@ function EditableDeliverable(props) {
             mouseEvent={"onMouseUp"}
             onClickAway={() => setShowUnit(false)}
         >
-            <DeliverableBox>
-                <DeliverableCard
-                    compact
-                    label={deliverable.label}
-                    icon={deliverable.icon}
-                >
-                    <Grid container direction={"column"}>
-                        <Grid item>
-                            <Grid container direction={"row"}>
-                                <Grid item>
-                                    <Tooltip
-                                        title={`${deliverable.unit}. Click to change`}
-                                    >
-                                        <IconButton onClick={handleCloseUnit} className={classes.iconButton} size="large">
-                                            <ArchitectureIcon
-                                                className={classes.button}
-                                            />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Grid>
-                                <Grid item>
-                                    <IncreaseDecreaseCounter
-                                        value={deliverable.count || 0}
-                                        disabled={props.isDeleting}
-                                        onChange={(count) =>
-                                            props.onChangeCount(
-                                                deliverable.id,
-                                                count
-                                            )
-                                        }
-                                        onDelete={() =>
-                                            props.onDelete(deliverable.id)
-                                        }
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid className={showUnit ? show : hide} item>
-                            <UnitSelector
-                                value={deliverable.unit}
-                                onChange={(unit) =>
-                                    props.onChangeUnit(
-                                        deliverable.id,
-                                        unit.target.value
-                                    )
-                                }
-                            />
-                        </Grid>
-                    </Grid>
-                </DeliverableCard>
-            </DeliverableBox>
+            <DeliverableCard
+                compact
+                label={deliverable.label}
+                icon={deliverable.icon}
+            >
+                <Stack direction={"column"}>
+                    <Stack direction={"row"}>
+                        <Tooltip title={`${deliverable.unit}. Click to change`}>
+                            <IconButton
+                                onClick={handleCloseUnit}
+                                className={classes.iconButton}
+                                size="large"
+                            >
+                                <ArchitectureIcon className={classes.button} />
+                            </IconButton>
+                        </Tooltip>
+                        <IncreaseDecreaseCounter
+                            value={deliverable.count || 0}
+                            disabled={props.isDeleting}
+                            onChange={(count) =>
+                                props.onChangeCount(deliverable.id, count)
+                            }
+                            onDelete={() => props.onDelete(deliverable.id)}
+                        />
+                    </Stack>
+                    {unitSelect}
+                </Stack>
+            </DeliverableCard>
         </ClickAwayListener>
     );
 }

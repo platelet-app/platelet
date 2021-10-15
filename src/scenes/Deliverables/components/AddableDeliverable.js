@@ -1,15 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import { SmallCirclePlusButton } from "../../../components/Buttons";
 import { deliverableUnits } from "../../../apiConsts";
-
-const DeliverableBox = styled(Box)({
-    backgroundColor: "rgba(180, 180, 180, 0.1)",
-    paddingLeft: 10,
-});
 
 function AddableDeliverable(props) {
     const deliverableType = props.deliverableType;
@@ -24,18 +19,16 @@ function AddableDeliverable(props) {
     }
 
     return (
-        <DeliverableBox>
-            <DeliverableCard
-                compact
-                label={deliverableType.label}
-                icon={deliverableType.icon}
-            >
-                <SmallCirclePlusButton
-                    onClick={makeNewDeliverable}
-                    disabled={props.isPosting}
-                />
-            </DeliverableCard>
-        </DeliverableBox>
+        <DeliverableCard
+            compact
+            label={deliverableType.label}
+            icon={deliverableType.icon}
+        >
+            <SmallCirclePlusButton
+                onClick={makeNewDeliverable}
+                disabled={props.isPosting}
+            />
+        </DeliverableCard>
     );
 }
 

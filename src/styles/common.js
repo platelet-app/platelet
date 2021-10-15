@@ -74,7 +74,7 @@ export const StyledStrip = styled(Card)({
 
 export function PaddedPaper(props) {
     const padding = props.padding ? props.padding : "30px";
-    const maxWidth = props.maxWidth ? props.maxWidth : "1000px";
+    const maxWidth = props.maxWidth ? props.maxWidth : "1280px";
     const minWidth = props.minWidth ? props.minWidth : "30px";
     const maxHeight = props.maxHeight ? props.maxHeight : "100%";
     const minHeight = props.minHeight ? props.minHeight : "30px";

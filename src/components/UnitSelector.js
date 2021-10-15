@@ -9,6 +9,7 @@ function UnitSelector(props) {
         <FormControl fullWidth>
             <Select
                 id="deliverable-units"
+                variant={"standard"}
                 value={props.value}
                 label={props.label}
                 onChange={props.onChange}
