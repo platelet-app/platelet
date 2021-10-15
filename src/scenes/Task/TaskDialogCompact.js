@@ -2,11 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@material-ui/core/Dialog";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    convertListDataToObject,
-    decodeUUID,
-    determineTaskStatus,
-} from "../../utilities";
+import { convertListDataToObject, determineTaskStatus } from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -21,7 +17,7 @@ import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import _ from "lodash";
-import { tasksStatus, userRoles } from "../../apiConsts";
+import { userRoles } from "../../apiConsts";
 import {
     displayErrorNotification,
     displayWarningNotification,
@@ -54,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DialogWrapper = (props) => {
-    const theme = useTheme();
     const { handleClose } = props;
     const classes = useStyles();
     return (
@@ -79,12 +74,6 @@ const DialogWrapper = (props) => {
     );
 };
 
-const initialLocationState = {
-    address: null,
-    contact: { name: null, telephone_number: null },
-    protected: false,
-    listed: false,
-};
 const initialState = {
     id: null,
     reference: "",
@@ -151,7 +140,6 @@ function TaskDialogCompact(props) {
                     const assignees = (
                         await DataStore.query(models.TaskAssignee)
                     ).filter((a) => a.task.id === taskUUID);
-                    console.log(assignees);
                     setTask({
                         ...taskData,
                         assignees: convertListDataToObject(assignees),
@@ -347,15 +335,20 @@ function TaskDialogCompact(props) {
                     name: `Copy of ${name}`,
                 })
             );
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.dropOffLocationId = newLocation.id;
-                })
-            );
-            setTask((prevState) => ({
-                ...prevState,
-                dropOffLocation: newLocation,
-            }));
+            try {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.dropOffLocationId = newLocation.id;
+                    })
+                );
+            } catch (e) {
+                console.log("dumb error");
+                console.log(e);
+                setTask((prevState) => ({
+                    ...prevState,
+                    dropOffLocation: newLocation,
+                }));
+            }
         }
     }
 
@@ -384,15 +377,20 @@ function TaskDialogCompact(props) {
                     name: `Copy of ${name}`,
                 })
             );
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.pickUpLocationId = newLocation.id;
-                })
-            );
-            setTask((prevState) => ({
-                ...prevState,
-                pickUpLocation: newLocation,
-            }));
+            try {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.pickUpLocationId = newLocation.id;
+                    })
+                );
+            } catch (e) {
+                console.log("dumb error");
+                console.log(e);
+                setTask((prevState) => ({
+                    ...prevState,
+                    pickUpLocation: newLocation,
+                }));
+            }
         }
     }
     async function selectPickUpPreset(location) {
