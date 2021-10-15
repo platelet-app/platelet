@@ -1082,7 +1082,7 @@ export const schema = {
                     "type": {
                         "model": "Task"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -1096,7 +1096,7 @@ export const schema = {
                     "type": {
                         "model": "Task"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -1369,5 +1369,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "417283654f712c30bfb9165e77f8f61d"
+    "version": "e9915787d5b2529db357354c00d2e9f3"
 };

@@ -90,21 +90,12 @@ export const onCreateUser = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      tasksRider {
+      assignments {
         items {
           id
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      tasksCoordinator {
-        items {
-          id
+          taskId
+          assigneeId
+          role
           _version
           _deleted
           _lastChangedAt
@@ -212,21 +203,12 @@ export const onUpdateUser = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      tasksRider {
+      assignments {
         items {
           id
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      tasksCoordinator {
-        items {
-          id
+          taskId
+          assigneeId
+          role
           _version
           _deleted
           _lastChangedAt
@@ -334,21 +316,12 @@ export const onDeleteUser = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      tasksRider {
+      assignments {
         items {
           id
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      tasksCoordinator {
-        items {
-          id
+          taskId
+          assigneeId
+          role
           _version
           _deleted
           _lastChangedAt
@@ -537,11 +510,7 @@ export const onCreateVehicle = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -643,11 +612,7 @@ export const onUpdateVehicle = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -749,11 +714,7 @@ export const onDeleteVehicle = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -764,189 +725,6 @@ export const onDeleteVehicle = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      comments {
-        items {
-          id
-          parentId
-          body
-          visibility
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateLocation = /* GraphQL */ `
-  subscription OnCreateLocation {
-    onCreateLocation {
-      id
-      name
-      listed
-      contact {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      what3words
-      comments {
-        items {
-          id
-          parentId
-          body
-          visibility
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateLocation = /* GraphQL */ `
-  subscription OnUpdateLocation {
-    onUpdateLocation {
-      id
-      name
-      listed
-      contact {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      what3words
-      comments {
-        items {
-          id
-          parentId
-          body
-          visibility
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteLocation = /* GraphQL */ `
-  subscription OnDeleteLocation {
-    onDeleteLocation {
-      id
-      name
-      listed
-      contact {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      what3words
       comments {
         items {
           id
@@ -1174,192 +952,46 @@ export const onDeleteDeliverable = /* GraphQL */ `
     }
   }
 `;
-export const onCreateRiderTasks = /* GraphQL */ `
-  subscription OnCreateRiderTasks {
-    onCreateRiderTasks {
+export const onCreateLocation = /* GraphQL */ `
+  subscription OnCreateLocation {
+    onCreateLocation {
       id
-      user {
+      name
+      listed
+      contact {
         id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        displayName
         name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          nextToken
-          startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
-          nextToken
-          startedAt
-        }
-        active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
         createdAt
         updatedAt
       }
-      task {
-        id
-        name
-        createdBy {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        timeOfCall
-        timePickedUp
-        timeDroppedOff
-        timeCancelled
-        timeRejected
-        requesterContact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        pickUpLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        dropOffLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
-          nextToken
-          startedAt
-        }
-        priority
-        deliverables {
-          nextToken
-          startedAt
-        }
-        relayPrevious {
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      tasksAsPickUp {
+        items {
           id
           name
           timeOfCall
@@ -1367,6 +999,8 @@ export const onCreateRiderTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1375,7 +1009,11 @@ export const onCreateRiderTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        relayNext {
+        nextToken
+        startedAt
+      }
+      tasksAsDropOff {
+        items {
           id
           name
           timeOfCall
@@ -1383,6 +1021,8 @@ export const onCreateRiderTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1391,20 +1031,23 @@ export const onCreateRiderTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        group {
-          nextToken
-          startedAt
+        nextToken
+        startedAt
+      }
+      comments {
+        items {
+          id
+          parentId
+          body
+          visibility
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
         }
-        comments {
-          nextToken
-          startedAt
-        }
-        status
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -1414,192 +1057,46 @@ export const onCreateRiderTasks = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateRiderTasks = /* GraphQL */ `
-  subscription OnUpdateRiderTasks {
-    onUpdateRiderTasks {
+export const onUpdateLocation = /* GraphQL */ `
+  subscription OnUpdateLocation {
+    onUpdateLocation {
       id
-      user {
+      name
+      listed
+      contact {
         id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        displayName
         name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          nextToken
-          startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
-          nextToken
-          startedAt
-        }
-        active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
         createdAt
         updatedAt
       }
-      task {
-        id
-        name
-        createdBy {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        timeOfCall
-        timePickedUp
-        timeDroppedOff
-        timeCancelled
-        timeRejected
-        requesterContact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        pickUpLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        dropOffLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
-          nextToken
-          startedAt
-        }
-        priority
-        deliverables {
-          nextToken
-          startedAt
-        }
-        relayPrevious {
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      tasksAsPickUp {
+        items {
           id
           name
           timeOfCall
@@ -1607,6 +1104,8 @@ export const onUpdateRiderTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1615,7 +1114,11 @@ export const onUpdateRiderTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        relayNext {
+        nextToken
+        startedAt
+      }
+      tasksAsDropOff {
+        items {
           id
           name
           timeOfCall
@@ -1623,6 +1126,8 @@ export const onUpdateRiderTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1631,20 +1136,23 @@ export const onUpdateRiderTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        group {
-          nextToken
-          startedAt
+        nextToken
+        startedAt
+      }
+      comments {
+        items {
+          id
+          parentId
+          body
+          visibility
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
         }
-        comments {
-          nextToken
-          startedAt
-        }
-        status
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -1654,192 +1162,46 @@ export const onUpdateRiderTasks = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteRiderTasks = /* GraphQL */ `
-  subscription OnDeleteRiderTasks {
-    onDeleteRiderTasks {
+export const onDeleteLocation = /* GraphQL */ `
+  subscription OnDeleteLocation {
+    onDeleteLocation {
       id
-      user {
+      name
+      listed
+      contact {
         id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        displayName
         name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          nextToken
-          startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
-          nextToken
-          startedAt
-        }
-        active
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
         _version
         _deleted
         _lastChangedAt
         createdAt
         updatedAt
       }
-      task {
-        id
-        name
-        createdBy {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        timeOfCall
-        timePickedUp
-        timeDroppedOff
-        timeCancelled
-        timeRejected
-        requesterContact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        pickUpLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        dropOffLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
-          nextToken
-          startedAt
-        }
-        priority
-        deliverables {
-          nextToken
-          startedAt
-        }
-        relayPrevious {
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      tasksAsPickUp {
+        items {
           id
           name
           timeOfCall
@@ -1847,6 +1209,8 @@ export const onDeleteRiderTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1855,756 +1219,45 @@ export const onDeleteRiderTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        relayNext {
-          id
-          name
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          priority
-          status
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        group {
-          nextToken
-          startedAt
-        }
-        comments {
-          nextToken
-          startedAt
-        }
-        status
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateCoordinatorTasks = /* GraphQL */ `
-  subscription OnCreateCoordinatorTasks {
-    onCreateCoordinatorTasks {
-      id
-      coordinator {
-        id
-        username
-        contact {
+      tasksAsDropOff {
+        items {
           id
           name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        displayName
-        name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          nextToken
-          startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
-          nextToken
-          startedAt
-        }
-        active
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
-      task {
-        id
-        name
-        createdBy {
+      comments {
+        items {
           id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          parentId
+          body
+          visibility
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        timeOfCall
-        timePickedUp
-        timeDroppedOff
-        timeCancelled
-        timeRejected
-        requesterContact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        pickUpLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        dropOffLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
-          nextToken
-          startedAt
-        }
-        priority
-        deliverables {
-          nextToken
-          startedAt
-        }
-        relayPrevious {
-          id
-          name
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          priority
-          status
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        relayNext {
-          id
-          name
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          priority
-          status
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        group {
-          nextToken
-          startedAt
-        }
-        comments {
-          nextToken
-          startedAt
-        }
-        status
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateCoordinatorTasks = /* GraphQL */ `
-  subscription OnUpdateCoordinatorTasks {
-    onUpdateCoordinatorTasks {
-      id
-      coordinator {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          nextToken
-          startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
-          nextToken
-          startedAt
-        }
-        active
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      task {
-        id
-        name
-        createdBy {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        timeOfCall
-        timePickedUp
-        timeDroppedOff
-        timeCancelled
-        timeRejected
-        requesterContact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        pickUpLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        dropOffLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
-          nextToken
-          startedAt
-        }
-        priority
-        deliverables {
-          nextToken
-          startedAt
-        }
-        relayPrevious {
-          id
-          name
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          priority
-          status
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        relayNext {
-          id
-          name
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          priority
-          status
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        group {
-          nextToken
-          startedAt
-        }
-        comments {
-          nextToken
-          startedAt
-        }
-        status
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteCoordinatorTasks = /* GraphQL */ `
-  subscription OnDeleteCoordinatorTasks {
-    onDeleteCoordinatorTasks {
-      id
-      coordinator {
-        id
-        username
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        comments {
-          nextToken
-          startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
-          nextToken
-          startedAt
-        }
-        active
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      task {
-        id
-        name
-        createdBy {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        timeOfCall
-        timePickedUp
-        timeDroppedOff
-        timeCancelled
-        timeRejected
-        requesterContact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        pickUpLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        dropOffLocation {
-          id
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        riderResponsibility {
-          id
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
-          nextToken
-          startedAt
-        }
-        priority
-        deliverables {
-          nextToken
-          startedAt
-        }
-        relayPrevious {
-          id
-          name
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          priority
-          status
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        relayNext {
-          id
-          name
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          priority
-          status
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        group {
-          nextToken
-          startedAt
-        }
-        comments {
-          nextToken
-          startedAt
-        }
-        status
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
+        nextToken
+        startedAt
       }
       _version
       _deleted
@@ -2677,11 +1330,7 @@ export const onCreateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -2719,6 +1368,8 @@ export const onCreateTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      pickUpLocationId
+      dropOffLocationId
       pickUpLocation {
         id
         name
@@ -2755,6 +1406,14 @@ export const onCreateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -2801,6 +1460,14 @@ export const onCreateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -2820,21 +1487,12 @@ export const onCreateTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      assignedCoordinators {
+      assignees {
         items {
           id
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      assignedRiders {
-        items {
-          id
+          taskId
+          assigneeId
+          role
           _version
           _deleted
           _lastChangedAt
@@ -2907,6 +1565,8 @@ export const onCreateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -2956,11 +1616,7 @@ export const onCreateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -2977,6 +1633,8 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -2993,6 +1651,8 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -3062,6 +1722,8 @@ export const onCreateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -3111,11 +1773,7 @@ export const onCreateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -3132,6 +1790,8 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -3148,6 +1808,8 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -3272,11 +1934,7 @@ export const onUpdateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -3314,6 +1972,8 @@ export const onUpdateTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      pickUpLocationId
+      dropOffLocationId
       pickUpLocation {
         id
         name
@@ -3350,6 +2010,14 @@ export const onUpdateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -3396,6 +2064,14 @@ export const onUpdateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -3415,21 +2091,12 @@ export const onUpdateTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      assignedCoordinators {
+      assignees {
         items {
           id
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      assignedRiders {
-        items {
-          id
+          taskId
+          assigneeId
+          role
           _version
           _deleted
           _lastChangedAt
@@ -3502,6 +2169,8 @@ export const onUpdateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -3551,11 +2220,7 @@ export const onUpdateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -3572,6 +2237,8 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -3588,6 +2255,8 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -3657,6 +2326,8 @@ export const onUpdateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -3706,11 +2377,7 @@ export const onUpdateTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -3727,6 +2394,8 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -3743,6 +2412,8 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -3867,11 +2538,7 @@ export const onDeleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -3909,6 +2576,8 @@ export const onDeleteTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      pickUpLocationId
+      dropOffLocationId
       pickUpLocation {
         id
         name
@@ -3945,6 +2614,14 @@ export const onDeleteTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -3991,6 +2668,14 @@ export const onDeleteTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -4010,21 +2695,12 @@ export const onDeleteTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      assignedCoordinators {
+      assignees {
         items {
           id
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      assignedRiders {
-        items {
-          id
+          taskId
+          assigneeId
+          role
           _version
           _deleted
           _lastChangedAt
@@ -4097,6 +2773,8 @@ export const onDeleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -4146,11 +2824,7 @@ export const onDeleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -4167,6 +2841,8 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -4183,6 +2859,8 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -4252,6 +2930,8 @@ export const onDeleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -4301,11 +2981,7 @@ export const onDeleteTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -4322,6 +2998,8 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -4338,6 +3016,8 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -4391,6 +3071,729 @@ export const onDeleteTask = /* GraphQL */ `
         startedAt
       }
       status
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateTaskAssignee = /* GraphQL */ `
+  subscription OnCreateTaskAssignee {
+    onCreateTaskAssignee {
+      id
+      taskId
+      assigneeId
+      role
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      assignee {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+          startedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          nextToken
+          startedAt
+        }
+        group {
+          id
+          taskGroupId
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        active
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateTaskAssignee = /* GraphQL */ `
+  subscription OnUpdateTaskAssignee {
+    onUpdateTaskAssignee {
+      id
+      taskId
+      assigneeId
+      role
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      assignee {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+          startedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          nextToken
+          startedAt
+        }
+        group {
+          id
+          taskGroupId
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        active
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteTaskAssignee = /* GraphQL */ `
+  subscription OnDeleteTaskAssignee {
+    onDeleteTaskAssignee {
+      id
+      taskId
+      assigneeId
+      role
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      assignee {
+        id
+        username
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+          startedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        comments {
+          nextToken
+          startedAt
+        }
+        group {
+          id
+          taskGroupId
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        active
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       _version
       _deleted
       _lastChangedAt
@@ -4463,11 +3866,7 @@ export const onCreateComment = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -4551,11 +3950,7 @@ export const onUpdateComment = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -4639,11 +4034,7 @@ export const onDeleteComment = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }

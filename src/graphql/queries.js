@@ -72,11 +72,7 @@ export const syncUsers = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -181,21 +177,12 @@ export const getUser = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      tasksRider {
+      assignments {
         items {
           id
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      tasksCoordinator {
-        items {
-          id
+          taskId
+          assigneeId
+          role
           _version
           _deleted
           _lastChangedAt
@@ -279,11 +266,7 @@ export const listUsers = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -511,11 +494,7 @@ export const getVehicle = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -580,189 +559,6 @@ export const listVehicles = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        comments {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const syncLocations = /* GraphQL */ `
-  query SyncLocations(
-    $filter: ModelLocationFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncLocations(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        name
-        listed
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        comments {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const getLocation = /* GraphQL */ `
-  query GetLocation($id: ID!) {
-    getLocation(id: $id) {
-      id
-      name
-      listed
-      contact {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      what3words
-      comments {
-        items {
-          id
-          parentId
-          body
-          visibility
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listLocations = /* GraphQL */ `
-  query ListLocations(
-    $filter: ModelLocationFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listLocations(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        name
-        listed
-        contact {
-          id
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
         comments {
           nextToken
           startedAt
@@ -1008,14 +804,14 @@ export const listDeliverables = /* GraphQL */ `
     }
   }
 `;
-export const syncRiderTasks = /* GraphQL */ `
-  query SyncRiderTasks(
-    $filter: ModelRiderTasksFilterInput
+export const syncLocations = /* GraphQL */ `
+  query SyncLocations(
+    $filter: ModelLocationFilterInput
     $limit: Int
     $nextToken: String
     $lastSync: AWSTimestamp
   ) {
-    syncRiderTasks(
+    syncLocations(
       filter: $filter
       limit: $limit
       nextToken: $nextToken
@@ -1023,37 +819,51 @@ export const syncRiderTasks = /* GraphQL */ `
     ) {
       items {
         id
-        user {
+        name
+        listed
+        contact {
           id
-          username
-          displayName
           name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
           _version
           _deleted
           _lastChangedAt
           createdAt
           updatedAt
         }
-        task {
-          id
-          name
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          priority
-          status
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -1066,38 +876,46 @@ export const syncRiderTasks = /* GraphQL */ `
     }
   }
 `;
-export const syncCoordinatorTasks = /* GraphQL */ `
-  query SyncCoordinatorTasks(
-    $filter: ModelCoordinatorTasksFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncCoordinatorTasks(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
+export const getLocation = /* GraphQL */ `
+  query GetLocation($id: ID!) {
+    getLocation(id: $id) {
+      id
+      name
+      listed
+      contact {
         id
-        coordinator {
-          id
-          username
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        task {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      tasksAsPickUp {
+        items {
           id
           name
           timeOfCall
@@ -1105,6 +923,8 @@ export const syncCoordinatorTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1112,6 +932,109 @@ export const syncCoordinatorTasks = /* GraphQL */ `
           _lastChangedAt
           createdAt
           updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      tasksAsDropOff {
+        items {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      comments {
+        items {
+          id
+          parentId
+          body
+          visibility
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listLocations = /* GraphQL */ `
+  query ListLocations(
+    $filter: ModelLocationFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listLocations(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        listed
+        contact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
         }
         _version
         _deleted
@@ -1183,6 +1106,8 @@ export const syncTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -1232,11 +1157,7 @@ export const syncTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -1253,6 +1174,8 @@ export const syncTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1269,6 +1192,8 @@ export const syncTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1360,11 +1285,7 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -1402,6 +1323,8 @@ export const getTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      pickUpLocationId
+      dropOffLocationId
       pickUpLocation {
         id
         name
@@ -1438,6 +1361,14 @@ export const getTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -1484,6 +1415,14 @@ export const getTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -1503,21 +1442,12 @@ export const getTask = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      assignedCoordinators {
+      assignees {
         items {
           id
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      assignedRiders {
-        items {
-          id
+          taskId
+          assigneeId
+          role
           _version
           _deleted
           _lastChangedAt
@@ -1590,6 +1520,8 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -1639,11 +1571,7 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -1660,6 +1588,8 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1676,6 +1606,8 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1745,6 +1677,8 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -1794,11 +1728,7 @@ export const getTask = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -1815,6 +1745,8 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1831,6 +1763,8 @@ export const getTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -1945,6 +1879,8 @@ export const listTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -1994,11 +1930,7 @@ export const listTasks = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -2015,6 +1947,8 @@ export const listTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -2031,6 +1965,8 @@ export const listTasks = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -2048,6 +1984,69 @@ export const listTasks = /* GraphQL */ `
           startedAt
         }
         status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const syncTaskAssignees = /* GraphQL */ `
+  query SyncTaskAssignees(
+    $filter: ModelTaskAssigneeFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncTaskAssignees(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        taskId
+        assigneeId
+        role
+        task {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignee {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
         _version
         _deleted
         _lastChangedAt
@@ -2168,11 +2167,7 @@ export const getComment = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        tasksRider {
-          nextToken
-          startedAt
-        }
-        tasksCoordinator {
+        assignments {
           nextToken
           startedAt
         }
@@ -2428,6 +2423,8 @@ export const tasksByStatus = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        pickUpLocationId
+        dropOffLocationId
         pickUpLocation {
           id
           name
@@ -2477,11 +2474,7 @@ export const tasksByStatus = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        assignedCoordinators {
-          nextToken
-          startedAt
-        }
-        assignedRiders {
+        assignees {
           nextToken
           startedAt
         }
@@ -2498,6 +2491,8 @@ export const tasksByStatus = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version
@@ -2514,6 +2509,8 @@ export const tasksByStatus = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          pickUpLocationId
+          dropOffLocationId
           priority
           status
           _version

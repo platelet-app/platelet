@@ -78,8 +78,8 @@ type Location @model {
   country: String
   postcode: String
   what3words: String
-  tasksAsPickUp: [Task!] @connection (keyName: "byPickUpLocation", fields: ["id"])
-  tasksAsDropOff: [Task!] @connection (keyName: "byDropOffLocation", fields: ["id"])
+  tasksAsPickUp: [Task] @connection (keyName: "byPickUpLocation", fields: ["id"])
+  tasksAsDropOff: [Task] @connection (keyName: "byDropOffLocation", fields: ["id"])
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 

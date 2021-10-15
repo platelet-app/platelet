@@ -243,8 +243,8 @@ export declare class Location {
   readonly country?: string;
   readonly postcode?: string;
   readonly what3words?: string;
-  readonly tasksAsPickUp?: Task[];
-  readonly tasksAsDropOff?: Task[];
+  readonly tasksAsPickUp?: (Task | null)[];
+  readonly tasksAsDropOff?: (Task | null)[];
   readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
