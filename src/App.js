@@ -21,7 +21,6 @@ import { DismissButton } from "./styles/common";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
-import config from "../src/aws-exports.js";
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -29,6 +28,7 @@ if (
     (!process.env.REACT_APP_DEMO_MODE ||
         process.env.REACT_APP_DEMO_MODE === "false")
 ) {
+    const config = require("../src/aws-exports");
     Amplify.configure({
         ...config,
         ssr: true,
