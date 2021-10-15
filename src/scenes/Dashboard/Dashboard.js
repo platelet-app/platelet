@@ -14,7 +14,6 @@ import {
 import {
     convertListDataToObject,
     decodeUUID,
-    determineTaskStatus,
     getDashboardRoleMode,
     saveDashboardRoleMode,
 } from "../../utilities";
@@ -158,10 +157,10 @@ function Dashboard(props) {
             tasksSubscription.current = DataStore.observe(
                 models.Task
             ).subscribe(async (newTask) => {
-                console.log(newTask.element);
                 const task = newTask.element;
                 addTaskToState(task);
             });
+
             setIsFetching(false);
         }
     }
@@ -244,6 +243,7 @@ function Dashboard(props) {
                 status: tasksStatus.new,
                 timeOfCall,
                 taskRequesterContactId: newRequesterContact.id,
+                taskCreatedById: whoami.id,
             })
         );
         const assignment = await DataStore.save(
@@ -255,6 +255,7 @@ function Dashboard(props) {
         );
         addTaskToState({
             ...newTask,
+            createdBy: whoami,
             assignees: { [assignment.id]: assignment },
         });
     }
