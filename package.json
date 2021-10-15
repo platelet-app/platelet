@@ -30,7 +30,7 @@
         "material-table": "^1.69.3",
         "moment": "^2.29.1",
         "moment-timezone": "^0.5.33",
-        "notistack": "^1.0.10",
+        "notistack": "^2.0.2",
         "prop-types": "^15.7.2",
         "react": "^17.0.2",
         "react-cropper": "^2.1.8",
