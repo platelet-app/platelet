@@ -1,4 +1,4 @@
-import {styled} from "@material-ui/styles";
+import {styled} from "@mui/styles";
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
 
 export const StyledAddCircleOutline = styled(AddCircleOutline)({

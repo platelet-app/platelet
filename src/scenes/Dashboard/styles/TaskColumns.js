@@ -1,4 +1,4 @@
-import {styled} from "@material-ui/styles";
+import {styled} from "@mui/styles";
 import {StyledColumn} from "../../../styles/common"
 import Box from "@mui/material/Box";
 import {withTheme} from "@mui/material/styles";

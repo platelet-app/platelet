@@ -1,4 +1,4 @@
-import { styled } from "@material-ui/styles";
+import { styled } from "@mui/styles";
 import { StyledCard } from "../../../styles/common";
 import { withTheme } from "@mui/material";
 
