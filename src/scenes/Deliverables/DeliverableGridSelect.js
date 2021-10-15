@@ -155,7 +155,12 @@ function DeliverableGridSelect(props) {
         return (
             <Paper className={cardClasses.root}>
                 <Stack
-                    spacing={5}
+                    spacing={
+                        deliverablesSorted.deliverables.length > 0 &&
+                        deliverablesSorted.defaults.length > 0
+                            ? 5
+                            : 0
+                    }
                     justifyContent={"flex-start"}
                     direction={"column"}
                 >

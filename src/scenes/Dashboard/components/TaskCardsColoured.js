@@ -9,7 +9,7 @@ import CardItem from "../../../components/CardItem";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import { Tooltip } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
 import { getWhoami } from "../../../redux/Selectors";
@@ -19,9 +19,9 @@ const colourBarPercent = "90%";
 const generateClass = (theme, status) => {
     return {
         background: `linear-gradient(0deg,
-        ${theme.palette.background.paper}
+        rgba(0,0,0,0)
         ${colourBarPercent},
-        ${theme.palette.background.paper}
+        rgba(0,0,0,0)
         ${colourBarPercent},
         ${theme.palette.taskStatus[status]}
         ${colourBarPercent},
@@ -180,7 +180,11 @@ const TaskCard = React.memo((props) => {
         </CardContent>
     );
 
-    return <StyledCard className={className}>{cardInnerContent}</StyledCard>;
+    return (
+        <StyledCard PaperProps={{ elevation: 1 }} className={className}>
+            {cardInnerContent}
+        </StyledCard>
+    );
 });
 
 TaskCard.propTypes = {

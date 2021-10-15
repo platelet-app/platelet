@@ -44,39 +44,34 @@ function EditableDeliverable(props) {
         setShowUnit((prevState) => !prevState);
     }
     return (
-        <ClickAwayListener
-            mouseEvent={"onMouseUp"}
-            onClickAway={() => setShowUnit(false)}
+        <DeliverableCard
+            compact
+            label={deliverable.label}
+            icon={deliverable.icon}
         >
-            <DeliverableCard
-                compact
-                label={deliverable.label}
-                icon={deliverable.icon}
-            >
-                <Stack direction={"column"}>
-                    <Stack direction={"row"}>
-                        <Tooltip title={`${deliverable.unit}. Click to change`}>
-                            <IconButton
-                                onClick={handleCloseUnit}
-                                className={classes.iconButton}
-                                size="large"
-                            >
-                                <ArchitectureIcon className={classes.button} />
-                            </IconButton>
-                        </Tooltip>
-                        <IncreaseDecreaseCounter
-                            value={deliverable.count || 0}
-                            disabled={props.isDeleting}
-                            onChange={(count) =>
-                                props.onChangeCount(deliverable.id, count)
-                            }
-                            onDelete={() => props.onDelete(deliverable.id)}
-                        />
-                    </Stack>
-                    {unitSelect}
+            <Stack direction={"column"}>
+                <Stack direction={"row"}>
+                    <Tooltip title={`${deliverable.unit}. Click to change`}>
+                        <IconButton
+                            onClick={handleCloseUnit}
+                            className={classes.iconButton}
+                            size="large"
+                        >
+                            <ArchitectureIcon className={classes.button} />
+                        </IconButton>
+                    </Tooltip>
+                    <IncreaseDecreaseCounter
+                        value={deliverable.count || 0}
+                        disabled={props.isDeleting}
+                        onChange={(count) =>
+                            props.onChangeCount(deliverable.id, count)
+                        }
+                        onDelete={() => props.onDelete(deliverable.id)}
+                    />
                 </Stack>
-            </DeliverableCard>
-        </ClickAwayListener>
+                {unitSelect}
+            </Stack>
+        </DeliverableCard>
     );
 }
 

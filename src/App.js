@@ -169,30 +169,26 @@ function AppDefault(props) {
     const darkMode = useSelector((state) => state.darkMode);
     let theme;
     if (darkMode) {
-        theme = createTheme(
-            adaptV4Theme({
-                palette: {
-                    mode: "dark",
-                    background: {
-                        paper: "rgb(40, 40, 40)",
-                        default: "rgb(30, 30, 30)",
-                    },
-                    taskStatus,
+        theme = createTheme({
+            palette: {
+                mode: "dark",
+                background: {
+                    paper: "rgb(40, 40, 40)",
+                    default: "rgb(30, 30, 30)",
                 },
-            })
-        );
+                taskStatus,
+            },
+        });
     } else {
-        theme = createTheme(
-            adaptV4Theme({
-                palette: {
-                    mode: "light",
-                    background: {
-                        default: "rgb(235, 235, 235)",
-                    },
-                    taskStatus,
+        theme = createTheme({
+            palette: {
+                mode: "light",
+                background: {
+                    default: "rgb(235, 235, 235)",
                 },
-            })
-        );
+                taskStatus,
+            },
+        });
     }
 
     const useStylesNotistack = makeStyles({

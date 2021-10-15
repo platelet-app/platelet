@@ -282,7 +282,7 @@ function Dashboard(props) {
     } else {
         return (
             <>
-                <Paper elevation={3}>
+                <Paper>
                     <DashboardDetailTabs
                         value={viewMode}
                         onChange={(event, newValue) => setViewMode(newValue)}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
 import Linkify from "react-linkify";
 import { CommentCardStyled, commentStyles } from "../styles/CommentCards";
@@ -14,41 +14,50 @@ import { commentVisibility } from "../../../apiConsts";
 import { useSelector } from "react-redux";
 import { getWhoami } from "../../../redux/Selectors";
 
-const contextCreateStyles = makeStyles((theme) => ({
-    root: (props) => ({
-        position: "relative",
-        "&:hover": {
-            "& $dots": {
-                display:
-                    props.showContextMenu && !props.editMode
-                        ? "inline"
-                        : "none",
+const contextCreateStyles = makeStyles((theme) => {
+    return {
+        root: (props) => ({
+            position: "relative",
+            "&:hover": {
+                "& $dots": {
+                    display:
+                        props.showContextMenu && !props.editMode
+                            ? "inline"
+                            : "none",
+                },
             },
+        }),
+        dots: (props) => {
+            const backColor =
+                theme.palette.mode === "dark"
+                    ? "rgb(51, 51, 51)"
+                    : theme.palette.background.paper;
+            return {
+                background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, ${backColor} 33%, ${backColor} 100%)`,
+                borderRadius: "1em",
+                position: "absolute",
+                bottom: 4,
+                right: 4,
+                display: "none",
+                zIndex: 1000,
+                "&::before":
+                    props.comment &&
+                    props.comment.visibility === commentVisibility.me
+                        ? {
+                              pointerEvents: "none",
+                              borderRadius: "1em",
+                              content: '""',
+                              position: "absolute",
+                              background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, black 33%, black 100%)`,
+                              opacity: 0.15,
+                              width: "100%",
+                              height: "100%",
+                          }
+                        : {},
+            };
         },
-    }),
-    dots: (props) => ({
-        background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, ${theme.palette.background.paper} 33%, ${theme.palette.background.paper} 100%)`,
-        borderRadius: "1em",
-        position: "absolute",
-        bottom: 4,
-        right: 4,
-        display: "none",
-        zIndex: 1000,
-        "&::before":
-            props.comment && props.comment.visibility === commentVisibility.me
-                ? {
-                      pointerEvents: "none",
-                      borderRadius: "1em",
-                      content: '""',
-                      position: "absolute",
-                      background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, black 33%, black 100%)`,
-                      opacity: 0.15,
-                      width: "100%",
-                      height: "100%",
-                  }
-                : {},
-    }),
-}));
+    };
+});
 
 const initialCommentState = {
     id: "",
@@ -150,6 +159,7 @@ function Comment(props) {
         return (
             <div className={contextClasses.root}>
                 <CommentCard
+                    id={"comment-card"}
                     author={state.author}
                     numEdits={state._version - 1}
                     showAuthor={props.showAuthor}
