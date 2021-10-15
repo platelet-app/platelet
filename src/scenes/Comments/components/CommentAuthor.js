@@ -3,7 +3,7 @@ import UserAvatar from "../../../components/UserAvatar";
 import { Link as RouterLink } from "react-router-dom";
 import { encodeUUID } from "../../../utilities";
 import { Tooltip } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { Typography } from "@mui/material";
 import { Grid } from "@mui/material";
 import { ThemedLink } from "../../../styles/common";
@@ -31,7 +31,7 @@ const CommentAuthor = React.memo((props) => {
                     to={"/user/" + encodeUUID(props.uuid)}
                 >
                     <UserAvatar
-                        size={theme.spacing(0.5)}
+                        size={theme.spacing(5)}
                         userUUID={props.uuid}
                         displayName={props.displayName}
                         avatarURL={props.avatarURL}
