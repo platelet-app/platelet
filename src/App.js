@@ -3,7 +3,7 @@ import { MenuMainContainer } from "./navigation/MenuMainContainer";
 import "./index.css";
 import "./App.css";
 import "typeface-roboto";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import CssBaseline from "@mui/material/CssBaseline";
 import { useDispatch, useSelector } from "react-redux";
 import { useIdleTimer } from "react-idle-timer";
 import { setIdleStatus, setMobileView } from "./redux/Actions";
