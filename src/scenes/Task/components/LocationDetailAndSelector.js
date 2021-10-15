@@ -102,10 +102,6 @@ function LocationDetailAndSelector(props) {
 
     useEffect(updateStateFromProps, [props.location]);
 
-    function onFieldFinished() {
-        props.onChange(state);
-    }
-
     function onSelectPreset(value) {
         props.onSelectPreset(value);
         setPresetMode(false);

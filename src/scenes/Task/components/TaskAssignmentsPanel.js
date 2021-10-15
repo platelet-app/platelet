@@ -33,7 +33,6 @@ function TaskAssignmentsPanel(props) {
     const { show, hide } = showHide();
 
     function sortAssignees() {
-        console.log(task.assignees);
         if (task.assignees && Object.values(task.assignees).length > 0) {
             const riders = Object.values(task.assignees)
                 .filter((assignment) => assignment.role === userRoles.rider)

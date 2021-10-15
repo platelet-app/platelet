@@ -20,7 +20,6 @@ function FavouriteLocationsSelect(props) {
         const locations = await DataStore.query(models.Location, (l) =>
             l.listed("eq", 1)
         );
-        console.log(locations);
         setAvailableLocations(locations);
     }
 

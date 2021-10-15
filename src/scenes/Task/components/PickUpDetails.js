@@ -1,7 +1,5 @@
 import Grid from "@material-ui/core/Grid";
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
-import LabelItemPair from "../../../components/LabelItemPair";
-import TimePicker from "./TimePicker";
 import React from "react";
 import PropTypes from "prop-types";
 import { Divider, Paper, Typography } from "@material-ui/core";
