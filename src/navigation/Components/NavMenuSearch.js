@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import Grid from "@material-ui/core/Grid";
-import { Hidden } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import { Hidden } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import Menu from "@material-ui/core/Menu";
+import Menu from "@mui/material/Menu";
 import MobileNavigationDrawer from "../MobileNavigationDrawer";
 import { useSelector } from "react-redux";
-import List from "@material-ui/core/List";
-import MenuItem from "@material-ui/core/MenuItem";
+import List from "@mui/material/List";
+import MenuItem from "@mui/material/MenuItem";
 import { createLoadingSelector } from "../../redux/LoadingSelectors";
 import { getWhoami } from "../../redux/Selectors";
 
@@ -87,10 +87,10 @@ function NavMenuSearch() {
             container
             direction={"row"}
             spacing={3}
-            justify={"flex-start"}
+            justifyContent={"flex-start"}
             alignItems={"center"}
         >
-            <Hidden smDown>
+            <Hidden mdDown>
                 <Grid item>
                     <Typography variant="h6">
                         {serverSettings ? serverSettings.organisation_name : ""}
@@ -98,12 +98,12 @@ function NavMenuSearch() {
                 </Grid>
             </Hidden>
             <Grid item>
-                <Hidden smDown>
+                <Hidden mdDown>
                     <Grid
                         container
                         direction={"row"}
                         spacing={0}
-                        justify={"flex-start"}
+                        justifyContent={"flex-start"}
                         alignItems={"center"}
                     >
                         <Grid item>
@@ -127,7 +127,7 @@ function NavMenuSearch() {
                                 onClick={(event) => {
                                     setAnchorElDashMenu(event.currentTarget);
                                 }}
-                            >
+                                size="large">
                                 <ArrowDropDownIcon />
                             </IconButton>
                             <Menu

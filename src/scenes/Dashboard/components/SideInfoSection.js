@@ -1,16 +1,17 @@
 import React, { useEffect } from "react";
 import clsx from "clsx";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useDispatch, useSelector } from "react-redux";
-import { SwipeableDrawer } from "@material-ui/core";
+import { SwipeableDrawer } from "@mui/material";
 import ActionsRecord from "../../ActionsRecord/ActionsRecord";
 import { getTasksActionsRecordRequest } from "../../../redux/actionsRecord/ActionsRecordActions";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { getWhoami } from "../../../redux/Selectors";
 
 const drawerWidth = 400;
@@ -89,7 +90,7 @@ export default function SideInfoSection(props) {
                 }}
             >
                 <div className={classes.drawerHeader}>
-                    <IconButton onClick={props.handleDrawerClose}>
+                    <IconButton onClick={props.handleDrawerClose} size="large">
                         {theme.direction === "rtl" ? (
                             <ChevronLeftIcon />
                         ) : (

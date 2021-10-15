@@ -1,4 +1,5 @@
-import { Button, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Button, Grid, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
@@ -78,7 +79,7 @@ function AdminAddDeliverableType() {
                     container
                     className={classes.root}
                     direction={"column"}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     alignItems={"top"}
                     spacing={3}
                 >

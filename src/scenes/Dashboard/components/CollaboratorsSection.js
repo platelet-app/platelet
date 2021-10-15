@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types'
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import CollaboratorPickerPopover from "./CollaboratorPickerPopover";
@@ -12,21 +12,21 @@ function CollaboratorsSection(props) {
          : <></>
 
     return (
-    <Grid container spacing={1} direction={"row"} justify={"flex-start"} alignItems={"center"}>
-        <Grid item>
+        <Grid container spacing={1} direction={"row"} justifyContent={"flex-start"} alignItems={"center"}>
+            <Grid item>
 
-            <AvatarGroup>
-                {props.collaborators.map((u) =>
-                    <UserAvatar size={4} userUUID={u.uuid} displayName={u.display_name} avatarURL={u.avatar_url}/>
-                )
-                }
-            </AvatarGroup>
+                <AvatarGroup>
+                    {props.collaborators.map((u) =>
+                        <UserAvatar size={4} userUUID={u.uuid} displayName={u.display_name} avatarURL={u.avatar_url}/>
+                    )
+                    }
+                </AvatarGroup>
+            </Grid>
+            <Grid item>
+                {collaboratorAddButton}
+            </Grid>
         </Grid>
-        <Grid item>
-            {collaboratorAddButton}
-        </Grid>
-    </Grid>
-)
+    );
 
 }
 

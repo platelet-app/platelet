@@ -1,7 +1,8 @@
 import React from "react";
-import { Avatar, makeStyles } from "@material-ui/core";
+import { Avatar } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import AcUnitIcon from "@mui/icons-material/AcUnit";
-import { lightGreen, green } from "@material-ui/core/colors";
+import { lightGreen, green } from "@mui/material/colors";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({

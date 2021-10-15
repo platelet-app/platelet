@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import Cropper from "react-cropper";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import {PaddedPaper} from "../../../styles/common";
 import "cropperjs/dist/cropper.css";
 import {uploadUserProfilePictureRequest} from "../../../redux/users/UsersActions";
@@ -87,7 +87,7 @@ export default function ProfilePicture(props) {
         /> : <img width={300} height={300} alt={props.altText} src={newImage || props.pictureURL}/>
 
     const picUploadButton = image ?
-        <Grid container direction={"row"} justify={"space-between"}>
+        <Grid container direction={"row"} justifyContent={"space-between"}>
             <Grid item>
                 <Button disabled={isPosting} onClick={sendPictureData}>Finish</Button>
             </Grid>

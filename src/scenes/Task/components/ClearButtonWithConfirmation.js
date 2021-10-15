@@ -1,9 +1,9 @@
 import React, {useRef, useState} from "react";
-import {Tooltip} from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
+import {Tooltip} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from "prop-types";
 import {useHistory, useLocation} from "react-router-dom";
 
@@ -48,23 +48,22 @@ function ClearButtonWithConfirmation(props) {
         history.push(firstLocation.current);
     }
 
-    return (
-        <>
-            <ConfirmationDialog onSelect={onSelect} dialogTitle={"Are you sure?"}
-                                onClose={handleClose}
-                                dialogText={`Are you sure you want to clear the ${props.label.toLowerCase()} location?`}
-                                open={open}/>
-            <Tooltip title={"Clear"}>
-                <IconButton
-                    className={classes.button}
-                    edge={"end"}
-                    disabled={props.disabled}
-                    onClick={onClick}>
-                    <CancelIcon/>
-                </IconButton>
-            </Tooltip>
-        </>
-    )
+    return <>
+        <ConfirmationDialog onSelect={onSelect} dialogTitle={"Are you sure?"}
+                            onClose={handleClose}
+                            dialogText={`Are you sure you want to clear the ${props.label.toLowerCase()} location?`}
+                            open={open}/>
+        <Tooltip title={"Clear"}>
+            <IconButton
+                className={classes.button}
+                edge={"end"}
+                disabled={props.disabled}
+                onClick={onClick}
+                size="large">
+                <CancelIcon/>
+            </IconButton>
+        </Tooltip>
+    </>;
 
 }
 

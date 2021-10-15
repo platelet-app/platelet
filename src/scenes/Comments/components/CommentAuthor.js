@@ -2,11 +2,12 @@ import React from "react";
 import UserAvatar from "../../../components/UserAvatar";
 import { Link as RouterLink } from "react-router-dom";
 import { encodeUUID } from "../../../utilities";
-import { makeStyles, Tooltip } from "@material-ui/core";
-import { Typography } from "@material-ui/core";
-import { Grid } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import { Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import { ThemedLink } from "../../../styles/common";
-import { useTheme } from "@material-ui/core";
+import { useTheme } from "@mui/material";
 
 const useStyles = makeStyles({
     link: {

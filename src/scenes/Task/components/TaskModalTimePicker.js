@@ -1,12 +1,12 @@
 import ToggleTimeStamp from "./ToggleTimeStamp";
 import {DateAndTimePicker} from "../../../components/DateTimePickers";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import React, {useState} from "react";
 
 export default function TaskModalTimePicker(props) {
     const [dateTime, setDateTime] = useState(props.time);
     return (
-        <Grid container spacing={2} direction={"column"} alignItems={"flex-start"} justify={"center"}>
+        <Grid container spacing={2} direction={"column"} alignItems={"flex-start"} justifyContent={"center"}>
             <Grid item>
                 <ToggleTimeStamp label={props.label} status={dateTime !== null}
                                  onSelect={() => {
@@ -29,5 +29,5 @@ export default function TaskModalTimePicker(props) {
                                    }} disabled={props.disabled}/>
             </Grid>
         </Grid>
-    )
+    );
 }

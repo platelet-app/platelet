@@ -1,13 +1,13 @@
 import React from "react";
 import { PropTypes } from "prop-types";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 import PickUpDetails from "./PickUpDetails";
 import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import DeliverableDetails from "./DeliverableDetails";
 
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 1800,
         paddingTop: 20,
-        [theme.breakpoints.down("md")]: {
+        [theme.breakpoints.down('lg')]: {
             padding: 5,
             paddingTop: 5,
         },
@@ -54,7 +54,7 @@ function TaskOverview(props) {
     const { taskUUID, task } = props;
     const classes = useStyles();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("xs"));
+    const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
     return (
         <Container className={classes.root} maxWidth={true}>
@@ -65,7 +65,7 @@ function TaskOverview(props) {
                 item
                 direction={"row"}
                 alignItems={"flex-start"}
-                justify={"flex-start"}
+                justifyContent={"flex-start"}
             >
                 <Grid className={classes.item} item>
                     <TaskDetailsPanel

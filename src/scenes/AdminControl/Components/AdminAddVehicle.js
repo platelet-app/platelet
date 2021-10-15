@@ -1,4 +1,5 @@
-import { Button, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Button, Grid, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import DatePicker from '@mui/lab/DatePicker';
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
@@ -96,7 +97,7 @@ function AdminAddVehicle() {
                     container
                     className={classes.root}
                     direction={"column"}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     alignItems={"top"}
                     spacing={3}
                 >

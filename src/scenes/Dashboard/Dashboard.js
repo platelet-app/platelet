@@ -3,7 +3,7 @@ import "../../App.css";
 import { useHistory } from "react-router";
 import "typeface-roboto";
 import * as models from "../../models/index";
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import { setRoleView } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +23,7 @@ import { DataStore } from "aws-amplify";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import _ from "lodash";
 import TaskDialogCompact from "../Task/TaskDialogCompact";
+import { useTheme } from "@mui/material";
 
 const initialTasksState = {
     tasksNew: {},
@@ -264,6 +265,9 @@ function Dashboard(props) {
         if (props.location.state) history.goBack();
         else history.push("/");
     }
+
+    const theme = useTheme();
+    console.log(theme);
 
     const dialog = props.match.params.task_uuid_b62 ? (
         <TaskDialogCompact

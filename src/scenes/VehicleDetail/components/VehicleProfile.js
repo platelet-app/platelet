@@ -7,9 +7,9 @@ import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import UsersSelect from "../../../components/UsersSelect";
 import { PaddedPaper } from "../../../styles/common";
 import EditIcon from "@mui/icons-material/Edit";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import Divider from "@material-ui/core/Divider";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
 
@@ -72,7 +72,7 @@ function VehicleProfile(props) {
                     setEditMode(!editMode);
                     setState(oldState);
                 }}
-            >
+                size="large">
                 <EditIcon />
             </IconButton>
         ) : (
@@ -82,7 +82,7 @@ function VehicleProfile(props) {
                 onClick={() => {
                     setEditMode(!editMode);
                 }}
-            >
+                size="large">
                 <EditIcon />
             </IconButton>
         );
@@ -122,7 +122,7 @@ function VehicleProfile(props) {
         <Grid
             container
             direction={"column"}
-            justify={"flex-start"}
+            justifyContent={"flex-start"}
             alignItems={"flex-start"}
             spacing={4}
         >
@@ -130,14 +130,14 @@ function VehicleProfile(props) {
                 <Grid
                     container
                     direction={"column"}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     spacing={3}
                 >
                     <Grid item>
                         <Grid
                             container
                             direction={"row"}
-                            justify={"space-between"}
+                            justifyContent={"space-between"}
                             alignItems={"flex-end"}
                             spacing={3}
                         >
@@ -173,7 +173,7 @@ function VehicleProfile(props) {
                     <Grid
                         container
                         direction={"row"}
-                        justify={"space-between"}
+                        justifyContent={"space-between"}
                         alignItems={"flex-end"}
                         spacing={3}
                     >

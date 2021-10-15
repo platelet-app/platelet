@@ -1,11 +1,11 @@
 import React from "react";
 import moment from "moment";
-import Menu from "@material-ui/core/Menu";
-import { makeStyles } from "@material-ui/core";
-import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@mui/material/Menu";
+import makeStyles from '@mui/styles/makeStyles';
+import MenuItem from "@mui/material/MenuItem";
 import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import { createPostingSelector } from "../../redux/LoadingSelectors";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import PropTypes from "prop-types";
@@ -157,99 +157,97 @@ function TaskContextMenu(props) {
         setState(initialState);
     };
 
-    return (
-        <>
-            <IconButton
-                aria-label="more"
-                aria-controls="long-menu"
-                aria-haspopup="true"
-                onClick={handleClick}
-                disabled={isPosting}
-            >
-                <MoreVertIcon className={classes.button} />
-            </IconButton>
-            <Menu
-                keepMounted
-                open={state.mouseY !== null}
-                onClose={handleClose}
-                anchorReference="anchorPosition"
-                anchorPosition={
-                    state.mouseY !== null && state.mouseX !== null
-                        ? { top: state.mouseY, left: state.mouseX }
-                        : undefined
+    return <>
+        <IconButton
+            aria-label="more"
+            aria-controls="long-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+            disabled={isPosting}
+            size="large">
+            <MoreVertIcon className={classes.button} />
+        </IconButton>
+        <Menu
+            keepMounted
+            open={state.mouseY !== null}
+            onClose={handleClose}
+            anchorReference="anchorPosition"
+            anchorPosition={
+                state.mouseY !== null && state.mouseX !== null
+                    ? { top: state.mouseY, left: state.mouseX }
+                    : undefined
+            }
+        >
+            <MenuItem
+                disabled={
+                    task === null ||
+                    !!task.timePickedUp ||
+                    !props.assignedRiders.length > 0 ||
+                    !!task.timeRejected ||
+                    !!task.timeCancelled
                 }
+                onClick={onSelectPickedUp}
             >
-                <MenuItem
-                    disabled={
-                        task === null ||
-                        !!task.timePickedUp ||
-                        !props.assignedRiders.length > 0 ||
-                        !!task.timeRejected ||
-                        !!task.timeCancelled
-                    }
-                    onClick={onSelectPickedUp}
-                >
-                    Mark picked up
-                </MenuItem>
-                <MenuItem
-                    disabled={
-                        task === null ||
-                        !!task.timeDroppedOff ||
-                        !!!task.timePickedUp ||
-                        !!task.timeRejected ||
-                        !!task.timeCancelled
-                    }
-                    onClick={onSelectDroppedOff}
-                >
-                    Mark delivered
-                </MenuItem>
-                <MenuItem
-                    disabled={
-                        task === null ||
-                        !!task.timeRejected ||
-                        !!task.timeCancelled
-                    }
-                    onClick={onSelectRejected}
-                >
-                    Mark rejected
-                </MenuItem>
-                <MenuItem
-                    disabled={
-                        task === null ||
-                        !!task.timeCancelled ||
-                        !!task.timeRejected
-                    }
-                    onClick={onSelectCancelled}
-                >
-                    Mark cancelled
-                </MenuItem>
-                <MenuItem
-                    disabled={
-                        props.disableRelay ||
-                        task === null ||
-                        !!task.timeCancelled ||
-                        !!task.timeRejected
-                    }
-                    onClick={addRelay}
-                >
-                    Add relay
-                </MenuItem>
-                <MenuItem onClick={copyTaskDataToClipboard}>
-                    Save to clipboard
-                </MenuItem>
-                <MenuItem
-                    className={
-                        props.disableDeleted
-                            ? deleteButtonClasses.deleteButtonDisabled
-                            : deleteButtonClasses.deleteButton
-                    }
-                    onClick={onDelete}
-                >
-                    Delete
-                </MenuItem>
-            </Menu>
-        </>
-    );
+                Mark picked up
+            </MenuItem>
+            <MenuItem
+                disabled={
+                    task === null ||
+                    !!task.timeDroppedOff ||
+                    !!!task.timePickedUp ||
+                    !!task.timeRejected ||
+                    !!task.timeCancelled
+                }
+                onClick={onSelectDroppedOff}
+            >
+                Mark delivered
+            </MenuItem>
+            <MenuItem
+                disabled={
+                    task === null ||
+                    !!task.timeRejected ||
+                    !!task.timeCancelled
+                }
+                onClick={onSelectRejected}
+            >
+                Mark rejected
+            </MenuItem>
+            <MenuItem
+                disabled={
+                    task === null ||
+                    !!task.timeCancelled ||
+                    !!task.timeRejected
+                }
+                onClick={onSelectCancelled}
+            >
+                Mark cancelled
+            </MenuItem>
+            <MenuItem
+                disabled={
+                    props.disableRelay ||
+                    task === null ||
+                    !!task.timeCancelled ||
+                    !!task.timeRejected
+                }
+                onClick={addRelay}
+            >
+                Add relay
+            </MenuItem>
+            <MenuItem onClick={copyTaskDataToClipboard}>
+                Save to clipboard
+            </MenuItem>
+            <MenuItem
+                className={
+                    props.disableDeleted
+                        ? deleteButtonClasses.deleteButtonDisabled
+                        : deleteButtonClasses.deleteButton
+                }
+                onClick={onDelete}
+            >
+                Delete
+            </MenuItem>
+        </Menu>
+    </>;
 }
 
 TaskContextMenu.propTypes = {

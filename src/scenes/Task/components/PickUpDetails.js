@@ -1,8 +1,8 @@
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
 import React from "react";
 import PropTypes from "prop-types";
-import { Divider, Paper, Typography } from "@material-ui/core";
+import { Divider, Paper, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 
 function PickUpDetails(props) {
@@ -17,11 +17,11 @@ function PickUpDetails(props) {
             <Grid
                 container
                 direction={"column"}
-                justify={"space-between"}
+                justifyContent={"space-between"}
                 spacing={1}
             >
                 <Grid item>
-                    <Grid container direction={"row"} justify={"space-between"}>
+                    <Grid container direction={"row"} justifyContent={"space-between"}>
                         <Grid item>
                             <Typography variant={"h6"}>Collect from</Typography>
                         </Grid>

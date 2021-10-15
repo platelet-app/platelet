@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { decodeUUID } from "../../utilities";
-import API from "@aws-amplify/api";
 import _ from "lodash";
 
 import { useDispatch, useSelector } from "react-redux";
-import * as queries from "./queries";
 import UserProfile from "./components/UserProfile";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";
@@ -122,7 +120,6 @@ export default function UserDetail(props) {
             setIsPosting(false);
         }
     }
-
     if (isFetching) {
         return <DetailSkeleton />;
     } else if (notFound) {

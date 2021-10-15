@@ -1,18 +1,13 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
-import styled from "@material-ui/core/styles/styled";
-import Box from "@material-ui/core/Box";
+import { styled } from '@mui/material/styles';
+import Box from "@mui/material/Box";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";
 import UnitSelector from "../../../components/UnitSelector";
 import { showHide } from "../../../styles/common";
-import {
-    ClickAwayListener,
-    Grid,
-    IconButton,
-    makeStyles,
-    Tooltip,
-} from "@material-ui/core";
+import { ClickAwayListener, Grid, IconButton, Tooltip } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import ArchitectureIcon from "@mui/icons-material/Architecture";
 
 const DeliverableBox = styled(Box)({
@@ -56,10 +51,7 @@ function EditableDeliverable(props) {
                                     <Tooltip
                                         title={`${deliverable.unit}. Click to change`}
                                     >
-                                        <IconButton
-                                            onClick={handleCloseUnit}
-                                            className={classes.iconButton}
-                                        >
+                                        <IconButton onClick={handleCloseUnit} className={classes.iconButton} size="large">
                                             <ArchitectureIcon
                                                 className={classes.button}
                                             />

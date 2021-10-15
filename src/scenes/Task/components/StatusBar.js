@@ -1,18 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import { AppBar, Hidden } from "@material-ui/core";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { AppBar, Hidden } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
 import { encodeUUID, taskStatusHumanReadable } from "../../../utilities";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { useSelector } from "react-redux";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import clsx from "clsx";
 
 const colourBarPercent = "90%";
@@ -48,7 +48,7 @@ const generateClass = (theme, status) => {
                 fontStyle: "italic",
             },
             background:
-                theme.palette.type === "dark"
+                theme.palette.mode === "dark"
                     ? theme.palette.background.paper
                     : theme.palette.primary.main,
         };
@@ -60,7 +60,7 @@ const dialogComponent = (props) =>
         return {
             root: generateClass(theme, props.status),
             text: {
-                color: theme.palette.type === "dark" ? "white" : "black",
+                color: theme.palette.mode === "dark" ? "white" : "black",
             },
             items: {
                 marginTop: 5,
@@ -72,7 +72,7 @@ function StatusBar(props) {
     const classes = dialogComponent(props)();
     const { show, hide } = showHide();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const isSm = useMediaQuery(theme.breakpoints.down('md'));
     const task = useSelector((state) => state.task.task);
     const roleView = useSelector((state) => state.roleView);
     const statusHumanReadable = taskStatusHumanReadable(props.status);
@@ -86,11 +86,11 @@ function StatusBar(props) {
                 className={classes.items}
                 container
                 direction={"row"}
-                justify={"space-between"}
+                justifyContent={"space-between"}
                 alignItems={"center"}
             >
                 <Grid item>
-                    <Hidden smDown>
+                    <Hidden mdDown>
                         <Button onClick={props.handleClose}>Close</Button>
                     </Hidden>
                     <Hidden smUp>
@@ -104,7 +104,7 @@ function StatusBar(props) {
                         container
                         direction={"row"}
                         alignItems={"center"}
-                        justify={"flex-start"}
+                        justifyContent={"flex-start"}
                         spacing={2}
                     >
                         <Grid item>
@@ -133,10 +133,10 @@ function StatusBar(props) {
                         container
                         direction={"row"}
                         alignItems={"center"}
-                        justify={"flex-start"}
+                        justifyContent={"flex-start"}
                         spacing={2}
                     >
-                        <Hidden smDown>
+                        <Hidden mdDown>
                             <Grid item>
                                 <ArrowButton
                                     linkTo={encodeUUID(

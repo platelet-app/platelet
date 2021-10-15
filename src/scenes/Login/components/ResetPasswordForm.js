@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import PasswordField from "./PasswordField";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import {useDispatch, useSelector} from "react-redux";
 import {updateUserPasswordRequest} from "../../../redux/users/UsersActions";
@@ -20,7 +20,7 @@ export default function ResetPasswordForm(props) {
     }
 
     return (
-        <Grid container direction={"column"} spacing={3} alignItems={"center"} justify={"flex-start"}>
+        <Grid container direction={"column"} spacing={3} alignItems={"center"} justifyContent={"flex-start"}>
             <Grid item>
                 <Typography>You must reset your password before logging in.</Typography>
             </Grid>
@@ -37,5 +37,5 @@ export default function ResetPasswordForm(props) {
             </Button>
             </Grid>
         </Grid>
-    )
+    );
 }

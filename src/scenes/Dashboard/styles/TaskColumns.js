@@ -1,7 +1,7 @@
-import {styled} from "@material-ui/styles";
+import {styled} from "@mui/styles";
 import {StyledColumn} from "../../../styles/common"
-import Box from "@material-ui/core/Box";
-import {withTheme} from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import withTheme from '@mui/styles/withTheme';
 
 export const TasksKanbanColumn = styled(withTheme(Box))(props => ({
     padding: 15,
@@ -11,7 +11,7 @@ export const TasksKanbanColumn = styled(withTheme(Box))(props => ({
     boxShadow: '0 2px 3px 1px rgba(100, 100, 100, .3)',
     height: "100%",
     width: "100%",
-    [props.theme.breakpoints.down('sm')]: {
+    [props.theme.breakpoints.down('md')]: {
         padding: 0,
     },
     [props.theme.breakpoints.up('sm')]: {

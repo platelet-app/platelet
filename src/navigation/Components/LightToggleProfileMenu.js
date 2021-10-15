@@ -1,16 +1,16 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { Link, useHistory } from "react-router-dom";
 import { encodeUUID } from "../../utilities";
-import { Hidden, Tooltip } from "@material-ui/core";
+import { Hidden, Tooltip } from "@mui/material";
 import { setDarkMode } from "../../redux/Actions";
 import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import UserAvatar from "../../components/UserAvatar";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
@@ -50,7 +50,7 @@ function LightToggleProfileMenu(props) {
         <Grid
             container
             direction={"row-reverse"}
-            justify={"flex-start"}
+            justifyContent={"flex-start"}
             alignItems={"center"}
         >
             <Grid item>
@@ -62,7 +62,7 @@ function LightToggleProfileMenu(props) {
                         onClick={(event) => {
                             setAnchorElProfileMenu(event.currentTarget);
                         }}
-                    >
+                        size="large">
                         <ArrowDropDownIcon />
                     </IconButton>
                     <Menu
@@ -101,13 +101,13 @@ function LightToggleProfileMenu(props) {
                 <Grid
                     container
                     direction={"row"}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     alignItems={"center"}
                     spacing={1}
                 >
                     <Grid item className={networkStatus ? hide : show}>
                         <Tooltip title={"You are working offline"}>
-                            <IconButton color="inherit">
+                            <IconButton color="inherit" size="large">
                                 <SignalWifiOff />
                             </IconButton>
                         </Tooltip>
@@ -119,7 +119,7 @@ function LightToggleProfileMenu(props) {
                                 onClick={() => {
                                     dispatch(setDarkMode(!darkMode));
                                 }}
-                            >
+                                size="large">
                                 {darkMode ? (
                                     <BrightnessHighIcon />
                                 ) : (
@@ -128,7 +128,7 @@ function LightToggleProfileMenu(props) {
                             </IconButton>
                         </Tooltip>
                     </Grid>
-                    <Hidden smDown>
+                    <Hidden mdDown>
                         <Grid item>
                             <Link
                                 to={`/user/${encodeUUID(whoami.id)}`}

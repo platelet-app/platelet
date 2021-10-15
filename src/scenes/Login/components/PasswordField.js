@@ -1,12 +1,12 @@
-import Grid from "@material-ui/core/Grid";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import IconButton from "@material-ui/core/IconButton";
+import Grid from "@mui/material/Grid";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import React, {useState} from "react";
 
 export default function PasswordField(props) {
@@ -36,7 +36,7 @@ export default function PasswordField(props) {
                             onClick={() => setShowPassword(!showPassword)}
                             onMouseDown={(e) => e.preventDefault()}
                             edge="end"
-                        >
+                            size="large">
                             {showPassword ? <Visibility/> : <VisibilityOff/>}
                         </IconButton>
                     </InputAdornment>
@@ -44,5 +44,5 @@ export default function PasswordField(props) {
                 labelWidth={70}
             />
         </FormControl>
-    )
+    );
 }

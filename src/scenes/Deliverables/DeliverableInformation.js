@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
-import Grid from "@material-ui/core/Grid";
-import DialogContentText from '@material-ui/core/DialogContentText';
+import Grid from "@mui/material/Grid";
+import DialogContentText from '@mui/material/DialogContentText';
 import {useDispatch, useSelector} from "react-redux";
 import {getDeliverablesRequest} from "../../redux/deliverables/DeliverablesActions";
 
@@ -20,7 +20,7 @@ export default function DeliverableInformation(props) {
         <Grid container
               spacing={0}
               direction={"column"}
-              justify={"flex-start"}
+              justifyContent={"flex-start"}
               alignItems={"center"}
         >
             {Object.values(deliverables).map(deliverable => {
@@ -35,5 +35,5 @@ export default function DeliverableInformation(props) {
             })
             }
         </Grid>
-    )
+    );
 }

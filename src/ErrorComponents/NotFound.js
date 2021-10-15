@@ -1,12 +1,12 @@
 import React from "react";
 import {PaddedPaper} from "../styles/common";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 
 function NotFound(props) {
     return (
         <PaddedPaper>
-            <Grid container spacing={1} direction={"column"} alignItems={"center"} justify={"center"}>
+            <Grid container spacing={1} direction={"column"} alignItems={"center"} justifyContent={"center"}>
                 <Grid item>
                     <Typography variant={"h4"}>
                         This page not found.
@@ -19,7 +19,7 @@ function NotFound(props) {
                 </Grid>
             </Grid>
         </PaddedPaper>
-    )
+    );
 }
 
 export default NotFound;

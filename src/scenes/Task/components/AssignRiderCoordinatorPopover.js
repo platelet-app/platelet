@@ -3,10 +3,11 @@ import RiderPicker from "../../../components/RiderPicker";
 import PropTypes from "prop-types";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import { showHide } from "../../../styles/common";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, Tooltip } from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import { Tooltip } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from "clsx";
 import { AddCircleOutline } from "@mui/icons-material";
 import { userRoles } from "../../../apiConsts";
@@ -47,12 +48,12 @@ function AssignRiderCoordinatorPopover(props) {
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleOpen}
-            >
+                size="large">
                 <AddCircleOutline className={classes.button} />
             </IconButton>
         </Tooltip>
     ) : (
-        <IconButton onClick={handleClose}>
+        <IconButton onClick={handleClose} size="large">
             <CloseIcon className={classes.button} />
         </IconButton>
     );
@@ -63,7 +64,7 @@ function AssignRiderCoordinatorPopover(props) {
                 container
                 direction={"row"}
                 spacing={2}
-                justify={"flex-end"}
+                justifyContent={"flex-end"}
                 alignItems={"center"}
             >
                 <Grid item>
@@ -84,7 +85,7 @@ function AssignRiderCoordinatorPopover(props) {
                 container
                 direction={"row"}
                 spacing={2}
-                justify={"flex-end"}
+                justifyContent={"flex-end"}
                 alignItems={"center"}
             >
                 <Grid item>

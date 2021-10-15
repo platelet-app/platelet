@@ -1,10 +1,10 @@
 import {TextFieldControlled} from "./TextFields";
 import {clearDashboardFilter, debounceDashboardFilter} from "../redux/dashboardFilter/DashboardFilterActions";
-import {InputAdornment} from "@material-ui/core";
+import {InputAdornment} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {makeStyles} from "@material-ui/core/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => {
@@ -25,17 +25,17 @@ const useStyles = makeStyles(theme => {
             "& .MuiInputLabel-outlined.Mui-focused": {
                 color: "white"
             },
-            [theme.breakpoints.down("sm")]: {
+            [theme.breakpoints.down('md')]: {
                 width: "100%"
             }
         },
         searchIcon: {
             color: "white",
-            [theme.breakpoints.down("sm")]: {
+            [theme.breakpoints.down('md')]: {
                 display: "none"
             }
         },
-    }
+    };
 });
 
 

@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import ClearIcon from '@mui/icons-material/Clear';
-import {makeStyles} from "@material-ui/core/styles";
+import makeStyles from '@mui/styles/makeStyles';
 
 function IncreaseDecreaseCounter(props) {
     const [state, setState] = useState(props.value);
@@ -23,13 +23,13 @@ function IncreaseDecreaseCounter(props) {
     const classes = useStyles();
 
     return (
-        <Grid container direction={"row-reverse"} spacing={1} alignItems={"center"} justify={"center"}>
+        <Grid container direction={"row-reverse"} spacing={1} alignItems={"center"} justifyContent={"center"}>
             <Grid item>
                 <IconButton
                     className={classes.iconButton}
                     disabled={props.disabled}
                     onClick={props.onDelete}
-                >
+                    size="large">
                     <ClearIcon className={classes.button}/>
                 </IconButton>
             </Grid>
@@ -43,7 +43,8 @@ function IncreaseDecreaseCounter(props) {
                             props.onChange(state + 1);
                             setState(state + 1);
                         }
-                    }>
+                    }
+                    size="large">
                     <AddIcon className={classes.button}/>
                 </IconButton>
             </Grid>
@@ -60,12 +61,13 @@ function IncreaseDecreaseCounter(props) {
                             props.onChange(state - 1);
                             setState(state - 1);
                         }
-                    }>
+                    }
+                    size="large">
                     <RemoveIcon className={classes.button}/>
                 </IconButton>
             </Grid>
         </Grid>
-    )
+    );
 }
 
 IncreaseDecreaseCounter.defaultProps = {

@@ -1,17 +1,17 @@
 import React from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import Moment from "react-moment";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import CancelIcon from "@mui/icons-material/Cancel";
-import IconButton from "@material-ui/core/IconButton";
-import { Tooltip } from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import { Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import { showHide } from "../../../styles/common";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from '@mui/styles/makeStyles';
 import TextField from "@mui/material/TextField";
 
 const useStyles = makeStyles({
@@ -50,7 +50,7 @@ function TimePicker(props) {
                     <Grid
                         container
                         direction={"row"}
-                        justify={"flex-end"}
+                        justifyContent={"flex-end"}
                         alignItems={"center"}
                     >
                         <Grid item>
@@ -69,7 +69,7 @@ function TimePicker(props) {
                                         className={classes.button}
                                         disabled={props.disabled}
                                         onClick={toggleEditMode}
-                                    >
+                                        size="large">
                                         <CancelIcon />
                                     </IconButton>
                                 </Tooltip>
@@ -84,7 +84,7 @@ function TimePicker(props) {
                     <Grid
                         container
                         direction={"row"}
-                        justify={"space-between"}
+                        justifyContent={"space-between"}
                         alignItems={"center"}
                     >
                         <Grid item>
@@ -99,7 +99,7 @@ function TimePicker(props) {
                                     edge={"end"}
                                     disabled={props.disabled}
                                     onClick={toggleEditMode}
-                                >
+                                    size="large">
                                     <EditIcon />
                                 </IconButton>
                             </Tooltip>
@@ -111,7 +111,7 @@ function TimePicker(props) {
                                     edge={"end"}
                                     disabled={props.disabled}
                                     onClick={onClear}
-                                >
+                                    size="large">
                                     <CancelIcon />
                                 </IconButton>
                             </Tooltip>

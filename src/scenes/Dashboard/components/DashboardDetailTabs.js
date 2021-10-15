@@ -1,30 +1,29 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Box from "@material-ui/core/Box";
+import makeStyles from "@mui/styles/makeStyles";
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
-import { createPostingSelector } from "../../../redux/LoadingSelectors";
-import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
 import TimelineIcon from "@mui/icons-material/Timeline";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import SideInfoSection from "./SideInfoSection";
-import Toolbar from "@material-ui/core/Toolbar";
+import Toolbar from "@mui/material/Toolbar";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { saveDashboardRoleMode } from "../../../utilities";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { showHide } from "../../../styles/common";
 import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Hidden } from "@material-ui/core";
+import { Hidden } from "@mui/material";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import CallIcon from "@mui/icons-material/Call";
-import { useTheme, useMediaQuery } from "@material-ui/core";
+import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
 import { getWhoami } from "../../../redux/Selectors";
@@ -33,7 +32,7 @@ export function TabPanel(props) {
     const { children, index, ...other } = props;
     const value = parseInt(props.value);
     const theme = useTheme();
-    const isMd = useMediaQuery(theme.breakpoints.down("md"));
+    const isMd = useMediaQuery(theme.breakpoints.down("lg"));
 
     return (
         <div
@@ -63,7 +62,7 @@ function a11yProps(index) {
 
 const useStyles = makeStyles((theme) => {
     const appBarBack =
-        theme.palette.type === "dark"
+        theme.palette.mode === "dark"
             ? theme.palette.background.paper
             : theme.palette.primary.main;
     return {
@@ -82,19 +81,9 @@ export function DashboardDetailTabs(props) {
     const roleView = useSelector((state) => state.roleView);
     const classes = useStyles();
     const { show, hide } = showHide();
-    const postingSelector = createPostingSelector([
-        "DELETE_TASK",
-        "RESTORE_TASK",
-        "UPDATE_TASK",
-        "UPDATE_TASK_PICKUP_TIME",
-        "UPDATE_TASK_DROPOFF_TIME",
-        "UPDATE_TASK_CANCELLED_TIME",
-        "UPDATE_TASK_REJECTED_TIME",
-    ]);
-    const isPosting = useSelector((state) => postingSelector(state));
 
     const theme = useTheme();
-    const isXs = useMediaQuery(theme.breakpoints.down("xs"));
+    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleChange = (event, newValue) => {
         props.onChange(event, newValue);
@@ -128,7 +117,7 @@ export function DashboardDetailTabs(props) {
                         spacing={1}
                         wrap={"nowrap"}
                         direction={"row"}
-                        justify={"space-between"}
+                        justifyContent={"space-between"}
                         alignItems={"center"}
                     >
                         <Grid item>
@@ -136,11 +125,11 @@ export function DashboardDetailTabs(props) {
                                 container
                                 spacing={2}
                                 direction={"row"}
-                                justify={"flex-start"}
+                                justifyContent={"flex-start"}
                                 alignItems={"center"}
                             >
                                 <Grid item>{tabs}</Grid>
-                                <Hidden smDown>
+                                <Hidden mdDown>
                                     <Grid item>
                                         <TaskFilterTextField />
                                     </Grid>
@@ -152,7 +141,7 @@ export function DashboardDetailTabs(props) {
                                 container
                                 spacing={2}
                                 direction={"row"}
-                                justify={"flex-start"}
+                                justifyContent={"flex-start"}
                                 alignItems={"center"}
                             >
                                 <Grid item>
@@ -167,11 +156,11 @@ export function DashboardDetailTabs(props) {
                                         }
                                         container
                                         direction={"row"}
-                                        justify={"flex-start"}
+                                        justifyContent={"flex-start"}
                                         alignItems={"center"}
                                     >
                                         <Grid item>
-                                            <Hidden smDown>
+                                            <Hidden mdDown>
                                                 <Typography>
                                                     {`${roleView} view`.toUpperCase()}
                                                 </Typography>
@@ -194,6 +183,7 @@ export function DashboardDetailTabs(props) {
                                                         event.currentTarget
                                                     );
                                                 }}
+                                                size="large"
                                             >
                                                 <ArrowDropDownIcon />
                                             </IconButton>
@@ -311,6 +301,7 @@ export function DashboardDetailTabs(props) {
                                                     !rightSideBarOpen
                                                 )
                                             }
+                                            size="large"
                                         >
                                             <TimelineIcon />
                                         </IconButton>

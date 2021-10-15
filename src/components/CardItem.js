@@ -1,8 +1,8 @@
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Grid from "@material-ui/core/Grid";
-import {Typography} from "@material-ui/core";
+import makeStyles from '@mui/styles/makeStyles';
+import Grid from "@mui/material/Grid";
+import {Typography} from "@mui/material";
 import React from "react";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import {showHide} from "../styles/common";
 import PropTypes from "prop-types"
 
@@ -25,7 +25,7 @@ function CardItem(props) {
     const {show, hide} = showHide();
     return (
         <div className={classes.root}>
-            <Grid container spacing={1} direction={"row"} alignItems={"flex-end"} justify={"space-between"}>
+            <Grid container spacing={1} direction={"row"} alignItems={"flex-end"} justifyContent={"space-between"}>
                 <Grid className={props.label ? show : hide} item>
                     <Typography className={classes.titleText}>{props.label}:</Typography>
                 </Grid>
@@ -34,7 +34,7 @@ function CardItem(props) {
                 </Grid>
             </Grid>
         </div>
-    )
+    );
 }
 
 

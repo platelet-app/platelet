@@ -1,5 +1,5 @@
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import React from "react";
 import PropTypes from "prop-types";
 
@@ -8,7 +8,7 @@ function SaveCancelButtons(props) {
         <Grid
             container
             direction={"row"}
-            justify={"space-between"}
+            justifyContent={"space-between"}
             alignItems={"top"}
             spacing={3}
         >

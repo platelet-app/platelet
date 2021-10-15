@@ -1,8 +1,8 @@
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import React from "react";
 import NewCommentCard from "./NewCommentCard";
 import { useSelector } from "react-redux";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@mui/styles";
 import PropTypes from "prop-types";
 import { getWhoami } from "../../../redux/Selectors";
 import Comment from "./Comment";

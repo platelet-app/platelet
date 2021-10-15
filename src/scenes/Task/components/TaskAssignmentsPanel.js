@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Tooltip } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import { Tooltip } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import AssigneeEditPopover from "./AssigneeEditPopover";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
-import { makeStyles } from "@material-ui/core";
+import makeStyles from '@mui/styles/makeStyles';
 import { showHide } from "../../../styles/common";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
-import { Paper } from "@material-ui/core";
+import { Paper } from "@mui/material";
 import { userRoles } from "../../../apiConsts";
 
 export const useStyles = makeStyles(() => ({
@@ -57,14 +57,14 @@ function TaskAssignmentsPanel(props) {
     useEffect(sortAssignees, [props.task]);
     return (
         <Paper className={cardClasses.root}>
-            <Grid container justify={"center"} direction={"column"} spacing={3}>
+            <Grid container justifyContent={"center"} direction={"column"} spacing={3}>
                 <Grid item>
                     <Grid
                         container
                         alignItems={"center"}
                         direction={"row"}
                         spacing={1}
-                        justify={"space-between"}
+                        justifyContent={"space-between"}
                     >
                         <Grid item>
                             <Typography>Riders:</Typography>
@@ -128,7 +128,7 @@ function TaskAssignmentsPanel(props) {
                         alignItems={"center"}
                         direction={"row"}
                         spacing={1}
-                        justify={"space-between"}
+                        justifyContent={"space-between"}
                     >
                         <Grid item>
                             <Typography>Coordinators:</Typography>

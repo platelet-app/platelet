@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import { Paper } from "@material-ui/core";
+import makeStyles from '@mui/styles/makeStyles';
+import { Paper } from "@mui/material";
 import { dialogCardStyles } from "../Task/styles/DialogCompactStyles";
-import Link from "@material-ui/core/Link";
+import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
@@ -169,7 +169,7 @@ function DeliverableGridSelect(props) {
                 <Grid
                     container
                     spacing={2}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     direction={"column"}
                 >
                     <Grid item>

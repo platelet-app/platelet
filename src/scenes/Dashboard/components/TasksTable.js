@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {AddCircleButton} from "../../../components/Buttons";
 import TaskItem from "./TaskItem";
 import {encodeUUID, orderTaskList} from "../../../utilities";
@@ -7,7 +7,7 @@ import {createPostingSelector} from "../../../redux/LoadingSelectors";
 import {useDispatch, useSelector} from "react-redux";
 import {TasksSheetColumn} from "../styles/TaskColumns";
 import MaterialTable from 'material-table';
-import Box from "@material-ui/core/Box";
+import Box from "@mui/material/Box";
 import {useHistory, useLocation} from "react-router-dom";
 
 import {addTaskRequest} from "../../../redux/tasks/TasksActions";
@@ -234,7 +234,7 @@ export function TasksTablae(props) {
         <Grid container
               spacing={3}
               direction={"column"}
-              justify={"flex-start"}
+              justifyContent={"flex-start"}
               alignItems={"stretch"}
         >
             {Object.entries(orderTaskList(props.tasks)).map(taskList => {
@@ -255,7 +255,7 @@ export function TasksTablae(props) {
                             <Grid container
                                   spacing={0}
                                   direction={"column"}
-                                  justify={"flex-start"}
+                                  justifyContent={"flex-start"}
                                   alignItems={"center"}
                             >
                                 {newTaskButton}
@@ -269,8 +269,8 @@ export function TasksTablae(props) {
                             </Grid>
                         </TasksSheetColumn>
                     </Grid>
-                )
+                );
             })}
         </Grid>
-    )
+    );
 }

@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
-import {
-    Grid,
-    Button,
-    makeStyles,
-    TextField,
-    Typography,
-} from "@material-ui/core";
+import { Grid, Button, TextField, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import {
@@ -130,7 +125,7 @@ function AdminAddUser() {
                     container
                     className={classes.root}
                     direction={"column"}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     alignItems={"top"}
                     spacing={3}
                 >

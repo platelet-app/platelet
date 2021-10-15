@@ -12,12 +12,12 @@ import {
 } from "../../redux/LoadingSelectors";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import { PaddedPaper } from "../../styles/common";
 import CommentsSection from "../Comments/CommentsSection";
 import UserCard from "../../components/UserCard";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -133,7 +133,7 @@ export default function VehicleDetail(props) {
                             container
                             direction={"column"}
                             spacing={3}
-                            justify={"center"}
+                            justifyContent={"center"}
                             alignItems={"flex-start"}
                         >
                             <Grid item>

@@ -1,8 +1,8 @@
 import React from "react";
 import UserAvatar from "./UserAvatar";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 
 function CompactUserCard(props) {
     return (
@@ -11,7 +11,7 @@ function CompactUserCard(props) {
             style={{ width: "100%" }}
             spacing={1}
             alignItems={"center"}
-            justify={"space-between"}
+            justifyContent={"space-between"}
             direction={"row"}
         >
             <Grid item>
@@ -19,7 +19,7 @@ function CompactUserCard(props) {
                     container
                     spacing={1}
                     alignItems={"center"}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     direction={"row"}
                 >
                     <Grid item>

@@ -1,10 +1,10 @@
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
+import makeStyles from '@mui/styles/makeStyles';
+import Avatar from "@mui/material/Avatar";
 import PropTypes from "prop-types";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 import { deliverableIcons } from "../../../apiConsts";
 import { getDeliverableIconByEnum } from "../../../utilities";
 
@@ -26,7 +26,7 @@ function DeliverableCard(props) {
             className={classes.root}
             container
             spacing={1}
-            justify={"space-between"}
+            justifyContent={"space-between"}
             alignItems={"center"}
             direction={"row"}
         >
@@ -34,7 +34,7 @@ function DeliverableCard(props) {
                 <Grid
                     container
                     spacing={2}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     alignItems={"center"}
                     direction={"row"}
                 >

@@ -1,8 +1,8 @@
 import {Link} from "react-router-dom";
 import {encodeUUID} from "../utilities";
 import {StyledSharpCard} from "../styles/common";
-import CardContent from "@material-ui/core/CardContent";
-import Grid from "@material-ui/core/Grid";
+import CardContent from "@mui/material/CardContent";
+import Grid from "@mui/material/Grid";
 import CardItem from "./CardItem";
 import React from "react";
 

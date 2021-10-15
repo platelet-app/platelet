@@ -2,14 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import "../../../App.css";
 import "typeface-roboto";
-import CardContent from "@material-ui/core/CardContent";
+import CardContent from "@mui/material/CardContent";
 import Moment from "react-moment";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import CardItem from "../../../components/CardItem";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
-import { Tooltip } from "@material-ui/core";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { Tooltip } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
 import { getWhoami } from "../../../redux/Selectors";
@@ -105,7 +105,7 @@ const TaskCard = React.memo((props) => {
                 container
                 spacing={0}
                 alignItems={"flex-end"}
-                justify={"flex-start"}
+                justifyContent={"flex-start"}
                 direction={"column"}
             >
                 <Grid
@@ -113,7 +113,7 @@ const TaskCard = React.memo((props) => {
                     item
                     className={classes.itemTopBarContainer}
                     direction={"row"}
-                    justify={"space-between"}
+                    justifyContent={"space-between"}
                     alignItems={"center"}
                 >
                     <Grid item>

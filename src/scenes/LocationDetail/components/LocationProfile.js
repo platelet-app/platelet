@@ -1,4 +1,4 @@
-import { Divider, Grid, Typography } from "@material-ui/core";
+import { Divider, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
@@ -101,78 +101,76 @@ function LocationProfile(props) {
         </div>
     );
 
-    return (
-        <>
-            <Grid
-                container
-                direction={"row"}
-                justify={"space-between"}
-                alignItems={"top"}
-                spacing={3}
-            >
-                <Grid item>{header}</Grid>
-                <Grid item>{editToggle}</Grid>
-            </Grid>
-            <Grid
-                container
-                direction={"row"}
-                justify={"space-between"}
-                alignItems={"flex-start"}
-                spacing={1}
-            >
-                {Object.keys(fields).map((key) => {
-                    return (
-                        <Grid key={key} style={{ width: "50%" }} item>
-                            <TextFieldUncontrolled
-                                value={state[key]}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                    disableUnderline: !editMode,
-                                }}
-                                fullWidth
-                                label={fields[key]}
-                                id={key}
-                                onChange={(e) => {
-                                    setState({
-                                        ...state,
+    return <>
+        <Grid
+            container
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"top"}
+            spacing={3}
+        >
+            <Grid item>{header}</Grid>
+            <Grid item>{editToggle}</Grid>
+        </Grid>
+        <Grid
+            container
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"flex-start"}
+            spacing={1}
+        >
+            {Object.keys(fields).map((key) => {
+                return (
+                    <Grid key={key} style={{ width: "50%" }} item>
+                        <TextFieldUncontrolled
+                            value={state[key]}
+                            InputProps={{
+                                readOnly: !editMode,
+                                disableUnderline: !editMode,
+                            }}
+                            fullWidth
+                            label={fields[key]}
+                            id={key}
+                            onChange={(e) => {
+                                setState({
+                                    ...state,
+                                    [key]: e.target.value,
+                                });
+                            }}
+                        />
+                        {divider}
+                    </Grid>
+                );
+            })}
+            {Object.keys(state.contact ? contactFields : []).map((key) => {
+                return (
+                    <Grid key={key} style={{ width: "50%" }} item>
+                        <TextFieldUncontrolled
+                            value={state.contact[key]}
+                            InputProps={{
+                                readOnly: !editMode,
+                                disableUnderline: !editMode,
+                            }}
+                            fullWidth
+                            label={contactFields[key]}
+                            id={key}
+                            onChange={(e) => {
+                                setState({
+                                    ...state,
+                                    contact: {
+                                        ...state.contact,
                                         [key]: e.target.value,
-                                    });
-                                }}
-                            />
-                            {divider}
-                        </Grid>
-                    );
-                })}
-                {Object.keys(state.contact ? contactFields : []).map((key) => {
-                    return (
-                        <Grid key={key} style={{ width: "50%" }} item>
-                            <TextFieldUncontrolled
-                                value={state.contact[key]}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                    disableUnderline: !editMode,
-                                }}
-                                fullWidth
-                                label={contactFields[key]}
-                                id={key}
-                                onChange={(e) => {
-                                    setState({
-                                        ...state,
-                                        contact: {
-                                            ...state.contact,
-                                            [key]: e.target.value,
-                                        },
-                                    });
-                                }}
-                            />
-                            {divider}
-                        </Grid>
-                    );
-                })}
-            </Grid>
-            {saveButtons}
-        </>
-    );
+                                    },
+                                });
+                            }}
+                        />
+                        {divider}
+                    </Grid>
+                );
+            })}
+        </Grid>
+        {saveButtons}
+    </>;
 }
 
 LocationProfile.propTypes = {

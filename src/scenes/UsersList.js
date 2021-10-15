@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserCard from "../components/UserCard";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import * as queries from "../graphql/queries";
 import API from "@aws-amplify/api";
 import { TextFieldControlled } from "../components/TextFields";
@@ -12,7 +12,7 @@ import { contextDots, PaddedPaper } from "../styles/common";
 import { createPostingSelector } from "../redux/LoadingSelectors";
 import { sortByCreatedTime } from "../utilities";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
 import { Link } from "react-router-dom";
 import { DataStore, Hub } from "aws-amplify";
@@ -96,7 +96,7 @@ export default function UsersList(props) {
                 direction={"column"}
                 spacing={3}
                 alignItems={"flex-start"}
-                justify={"center"}
+                justifyContent={"center"}
             >
                 <Grid item>{addButton}</Grid>
                 <Grid item>
@@ -105,7 +105,7 @@ export default function UsersList(props) {
                             container
                             spacing={1}
                             direction={"column"}
-                            justify={"center"}
+                            justifyContent={"center"}
                             alignItems={"flex-start"}
                         >
                             <Grid item>

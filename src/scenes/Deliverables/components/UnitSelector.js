@@ -1,4 +1,4 @@
-import { FormControl, MenuItem, Select } from "@material-ui/core";
+import { FormControl, MenuItem, Select } from "@mui/material";
 import PropTypes from "prop-types";
 import React from "react";
 import { deliverableUnits } from "../apiConsts";

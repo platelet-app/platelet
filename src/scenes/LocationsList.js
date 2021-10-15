@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createLoadingSelector } from "../redux/LoadingSelectors";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import LocationCard from "../components/LocationCard";
 import { PaddedPaper } from "../styles/common";
 import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 export default function LocationsList() {
@@ -57,7 +57,7 @@ export default function LocationsList() {
                 direction={"column"}
                 spacing={3}
                 alignItems={"flex-start"}
-                justify={"center"}
+                justifyContent={"center"}
             >
                 <Grid item>{addButton}</Grid>
                 <Grid item>

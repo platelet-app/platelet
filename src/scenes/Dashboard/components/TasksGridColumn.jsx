@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import TaskItem from "./TaskItem";
 import { dashboardQuery } from "../queries/tasksGridQuery";
 import {
@@ -9,12 +9,12 @@ import {
 } from "../../../redux/LoadingSelectors";
 import { useDispatch, useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { Waypoint } from "react-waypoint";
-import Tooltip from "@material-ui/core/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { CircularProgress, Typography } from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
+import { CircularProgress, Typography } from "@mui/material";
+import Divider from "@mui/material/Divider";
 import TasksGridSkeleton from "./TasksGridSkeleton";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
@@ -26,7 +26,7 @@ import {
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
 import clsx from "clsx";
 import { API } from "aws-amplify";
-import { makeStyles } from "@material-ui/core";
+import makeStyles from '@mui/styles/makeStyles';
 import columns from "./tasksGridColumns";
 import { getWhoami } from "../../../redux/Selectors";
 import { sortByCreatedTime } from "../../../utilities";
@@ -178,7 +178,7 @@ function TasksGridColumn(props) {
                 direction={"column"}
                 spacing={2}
                 alignItems={"center"}
-                justify={"flex-start"}
+                justifyContent={"flex-start"}
             >
                 <Grid item>{header}</Grid>
                 <Grid item>
@@ -189,7 +189,7 @@ function TasksGridColumn(props) {
                     item
                     spacing={0}
                     direction={"column"}
-                    justify={"flex-start"}
+                    justifyContent={"flex-start"}
                     alignItems={"center"}
                     key={props.title + "column"}
                 >
@@ -216,7 +216,7 @@ function TasksGridColumn(props) {
                                     <Grid
                                         container
                                         alignItems={"center"}
-                                        justify={"center"}
+                                        justifyContent={"center"}
                                         className={classes.spacer}
                                     >
                                         <Grid

@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
-import Dialog from "@material-ui/core/Dialog";
+import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { convertListDataToObject, determineTaskStatus } from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
+import useMediaQuery from "@mui/material/useMediaQuery";
 import NotFound from "../../ErrorComponents/NotFound";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
-import { Button, Hidden } from "@material-ui/core";
+import { Button, Hidden } from "@mui/material";
 import CommentsSection from "../Comments/CommentsSection";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
@@ -40,10 +41,10 @@ const useStyles = makeStyles((theme) => ({
     },
     overview: {
         marginRight: drawerWidth,
-        [theme.breakpoints.down("md")]: {
+        [theme.breakpoints.down('lg')]: {
             marginRight: drawerWidthMd,
         },
-        [theme.breakpoints.down("sm")]: {
+        [theme.breakpoints.down('md')]: {
             marginRight: 0,
         },
     },
@@ -111,7 +112,7 @@ function TaskDialogCompact(props) {
     const [notFound, setNotFound] = useState(false);
     const classes = useStyles();
     const theme = useTheme();
-    const isMd = useMediaQuery(theme.breakpoints.down("md"));
+    const isMd = useMediaQuery(theme.breakpoints.down('lg'));
     const [isFetching, setIsFetching] = useState(false);
     const [task, setTask] = useState(initialState);
     // taskDeliverablesRef exists to keep track of which deliverables
@@ -716,7 +717,7 @@ function TaskDialogCompact(props) {
                         onDeleteDeliverable={deleteDeliverable}
                     />
                 </div>
-                <Hidden smDown>
+                <Hidden mdDown>
                     <CommentsSideBar
                         width={isMd ? drawerWidthMd : drawerWidth}
                         parentUUID={taskUUID}

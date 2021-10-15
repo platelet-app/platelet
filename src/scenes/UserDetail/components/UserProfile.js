@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { useDispatch, useSelector } from "react-redux";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
@@ -109,7 +109,7 @@ export default function UserProfile(props) {
             <Grid
                 container
                 direction={"row"}
-                justify={"space-between"}
+                justifyContent={"space-between"}
                 alignItems={"top"}
                 spacing={3}
             >
@@ -119,7 +119,7 @@ export default function UserProfile(props) {
             <Grid
                 container
                 direction={"column"}
-                justify={"space-between"}
+                justifyContent={"space-between"}
                 alignItems={"flex-start"}
                 spacing={1}
             >

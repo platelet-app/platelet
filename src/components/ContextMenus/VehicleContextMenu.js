@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { deleteVehicleRequest } from "../../redux/vehicles/VehiclesActions";
 import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import { createPostingSelector } from "../../redux/LoadingSelectors";
 import { deleteButtonStyles, contextDots } from "./contextMenuCSS";
 import { getWhoami } from "../../redux/Selectors";
@@ -42,39 +42,37 @@ export default function VehicleContextMenu(props) {
         setState(initialState);
     };
 
-    return (
-        <>
-            <IconButton
-                aria-label="more"
-                aria-controls="long-menu"
-                aria-haspopup="true"
-                onClick={handleClick}
-                disabled={isPosting}
-            >
-                <MoreVertIcon />
-            </IconButton>
-            <Menu
-                keepMounted
-                open={state.mouseY !== null}
-                onClose={handleClose}
-                anchorReference="anchorPosition"
-                anchorPosition={
-                    state.mouseY !== null && state.mouseX !== null
-                        ? { top: state.mouseY, left: state.mouseX }
-                        : undefined
+    return <>
+        <IconButton
+            aria-label="more"
+            aria-controls="long-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+            disabled={isPosting}
+            size="large">
+            <MoreVertIcon />
+        </IconButton>
+        <Menu
+            keepMounted
+            open={state.mouseY !== null}
+            onClose={handleClose}
+            anchorReference="anchorPosition"
+            anchorPosition={
+                state.mouseY !== null && state.mouseX !== null
+                    ? { top: state.mouseY, left: state.mouseX }
+                    : undefined
+            }
+        >
+            <MenuItem
+                className={
+                    whoami.roles.includes("ADMIN")
+                        ? classes.deleteButton
+                        : classes.deleteButtonDisabled
                 }
+                onClick={onDelete}
             >
-                <MenuItem
-                    className={
-                        whoami.roles.includes("ADMIN")
-                            ? classes.deleteButton
-                            : classes.deleteButtonDisabled
-                    }
-                    onClick={onDelete}
-                >
-                    Delete
-                </MenuItem>
-            </Menu>
-        </>
-    );
+                Delete
+            </MenuItem>
+        </Menu>
+    </>;
 }

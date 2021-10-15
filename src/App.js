@@ -3,13 +3,14 @@ import { MenuMainContainer } from "./navigation/MenuMainContainer";
 import "./index.css";
 import "./App.css";
 import "typeface-roboto";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import CssBaseline from "@mui/material/CssBaseline";
 import { useDispatch, useSelector } from "react-redux";
 import { useIdleTimer } from "react-idle-timer";
 import { setIdleStatus, setMobileView } from "./redux/Actions";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme, adaptV4Theme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 import Moment from "react-moment";
 import Amplify, { Logger } from "aws-amplify";
 
@@ -18,7 +19,11 @@ import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
 import "moment/locale/en-gb";
 import { DismissButton } from "./styles/common";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import {
+    ThemeProvider,
+    StyledEngineProvider,
+    createTheme,
+} from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
 
@@ -164,22 +169,30 @@ function AppDefault(props) {
     const darkMode = useSelector((state) => state.darkMode);
     let theme;
     if (darkMode) {
-        theme = createMuiTheme({
-            palette: {
-                type: "dark",
-                taskStatus,
-            },
-        });
-    } else {
-        theme = createMuiTheme({
-            palette: {
-                type: "light",
-                background: {
-                    default: "rgb(235, 235, 235)",
+        theme = createTheme(
+            adaptV4Theme({
+                palette: {
+                    mode: "dark",
+                    background: {
+                        paper: "rgb(40, 40, 40)",
+                        default: "rgb(30, 30, 30)",
+                    },
+                    taskStatus,
                 },
-                taskStatus,
-            },
-        });
+            })
+        );
+    } else {
+        theme = createTheme(
+            adaptV4Theme({
+                palette: {
+                    mode: "light",
+                    background: {
+                        default: "rgb(235, 235, 235)",
+                    },
+                    taskStatus,
+                },
+            })
+        );
     }
 
     const useStylesNotistack = makeStyles({
@@ -203,12 +216,14 @@ function AppDefault(props) {
     const classes = useStylesNotistack();
 
     return (
-        <MuiThemeProvider theme={theme}>
-            <CssBaseline />
-            <SnackbarProvider classes={classes} maxSnack={1}>
-                <AppMain {...props} />
-            </SnackbarProvider>
-        </MuiThemeProvider>
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <SnackbarProvider classes={classes} maxSnack={1}>
+                    <AppMain {...props} />
+                </SnackbarProvider>
+            </ThemeProvider>
+        </StyledEngineProvider>
     );
 }
 

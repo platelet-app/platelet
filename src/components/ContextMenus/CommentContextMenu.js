@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { useDispatch } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
@@ -63,7 +63,7 @@ export default function CommentContextMenu(props) {
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}
-            >
+                size="large">
                 <MoreVertIcon />
             </IconButton>
             <Menu

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import _ from "lodash";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import TaskItem from "./TaskItem";
 import { useDispatch, useSelector } from "react-redux";
 import { addTaskRelayRequest } from "../../../redux/tasks/TasksActions";
-import Tooltip from "@material-ui/core/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import { filterTasks } from "../utilities/functions";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from "clsx";
 import { getTasksSelector } from "../../../redux/Selectors";
 import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
     },
     column: {
-        [theme.breakpoints.down("sm")]: {
+        [theme.breakpoints.down('md')]: {
             width: "100%",
         },
     },
@@ -108,7 +108,7 @@ const TaskGroup = (props) => {
                         container
                         className={classes.root}
                         alignItems={"center"}
-                        justify={"center"}
+                        justifyContent={"center"}
                     >
                         <Grid item className={classes.root}>
                             <TaskItem
@@ -135,7 +135,7 @@ const TaskGroup = (props) => {
                             <Grid
                                 container
                                 alignItems={"center"}
-                                justify={"center"}
+                                justifyContent={"center"}
                             >
                                 <Grid
                                     className={
@@ -177,7 +177,7 @@ function TasksGrid(props) {
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const { show, hide } = showHide();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const isSm = useMediaQuery(theme.breakpoints.down('md'));
 
     const addRelay = React.useCallback((data) => {
         dispatch(addTaskRelayRequest(data));
@@ -190,49 +190,47 @@ function TasksGrid(props) {
 
     useEffect(doSearch, [dashboardFilter]);
 
-    return (
-        <>
-            <Grid
-                container
-                spacing={2}
-                direction={"row"}
-                justify={isSm ? "center" : "flex-start"}
-                alignItems={"stretch"}
-            >
-                {Object.keys(columns).map((taskKey) => {
-                    const title = getColumnTitle(taskKey);
-                    return (
-                        <Grid
-                            item
-                            key={taskKey}
-                            className={clsx([
-                                props.excludeColumnList &&
-                                props.excludeColumnList.includes(taskKey)
-                                    ? hide
-                                    : show,
-                                classes.column,
-                            ])}
-                        >
-                            <TasksGridColumn
-                                title={title}
-                                classes={classes}
-                                onAddTaskClick={props.onAddTaskClick}
-                                onAddRelayClick={addRelay}
-                                taskKey={taskKey}
-                                tasks={props.tasks[taskKey]}
-                                showTasks={filteredTasksUUIDs}
-                                key={title}
-                            />
-                        </Grid>
-                    );
-                })}
-            </Grid>
-            <GuidedSetup
-                show={showGuidedSetup}
-                onClose={() => setShowGuidedSetup(false)}
-            />
-        </>
-    );
+    return <>
+        <Grid
+            container
+            spacing={2}
+            direction={"row"}
+            justifyContent={isSm ? "center" : "flex-start"}
+            alignItems={"stretch"}
+        >
+            {Object.keys(columns).map((taskKey) => {
+                const title = getColumnTitle(taskKey);
+                return (
+                    <Grid
+                        item
+                        key={taskKey}
+                        className={clsx([
+                            props.excludeColumnList &&
+                            props.excludeColumnList.includes(taskKey)
+                                ? hide
+                                : show,
+                            classes.column,
+                        ])}
+                    >
+                        <TasksGridColumn
+                            title={title}
+                            classes={classes}
+                            onAddTaskClick={props.onAddTaskClick}
+                            onAddRelayClick={addRelay}
+                            taskKey={taskKey}
+                            tasks={props.tasks[taskKey]}
+                            showTasks={filteredTasksUUIDs}
+                            key={title}
+                        />
+                    </Grid>
+                );
+            })}
+        </Grid>
+        <GuidedSetup
+            show={showGuidedSetup}
+            onClose={() => setShowGuidedSetup(false)}
+        />
+    </>;
 }
 
 TasksGrid.propTypes = {

@@ -1,13 +1,13 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import {
     commentStyles,
     CommentCardStyled,
     PrivateCommentCardStyled,
 } from "../styles/CommentCards";
 import LockIcon from "@mui/icons-material/Lock";
-import Tooltip from "@material-ui/core/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import moment from "moment";
 import CommentAuthor from "./CommentAuthor";
 import EditIcon from "@mui/icons-material/Edit";
@@ -50,7 +50,7 @@ const CommentCard = React.memo((props) => {
             </Grid>
             <Grid item>
                 <Card>
-                    <Grid container direction={"row"} justify={"space-between"}>
+                    <Grid container direction={"row"} justifyContent={"space-between"}>
                         <Grid item>{props.children}</Grid>
                         <Grid item>
                             <Grid

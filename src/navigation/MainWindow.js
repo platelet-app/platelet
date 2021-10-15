@@ -15,9 +15,10 @@ import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { useDispatch } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
+import Container from "@mui/material/Container";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
 import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";
@@ -28,7 +29,7 @@ function MainWindowContainer(props) {
         root: {
             paddingTop: 10,
             paddingBottom: 10,
-            [theme.breakpoints.down("sm")]: {
+            [theme.breakpoints.down("md")]: {
                 paddingTop: 5,
             },
         },
@@ -36,7 +37,7 @@ function MainWindowContainer(props) {
     }));
     const classes = styles();
     const theme = useTheme();
-    const isMd = useMediaQuery(theme.breakpoints.down("md"));
+    const isMd = useMediaQuery(theme.breakpoints.down("lg"));
     return (
         <Container disableGutters={isMd} className={classes.root}>
             {props.children}

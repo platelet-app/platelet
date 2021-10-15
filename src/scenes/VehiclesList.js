@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../App.css";
 import "typeface-roboto";
 import { contextDots, PaddedPaper } from "../styles/common";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { addVehicleRequest } from "../redux/vehicles/VehiclesActions";
 import { encodeUUID, sortByCreatedTime } from "../utilities";
@@ -58,7 +58,7 @@ function VehicleList() {
                 container
                 spacing={2}
                 direction={"column"}
-                justify={"flex-start"}
+                justifyContent={"flex-start"}
                 alignItems={"flex-start"}
             >
                 <Grid item>{addButton}</Grid>
@@ -68,7 +68,7 @@ function VehicleList() {
                             container
                             spacing={1}
                             direction={"row"}
-                            justify={"flex-start"}
+                            justifyContent={"flex-start"}
                             alignItems={"center"}
                         >
                             <Grid item>
@@ -76,7 +76,7 @@ function VehicleList() {
                                     container
                                     spacing={3}
                                     direction={"row"}
-                                    justify={"flex-start"}
+                                    justifyContent={"flex-start"}
                                     alignItems={"center"}
                                 >
                                     {sortByCreatedTime(
