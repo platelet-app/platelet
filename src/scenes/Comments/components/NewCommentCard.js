@@ -28,6 +28,7 @@ function VisibilityMenu(props) {
             <Select
                 id="visibility-menu"
                 value={props.value}
+                variant={"standard"}
                 label="Visibility"
                 onChange={props.onChange}
             >
@@ -124,7 +125,11 @@ function NewCommentCard(props) {
                     />
                 </Grid>
                 <Grid item className={classes.gridItem}>
-                    <Grid container direction={"row"} justifyContent={"space-between"}>
+                    <Grid
+                        container
+                        direction={"row"}
+                        justifyContent={"space-between"}
+                    >
                         <Grid item>
                             <Button
                                 disabled={
