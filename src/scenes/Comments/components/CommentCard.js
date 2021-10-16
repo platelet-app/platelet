@@ -78,10 +78,7 @@ const CommentCard = React.memo((props) => {
                                                 : "times"
                                         }.`}
                                     >
-                                        <EditIcon
-                                            className={classes.icon}
-                                            color={"disabled"}
-                                        />
+                                        <EditIcon className={classes.icon} />
                                     </Tooltip>
                                 </Grid>
                                 <Grid item>
