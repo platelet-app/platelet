@@ -566,7 +566,7 @@ function TaskDialogCompact(props) {
             // if no location exists yet
             // make sure we aren't just sending empty values
             const result = {};
-            if (rest) {
+            if (!_.isEmpty(rest)) {
                 for (const [key, value] of Object.entries(rest)) {
                     if (!!value) {
                         result[key] = value;
