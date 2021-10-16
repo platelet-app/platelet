@@ -9,8 +9,7 @@ import { useIdleTimer } from "react-idle-timer";
 import { setIdleStatus, setMobileView } from "./redux/Actions";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme, adaptV4Theme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
+import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
 import Amplify, { Logger } from "aws-amplify";
 
