@@ -191,31 +191,11 @@ function AppDefault(props) {
         });
     }
 
-    const useStylesNotistack = makeStyles({
-        contentRoot: {
-            backgroundColor: theme.palette.background.default,
-        },
-        variantSuccess: {
-            backgroundColor: theme.palette.success.main,
-        },
-        variantError: {
-            backgroundColor: theme.palette.error.main,
-        },
-        variantInfo: {
-            backgroundColor: theme.palette.info.main,
-        },
-        variantWarning: {
-            backgroundColor: theme.palette.warning.main,
-        },
-    });
-
-    const classes = useStylesNotistack();
-
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
-                <SnackbarProvider classes={classes} maxSnack={1}>
+                <SnackbarProvider maxSnack={1}>
                     <AppMain {...props} />
                 </SnackbarProvider>
             </ThemeProvider>
