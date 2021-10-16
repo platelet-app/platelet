@@ -172,7 +172,6 @@ function TasksGrid(props) {
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
     const [showGuidedSetup, setShowGuidedSetup] = useState(false);
 
-    const tasks = useSelector(getTasksSelector);
     const dispatch = useDispatch();
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const { show, hide } = showHide();
@@ -184,11 +183,11 @@ function TasksGrid(props) {
     }, []);
 
     function doSearch() {
-        const result = filterTasks(tasks, dashboardFilter);
+        const result = filterTasks(props.tasks, dashboardFilter);
         setFilteredTasksUUIDs(result);
     }
 
-    useEffect(doSearch, [dashboardFilter]);
+    useEffect(doSearch, [dashboardFilter, props.tasks]);
 
     return (
         <>

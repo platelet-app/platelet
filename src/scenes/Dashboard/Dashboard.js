@@ -266,8 +266,6 @@ function Dashboard(props) {
         else history.push("/");
     }
 
-    const theme = useTheme();
-
     const dialog = props.match.params.task_uuid_b62 ? (
         <TaskDialogCompact
             onClose={handleDialogClose}
