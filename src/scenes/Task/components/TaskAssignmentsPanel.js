@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Tooltip } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Stack, Tooltip } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import AssigneeEditPopover from "./AssigneeEditPopover";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import AssignRiderCoordinatorPopover from "./AssignRiderCoordinatorPopover";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { showHide } from "../../../styles/common";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { Paper } from "@mui/material";
 import { userRoles } from "../../../apiConsts";
+import RiderPicker from "../../../components/RiderPicker";
+import CoordinatorPicker from "../../../components/CoordinatorPicker";
+import UserRoleSelect from "../../../components/UserRoleSelect";
+import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -20,7 +24,8 @@ export const useStyles = makeStyles(() => ({
 
 function TaskAssignmentsPanel(props) {
     const { task } = props;
-
+    const [editMode, setEditMode] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [assignedCoordinators, setAssignedCoordinators] = useState([]);
     const [assignedRidersDisplayString, setAssignedRidersDisplayString] =
@@ -31,6 +36,18 @@ function TaskAssignmentsPanel(props) {
     ] = useState("");
     const cardClasses = dialogCardStyles();
     const { show, hide } = showHide();
+    const [role, setRole] = useState(userRoles.rider);
+
+    function onSelect() {
+        if (selectedUser) props.onSelect(selectedUser, role);
+        clearEditMode();
+    }
+
+    function clearEditMode() {
+        setEditMode(false);
+        setSelectedUser(null);
+        setRole(userRoles.rider);
+    }
 
     function sortAssignees() {
         if (task.assignees && Object.values(task.assignees).length > 0) {
@@ -55,9 +72,95 @@ function TaskAssignmentsPanel(props) {
     }
 
     useEffect(sortAssignees, [props.task]);
+
+    const assigneeSelector = editMode ? (
+        <>
+            <UserRoleSelect
+                value={role}
+                onSelect={(value) => setRole(value)}
+                exclude={Object.values(userRoles).filter(
+                    (value) =>
+                        ![userRoles.rider, userRoles.coordinator].includes(
+                            value
+                        )
+                )}
+            />
+            {role === userRoles.rider ? (
+                <RiderPicker
+                    onSelect={(v) => setSelectedUser(v)}
+                    exclude={assignedRiders.map((u) => u.id)}
+                />
+            ) : (
+                <CoordinatorPicker
+                    onSelect={(v) => setSelectedUser(v)}
+                    exclude={assignedCoordinators.map((u) => u.id)}
+                />
+            )}
+            <Typography>
+                {selectedUser ? selectedUser.displayName : ""}
+            </Typography>
+            <Stack justifyContent={"space-between"} direction={"row"}>
+                <Button onClick={onSelect} disabled={!!!selectedUser}>
+                    Save
+                </Button>
+                <Button onClick={clearEditMode}>Cancel</Button>
+            </Stack>
+        </>
+    ) : (
+        <></>
+    );
+
     return (
         <Paper className={cardClasses.root}>
-            <Grid container justifyContent={"center"} direction={"column"} spacing={3}>
+            <Stack spacing={3} direction={"column"}>
+                <Stack justifyContent={"space-between"} direction={"row"}>
+                    <EditModeToggleButton
+                        tooltipDefault={"Edit assignees"}
+                        value={editMode}
+                        onChange={(v) => {
+                            setEditMode(v);
+                        }}
+                    />
+                    <Tooltip title={assignedCoordinatorsDisplayString}>
+                        <AvatarGroup>
+                            {assignedCoordinators.map((u) => (
+                                <UserAvatar
+                                    key={u.id}
+                                    size={5}
+                                    userUUID={u.id}
+                                    displayName={u.displayName}
+                                    avatarURL={u.profilePictureThumbnailURL}
+                                />
+                            ))}
+                        </AvatarGroup>
+                    </Tooltip>
+                    <Tooltip title={assignedRidersDisplayString}>
+                        <AvatarGroup>
+                            {assignedRiders.map((u) => (
+                                <UserAvatar
+                                    key={u.id}
+                                    size={5}
+                                    userUUID={u.id}
+                                    displayName={u.displayName}
+                                    avatarURL={u.profilePictureThumbnailURL}
+                                />
+                            ))}
+                        </AvatarGroup>
+                    </Tooltip>
+                </Stack>
+                {assigneeSelector}
+            </Stack>
+        </Paper>
+    );
+
+    return (
+        <Paper className={cardClasses.root}>
+            <Grid
+                container
+                justifyContent={"center"}
+                direction={"column"}
+                spacing={3}
+            >
                 <Grid item>
                     <Grid
                         container
@@ -116,73 +219,6 @@ function TaskAssignmentsPanel(props) {
                                             (u) => u.uuid
                                         )}
                                         taskUUID={task.uuid}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item>
-                    <Grid
-                        container
-                        alignItems={"center"}
-                        direction={"row"}
-                        spacing={1}
-                        justifyContent={"space-between"}
-                    >
-                        <Grid item>
-                            <Typography>Coordinators:</Typography>
-                        </Grid>
-                        <Grid item>
-                            <Grid
-                                container
-                                alignItems={"center"}
-                                spacing={1}
-                                direction={"row"}
-                            >
-                                <Grid item>
-                                    <AssigneeEditPopover
-                                        coordinator
-                                        onSelect={props.onSelect}
-                                        assignees={assignedCoordinators}
-                                        className={
-                                            assignedCoordinators &&
-                                            assignedCoordinators.length > 0
-                                                ? show
-                                                : hide
-                                        }
-                                        taskUUID={task.uuid}
-                                    />
-                                </Grid>
-                                <Grid item>
-                                    <Tooltip
-                                        title={
-                                            assignedCoordinatorsDisplayString
-                                        }
-                                    >
-                                        <AvatarGroup>
-                                            {assignedCoordinators.map((u) => (
-                                                <UserAvatar
-                                                    key={u.id}
-                                                    size={5}
-                                                    userUUID={u.id}
-                                                    displayName={u.displayName}
-                                                    avatarURL={
-                                                        u.profilePictureThumbnailURL
-                                                    }
-                                                />
-                                            ))}
-                                        </AvatarGroup>
-                                    </Tooltip>
-                                </Grid>
-                                <Grid item>
-                                    <AssignRiderCoordinatorPopover
-                                        exclude={assignedCoordinators.map(
-                                            (u) => u.id
-                                        )}
-                                        onSelect={props.onSelect}
-                                        coordinator
-                                        taskUUID={task.id}
                                     />
                                 </Grid>
                             </Grid>
