@@ -564,6 +564,24 @@ function TaskDialogCompact(props) {
             }
         } else {
             // if no location exists yet
+            // make sure we aren't just sending empty values
+            const result = {};
+            if (rest) {
+                for (const [key, value] of Object.entries(rest)) {
+                    if (!!value) {
+                        result[key] = value;
+                    }
+                }
+            }
+            if (contact) {
+                for (const [key, value] of Object.entries(contact)) {
+                    if (!!value) {
+                        result[key] = value;
+                    }
+                }
+            }
+            if (_.isEmpty(result)) return;
+
             // create a contact model
             contactResult = await DataStore.save(
                 new models.AddressAndContactDetails(contact || {})

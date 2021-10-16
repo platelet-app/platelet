@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import TextField from "@mui/material/TextField";
-import { useSelector } from "react-redux";
 import Autocomplete from "@mui/material/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
-import Divider from "@mui/material/Divider";
 import { DataStore } from "aws-amplify";
 import { userRoles } from "../apiConsts";
 import * as models from "../models/index";
