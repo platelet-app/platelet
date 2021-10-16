@@ -6,7 +6,7 @@ import { convertListDataToObject, determineTaskStatus } from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@mui/material/Typography";
@@ -41,10 +41,10 @@ const useStyles = makeStyles((theme) => ({
     },
     overview: {
         marginRight: drawerWidth,
-        [theme.breakpoints.down('lg')]: {
+        [theme.breakpoints.down("lg")]: {
             marginRight: drawerWidthMd,
         },
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             marginRight: 0,
         },
     },
@@ -112,7 +112,7 @@ function TaskDialogCompact(props) {
     const [notFound, setNotFound] = useState(false);
     const classes = useStyles();
     const theme = useTheme();
-    const isMd = useMediaQuery(theme.breakpoints.down('lg'));
+    const isMd = useMediaQuery(theme.breakpoints.down("lg"));
     const [isFetching, setIsFetching] = useState(false);
     const [task, setTask] = useState(initialState);
     // taskDeliverablesRef exists to keep track of which deliverables
@@ -232,6 +232,13 @@ function TaskDialogCompact(props) {
                 })
             );
         }
+        const assignees = (await DataStore.query(models.TaskAssignee)).filter(
+            (a) => a.task.id === taskUUID
+        );
+        setTask((prevState) => ({
+            ...prevState,
+            assignees,
+        }));
     }
 
     async function setTimeOfCall(value) {

@@ -29,23 +29,6 @@ function LightToggleProfileMenu(props) {
     const networkStatus = useSelector(networkStatusSelector);
     const { show, hide } = showHide();
 
-    const clearDataMenuItem =
-        process.env.REACT_APP_DEMO_MODE !== "true" &&
-        process.env.REACT_APP_OFFLINE_ONLY === "true" &&
-        process.env.REACT_APP_POPULATE_FAKE_DATA === "true" ? (
-            <MenuItem
-                onClick={() => {
-                    setAnchorElProfileMenu(null);
-                    DataStore.clear();
-                    window.location = "/";
-                }}
-            >
-                Clear Saved Data
-            </MenuItem>
-        ) : (
-            <></>
-        );
-
     return (
         <Grid
             container
@@ -62,7 +45,8 @@ function LightToggleProfileMenu(props) {
                         onClick={(event) => {
                             setAnchorElProfileMenu(event.currentTarget);
                         }}
-                        size="large">
+                        size="large"
+                    >
                         <ArrowDropDownIcon />
                     </IconButton>
                     <Menu
@@ -93,7 +77,6 @@ function LightToggleProfileMenu(props) {
                         >
                             Logout
                         </MenuItem>
-                        {clearDataMenuItem}
                     </Menu>
                 </div>
             </Grid>
@@ -119,7 +102,8 @@ function LightToggleProfileMenu(props) {
                                 onClick={() => {
                                     dispatch(setDarkMode(!darkMode));
                                 }}
-                                size="large">
+                                size="large"
+                            >
                                 {darkMode ? (
                                     <BrightnessHighIcon />
                                 ) : (
