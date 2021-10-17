@@ -7,6 +7,11 @@ import { DataStore } from "aws-amplify";
 import { userRoles } from "../apiConsts";
 import * as models from "../models/index";
 import { Box } from "@mui/material";
+import { matchSorter } from "match-sorter";
+
+const filterOptions = (options, { inputValue }) => {
+    return matchSorter(options, inputValue, { keys: ["displayName"] });
+};
 
 function RiderPicker(props) {
     const [availableUsers, setAvailableRiders] = useState([]);
@@ -46,6 +51,7 @@ function RiderPicker(props) {
         <div>
             <Autocomplete
                 disablePortal
+                filterOptions={filterOptions}
                 id="combo-box-riders"
                 options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.displayName}

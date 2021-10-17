@@ -28,6 +28,7 @@ function FavouriteLocationsSelect(props) {
     return (
         <Autocomplete
             disablePortal
+            filterOptions={filterOptions}
             options={availableLocations}
             getOptionLabel={(option) => option.name}
             size={"small"}

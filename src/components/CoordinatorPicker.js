@@ -7,11 +7,14 @@ import { DataStore } from "aws-amplify";
 import { userRoles } from "../apiConsts";
 import * as models from "../models/index";
 import { Box } from "@mui/material";
+import { matchSorter } from "match-sorter";
+
+const filterOptions = (options, { inputValue }) => {
+    return matchSorter(options, inputValue, { keys: ["displayName"] });
+};
 
 function CoordinatorPicker(props) {
     const [availableCoordinators, setAvailableCoordinators] = useState([]);
-    const [filteredCoordinatorSuggestions, setFilteredCoordinatorSuggestions] =
-        useState([]);
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
     };
@@ -29,6 +32,7 @@ function CoordinatorPicker(props) {
         <div>
             <Autocomplete
                 disablePortal
+                filterOptions={filterOptions}
                 id="combo-box-coordinators"
                 options={availableCoordinators}
                 getOptionLabel={(option) => option.displayName}
