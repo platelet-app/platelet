@@ -15,9 +15,11 @@ const setupStyles = makeStyles((theme) => ({
         height: "80%",
     },
     leftPanel: {
+        display: "grid",
+        alignContent: "space-between",
         background: "white",
         height: "100%",
-        paddingLeft: "50px",
+        padding: "15px 50px",
         borderRight: "solid 2px"
     }
   }));
@@ -28,7 +30,6 @@ export const CoordinatorSetup = ({ show, onClose}) => {
     return (
         <Grid container className={classes.container}>
             <Grid item xs={8} className={classes.leftPanel} >
-                {/* <div className={classes.leftPanel} /> */}
                 <RiderJobActivity />
                 <EnhancedTable />
             </Grid>
