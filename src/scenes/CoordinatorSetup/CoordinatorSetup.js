@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import {Grid} from '@material-ui/core';
 
 import { GuidedSetup } from '../GuidedSetup/GuidedSetup'
-import { RiderJobActivity } from '../../components/RiderJobActivity'
+import { RiderJobActivity } from './components/RiderJobActivity'
+import { EnhancedTable } from './components/EnhancedTable'
 
 const setupStyles = makeStyles((theme) => ({
     container: {
@@ -29,6 +30,7 @@ export const CoordinatorSetup = ({ show, onClose}) => {
             <Grid item xs={8} className={classes.leftPanel} >
                 {/* <div className={classes.leftPanel} /> */}
                 <RiderJobActivity />
+                <EnhancedTable />
             </Grid>
 
             <Grid item xs={4}>
