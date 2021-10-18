@@ -99,6 +99,7 @@ const defaultValues = {
     email: "",
   },
   pickUpLocation: null,
+  pickUpTime: "",
   sender: {
     name: "",
     phone: "",
@@ -110,6 +111,7 @@ const defaultValues = {
     email: "",
   },
   dropOffLocation: null,
+  dropOffTime: "",
   priority: "",
   items: {
     sample: 0,
@@ -178,6 +180,18 @@ export const GuidedSetup = ({ show, onClose }) => {
     const result = {...formValues, receiver: {...formValues.receiver, ...value}}
     setFormValues(result)
   }
+
+  const onPickUpTimeSaved = (pickUpTime) => {
+    const result = {...formValues, pickUpTime}
+
+    setFormValues(result)
+  }
+
+  const onDropOffTimeSaved = (dropOffTime) => {
+    const result = {...formValues, dropOffTime}
+
+    setFormValues(result)
+  }
   
   const onPickUpLocationSaved = (pickUpLocation) => {
     const result = {...formValues, pickUpLocation}
@@ -190,7 +204,7 @@ export const GuidedSetup = ({ show, onClose }) => {
     }
 }
 
-  const onSelectDropoffFromSaved = (dropOffLocation) => {
+  const onDropoffLocationSaved = (dropOffLocation) => {
     const result = {...formValues, dropOffLocation}
     const locationUUID = dropOffLocation.uuid;
 
@@ -260,7 +274,10 @@ export const GuidedSetup = ({ show, onClose }) => {
                 <Step3 
                   values={formValues} 
                   onChange={handleReceiverContactChange}
-                  onSelect={onSelectDropoffFromSaved} />
+                  onSelectDropoffLocation={onDropoffLocationSaved}
+                  onSelectDropoffTime={onDropOffTimeSaved}
+                  onSelectPickupLocation={onPickUpLocationSaved}
+                  onSelectPickupTime={onPickUpTimeSaved} />
             </TabPanel>
             <TabPanel value={value} index={3}>
                 <Step4 values={formValues} onChange={() => {}} />
