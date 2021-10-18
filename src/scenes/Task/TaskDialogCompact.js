@@ -114,13 +114,13 @@ function TaskDialogCompact(props) {
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
     const [isFetching, setIsFetching] = useState(false);
-    const [task, setTask] = useState(initialState);
+    const [state, setState] = useState(initialState);
     // taskDeliverablesRef exists to keep track of which deliverables
     // have been added or removed without resending data to DeliverableGridSelect props by updating state
     const taskDeliverablesRef = useRef({});
-    taskDeliverablesRef.current = task.deliverables;
+    taskDeliverablesRef.current = state.deliverables;
     const taskRef = useRef();
-    taskRef.current = task;
+    taskRef.current = state;
     const taskObserver = useRef({ unsubscribe: () => {} });
     const deliverablesObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
@@ -141,7 +141,7 @@ function TaskDialogCompact(props) {
                     const assignees = (
                         await DataStore.query(models.TaskAssignee)
                     ).filter((a) => a.task.id === taskUUID);
-                    setTask({
+                    setState({
                         ...taskData,
                         assignees: convertListDataToObject(assignees),
                         deliverables: deliverables
@@ -154,7 +154,7 @@ function TaskDialogCompact(props) {
                         taskUUID
                     ).subscribe((observeResult) => {
                         const task = observeResult.element;
-                        setTask((prevState) => ({ ...prevState, ...task }));
+                        setState((prevState) => ({ ...prevState, ...task }));
                     });
 
                     if (deliverables) {
@@ -165,7 +165,7 @@ function TaskDialogCompact(props) {
                         ).subscribe((observeResult) => {
                             const deliverable = observeResult.element;
                             if (observeResult.opType === "INSERT") {
-                                setTask((prevState) => ({
+                                setState((prevState) => ({
                                     ...prevState,
                                     deliverables: {
                                         ...prevState.deliverables,
@@ -173,7 +173,7 @@ function TaskDialogCompact(props) {
                                     },
                                 }));
                             } else if (observeResult.opType === "UPDATE") {
-                                setTask((prevState) => ({
+                                setState((prevState) => ({
                                     ...prevState,
                                     deliverables: {
                                         ...prevState.deliverables,
@@ -187,7 +187,7 @@ function TaskDialogCompact(props) {
                                 }));
                             }
                             if (observeResult.opType === "DELETE") {
-                                setTask((prevState) => ({
+                                setState((prevState) => ({
                                     ...prevState,
                                     deliverables: _.omit(
                                         prevState.deliverables,
@@ -235,7 +235,7 @@ function TaskDialogCompact(props) {
         const assignees = (await DataStore.query(models.TaskAssignee)).filter(
             (a) => a.task.id === taskUUID
         );
-        setTask((prevState) => ({
+        setState((prevState) => ({
             ...prevState,
             assignees,
         }));
@@ -250,7 +250,7 @@ function TaskDialogCompact(props) {
                 })
             );
             taskRef.current = { ...taskRef.current, timeOfCall: value };
-            setTask((prevState) => ({
+            setState((prevState) => ({
                 ...prevState,
                 timeOfCall: value,
             }));
@@ -275,7 +275,7 @@ function TaskDialogCompact(props) {
                 })
             );
             taskRef.current = { ...taskRef.current, [key]: value };
-            setTask((prevState) => ({
+            setState((prevState) => ({
                 ...prevState,
                 status,
                 [key]: value,
@@ -352,7 +352,7 @@ function TaskDialogCompact(props) {
             } catch (e) {
                 console.log("dumb error");
                 console.log(e);
-                setTask((prevState) => ({
+                setState((prevState) => ({
                     ...prevState,
                     dropOffLocation: newLocation,
                 }));
@@ -394,7 +394,7 @@ function TaskDialogCompact(props) {
             } catch (e) {
                 console.log("dumb error");
                 console.log(e);
-                setTask((prevState) => ({
+                setState((prevState) => ({
                     ...prevState,
                     pickUpLocation: newLocation,
                 }));
@@ -414,7 +414,7 @@ function TaskDialogCompact(props) {
         } catch (e) {
             console.error("dumb error");
             console.error(e);
-            setTask((prevState) => ({
+            setState((prevState) => ({
                 ...prevState,
                 pickUpLocation: location,
             }));
@@ -433,7 +433,7 @@ function TaskDialogCompact(props) {
             } catch (e) {
                 console.error("dumb error");
                 console.error(e);
-                setTask((prevState) => ({
+                setState((prevState) => ({
                     ...prevState,
                     pickUpLocation: null,
                 }));
@@ -454,7 +454,7 @@ function TaskDialogCompact(props) {
         } catch (e) {
             console.error("dumb error");
             console.error(e);
-            setTask((prevState) => ({
+            setState((prevState) => ({
                 ...prevState,
                 dropOffLocation: location,
             }));
@@ -495,7 +495,7 @@ function TaskDialogCompact(props) {
         } catch (e) {
             console.error("dumb error");
             console.error(e);
-            setTask((prevState) => ({
+            setState((prevState) => ({
                 ...prevState,
                 dropOffLocation: null,
             }));
@@ -615,7 +615,7 @@ function TaskDialogCompact(props) {
         }
 
         // update local state, but find data from prevState to fill contactResult or locationResult if they are undefined
-        setTask((prevState) => {
+        setState((prevState) => {
             if (!contactResult)
                 contactResult = prevState[key] ? prevState[key].contact : null;
             if (!locationResult) locationResult = prevState[key];
@@ -667,12 +667,12 @@ function TaskDialogCompact(props) {
     }
 
     const statusBar =
-        !task || notFound ? (
+        !state || notFound ? (
             <Button onClick={props.onClose}>Close</Button>
         ) : (
             <StatusBar
                 handleClose={props.onClose}
-                status={task.status}
+                status={state.status}
                 taskUUID={taskUUID}
             />
         );
@@ -700,7 +700,7 @@ function TaskDialogCompact(props) {
                 <div className={classes.overview}>
                     {statusBar}
                     <TaskOverview
-                        task={task}
+                        task={state}
                         taskUUID={taskUUID}
                         onSelectAssignee={addAssignee}
                         onSelectPriority={selectPriority}
