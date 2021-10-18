@@ -35,18 +35,6 @@ function* getWhoami() {
         );
         if (existingUser.length === 0) {
             let userResult = fakeUser;
-            if (process.env.REACT_APP_DEMO_MODE === "true") {
-                userResult = {
-                    ...fakeUser,
-                    name: "Demo User",
-                    displayName: "Demo User",
-                    roles: [
-                        userRoles.user,
-                        userRoles.coordinator,
-                        userRoles.user,
-                    ],
-                };
-            }
             const userModel = yield new models.User(userResult);
             const newFakeUser = yield call(
                 [DataStore, DataStore.save],

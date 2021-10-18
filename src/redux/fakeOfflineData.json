@@ -1,6 +1,25 @@
 {
     "users": [
         {
+            "username": "offline",
+            "displayName": "Offline User",
+            "roles": ["RIDER", "COORDINATOR", "ADMIN"],
+            "name": "Offline User",
+            "dateOfBirth": null,
+            "address": {
+                "line1": "123 Fake Street",
+                "line2": "",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "EEE AAA",
+                "what3words": "some.what.words"
+            },
+            "profilePictureURL": null,
+            "profilePictureThumbnailURL": null,
+            "active": 1
+        },
+        {
             "username": "josieposie",
             "name": "Josie",
             "displayName": "Josie Whittle",
