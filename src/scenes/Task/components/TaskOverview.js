@@ -11,6 +11,7 @@ import makeStyles from "@mui/styles/makeStyles";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
     dialogContent: {
@@ -69,14 +70,25 @@ function TaskOverview(props) {
                 justifyContent={"flex-start"}
             >
                 <Grid className={classes.item} item>
-                    <TaskDetailsPanel
-                        onSelectPriority={props.onSelectPriority}
-                        onChangeTimeOfCall={props.onChangeTimeOfCall}
-                        onChangeRequesterContact={
-                            props.onChangeRequesterContact
-                        }
-                        task={task}
-                    />
+                    <Stack direction={"column"} spacing={isSm ? 1 : 3}>
+                        <TaskDetailsPanel
+                            onSelectPriority={props.onSelectPriority}
+                            onChangeTimeOfCall={props.onChangeTimeOfCall}
+                            onChangeRequesterContact={
+                                props.onChangeRequesterContact
+                            }
+                            task={task}
+                        />
+                        <TaskActions
+                            onChangeTimePickedUp={props.onChangeTimePickedUp}
+                            onChangeTimeCancelled={props.onChangeTimeCancelled}
+                            onChangeTimeDroppedOff={
+                                props.onChangeTimeDroppedOff
+                            }
+                            onChangeTimeRejected={props.onChangeTimeRejected}
+                            task={props.task}
+                        />
+                    </Stack>
                 </Grid>
                 <Grid className={classes.item} item>
                     <Grid container spacing={1} direction={"column"}>
@@ -130,15 +142,6 @@ function TaskOverview(props) {
                 <Grid className={classes.item} item>
                     <TaskAssignmentsPanel
                         onSelect={props.onSelectAssignee}
-                        task={props.task}
-                    />
-                </Grid>
-                <Grid className={classes.item} item>
-                    <TaskActions
-                        onChangeTimePickedUp={props.onChangeTimePickedUp}
-                        onChangeTimeCancelled={props.onChangeTimeCancelled}
-                        onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
-                        onChangeTimeRejected={props.onChangeTimeRejected}
                         task={props.task}
                     />
                 </Grid>
