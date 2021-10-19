@@ -1,5 +1,5 @@
 import { Button, Grid, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
@@ -98,10 +98,10 @@ function AdminAddDeliverableType() {
                                     label={fields[key]}
                                     id={key}
                                     onChange={(e) => {
-                                        setState({
-                                            ...state,
+                                        setState((prevState) => ({
+                                            ...prevState,
                                             [key]: e.target.value,
-                                        });
+                                        }));
                                     }}
                                 />
                             </Grid>

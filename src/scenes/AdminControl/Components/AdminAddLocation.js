@@ -1,6 +1,6 @@
 import { DataStore } from "@aws-amplify/datastore";
 import { Button, Grid, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
@@ -139,10 +139,10 @@ function AdminAddLocation() {
                                     label={fields[key]}
                                     id={key}
                                     onChange={(e) => {
-                                        setState({
-                                            ...state,
+                                        setState((prevState) => ({
+                                            ...prevState,
                                             [key]: e.target.value,
-                                        });
+                                        }));
                                     }}
                                 />
                             </Grid>
@@ -157,13 +157,13 @@ function AdminAddLocation() {
                                     label={contactFields[key]}
                                     id={key}
                                     onChange={(e) => {
-                                        setState({
-                                            ...state,
+                                        setState((prevState) => ({
+                                            ...prevState,
                                             contact: {
                                                 ...state.contact,
                                                 [key]: e.target.value,
                                             },
-                                        });
+                                        }));
                                     }}
                                 />
                             </Grid>

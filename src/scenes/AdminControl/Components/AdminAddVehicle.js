@@ -1,6 +1,6 @@
-import { Button, Grid, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
-import DatePicker from '@mui/lab/DatePicker';
+import { Button, Grid, TextField, Typography } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import DatePicker from "@mui/lab/DatePicker";
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
@@ -30,14 +30,16 @@ const useStyles = makeStyles({
         width: "100%",
         maxWidth: 460,
     },
-    message: {
-        height: 80,
-    },
 });
+
+const fields = {
+    name: "Name",
+    model: "Model",
+    manufacturer: "Manufacturer",
+};
 
 function AdminAddVehicle() {
     const [state, setState] = useState(initialVehicleState);
-    const [message, setMessage] = useState("");
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
     const [isPosting, setIsPosting] = useState(false);
@@ -106,65 +108,49 @@ function AdminAddVehicle() {
                             Add a new vehicle
                         </Typography>
                     </Grid>
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            value={state.name}
-                            fullWidth
-                            label={"Name"}
-                            id={"name"}
-                            onChange={(e) => {
-                                setState({ ...state, name: e.target.value });
-                            }}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            value={state.manufacturer}
-                            fullWidth
-                            label={"Manufacturer"}
-                            id={"manufacturer"}
-                            onChange={(e) => {
-                                setState({
-                                    ...state,
-                                    manufacturer: e.target.value,
-                                });
-                            }}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            value={state.model}
-                            fullWidth
-                            label={"Model"}
-                            id={"model"}
-                            onChange={(e) => {
-                                setState({
-                                    ...state,
-                                    model: e.target.value,
-                                });
-                            }}
-                        />
-                    </Grid>
+
+                    {Object.keys(fields).map((key) => {
+                        return (
+                            <Grid key={key} item>
+                                <TextFieldUncontrolled
+                                    value={state[key]}
+                                    fullWidth
+                                    label={fields[key]}
+                                    id={key}
+                                    onChange={(e) => {
+                                        setState((prevState) => ({
+                                            ...prevState,
+                                            [key]: e.target.value,
+                                        }));
+                                    }}
+                                />
+                            </Grid>
+                        );
+                    })}
                     <Grid item>
                         <DatePicker
+                            inputFormat={"dd/mm/yyyy"}
+                            renderInput={(props) => <TextField {...props} />}
                             label={"Date of registration"}
                             onChange={(value) => {
-                                setState({
-                                    ...state,
+                                setState((prevState) => ({
+                                    ...prevState,
                                     dateOfRegistration: value,
-                                });
+                                }));
                             }}
                             value={state.dateOfRegistration}
                         />
                     </Grid>
                     <Grid item>
                         <DatePicker
+                            inputFormat={"dd/mm/yyyy"}
+                            renderInput={(props) => <TextField {...props} />}
                             label={"Date of manufacture"}
                             onChange={(value) => {
-                                setState({
-                                    ...state,
+                                setState((prevState) => ({
+                                    ...prevState,
                                     dateOfManufacture: value,
-                                });
+                                }));
                             }}
                             value={state.dateOfManufacture}
                         />
@@ -176,9 +162,6 @@ function AdminAddVehicle() {
                         >
                             Add vehicle
                         </Button>
-                    </Grid>
-                    <Grid className={classes.message} item>
-                        <Typography>{message}</Typography>
                     </Grid>
                 </Grid>
             </PaddedPaper>

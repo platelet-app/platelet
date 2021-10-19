@@ -9,8 +9,7 @@ import { showHide } from "../../../styles/common";
 import { encodeUUID, taskStatusHumanReadable } from "../../../utilities";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
-import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
+import makeStyles from "@mui/styles/makeStyles";
 import { useSelector } from "react-redux";
 import IconButton from "@mui/material/IconButton";
 import clsx from "clsx";
@@ -72,7 +71,7 @@ function StatusBar(props) {
     const classes = dialogComponent(props)();
     const { show, hide } = showHide();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down('md'));
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const task = useSelector((state) => state.task.task);
     const roleView = useSelector((state) => state.roleView);
     const statusHumanReadable = taskStatusHumanReadable(props.status);

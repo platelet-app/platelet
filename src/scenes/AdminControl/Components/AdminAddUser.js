@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
 import { Grid, Button, TextField, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import {
@@ -86,13 +86,18 @@ function AdminAddUser() {
                 );
             } else {
                 // Only add the user to DataStore if we're working offline, otherwise get it from amplify once user is confirmed
+                const newContact = await DataStore.save(
+                    new models.AddressAndContactDetails({
+                        emailAddress: state.attributes.email,
+                    })
+                );
                 const newUser = await DataStore.save(
                     new models.User({
                         name: state.attributes.name,
                         displayName: state.attributes.name,
                         active: 1,
                         username: state.username,
-                        emailAddress: state.attributes.email,
+                        userContactId: newContact.id,
                         _version: 1,
                         _lastUpdatedAt: new Date().getTime().toString(),
                     })
@@ -140,10 +145,10 @@ function AdminAddUser() {
                             label={"Username"}
                             id={"username"}
                             onChange={(e) => {
-                                setState({
-                                    ...state,
+                                setState((prevState) => ({
+                                    ...prevState,
                                     username: e.target.value,
-                                });
+                                }));
                             }}
                         />
                     </Grid>
@@ -153,16 +158,16 @@ function AdminAddUser() {
                             label={"Email address"}
                             id={"email"}
                             onChange={(e) =>
-                                setState({
-                                    ...state,
+                                setState((prevState) => ({
+                                    ...prevState,
                                     username: usernameMode
-                                        ? state.username
+                                        ? prevState.username
                                         : e.target.value,
                                     attributes: {
-                                        ...state.attributes,
+                                        ...prevState.attributes,
                                         email: e.target.value,
                                     },
-                                })
+                                }))
                             }
                             value={state.attributes.email}
                         />
@@ -173,13 +178,13 @@ function AdminAddUser() {
                             label={"Name"}
                             id={"name"}
                             onChange={(e) =>
-                                setState({
-                                    ...state,
+                                setState((prevState) => ({
+                                    ...prevState,
                                     attributes: {
-                                        ...state.attributes,
+                                        ...prevState.attributes,
                                         name: e.target.value,
                                     },
-                                })
+                                }))
                             }
                             value={state.attributes.name}
                         />
@@ -195,10 +200,10 @@ function AdminAddUser() {
                             id={"password"}
                             autoComplete="new-password"
                             onChange={(e) => {
-                                setState({
-                                    ...state,
+                                setState((prevState) => ({
+                                    ...prevState,
                                     password: e.target.value,
-                                });
+                                }));
                             }}
                         />
                     </Grid>
@@ -220,10 +225,10 @@ function AdminAddUser() {
                             fullWidth
                             autoComplete="new-password"
                             onChange={(e) => {
-                                setState({
-                                    ...state,
+                                setState((prevState) => ({
+                                    ...prevState,
                                     passwordCheck: e.target.value,
-                                });
+                                }));
                             }}
                         />
                     </Grid>
