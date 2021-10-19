@@ -217,6 +217,7 @@ function TasksGrid(props) {
                                 classes={classes}
                                 onAddTaskClick={props.onAddTaskClick}
                                 onAddRelayClick={addRelay}
+                                deleteDisabled
                                 taskKey={taskKey}
                                 tasks={props.tasks[taskKey]}
                                 showTasks={filteredTasksUUIDs}
