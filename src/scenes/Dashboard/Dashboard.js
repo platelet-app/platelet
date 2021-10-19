@@ -34,6 +34,7 @@ const initialTasksState = {
     tasksCancelled: {},
 };
 function findTask(tasks, taskId) {
+    if (!tasks || !taskId) return { task: undefined, key: undefined };
     for (const taskKey of Object.keys(initialTasksState)) {
         if (tasks[taskKey][taskId])
             return { task: tasks[taskKey][taskId], key: taskKey };
@@ -268,6 +269,29 @@ function Dashboard(props) {
 
     const dialog = props.match.params.task_uuid_b62 ? (
         <TaskDialogCompact
+            locationWorkaround={(location, locationKey, taskId) => {
+                // This is here because of the DataStore bug that prevents observe working
+                // Updates the dashboard with location details so that it shows on the card
+                // https://github.com/aws-amplify/amplify-js/issues/9034
+                const { task, key } = findTask(tasks, taskId);
+                let idKey;
+                if (locationKey === "pickUpLocation") {
+                    idKey = "pickUpLocationId";
+                } else if (locationKey === "dropOffLocation") {
+                    idKey = "dropOffLocationId";
+                }
+                if (task) {
+                    const newTask = {
+                        ...task,
+                        [locationKey]: location,
+                        [idKey]: location ? location.id : null,
+                    };
+                    setTasks((prevState) => ({
+                        ...prevState,
+                        [key]: { ...prevState[key], [newTask.id]: newTask },
+                    }));
+                }
+            }}
             onClose={handleDialogClose}
             location={props.location}
             taskId={decodeUUID(props.match.params.task_uuid_b62)}
@@ -289,7 +313,6 @@ function Dashboard(props) {
                             <TasksGrid
                                 tasks={tasks}
                                 onAddTaskClick={addTask}
-                                fullScreenModal={mobileView}
                                 modalView={"edit"}
                                 hideRelayIcons={roleView === "rider"}
                                 hideAddButton={!postPermission}

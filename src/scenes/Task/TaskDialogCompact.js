@@ -382,7 +382,13 @@ function TaskDialogCompact(props) {
                 setState((prevState) => ({
                     ...prevState,
                     dropOffLocation: newLocation,
+                    dropOffLocationId: newLocation.id,
                 }));
+                props.locationWorkaround(
+                    newLocation,
+                    "dropOffLocation",
+                    state.id
+                );
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -428,6 +434,11 @@ function TaskDialogCompact(props) {
                     ...prevState,
                     pickUpLocation: newLocation,
                 }));
+                props.locationWorkaround(
+                    newLocation,
+                    "pickUpLocation",
+                    state.id
+                );
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -452,6 +463,7 @@ function TaskDialogCompact(props) {
                 ...prevState,
                 pickUpLocation: location,
             }));
+            props.locationWorkaround(location, "pickUpLocation", state.id);
         }
     }
 
@@ -472,6 +484,7 @@ function TaskDialogCompact(props) {
                     ...prevState,
                     pickUpLocation: null,
                 }));
+                props.locationWorkaround(null, "pickUpLocation", state.id);
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -496,6 +509,7 @@ function TaskDialogCompact(props) {
                     ...prevState,
                     dropOffLocation: location,
                 }));
+                props.locationWorkaround(location, "dropOffLocation", state.id);
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -544,6 +558,7 @@ function TaskDialogCompact(props) {
                     ...prevState,
                     dropOffLocation: null,
                 }));
+                props.locationWorkaround(null, "dropOffLocation", state.id);
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -679,6 +694,7 @@ function TaskDialogCompact(props) {
                     },
                 };
             });
+            props.locationWorkaround(locationResult, [key], state.id);
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
