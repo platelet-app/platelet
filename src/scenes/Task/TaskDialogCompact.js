@@ -9,6 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import NotFound from "../../ErrorComponents/NotFound";
+import GetError from "../../ErrorComponents/GetError";
 import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
@@ -49,6 +50,8 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
+
+const errorMessage = "Sorry, an error occurred";
 
 const DialogWrapper = (props) => {
     const { handleClose } = props;
@@ -114,6 +117,7 @@ function TaskDialogCompact(props) {
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
     const [isFetching, setIsFetching] = useState(false);
+    const [errorState, setErrorState] = useState(null);
     const [state, setState] = useState(initialState);
     // taskDeliverablesRef exists to keep track of which deliverables
     // have been added or removed without resending data to DeliverableGridSelect props by updating state
@@ -203,6 +207,7 @@ function TaskDialogCompact(props) {
                 setIsFetching(false);
             } catch (error) {
                 setIsFetching(false);
+                setErrorState(error);
                 console.error("Request failed", error);
             }
         }
@@ -213,37 +218,43 @@ function TaskDialogCompact(props) {
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
 
     async function addAssignee(user, role) {
-        const result = await DataStore.save(
-            new models.TaskAssignee({
-                assigneeId: user.id,
-                taskId: taskUUID,
-                role,
-            })
-        );
-        if (role === userRoles.rider) {
-            const taskResult = await DataStore.query(models.Task, taskUUID);
-            const status = determineTaskStatus({
-                ...taskResult,
-                assignees: [result],
-            });
-            await DataStore.save(
-                models.Task.copyOf(taskResult, (updated) => {
-                    updated.status = status;
+        try {
+            const result = await DataStore.save(
+                new models.TaskAssignee({
+                    assigneeId: user.id,
+                    taskId: taskUUID,
+                    role,
                 })
             );
+            if (role === userRoles.rider) {
+                const taskResult = await DataStore.query(models.Task, taskUUID);
+                if (!taskResult) throw new Error("Task doesn't exist");
+                const status = determineTaskStatus({
+                    ...taskResult,
+                    assignees: [result],
+                });
+                await DataStore.save(
+                    models.Task.copyOf(taskResult, (updated) => {
+                        updated.status = status;
+                    })
+                );
+            }
+            const assignees = (
+                await DataStore.query(models.TaskAssignee)
+            ).filter((a) => a.task.id === taskUUID);
+            setState((prevState) => ({
+                ...prevState,
+                assignees,
+            }));
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
-        const assignees = (await DataStore.query(models.TaskAssignee)).filter(
-            (a) => a.task.id === taskUUID
-        );
-        setState((prevState) => ({
-            ...prevState,
-            assignees,
-        }));
     }
 
     async function setTimeOfCall(value) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result) {
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
                     updated.timeOfCall = value;
@@ -254,12 +265,15 @@ function TaskDialogCompact(props) {
                 ...prevState,
                 timeOfCall: value,
             }));
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function setTimeWithKey(value, key) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result) {
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
             const assignees = (
                 await DataStore.query(models.TaskAssignee)
             ).filter((a) => a.task.id === taskUUID);
@@ -280,58 +294,71 @@ function TaskDialogCompact(props) {
                 status,
                 [key]: value,
             }));
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function selectPriority(priority) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result) {
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
                     updated.priority = priority;
                 })
             );
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function updateRequesterContact(requesterValue) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result && result.requesterContact) {
-            await DataStore.save(
-                models.AddressAndContactDetails.copyOf(
-                    result.requesterContact,
-                    (updated) => {
-                        for (const [key, value] of Object.entries(
-                            requesterValue
-                        )) {
-                            updated[key] = value;
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
+            if (!result.requesterContact)
+                throw new Error("Task doesn't have a requester contact");
+            if (result && result.requesterContact) {
+                await DataStore.save(
+                    models.AddressAndContactDetails.copyOf(
+                        result.requesterContact,
+                        (updated) => {
+                            for (const [key, value] of Object.entries(
+                                requesterValue
+                            )) {
+                                updated[key] = value;
+                            }
                         }
-                    }
-                )
-            );
+                    )
+                );
+            }
+            taskRef.current = {
+                ...taskRef.current,
+                requesterContact: {
+                    ...taskRef.current.requesterContact,
+                    ...requesterValue,
+                },
+            };
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
-        taskRef.current = {
-            ...taskRef.current,
-            requesterContact: {
-                ...taskRef.current.requesterContact,
-                ...requesterValue,
-            },
-        };
     }
     async function editDropOffPreset(currentState) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        const {
-            createdAt,
-            updatedAt,
-            id,
-            name,
-            contact,
-            _version,
-            _lastChangedAt,
-            _deleted,
-            ...rest
-        } = currentState;
-        if (result && rest) {
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
+            const {
+                createdAt,
+                updatedAt,
+                id,
+                name,
+                contact,
+                _version,
+                _lastChangedAt,
+                _deleted,
+                ...rest
+            } = currentState;
             const newContact = await DataStore.save(
                 new models.AddressAndContactDetails(contact)
             );
@@ -357,23 +384,26 @@ function TaskDialogCompact(props) {
                     dropOffLocation: newLocation,
                 }));
             }
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function editPickUpPreset(currentState) {
-        const result = await DataStore.query(models.Task, taskUUID);
-        const {
-            createdAt,
-            updatedAt,
-            id,
-            name,
-            contact,
-            _version,
-            _lastChangedAt,
-            _deleted,
-            ...rest
-        } = currentState;
-        if (result && rest) {
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
+            const {
+                createdAt,
+                updatedAt,
+                id,
+                name,
+                contact,
+                _version,
+                _lastChangedAt,
+                _deleted,
+                ...rest
+            } = currentState;
             const newContact = await DataStore.save(
                 new models.AddressAndContactDetails(contact)
             );
@@ -399,11 +429,15 @@ function TaskDialogCompact(props) {
                     pickUpLocation: newLocation,
                 }));
             }
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
     async function selectPickUpPreset(location) {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
+            if (!location) throw new Error("Location was not provided");
             if (result && location) {
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
@@ -422,8 +456,9 @@ function TaskDialogCompact(props) {
     }
 
     async function clearPickUpLocation() {
-        const result = await DataStore.query(models.Task, taskUUID);
-        if (result) {
+        try {
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
             try {
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
@@ -438,26 +473,32 @@ function TaskDialogCompact(props) {
                     pickUpLocation: null,
                 }));
             }
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function selectDropOffPreset(location) {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
-            if (result && location) {
+            if (!result) throw new Error("Task doesn't exist");
+            if (!location) throw new Error("Location was not provided");
+            try {
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
                         updated.dropOffLocationId = location.id;
                     })
                 );
+            } catch (e) {
+                console.error("dumb error");
+                console.error(e);
+                setState((prevState) => ({
+                    ...prevState,
+                    dropOffLocation: location,
+                }));
             }
-        } catch (e) {
-            console.error("dumb error");
-            console.error(e);
-            setState((prevState) => ({
-                ...prevState,
-                dropOffLocation: location,
-            }));
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
@@ -467,135 +508,145 @@ function TaskDialogCompact(props) {
         const existing = Object.values(taskDeliverablesRef.current).find(
             (d) => d.deliverableTypeDeliverableTypeId === deliverableTypeId
         );
-        if (existing) {
-            const existingDeliverable = await DataStore.query(
-                models.Deliverable,
-                existing.id
-            );
-            if (existingDeliverable)
-                await DataStore.delete(existingDeliverable);
-            // remove it from the tracking reference
-            taskDeliverablesRef.current = _.omit(
-                taskDeliverablesRef.current,
-                existing.id
-            );
+        try {
+            if (existing) {
+                const existingDeliverable = await DataStore.query(
+                    models.Deliverable,
+                    existing.id
+                );
+                if (existingDeliverable)
+                    await DataStore.delete(existingDeliverable);
+                // remove it from the tracking reference
+                taskDeliverablesRef.current = _.omit(
+                    taskDeliverablesRef.current,
+                    existing.id
+                );
+            }
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function clearDropOffLocation() {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
-            if (result) {
+            if (!result) throw new Error("Task doesn't exist");
+            try {
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
                         updated.dropOffLocationId = null;
                     })
                 );
+            } catch (e) {
+                console.error("dumb error");
+                console.error(e);
+                setState((prevState) => ({
+                    ...prevState,
+                    dropOffLocation: null,
+                }));
             }
-        } catch (e) {
-            console.error("dumb error");
-            console.error(e);
-            setState((prevState) => ({
-                ...prevState,
-                dropOffLocation: null,
-            }));
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function changeLocationDetails(locationId, values, key) {
         // display error if some location that doesn't exist is attempted to be created
         if (!["dropOffLocation", "pickUpLocation"].includes(key)) {
-            dispatch(
-                displayErrorNotification(
-                    "An error has occurred while updating the location"
-                )
-            );
+            dispatch(displayErrorNotification(errorMessage));
             return;
         }
-
-        //separate any contact details with location details
-        const { contact, ...rest } = values;
-        let locationResult;
-        let contactResult;
-        // if we are updating an existing location
-        if (locationId) {
-            const existingLocation = await DataStore.query(
-                models.Location,
-                locationId
-            );
-            if (!!existingLocation.listed) {
-                // can't edit a location if it's from the directory
-                dispatch(
-                    displayWarningNotification(
-                        "You can't edit listed locations in this way."
-                    )
+        try {
+            //separate any contact details with location details
+            const { contact, ...rest } = values;
+            let locationResult;
+            let contactResult;
+            // if we are updating an existing location
+            if (locationId) {
+                const existingLocation = await DataStore.query(
+                    models.Location,
+                    locationId
                 );
-                return;
-            }
-            // if rest is empty, only contact data was sent
-            if (!_.isEmpty(rest) && existingLocation) {
-                // update the location and get the updated version back to locationResult
-                locationResult = await DataStore.save(
-                    models.Location.copyOf(existingLocation, (updated) => {
-                        for (const [key, v] of Object.entries(rest)) {
-                            updated[key] = v;
-                        }
-                    })
-                );
-            }
-            // if contact is undefined, no contact data was sent
-            if (contact && existingLocation) {
-                // get the existing contact model
-                const existingContact = await DataStore.query(
-                    models.AddressAndContactDetails,
-                    existingLocation.contact.id
-                );
-                // update the existing contact model and save the final version to contactResult
-                contactResult = await DataStore.save(
-                    models.AddressAndContactDetails.copyOf(
-                        existingContact,
-                        (updated) => {
-                            for (const [key, v] of Object.entries(contact)) {
+                if (!existingLocation)
+                    throw new Error("Location doesn't exist");
+                if (!!existingLocation.listed) {
+                    // can't edit a location if it's from the directory
+                    dispatch(
+                        displayWarningNotification(
+                            "You can't edit listed locations in this way."
+                        )
+                    );
+                    return;
+                }
+                // if rest is empty, only contact data was sent
+                if (!_.isEmpty(rest) && existingLocation) {
+                    // update the location and get the updated version back to locationResult
+                    locationResult = await DataStore.save(
+                        models.Location.copyOf(existingLocation, (updated) => {
+                            for (const [key, v] of Object.entries(rest)) {
                                 updated[key] = v;
                             }
+                        })
+                    );
+                }
+                // if contact is undefined, no contact data was sent
+                if (contact && existingLocation) {
+                    // get the existing contact model
+                    const existingContact = await DataStore.query(
+                        models.AddressAndContactDetails,
+                        existingLocation.contact.id
+                    );
+                    // update the existing contact model and save the final version to contactResult
+                    contactResult = await DataStore.save(
+                        models.AddressAndContactDetails.copyOf(
+                            existingContact,
+                            (updated) => {
+                                for (const [key, v] of Object.entries(
+                                    contact
+                                )) {
+                                    updated[key] = v;
+                                }
+                            }
+                        )
+                    );
+                }
+            } else {
+                // if no location exists yet
+                // make sure we aren't just sending empty values
+                const result = {};
+                if (!_.isEmpty(rest)) {
+                    for (const [key, value] of Object.entries(rest)) {
+                        if (!!value) {
+                            result[key] = value;
                         }
-                    )
-                );
-            }
-        } else {
-            // if no location exists yet
-            // make sure we aren't just sending empty values
-            const result = {};
-            if (!_.isEmpty(rest)) {
-                for (const [key, value] of Object.entries(rest)) {
-                    if (!!value) {
-                        result[key] = value;
                     }
                 }
-            }
-            if (contact) {
-                for (const [key, value] of Object.entries(contact)) {
-                    if (!!value) {
-                        result[key] = value;
+                if (contact) {
+                    for (const [key, value] of Object.entries(contact)) {
+                        if (!!value) {
+                            result[key] = value;
+                        }
                     }
                 }
-            }
-            if (_.isEmpty(result)) return;
+                if (_.isEmpty(result)) return;
 
-            // create a contact model
-            contactResult = await DataStore.save(
-                new models.AddressAndContactDetails(contact || {})
-            );
-            // create a new location and link it to the new contact model
-            locationResult = await DataStore.save(
-                new models.Location({
-                    ...rest,
-                    locationContactId: contactResult.id,
-                })
-            );
-            // find the existing task
-            const existingTask = await DataStore.query(models.Task, taskUUID);
-            if (existingTask) {
+                // create a contact model
+                contactResult = await DataStore.save(
+                    new models.AddressAndContactDetails(contact || {})
+                );
+                // create a new location and link it to the new contact model
+                locationResult = await DataStore.save(
+                    new models.Location({
+                        ...rest,
+                        locationContactId: contactResult.id,
+                    })
+                );
+                // find the existing task
+                const existingTask = await DataStore.query(
+                    models.Task,
+                    taskUUID
+                );
+                if (!existingTask) throw new Error("Task doesn't exist");
                 // find the id that we want to link to the new location
                 const idName =
                     key === "dropOffLocation"
@@ -612,57 +663,65 @@ function TaskDialogCompact(props) {
                     console.error(e);
                 }
             }
-        }
 
-        // update local state, but find data from prevState to fill contactResult or locationResult if they are undefined
-        setState((prevState) => {
-            if (!contactResult)
-                contactResult = prevState[key] ? prevState[key].contact : null;
-            if (!locationResult) locationResult = prevState[key];
-            return {
-                ...prevState,
-                [key]: {
-                    ...locationResult,
-                    contact: contactResult,
-                },
-            };
-        });
+            // update local state, but find data from prevState to fill contactResult or locationResult if they are undefined
+            setState((prevState) => {
+                if (!contactResult)
+                    contactResult = prevState[key]
+                        ? prevState[key].contact
+                        : null;
+                if (!locationResult) locationResult = prevState[key];
+                return {
+                    ...prevState,
+                    [key]: {
+                        ...locationResult,
+                        contact: contactResult,
+                    },
+                };
+            });
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
+        }
     }
 
     async function updateDeliverables(value) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
-        const existing = Object.values(taskDeliverablesRef.current).find(
-            (d) => d.deliverableTypeDeliverableTypeId === value.id
-        );
-        if (existing) {
-            const existingDeliverable = await DataStore.query(
-                models.Deliverable,
-                existing.id
+        try {
+            const existing = Object.values(taskDeliverablesRef.current).find(
+                (d) => d.deliverableTypeDeliverableTypeId === value.id
             );
-            if (existingDeliverable) {
-                await DataStore.save(
-                    models.Deliverable.copyOf(
-                        existingDeliverable,
-                        (updated) => {
-                            for (const [key, v] of Object.entries(value)) {
-                                updated[key] = v;
-                            }
-                        }
-                    )
+            if (existing) {
+                const existingDeliverable = await DataStore.query(
+                    models.Deliverable,
+                    existing.id
                 );
+                if (existingDeliverable) {
+                    await DataStore.save(
+                        models.Deliverable.copyOf(
+                            existingDeliverable,
+                            (updated) => {
+                                for (const [key, v] of Object.entries(value)) {
+                                    updated[key] = v;
+                                }
+                            }
+                        )
+                    );
+                }
+            } else {
+                const { id, ...rest } = value;
+                const newDeliverable = await DataStore.save(
+                    new models.Deliverable({
+                        taskDeliverablesId: taskUUID,
+                        deliverableTypeDeliverableTypeId: id,
+                        ...rest,
+                    })
+                );
+                // add it to the tracking reference
+                taskDeliverablesRef.current[newDeliverable.id] = newDeliverable;
             }
-        } else {
-            const { id, ...rest } = value;
-            const newDeliverable = await DataStore.save(
-                new models.Deliverable({
-                    taskDeliverablesId: taskUUID,
-                    deliverableTypeDeliverableTypeId: id,
-                    ...rest,
-                })
-            );
-            // add it to the tracking reference
-            taskDeliverablesRef.current[newDeliverable.id] = newDeliverable;
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
@@ -692,6 +751,19 @@ function TaskDialogCompact(props) {
                         Task with UUID {taskUUID} not found.
                     </Typography>
                 </NotFound>
+            </DialogWrapper>
+        );
+    } else if (errorState) {
+        return (
+            <DialogWrapper handleClose={props.onClose}>
+                {statusBar}
+                <GetError>
+                    <Typography>
+                        {errorState && errorState.message
+                            ? errorState.message
+                            : "Unknown"}
+                    </Typography>
+                </GetError>
             </DialogWrapper>
         );
     } else {
