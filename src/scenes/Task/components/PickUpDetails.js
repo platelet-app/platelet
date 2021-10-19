@@ -21,7 +21,11 @@ function PickUpDetails(props) {
                 spacing={1}
             >
                 <Grid item>
-                    <Grid container direction={"row"} justifyContent={"space-between"}>
+                    <Grid
+                        container
+                        direction={"row"}
+                        justifyContent={"space-between"}
+                    >
                         <Grid item>
                             <Typography variant={"h6"}>Collect from</Typography>
                         </Grid>
@@ -43,7 +47,6 @@ function PickUpDetails(props) {
                         onClear={onClearPickUpLocation}
                         location={props.location}
                         displayPresets={true}
-                        label={"Pick up"}
                         showContact={props.showContact}
                     />
                 </Grid>

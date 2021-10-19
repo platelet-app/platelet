@@ -17,7 +17,11 @@ function DropOffDetails(props) {
                 spacing={1}
             >
                 <Grid item>
-                    <Grid container direction={"row"} justifyContent={"space-between"}>
+                    <Grid
+                        container
+                        direction={"row"}
+                        justifyContent={"space-between"}
+                    >
                         <Grid item>
                             <Typography variant={"h6"}>Deliver to</Typography>
                         </Grid>
@@ -39,7 +43,6 @@ function DropOffDetails(props) {
                         onEditPreset={props.onEditPreset}
                         location={props.location}
                         displayPresets={true}
-                        label={"Deliver"}
                         showContact={props.showContact}
                     />
                 </Grid>

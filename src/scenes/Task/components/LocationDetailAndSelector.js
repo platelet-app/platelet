@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import Button from "@mui/material/Button";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import Divider from "@mui/material/Divider";
-import { Tooltip } from "@mui/material";
+import { Box, Stack, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import { showHide, ThemedLink } from "../../../styles/common";
@@ -70,7 +68,6 @@ function LocationDetailAndSelector(props) {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
     const [protectedLocation, setProtectedLocation] = useState(false);
-    const [presetMode, setPresetMode] = useState(false);
     const { show, hide } = showHide();
     const [collapsed, setCollapsed] = useState(true);
 
@@ -104,7 +101,6 @@ function LocationDetailAndSelector(props) {
 
     function onSelectPreset(value) {
         props.onSelectPreset(value);
-        setPresetMode(false);
     }
 
     function onClickEditButton() {
@@ -143,79 +139,54 @@ function LocationDetailAndSelector(props) {
     }
 
     const presetSelect = props.displayPresets ? (
-        <Grid item>
-            <Grid
-                container
-                spacing={1}
-                justifyContent={"space-between"}
-                alignItems={"center"}
+        <Stack
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            direction={"row"}
+        >
+            {!props.location ? (
+                <FavouriteLocationsSelect
+                    label={props.label}
+                    onSelect={onSelectPreset}
+                />
+            ) : (
+                locationTitle
+            )}
+            <Stack
                 direction={"row"}
+                justifyContent={"flex-end"}
+                alignItems={"center"}
             >
-                <Grid item>
-                    {presetMode ? (
-                        <FavouriteLocationsSelect
-                            label={props.label}
-                            onSelect={onSelectPreset}
-                        />
-                    ) : (
-                        locationTitle
-                    )}
-                </Grid>
-                <Grid item>
-                    <Grid
-                        container
-                        direction={"row"}
-                        justifyContent={"flex-end"}
-                        alignItems={"center"}
-                    >
-                        <Grid
-                            className={
-                                props.location && props.location.listed
-                                    ? show
-                                    : hide
-                            }
-                            item
+                <Box
+                    className={
+                        props.location && props.location.listed ? show : hide
+                    }
+                >
+                    <Tooltip title={"Edit"}>
+                        <IconButton
+                            className={classes.button}
+                            edge={"end"}
+                            disabled={props.disabled}
+                            onClick={onClickEditButton}
+                            size="large"
                         >
-                            <Tooltip title={"Edit"}>
-                                <IconButton
-                                    className={classes.button}
-                                    edge={"end"}
-                                    disabled={props.disabled}
-                                    onClick={onClickEditButton}
-                                    size="large">
-                                    <EditIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
-                        <Grid
-                            className={
-                                props.location && !props.disableClear
-                                    ? show
-                                    : hide
-                            }
-                            item
-                        >
-                            <ClearButtonWithConfirmation
-                                label={props.label}
-                                disabled={props.disabled}
-                                onClear={onClickClearButton}
-                            />
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid className={!!!props.location ? show : hide} item>
-                    <Button
-                        onClick={() => {
-                            setPresetMode(!presetMode);
-                        }}
-                        variant={"contained"}
-                        color={"primary"}
-                    >
-                        {presetMode ? "Cancel" : "Search"}
-                    </Button>
-                </Grid>
-            </Grid>
-        </Grid>
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+                <Box
+                    className={
+                        props.location && !props.disableClear ? show : hide
+                    }
+                >
+                    <ClearButtonWithConfirmation
+                        label={props.label}
+                        disabled={props.disabled}
+                        onClear={onClickClearButton}
+                    />
+                </Box>
+            </Stack>
+        </Stack>
     ) : (
         <></>
     );
@@ -223,19 +194,14 @@ function LocationDetailAndSelector(props) {
     const collapsedShowFields = ["ward", "what3words", "postcode", "line1"];
 
     return (
-        <div className={classes.root}>
-            <Grid
-                container
-                spacing={1}
-                className={props.className}
-                direction={"column"}
-            >
+        <Box className={classes.root}>
+            <Stack spacing={1} className={props.className} direction={"column"}>
                 {presetSelect}
-                <Grid item>
+                <Stack direction={"column"}>
                     {Object.entries(addressFields).map(([key, label]) => {
                         if (collapsedShowFields.includes(key) || !collapsed) {
                             return (
-                                <LabelItemPair label={label}>
+                                <LabelItemPair label={collapsed ? label : ""}>
                                     <ClickableTextField
                                         label={label}
                                         disabled={protectedLocation}
@@ -258,8 +224,8 @@ function LocationDetailAndSelector(props) {
                         }
                     })}
 
-                    <div className={classes.separator} />
-                    <div className={props.showContact ? show : hide}>
+                    <Box className={classes.separator} />
+                    <Box className={props.showContact ? show : hide}>
                         {Object.entries(contactFields).map(([key, label]) => {
                             if (!collapsed) {
                                 return (
@@ -287,43 +253,33 @@ function LocationDetailAndSelector(props) {
                                 return <></>;
                             }
                         })}
-                    </div>
-                </Grid>
-                <Grid item>
-                    <Divider />
-                </Grid>
-                <Grid item>
-                    <Grid
-                        container
-                        alignItems={"center"}
-                        justifyContent={"flex-start"}
-                        direction={"row"}
+                    </Box>
+                </Stack>
+                <Divider />
+                <Stack
+                    alignItems={"center"}
+                    justifyContent={"flex-start"}
+                    direction={"row"}
+                >
+                    <IconButton
+                        onClick={() => setCollapsed((prevState) => !prevState)}
+                        size="large"
                     >
-                        <Grid item>
-                            <IconButton
-                                onClick={() =>
-                                    setCollapsed((prevState) => !prevState)
-                                }
-                                size="large">
-                                <ExpandMoreIcon />
-                            </IconButton>
-                        </Grid>
-                        <Grid item>
-                            <Link
-                                href="#"
-                                onClick={(e) => {
-                                    setCollapsed((prevState) => !prevState);
-                                    e.preventDefault();
-                                }}
-                                color="inherit"
-                            >
-                                {collapsed ? "Expand to see more" : "Show less"}
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </div>
+                        <ExpandMoreIcon />
+                    </IconButton>
+                    <Link
+                        href="#"
+                        onClick={(e) => {
+                            setCollapsed((prevState) => !prevState);
+                            e.preventDefault();
+                        }}
+                        color="inherit"
+                    >
+                        {collapsed ? "Expand to see more" : "Show less"}
+                    </Link>
+                </Stack>
+            </Stack>
+        </Box>
     );
 }
 
@@ -341,7 +297,7 @@ LocationDetailAndSelector.propTypes = {
 };
 
 LocationDetailAndSelector.defaultProps = {
-    label: "",
+    label: "Search locations",
     displayPresets: true,
     disableClear: false,
     location: null,

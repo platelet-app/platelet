@@ -28,11 +28,11 @@ function FavouriteLocationsSelect(props) {
     return (
         <Autocomplete
             disablePortal
+            fullWidth
             filterOptions={filterOptions}
             options={availableLocations}
             getOptionLabel={(option) => option.name}
             size={"small"}
-            style={{ width: 230 }}
             renderInput={(params) => (
                 <TextField
                     {...params}
