@@ -4,11 +4,12 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import Grid from "@mui/material/Grid";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
 import TimePicker from "./TimePicker";
 import { Paper } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
+import TaskActions from "./TaskActions";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -57,11 +58,7 @@ function TaskDetailsPanel(props) {
     const [state, setState] = useState({
         reference: null,
         timeOfCall: null,
-        timeCancelled: null,
-        timeDroppedOff: null,
-        timePickedUp: null,
         priority: null,
-        timeRejected: null,
         riderResponsibility: null,
         id: null,
         requesterContact: {
@@ -76,28 +73,6 @@ function TaskDetailsPanel(props) {
     function onChangeTimeOfCall(value) {
         if (value) {
             props.onChangeTimeOfCall(value);
-        }
-    }
-
-    function onChangeTimeCancelled(value) {
-        if (value || value === null) {
-            props.onChangeTimeCancelled(value);
-        }
-    }
-    function onChangeTimePickedUp(value) {
-        if (value || value === null) {
-            props.onChangeTimePickedUp(value);
-        }
-    }
-    function onChangeTimeDroppedOff(value) {
-        if (value || value === null) {
-            props.onChangeTimeDroppedOff(value);
-        }
-    }
-
-    function onChangeTimeRejected(value) {
-        if (value || value === null) {
-            props.onChangeTimeRejected(value);
         }
     }
 
@@ -166,60 +141,6 @@ function TaskDetailsPanel(props) {
                     <LabelItemPair label={"Patch"}>
                         <Typography>{state.patch}</Typography>
                     </LabelItemPair>
-                    <LabelItemPair label={"Assigned rider"}>
-                        <Typography>
-                            {state.assigned_riders_display_string}
-                        </Typography>
-                    </LabelItemPair>
-                </Grid>
-                <Grid item>
-                    <Grid container spacing={1} direction={"column"}>
-                        <Grid item>
-                            <LabelItemPair label={"Time picked up"}>
-                                <TimePicker
-                                    onChange={onChangeTimePickedUp}
-                                    label={"Mark picked up"}
-                                    time={state.timePickedUp}
-                                />
-                            </LabelItemPair>
-                        </Grid>
-                        <Grid item>
-                            <LabelItemPair label={"Time delivered"}>
-                                <TimePicker
-                                    onChange={onChangeTimeDroppedOff}
-                                    disabled={props.disableTimeButton}
-                                    label={"Mark delivered"}
-                                    time={state.timeDroppedOff}
-                                />
-                            </LabelItemPair>
-                        </Grid>
-                        <Grid item>
-                            <LabelItemPair label={"Time cancelled"}>
-                                <TimePicker
-                                    onChange={onChangeTimeCancelled}
-                                    disabled={
-                                        !!state.timeDroppedOff ||
-                                        !!state.timeRejected
-                                    }
-                                    label={"Mark cancelled"}
-                                    time={state.timeCancelled}
-                                />
-                            </LabelItemPair>
-                        </Grid>
-                        <Grid item>
-                            <LabelItemPair label={"Time rejected"}>
-                                <TimePicker
-                                    onChange={onChangeTimeRejected}
-                                    disabled={
-                                        !!state.timeDroppedOff ||
-                                        !!state.timeCancelled
-                                    }
-                                    label={"Mark rejected"}
-                                    time={state.timeRejected}
-                                />
-                            </LabelItemPair>
-                        </Grid>
-                    </Grid>
                 </Grid>
             </Grid>
         </Paper>
@@ -228,15 +149,11 @@ function TaskDetailsPanel(props) {
 
 TaskDetailsPanel.propTypes = {
     task: PropTypes.object,
-    onChangeTimeRejected: PropTypes.func,
-    onChangeTimeCancelled: PropTypes.func,
     onSelectPriority: PropTypes.func,
     onChangeRequesterContact: PropTypes.func,
 };
 
 TaskDetailsPanel.defaultProps = {
-    onChangeTimeRejected: () => {},
-    onChangeTimeCancelled: () => {},
     onSelectPriority: () => {},
     onChangeRequesterContact: () => {},
 };

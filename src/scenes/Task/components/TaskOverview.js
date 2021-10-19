@@ -7,9 +7,10 @@ import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import DeliverableDetails from "./DeliverableDetails";
+import TaskActions from "./TaskActions";
 
 const useStyles = makeStyles((theme) => ({
     dialogContent: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 1800,
         paddingTop: 20,
-        [theme.breakpoints.down('lg')]: {
+        [theme.breakpoints.down("lg")]: {
             padding: 5,
             paddingTop: 5,
         },
@@ -54,7 +55,7 @@ function TaskOverview(props) {
     const { taskUUID, task } = props;
     const classes = useStyles();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Container className={classes.root} maxWidth={true}>
@@ -71,10 +72,6 @@ function TaskOverview(props) {
                     <TaskDetailsPanel
                         onSelectPriority={props.onSelectPriority}
                         onChangeTimeOfCall={props.onChangeTimeOfCall}
-                        onChangeTimePickedUp={props.onChangeTimePickedUp}
-                        onChangeTimeCancelled={props.onChangeTimeCancelled}
-                        onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
-                        onChangeTimeRejected={props.onChangeTimeRejected}
                         onChangeRequesterContact={
                             props.onChangeRequesterContact
                         }
@@ -133,6 +130,15 @@ function TaskOverview(props) {
                 <Grid className={classes.item} item>
                     <TaskAssignmentsPanel
                         onSelect={props.onSelectAssignee}
+                        task={props.task}
+                    />
+                </Grid>
+                <Grid className={classes.item} item>
+                    <TaskActions
+                        onChangeTimePickedUp={props.onChangeTimePickedUp}
+                        onChangeTimeCancelled={props.onChangeTimeCancelled}
+                        onChangeTimeDroppedOff={props.onChangeTimeDroppedOff}
+                        onChangeTimeRejected={props.onChangeTimeRejected}
                         task={props.task}
                     />
                 </Grid>
