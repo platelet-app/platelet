@@ -32,7 +32,7 @@ export default function CommentContextMenu(props) {
             models.Comment,
             props.commentUUID
         );
-        await DataStore.delete(existingComment);
+        if (existingComment) await DataStore.delete(existingComment);
     }
 
     function onUndo() {
@@ -63,7 +63,8 @@ export default function CommentContextMenu(props) {
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}
-                size="large">
+                size="large"
+            >
                 <MoreVertIcon />
             </IconButton>
             <Menu

@@ -11,8 +11,9 @@ import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { commentVisibility } from "../../../apiConsts";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../../redux/Selectors";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 const contextCreateStyles = makeStyles((theme) => {
     return {
@@ -73,6 +74,7 @@ const initialCommentState = {
 function Comment(props) {
     const { comment } = props;
     const whoami = useSelector(getWhoami);
+    const dispatch = useDispatch();
     const [state, setState] = useState(initialCommentState);
     const [oldState, setOldState] = useState(initialCommentState);
     const [editMode, setEditMode] = useState(false);
@@ -130,25 +132,33 @@ function Comment(props) {
                                 setEditMode(false);
                             }}
                             onSave={async () => {
-                                setIsPosting(true);
-                                const existing = await DataStore.query(
-                                    models.Comment,
-                                    state.id
-                                );
-                                await DataStore.save(
-                                    models.Comment.copyOf(
-                                        existing,
-                                        (updated) => {
-                                            updated.body = state.body;
-                                        }
-                                    )
-                                );
-                                setEditMode(false);
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    _version: prevState._version + 1,
-                                }));
-                                setIsPosting(false);
+                                try {
+                                    setIsPosting(true);
+                                    const existing = await DataStore.query(
+                                        models.Comment,
+                                        state.id
+                                    );
+                                    await DataStore.save(
+                                        models.Comment.copyOf(
+                                            existing,
+                                            (updated) => {
+                                                updated.body = state.body;
+                                            }
+                                        )
+                                    );
+                                    setEditMode(false);
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        _version: prevState._version + 1,
+                                    }));
+                                    setIsPosting(false);
+                                } catch (error) {
+                                    dispatch(
+                                        displayErrorNotification(
+                                            "Sorry, an error occured."
+                                        )
+                                    );
+                                }
                             }}
                         />
                     </CommentCardStyled>

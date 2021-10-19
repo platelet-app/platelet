@@ -7,7 +7,7 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import IconButton from "@mui/material/IconButton";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import Button from "@mui/material/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CommentAuthor from "./CommentAuthor";
 import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
 import PropTypes from "prop-types";
@@ -16,6 +16,7 @@ import * as models from "../../../models/index";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
 import { FormControl, Select, MenuItem } from "@mui/material";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 const initialCommentState = {
     body: "",
@@ -43,21 +44,27 @@ function NewCommentCard(props) {
     const [state, setState] = useState(initialCommentState);
     const [isPosting, setIsPosting] = useState(false);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const dispatch = useDispatch();
 
     const classes = commentStyles();
 
     async function addComment() {
         setIsPosting(true);
-        const newComment = await DataStore.save(
-            new models.Comment({
-                ...state,
-                parentId: props.parentUUID,
-                commentAuthorId: props.author.id,
-            })
-        );
-        setState((prevState) => ({ ...prevState, body: "" }));
-        setIsPosting(false);
-        props.onNewComment(newComment);
+        try {
+            const newComment = await DataStore.save(
+                new models.Comment({
+                    ...state,
+                    parentId: props.parentUUID,
+                    commentAuthorId: props.author.id,
+                })
+            );
+            setState((prevState) => ({ ...prevState, body: "" }));
+            setIsPosting(false);
+            props.onNewComment(newComment);
+        } catch (error) {
+            dispatch(displayErrorNotification("Sorry, an error occurred."));
+            setIsPosting(false);
+        }
     }
 
     function clearCommentOnPost() {

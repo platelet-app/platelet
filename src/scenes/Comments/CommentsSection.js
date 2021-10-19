@@ -9,11 +9,14 @@ import * as models from "../../models/index";
 import { convertListDataToObject } from "../../utilities";
 import _ from "lodash";
 import { commentVisibility } from "../../apiConsts";
+import GetError from "../../ErrorComponents/GetError";
+import { Typography } from "@mui/material";
 
 function CommentsSection(props) {
     const [isFetching, setIsFetching] = useState(false);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [comments, setComments] = useState({});
+    const [errorState, setErrorState] = useState(null);
     const whoami = useSelector(getWhoami);
     const commentsRef = useRef({});
     commentsRef.current = comments;
@@ -53,38 +56,47 @@ function CommentsSection(props) {
             setIsFetching(true);
         } else {
             //TODO: see if a more secure way to restrict private comment access
-            const commentsResult = (
-                await DataStore.query(models.Comment, (c) =>
-                    c.parentId("eq", props.parentUUID)
-                )
-            ).filter(
-                (c) =>
-                    c.visibility === commentVisibility.everyone ||
-                    (c.visibility === commentVisibility.me &&
-                        c.author.id === whoami.id)
-            );
-            const commentsObject = convertListDataToObject(commentsResult);
-            setComments(commentsObject);
-            commentsSubscription.current.unsubscribe();
-            commentsSubscription.current = DataStore.observe(
-                models.Comment,
-                (c) => c.parentId("eq", props.parentUUID)
-            ).subscribe(async (newComment) => {
-                const comment = newComment.element;
-                if (newComment.opType === "DELETE") {
-                    removeCommentFromState(comment.id);
-                    return;
-                }
-                if (
-                    !comment.commentAuthorId ||
-                    (comment.commentAuthorId !== whoami.id &&
-                        comment.visibility === commentVisibility.me)
-                ) {
-                    return;
-                } else if (["UPDATE", "INSERT"].includes(newComment.opType)) {
-                    addCommentToState(comment);
-                }
-            });
+            try {
+                const commentsResult = (
+                    await DataStore.query(models.Comment, (c) =>
+                        c.parentId("eq", props.parentUUID)
+                    )
+                ).filter(
+                    (c) =>
+                        c.visibility === commentVisibility.everyone ||
+                        (c.visibility === commentVisibility.me &&
+                            c.author.id === whoami.id)
+                );
+                const commentsObject = convertListDataToObject(commentsResult);
+                setComments(commentsObject);
+                setIsFetching(false);
+                commentsSubscription.current.unsubscribe();
+                commentsSubscription.current = DataStore.observe(
+                    models.Comment,
+                    (c) => c.parentId("eq", props.parentUUID)
+                ).subscribe(async (newComment) => {
+                    const comment = newComment.element;
+                    if (newComment.opType === "DELETE") {
+                        removeCommentFromState(comment.id);
+                        return;
+                    }
+                    if (
+                        !comment.commentAuthorId ||
+                        (comment.commentAuthorId !== whoami.id &&
+                            comment.visibility === commentVisibility.me)
+                    ) {
+                        return;
+                    } else if (
+                        ["UPDATE", "INSERT"].includes(newComment.opType)
+                    ) {
+                        addCommentToState(comment);
+                    }
+                });
+            } catch (error) {
+                setIsFetching(false);
+                setErrorState(error);
+                console.error("Request failed", error);
+            }
         }
     }
     useEffect(() => getComments(), [props.parentUUID, dataStoreReadyStatus]);
@@ -98,6 +110,16 @@ function CommentsSection(props) {
 
     if (isFetching) {
         return <CommentsSkeleton />;
+    } else if (errorState) {
+        return (
+            <GetError>
+                <Typography>
+                    {errorState && errorState.message
+                        ? errorState.message
+                        : "Unknown"}
+                </Typography>
+            </GetError>
+        );
     } else {
         return (
             <CommentsMain
