@@ -53,7 +53,6 @@ function CoordinatorPicker(props) {
                             <CompactUserCard
                                 userUUID={option.id}
                                 displayName={option.displayName}
-                                patch={option.riderResponsibility}
                                 profilePictureURL={
                                     option.profilePictureThumbnailURL
                                 }

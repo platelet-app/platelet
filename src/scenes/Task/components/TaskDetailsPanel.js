@@ -139,7 +139,11 @@ function TaskDetailsPanel(props) {
                         />
                     </div>
                     <LabelItemPair label={"Responsibility"}>
-                        <Typography>{state.riderResponsibility}</Typography>
+                        <Typography>
+                            {state.riderResponsibility
+                                ? state.riderResponsibility.label
+                                : ""}
+                        </Typography>
                     </LabelItemPair>
                 </Grid>
             </Grid>

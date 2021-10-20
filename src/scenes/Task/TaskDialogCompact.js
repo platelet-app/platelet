@@ -233,11 +233,19 @@ function TaskDialogCompact(props) {
                     ...taskResult,
                     assignees: [result],
                 });
-                await DataStore.save(
-                    models.Task.copyOf(taskResult, (updated) => {
-                        updated.status = status;
-                    })
-                );
+                try {
+                    const responsibility = user.riderResponsibility
+                        ? user.riderResponsibility.id
+                        : null;
+                    await DataStore.save(
+                        models.Task.copyOf(taskResult, (updated) => {
+                            updated.status = status;
+                            updated.taskRiderResponsibilityId = responsibility;
+                        })
+                    );
+                } catch (error) {
+                    console.error("DataStore workaround", error);
+                }
             }
             const assignees = (
                 await DataStore.query(models.TaskAssignee)
@@ -247,6 +255,7 @@ function TaskDialogCompact(props) {
                 assignees,
             }));
         } catch (error) {
+            throw error;
             dispatch(displayErrorNotification(errorMessage));
         }
     }

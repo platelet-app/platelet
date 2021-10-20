@@ -80,7 +80,11 @@ function RiderPicker(props) {
                             <CompactUserCard
                                 userUUID={option.id}
                                 displayName={option.displayName}
-                                patch={option.riderResponsibility}
+                                responsibility={
+                                    option.riderResponsibility
+                                        ? option.riderResponsibility.label
+                                        : ""
+                                }
                                 profilePictureURL={
                                     option.profilePictureThumbnailURL
                                 }

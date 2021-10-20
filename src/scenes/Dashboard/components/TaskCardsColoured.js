@@ -192,6 +192,7 @@ TaskCard.propTypes = {
     dropOffAddress: PropTypes.object,
     assignedRiders: PropTypes.arrayOf(PropTypes.object),
     assignedCoordinators: PropTypes.arrayOf(PropTypes.object),
+    riderResponsibility: PropTypes.string,
     timePickedUp: PropTypes.string,
     timeDroppedOff: PropTypes.string,
     assignedCoordinatorsDisplayString: PropTypes.string,
@@ -203,7 +204,7 @@ TaskCard.propTypes = {
 TaskCard.defaultProps = {
     assignedRiders: [],
     assignedCoordinators: [],
-    patch: "",
+    riderResponsibility: "",
     priority: "",
 };
 

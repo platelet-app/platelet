@@ -36,7 +36,7 @@ function CompactUserCard(props) {
                                 <Typography>{props.displayName}</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography>{props.patch}</Typography>
+                                <Typography>{props.responsibility}</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -53,13 +53,13 @@ CompactUserCard.propTypes = {
     userUUID: PropTypes.string,
     displayName: PropTypes.string,
     profilePictureURL: PropTypes.string,
-    patch: PropTypes.string,
+    responsibility: PropTypes.string,
     vehicleName: PropTypes.string,
 };
 
 CompactUserCard.defaultProps = {
     displayName: "Unknown User",
-    patch: "",
+    responsibility: "",
     vehicleName: "",
 };
 
