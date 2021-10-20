@@ -58,6 +58,13 @@ export function* watchInitialWhoamiCompleted() {
 }
 
 async function populateFakeData() {
+    if (fakeData.riderResponsibilities) {
+        for (const value of fakeData.riderResponsibilities) {
+            await DataStore.save(
+                new models.RiderResponsibility({ label: value })
+            );
+        }
+    }
     if (fakeData.users) {
         const profilePicsArray = _.shuffle(
             Object.entries(profilePictures).map(([key, value]) => ({
@@ -67,6 +74,9 @@ async function populateFakeData() {
         );
         const checker = await DataStore.query(models.User);
         if (checker.length === 0) {
+            const responsibilities = await DataStore.query(
+                models.RiderResponsibility
+            );
             for (const value of Object.values(fakeData.users)) {
                 let userToSave = value;
                 if (
@@ -76,6 +86,8 @@ async function populateFakeData() {
                     userToSave = {
                         ...value,
                         name: "Demo User",
+                        userRiderResponsibilityId:
+                            _.sample(responsibilities).id || null,
                         displayName: "Demo User",
                         roles: [
                             userRoles.rider,
@@ -111,6 +123,8 @@ async function populateFakeData() {
                     new models.User({
                         ...rest,
                         dateOfBirth,
+                        userRiderResponsibilityId:
+                            _.sample(responsibilities).id || null,
                         profilePictureURL: profilePicURL,
                         profilePictureThumbnailURL: thumbnail,
                         userContactId: addressContact.id,

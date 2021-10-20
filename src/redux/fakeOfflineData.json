@@ -1,4 +1,11 @@
 {
+    "riderResponsibilities": [
+        "North",
+        "West",
+        "East",
+        "Air Ambulance",
+        "Relief"
+    ],
     "users": [
         {
             "username": "offline",
