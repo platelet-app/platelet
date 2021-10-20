@@ -233,13 +233,21 @@ function TaskDialogCompact(props) {
                     ...taskResult,
                     assignees: [result],
                 });
+                await DataStore.save(
+                    models.Task.copyOf(taskResult, (updated) => {
+                        updated.status = status;
+                    })
+                );
                 try {
+                    const taskResultWorkaround = await DataStore.query(
+                        models.Task,
+                        taskUUID
+                    );
                     const responsibility = user.riderResponsibility
                         ? user.riderResponsibility.id
                         : null;
                     await DataStore.save(
-                        models.Task.copyOf(taskResult, (updated) => {
-                            updated.status = status;
+                        models.Task.copyOf(taskResultWorkaround, (updated) => {
                             updated.taskRiderResponsibilityId = responsibility;
                         })
                     );
@@ -250,12 +258,13 @@ function TaskDialogCompact(props) {
             const assignees = (
                 await DataStore.query(models.TaskAssignee)
             ).filter((a) => a.task.id === taskUUID);
+            console.log(assignees);
             setState((prevState) => ({
                 ...prevState,
                 assignees,
             }));
+            console.log("done");
         } catch (error) {
-            throw error;
             dispatch(displayErrorNotification(errorMessage));
         }
     }
