@@ -112,8 +112,8 @@ function TaskAssignmentsPanel(props) {
 
     return (
         <Paper className={cardClasses.root}>
-            <Stack spacing={3} direction={"column"}>
-                <Stack justifyContent={"space-between"} direction={"row"}>
+            <Grid container spacing={3} direction={"column"}>
+                <Grid item>
                     <EditModeToggleButton
                         tooltipDefault={"Edit assignees"}
                         value={editMode}
@@ -121,35 +121,53 @@ function TaskAssignmentsPanel(props) {
                             setEditMode(v);
                         }}
                     />
-                    <Tooltip title={assignedCoordinatorsDisplayString}>
-                        <AvatarGroup>
-                            {assignedCoordinators.map((u) => (
-                                <UserAvatar
-                                    key={u.id}
-                                    size={5}
-                                    userUUID={u.id}
-                                    displayName={u.displayName}
-                                    avatarURL={u.profilePictureThumbnailURL}
-                                />
-                            ))}
-                        </AvatarGroup>
-                    </Tooltip>
-                    <Tooltip title={assignedRidersDisplayString}>
-                        <AvatarGroup>
-                            {assignedRiders.map((u) => (
-                                <UserAvatar
-                                    key={u.id}
-                                    size={5}
-                                    userUUID={u.id}
-                                    displayName={u.displayName}
-                                    avatarURL={u.profilePictureThumbnailURL}
-                                />
-                            ))}
-                        </AvatarGroup>
-                    </Tooltip>
-                </Stack>
-                {assigneeSelector}
-            </Stack>
+                </Grid>
+                <Grid item>
+                    <Stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="row"
+                    >
+                        <Typography>Coordinators:</Typography>
+                        <Tooltip title={assignedCoordinatorsDisplayString}>
+                            <AvatarGroup>
+                                {assignedCoordinators.map((u) => (
+                                    <UserAvatar
+                                        key={u.id}
+                                        size={5}
+                                        userUUID={u.id}
+                                        displayName={u.displayName}
+                                        avatarURL={u.profilePictureThumbnailURL}
+                                    />
+                                ))}
+                            </AvatarGroup>
+                        </Tooltip>
+                    </Stack>
+                </Grid>
+                <Grid item>
+                    <Stack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        direction="row"
+                    >
+                        <Typography>Riders:</Typography>
+                        <Tooltip title={assignedRidersDisplayString}>
+                            <AvatarGroup>
+                                {assignedRiders.map((u) => (
+                                    <UserAvatar
+                                        key={u.id}
+                                        size={5}
+                                        userUUID={u.id}
+                                        displayName={u.displayName}
+                                        avatarURL={u.profilePictureThumbnailURL}
+                                    />
+                                ))}
+                            </AvatarGroup>
+                        </Tooltip>
+                    </Stack>
+                </Grid>
+                <Grid item>{assigneeSelector}</Grid>
+            </Grid>
         </Paper>
     );
 

@@ -156,8 +156,16 @@ function Dashboard(props) {
             tasksSubscription.current = DataStore.observe(
                 models.Task
             ).subscribe(async (newTask) => {
-                const task = newTask.element;
-                addTaskToState(task);
+                if (newTask.opType === "UPDATE") {
+                    const replaceTask = await DataStore.query(
+                        models.Task,
+                        newTask.element.id
+                    );
+                    addTaskToState(replaceTask);
+                } else {
+                    const task = newTask.element;
+                    addTaskToState(task);
+                }
             });
 
             setIsFetching(false);
@@ -266,28 +274,12 @@ function Dashboard(props) {
 
     const dialog = props.match.params.task_uuid_b62 ? (
         <TaskDialogCompact
-            locationWorkaround={(location, locationKey, taskId) => {
+            refreshTask={async (taskId) => {
                 // This is here because of the DataStore bug that prevents observe working
                 // Updates the dashboard with location details so that it shows on the card
                 // https://github.com/aws-amplify/amplify-js/issues/9034
-                const { task, key } = findTask(tasks, taskId);
-                let idKey;
-                if (locationKey === "pickUpLocation") {
-                    idKey = "pickUpLocationId";
-                } else if (locationKey === "dropOffLocation") {
-                    idKey = "dropOffLocationId";
-                }
-                if (task) {
-                    const newTask = {
-                        ...task,
-                        [locationKey]: location,
-                        [idKey]: location ? location.id : null,
-                    };
-                    setTasks((prevState) => ({
-                        ...prevState,
-                        [key]: { ...prevState[key], [newTask.id]: newTask },
-                    }));
-                }
+                const refreshTask = await DataStore.query(models.Task, taskId);
+                addTaskToState(refreshTask);
             }}
             onClose={handleDialogClose}
             location={props.location}

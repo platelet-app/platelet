@@ -242,6 +242,8 @@ function TaskDialogCompact(props) {
                     );
                 } catch (error) {
                     console.error("DataStore workaround", error);
+                } finally {
+                    props.refreshTask(state.id);
                 }
                 const taskResult = await DataStore.query(models.Task, taskUUID);
                 if (!taskResult) throw new Error("Task doesn't exist");
@@ -402,11 +404,8 @@ function TaskDialogCompact(props) {
                     dropOffLocation: newLocation,
                     dropOffLocationId: newLocation.id,
                 }));
-                props.locationWorkaround(
-                    newLocation,
-                    "dropOffLocation",
-                    state.id
-                );
+            } finally {
+                props.refreshTask(state.id);
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -452,11 +451,8 @@ function TaskDialogCompact(props) {
                     ...prevState,
                     pickUpLocation: newLocation,
                 }));
-                props.locationWorkaround(
-                    newLocation,
-                    "pickUpLocation",
-                    state.id
-                );
+            } finally {
+                props.refreshTask(state.id);
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -481,7 +477,8 @@ function TaskDialogCompact(props) {
                 ...prevState,
                 pickUpLocation: location,
             }));
-            props.locationWorkaround(location, "pickUpLocation", state.id);
+        } finally {
+            props.refreshTask(state.id);
         }
     }
 
@@ -502,7 +499,8 @@ function TaskDialogCompact(props) {
                     ...prevState,
                     pickUpLocation: null,
                 }));
-                props.locationWorkaround(null, "pickUpLocation", state.id);
+            } finally {
+                props.refreshTask(state.id);
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -527,7 +525,7 @@ function TaskDialogCompact(props) {
                     ...prevState,
                     dropOffLocation: location,
                 }));
-                props.locationWorkaround(location, "dropOffLocation", state.id);
+                props.refreshTask(state.id);
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -576,7 +574,7 @@ function TaskDialogCompact(props) {
                     ...prevState,
                     dropOffLocation: null,
                 }));
-                props.locationWorkaround(null, "dropOffLocation", state.id);
+                props.refreshTask(state.id);
             }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -712,7 +710,6 @@ function TaskDialogCompact(props) {
                     },
                 };
             });
-            props.locationWorkaround(locationResult, [key], state.id);
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }

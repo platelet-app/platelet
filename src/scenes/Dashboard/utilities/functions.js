@@ -13,9 +13,10 @@ export function filterTasks(tasks, search) {
             for (const groupList of Object.values(tasks)) {
                 const filtered = Object.values(groupList)
                     .filter((task) => {
+                        debugger;
                         if (
-                            task.assigned_riders_display_string
-                                ? task.assigned_riders_display_string
+                            task.assigneesString
+                                ? task.assigneesString
                                       .toLowerCase()
                                       .includes(searchTerm)
                                 : false
