@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { MenuMainContainer } from "./navigation/MenuMainContainer";
 import "./index.css";
 import "./App.css";
-import "typeface-roboto";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useDispatch, useSelector } from "react-redux";
 import { useIdleTimer } from "react-idle-timer";
@@ -12,6 +11,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
 import Amplify, { Logger } from "aws-amplify";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 
 import { SnackbarProvider, withSnackbar } from "notistack";
 import { Helmet } from "react-helmet";
