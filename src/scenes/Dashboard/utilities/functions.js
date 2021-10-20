@@ -4,7 +4,6 @@ export function filterTasks(tasks, search) {
     if (!search) {
         return null;
     } else {
-        debugger;
         const searchTerms = search.toLowerCase().split(" ").filter(Boolean);
         //const searchTerm = search.toLowerCase();
         const results = [];
@@ -12,7 +11,6 @@ export function filterTasks(tasks, search) {
             debugger;
             let filteredResult = [];
             for (const groupList of Object.values(tasks)) {
-                debugger;
                 const filtered = Object.values(groupList)
                     .filter((task) => {
                         if (
@@ -24,8 +22,11 @@ export function filterTasks(tasks, search) {
                         ) {
                             return true;
                         } else if (
-                            task.responsibility
-                                ? task.patch.toLowerCase().includes(searchTerm)
+                            task.riderResponsibility &&
+                            task.riderResponsibility.label
+                                ? task.riderResponsibility.label
+                                      .toLowerCase()
+                                      .includes(searchTerm)
                                 : false
                         ) {
                             return true;

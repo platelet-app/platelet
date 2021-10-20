@@ -13,7 +13,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import clsx from "clsx";
-import { getTasksSelector } from "../../../redux/Selectors";
 import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
 import TasksGridColumn from "./TasksGridColumn";
 import columns from "./tasksGridColumns";

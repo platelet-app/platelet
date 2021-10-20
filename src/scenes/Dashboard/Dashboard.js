@@ -61,7 +61,6 @@ function getKeyFromEnum(value) {
 
 function Dashboard(props) {
     const dispatch = useDispatch();
-    const mobileView = useSelector((state) => state.mobileView);
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
