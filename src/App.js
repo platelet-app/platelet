@@ -10,8 +10,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
-import Amplify, { Logger } from "aws-amplify";
-
+import Amplify, { Logger, Auth } from "aws-amplify";
 import { SnackbarProvider, withSnackbar } from "notistack";
 import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
@@ -33,7 +32,7 @@ if (
 ) {
     const config = require("../src/aws-exports");
     Amplify.configure({
-        ...config,
+        ...config.default,
         ssr: true,
     });
 }
