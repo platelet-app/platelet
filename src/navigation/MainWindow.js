@@ -20,6 +20,7 @@ import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
 import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";
 import AdminAddDeliverableType from "../scenes/AdminControl/Components/AdminAddDeliverableType";
+import AdminAddRiderResponsibility from "../scenes/AdminControl/Components/AdminAddRiderResponsibility";
 
 function MainWindowContainer(props) {
     const styles = makeStyles((theme) => ({
@@ -116,6 +117,14 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("admin"));
                             return <AdminAddVehicle {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/admin/add-responsibility"
+                        render={(props) => {
+                            dispatch(setMenuIndex("admin"));
+                            return <AdminAddRiderResponsibility {...props} />;
                         }}
                     />
                     <Route

@@ -91,11 +91,11 @@ function TaskDetailsPanel(props) {
                     <LabelItemPair label={"Reference"}>
                         <Typography>{state.reference}</Typography>
                     </LabelItemPair>
-                    <LabelItemPair label={"TOC"}>
+                    <LabelItemPair label={"Time of call"}>
                         <TimePicker
                             onChange={onChangeTimeOfCall}
                             disableClear={true}
-                            label={"TOC"}
+                            label={"Time of call"}
                             time={state.timeOfCall}
                         />
                     </LabelItemPair>
@@ -138,8 +138,8 @@ function TaskDetailsPanel(props) {
                             priority={state.priority}
                         />
                     </div>
-                    <LabelItemPair label={"Patch"}>
-                        <Typography>{state.patch}</Typography>
+                    <LabelItemPair label={"Responsibility"}>
+                        <Typography>{state.riderResponsibility}</Typography>
                     </LabelItemPair>
                 </Grid>
             </Grid>
