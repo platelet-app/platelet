@@ -390,23 +390,15 @@ function TaskDialogCompact(props) {
                     name: `Copy of ${name}`,
                 })
             );
-            try {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.dropOffLocationId = newLocation.id;
-                    })
-                );
-            } catch (e) {
-                console.log("dumb error");
-                console.log(e);
-                setState((prevState) => ({
-                    ...prevState,
-                    dropOffLocation: newLocation,
-                    dropOffLocationId: newLocation.id,
-                }));
-            } finally {
-                props.refreshTask(state.id);
-            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.dropOffLocation = newLocation;
+                })
+            );
+            setState((prevState) => ({
+                ...prevState,
+                dropOffLocation: newLocation,
+            }));
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
@@ -438,22 +430,15 @@ function TaskDialogCompact(props) {
                     name: `Copy of ${name}`,
                 })
             );
-            try {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.pickUpLocationId = newLocation.id;
-                    })
-                );
-            } catch (e) {
-                console.log("dumb error");
-                console.log(e);
-                setState((prevState) => ({
-                    ...prevState,
-                    pickUpLocation: newLocation,
-                }));
-            } finally {
-                props.refreshTask(state.id);
-            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.pickUpLocation = newLocation;
+                })
+            );
+            setState((prevState) => ({
+                ...prevState,
+                pickUpLocation: newLocation,
+            }));
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
@@ -466,19 +451,16 @@ function TaskDialogCompact(props) {
             if (result && location) {
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
-                        updated.pickUpLocationId = location.id;
+                        updated.pickUpLocation = location;
                     })
                 );
             }
-        } catch (e) {
-            console.error("dumb error");
-            console.error(e);
             setState((prevState) => ({
                 ...prevState,
                 pickUpLocation: location,
             }));
-        } finally {
-            props.refreshTask(state.id);
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
@@ -486,22 +468,15 @@ function TaskDialogCompact(props) {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
             if (!result) throw new Error("Task doesn't exist");
-            try {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.pickUpLocationId = null;
-                    })
-                );
-            } catch (e) {
-                console.error("dumb error");
-                console.error(e);
-                setState((prevState) => ({
-                    ...prevState,
-                    pickUpLocation: null,
-                }));
-            } finally {
-                props.refreshTask(state.id);
-            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.pickUpLocation = null;
+                })
+            );
+            setState((prevState) => ({
+                ...prevState,
+                pickUpLocation: null,
+            }));
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
@@ -512,21 +487,15 @@ function TaskDialogCompact(props) {
             const result = await DataStore.query(models.Task, taskUUID);
             if (!result) throw new Error("Task doesn't exist");
             if (!location) throw new Error("Location was not provided");
-            try {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.dropOffLocationId = location.id;
-                    })
-                );
-            } catch (e) {
-                console.error("dumb error");
-                console.error(e);
-                setState((prevState) => ({
-                    ...prevState,
-                    dropOffLocation: location,
-                }));
-                props.refreshTask(state.id);
-            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.dropOffLocation = location;
+                })
+            );
+            setState((prevState) => ({
+                ...prevState,
+                dropOffLocation: location,
+            }));
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
@@ -561,21 +530,15 @@ function TaskDialogCompact(props) {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
             if (!result) throw new Error("Task doesn't exist");
-            try {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.dropOffLocationId = null;
-                    })
-                );
-            } catch (e) {
-                console.error("dumb error");
-                console.error(e);
-                setState((prevState) => ({
-                    ...prevState,
-                    dropOffLocation: null,
-                }));
-                props.refreshTask(state.id);
-            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.dropOffLocation = null;
+                })
+            );
+            setState((prevState) => ({
+                ...prevState,
+                dropOffLocation: null,
+            }));
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
@@ -678,21 +641,12 @@ function TaskDialogCompact(props) {
                     taskUUID
                 );
                 if (!existingTask) throw new Error("Task doesn't exist");
-                // find the id that we want to link to the new location
-                const idName =
-                    key === "dropOffLocation"
-                        ? "dropOffLocationId"
-                        : "pickUpLocationId";
-                try {
-                    await DataStore.save(
-                        models.Task.copyOf(existingTask, (updated) => {
-                            updated[idName] = locationResult.id;
-                        })
-                    );
-                } catch (e) {
-                    console.error("dumb error");
-                    console.error(e);
-                }
+                // link to new location
+                await DataStore.save(
+                    models.Task.copyOf(existingTask, (updated) => {
+                        updated[key] = locationResult;
+                    })
+                );
             }
 
             // update local state, but find data from prevState to fill contactResult or locationResult if they are undefined
@@ -713,6 +667,7 @@ function TaskDialogCompact(props) {
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
+        props.refreshTask();
     }
 
     async function updateDeliverables(value) {
