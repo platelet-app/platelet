@@ -23,6 +23,7 @@ const initialUserState = {
     },
     displayName: "",
     name: "",
+    responsibility: null,
     dateOfBirth: null,
     patch: null,
     profilePictureURL: null,
@@ -88,23 +89,27 @@ export default function UserDetail(props) {
         setIsPosting(true);
         try {
             const existingUser = await DataStore.query(models.User, user.id);
+            const {
+                userRiderResponsibilityId,
+                responsibility,
+                contact,
+                ...rest
+            } = value;
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
-                    // There is probably a better way of doing this?
-                    for (const [key, newValue] of Object.entries(value)) {
+                    for (const [key, newValue] of Object.entries(rest)) {
                         if (!protectedFields.includes(key))
                             updated[key] = newValue;
                     }
                 })
             );
-            if (existingUser.contact) {
+            if (existingUser.contact && contact) {
                 await DataStore.save(
                     models.AddressAndContactDetails.copyOf(
                         existingUser.contact,
                         (updated) => {
-                            // There is probably a better way of doing this?
                             for (const [key, newValue] of Object.entries(
-                                value.contact
+                                contact
                             )) {
                                 if (!protectedFields.includes(key))
                                     updated[key] = newValue;
@@ -112,6 +117,25 @@ export default function UserDetail(props) {
                         }
                     )
                 );
+            }
+            if (userRiderResponsibilityId) {
+                const existingUserResponsibility = await DataStore.query(
+                    models.User,
+                    user.id
+                );
+                try {
+                    await DataStore.save(
+                        models.User.copyOf(
+                            existingUserResponsibility,
+                            (updated) => {
+                                updated.userRiderResponsibilityId =
+                                    userRiderResponsibilityId;
+                            }
+                        )
+                    );
+                } catch (error) {
+                    console.error("DataStore workaround", error);
+                }
             }
             setIsPosting(false);
         } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useDispatch, useSelector } from "react-redux";
 import Divider from "@mui/material/Divider";
@@ -8,6 +8,11 @@ import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
 import _ from "lodash";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import RiderResponsibilitySelect from "./RiderResponsibilitySelect";
+import { userRoles } from "../../../apiConsts";
+import { Box, Stack, Typography } from "@mui/material";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models/index";
 
 const fields = {
     username: "Username",
@@ -24,13 +29,21 @@ const contactFields = {
 export default function UserProfile(props) {
     const [editMode, setEditMode] = useState(false);
     const [state, setState] = useState({ ...props.user });
-    const [oldState, setOldState] = useState({ ...props.user });
+    const oldState = useRef({ ...props.user });
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
 
     function updateStateFromProps() {
-        setState(props.user);
-        setOldState(props.user);
+        if (props.user) {
+            const newState = {
+                ...props.user,
+                userRiderResponsibilityId: props.user.riderResponsibility
+                    ? props.user.riderResponsibility.id
+                    : null,
+            };
+            setState(newState);
+            oldState.current = newState;
+        }
     }
     useEffect(updateStateFromProps, [props.user]);
 
@@ -43,7 +56,10 @@ export default function UserProfile(props) {
 
     let editToggle = <></>;
     if (whoami.roles) {
-        if (whoami.roles.includes("ADMIN") || whoami.id === props.user.id) {
+        if (
+            whoami.roles.includes(userRoles.admin) ||
+            whoami.id === props.user.id
+        ) {
             editToggle = (
                 <EditModeToggleButton
                     tooltipDefault={
@@ -54,7 +70,7 @@ export default function UserProfile(props) {
                     value={editMode}
                     onChange={(v) => {
                         setEditMode(v);
-                        if (!v) setState(oldState);
+                        if (!v) setState(oldState.current);
                     }}
                 />
             );
@@ -85,15 +101,45 @@ export default function UserProfile(props) {
                 if (verifyUpdate(state)) {
                     props.onUpdate(state);
                     setEditMode(false);
-                    setOldState(state);
+                    oldState.current = state;
                 }
             }}
             onCancel={() => {
                 setEditMode(false);
-                setState(oldState);
+                setState(oldState.current);
             }}
         />
     );
+
+    const responsibility =
+        props.user &&
+        props.user.roles &&
+        props.user.roles.includes(userRoles.rider) ? (
+            editMode ? (
+                <RiderResponsibilitySelect
+                    onSelect={async (value) => {
+                        const riderResponsibility = await DataStore.query(
+                            models.RiderResponsibility,
+                            value
+                        );
+                        setState((prevState) => ({
+                            ...prevState,
+                            userRiderResponsibilityId: value,
+                            riderResponsibility,
+                        }));
+                    }}
+                    value={state.userRiderResponsibilityId}
+                />
+            ) : (
+                <Typography>
+                    {state.riderResponsibility
+                        ? state.riderResponsibility.label
+                        : "No responsibility"}
+                </Typography>
+            )
+        ) : (
+            <></>
+        );
 
     const divider = editMode ? (
         <></>
@@ -105,19 +151,17 @@ export default function UserProfile(props) {
         </div>
     );
     return (
-        <>
-            <Grid
-                container
+        <Stack direction="column">
+            <Stack
                 direction={"row"}
                 justifyContent={"space-between"}
                 alignItems={"top"}
                 spacing={3}
             >
-                <Grid item>{header}</Grid>
-                <Grid item>{editToggle}</Grid>
-            </Grid>
-            <Grid
-                container
+                {header}
+                {editToggle}
+            </Stack>
+            <Stack
                 direction={"column"}
                 justifyContent={"space-between"}
                 alignItems={"flex-start"}
@@ -125,7 +169,7 @@ export default function UserProfile(props) {
             >
                 {Object.keys(fields).map((key) => {
                     return (
-                        <Grid key={key} style={{ width: "50%" }} item>
+                        <Box key={key} sx={{ width: "50%" }}>
                             <TextFieldUncontrolled
                                 value={state[key]}
                                 InputProps={{
@@ -143,12 +187,12 @@ export default function UserProfile(props) {
                                 }}
                             />
                             {divider}
-                        </Grid>
+                        </Box>
                     );
                 })}
                 {Object.keys(state.contact ? contactFields : []).map((key) => {
                     return (
-                        <Grid key={key} style={{ width: "50%" }} item>
+                        <Box key={key} sx={{ width: "50%" }}>
                             <TextFieldUncontrolled
                                 value={state.contact[key]}
                                 InputProps={{
@@ -169,11 +213,12 @@ export default function UserProfile(props) {
                                 }}
                             />
                             {divider}
-                        </Grid>
+                        </Box>
                     );
                 })}
-            </Grid>
-            {saveButtons}
-        </>
+                {responsibility}
+                {saveButtons}
+            </Stack>
+        </Stack>
     );
 }
