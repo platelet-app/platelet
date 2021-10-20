@@ -39,10 +39,6 @@ const useStyles = makeStyles((theme) => ({
             width: "95%",
         },
     },
-    container: {
-        //width: "100%",
-        //margin: 0
-    },
     statusBar: {
         paddingBottom: 8,
     },
@@ -64,12 +60,8 @@ function TaskOverview(props) {
                 container
                 className={classes.container}
                 spacing={isSm ? 1 : 3}
-                item
-                direction={"row"}
-                alignItems={"flex-start"}
-                justifyContent={"flex-start"}
             >
-                <Grid className={classes.item} item>
+                <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <TaskDetailsPanel
                             onSelectPriority={props.onSelectPriority}
@@ -90,60 +82,50 @@ function TaskOverview(props) {
                         />
                     </Stack>
                 </Grid>
-                <Grid className={classes.item} item>
-                    <Grid container spacing={1} direction={"column"}>
-                        <Grid item>
-                            <PickUpDetails
-                                taskUUID={taskUUID}
-                                onClearPickUpLocation={
-                                    props.onClearPickUpLocation
-                                }
-                                onChange={props.onChangePickUpLocation}
-                                onSelectPickupPreset={
-                                    props.onSelectPickUpPreset
-                                }
-                                onEditPreset={props.onEditPickUpPreset}
-                                location={task.pickUpLocation}
-                                time={task.timePickedUp}
-                                showContact
-                            />
-                        </Grid>
-                        <Grid item>
-                            <DropOffDetails
-                                disableTimeButton={!!!task.timePickedUp}
-                                taskUUID={taskUUID}
-                                onSelectDropOffPreset={
-                                    props.onSelectDropOffPreset
-                                }
-                                onClearDropOffLocation={
-                                    props.onClearDropOffLocation
-                                }
-                                onEditPreset={props.onEditDropOffPreset}
-                                onChange={props.onChangeDropOffLocation}
-                                location={task.dropOffLocation}
-                                time={task.timeDroppedOff}
-                                showContact
-                            />
-                        </Grid>
-                    </Grid>
+                <Grid item className={classes.item}>
+                    <Stack direction={"column"} spacing={isSm ? 1 : 3}>
+                        <PickUpDetails
+                            taskUUID={taskUUID}
+                            onClearPickUpLocation={props.onClearPickUpLocation}
+                            onChange={props.onChangePickUpLocation}
+                            onSelectPickupPreset={props.onSelectPickUpPreset}
+                            onEditPreset={props.onEditPickUpPreset}
+                            location={task.pickUpLocation}
+                            time={task.timePickedUp}
+                            showContact
+                        />
+                        <DropOffDetails
+                            disableTimeButton={!!!task.timePickedUp}
+                            taskUUID={taskUUID}
+                            onSelectDropOffPreset={props.onSelectDropOffPreset}
+                            onClearDropOffLocation={
+                                props.onClearDropOffLocation
+                            }
+                            onEditPreset={props.onEditDropOffPreset}
+                            onChange={props.onChangeDropOffLocation}
+                            location={task.dropOffLocation}
+                            time={task.timeDroppedOff}
+                            showContact
+                        />
+                    </Stack>
                 </Grid>
-                <Grid className={classes.item} item>
-                    <DeliverableDetails
-                        deliverables={
-                            task.deliverables
-                                ? Object.values(task.deliverables)
-                                : []
-                        }
-                        taskUUID={taskUUID}
-                        onChange={props.onUpdateDeliverable}
-                        onDelete={props.onDeleteDeliverable}
-                    />
-                </Grid>
-                <Grid className={classes.item} item>
-                    <TaskAssignmentsPanel
-                        onSelect={props.onSelectAssignee}
-                        task={props.task}
-                    />
+                <Grid item className={classes.item}>
+                    <Stack direction={"column"} spacing={isSm ? 1 : 3}>
+                        <DeliverableDetails
+                            deliverables={
+                                task.deliverables
+                                    ? Object.values(task.deliverables)
+                                    : []
+                            }
+                            taskUUID={taskUUID}
+                            onChange={props.onUpdateDeliverable}
+                            onDelete={props.onDeleteDeliverable}
+                        />
+                        <TaskAssignmentsPanel
+                            onSelect={props.onSelectAssignee}
+                            task={props.task}
+                        />
+                    </Stack>
                 </Grid>
             </Grid>
         </Container>
