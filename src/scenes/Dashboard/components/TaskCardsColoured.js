@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "../../../App.css";
-import "typeface-roboto";
 import CardContent from "@mui/material/CardContent";
 import Moment from "react-moment";
 import Grid from "@mui/material/Grid";

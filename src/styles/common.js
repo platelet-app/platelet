@@ -1,6 +1,5 @@
 import React from "react";
 import "../App.css";
-import "typeface-roboto";
 import Card from "@mui/material/Card";
 import { styled } from "@mui/styles";
 import Container from "@mui/material/Container";

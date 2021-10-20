@@ -227,17 +227,6 @@ function TaskDialogCompact(props) {
                 })
             );
             if (role === userRoles.rider) {
-                const taskResult = await DataStore.query(models.Task, taskUUID);
-                if (!taskResult) throw new Error("Task doesn't exist");
-                const status = determineTaskStatus({
-                    ...taskResult,
-                    assignees: [result],
-                });
-                await DataStore.save(
-                    models.Task.copyOf(taskResult, (updated) => {
-                        updated.status = status;
-                    })
-                );
                 try {
                     const taskResultWorkaround = await DataStore.query(
                         models.Task,
@@ -254,6 +243,17 @@ function TaskDialogCompact(props) {
                 } catch (error) {
                     console.error("DataStore workaround", error);
                 }
+                const taskResult = await DataStore.query(models.Task, taskUUID);
+                if (!taskResult) throw new Error("Task doesn't exist");
+                const status = determineTaskStatus({
+                    ...taskResult,
+                    assignees: [result],
+                });
+                await DataStore.save(
+                    models.Task.copyOf(taskResult, (updated) => {
+                        updated.status = status;
+                    })
+                );
             }
             const assignees = (
                 await DataStore.query(models.TaskAssignee)

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "typeface-roboto";
 import "../index.css";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";

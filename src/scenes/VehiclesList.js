@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
-import "typeface-roboto";
 import { contextDots, PaddedPaper } from "../styles/common";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
-import { addVehicleRequest } from "../redux/vehicles/VehiclesActions";
 import { encodeUUID, sortByCreatedTime } from "../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";

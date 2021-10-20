@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../../App.css";
 import { useHistory } from "react-router";
-import "typeface-roboto";
 import * as models from "../../models/index";
 import Paper from "@mui/material/Paper";
 import { setRoleView } from "../../redux/Actions";
@@ -23,7 +22,6 @@ import { DataStore } from "aws-amplify";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import _ from "lodash";
 import TaskDialogCompact from "../Task/TaskDialogCompact";
-import { useTheme } from "@mui/material";
 
 const initialTasksState = {
     tasksNew: {},

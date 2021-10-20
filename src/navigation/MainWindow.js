@@ -1,5 +1,4 @@
 import React from "react";
-import "typeface-roboto";
 import "../index.css";
 import { Route, Switch, useLocation } from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
