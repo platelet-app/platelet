@@ -48,15 +48,15 @@ function RiderPicker(props) {
     }, [availableUsers, props.exclude]);
 
     return (
-        <div>
+        <>
             <Autocomplete
                 disablePortal
+                fullWidth
                 filterOptions={filterOptions}
                 id="combo-box-riders"
                 options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.displayName}
                 size={props.size}
-                style={{ width: 230 }}
                 onChange={onSelect}
                 renderInput={(params) => (
                     <TextField
@@ -94,7 +94,7 @@ function RiderPicker(props) {
                     );
                 }}
             />
-        </div>
+        </>
     );
 }
 

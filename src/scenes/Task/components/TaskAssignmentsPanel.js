@@ -38,8 +38,8 @@ function TaskAssignmentsPanel(props) {
     const { show, hide } = showHide();
     const [role, setRole] = useState(userRoles.rider);
 
-    function onSelect() {
-        if (selectedUser) props.onSelect(selectedUser, role);
+    function onSelect(value) {
+        if (value) props.onSelect(value, role);
         clearEditMode();
     }
 
@@ -74,7 +74,7 @@ function TaskAssignmentsPanel(props) {
     useEffect(sortAssignees, [props.task]);
 
     const assigneeSelector = editMode ? (
-        <>
+        <Stack directon={"column"} spacing={1}>
             <UserRoleSelect
                 value={role}
                 onSelect={(value) => setRole(value)}
@@ -87,25 +87,17 @@ function TaskAssignmentsPanel(props) {
             />
             {role === userRoles.rider ? (
                 <RiderPicker
-                    onSelect={(v) => setSelectedUser(v)}
+                    onSelect={onSelect}
                     exclude={assignedRiders.map((u) => u.id)}
                 />
             ) : (
                 <CoordinatorPicker
-                    onSelect={(v) => setSelectedUser(v)}
+                    onSelect={onSelect}
                     exclude={assignedCoordinators.map((u) => u.id)}
                 />
             )}
-            <Typography>
-                {selectedUser ? selectedUser.displayName : ""}
-            </Typography>
-            <Stack justifyContent={"space-between"} direction={"row"}>
-                <Button onClick={onSelect} disabled={!!!selectedUser}>
-                    Save
-                </Button>
-                <Button onClick={clearEditMode}>Cancel</Button>
-            </Stack>
-        </>
+            <Button onClick={clearEditMode}>Cancel</Button>
+        </Stack>
     ) : (
         <></>
     );

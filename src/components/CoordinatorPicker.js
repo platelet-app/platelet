@@ -32,12 +32,12 @@ function CoordinatorPicker(props) {
         <div>
             <Autocomplete
                 disablePortal
+                fullWidth
                 filterOptions={filterOptions}
                 id="combo-box-coordinators"
                 options={availableCoordinators}
                 getOptionLabel={(option) => option.displayName}
                 size={props.size}
-                style={{ width: 230 }}
                 onChange={onSelect}
                 renderInput={(params) => (
                     <TextField
