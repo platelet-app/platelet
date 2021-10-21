@@ -58,6 +58,14 @@ export function* watchInitialWhoamiCompleted() {
 }
 
 async function populateFakeData() {
+    if (fakeData.responsibilities) {
+        const checker = await DataStore.query(models.RiderResponsibility);
+        if (checker.length === 0) {
+            for (const value of Object.values(fakeData.responsibilities)) {
+                await DataStore.save(new models.RiderResponsibility(value));
+            }
+        }
+    }
     if (fakeData.users) {
         const profilePicsArray = _.shuffle(
             Object.entries(profilePictures).map(([key, value]) => ({
@@ -146,14 +154,6 @@ async function populateFakeData() {
         if (checker.length === 0) {
             for (const value of Object.values(fakeData.deliverables)) {
                 await DataStore.save(new models.DeliverableType(value));
-            }
-        }
-    }
-    if (fakeData.responsibilities) {
-        const checker = await DataStore.query(models.RiderResponsibility);
-        if (checker.length === 0) {
-            for (const value of Object.values(fakeData.responsibilities)) {
-                await DataStore.save(new models.RiderResponsibility(value));
             }
         }
     }
