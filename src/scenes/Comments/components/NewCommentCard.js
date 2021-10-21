@@ -46,12 +46,16 @@ function NewCommentCard(props) {
 
     async function addComment() {
         setIsPosting(true);
+        const commentAuthor =
+            props.author && props.author.id
+                ? await DataStore.query(models.User, props.author.id)
+                : null;
         try {
             const newComment = await DataStore.save(
                 new models.Comment({
                     ...state,
                     parentId: props.parentUUID,
-                    commentAuthorId: props.author.id,
+                    commentAuthor,
                 })
             );
             setState((prevState) => ({ ...prevState, body: "" }));

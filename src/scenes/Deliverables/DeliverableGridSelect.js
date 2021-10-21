@@ -33,11 +33,10 @@ function DeliverableGridSelect(props) {
     function convertExistingDeliverablesToState() {
         const result = {};
         for (const d of props.deliverables) {
-            const deliverableType =
-                availableDeliverables[d.deliverableTypeDeliverableTypeId];
-            result[d.deliverableTypeDeliverableTypeId] = {
+            const deliverableType = availableDeliverables[d.deliverableType.id];
+            result[d.deliverableType.id] = {
                 count: d.count,
-                id: d.deliverableTypeDeliverableTypeId,
+                id: d.deliverableType.id,
                 label: deliverableType ? deliverableType.label : "",
                 createdAt: d.createdAt,
                 unit: d.unit,

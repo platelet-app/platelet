@@ -138,10 +138,10 @@ function TaskDialogCompact(props) {
             try {
                 const taskData = await DataStore.query(models.Task, taskUUID);
                 if (taskData) {
-                    const deliverables = await DataStore.query(
-                        models.Deliverable,
-                        (t) => t.taskDeliverablesId("eq", taskUUID)
-                    );
+                    const deliverables = (
+                        await DataStore.query(models.Deliverable)
+                    ).filter((d) => d.task.id === taskUUID);
+                    debugger;
                     const assignees = (
                         await DataStore.query(models.TaskAssignee)
                     ).filter((a) => a.task.id === taskUUID);
@@ -219,31 +219,31 @@ function TaskDialogCompact(props) {
 
     async function addAssignee(user, role) {
         try {
+            const assignee = await DataStore.query(models.User, user.id);
+            const task = await DataStore.query(models.Task, taskUUID);
+            if (!assignee || !task)
+                throw new Error(
+                    `Can't find assignee or task: ${taskUUID}, userId: ${user.id}`
+                );
             const result = await DataStore.save(
                 new models.TaskAssignee({
-                    assigneeId: user.id,
-                    taskId: taskUUID,
+                    assignee,
+                    task,
                     role,
                 })
             );
             if (role === userRoles.rider) {
-                try {
-                    const taskResultWorkaround = await DataStore.query(
-                        models.Task,
-                        taskUUID
+                if (user.riderResponsibility) {
+                    const responsibility = await DataStore.query(
+                        models.RiderResponsibility,
+                        user.riderResponsibility.id
                     );
-                    const responsibility = user.riderResponsibility
-                        ? user.riderResponsibility.id
-                        : null;
                     await DataStore.save(
-                        models.Task.copyOf(taskResultWorkaround, (updated) => {
-                            updated.taskRiderResponsibilityId = responsibility;
+                        models.Task.copyOf(task, (updated) => {
+                            updated.riderResponsibility =
+                                responsibility || null;
                         })
                     );
-                } catch (error) {
-                    console.error("DataStore workaround", error);
-                } finally {
-                    props.refreshTask(state.id);
                 }
                 const taskResult = await DataStore.query(models.Task, taskUUID);
                 if (!taskResult) throw new Error("Task doesn't exist");
@@ -260,12 +260,10 @@ function TaskDialogCompact(props) {
             const assignees = (
                 await DataStore.query(models.TaskAssignee)
             ).filter((a) => a.task.id === taskUUID);
-            console.log(assignees);
             setState((prevState) => ({
                 ...prevState,
                 assignees,
             }));
-            console.log("done");
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
@@ -339,20 +337,18 @@ function TaskDialogCompact(props) {
             if (!result) throw new Error("Task doesn't exist");
             if (!result.requesterContact)
                 throw new Error("Task doesn't have a requester contact");
-            if (result && result.requesterContact) {
-                await DataStore.save(
-                    models.AddressAndContactDetails.copyOf(
-                        result.requesterContact,
-                        (updated) => {
-                            for (const [key, value] of Object.entries(
-                                requesterValue
-                            )) {
-                                updated[key] = value;
-                            }
+            await DataStore.save(
+                models.AddressAndContactDetails.copyOf(
+                    result.requesterContact,
+                    (updated) => {
+                        for (const [key, value] of Object.entries(
+                            requesterValue
+                        )) {
+                            updated[key] = value;
                         }
-                    )
-                );
-            }
+                    }
+                )
+            );
             taskRef.current = {
                 ...taskRef.current,
                 requesterContact: {
@@ -380,13 +376,13 @@ function TaskDialogCompact(props) {
                 ...rest
             } = currentState;
             const newContact = await DataStore.save(
-                new models.AddressAndContactDetails(contact)
+                new models.AddressAndContactDetails({ ...contact })
             );
             const newLocation = await DataStore.save(
                 new models.Location({
                     ...rest,
                     listed: 0,
-                    locationContactId: newContact.id,
+                    contact: newContact,
                     name: `Copy of ${name}`,
                 })
             );
@@ -420,13 +416,13 @@ function TaskDialogCompact(props) {
                 ...rest
             } = currentState;
             const newContact = await DataStore.save(
-                new models.AddressAndContactDetails(contact)
+                new models.AddressAndContactDetails({ ...contact })
             );
             const newLocation = await DataStore.save(
                 new models.Location({
                     ...rest,
                     listed: 0,
-                    locationContactId: newContact.id,
+                    contact: newContact,
                     name: `Copy of ${name}`,
                 })
             );
@@ -505,7 +501,7 @@ function TaskDialogCompact(props) {
         // receive DeliverableTypeId only from selector component
         // check if one of this DeliverableType has already been saved so we can delete it
         const existing = Object.values(taskDeliverablesRef.current).find(
-            (d) => d.deliverableTypeDeliverableTypeId === deliverableTypeId
+            (d) => d.deliverableType.id === deliverableTypeId
         );
         try {
             if (existing) {
@@ -632,7 +628,7 @@ function TaskDialogCompact(props) {
                 locationResult = await DataStore.save(
                     new models.Location({
                         ...rest,
-                        locationContactId: contactResult.id,
+                        contact: contactResult,
                     })
                 );
                 // find the existing task
@@ -675,7 +671,7 @@ function TaskDialogCompact(props) {
         // check if one of this DeliverableType has already been saved
         try {
             const existing = Object.values(taskDeliverablesRef.current).find(
-                (d) => d.deliverableTypeDeliverableTypeId === value.id
+                (d) => d.deliverableType.id === value.id
             );
             if (existing) {
                 const existingDeliverable = await DataStore.query(
@@ -695,11 +691,22 @@ function TaskDialogCompact(props) {
                     );
                 }
             } else {
+                const existingTask = await DataStore.query(
+                    models.Task,
+                    taskUUID
+                );
+                if (!existingTask) throw new Error("Task does not exist");
                 const { id, ...rest } = value;
+                const deliverableType = await DataStore.query(
+                    models.DeliverableType,
+                    id
+                );
+                if (!deliverableType)
+                    throw new Error("Deliverable type does not exist");
                 const newDeliverable = await DataStore.save(
                     new models.Deliverable({
-                        taskDeliverablesId: taskUUID,
-                        deliverableTypeDeliverableTypeId: id,
+                        task: existingTask,
+                        deliverableType,
                         ...rest,
                     })
                 );

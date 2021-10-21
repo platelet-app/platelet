@@ -123,19 +123,18 @@ export default function UserDetail(props) {
                     models.User,
                     user.id
                 );
-                try {
-                    await DataStore.save(
-                        models.User.copyOf(
-                            existingUserResponsibility,
-                            (updated) => {
-                                updated.userRiderResponsibilityId =
-                                    userRiderResponsibilityId;
-                            }
-                        )
-                    );
-                } catch (error) {
-                    console.error("DataStore workaround", error);
-                }
+                const riderResponsibility = await DataStore.query(
+                    models.RiderResponsibility,
+                    userRiderResponsibilityId
+                );
+                await DataStore.save(
+                    models.User.copyOf(
+                        existingUserResponsibility,
+                        (updated) => {
+                            updated.riderResponsibility = riderResponsibility;
+                        }
+                    )
+                );
             }
             setIsPosting(false);
         } catch (error) {

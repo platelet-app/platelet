@@ -51,8 +51,7 @@ function AdminAddDeliverableType() {
     async function addDeliverableTypeToStore() {
         try {
             setIsPosting(true);
-            const result = { ...state };
-            await DataStore.save(new models.DeliverableType(result));
+            await DataStore.save(new models.DeliverableType({ ...state }));
             setState(initialDeliverableTypeState);
             setIsPosting(false);
             dispatch(displayInfoNotification("Deliverable type added"));

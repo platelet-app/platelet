@@ -242,27 +242,28 @@ function Dashboard(props) {
     async function addTask() {
         const date = new Date();
         const timeOfCall = date.toISOString();
-        const newRequesterContact = await DataStore.save(
+        const requesterContact = await DataStore.save(
             new models.AddressAndContactDetails({})
         );
+        const createdBy = await DataStore.query(models.User, whoami.id);
         const newTask = await DataStore.save(
             new models.Task({
                 status: tasksStatus.new,
                 timeOfCall,
-                taskRequesterContactId: newRequesterContact.id,
-                taskCreatedById: whoami.id,
+                requesterContact,
+                createdBy,
             })
         );
         const assignment = await DataStore.save(
             new models.TaskAssignee({
-                taskId: newTask.id,
-                assigneeId: whoami.id,
+                task: newTask,
+                assignee: createdBy,
                 role: userRoles.coordinator,
             })
         );
         addTaskToState({
             ...newTask,
-            createdBy: whoami,
+            createdBy,
             assignees: { [assignment.id]: assignment },
         });
     }

@@ -58,13 +58,6 @@ export function* watchInitialWhoamiCompleted() {
 }
 
 async function populateFakeData() {
-    if (fakeData.riderResponsibilities) {
-        for (const value of fakeData.riderResponsibilities) {
-            await DataStore.save(
-                new models.RiderResponsibility({ label: value })
-            );
-        }
-    }
     if (fakeData.users) {
         const profilePicsArray = _.shuffle(
             Object.entries(profilePictures).map(([key, value]) => ({
@@ -97,7 +90,6 @@ async function populateFakeData() {
                     };
                 }
                 const profilePicture = profilePicsArray.pop();
-                console.log(profilePicture, profilePicsArray);
                 let thumbnail = null;
                 let profilePicURL = null;
                 if (profilePicture) {
@@ -123,11 +115,10 @@ async function populateFakeData() {
                     new models.User({
                         ...rest,
                         dateOfBirth,
-                        userRiderResponsibilityId:
-                            _.sample(responsibilities).id || null,
+                        riderResponsibility: _.sample(responsibilities) || null,
                         profilePictureURL: profilePicURL,
                         profilePictureThumbnailURL: thumbnail,
-                        userContactId: addressContact.id,
+                        contact: addressContact,
                     })
                 );
             }
@@ -171,8 +162,12 @@ async function populateFakeData() {
         if (checker.length === 0) {
             for (const value of Object.values(fakeData.locations)) {
                 const { address, ...rest } = value;
+                const contact = await DataStore.save(
+                    new models.AddressAndContactDetails({ ...address })
+                );
                 await DataStore.save(
                     new models.Location({
+                        contact,
                         ...rest,
                         ...address,
                     })

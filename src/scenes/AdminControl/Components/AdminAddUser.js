@@ -97,9 +97,7 @@ function AdminAddUser() {
                         displayName: state.attributes.name,
                         active: 1,
                         username: state.username,
-                        userContactId: newContact.id,
-                        _version: 1,
-                        _lastUpdatedAt: new Date().getTime().toString(),
+                        contact: newContact,
                     })
                 );
                 dispatch(

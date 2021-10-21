@@ -47,8 +47,7 @@ function AdminAddRiderResponsibility() {
     async function addRiderResponsibilityToStore() {
         try {
             setIsPosting(true);
-            const result = { ...state };
-            await DataStore.save(new models.RiderResponsibility(result));
+            await DataStore.save(new models.RiderResponsibility({ ...state }));
             setState(initialRiderResponsibilityState);
             setIsPosting(false);
             dispatch(
