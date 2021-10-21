@@ -55,7 +55,7 @@ function NewCommentCard(props) {
                 new models.Comment({
                     ...state,
                     parentId: props.parentUUID,
-                    commentAuthor,
+                    author: commentAuthor,
                 })
             );
             setState((prevState) => ({ ...prevState, body: "" }));

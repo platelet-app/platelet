@@ -76,19 +76,22 @@ function CommentsSection(props) {
                     (c) => c.parentId("eq", props.parentUUID)
                 ).subscribe(async (newComment) => {
                     const comment = newComment.element;
+                    debugger;
                     if (newComment.opType === "DELETE") {
                         removeCommentFromState(comment.id);
                         return;
                     }
                     if (
-                        !comment.commentAuthorId ||
-                        (comment.commentAuthorId !== whoami.id &&
+                        !comment.author ||
+                        !comment.author.id ||
+                        (comment.author.id !== whoami.id &&
                             comment.visibility === commentVisibility.me)
                     ) {
                         return;
                     } else if (
                         ["UPDATE", "INSERT"].includes(newComment.opType)
                     ) {
+                        console.log("yeee");
                         addCommentToState(comment);
                     }
                 });
@@ -126,12 +129,12 @@ function CommentsSection(props) {
                 onNewComment={addCommentToState}
                 parentUUID={props.parentUUID}
                 comments={Object.values(comments).filter((c) => !c._deleted)}
-                onRestore={(commentId) => {
+                onRestore={(comment) => {
                     setComments((prevState) => {
                         return {
                             ...prevState,
-                            [commentId]: {
-                                ...prevState[commentId],
+                            [comment.id]: {
+                                ...comment,
                                 _deleted: false,
                             },
                         };

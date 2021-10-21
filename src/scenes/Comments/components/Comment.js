@@ -185,7 +185,7 @@ function Comment(props) {
                         commentUUID={comment.id}
                         onSetEditMode={() => setEditMode(true)}
                         onDelete={props.onDelete}
-                        onRestore={props.onRestore}
+                        onRestore={() => props.onRestore(state)}
                     />
                 </div>
             </div>
