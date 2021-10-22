@@ -13,7 +13,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import clsx from "clsx";
-import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
+import { CoordinatorSetup } from '../../CoordinatorSetup/CoordinatorSetup'
 import TasksGridColumn from "./TasksGridColumn";
 import columns from "./tasksGridColumns";
 
@@ -226,10 +226,7 @@ function TasksGrid(props) {
                     );
                 })}
             </Grid>
-            <GuidedSetup
-                show={showGuidedSetup}
-                onClose={() => setShowGuidedSetup(false)}
-            />
+            <CoordinatorSetup show={showGuidedSetup} onClose={() => setShowGuidedSetup(false)}/>
         </>
     );
 }
