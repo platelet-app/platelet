@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {
     addDeliverableRequest, deleteDeliverableRequest,
     getDeliverablesRequest, updateDeliverableRequest,
@@ -8,17 +8,17 @@ import {useDispatch, useSelector} from "react-redux"
 import {createDeletingSelector, createLoadingSelector, createPostingSelector} from "../../../redux/LoadingSelectors";
 import DeliverableCard from "../../../scenes/Deliverables/components/DeliverableCard";
 import DeliverablesSkeleton from "../../../scenes/Deliverables/components/DeliverablesSkeleton";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import styled from "@material-ui/core/styles/styled";
-import Box from "@material-ui/core/Box";
-import {Paper} from "@material-ui/core";
+import { styled } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import Box from "@mui/material/Box";
+import {Paper} from "@mui/material";
 import {dialogCardStyles} from "../../Task/styles/DialogCompactStyles";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";
 import {v4 as uuidv4} from 'uuid';
 import {SmallCirclePlusButton} from "../../../components/Buttons";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import {showHide} from "../../../styles/common";
-import Link from "@material-ui/core/Link";
+import Link from "@mui/material/Link";
 
 
 const useStyles = makeStyles({
@@ -119,7 +119,7 @@ export default function ItemSelector(props) {
             <Paper className={
                 cardClasses.root
             }>
-                <Grid container justify={"space-between"} direction={"column"}>
+                <Grid container justifyContent={"space-between"} direction={"column"}>
                     {Object.keys(deliverablesSorted).map(key => {
                         return (
                             <Grid key={key} item>
@@ -144,6 +144,6 @@ export default function ItemSelector(props) {
                     })}
                 </Grid>
             </Paper>
-        )
+        );
     }
 }

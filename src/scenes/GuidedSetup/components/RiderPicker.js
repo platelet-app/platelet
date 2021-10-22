@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import TextField from "@material-ui/core/TextField";
+import TextField from "@mui/material/TextField";
 import { useSelector } from "react-redux";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete from '@mui/material/Autocomplete';
 import CompactUserCard from "../../../components/CompactUserCard";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 
 export const RiderPicker = (props) => {
     const availableUsers = useSelector((state) => state.users.users);

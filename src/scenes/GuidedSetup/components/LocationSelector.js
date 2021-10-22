@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import Button from "@material-ui/core/Button";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Divider from "@material-ui/core/Divider";
-import { Tooltip } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
+import Button from "@mui/material/Button";
+import makeStyles from '@mui/styles/makeStyles';
+import Divider from "@mui/material/Divider";
+import { Tooltip } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 import { showHide, ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "../../Task/components/ClearButtonWithConfirmation";
@@ -110,7 +110,7 @@ function LocationSelector(props) {
             <Grid
                 container
                 spacing={1}
-                justify={"space-between"}
+                justifyContent={"space-between"}
                 alignItems={"center"}
                 direction={"row"}
             >
@@ -125,7 +125,7 @@ function LocationSelector(props) {
                     <Grid
                         container
                         direction={"row"}
-                        justify={"flex-end"}
+                        justifyContent={"flex-end"}
                         alignItems={"center"}
                     >
                         <Grid
@@ -142,7 +142,7 @@ function LocationSelector(props) {
                                     edge={"end"}
                                     disabled={props.disabled}
                                     onClick={onClickEditButton}
-                                >
+                                    size="large">
                                     <EditIcon />
                                 </IconButton>
                             </Tooltip>
@@ -178,7 +178,7 @@ function LocationSelector(props) {
                 direction={"column"}
             >
                 <Grid item>
-                    <Grid container direction={"row"} justify={"space-between"}>
+                    <Grid container direction={"row"} justifyContent={"space-between"}>
                         <Grid item>
                             <Typography variant={"h6"}>
                                 {props.label}

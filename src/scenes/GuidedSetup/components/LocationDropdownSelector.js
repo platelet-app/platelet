@@ -1,8 +1,8 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from '@mui/styles/makeStyles';
 import { encodeUUID } from "../../../utilities";
 
 const useStyles = makeStyles({
@@ -37,7 +37,7 @@ export const LocationDropdownSelector = (props) => {
             <Grid
                 container
                 spacing={1}
-                justify={"space-between"}
+                justifyContent={"space-between"}
                 alignItems={"center"}
                 direction={"row"}
             >

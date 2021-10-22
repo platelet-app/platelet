@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import Divider from "@material-ui/core/Divider";
+import makeStyles from '@mui/styles/makeStyles';
+import Divider from "@mui/material/Divider";
 
 const initialState = {
     address: {
@@ -81,7 +81,7 @@ export const ManualAddress = (props) => {
             direction={"column"}
         >
             <Grid item>
-                <Grid container direction={"row"} justify={"space-between"}>
+                <Grid container direction={"row"} justifyContent={"space-between"}>
                     <Grid item>
                         <Typography variant={"h6"}>
                             {props.label}
@@ -243,5 +243,5 @@ export const ManualAddress = (props) => {
             </Grid>
         </Grid>
     </div>
-    )
+    );
 }
