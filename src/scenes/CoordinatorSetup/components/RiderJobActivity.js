@@ -1,8 +1,8 @@
 import React from "react";
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import {Grid} from '@material-ui/core';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
+import Box from '@mui/material/Box';
+import {Grid} from '@mui/material';
 
 const riderJobActivityStyles = makeStyles((theme) => ({
     box: {
