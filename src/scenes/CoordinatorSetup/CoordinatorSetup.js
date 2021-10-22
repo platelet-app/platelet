@@ -5,6 +5,8 @@ import {Grid} from '@material-ui/core';
 import { GuidedSetup } from '../GuidedSetup/GuidedSetup'
 import { RiderJobActivity } from './components/RiderJobActivity'
 import { EnhancedTable } from './components/EnhancedTable'
+import { CustomizedDialogs } from '../../components/CustomizedDialogs'
+
 
 const setupStyles = makeStyles((theme) => ({
     container: {
@@ -12,31 +14,33 @@ const setupStyles = makeStyles((theme) => ({
         left: "0",
         top: "15%",
         width: "100%",
-        height: "80%",
+        height: "100%",
     },
     leftPanel: {
         display: "grid",
         alignContent: "space-between",
         background: "white",
         height: "100%",
-        padding: "15px 50px",
+        padding: "20px 80px",
         borderRight: "solid 2px"
     }
   }));
 
-export const CoordinatorSetup = ({ show, onClose}) => {
+export const CoordinatorSetup = ({ show, onClose }) => {
     const classes = setupStyles();
-
+    
     return (
-        <Grid container className={classes.container}>
-            <Grid item xs={8} className={classes.leftPanel} >
-                <RiderJobActivity />
-                <EnhancedTable />
-            </Grid>
+        <CustomizedDialogs open={show} onClose={onClose}>
+            <Grid container className={classes.container}>
+                <Grid item xs={8} className={classes.leftPanel} >
+                    <RiderJobActivity />
+                    <EnhancedTable />
+                </Grid>
 
-            <Grid item xs={4}>
-                <GuidedSetup show={show} onClose={onClose} />
-            </Grid>
-        </Grid>
+                <Grid item xs={4}>
+                    <GuidedSetup />
+                </Grid>
+            </Grid> 
+        </CustomizedDialogs>
     )
 }

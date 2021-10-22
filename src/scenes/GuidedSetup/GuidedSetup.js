@@ -58,6 +58,15 @@ const a11yProps = (index) => {
 }
 
 const guidedSetupStyles = makeStyles((theme) => ({
+  appBar: {
+    fontSize: "20px",
+    color: "black",
+    backgroundColor: "transparent",
+    padding: "30px 15px",
+    "& .MuiTypography-root": {
+      marginBottom: "15px",
+    }
+  },
   tabs: {
     "& .MuiTabs-flexContainer": {
       justifyContent: "space-around"
@@ -137,6 +146,8 @@ const emptyTask = {
 };
 
 export const GuidedSetup = ({ show, onClose }) => {
+
+
   const history = useHistory();
 
   const classes = guidedSetupStyles();
@@ -234,16 +245,17 @@ export const GuidedSetup = ({ show, onClose }) => {
 
   const onShowTaskOverview = () => history.push(`/task/${encodeUUID(task.uuid)}`);
   
-  const onCloseForm = () => {
-    onClose()
-    setFormValues(defaultValues)
-    setValue(0)
-  }
+    const onCloseForm = () => {
+      onClose()
+      setFormValues(defaultValues)
+      setValue(0)
+    }
   
   return (
-    <div open={show} onClose={onCloseForm} >
+    <div>
         <div className={classes.tabContent}>
-            <AppBar position="static">
+            <AppBar position="static" className={classes.appBar}>
+                <Typography variant="p">New Job Quick Start</Typography>
                 <Tabs 
                   value={value} 
                   onChange={handleChange} 

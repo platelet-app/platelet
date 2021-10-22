@@ -59,7 +59,7 @@ const CustomizedDialogsStyles = makeStyles((theme) => ({
   },
 }));
 
-export const CustomizedDialogs = ({ open, onClose, children: [content, cta] })  => {
+export const CustomizedDialogs = ({ open, onClose, children })  => {
   const classes = CustomizedDialogsStyles()
   return (
     <Dialog 
@@ -70,11 +70,11 @@ export const CustomizedDialogs = ({ open, onClose, children: [content, cta] })  
       maxWidth={'xl'}>
       <DialogTitle id="customized-dialog-title" onClose={onClose} />
       <DialogContent dividers>
-        {content}
+        {children }
       </DialogContent>
-      <DialogActions>
+      {/* <DialogActions>
         {cta}
-      </DialogActions>
+      </DialogActions> */}
     </Dialog>
   );
 }
