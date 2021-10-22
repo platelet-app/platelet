@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: '25ch',
+    width: '100%',
   },
 }));
 
@@ -23,7 +23,7 @@ export const ContactForm = ({ values, onChange }) => {
     return (
       <form className={classes.root} noValidate autoComplete="off">
         <TextField
-            label="Name"
+            label="Contact:"
             id="name"
             className={classes.textField}
             margin="normal"
@@ -33,7 +33,7 @@ export const ContactForm = ({ values, onChange }) => {
             />
 
         <TextField
-            label="Phone Number"
+            label="Tel:"
             id="phone"
             className={classes.textField}
             margin="normal"
@@ -42,7 +42,7 @@ export const ContactForm = ({ values, onChange }) => {
             value={values.phone}
             />
         <TextField
-            label="Email"
+            label="Email:"
             id="email"
             className={classes.textField}
             margin="normal"

@@ -1,23 +1,22 @@
 import React from 'react';
 import Typography from '@mui/material/Typography';
 
-import { ContactForm } from '../../components/ContactForm'
-import LocationDetailAndSelector from '../../scenes/Task/components/LocationDetailAndSelector'
+import ItemSelector from './components/ItemSelector'
+import PrioritySelect from "../../scenes/Task/components/PrioritySelect";
 
 import { Styles } from './styles'
 
-export const Step2 = ({ values, onChange, onSelect }) => {
+export const Step2 = ({ values, onChange, onSelect, taskUUID }) => {
     const classes = Styles()
     return (
       <div className={classes.columnWrapper}>
         <div classes={classes.block}>
-          <Typography variant="h6" gutterBottom >{"Where is it being picked up from?"}</Typography>
-          <LocationDetailAndSelector displayPresets onSelectPreset={onSelect} location={values.pickUpLocation} />
-        </div>
+          <Typography variant="h6" gutterBottom >{"Select number of items and priority"}</Typography>
+          <ItemSelector taskUUID={taskUUID}/>
 
-        <div classes={classes.block}>
-          <Typography variant="h6" gutterBottom >{"Sender Contact:"}</Typography>
-          <ContactForm values={values['sender']} onChange={onChange} />
+          <div>
+            <PrioritySelect />
+          </div>
         </div>
       </div>
     )

@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from '@mui/material/Typography';
 
-import PrioritySelect from "../../scenes/Task/components/PrioritySelect";
+import { RiderPicker } from './components/RiderPicker'
 
 import { Styles } from './styles'
 
@@ -10,9 +10,9 @@ export const Step4 = () => {
 
     return (
         <div className={classes.wrapper}>
-            <Typography variant="h6" gutterBottom >{"What is the priority?"}</Typography>
+            <Typography variant="h6" gutterBottom >{"Potential Riders"}</Typography>
             <div>
-                <PrioritySelect />
+                <RiderPicker />
             </div>
         </div>
     )
