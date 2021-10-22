@@ -1,197 +1,220 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import PropTypes from 'prop-types';
-import {useDispatch, useSelector} from "react-redux";
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import {v4 as uuidv4} from 'uuid';
+import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import makeStyles from '@mui/styles/makeStyles';
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { v4 as uuidv4 } from "uuid";
 
 import { encodeUUID } from "../../utilities";
 import { addTaskRequest } from "../../redux/tasks/TasksActions";
-import { setTaskDropoffDestinationRequest, setTaskPickupDestinationRequest } from "../../redux/taskDestinations/TaskDestinationsActions";
 import {
-  addDeliverableRequest, updateDeliverableRequest,
+    setTaskDropoffDestinationRequest,
+    setTaskPickupDestinationRequest,
+} from "../../redux/taskDestinations/TaskDestinationsActions";
+import {
+    addDeliverableRequest,
+    updateDeliverableRequest,
 } from "../../redux/deliverables/DeliverablesActions";
 
-import { CustomizedDialogs } from '../../components/CustomizedDialogs'
-import { Step1, Step2, Step3, Step4, Step5 } from './index'
-
+import { CustomizedDialogs } from "../../components/CustomizedDialogs";
+import { Step1, Step2, Step3, Step4, Step5 } from "./index";
+import { getWhoami } from "../../redux/Selectors";
 
 const TabPanel = (props) => {
-  const { children, value, index, ...other } = props;
+    const { children, value, index, ...other } = props;
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box p={3}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+};
 
 TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
 };
 
 const a11yProps = (index) => {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
+    return {
+        id: `simple-tab-${index}`,
+        "aria-controls": `simple-tabpanel-${index}`,
+    };
+};
 
 const guidedSetupStyles = makeStyles((theme) => ({
-  tabContent: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-  btnWrapper: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-  }
+    tabContent: {
+        flexGrow: 1,
+        backgroundColor: theme.palette.background.paper,
+    },
+    btnWrapper: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
 }));
 
 const defaultValues = {
-  caller: {
-    name: "",
-    phone: "",
-    email: "",
-  },
-  pickUpLocation: null,
-  sender: {
-    name: "",
-    phone: "",
-    email: "",
-  },
-  receiver: {
-    name: "",
-    phone: "",
-    email: "",
-  },
-  dropOffLocation: null,
-  priority: "",
-  items: {
-    sample: 0,
-    covidSample: 0,
-    milk: 0,
-    documents: 0,
-    equipment: 0,
-  },
-}
+    caller: {
+        name: "",
+        phone: "",
+        email: "",
+    },
+    pickUpLocation: null,
+    sender: {
+        name: "",
+        phone: "",
+        email: "",
+    },
+    receiver: {
+        name: "",
+        phone: "",
+        email: "",
+    },
+    dropOffLocation: null,
+    priority: "",
+    items: {
+        sample: 0,
+        covidSample: 0,
+        milk: 0,
+        documents: 0,
+        equipment: 0,
+    },
+};
 
 const emptyTask = {
-  uuid: "",
-  requester_contact: {
-      name: "",
-      telephone_number: ""
-  },
-  assigned_riders: [],
-  assigned_coordinators: [],
-  time_picked_up: null,
-  time_dropped_off: null,
-  time_rejected: null,
-  time_cancelled: null
+    uuid: "",
+    requester_contact: {
+        name: "",
+        telephone_number: "",
+    },
+    assigned_riders: [],
+    assigned_coordinators: [],
+    time_picked_up: null,
+    time_dropped_off: null,
+    time_rejected: null,
+    time_cancelled: null,
 };
 
 export const GuidedSetup = ({ show, onClose }) => {
-  const history = useHistory();
+    const history = useHistory();
 
-  const classes = guidedSetupStyles();
-  const [task, setTask] = useState(emptyTask)
-  const [value, setValue] = React.useState(0);
-  const [formValues, setFormValues] = useState(defaultValues)
-  const roleView = useSelector(state => state.roleView);
-  const whoami = useSelector(state => state.whoami.user);
-  const dispatch = useDispatch();
+    const classes = guidedSetupStyles();
+    const [task, setTask] = useState(emptyTask);
+    const [value, setValue] = React.useState(0);
+    const [formValues, setFormValues] = useState(defaultValues);
+    const roleView = useSelector((state) => state.roleView);
+    const whoami = useSelector(getWhoami);
+    const dispatch = useDispatch();
 
-  useEffect(() => {
-    if(show) {
-      const uuid = uuidv4();
-      const newTask = {...emptyTask, uuid}
-      setTask(newTask)
+    useEffect(() => {
+        if (show) {
+            const uuid = uuidv4();
+            const newTask = { ...emptyTask, uuid };
+            setTask(newTask);
 
-      dispatch(addTaskRequest({
-        ...newTask,
-        time_of_call: new Date().toISOString(),
-        time_created: new Date().toISOString()
-      }, roleView, whoami.uuid))
-    }
-    
-  }, [show])
+            dispatch(
+                addTaskRequest(
+                    {
+                        ...newTask,
+                        time_of_call: new Date().toISOString(),
+                        time_created: new Date().toISOString(),
+                    },
+                    roleView,
+                    whoami.id
+                )
+            );
+        }
+    }, [show]);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
-  const handleCallerContactChange = (value) => {
-    const result = {...formValues, caller: {...formValues.caller, ...value}}
-    setFormValues(result)
-  }
+    const handleCallerContactChange = (value) => {
+        const result = {
+            ...formValues,
+            caller: { ...formValues.caller, ...value },
+        };
+        setFormValues(result);
+    };
 
-  const handleSenderContactChange = (value) => {
-    const result = {...formValues, sender: {...formValues.sender, ...value}}
-    setFormValues(result)
-  }
+    const handleSenderContactChange = (value) => {
+        const result = {
+            ...formValues,
+            sender: { ...formValues.sender, ...value },
+        };
+        setFormValues(result);
+    };
 
-  const handleReceiverContactChange = (value) => {
-    const result = {...formValues, receiver: {...formValues.receiver, ...value}}
-    setFormValues(result)
-  }
-  
-  const onPickUpLocationSaved = (pickUpLocation) => {
-    const result = {...formValues, pickUpLocation}
-    const locationUUID = pickUpLocation.uuid;
+    const handleReceiverContactChange = (value) => {
+        const result = {
+            ...formValues,
+            receiver: { ...formValues.receiver, ...value },
+        };
+        setFormValues(result);
+    };
 
-    setFormValues(result)
+    const onPickUpLocationSaved = (pickUpLocation) => {
+        const result = { ...formValues, pickUpLocation };
+        const locationUUID = pickUpLocation.uuid;
 
-    if (locationUUID) {
-        dispatch(setTaskPickupDestinationRequest(task.uuid, locationUUID))
-    }
-}
+        setFormValues(result);
 
-  const onSelectDropoffFromSaved = (dropOffLocation) => {
-    const result = {...formValues, dropOffLocation}
-    const locationUUID = dropOffLocation.uuid;
+        if (locationUUID) {
+            dispatch(setTaskPickupDestinationRequest(task.uuid, locationUUID));
+        }
+    };
 
-    setFormValues(result)
-    if (locationUUID) {
-        dispatch(setTaskDropoffDestinationRequest(task.uuid, locationUUID))
-    }
-  }
+    const onSelectDropoffFromSaved = (dropOffLocation) => {
+        const result = { ...formValues, dropOffLocation };
+        const locationUUID = dropOffLocation.uuid;
 
-  let emptyDeliverable = {
-    task_uuid: task.uuid,
-    uuid: uuidv4()
-  };
+        setFormValues(result);
+        if (locationUUID) {
+            dispatch(setTaskDropoffDestinationRequest(task.uuid, locationUUID));
+        }
+    };
 
-  const onAddNewDeliverable = (deliverable) => {
-    let newDeliverable = {...emptyDeliverable, count: 1, type_id: deliverable.id, type: deliverable.label};
-    dispatch(addDeliverableRequest(newDeliverable));
-};
+    let emptyDeliverable = {
+        task_uuid: task.uuid,
+        uuid: uuidv4(),
+    };
 
-  const handleDeliverablesChange = (deliverable, count) => {
-    if (deliverable.uuid) {
-        dispatch(updateDeliverableRequest(deliverable.uuid, {count}));
-    } else if (deliverable.id) {
-        onAddNewDeliverable(deliverable);
-    }
-  }
+    const onAddNewDeliverable = (deliverable) => {
+        let newDeliverable = {
+            ...emptyDeliverable,
+            count: 1,
+            type_id: deliverable.id,
+            type: deliverable.label,
+        };
+        dispatch(addDeliverableRequest(newDeliverable));
+    };
+
+    const handleDeliverablesChange = (deliverable, count) => {
+        if (deliverable.uuid) {
+            dispatch(updateDeliverableRequest(deliverable.uuid, { count }));
+        } else if (deliverable.id) {
+            onAddNewDeliverable(deliverable);
+        }
+    };
 
   const onShowTaskOverview = () => history.push(`/task/${encodeUUID(task.uuid)}`);
   
@@ -269,4 +292,4 @@ GuidedSetup.propTypes = {
     open: PropTypes.bool,
     onClose: PropTypes.func,
     showPreview: PropTypes.bool,
-}
+};

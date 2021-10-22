@@ -1,0 +1,298 @@
+{
+    "riderResponsibilities": [
+        "North",
+        "West",
+        "East",
+        "Air Ambulance",
+        "Relief"
+    ],
+    "users": [
+        {
+            "username": "offline",
+            "displayName": "Offline User",
+            "roles": ["RIDER", "COORDINATOR", "ADMIN"],
+            "name": "Offline User",
+            "dateOfBirth": null,
+            "address": {
+                "line1": "123 Fake Street",
+                "line2": "",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "EEE AAA",
+                "what3words": "some.what.words"
+            },
+            "profilePictureURL": null,
+            "profilePictureThumbnailURL": null,
+            "active": 1
+        },
+        {
+            "username": "josieposie",
+            "name": "Josie",
+            "displayName": "Josie Whittle",
+            "address": {
+                "line1": "87 Iffley Road",
+                "line2": "",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS19NR",
+                "what3words": "some.what.words"
+            },
+            "roles": ["COORDINATOR"],
+            "active": 1
+        },
+        {
+            "username": "someone",
+            "name": "Blessing",
+            "displayName": "Mr McKnight",
+            "address": {
+                "line1": "79 Somewhere Road",
+                "line2": "",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS6 8ZY",
+                "what3words": "some.what.words"
+            },
+            "roles": ["COORDINATOR"],
+            "active": 1
+        },
+        {
+            "username": "and",
+            "name": "Anderson",
+            "displayName": "Anders Davidson",
+            "address": {
+                "line1": "44 Sofake Road",
+                "line2": "",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS1 1PA",
+                "what3words": "some.what.words"
+            },
+            "roles": ["RIDER"],
+            "active": 1
+        },
+        {
+            "username": "kirbster",
+            "name": "Abdi",
+            "displayName": "Kirby",
+            "address": {
+                "line1": "8 Inbristol Road",
+                "line2": "",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS1 3ZR",
+                "what3words": "some.what.words"
+            },
+            "roles": ["RIDER", "COORDINATOR"],
+            "active": 1
+        },
+        {
+            "username": "kc",
+            "name": "Kieron",
+            "displayName": "Mr Kieron C",
+            "address": {
+                "line1": "52 Some Road",
+                "line2": "",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS6 1PP",
+                "what3words": "some.what.words"
+            },
+            "roles": ["RIDER", "COORDINATOR"],
+            "active": 1
+        },
+        {
+            "username": "kays",
+            "name": "Kayley",
+            "displayName": "Kays",
+            "address": {
+                "line1": "120 Faker Road",
+                "line2": "",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS1 3YD",
+                "what3words": "some.what.words"
+            },
+            "roles": ["RIDER"]
+        }
+    ],
+    "locations": [
+        {
+            "name": "Bristol Royal Infirmary",
+            "address": {
+                "line1": "Bristol Royal Infirmary",
+                "line2": "Marlborough Street",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS2 8HW",
+                "what3words": "some.what.words"
+            },
+            "listed": 1
+        },
+        {
+            "name": "Bristol Royal Infirmary - A&E",
+            "address": {
+                "ward": "Accident and Emergency",
+                "line1": "Bristol Royal Infirmary",
+                "line2": "Marlborough Street",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS2 8HW",
+                "what3words": "some.what.words"
+            },
+            "listed": 1
+        },
+        {
+            "name": "Southmead Hospital - Pathology",
+            "address": {
+                "ward": "Pathology",
+                "line1": "Southmead Hospital",
+                "line2": "Southmead Road",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS10 5NB",
+                "what3words": "some.what.words"
+            },
+            "listed": 1
+        },
+        {
+            "name": "Southmead Hospital - NICU",
+            "address": {
+                "ward": "Neonatal Intensive Care",
+                "line1": "Southmead Hospital",
+                "line2": "Southmead Road",
+                "town": "Bristol",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS10 5NB",
+                "what3words": "some.what.words"
+            },
+            "listed": 1
+        },
+        {
+            "name": "Callington Road Hospital - Aspen",
+            "address": {
+                "ward": "Aspen Unit",
+                "line1": "Callington Road Hospital",
+                "line2": "Marmalade Lane",
+                "town": "Brislington",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS4 5BJ",
+                "what3words": "some.what.words"
+            },
+            "listed": 1
+        },
+        {
+            "name": "Callington Road Hospital - Silverpine",
+            "address": {
+                "ward": "Silverpine Unit",
+                "line1": "Callington Road Hospital",
+                "line2": "Marmalade Lane",
+                "town": "Brislington",
+                "county": "Bristol",
+                "country": "UK",
+                "postcode": "BS4 5BJ",
+                "what3words": "some.what.words"
+            },
+            "listed": 1
+        },
+        {
+            "name": "Great Western Hospital - A&E",
+            "address": {
+                "ward": "Accident and Emergency",
+                "line1": "Great Western Hospital",
+                "line2": "Marlborough Road",
+                "town": "Swindon",
+                "county": "Swindon",
+                "country": "UK",
+                "postcode": "SN3 6BB",
+                "what3words": "some.what.words"
+            },
+            "listed": 1
+        }
+    ],
+    "responsibilities": [
+        {
+            "label": "North"
+        },
+        {
+            "label": "East"
+        },
+        {
+            "label": "West"
+        },
+        {
+            "label": "Relief"
+        },
+        {
+            "label": "Air Ambulance"
+        }
+    ],
+    "deliverables": [
+        {
+            "label": "Sample",
+            "icon": "BUG",
+            "defaultUnit": "ITEM"
+        },
+        {
+            "label": "Covid sample",
+            "icon": "BUG",
+            "defaultUnit": "ITEM"
+        },
+        {
+            "label": "Document",
+            "icon": "DOCUMENT",
+            "defaultUnit": "ITEM"
+        },
+        {
+            "label": "Milk",
+            "icon": "CHILD",
+            "defaultUnit": "LITRE"
+        },
+        {
+            "label": "Equipment",
+            "icon": "EQUIPMENT",
+            "defaultUnit": "ITEM"
+        },
+        {
+            "label": "Other",
+            "icon": "OTHER"
+        }
+    ],
+    "vehicles": [
+        {
+            "manufacturer": "Yamaha",
+            "name": "Bike One",
+            "model": "FJR1300",
+            "registrationNumber": "FJ13 RRR"
+        },
+        {
+            "manufacturer": "Honda",
+            "name": "Bike Two",
+            "model": "CBR1100XX",
+            "registrationNumber": "AAA"
+        },
+        {
+            "manufacturer": "Yamaha",
+            "name": "Bike Three",
+            "model": "FJR1300",
+            "registrationNumber": "FJ13 RRR"
+        },
+        {
+            "manufacturer": "Honda",
+            "name": "Bike Four",
+            "model": "CBR1100XX",
+            "registrationNumber": "AAA"
+        }
+    ]
+}

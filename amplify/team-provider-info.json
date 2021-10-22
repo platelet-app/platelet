@@ -1,0 +1,30 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-platelet-dev-165046-authRole",
+      "UnauthRoleArn": "arn:aws:iam::130063560692:role/amplify-platelet-dev-165046-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::130063560692:role/amplify-platelet-dev-165046-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-platelet-dev-165046-deployment",
+      "UnauthRoleName": "amplify-platelet-dev-165046-unauthRole",
+      "StackName": "amplify-platelet-dev-165046",
+      "StackId": "arn:aws:cloudformation:eu-west-1:130063560692:stack/amplify-platelet-dev-165046/8cb92470-074e-11ec-b2e8-0292b041fa93",
+      "AmplifyAppId": "d1yif924l5w2t0"
+    },
+    "categories": {
+      "auth": {
+        "platelet61a0ac07": {}
+      },
+      "function": {
+        "PlateletTaskResolvers": {
+          "deploymentBucketName": "amplify-platelet-dev-165046-deployment",
+          "s3Key": "amplify-builds/PlateletTaskResolvers-3245504973786735457a-build.zip"
+        },
+        "plateletCognitoPostConfirmation": {
+          "deploymentBucketName": "amplify-platelet-dev-165046-deployment",
+          "s3Key": "amplify-builds/plateletCognitoPostConfirmation-7350782f6c636c316735-build.zip"
+        }
+      }
+    }
+  }
+}

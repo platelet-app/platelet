@@ -1,5 +1,6 @@
 import React from "react";
-import { Drawer, Hidden, makeStyles, useTheme } from "@material-ui/core";
+import { Drawer, Hidden, useTheme } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { useState } from "react";
 import CommentsSection from "../../Comments/CommentsSection";
 
@@ -62,37 +63,35 @@ export default function CommentsSideBar(props) {
         setOpen(!open);
     };
 
-    return (
-        <>
-            <Hidden smUp implementation="css">
-                <Drawer
-                    container={container}
-                    variant="temporary"
-                    anchor={"right"}
-                    open={mobileOpen}
-                    onClose={handleDrawerToggle}
-                    classes={{
-                        paper: classes.drawerPaper,
-                    }}
-                    ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
-                    }}
-                >
-                    commentsMob
-                </Drawer>
-            </Hidden>
-            <Hidden xsDown implementation="css">
-                <Drawer
-                    classes={{
-                        paper: classes.drawerPaper,
-                    }}
-                    anchor={"right"}
-                    variant="permanent"
-                    open
-                >
-                    <CommentsSection parentUUID={props.parentUUID} />
-                </Drawer>
-            </Hidden>
-        </>
-    );
+    return <>
+        <Hidden smUp implementation="css">
+            <Drawer
+                container={container}
+                variant="temporary"
+                anchor={"right"}
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
+                ModalProps={{
+                    keepMounted: true, // Better open performance on mobile.
+                }}
+            >
+                commentsMob
+            </Drawer>
+        </Hidden>
+        <Hidden smDown implementation="css">
+            <Drawer
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
+                anchor={"right"}
+                variant="permanent"
+                open
+            >
+                <CommentsSection parentUUID={props.parentUUID} />
+            </Drawer>
+        </Hidden>
+    </>;
 }

@@ -1,5 +1,5 @@
-import Grid from "@material-ui/core/Grid";
-import {Skeleton} from "@material-ui/lab";
+import Grid from "@mui/material/Grid";
+import Skeleton from '@mui/material/Skeleton';
 import React from "react";
 
 export default function LoginSkeleton(props) {

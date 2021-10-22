@@ -1,10 +1,10 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
-import Popover from '@material-ui/core/Popover';
-import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
-import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
-import Grid from "@material-ui/core/Grid";
+import makeStyles from '@mui/styles/makeStyles';
+import Popover from '@mui/material/Popover';
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
+import Grid from "@mui/material/Grid";
 import UserCard from "../../../components/UserCard";
 import UsersSelect from "../../../components/UsersSelect";
 import {useDispatch} from "react-redux";
@@ -58,7 +58,7 @@ export default function CollaboratorPickerPopover(props) {
                 }}
             >
                 <div className={classes.root}>
-                <Grid container spacing={1} direction={"column"} alignItems={"center"} justify={"flex-start"}>
+                <Grid container spacing={1} direction={"column"} alignItems={"center"} justifyContent={"flex-start"}>
                     <Grid item>
                         <UsersSelect roles={["coordinator"]} onSelect={handleSelectUser} excludeList={userSelectExclude}/>
                     </Grid>

@@ -1,88 +1,63 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { MenuMainContainer } from "./navigation/MenuMainContainer";
-import Login from "./scenes/Login/Login";
 import "./index.css";
 import "./App.css";
-import "typeface-roboto";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import CssBaseline from "@mui/material/CssBaseline";
 import { useDispatch, useSelector } from "react-redux";
 import { useIdleTimer } from "react-idle-timer";
-import { setDarkMode, setIdleStatus, setMobileView } from "./redux/Actions";
-import { logoutUser, removeApiURL } from "./redux/login/LoginActions";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { setIdleStatus, setMobileView } from "./redux/Actions";
+import { withAuthenticator } from "@aws-amplify/ui-react";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import {
-    clearServerSettings,
-    getServerSettingsRequest,
-} from "./redux/ServerSettings/ServerSettingsActions";
+import Amplify, { Logger, Auth } from "aws-amplify";
 import { SnackbarProvider, withSnackbar } from "notistack";
-import LoginSkeleton from "./scenes/Login/components/LoginSkeleton";
 import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
 import "moment/locale/en-gb";
-import { DismissButton, showHide } from "./styles/common";
-import { Link } from "react-router-dom";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { DismissButton } from "./styles/common";
+import {
+    ThemeProvider,
+    StyledEngineProvider,
+    createTheme,
+} from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
+import SnackNotificationButtons from "./components/SnackNotificationButtons";
 
-const useStyles = makeStyles((theme) => ({
-    centeredDiv: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        textAlign: "center",
-    },
-    login: {
-        height: "100%",
-        margin: "auto",
-        paddingTop: 70,
-    },
-}));
+if (
+    (!process.env.REACT_APP_OFFLINE_ONLY ||
+        process.env.REACT_APP_OFFLINE_ONLY === "false") &&
+    (!process.env.REACT_APP_DEMO_MODE ||
+        process.env.REACT_APP_DEMO_MODE === "false")
+) {
+    const config = require("../src/aws-exports");
+    Amplify.configure({
+        ...config.default,
+        ssr: true,
+    });
+}
+Logger.LOG_LEVEL = "ERROR";
 
 function AppContents(props) {
-    const forceResetPassword = useSelector(
-        (state) => state.whoami.user.password_reset_on_login
-    );
-    const isInitialised = useSelector((state) => state.apiControl.initialised);
     const incomingNotification = useSelector((state) => state.notification);
-    const apiURL = useSelector((state) => state.apiControl.api_url);
     const serverSettings = useSelector((state) => state.serverSettings);
     const error = useSelector((state) => state.error);
     const dispatch = useDispatch();
-    const classes = useStyles();
-    const { show, hide } = showHide();
-
-    const [headerSettings, setHeaderSettings] = useState({
-        title: "Bloodbike Dispatch",
-        favicon: "",
-    });
-
-    useEffect(() => dispatch(getServerSettingsRequest()), []);
 
     function initialise() {
-        // this gets priorities, deliverable types, users, patches from the api and connects sockets
-        if (isInitialised) dispatch(initialiseApp());
+        dispatch(initialiseApp());
     }
-
-    useEffect(initialise, [isInitialised]);
+    useEffect(initialise, []);
 
     const handleOnIdle = (event) => {
         dispatch(setIdleStatus(true));
-        console.log("user is idle", event);
-        console.log("last active", getLastActiveTime());
     };
 
     const handleOnActive = (event) => {
         dispatch(setIdleStatus(false));
-        console.log("user is active", event);
-        console.log("time remaining", getRemainingTime());
     };
 
-    const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    useIdleTimer({
         timeout: 1000 * 60 * 5,
         onIdle: handleOnIdle,
         onActive: handleOnActive,
@@ -140,50 +115,21 @@ function AppContents(props) {
 
     function showNotification() {
         if (incomingNotification) {
-            const { message, options, restoreActions, viewLink } =
+            const { message, options, restoreCallback, viewLink } =
                 incomingNotification;
             options.action = (key) => (
-                <React.Fragment>
-                    <Button
-                        className={
-                            restoreActions && restoreActions().length !== 0
-                                ? show
-                                : hide
-                        }
-                        color="secondary"
-                        size="small"
-                        onClick={() => {
-                            props.closeSnackbar(key);
-                            for (const dispatchAction of restoreActions()) {
-                                dispatch(dispatchAction);
-                            }
-                        }}
-                    >
-                        UNDO
-                    </Button>
-                    <Button
-                        className={viewLink ? show : hide}
-                        color="secondary"
-                        size="small"
-                        component={Link}
-                        to={viewLink || "/"}
-                    >
-                        VIEW
-                    </Button>
-                    <DismissButton onClick={() => props.closeSnackbar(key)} />
-                </React.Fragment>
+                <SnackNotificationButtons
+                    restoreCallback={restoreCallback}
+                    viewLink={viewLink}
+                    snackKey={key}
+                    closeSnackbar={props.closeSnackbar}
+                />
             );
             props.enqueueSnackbar(message, options);
         }
     }
 
     useEffect(showNotification, [incomingNotification]);
-
-    let helmet = (
-        <Helmet>
-            <title>Bloodbike Dispatch</title>
-        </Helmet>
-    );
 
     function checkServerSettings() {
         Moment.globalMoment = moment;
@@ -195,56 +141,45 @@ function AppContents(props) {
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
 
-    let appContents;
-
-    if (forceResetPassword || (serverSettings && !isInitialised)) {
-        appContents = (
-            <div className={classes.login}>
-                <Login apiUrl={apiURL} />
-            </div>
-        );
-    } else if (isInitialised) {
-        appContents = (
-            <React.Fragment>
-                <Helmet>
-                    <title>platelet</title>
-                </Helmet>
-                <MenuMainContainer />
-            </React.Fragment>
-        );
-    } else {
-        appContents = (
-            <div className={classes.login}>
-                <LoginSkeleton />
-            </div>
-        );
-    }
-    return <React.Fragment>{appContents}</React.Fragment>;
+    return (
+        <React.Fragment>
+            <Helmet>
+                <title>platelet</title>
+            </Helmet>
+            <MenuMainContainer />
+        </React.Fragment>
+    );
 }
 
 const AppMain = withSnackbar(AppContents);
 
 const taskStatus = {
-    new: "rgba(252, 231, 121, 1)",
-    active: "cornflowerblue",
-    pickedUp: "orange",
-    delivered: "lightgreen",
+    NEW: "rgba(252, 231, 121, 1)",
+    ACTIVE: "cornflowerblue",
+    PICKED_UP: "orange",
+    DROPPED_OFF: "lightgreen",
+    CANCELLED: "blue",
+    REJECTED: "grey",
 };
 
-function App(props) {
+function AppDefault(props) {
     const darkMode = useSelector((state) => state.darkMode);
     let theme;
     if (darkMode) {
-        theme = createMuiTheme({
+        theme = createTheme({
             palette: {
-                type: "dark",
+                mode: "dark",
+                background: {
+                    paper: "rgb(40, 40, 40)",
+                    default: "rgb(30, 30, 30)",
+                },
                 taskStatus,
             },
         });
     } else {
-        theme = createMuiTheme({
+        theme = createTheme({
             palette: {
-                type: "light",
+                mode: "light",
                 background: {
                     default: "rgb(235, 235, 235)",
                 },
@@ -253,34 +188,20 @@ function App(props) {
         });
     }
 
-    const useStylesNotistack = makeStyles({
-        contentRoot: {
-            backgroundColor: theme.palette.background.default,
-        },
-        variantSuccess: {
-            backgroundColor: theme.palette.success.main,
-        },
-        variantError: {
-            backgroundColor: theme.palette.error.main,
-        },
-        variantInfo: {
-            backgroundColor: theme.palette.info.main,
-        },
-        variantWarning: {
-            backgroundColor: theme.palette.warning.main,
-        },
-    });
-
-    const classes = useStylesNotistack();
-
     return (
-        <MuiThemeProvider theme={theme}>
-            <CssBaseline />
-            <SnackbarProvider classes={classes} maxSnack={1}>
-                <AppMain {...props} />
-            </SnackbarProvider>
-        </MuiThemeProvider>
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <SnackbarProvider maxSnack={1}>
+                    <AppMain {...props} />
+                </SnackbarProvider>
+            </ThemeProvider>
+        </StyledEngineProvider>
     );
 }
 
+const App =
+    process.env.REACT_APP_OFFLINE_ONLY === "true"
+        ? AppDefault
+        : withAuthenticator(AppDefault);
 export default App;

@@ -1,41 +1,44 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "../../../App.css";
-import "typeface-roboto";
-import CardContent from "@material-ui/core/CardContent";
+import CardContent from "@mui/material/CardContent";
 import Moment from "react-moment";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import CardItem from "../../../components/CardItem";
-import AvatarGroup from "@material-ui/lab/AvatarGroup";
+import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
-import { Tooltip } from "@material-ui/core";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { Tooltip } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
-import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
+import { getWhoami } from "../../../redux/Selectors";
 
 const colourBarPercent = "90%";
+
+const generateClass = (theme, status) => {
+    return {
+        background: `linear-gradient(0deg,
+        rgba(0,0,0,0)
+        ${colourBarPercent},
+        rgba(0,0,0,0)
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]}
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]} 100%)`,
+        cursor: "pointer",
+    };
+};
 
 const useStyles = makeStyles((theme) => ({
     cardContent: {
         paddingTop: 5,
     },
-    new: {
-        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.new} ${colourBarPercent}, ${theme.palette.taskStatus.new} 100%)`,
-        cursor: "pointer",
-    },
-    active: {
-        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.active} ${colourBarPercent}, ${theme.palette.taskStatus.active} 100%)`,
-        cursor: "pointer",
-    },
-    pickedUp: {
-        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} 100%)`,
-        cursor: "pointer",
-    },
-    delivered: {
-        background: `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} 100%)`,
-        cursor: "pointer",
-    },
+    NEW: generateClass(theme, "NEW"),
+    ACTIVE: generateClass(theme, "ACTIVE"),
+    PICKED_UP: generateClass(theme, "PICKED_UP"),
+    DROPPED_OFF: generateClass(theme, "DROPPED_OFF"),
+    CANCELLED: generateClass(theme, "CANCELLED"),
+    REJECTED: generateClass(theme, "REJECTED"),
     itemTopBarContainer: {
         width: "100%",
         height: 30,
@@ -54,55 +57,45 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TaskCard = React.memo((props) => {
-    const whoami = useSelector((state) => state.whoami.user);
+    const whoami = useSelector(getWhoami);
     const classes = useStyles();
     const roleView = useSelector((state) => state.roleView);
-    let pickupTitle = "";
-    if (props.pickupAddress) {
-        pickupTitle = props.pickupAddress.line1
-            ? props.pickupAddress.line1
+    let pickUpTitle = "";
+    if (props.pickUpLocation) {
+        pickUpTitle = props.pickUpLocation.line1
+            ? props.pickUpLocation.line1
             : "";
     }
-    let pickupWard = "";
-    if (props.pickupAddress) {
-        pickupWard = props.pickupAddress.ward ? props.pickupAddress.ward : "";
+    let pickUpWard = "";
+    if (props.pickUpLocation) {
+        pickUpWard = props.pickUpLocation.ward ? props.pickUpLocation.ward : "";
     }
-    let dropoffTitle = "";
-    if (props.dropoffAddress) {
-        dropoffTitle = props.dropoffAddress.line1
-            ? props.dropoffAddress.line1
+    let dropOffTitle = "";
+    if (props.dropOffLocation) {
+        dropOffTitle = props.dropOffLocation.line1
+            ? props.dropOffLocation.line1
             : "";
     }
-    let dropoffWard = "";
-    if (props.dropoffAddress) {
-        dropoffWard = props.dropoffAddress.ward
-            ? props.dropoffAddress.ward
+    let dropOffWard = "";
+    if (props.dropOffLocation) {
+        dropOffWard = props.dropOffLocation.ward
+            ? props.dropOffLocation.ward
             : "";
     }
     const hasRider = props.assignedRiders
         ? !!props.assignedRiders.length
         : false;
 
-    let className;
-
-    if (!hasRider) {
-        className = classes.new;
-    } else if (hasRider && !props.timePickedUp) {
-        className = classes.active;
-    } else if (hasRider && props.timePickedUp && !props.timeDroppedOff) {
-        className = classes.pickedUp;
-    } else if (props.timeDroppedOff) {
-        className = classes.delivered;
-    }
+    const className = classes[props.status];
 
     const coordAvatars = props.assignedCoordinators
         ? ["coordinator", "all"].includes(roleView)
-            ? props.assignedCoordinators.filter((u) => u.uuid !== whoami.uuid)
+            ? props.assignedCoordinators.filter((u) => u.id !== whoami.id)
             : props.assignedCoordinators
         : [];
     const riderAvatars = props.assignedRiders
         ? roleView === "rider"
-            ? props.assignedRiders.filter((u) => u.uuid !== whoami.uuid)
+            ? props.assignedRiders.filter((u) => u.id !== whoami.id)
             : props.assignedRiders
         : [];
     const cardInnerContent = (
@@ -111,7 +104,7 @@ const TaskCard = React.memo((props) => {
                 container
                 spacing={0}
                 alignItems={"flex-end"}
-                justify={"flex-start"}
+                justifyContent={"flex-start"}
                 direction={"column"}
             >
                 <Grid
@@ -119,7 +112,7 @@ const TaskCard = React.memo((props) => {
                     item
                     className={classes.itemTopBarContainer}
                     direction={"row"}
-                    justify={"space-between"}
+                    justifyContent={"space-between"}
                     alignItems={"center"}
                 >
                     <Grid item>
@@ -129,13 +122,11 @@ const TaskCard = React.memo((props) => {
                             <AvatarGroup>
                                 {coordAvatars.map((u) => (
                                     <UserAvatar
-                                        key={u.uuid}
+                                        key={u.id}
                                         size={3}
-                                        userUUID={u.uuid}
-                                        displayName={u.display_name}
-                                        avatarURL={
-                                            u.profile_picture_thumbnail_url
-                                        }
+                                        userUUID={u.id}
+                                        displayName={u.displayName}
+                                        avatarURL={u.profilePictureThumbnailURL}
                                     />
                                 ))}
                             </AvatarGroup>
@@ -146,13 +137,11 @@ const TaskCard = React.memo((props) => {
                             <AvatarGroup>
                                 {riderAvatars.map((u) => (
                                     <UserAvatar
-                                        key={u.uuid}
+                                        key={u.id}
                                         size={3}
-                                        userUUID={u.uuid}
-                                        displayName={u.display_name}
-                                        avatarURL={
-                                            u.profile_picture_thumbnail_url
-                                        }
+                                        userUUID={u.id}
+                                        displayName={u.displayName}
+                                        avatarURL={u.profilePictureThumbnailURL}
                                     />
                                 ))}
                             </AvatarGroup>
@@ -160,19 +149,21 @@ const TaskCard = React.memo((props) => {
                     </Grid>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"Patch"}>{props.patch}</CardItem>
+                    <CardItem label={"Responsibility"}>
+                        {props.riderResponsibility}
+                    </CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"From"}>{pickupTitle}</CardItem>
+                    <CardItem label={"From"}>{pickUpTitle}</CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"Ward"}>{pickupWard}</CardItem>
+                    <CardItem label={"Ward"}>{pickUpWard}</CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"To"}>{dropoffTitle}</CardItem>
+                    <CardItem label={"To"}>{dropOffTitle}</CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
-                    <CardItem label={"Ward"}>{dropoffWard}</CardItem>
+                    <CardItem label={"Ward"}>{dropOffWard}</CardItem>
                 </Grid>
                 <Grid className={classes.gridItem} item>
                     <CardItem label={"TOC"}>
@@ -188,14 +179,19 @@ const TaskCard = React.memo((props) => {
         </CardContent>
     );
 
-    return <StyledCard className={className}>{cardInnerContent}</StyledCard>;
+    return (
+        <StyledCard PaperProps={{ elevation: 1 }} className={className}>
+            {cardInnerContent}
+        </StyledCard>
+    );
 });
 
 TaskCard.propTypes = {
-    pickupAddress: PropTypes.object,
-    dropoffAddress: PropTypes.object,
+    pickUpAddress: PropTypes.object,
+    dropOffAddress: PropTypes.object,
     assignedRiders: PropTypes.arrayOf(PropTypes.object),
     assignedCoordinators: PropTypes.arrayOf(PropTypes.object),
+    riderResponsibility: PropTypes.string,
     timePickedUp: PropTypes.string,
     timeDroppedOff: PropTypes.string,
     assignedCoordinatorsDisplayString: PropTypes.string,
@@ -207,7 +203,7 @@ TaskCard.propTypes = {
 TaskCard.defaultProps = {
     assignedRiders: [],
     assignedCoordinators: [],
-    patch: "",
+    riderResponsibility: "",
     priority: "",
 };
 

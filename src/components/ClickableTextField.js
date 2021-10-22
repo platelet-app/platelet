@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import Typography from "@material-ui/core/Typography";
-import { TextField } from "@material-ui/core";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Typography from "@mui/material/Typography";
+import { TextField } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "./TextFields";
 import clsx from "clsx";
@@ -9,7 +9,7 @@ import clsx from "clsx";
 const useStyles = makeStyles((theme) => ({
     text: {
         maxWidth: 300,
-        [theme.breakpoints.down("md")]: {
+        [theme.breakpoints.down('lg')]: {
             maxWidth: 250,
         },
     },
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
         color: "gray",
         "&:hover": {
             background:
-                theme.palette.type === "dark"
+                theme.palette.mode === "dark"
                     ? "rgb(100, 100, 100)"
                     : "rgb(242, 242, 242)",
         },
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     hoverHighlight: {
         "&:hover": {
             background:
-                theme.palette.type === "dark"
+                theme.palette.mode === "dark"
                     ? "rgb(100, 100, 100)"
                     : "rgb(242, 242, 242)",
         },
@@ -63,26 +63,26 @@ function ClickableTextField(props) {
     }, [props.value]);
 
     const stuff = props.disabled ? (
-        props.value ? (
+        value ? (
             <Typography
                 noWrap
                 className={classes.text}
                 onClick={toggleEditMode}
                 align={"right"}
             >
-                {props.value}
+                {value}
             </Typography>
         ) : (
             <></>
         )
-    ) : props.value ? (
+    ) : value ? (
         <Typography
             noWrap
             className={clsx(classes.hoverHighlight, classes.text)}
             align={"right"}
             onClick={toggleEditMode}
         >
-            {props.value}
+            {value}
         </Typography>
     ) : (
         <Typography

@@ -1,20 +1,34 @@
 import React from "react";
 import UserAvatar from "./UserAvatar";
-import Grid from "@material-ui/core/Grid";
-import PropTypes from "prop-types"
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import PropTypes from "prop-types";
+import Typography from "@mui/material/Typography";
 
 function CompactUserCard(props) {
     return (
-        <Grid container style={{width: "100%"}} spacing={1} alignItems={"center"} justify={"space-between"}
-              direction={"row"}>
+        <Grid
+            container
+            style={{ width: "100%" }}
+            spacing={1}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            direction={"row"}
+        >
             <Grid item>
-                <Grid container spacing={1} alignItems={"center"} justify={"flex-start"} direction={"row"}>
+                <Grid
+                    container
+                    spacing={1}
+                    alignItems={"center"}
+                    justifyContent={"flex-start"}
+                    direction={"row"}
+                >
                     <Grid item>
-                        <UserAvatar userUUID={props.userUUID}
-                                    displayName={props.displayName}
-                                    size={3}
-                                    avatarURL={props.profilePictureURL}/>
+                        <UserAvatar
+                            userUUID={props.userUUID}
+                            displayName={props.displayName}
+                            size={3}
+                            avatarURL={props.profilePictureURL}
+                        />
                     </Grid>
                     <Grid item>
                         <Grid container direction={"column"}>
@@ -22,7 +36,7 @@ function CompactUserCard(props) {
                                 <Typography>{props.displayName}</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography>{props.patch}</Typography>
+                                <Typography>{props.responsibility}</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -32,21 +46,21 @@ function CompactUserCard(props) {
                 <Typography>{props.vehicleName}</Typography>
             </Grid>
         </Grid>
-    )
+    );
 }
 
 CompactUserCard.propTypes = {
     userUUID: PropTypes.string,
     displayName: PropTypes.string,
     profilePictureURL: PropTypes.string,
-    patch: PropTypes.string,
-    vehicleName: PropTypes.string
-}
+    responsibility: PropTypes.string,
+    vehicleName: PropTypes.string,
+};
 
 CompactUserCard.defaultProps = {
     displayName: "Unknown User",
-    patch: "",
-    vehicleName: ""
-}
+    responsibility: "",
+    vehicleName: "",
+};
 
 export default CompactUserCard;

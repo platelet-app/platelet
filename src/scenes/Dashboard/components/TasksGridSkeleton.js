@@ -1,6 +1,6 @@
 import React from "react";
-import {Skeleton} from "@material-ui/lab";
-import Grid from "@material-ui/core/Grid";
+import Skeleton from '@mui/material/Skeleton';
+import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types"
 function TasksGridSkeleton(props) {
 
@@ -8,25 +8,25 @@ function TasksGridSkeleton(props) {
         <Grid container
               spacing={3}
               direction={"row"}
-              justify={"flex-start"}
+              justifyContent={"flex-start"}
               alignItems={"center"}
               style={{paddingLeft: "15px"}}
         >
             {[...Array(props.count)].map((x, i) =>
                 <Grid item key={i}>
-                    <Grid container direction={"column"} spacing={3} justify={"center"} alignItems={"flex-start"}>
+                    <Grid container direction={"column"} spacing={3} justifyContent={"center"} alignItems={"flex-start"}>
                         <Grid item>
-                            <Skeleton variant="rect" width={370} height={100}/>
+                            <Skeleton variant="rectangular" width={370} height={100}/>
                         </Grid>
                         {[...Array( 10)].map((y, z) =>
                             <Grid item key={`${z}_${i}`}>
-                                <Skeleton variant="rect" width={370} height={250}/>
+                                <Skeleton variant="rectangular" width={370} height={250}/>
                             </Grid>
                         )}
                     </Grid>
                 </Grid>)}
         </Grid>
-    )
+    );
 }
 
 TasksGridSkeleton.prototypes = {

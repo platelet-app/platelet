@@ -1,6 +1,6 @@
-# Platelet web
+# Platelet
 
-This is the web front end for Platelet. It works with an instance of platelet-api. It uses React, Material-UI, Redux, Redux-Saga and other NPM libraries.
+This is the main repository for the Platelet app. It uses React, AWS Amplify, DataStore, Material-UI, Redux, Redux-Saga and other libraries.
 
 ## Setup
 
@@ -16,29 +16,39 @@ and
 
 `npm start`
 
-to run the development server. You can then navigate to http://localhost:3000 to load platelet-web.
-
 ## Environment Variables
 
-###### REACT_APP_API_URL
+###### REACT_APP_OFFLINE_ONLY
 
-This is the URL for the Platelet API you'd like to connect to. For example if you are running the API on localhost:
+When set to `true` the app will not attempt to connect to any AWS Amplify deployment and will work offline only.
 
-`http://localhost:5000/api/v0.1/`
+###### REACT_APP_POPULATE_FAKE_DATA
 
-You can use https or http and the full URL must be set including the leading `/`.
+When set to `true` the app will populate itself with some fake data. Best used with REACT_APP_OFFLINE_ONLY.
 
-###### REACT_APP_SOCKET_API_URL
+Note: you should clear site data before connecting to an AWS amplify deployment, to save fake data from being synchronised to the server.
 
-This is the URL for the socketio websocket server. Platelet API provides a websocket server using Flask-SocketIO, so in most cases this can be the same as `REACT_APP_API_URL`.
+###### REACT_APP_DEMO_MODE
+
+When set to `true` the app will clear saved data on each page reload. Good for a demonstration of the app combined with REACT_APP_POPULATE_FAKE_DATA.
 
 ###### REACT_APP_THROW_ERRORS
 
 Set this to `true` if Redux should throw errors instead of handling them and showing a notification. This can be helpful when developing.
 
-###### REACT_APP_DISABLE_SOCKETS
+## Development
 
-Set this to `true` if socket updates should be disabled.
+When making changes to the graphql schema, you should run:
+
+`amplify codegen models`
+
+To generate new models for the DataStore.
+
+Run:
+
+`amplify push`
+
+to push changes to an online AWS Amplify dev environment.
 
 ---
 

@@ -1,17 +1,17 @@
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import React from "react";
 import {StyledAddCircleOutlineDisabled, StyledAddCircleOutline} from "../styles/Buttons";
 import {StyledAddCircleOutlineSmallDisabled, StyledAddCircleOutlineSmall} from "../styles/Buttons";
-import Tooltip from "@material-ui/core/Tooltip";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
-import {makeStyles} from "@material-ui/core/styles";
+import Tooltip from "@mui/material/Tooltip";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
+import makeStyles from '@mui/styles/makeStyles';
 import PropTypes from "prop-types"
 import {Link} from "react-router-dom";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 
 export function AddCircleButton(props) {
     return (
@@ -23,7 +23,7 @@ export function AddCircleButton(props) {
                 onClick={props.onClick}
                 disabled={props.disabled}
                 className={props.className}
-            >
+                size="large">
                 {props.disabled ? <StyledAddCircleOutlineDisabled/> : <StyledAddCircleOutline/>}
             </IconButton>
         </Tooltip>
@@ -39,7 +39,7 @@ export function AddCircleButtonSmall(props) {
             onClick={props.onClick}
             disabled={props.disabled}
             className={props.className}
-        >
+            size="large">
             {props.disabled ? <StyledAddCircleOutlineSmallDisabled/> : <StyledAddCircleOutlineSmall/>}
         </IconButton>
     );
@@ -61,13 +61,14 @@ function SmallCirclePlusButton(props) {
 
     return (
         <Tooltip title={props.tooltip}>
-            <IconButton className={classes.iconButton}
-                        aria-label="more"
-                        aria-controls="long-menu"
-                        aria-haspopup="true"
-                        onClick={props.onClick}
-                        disabled={props.disabled}
-            >
+            <IconButton
+                className={classes.iconButton}
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={props.onClick}
+                disabled={props.disabled}
+                size="large">
                 <AddCircleOutline className={classes.button}/>
             </IconButton>
         </Tooltip>
@@ -118,14 +119,15 @@ function ArrowButton(props) {
     return (
         <div className={props.className}>
             <Tooltip title={props.tooltip}>
-                <IconButton className={classes.iconButton}
-                            aria-label="more"
-                            aria-controls="long-menu"
-                            aria-haspopup="true"
-                            onClick={props.onClick}
-                            disabled={props.disabled}
-                            {...linkProps}
-                >
+                <IconButton
+                    className={classes.iconButton}
+                    aria-label="more"
+                    aria-controls="long-menu"
+                    aria-haspopup="true"
+                    onClick={props.onClick}
+                    disabled={props.disabled}
+                    {...linkProps}
+                    size="large">
                     {arrowIcon}
                 </IconButton>
             </Tooltip>

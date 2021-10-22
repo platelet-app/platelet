@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import * as io from 'socket.io-client'
 
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import {PaddedPaper} from "../../styles/common";
 import {getLogin} from "../../utilities"
 import {createLoadingSelector} from "../../redux/LoadingSelectors";

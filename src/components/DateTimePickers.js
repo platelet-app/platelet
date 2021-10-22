@@ -1,35 +1,49 @@
 import React, { useState } from "react";
-import { DateTimePicker, KeyboardDateTimePicker } from "@material-ui/pickers";
+import { DateTimePicker, DatePicker } from "@mui/lab";
 
 export function DateAndTimePicker(props) {
-
     function handleDateChange(value) {
-        props.onChange(value)
+        props.onChange(value);
     }
 
-        return (
-                <KeyboardDateTimePicker
-                    disabled={props.disabled}
-                    variant="inline"
-                    ampm={false}
-                    label={props.label}
-                    value={props.value}
-                    onChange={handleDateChange}
-                    onError={console.log}
-                    format="yyyy/MM/dd HH:mm"
-                />
-        );
+    return (
+        <DateTimePicker
+            disabled={props.disabled}
+            variant="inline"
+            ampm={false}
+            label={props.label}
+            value={props.value}
+            onChange={handleDateChange}
+            onError={console.log}
+            format="yyyy/MM/dd HH:mm"
+        />
+    );
 }
 
+export function DatePickerNope(props) {
+    return (
+        <DatePicker
+            disabled={props.disabled}
+            variant="inline"
+            ampm={false}
+            label={props.label}
+            value={props.value}
+            onChange={props.onChange}
+            onError={console.log}
+            format="yyyy/MM/dd"
+        />
+    );
+}
 
 export function CustomDateTimePicker(props) {
     const [clearedDate, handleClearedDateChange] = useState(null);
-    const [selectedDate, handleDateChange] = useState(new Date("2019-01-01T18:54"));
+    const [selectedDate, handleDateChange] = useState(
+        new Date("2019-01-01T18:54")
+    );
 
     return (
         <>
-
-            <KeyboardDateTimePicker
+            <DateTimePicker
                 value={selectedDate}
                 onChange={handleDateChange}
                 label="Keyboard with error handler"
@@ -47,4 +61,3 @@ export function CustomDateTimePicker(props) {
         </>
     );
 }
-

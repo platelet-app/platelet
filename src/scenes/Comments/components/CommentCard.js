@@ -1,61 +1,61 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import {
     commentStyles,
     CommentCardStyled,
     PrivateCommentCardStyled,
 } from "../styles/CommentCards";
-import LockIcon from "@material-ui/icons/Lock";
-import Tooltip from "@material-ui/core/Tooltip";
+import LockIcon from "@mui/icons-material/Lock";
+import Tooltip from "@mui/material/Tooltip";
 import moment from "moment";
 import CommentAuthor from "./CommentAuthor";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@mui/icons-material/Edit";
 import { showHide } from "../../../styles/common";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
 import PropTypes from "prop-types";
+import { getWhoami } from "../../../redux/Selectors";
+import { commentVisibility } from "../../../apiConsts";
 
 const CommentCard = React.memo((props) => {
     const { show, hide } = showHide();
     const classes = commentStyles();
     const timeCreatedString = moment(props.timeCreated).calendar();
-    const whoami = useSelector((state) => state.whoami.user);
-    const Card = props.public
-        ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
-        : (props) => (
-              <PrivateCommentCardStyled>
-                  {props.children}
-              </PrivateCommentCardStyled>
-          );
+    const whoami = useSelector(getWhoami);
+    const Card =
+        props.visibility === commentVisibility.everyone
+            ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
+            : (props) => (
+                  <PrivateCommentCardStyled>
+                      {props.children}
+                  </PrivateCommentCardStyled>
+              );
     return (
         <Grid
             container
             direction={"column"}
             wrap={"nowrap"}
             alignItems={
-                whoami.uuid === props.author.uuid ? "flex-end" : "flex-start"
+                whoami.id === props.author.id ? "flex-end" : "flex-start"
             }
             spacing={1}
         >
             <Grid item className={props.showAuthor ? show : hide}>
                 <CommentAuthor
-                    uuid={props.author.uuid}
-                    displayName={props.author.display_name}
-                    avatarURL={props.author.profile_picture_thumbnail_url}
+                    uuid={props.author.id}
+                    displayName={props.author.displayName}
+                    avatarURL={props.author.profilePictureThumbnailURL}
                 />
             </Grid>
             <Grid item>
                 <Card>
-                    <Grid container direction={"row"} justify={"space-between"}>
-                        <Grid item>
-                            <Typography
-                                className={classes.body}
-                                align={"justify"}
-                            >
-                                {props.children}
-                            </Typography>
-                        </Grid>
+                    <Grid
+                        container
+                        direction={"row"}
+                        justifyContent={"space-between"}
+                    >
+                        <Grid item>{props.children}</Grid>
                         <Grid item>
                             <Grid
                                 container
@@ -72,17 +72,23 @@ const CommentCard = React.memo((props) => {
                                                 ? show
                                                 : hide
                                         }
-                                        title={`Edited ${props.numEdits} times.`}
+                                        title={`Edited ${props.numEdits} ${
+                                            props.numEdits === 1
+                                                ? "time"
+                                                : "times"
+                                        }.`}
                                     >
-                                        <EditIcon
-                                            className={classes.icon}
-                                            color={"disabled"}
-                                        />
+                                        <EditIcon className={classes.icon} />
                                     </Tooltip>
                                 </Grid>
                                 <Grid item>
                                     <Tooltip
-                                        className={props.public ? hide : show}
+                                        className={
+                                            props.visibility ===
+                                            commentVisibility.everyone
+                                                ? hide
+                                                : show
+                                        }
                                         title="Only visible to you"
                                     >
                                         <LockIcon
@@ -115,9 +121,9 @@ const CommentCard = React.memo((props) => {
     );
 });
 
-CommentCard.PropTypes = {
+CommentCard.propTypes = {
     author: PropTypes.object,
-    public: PropTypes.bool,
+    visibility: PropTypes.oneOf(Object.values(commentVisibility)),
     showAuthor: PropTypes.bool,
     numEdits: PropTypes.number,
     timeCreated: PropTypes.string,
@@ -125,13 +131,13 @@ CommentCard.PropTypes = {
 
 CommentCard.defaultProps = {
     author: {
-        display_name: "",
-        uuid: "",
-        profile_picture_thumbnail_url: "",
+        displayName: "",
+        id: "",
+        profilePictureThumbnailURL: "",
     },
     numEdits: 0,
     showAuthor: true,
-    public: false,
+    visibility: commentVisibility.me,
     timeCreated: undefined,
 };
 

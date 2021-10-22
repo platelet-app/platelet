@@ -1,0 +1,201 @@
+type User @model {
+  id: ID!
+  username: String!
+  contact: AddressAndContactDetails @connection
+  displayName: String!
+  name: String
+  roles: [Role!]!
+  dateOfBirth: AWSDateTime
+  vehicles: [Vehicle] @connection(keyName: "byAssignedUser", fields: ["id"])
+  riderResponsibility: RiderResponsibility @connection
+  profilePictureURL: String
+  profilePictureThumbnailURL: String
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
+  group: Group @connection(name: "GroupMembers")
+  assignments: [TaskAssignee] @connection(keyName: "byAssignee", fields: ["id"])
+  active: Int!
+}
+
+type Group @model {
+  id: ID!
+  taskGroupId: ID
+  name: String
+  users: [User] @connection(name: "GroupMembers")
+}
+
+type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
+  id: ID!
+  assignedUserID: ID
+  name: String!
+  manufacturer: String
+  model: String
+  dateOfManufacture: AWSDateTime
+  dateOfRegistration: AWSDateTime
+  assignedUser: User @connection(fields: ["assignedUserID"])
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
+}
+
+type AddressAndContactDetails @model {
+  id: ID!
+  name: String
+  telephoneNumber: String
+  mobileNumber: String
+  emailAddress: String
+  ward: String
+  line1: String
+  line2: String
+  line3: String
+  town: String
+  county: String
+  state: String
+  country: String
+  postcode: String
+  what3words: String
+}
+
+type Deliverable @model {
+  id: ID!
+  deliverableType: DeliverableType! @connection
+  task: Task @connection
+  count: Int
+  unit: DeliverableUnit
+  orderInGrid: Int
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
+}
+
+type Location @model {
+  id: ID!
+  name: String
+  listed: Int
+  contact: AddressAndContactDetails @connection
+  ward: String
+  line1: String
+  line2: String
+  line3: String
+  town: String
+  county: String
+  state: String
+  country: String
+  postcode: String
+  what3words: String
+  tasksAsPickUp: [Task] @connection (keyName: "byPickUpLocation", fields: ["id"])
+  tasksAsDropOff: [Task] @connection (keyName: "byDropOffLocation", fields: ["id"])
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
+}
+
+type Task
+  @model
+  @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
+  @key(name: "byPickUpLocation", fields: ["pickUpLocationId",])
+  @key(name: "byDropOffLocation", fields: ["dropOffLocationId",])
+  {
+  id: ID!
+  name: String
+  createdBy: User @connection
+  timeOfCall: AWSDateTime
+  timePickedUp: AWSDateTime
+  timeDroppedOff: AWSDateTime
+  timeCancelled: AWSDateTime
+  timeRejected: AWSDateTime
+  requesterContact: AddressAndContactDetails @connection
+  pickUpLocationId: ID
+  dropOffLocationId: ID
+  pickUpLocation: Location @connection(fields: ["pickUpLocationId"])
+  dropOffLocation: Location @connection(fields: ["dropOffLocationId"])
+  riderResponsibility: RiderResponsibility @connection
+  assignees: [TaskAssignee] @connection(keyName: "byAssignee", fields: ["id"])
+  priority: Priority
+  deliverables: [Deliverable!] @connection
+  relayPrevious: Task @connection
+  relayNext: Task @connection
+  group: [Group] @connection
+  comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
+  status: TaskStatus!
+}
+
+type TaskAssignee
+@model(queries: null)
+@key(name: "byTask", fields: ["taskId", "assigneeId"])
+@key(name: "byAssignee", fields: ["assigneeId", "taskId"])
+{
+  id: ID!
+  taskId: ID!
+  assigneeId: ID!
+  role: Role!
+  task: Task! @connection(fields: ["taskId"])
+  assignee: User! @connection(fields: ["assigneeId"])
+}
+
+type Comment @model @key(name: "byParent", fields: ["parentId"]) {
+  id: ID!
+  parentId: ID!
+  body: String!
+  author: User! @connection
+  visibility: CommentVisibility
+}
+
+type DeliverableType @model {
+  id: ID!
+  label: String!
+  icon: DeliverableTypeIcon
+  defaultUnit: DeliverableUnit
+}
+
+enum DeliverableTypeIcon {
+  BUG
+  CHILD
+  DOCUMENT
+  EQUIPMENT
+  OTHER
+}
+
+type RiderResponsibility @model {
+  id: ID!
+  label: String!
+}
+
+#TODO: Need to understand more of the context around statuses available, discuss with group
+enum TaskStatus {
+  NEW
+  ACTIVE
+  PICKED_UP
+  DROPPED_OFF
+  CANCELLED
+  REJECTED
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Patch {
+  NORTH
+  WEST
+  EAST
+  SOUTH
+  RELIEF
+  AIR_AMBULANCE
+}
+
+enum DeliverableUnit {
+  NONE
+  LITRE
+  MILLILITRE
+  GRAM
+  ITEM
+  BOX
+}
+
+enum Role {
+  USER
+  COORDINATOR
+  RIDER
+  ADMIN
+}
+
+enum CommentVisibility {
+  EVERYONE
+  ME
+}

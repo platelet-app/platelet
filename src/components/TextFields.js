@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import TextField from "@material-ui/core/TextField";
+import TextField from "@mui/material/TextField";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import PropTypes from "prop-types";
 
@@ -20,8 +20,8 @@ export function TextFieldControlled(props) {
     const errorText = `Not a valid ${props.tel ? "telephone number" : "email"}`;
 
     useEffect(() => {
-        if (currentValue === "") setErrorState(false);
-        else if (props.tel && currentValue !== "")
+        if (!currentValue) setErrorState(false);
+        else if (props.tel && currentValue)
             setErrorState(!validateNumber(currentValue));
     }, [currentValue]);
 
@@ -99,10 +99,12 @@ TextFieldControlled.defaultProps = {
 export function TextFieldUncontrolled(props) {
     const [errorState, setErrorState] = useState(false);
     const multiline = props.multiline;
-    const errorText = `Not a valid ${props.tel ? "telephone number" : "email"}`;
+    const errorText = `Not a valid ${
+        props.tel ? "telephone number" : props.email ? "email" : ""
+    }`;
 
     useEffect(() => {
-        if (props.value === "") setErrorState(false);
+        if (!props.value) setErrorState(false);
         else if (props.tel && props.value !== "")
             setErrorState(!validateNumber(props.value));
     }, [props.value]);

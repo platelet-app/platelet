@@ -1,6 +1,6 @@
-import { styled } from "@material-ui/styles";
+import { styled } from "@mui/styles";
 import { StyledCard } from "../../../styles/common";
-import { withTheme } from "@material-ui/core";
+import withTheme from '@mui/styles/withTheme';
 
 const colourBarPercent = "90%";
 

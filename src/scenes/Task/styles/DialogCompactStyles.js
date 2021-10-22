@@ -1,12 +1,11 @@
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from "@mui/styles/makeStyles";
 
 export const dialogCardStyles = makeStyles((theme) => ({
     root: {
         padding: 20,
         width: "100%",
         maxWidth: 400,
-        minHeight: 350,
-        [theme.breakpoints.down("md")]: {
+        [theme.breakpoints.down("lg")]: {
             padding: 5,
         },
     },

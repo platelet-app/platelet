@@ -1,7 +1,8 @@
-import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 import React from "react";
-import { Popover, makeStyles } from "@material-ui/core";
+import { Popover } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import TaskAssignees from "./TaskAssignees";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
@@ -29,34 +30,32 @@ function AssigneeEditPopover(props) {
     });
     const classes = useStyles();
 
-    return (
-        <>
-            <IconButton onClick={handleClick}>
-                <EditIcon
-                    className={clsx(
-                        classes.button,
-                        props.assignees.length === 0 ? hide : show
-                    )}
-                />
-            </IconButton>
-            <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
-                }}
-                transformOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
-                }}
-            >
-                <TaskAssignees {...props} onRemove={handleClose} />
-            </Popover>
-        </>
-    );
+    return <>
+        <IconButton onClick={handleClick} size="large">
+            <EditIcon
+                className={clsx(
+                    classes.button,
+                    props.assignees.length === 0 ? hide : show
+                )}
+            />
+        </IconButton>
+        <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+            }}
+            transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+            }}
+        >
+            <TaskAssignees {...props} onRemove={handleClose} />
+        </Popover>
+    </>;
 }
 
 AssigneeEditPopover.propTypes = {

@@ -4,10 +4,10 @@ import 'typeface-roboto'
 import {useSelector} from "react-redux";
 import {withSnackbar} from 'notistack';
 import {PaddedPaper} from "../../styles/common";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import LoginForm from "./components/LoginForm";
 import ResetPasswordForm from "./components/ResetPasswordForm";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from '@mui/styles/makeStyles';
 
 function getMessage(status) {
     switch (status) {
@@ -44,7 +44,7 @@ function Login(props) {
 
     return (
         <PaddedPaper className={classes.root} width={"400px"} height={"300px"}>
-            <Grid container spacing={1} direction={"column"} alignItems={"center"} justify={"center"}>
+            <Grid container spacing={1} direction={"column"} alignItems={"center"} justifyContent={"center"}>
                 <Grid item>
                     <img alt={"Organisation logo"} src={serverSettings.image_url} height={"50px"} width={"120px"} style={{objectFit: "contain"}}/>
                 </Grid>
@@ -53,7 +53,7 @@ function Login(props) {
                 </Grid>
             </Grid>
         </PaddedPaper>
-    )
+    );
 }
 
 export default withSnackbar(Login)

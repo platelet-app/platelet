@@ -1,25 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import PrioritySelect from "./PrioritySelect";
-import {
-    updateTaskCancelledTimePrefix,
-    updateTaskCancelledTimeRequest,
-    updateTaskPriorityRequest,
-    updateTaskRejectedTimeRequest,
-    updateTaskRequesterContactRequest,
-    updateTaskTimeOfCallPrefix,
-    updateTaskTimeOfCallRequest,
-} from "../../../redux/tasks/TasksActions";
-import { useDispatch, useSelector } from "react-redux";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import PropTypes from "prop-types";
+import makeStyles from "@mui/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
-import ActivityPopover from "./ActivityPopover";
 import TimePicker from "./TimePicker";
-import { createPostingSelector } from "../../../redux/LoadingSelectors";
-import { Paper } from "@material-ui/core";
+import { Paper } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
+import TaskActions from "./TaskActions";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -30,111 +20,68 @@ const useStyles = makeStyles({
     },
 });
 
-const tocPostingSelector = createPostingSelector([updateTaskTimeOfCallPrefix]);
-const cancelledPostingSelector = createPostingSelector([
-    updateTaskCancelledTimePrefix,
-]);
-const rejectedPostingSelector = createPostingSelector([
-    "UPDATE_TASK_TIME_REJECTED",
-]);
-
 function extractTaskData(task) {
     let {
         reference,
-        time_of_call,
-        patch,
-        assigned_riders_display_string,
-        uuid,
-        requester_contact,
+        timeOfCall,
+        riderResponsibility,
+        id,
+        requesterContact,
+        priority,
+        timeRejected,
+        timeCancelled,
+        timePickedUp,
+        timeDroppedOff,
     } = task;
-    if (requester_contact === null) {
-        requester_contact = {
+    if (requesterContact === null) {
+        requesterContact = {
             name: null,
-            telephone_number: null,
+            telephoneNumber: null,
         };
     }
     return {
         reference,
-        time_of_call,
-        patch,
-        assigned_riders_display_string,
-        uuid,
-        requester_contact,
+        timeOfCall,
+        riderResponsibility,
+        id,
+        requesterContact,
+        priority,
+        timeRejected,
+        timeCancelled,
+        timePickedUp,
+        timeDroppedOff,
     };
 }
 
-function TaskDetailsPanel() {
-    const task = useSelector((state) => state.task.task);
-    const tocPosting = useSelector((state) => tocPostingSelector(state));
-    const isPostingCancelTime = useSelector((state) =>
-        cancelledPostingSelector(state)
-    );
-    const isPostingRejectedTime = useSelector((state) =>
-        rejectedPostingSelector(state)
-    );
+function TaskDetailsPanel(props) {
     const cardClasses = dialogCardStyles();
     const [state, setState] = useState({
         reference: null,
-        time_of_call: null,
-        patch: null,
-        assigned_riders_display_string: "",
-        uuid: null,
-        requester_contact: {
+        timeOfCall: null,
+        priority: null,
+        riderResponsibility: null,
+        id: null,
+        requesterContact: {
             name: null,
-            telephone_number: null,
+            telephoneNumber: null,
         },
     });
-    const dispatch = useDispatch();
     const classes = useStyles();
 
-    useEffect(() => setState(extractTaskData(task)), [task]);
-
-    let priority_id;
-    try {
-        priority_id = parseInt(task.priority_id);
-    } catch {
-        priority_id = null;
-    }
+    useEffect(() => setState(extractTaskData(props.task)), [props.task]);
 
     function onChangeTimeOfCall(value) {
-        const payload = { time_of_call: value };
-        dispatch(updateTaskTimeOfCallRequest(state.uuid, payload));
+        if (value) {
+            props.onChangeTimeOfCall(value);
+        }
     }
 
-    function onChangeTimeCancelled(value) {
-        if (value || value === null)
-            dispatch(
-                updateTaskCancelledTimeRequest(task.uuid, {
-                    time_cancelled: value,
-                })
-            );
-    }
-
-    function onChangeTimeRejected(value) {
-        if (value || value === null)
-            dispatch(
-                updateTaskRejectedTimeRequest(task.uuid, {
-                    time_rejected: value,
-                })
-            );
-    }
-
-    function onSelectPriority(priority_id, priority) {
-        const payload = { priority_id, priority };
-        dispatch(updateTaskPriorityRequest(state.uuid, payload));
+    function onSelectPriority(priority) {
+        props.onSelectPriority(priority);
     }
 
     function onChangeRequesterContact(value) {
-        const result = { ...state.requester_contact, ...value };
-        setState({ ...state, requester_contact: result });
-    }
-
-    function sendRequesterContactData(value) {
-        const payload = {
-            requester_contact: { ...state.requester_contact, ...value },
-        };
-        dispatch(updateTaskRequesterContactRequest(state.uuid, payload));
-        setState({ ...state, ...payload });
+        props.onChangeRequesterContact(value);
     }
 
     return (
@@ -144,13 +91,12 @@ function TaskDetailsPanel() {
                     <LabelItemPair label={"Reference"}>
                         <Typography>{state.reference}</Typography>
                     </LabelItemPair>
-                    <LabelItemPair label={"TOC"}>
+                    <LabelItemPair label={"Time of call"}>
                         <TimePicker
                             onChange={onChangeTimeOfCall}
                             disableClear={true}
-                            disabled={tocPosting}
-                            label={"TOC"}
-                            time={state.time_of_call}
+                            label={"Time of call"}
+                            time={state.timeOfCall}
                         />
                     </LabelItemPair>
                     <Typography>Requester contact:</Typography>
@@ -158,22 +104,30 @@ function TaskDetailsPanel() {
                         <LabelItemPair label={"Name"}>
                             <ClickableTextField
                                 onFinished={(value) =>
-                                    sendRequesterContactData({
+                                    onChangeRequesterContact({
                                         name: value,
                                     })
                                 }
-                                value={state.requester_contact.name}
+                                value={
+                                    state.requesterContact
+                                        ? state.requesterContact.name
+                                        : null
+                                }
                             />
                         </LabelItemPair>
                         <LabelItemPair label={"Tel"}>
                             <ClickableTextField
                                 tel
                                 onFinished={(value) =>
-                                    sendRequesterContactData({
-                                        telephone_number: value,
+                                    onChangeRequesterContact({
+                                        telephoneNumber: value,
                                     })
                                 }
-                                value={state.requester_contact.telephone_number}
+                                value={
+                                    state.requesterContact
+                                        ? state.requesterContact.telephoneNumber
+                                        : null
+                                }
                             />
                         </LabelItemPair>
                     </div>
@@ -181,58 +135,31 @@ function TaskDetailsPanel() {
                     <div className={classes.priority}>
                         <PrioritySelect
                             onSelect={onSelectPriority}
-                            priorityID={parseInt(priority_id)}
+                            priority={state.priority}
                         />
                     </div>
-                    <LabelItemPair label={"Patch"}>
-                        <Typography>{state.patch}</Typography>
-                    </LabelItemPair>
-                    <LabelItemPair label={"Assigned rider"}>
+                    <LabelItemPair label={"Responsibility"}>
                         <Typography>
-                            {state.assigned_riders_display_string}
+                            {state.riderResponsibility
+                                ? state.riderResponsibility.label
+                                : ""}
                         </Typography>
                     </LabelItemPair>
-                </Grid>
-                <Grid item>
-                    <Grid container direction={"column"}>
-                        <Grid item>
-                            <LabelItemPair label={""}>
-                                <ActivityPopover parentUUID={task.uuid} />
-                            </LabelItemPair>
-                        </Grid>
-                        <Grid item>
-                            <LabelItemPair label={"Time cancelled"}>
-                                <TimePicker
-                                    onChange={onChangeTimeCancelled}
-                                    disabled={
-                                        isPostingCancelTime ||
-                                        !!task.time_dropped_off ||
-                                        !!task.time_rejected
-                                    }
-                                    label={"Mark cancelled"}
-                                    time={task.time_cancelled}
-                                />
-                            </LabelItemPair>
-                        </Grid>
-                        <Grid item>
-                            <LabelItemPair label={"Time rejected"}>
-                                <TimePicker
-                                    onChange={onChangeTimeRejected}
-                                    disabled={
-                                        isPostingRejectedTime ||
-                                        !!task.time_dropped_off ||
-                                        !!task.time_cancelled
-                                    }
-                                    label={"Mark rejected"}
-                                    time={task.time_rejected}
-                                />
-                            </LabelItemPair>
-                        </Grid>
-                    </Grid>
                 </Grid>
             </Grid>
         </Paper>
     );
 }
+
+TaskDetailsPanel.propTypes = {
+    task: PropTypes.object,
+    onSelectPriority: PropTypes.func,
+    onChangeRequesterContact: PropTypes.func,
+};
+
+TaskDetailsPanel.defaultProps = {
+    onSelectPriority: () => {},
+    onChangeRequesterContact: () => {},
+};
 
 export default TaskDetailsPanel;

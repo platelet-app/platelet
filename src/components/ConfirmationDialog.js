@@ -1,15 +1,15 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
-import {useTheme} from "@material-ui/core/styles";
+import { useTheme } from "@mui/material/styles";
 
 function ConfirmationDialog(props) {
-    const theme = useTheme()
+    const theme = useTheme();
     return (
         <Dialog
             open={props.open}
@@ -17,23 +17,31 @@ function ConfirmationDialog(props) {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
-            <DialogTitle id="alert-dialog-title">{props.dialogTitle}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">
+                {props.dialogTitle}
+            </DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                     {props.dialogText}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => {
-                    props.onSelect(false);
-                    props.onClose();
-                }} color={theme.palette.type === "dark" ? "white" : "primary"} autoFocus>
+                <Button
+                    onClick={() => {
+                        props.onSelect(false);
+                        props.onClose();
+                    }}
+                    autoFocus
+                >
                     Cancel
                 </Button>
-                <Button onClick={() => {
-                    props.onSelect(true);
-                    props.onClose();
-                }} color={theme.palette.type === "dark" ? "white" : "primary"} autoFocus>
+                <Button
+                    onClick={() => {
+                        props.onSelect(true);
+                        props.onClose();
+                    }}
+                    autoFocus
+                >
                     OK
                 </Button>
             </DialogActions>
@@ -46,7 +54,7 @@ ConfirmationDialog.propTypes = {
     onSelect: PropTypes.func,
     onClose: PropTypes.func,
     dialogText: PropTypes.string,
-    dialogTitle: PropTypes.string
+    dialogTitle: PropTypes.string,
 };
 
 ConfirmationDialog.defaultProps = {
@@ -54,7 +62,7 @@ ConfirmationDialog.defaultProps = {
     dialogText: "",
     dialogTitle: "",
     onSelect: () => {},
-    onClose: () => {}
+    onClose: () => {},
 };
 
 export default ConfirmationDialog;

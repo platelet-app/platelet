@@ -1,7 +1,7 @@
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 import seedrandom from "seedrandom";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import makeStyles from '@mui/styles/makeStyles';
 
 const ctx = document.createElement("canvas").getContext("2d");
 

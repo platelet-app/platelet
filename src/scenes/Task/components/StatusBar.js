@@ -1,59 +1,65 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import { AppBar, Hidden } from "@material-ui/core";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { AppBar, Hidden } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
-import { encodeUUID } from "../../../utilities";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
-import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
+import { encodeUUID, taskStatusHumanReadable } from "../../../utilities";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 import { useSelector } from "react-redux";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import clsx from "clsx";
 
 const colourBarPercent = "90%";
 
-export const dialogComponent = (props) =>
-    makeStyles((theme) => {
-        let background;
-        console.log(props.status);
-        switch (props.status) {
-            case "New":
-                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.new} ${colourBarPercent}, ${theme.palette.taskStatus.new} 100%)`;
-                break;
-            case "Active":
-                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.active} ${colourBarPercent}, ${theme.palette.taskStatus.active} 100%)`;
-                break;
-            case "Picked up":
-                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} ${colourBarPercent}, ${theme.palette.taskStatus.pickedUp} 100%)`;
-                break;
-            case "Delivered":
-                background = `linear-gradient(0deg, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.background.paper} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} ${colourBarPercent}, ${theme.palette.taskStatus.delivered} 100%)`;
-                break;
-            default:
-                background =
-                    theme.palette.type === "dark"
-                        ? theme.palette.background.paper
-                        : theme.palette.primary.main;
-        }
+const generateClass = (theme, status) => {
+    if (status) {
         return {
-            root: {
-                padding: 2,
-                display: "flex",
-                width: "100%",
-                paddingLeft: 15,
-                paddingRight: 15,
-                background,
-                italic: {
-                    fontStyle: "italic",
-                },
+            padding: 2,
+            display: "flex",
+            width: "100%",
+            paddingLeft: 15,
+            paddingRight: 15,
+            italic: {
+                fontStyle: "italic",
             },
+            background: `linear-gradient(0deg,
+        ${theme.palette.background.paper}
+        ${colourBarPercent},
+        ${theme.palette.background.paper}
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]}
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]} 100%)`,
+        };
+    } else {
+        return {
+            padding: 2,
+            display: "flex",
+            width: "100%",
+            paddingLeft: 15,
+            paddingRight: 15,
+            italic: {
+                fontStyle: "italic",
+            },
+            background:
+                theme.palette.mode === "dark"
+                    ? theme.palette.background.paper
+                    : theme.palette.primary.main,
+        };
+    }
+};
+
+const dialogComponent = (props) =>
+    makeStyles((theme) => {
+        return {
+            root: generateClass(theme, props.status),
             text: {
-                color: theme.palette.type === "dark" ? "white" : "black",
+                color: theme.palette.mode === "dark" ? "white" : "black",
             },
             items: {
                 marginTop: 5,
@@ -65,9 +71,10 @@ function StatusBar(props) {
     const classes = dialogComponent(props)();
     const { show, hide } = showHide();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const task = useSelector((state) => state.task.task);
     const roleView = useSelector((state) => state.roleView);
+    const statusHumanReadable = taskStatusHumanReadable(props.status);
     // don't change container to container item, it breaks the layout for some reason
     return (
         <AppBar
@@ -78,11 +85,11 @@ function StatusBar(props) {
                 className={classes.items}
                 container
                 direction={"row"}
-                justify={"space-between"}
+                justifyContent={"space-between"}
                 alignItems={"center"}
             >
                 <Grid item>
-                    <Hidden smDown>
+                    <Hidden mdDown>
                         <Button onClick={props.handleClose}>Close</Button>
                     </Hidden>
                     <Hidden smUp>
@@ -96,7 +103,7 @@ function StatusBar(props) {
                         container
                         direction={"row"}
                         alignItems={"center"}
-                        justify={"flex-start"}
+                        justifyContent={"flex-start"}
                         spacing={2}
                     >
                         <Grid item>
@@ -113,7 +120,7 @@ function StatusBar(props) {
                                 </Grid>
                                 <Grid item>
                                     <Typography className={classes.text}>
-                                        {props.status}
+                                        {statusHumanReadable}
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -125,10 +132,10 @@ function StatusBar(props) {
                         container
                         direction={"row"}
                         alignItems={"center"}
-                        justify={"flex-start"}
+                        justifyContent={"flex-start"}
                         spacing={2}
                     >
-                        <Hidden smDown>
+                        <Hidden mdDown>
                             <Grid item>
                                 <ArrowButton
                                     linkTo={encodeUUID(
@@ -166,18 +173,6 @@ function StatusBar(props) {
                         </Hidden>
                     </Grid>
                 </Grid>
-                <Grid item>
-                    <TaskContextMenu
-                        timeDroppedOff={task.time_dropped_off}
-                        timePickedUp={task.time_picked_up}
-                        assignedRiders={task.assigned_riders}
-                        disableDeleted={true}
-                        disableRelay={true}
-                        taskUUID={task.uuid}
-                        timeCancelled={task.time_cancelled}
-                        timeRejected={task.time_rejected}
-                    />
-                </Grid>
             </Grid>
         </AppBar>
     );
@@ -196,7 +191,7 @@ StatusBar.propTypes = {
 StatusBar.defaultProps = {
     assignedCoordinators: [],
     assignedRiders: [],
-    status: "No Status",
+    status: null,
 };
 
 export default StatusBar;

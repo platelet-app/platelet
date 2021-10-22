@@ -1,11 +1,12 @@
 import React from "react";
 import { encodeUUID } from "../utilities";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
-import IconButton from "@material-ui/core/IconButton";
-import ClearIcon from "@material-ui/icons/Clear";
-import { Box, styled, makeStyles } from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import ClearIcon from "@mui/icons-material/Clear";
+import { Box, styled } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { ThemedLink, showHide } from "../styles/common";
 
 const UserBox = styled(Box)({
@@ -40,7 +41,7 @@ export default function UserCard(props) {
                 event.preventDefault();
                 props.onDelete();
             }}
-        >
+            size="large">
             <ClearIcon className={classes.button} />
         </IconButton>
     ) : (
@@ -56,7 +57,7 @@ export default function UserCard(props) {
                     container
                     className={classes.root}
                     spacing={1}
-                    justify={"space-between"}
+                    justifyContent={"space-between"}
                     alignItems={"center"}
                     direction={"row"}
                 >
@@ -65,7 +66,7 @@ export default function UserCard(props) {
                             container
                             spacing={2}
                             direction={"row"}
-                            justify={"flex-start"}
+                            justifyContent={"flex-start"}
                             alignItems={"center"}
                         >
                             <Grid item>

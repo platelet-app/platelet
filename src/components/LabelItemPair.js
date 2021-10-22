@@ -1,11 +1,11 @@
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import React from "react";
 import PropTypes from "prop-types"
 
 function LabelItemPair(props) {
     return (
-        <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+        <Grid container direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
             <Grid item>
                 <Typography>{props.label ? `${props.label}:` : ""}</Typography>
             </Grid>
@@ -13,7 +13,7 @@ function LabelItemPair(props) {
                 {props.children}
             </Grid>
         </Grid>
-    )
+    );
 }
 
 LabelItemPair.propTypes = {

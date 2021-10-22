@@ -1,56 +1,156 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-    clearComments,
-    getCommentsPrefix,
-    getCommentsRequest,
-} from "../../redux/comments/CommentsActions";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import CommentsMain from "./components/CommentsMain";
-import {
-    createLoadingSelector,
-    createNotFoundSelector,
-} from "../../redux/LoadingSelectors";
 import CommentsSkeleton from "./components/CommentsSkeleton";
-import NotFound from "../../ErrorComponents/NotFound";
-import {
-    subscribeToComments,
-    unsubscribeFromComments,
-} from "../../redux/sockets/SocketActions";
 import PropTypes from "prop-types";
+import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import { DataStore } from "aws-amplify";
+import * as models from "../../models/index";
+import { convertListDataToObject } from "../../utilities";
+import _ from "lodash";
+import { commentVisibility } from "../../apiConsts";
+import GetError from "../../ErrorComponents/GetError";
+import { Typography } from "@mui/material";
 
 function CommentsSection(props) {
-    const dispatch = useDispatch();
-    const loadingSelector = createLoadingSelector([getCommentsPrefix]);
-    const isFetching = useSelector((state) => loadingSelector(state));
-    const notFoundSelector = createNotFoundSelector([getCommentsPrefix]);
-    const notFound = useSelector((state) => notFoundSelector(state));
-    const comments = useSelector((state) => state.comments.comments);
-    function updateComments() {
-        if (props.parentUUID) {
-            dispatch(getCommentsRequest(props.parentUUID));
-        } else {
-            dispatch(clearComments());
+    const [isFetching, setIsFetching] = useState(false);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const [comments, setComments] = useState({});
+    const [errorState, setErrorState] = useState(null);
+    const whoami = useSelector(getWhoami);
+    const commentsRef = useRef({});
+    commentsRef.current = comments;
+    const commentsSubscription = useRef({
+        unsubscribe: () => {},
+    });
+
+    function removeCommentFromState(commentId) {
+        if (commentId) {
+            setComments((prevState) => _.omit(prevState, commentId));
         }
     }
-    useEffect(updateComments, [props.parentUUID]);
 
-    function componentDidMount() {
-        dispatch(subscribeToComments(props.parentUUID));
-        return function cleanup() {
-            dispatch(unsubscribeFromComments(props.parentUUID));
-        };
+    async function addCommentToState(comment) {
+        if (comment) {
+            let author = comment.author;
+            if (!author) {
+                author = await DataStore.query(
+                    models.User,
+                    comment.commentAuthorId
+                );
+            }
+            setComments((prevState) => {
+                return {
+                    ...prevState,
+                    [comment.id]: {
+                        ...comment,
+                        author,
+                    },
+                };
+            });
+        }
     }
-    useEffect(componentDidMount, [props.parentUUID]);
+
+    async function getComments() {
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
+        } else {
+            //TODO: see if a more secure way to restrict private comment access
+            try {
+                const commentsResult = (
+                    await DataStore.query(models.Comment, (c) =>
+                        c.parentId("eq", props.parentUUID)
+                    )
+                ).filter(
+                    (c) =>
+                        c.visibility === commentVisibility.everyone ||
+                        (c.visibility === commentVisibility.me &&
+                            c.author.id === whoami.id)
+                );
+                const commentsObject = convertListDataToObject(commentsResult);
+                setComments(commentsObject);
+                setIsFetching(false);
+                commentsSubscription.current.unsubscribe();
+                commentsSubscription.current = DataStore.observe(
+                    models.Comment,
+                    (c) => c.parentId("eq", props.parentUUID)
+                ).subscribe(async (newComment) => {
+                    const comment = newComment.element;
+                    debugger;
+                    if (newComment.opType === "DELETE") {
+                        removeCommentFromState(comment.id);
+                        return;
+                    }
+                    if (
+                        !comment.author ||
+                        !comment.author.id ||
+                        (comment.author.id !== whoami.id &&
+                            comment.visibility === commentVisibility.me)
+                    ) {
+                        return;
+                    } else if (
+                        ["UPDATE", "INSERT"].includes(newComment.opType)
+                    ) {
+                        console.log("yeee");
+                        addCommentToState(comment);
+                    }
+                });
+            } catch (error) {
+                setIsFetching(false);
+                setErrorState(error);
+                console.error("Request failed", error);
+            }
+        }
+    }
+    useEffect(() => getComments(), [props.parentUUID, dataStoreReadyStatus]);
+
+    useEffect(() => {
+        return () => {
+            if (commentsSubscription.current)
+                commentsSubscription.current.unsubscribe();
+        };
+    }, []);
 
     if (isFetching) {
         return <CommentsSkeleton />;
-    } else if (notFound) {
-        return <NotFound>Comments section could not found.</NotFound>;
+    } else if (errorState) {
+        return (
+            <GetError>
+                <Typography>
+                    {errorState && errorState.message
+                        ? errorState.message
+                        : "Unknown"}
+                </Typography>
+            </GetError>
+        );
     } else {
         return (
             <CommentsMain
+                onNewComment={addCommentToState}
                 parentUUID={props.parentUUID}
-                comments={Object.values(comments)}
+                comments={Object.values(comments).filter((c) => !c._deleted)}
+                onRestore={(comment) => {
+                    setComments((prevState) => {
+                        return {
+                            ...prevState,
+                            [comment.id]: {
+                                ...comment,
+                                _deleted: false,
+                            },
+                        };
+                    });
+                }}
+                onDelete={(commentId) => {
+                    setComments((prevState) => {
+                        return {
+                            ...prevState,
+                            [commentId]: {
+                                ...prevState[commentId],
+                                _deleted: true,
+                            },
+                        };
+                    });
+                }}
             />
         );
     }

@@ -1,28 +1,41 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import {Link, useHistory} from "react-router-dom";
-import {encodeUUID} from "../../utilities";
-import {logoutUser} from "../../redux/login/LoginActions";
-import {Hidden, Tooltip} from "@material-ui/core";
-import {setDarkMode} from "../../redux/Actions";
-import BrightnessHighIcon from "@material-ui/icons/BrightnessHigh";
-import Brightness4Icon from "@material-ui/icons/Brightness4";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { Link, useHistory } from "react-router-dom";
+import { encodeUUID } from "../../utilities";
+import { Hidden, Tooltip } from "@mui/material";
+import { setDarkMode } from "../../redux/Actions";
+import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Typography from "@mui/material/Typography";
 import UserAvatar from "../../components/UserAvatar";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getWhoami } from "../../redux/Selectors";
+import { Auth } from "aws-amplify";
+import SignalWifiOff from "@mui/icons-material/SignalWifiOff";
+import { showHide } from "../../styles/common";
+import { networkStatusSelector } from "../../redux/Selectors";
+import { DataStore } from "@aws-amplify/datastore";
 
 function LightToggleProfileMenu(props) {
-    const whoami = useSelector(state => state.whoami.user);
-    const darkMode = useSelector(state => state.darkMode)
+    const whoami = useSelector(getWhoami);
+    const darkMode = useSelector((state) => state.darkMode);
     const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
     const dispatch = useDispatch();
     const history = useHistory();
+    const networkStatus = useSelector(networkStatusSelector);
+    const { show, hide } = showHide();
+
     return (
-        <Grid container direction={"row-reverse"} justify={"flex-start"} alignItems={"center"}>
+        <Grid
+            container
+            direction={"row-reverse"}
+            justifyContent={"flex-start"}
+            alignItems={"center"}
+        >
             <Grid item>
                 <div>
                     <IconButton
@@ -31,8 +44,10 @@ function LightToggleProfileMenu(props) {
                         aria-haspopup="true"
                         onClick={(event) => {
                             setAnchorElProfileMenu(event.currentTarget);
-                        }}>
-                        <ArrowDropDownIcon/>
+                        }}
+                        size="large"
+                    >
+                        <ArrowDropDownIcon />
                     </IconButton>
                     <Menu
                         id="profile-menu"
@@ -43,56 +58,91 @@ function LightToggleProfileMenu(props) {
                             setAnchorElProfileMenu(null);
                         }}
                     >
-                        <MenuItem onClick={() => {
-                            setAnchorElProfileMenu(null);
-                        }} component={Link} to={`/user/${encodeUUID(whoami.uuid)}`}>
+                        <MenuItem
+                            onClick={() => {
+                                setAnchorElProfileMenu(null);
+                            }}
+                            component={Link}
+                            to={`/user/${encodeUUID(whoami.id)}`}
+                        >
                             Profile
                         </MenuItem>
-                        <MenuItem onClick={() => {
-                            setAnchorElProfileMenu(null);
-                            dispatch(logoutUser());
-                            history.push("/dashboard");
-                        }}>
+                        <MenuItem
+                            onClick={() => {
+                                setAnchorElProfileMenu(null);
+                                //dispatch(logoutUser());
+                                history.push("/");
+                                Auth.signOut();
+                            }}
+                        >
                             Logout
                         </MenuItem>
                     </Menu>
                 </div>
             </Grid>
             <Grid item>
-                <Grid container direction={"row"} justify={"flex-start"} alignItems={"center"} spacing={1}>
+                <Grid
+                    container
+                    direction={"row"}
+                    justifyContent={"flex-start"}
+                    alignItems={"center"}
+                    spacing={1}
+                >
+                    <Grid item className={networkStatus ? hide : show}>
+                        <Tooltip title={"You are working offline"}>
+                            <IconButton color="inherit" size="large">
+                                <SignalWifiOff />
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
                     <Grid item>
                         <Tooltip title={"Toggle dark/light mode"}>
                             <IconButton
                                 color="inherit"
                                 onClick={() => {
-                                    dispatch(setDarkMode(!darkMode))
-                                }}>
-                                {darkMode ? <BrightnessHighIcon/> : <Brightness4Icon/>}
-
+                                    dispatch(setDarkMode(!darkMode));
+                                }}
+                                size="large"
+                            >
+                                {darkMode ? (
+                                    <BrightnessHighIcon />
+                                ) : (
+                                    <Brightness4Icon />
+                                )}
                             </IconButton>
                         </Tooltip>
                     </Grid>
-                    <Hidden smDown>
+                    <Hidden mdDown>
                         <Grid item>
-                            <Link to={`/user/${encodeUUID(whoami.uuid)}`}
-                                  style={{textDecoration: 'none', color: "white"}}>
+                            <Link
+                                to={`/user/${encodeUUID(whoami.id)}`}
+                                style={{
+                                    textDecoration: "none",
+                                    color: "white",
+                                }}
+                            >
                                 <Typography variant="h6" noWrap>
-                                    {whoami.display_name}
+                                    {whoami.displayName}
                                 </Typography>
                             </Link>
                         </Grid>
                     </Hidden>
                     <Grid item>
-                        <Link to={`/user/${encodeUUID(whoami.uuid)}`}
-                              style={{textDecoration: 'none'}}>
-                            <UserAvatar userUUID={whoami.uuid} displayName={whoami.display_name}
-                                        avatarURL={whoami.profile_picture_thumbnail_url}/>
+                        <Link
+                            to={`/user/${encodeUUID(whoami.id)}`}
+                            style={{ textDecoration: "none" }}
+                        >
+                            <UserAvatar
+                                userUUID={whoami.id}
+                                displayName={whoami.displayName}
+                                avatarURL={whoami.profilePictureThumbnailURL}
+                            />
                         </Link>
                     </Grid>
                 </Grid>
             </Grid>
         </Grid>
-    )
+    );
 }
 
 export default LightToggleProfileMenu;

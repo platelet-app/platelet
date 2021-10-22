@@ -1,7 +1,7 @@
-import Popover from "@material-ui/core/Popover";
+import Popover from "@mui/material/Popover";
 import React from "react";
-import {makeStyles} from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
+import makeStyles from '@mui/styles/makeStyles';
+import Button from "@mui/material/Button";
 import ActionsRecord from "../../ActionsRecord/ActionsRecord";
 import PropTypes from "prop-types"
 

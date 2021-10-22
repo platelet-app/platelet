@@ -1,83 +1,100 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import TextField from "@material-ui/core/TextField";
-import { useSelector } from "react-redux";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
-import Divider from "@material-ui/core/Divider";
+import { DataStore } from "aws-amplify";
+import { userRoles } from "../apiConsts";
+import * as models from "../models/index";
+import { Box } from "@mui/material";
+import { matchSorter } from "match-sorter";
+
+const filterOptions = (options, { inputValue }) => {
+    return matchSorter(options, inputValue, { keys: ["displayName"] });
+};
 
 function RiderPicker(props) {
-    const availableUsers = useSelector((state) => state.users.users);
+    const [availableUsers, setAvailableRiders] = useState([]);
     const [filteredRiderSuggestions, setFilteredRiderSuggestions] = useState(
         []
     );
-    const [textBoxValue, setTextBoxValue] = useState(null);
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
-        setTextBoxValue(null);
     };
 
+    async function getRiders() {
+        const riders = (await DataStore.query(models.User)).filter(
+            (u) =>
+                u.roles.includes(userRoles.rider) &&
+                !props.exclude.includes(u.id)
+        );
+        setAvailableRiders(riders);
+    }
+
+    useEffect(() => getRiders(), []);
+
     useEffect(() => {
-        const filteredSuggestions = Object.values(availableUsers).filter(
-            (u) => u.roles.includes("rider") && !props.exclude.includes(u.uuid)
+        const filteredSuggestions = availableUsers.filter(
+            (u) => !props.exclude.includes(u.id)
         );
-        const vehicleUsers = filteredSuggestions.filter(
-            (user) => user.assigned_vehicles.length !== 0
-        );
-        const noVehicleUsers = filteredSuggestions.filter(
-            (user) => user.assigned_vehicles.length === 0
-        );
-        const reorderedUsers = vehicleUsers.concat(noVehicleUsers);
-        setFilteredRiderSuggestions(reorderedUsers);
+        // const vehicleUsers = filteredSuggestions.filter(
+        //     (user) => user.assigned_vehicles.length !== 0
+        // );
+        // const noVehicleUsers = filteredSuggestions.filter(
+        //     (user) => user.assigned_vehicles.length === 0
+        // );
+        //const reorderedUsers = vehicleUsers.concat(noVehicleUsers);
+        setFilteredRiderSuggestions(filteredSuggestions);
     }, [availableUsers, props.exclude]);
 
     return (
-        <div>
+        <>
             <Autocomplete
+                disablePortal
+                fullWidth
+                filterOptions={filterOptions}
                 id="combo-box-riders"
-                size={props.size}
-                value={textBoxValue}
                 options={filteredRiderSuggestions}
-                getOptionLabel={(option) => option.display_name}
-                className={props.className}
-                style={{ width: 200 }}
+                getOptionLabel={(option) => option.displayName}
+                size={props.size}
+                onChange={onSelect}
                 renderInput={(params) => (
                     <TextField
-                        autoFocus
                         {...params}
-                        label={props.label}
+                        label={props.label || "Select"}
                         variant="outlined"
                         margin="none"
                     />
                 )}
-                onChange={onSelect}
-                renderOption={(option, { inputValue }) => {
-                    const vehicleName =
-                        option.assigned_vehicles &&
-                        option.assigned_vehicles.length > 0
-                            ? option.assigned_vehicles[
-                                  option.assigned_vehicles.length - 1
-                              ].name
-                            : "";
+                renderOption={(props, option) => {
+                    //const vehicleName =
+                    //    option.assigned_vehicles &&
+                    //    option.assigned_vehicles.length > 0
+                    //        ? option.assigned_vehicles[
+                    //              option.assigned_vehicles.length - 1
+                    //          ].name
+                    //        : "";
 
                     return (
-                        <div style={{ width: "100%" }}>
+                        <Box component="li" {...props}>
                             <CompactUserCard
-                                userUUID={option.uuid}
-                                displayName={option.display_name}
-                                patch={option.patch}
-                                profilePictureURL={
-                                    option.profile_picture_thumbnail_url
+                                userUUID={option.id}
+                                displayName={option.displayName}
+                                responsibility={
+                                    option.riderResponsibility
+                                        ? option.riderResponsibility.label
+                                        : ""
                                 }
-                                vehicleName={vehicleName}
+                                profilePictureURL={
+                                    option.profilePictureThumbnailURL
+                                }
+                                vehicleName={"no"}
                             />
-
-                            <Divider />
-                        </div>
+                        </Box>
                     );
                 }}
             />
-        </div>
+        </>
     );
 }
 

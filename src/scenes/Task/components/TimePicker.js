@@ -1,28 +1,29 @@
 import React from "react";
-import {useState} from "react";
-import PropTypes from "prop-types"
-import Typography from "@material-ui/core/Typography";
+import { useState } from "react";
+import PropTypes from "prop-types";
+import Typography from "@mui/material/Typography";
 import Moment from "react-moment";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import CancelIcon from '@material-ui/icons/Cancel';
-import IconButton from "@material-ui/core/IconButton";
-import {Tooltip} from "@material-ui/core";
-import EditIcon from '@material-ui/icons/Edit';
-import {DateTimePicker} from "@material-ui/pickers";
-import {showHide} from "../../../styles/common";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import CancelIcon from "@mui/icons-material/Cancel";
+import IconButton from "@mui/material/IconButton";
+import { Tooltip } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DateTimePicker from "@mui/lab/DateTimePicker";
+import { showHide } from "../../../styles/common";
+import makeStyles from '@mui/styles/makeStyles';
+import TextField from "@mui/material/TextField";
 
 const useStyles = makeStyles({
     button: {
         height: 9,
     },
-})
+});
 
 function TimePicker(props) {
     const [editMode, setEditMode] = useState(false);
     const classes = useStyles();
-    const {show, hide} = showHide();
+    const { show, hide } = showHide();
 
     function onButtonClick() {
         const timeNow = new Date().toISOString();
@@ -46,31 +47,46 @@ function TimePicker(props) {
         if (editMode) {
             return (
                 <div className={classes.root}>
-                    <Grid container direction={"row"} justify={"flex-end"} alignItems={"center"}>
+                    <Grid
+                        container
+                        direction={"row"}
+                        justifyContent={"flex-end"}
+                        alignItems={"center"}
+                    >
                         <Grid item>
                             <DateTimePicker
+                                label="Date&Time picker"
+                                helperText="Set the date and time"
                                 value={props.time}
                                 onChange={onChange}
-                                helperText="Set the date and time"
+                                renderInput={(params) => (
+                                    <TextField {...params} />
+                                )}
                             />
                             <Grid item>
                                 <Tooltip title={"Cancel"}>
                                     <IconButton
                                         className={classes.button}
                                         disabled={props.disabled}
-                                        onClick={toggleEditMode}>
-                                        <CancelIcon/>
+                                        onClick={toggleEditMode}
+                                        size="large">
+                                        <CancelIcon />
                                     </IconButton>
                                 </Tooltip>
                             </Grid>
                         </Grid>
                     </Grid>
                 </div>
-            )
+            );
         } else {
             return (
                 <div className={classes.root}>
-                    <Grid container direction={"row"} justify={"space-between"} alignItems={"center"}>
+                    <Grid
+                        container
+                        direction={"row"}
+                        justifyContent={"space-between"}
+                        alignItems={"center"}
+                    >
                         <Grid item>
                             <Typography>
                                 <Moment calendar>{props.time}</Moment>
@@ -82,8 +98,9 @@ function TimePicker(props) {
                                     className={classes.button}
                                     edge={"end"}
                                     disabled={props.disabled}
-                                    onClick={toggleEditMode}>
-                                    <EditIcon/>
+                                    onClick={toggleEditMode}
+                                    size="large">
+                                    <EditIcon />
                                 </IconButton>
                             </Tooltip>
                         </Grid>
@@ -93,14 +110,15 @@ function TimePicker(props) {
                                     className={classes.button}
                                     edge={"end"}
                                     disabled={props.disabled}
-                                    onClick={onClear}>
-                                    <CancelIcon/>
+                                    onClick={onClear}
+                                    size="large">
+                                    <CancelIcon />
                                 </IconButton>
                             </Tooltip>
                         </Grid>
                     </Grid>
                 </div>
-            )
+            );
         }
     } else {
         return (
@@ -109,7 +127,7 @@ function TimePicker(props) {
                     {props.label}
                 </Button>
             </div>
-        )
+        );
     }
 }
 
@@ -118,15 +136,14 @@ TimePicker.propTypes = {
     onChange: PropTypes.func,
     label: PropTypes.string,
     disabled: PropTypes.bool,
-    disableClear: PropTypes.bool
+    disableClear: PropTypes.bool,
 };
 TimePicker.defaultProps = {
     time: "",
-    onChange: () => {
-    },
+    onChange: () => {},
     label: "Set time",
     disabled: false,
-    disableClear: false
+    disableClear: false,
 };
 
 export default TimePicker;

@@ -1,15 +1,17 @@
 import React from "react";
 import { PropTypes } from "prop-types";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 import PickUpDetails from "./PickUpDetails";
 import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
-import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
+import DeliverableDetails from "./DeliverableDetails";
+import TaskActions from "./TaskActions";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
     dialogContent: {
@@ -18,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 1800,
         paddingTop: 20,
-        [theme.breakpoints.down("md")]: {
+        [theme.breakpoints.down("lg")]: {
             padding: 5,
             paddingTop: 5,
         },
@@ -37,10 +39,6 @@ const useStyles = makeStyles((theme) => ({
             width: "95%",
         },
     },
-    container: {
-        //width: "100%",
-        //margin: 0
-    },
     statusBar: {
         paddingBottom: 8,
     },
@@ -51,10 +49,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function TaskOverview(props) {
-    const { task, taskUUID } = props;
+    const { taskUUID, task } = props;
     const classes = useStyles();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("xs"));
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Container className={classes.root} maxWidth={true}>
@@ -62,36 +60,72 @@ function TaskOverview(props) {
                 container
                 className={classes.container}
                 spacing={isSm ? 1 : 3}
-                item
-                direction={"row"}
-                alignItems={"flex-start"}
-                justify={"flex-start"}
             >
-                <Grid className={classes.item} item>
-                    <PickUpDetails
-                        taskUUID={taskUUID}
-                        location={task.pickup_location}
-                        time={task.time_picked_up}
-                        showContact
-                    />
+                <Grid item className={classes.item}>
+                    <Stack direction={"column"} spacing={isSm ? 1 : 3}>
+                        <TaskDetailsPanel
+                            onSelectPriority={props.onSelectPriority}
+                            onChangeTimeOfCall={props.onChangeTimeOfCall}
+                            onChangeRequesterContact={
+                                props.onChangeRequesterContact
+                            }
+                            task={task}
+                        />
+                        <TaskActions
+                            onChangeTimePickedUp={props.onChangeTimePickedUp}
+                            onChangeTimeCancelled={props.onChangeTimeCancelled}
+                            onChangeTimeDroppedOff={
+                                props.onChangeTimeDroppedOff
+                            }
+                            onChangeTimeRejected={props.onChangeTimeRejected}
+                            task={props.task}
+                        />
+                    </Stack>
                 </Grid>
-                <Grid className={classes.item} item>
-                    <DropOffDetails
-                        disableTimeButton={!!!task.time_picked_up}
-                        taskUUID={taskUUID}
-                        location={task.dropoff_location}
-                        time={task.time_dropped_off}
-                        showContact
-                    />
+                <Grid item className={classes.item}>
+                    <Stack direction={"column"} spacing={isSm ? 1 : 3}>
+                        <PickUpDetails
+                            taskUUID={taskUUID}
+                            onClearPickUpLocation={props.onClearPickUpLocation}
+                            onChange={props.onChangePickUpLocation}
+                            onSelectPickupPreset={props.onSelectPickUpPreset}
+                            onEditPreset={props.onEditPickUpPreset}
+                            location={task.pickUpLocation}
+                            time={task.timePickedUp}
+                            showContact
+                        />
+                        <DropOffDetails
+                            disableTimeButton={!!!task.timePickedUp}
+                            taskUUID={taskUUID}
+                            onSelectDropOffPreset={props.onSelectDropOffPreset}
+                            onClearDropOffLocation={
+                                props.onClearDropOffLocation
+                            }
+                            onEditPreset={props.onEditDropOffPreset}
+                            onChange={props.onChangeDropOffLocation}
+                            location={task.dropOffLocation}
+                            time={task.timeDroppedOff}
+                            showContact
+                        />
+                    </Stack>
                 </Grid>
-                <Grid className={classes.item} item>
-                    <TaskDetailsPanel />
-                </Grid>
-                <Grid className={classes.item} item>
-                    <DeliverableGridSelect taskUUID={taskUUID} />
-                </Grid>
-                <Grid className={classes.item} item>
-                    <TaskAssignmentsPanel />
+                <Grid item className={classes.item}>
+                    <Stack direction={"column"} spacing={isSm ? 1 : 3}>
+                        <DeliverableDetails
+                            deliverables={
+                                task.deliverables
+                                    ? Object.values(task.deliverables)
+                                    : []
+                            }
+                            taskUUID={taskUUID}
+                            onChange={props.onUpdateDeliverable}
+                            onDelete={props.onDeleteDeliverable}
+                        />
+                        <TaskAssignmentsPanel
+                            onSelect={props.onSelectAssignee}
+                            task={props.task}
+                        />
+                    </Stack>
                 </Grid>
             </Grid>
         </Container>
@@ -101,6 +135,21 @@ function TaskOverview(props) {
 TaskOverview.propTypes = {
     task: PropTypes.object,
     taskUUID: PropTypes.string,
+    onUpdateDeliverable: PropTypes.func,
+    onDeleteDeliverable: PropTypes.func,
+    onChangeTimeCancelled: PropTypes.func,
+    onChangeTimeRejected: PropTypes.func,
+    onChangeTimeOfCall: PropTypes.func,
+    onSelectAssignee: PropTypes.func,
+};
+
+TaskOverview.defaultProps = {
+    onUpdateDeliverable: () => {},
+    onDeleteDeliverable: () => {},
+    onChangeTimeCancelled: () => {},
+    onChangeTimeRejected: () => {},
+    onChangeTimeOfCall: () => {},
+    onSelectAssignee: () => {},
 };
 
 export default TaskOverview;

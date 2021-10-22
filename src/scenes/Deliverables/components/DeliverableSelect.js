@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {useSelector} from "react-redux";
-import FormControl from "@material-ui/core/FormControl";
-import {InputLabel, MenuItem, Select} from "@material-ui/core";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import FormControl from "@mui/material/FormControl";
+import {InputLabel, MenuItem, Select} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
     formControl: {
