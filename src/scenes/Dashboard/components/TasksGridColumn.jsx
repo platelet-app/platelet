@@ -86,8 +86,8 @@ function TasksGridColumn(props) {
     const endlessLoadIsFetching = useSelector((state) =>
         isFetchingSelector(state)
     );
+    const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const roleView = useSelector((state) => state.roleView);
-    const [isFetching, setIsFetching] = useState(false);
 
     function updateStateFromTaskProp() {
         const listReversed = Object.values(props.tasks).reverse();
@@ -116,25 +116,18 @@ function TasksGridColumn(props) {
     const header =
         props.taskKey === "tasksNew" &&
         !props.hideAddButton &&
-        props.showTasks === null ? (
+        !dashboardFilter ? (
             <React.Fragment>
                 <Button
                     variant="contained"
                     color="primary"
                     disabled={props.disableAddButton}
                     onClick={props.onAddTaskClick}
-                    className={
-                        props.taskKey === "tasksNew" &&
-                        !props.hideAddButton &&
-                        props.showTasks === null
-                            ? show
-                            : hide
-                    }
                 >
                     Create New
                 </Button>
             </React.Fragment>
-        ) : props.showTasks !== null && props.taskKey === "tasksNew" ? (
+        ) : dashboardFilter && props.taskKey === "tasksNew" ? (
             <Button
                 variant="contained"
                 color="primary"

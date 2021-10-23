@@ -16,6 +16,9 @@ import clsx from "clsx";
 import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
 import TasksGridColumn from "./TasksGridColumn";
 import columns from "./tasksGridColumns";
+import * as models from "../../../models/index";
+import { DataStore } from "@aws-amplify/datastore";
+import { getWhoami } from "../../../redux/Selectors";
 
 const getColumnTitle = (key) => {
     switch (key) {
@@ -168,25 +171,10 @@ TaskGroup.propTypes = {
 
 function TasksGrid(props) {
     const classes = useStyles();
-    const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
     const [showGuidedSetup, setShowGuidedSetup] = useState(false);
-
-    const dispatch = useDispatch();
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const { show, hide } = showHide();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
-
-    const addRelay = React.useCallback((data) => {
-        dispatch(addTaskRelayRequest(data));
-    }, []);
-
-    function doSearch() {
-        const result = filterTasks(props.tasks, dashboardFilter);
-        setFilteredTasksUUIDs(result);
-    }
-
-    useEffect(doSearch, [dashboardFilter, props.tasks]);
 
     return (
         <>
@@ -215,11 +203,10 @@ function TasksGrid(props) {
                                 title={title}
                                 classes={classes}
                                 onAddTaskClick={props.onAddTaskClick}
-                                onAddRelayClick={addRelay}
                                 deleteDisabled
                                 taskKey={taskKey}
                                 tasks={props.tasks[taskKey]}
-                                showTasks={filteredTasksUUIDs}
+                                showTasks={props.showTaskIds}
                                 key={title}
                             />
                         </Grid>

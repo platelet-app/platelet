@@ -22,6 +22,7 @@ import { DataStore } from "aws-amplify";
 import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import _ from "lodash";
 import TaskDialogCompact from "../Task/TaskDialogCompact";
+import { filterTasks } from "./utilities/functions";
 
 const initialTasksState = {
     tasksNew: {},
@@ -64,6 +65,8 @@ function Dashboard(props) {
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const [viewMode, setViewMode] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
     const roleView = useSelector((state) => state.roleView);
@@ -72,6 +75,36 @@ function Dashboard(props) {
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
+
+    function doSearch() {
+        const result = filterTasks(tasks, dashboardFilter);
+        setFilteredTasksIds(result);
+    }
+
+    useEffect(doSearch, [dashboardFilter, tasks]);
+
+    async function filterTasksByRole() {
+        if (roleView === "all") {
+            setFilteredTasksIds(null);
+            return;
+        }
+        console.log("e");
+        const assignments = (
+            await DataStore.query(models.TaskAssignee, (a) =>
+                a.role("eq", roleView.toUpperCase())
+            )
+        ).filter((a) => a.assignee.id === whoami.id);
+        const allTasks = await DataStore.query(models.Task);
+        const ids = assignments.map((a) => a.task.id);
+        const allIds = allTasks.map((t) => t.id);
+        const include = [];
+        for (const i of allIds) {
+            if (ids.includes(i)) include.push(i);
+        }
+
+        setFilteredTasksIds(include);
+    }
+    useEffect(() => filterTasksByRole(), [roleView, tasks]);
 
     function setInitialRoleView() {
         if (whoami.id) {
@@ -172,7 +205,7 @@ function Dashboard(props) {
         }
     }
 
-    useEffect(() => getTasks(), [roleView, dataStoreReadyStatus]);
+    useEffect(() => getTasks(), [dataStoreReadyStatus]);
 
     useEffect(() => {
         return () => {
@@ -303,6 +336,7 @@ function Dashboard(props) {
                             <TasksGrid
                                 tasks={tasks}
                                 onAddTaskClick={addTask}
+                                showTaskIds={filteredTasksIds}
                                 modalView={"edit"}
                                 hideRelayIcons={roleView === "rider"}
                                 hideAddButton={!postPermission}
