@@ -14,20 +14,34 @@ const filterOptions = (options, { inputValue }) => {
 };
 
 function CoordinatorPicker(props) {
-    const [availableCoordinators, setAvailableCoordinators] = useState([]);
+    const [availableUsers, setAvailableUsers] = useState([]);
+    const [filteredCoordinatorSuggestions, setFilteredCoordinatorSuggestions] =
+        useState([]);
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
     };
     async function getCoordinators() {
-        const coords = (await DataStore.query(models.User)).filter(
+        const coords = await DataStore.query(models.User);
+        setAvailableUsers(coords);
+    }
+    useEffect(() => getCoordinators(), []);
+
+    useEffect(() => {
+        const filteredSuggestions = availableUsers.filter(
             (u) =>
                 u.roles.includes(userRoles.coordinator) &&
                 !props.exclude.includes(u.id)
         );
-        setAvailableCoordinators(coords);
-    }
+        // const vehicleUsers = filteredSuggestions.filter(
+        //     (user) => user.assigned_vehicles.length !== 0
+        // );
+        // const noVehicleUsers = filteredSuggestions.filter(
+        //     (user) => user.assigned_vehicles.length === 0
+        // );
+        //const reorderedUsers = vehicleUsers.concat(noVehicleUsers);
+        setFilteredCoordinatorSuggestions(filteredSuggestions);
+    }, [availableUsers, props.exclude]);
 
-    useEffect(() => getCoordinators(), []);
     return (
         <div>
             <Autocomplete
@@ -35,7 +49,7 @@ function CoordinatorPicker(props) {
                 fullWidth
                 filterOptions={filterOptions}
                 id="combo-box-coordinators"
-                options={availableCoordinators}
+                options={filteredCoordinatorSuggestions}
                 getOptionLabel={(option) => option.displayName}
                 size={props.size}
                 onChange={onSelect}

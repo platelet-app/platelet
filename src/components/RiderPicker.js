@@ -14,7 +14,7 @@ const filterOptions = (options, { inputValue }) => {
 };
 
 function RiderPicker(props) {
-    const [availableUsers, setAvailableRiders] = useState([]);
+    const [availableUsers, setAvailableUsers] = useState([]);
     const [filteredRiderSuggestions, setFilteredRiderSuggestions] = useState(
         []
     );
@@ -23,19 +23,16 @@ function RiderPicker(props) {
     };
 
     async function getRiders() {
-        const riders = (await DataStore.query(models.User)).filter(
-            (u) =>
-                u.roles.includes(userRoles.rider) &&
-                !props.exclude.includes(u.id)
-        );
-        setAvailableRiders(riders);
+        const users = await DataStore.query(models.User);
+        setAvailableUsers(users);
     }
-
     useEffect(() => getRiders(), []);
 
     useEffect(() => {
         const filteredSuggestions = availableUsers.filter(
-            (u) => !props.exclude.includes(u.id)
+            (u) =>
+                u.roles.includes(userRoles.rider) &&
+                !props.exclude.includes(u.id)
         );
         // const vehicleUsers = filteredSuggestions.filter(
         //     (user) => user.assigned_vehicles.length !== 0
