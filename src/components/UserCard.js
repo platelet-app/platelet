@@ -5,8 +5,8 @@ import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
 import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, styled } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import { Box, Stack, styled } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { ThemedLink, showHide } from "../styles/common";
 
 const UserBox = styled(Box)({
@@ -26,12 +26,12 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         minWidth: 250,
+        minHeight: 50,
     },
 }));
 
 export default function UserCard(props) {
     const classes = useStyles();
-    const { show, hide } = showHide();
 
     const deleteButton = props.onDelete ? (
         <IconButton
@@ -41,7 +41,8 @@ export default function UserCard(props) {
                 event.preventDefault();
                 props.onDelete();
             }}
-            size="large">
+            size="large"
+        >
             <ClearIcon className={classes.button} />
         </IconButton>
     ) : (
@@ -50,57 +51,45 @@ export default function UserCard(props) {
     return (
         <ThemedLink
             to={"/user/" + encodeUUID(props.userUUID)}
-            style={{ textDecoration: "none" }}
+            style={{ width: "100%", textDecoration: "none" }}
         >
             <UserBox>
-                <Grid
-                    container
+                <Stack
                     className={classes.root}
                     spacing={1}
                     justifyContent={"space-between"}
                     alignItems={"center"}
                     direction={"row"}
                 >
-                    <Grid item>
-                        <Grid
-                            container
-                            spacing={2}
-                            direction={"row"}
-                            justifyContent={"flex-start"}
-                            alignItems={"center"}
+                    <Stack
+                        spacing={2}
+                        direction={"row"}
+                        justifyContent={"flex-start"}
+                        alignItems={"center"}
+                    >
+                        <UserAvatar
+                            size={props.compact ? 3 : 6}
+                            userUUID={props.userUUID}
+                            displayName={props.displayName}
+                            avatarURL={props.avatarURL}
+                        />
+                        <Stack
+                            spacing={1}
+                            alignItems={"flex-start"}
+                            direction={"column"}
                         >
-                            <Grid item>
-                                <UserAvatar
-                                    size={props.compact ? 3 : 6}
-                                    userUUID={props.userUUID}
-                                    displayName={props.displayName}
-                                    avatarURL={props.avatarURL}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    alignItems={"flex-start"}
-                                    direction={"column"}
-                                >
-                                    <Grid item>
-                                        <Typography>
-                                            {props.displayName}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid
-                                        className={props.patch ? show : hide}
-                                        item
-                                    >
-                                        <Typography>{props.patch}</Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item>{deleteButton}</Grid>
-                </Grid>
+                            <Typography>{props.displayName}</Typography>
+                            {props.riderResponsibility ? (
+                                <Typography>
+                                    {props.riderResponsibility}
+                                </Typography>
+                            ) : (
+                                <></>
+                            )}
+                        </Stack>
+                    </Stack>
+                    {deleteButton}
+                </Stack>
             </UserBox>
         </ThemedLink>
     );

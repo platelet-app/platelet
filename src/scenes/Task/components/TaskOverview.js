@@ -123,6 +123,7 @@ function TaskOverview(props) {
                         />
                         <TaskAssignmentsPanel
                             onSelect={props.onSelectAssignee}
+                            onDelete={props.onDeleteAssignment}
                             task={props.task}
                         />
                     </Stack>
@@ -141,6 +142,7 @@ TaskOverview.propTypes = {
     onChangeTimeRejected: PropTypes.func,
     onChangeTimeOfCall: PropTypes.func,
     onSelectAssignee: PropTypes.func,
+    onDeleteAssignment: PropTypes.func,
 };
 
 TaskOverview.defaultProps = {
@@ -150,6 +152,7 @@ TaskOverview.defaultProps = {
     onChangeTimeRejected: () => {},
     onChangeTimeOfCall: () => {},
     onSelectAssignee: () => {},
+    onDeleteAssignment: () => {},
 };
 
 export default TaskOverview;

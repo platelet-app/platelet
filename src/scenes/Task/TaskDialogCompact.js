@@ -257,17 +257,34 @@ function TaskDialogCompact(props) {
                     })
                 );
             }
-            const assignees = (
-                await DataStore.query(models.TaskAssignee)
-            ).filter((a) => a.task.id === taskUUID);
             setState((prevState) => ({
                 ...prevState,
-                assignees,
+                assignees: { ...prevState.assignees, [result.id]: result },
             }));
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
     }
+
+    async function onDeleteAssignment(assignmentId) {
+        try {
+            if (!assignmentId) throw new Error("Assignment ID not provided");
+            const existingAssignment = await DataStore.query(
+                models.TaskAssignee,
+                assignmentId
+            );
+            console.log(_.omit(state.assignees, assignmentId));
+            if (existingAssignment) await DataStore.delete(existingAssignment);
+            setState((prevState) => ({
+                ...prevState,
+                assignees: _.omit(prevState.assignees, assignmentId),
+            }));
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+
+    useEffect(() => console.log(state.assignees), [state]);
 
     async function setTimeOfCall(value) {
         try {
@@ -768,6 +785,7 @@ function TaskDialogCompact(props) {
                         task={state}
                         taskUUID={taskUUID}
                         onSelectAssignee={addAssignee}
+                        onDeleteAssignment={onDeleteAssignment}
                         onSelectPriority={selectPriority}
                         onSelectPickUpPreset={selectPickUpPreset}
                         onEditPickUpPreset={editPickUpPreset}

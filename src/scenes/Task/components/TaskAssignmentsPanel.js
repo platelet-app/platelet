@@ -15,6 +15,7 @@ import RiderPicker from "../../../components/RiderPicker";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import UserRoleSelect from "../../../components/UserRoleSelect";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
+import TaskAssignees from "./TaskAssignees";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -25,7 +26,6 @@ export const useStyles = makeStyles(() => ({
 function TaskAssignmentsPanel(props) {
     const { task } = props;
     const [editMode, setEditMode] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [assignedCoordinators, setAssignedCoordinators] = useState([]);
     const [assignedRidersDisplayString, setAssignedRidersDisplayString] =
@@ -45,7 +45,6 @@ function TaskAssignmentsPanel(props) {
 
     function clearEditMode() {
         setEditMode(false);
-        setSelectedUser(null);
         setRole(userRoles.rider);
     }
 
@@ -68,13 +67,20 @@ function TaskAssignmentsPanel(props) {
                 coordinators.map((u) => u.displayName).join(", ")
             );
             setAssignedCoordinators(coordinators);
+        } else {
+            setAssignedCoordinators([]);
+            setAssignedRiders([]);
         }
     }
 
-    useEffect(sortAssignees, [props.task]);
+    useEffect(sortAssignees, [props.task.assignees]);
 
     const assigneeSelector = editMode ? (
-        <Stack directon={"column"} spacing={1}>
+        <Stack direction={"column"} spacing={1}>
+            <TaskAssignees
+                onRemove={props.onDelete}
+                assignees={Object.values(task.assignees)}
+            />
             <UserRoleSelect
                 value={role}
                 onSelect={(value) => setRole(value)}

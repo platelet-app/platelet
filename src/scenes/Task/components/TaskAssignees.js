@@ -1,15 +1,10 @@
-import Grid from "@mui/material/Grid";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import UserCard from "../../../components/UserCard";
-import React from "react";
-import { useDispatch } from "react-redux";
-import {
-    removeTaskAssignedCoordinatorRequest,
-    removeTaskAssignedRiderRequest,
-} from "../../../redux/taskAssignees/TaskAssigneesActions";
 import Divider from "@mui/material/Divider";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles({
     root: {
@@ -22,13 +17,11 @@ const useStyles = makeStyles({
 });
 
 function TaskAssignees(props) {
-    const dispatch = useDispatch();
-    const { taskUUID } = props;
     const classes = useStyles();
 
     const noAssigneeMessage = props.assignees ? (
         props.assignees.length === 0 ? (
-            <Typography>No assignee.</Typography>
+            <Typography>No assignees</Typography>
         ) : (
             <></>
         )
@@ -36,48 +29,37 @@ function TaskAssignees(props) {
         <></>
     );
 
-    function onRemoveUser(userUUID) {
-        if (props.rider)
-            dispatch(removeTaskAssignedRiderRequest(taskUUID, userUUID));
-        else if (props.coordinator)
-            dispatch(removeTaskAssignedCoordinatorRequest(taskUUID, userUUID));
-        if (props.onRemove) props.onRemove();
-    }
-
     return (
-        <Grid
-            container
+        <Stack
             className={classes.root}
             direction={"column"}
             justifyContent={"center"}
             alignItems={"flex-start"}
         >
-            <Grid item>{noAssigneeMessage}</Grid>
-            {Object.values(props.assignees).map((user) => {
+            {noAssigneeMessage}
+            {Object.values(props.assignees).map((assignment) => {
+                const user = assignment.assignee || null;
                 return (
-                    <Grid item key={user.uuid}>
+                    <React.Fragment key={assignment.id}>
                         <UserCard
                             compact
-                            onDelete={() => onRemoveUser(user.uuid)}
-                            userUUID={user.uuid}
-                            displayName={user.display_name}
-                            avatarURL={user.profile_picture_thumbnail_url}
+                            onDelete={() => props.onRemove(assignment.id)}
+                            userUUID={user.id}
+                            displayName={user.displayName}
+                            avatarURL={user.profilePictureThumbnailURL}
                         />
                         <Divider />
                         <div className={classes.spacer} />
-                    </Grid>
+                    </React.Fragment>
                 );
             })}
-        </Grid>
+        </Stack>
     );
 }
 
 TaskAssignees.propTypes = {
-    taskUUID: PropTypes.string.isRequired,
     assignees: PropTypes.arrayOf(PropTypes.object),
     onRemove: PropTypes.func,
-    coordinator: PropTypes.bool,
-    rider: PropTypes.bool,
 };
 
 TaskAssignees.defaultProps = {
