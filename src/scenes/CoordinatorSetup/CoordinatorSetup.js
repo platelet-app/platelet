@@ -5,24 +5,39 @@ import {Grid} from '@mui/material';
 import { GuidedSetup } from '../GuidedSetup/GuidedSetup'
 import { RiderJobActivity } from './components/RiderJobActivity'
 import { EnhancedTable } from './components/EnhancedTable'
-import { CustomizedDialogs } from '../../components/CustomizedDialogs'
-
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const setupStyles = makeStyles((theme) => ({
     container: {
+        // todo: replace with a direct url to redirect to new page instead
+        display: "flex",
+        flexDirection: "column",
         position: "fixed",
         left: "0",
-        top: "15%",
+        top: "5%",
         width: "100%",
         height: "100%",
+        background: "white",
+        padding: "20px 30px"
     },
     leftPanel: {
-        display: "grid",
-        alignContent: "space-between",
-        background: "white",
+        display: "grid",     
         height: "100%",
-        padding: "20px 80px",
-        borderRight: "solid 2px"
+        
+    },
+    divider: {
+       position: "relative",
+
+        "&:after": {
+            position: "absolute",
+            content: '""',
+            top: 0,
+            right: "50%",
+            width: "2px",
+            height: "100%",
+            background: "black"
+        }
     }
   }));
 
@@ -30,17 +45,20 @@ export const CoordinatorSetup = ({ show, onClose }) => {
     const classes = setupStyles();
     
     return (
-        <CustomizedDialogs open={show} onClose={onClose}>
-            <Grid container className={classes.container}>
-                <Grid item xs={8} className={classes.leftPanel} >
+        <div className={classes.container}>
+            <Box p={3}>
+                <Typography>{"Rider Job Activity"}</Typography>
+            </Box>
+            <Grid container>
+                <Grid item xs={7.5} className={classes.leftPanel} >
                     <RiderJobActivity />
                     <EnhancedTable />
                 </Grid>
-
+                <Grid item xs={0.5} className={classes.divider} />
                 <Grid item xs={4}>
                     <GuidedSetup />
                 </Grid>
             </Grid> 
-        </CustomizedDialogs>
+        </div>
     )
 }

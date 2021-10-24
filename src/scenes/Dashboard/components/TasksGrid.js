@@ -214,7 +214,10 @@ function TasksGrid(props) {
                             <TasksGridColumn
                                 title={title}
                                 classes={classes}
-                                onAddTaskClick={props.onAddTaskClick}
+                                onAddTaskClick={() => {
+                                    props.onAddTaskClick()
+                                    setShowGuidedSetup(true)
+                                }}
                                 onAddRelayClick={addRelay}
                                 deleteDisabled
                                 taskKey={taskKey}
@@ -226,7 +229,7 @@ function TasksGrid(props) {
                     );
                 })}
             </Grid>
-            <CoordinatorSetup show={showGuidedSetup} onClose={() => setShowGuidedSetup(false)}/>
+            {showGuidedSetup && <CoordinatorSetup onClose={() => setShowGuidedSetup(false)}/> }
         </>
     );
 }

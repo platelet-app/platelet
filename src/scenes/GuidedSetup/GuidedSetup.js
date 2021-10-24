@@ -58,6 +58,11 @@ const a11yProps = (index) => {
 }
 
 const guidedSetupStyles = makeStyles((theme) => ({
+  wrapper: {
+    display: "flex",
+    flexDirection: "column",
+    height: "100%"
+  },
   tabs: {
     "& .MuiTabs-flexContainer": {
       justifyContent: "space-around"
@@ -85,10 +90,12 @@ const guidedSetupStyles = makeStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
-  btnWrapper: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
+  btn: {
+    height: "60px",
+    width: "250px",
+    position: "absolute",
+    right: "0",
+    bottom: "5%",
   }
 }));
 
@@ -241,75 +248,54 @@ export const GuidedSetup = ({ show, onClose }) => {
   }
   
   return (
-    <div open={show} onClose={onCloseForm} >
+    <div className={classes.wrapper} open={show} onClose={onCloseForm} >
         <div className={classes.tabContent}>
-            <AppBar position="static">
-                <Tabs 
-                  value={value} 
-                  onChange={handleChange} 
-                  aria-label="coordianator setup tab" 
-                  className={classes.tabs}
-                  classes={{
-                    indicator: classes.indicator
-                  }}
-                >
-                    <Tab icon={<PersonIcon className={classes.btnIcon} />} label="Caller" {...a11yProps(0)} className={classes.tabButton} />
-                    <Tab icon={<PersonIcon className={classes.btnIcon} />} label={<div>{`Items &`} <br /> {`Priority`}</div>} {...a11yProps(1)} className={classes.tabButton} />
-                    <Tab icon={<PersonIcon className={classes.btnIcon} />} label={<div>Pick-up <br /> Drop-off</div>} {...a11yProps(2)} className={classes.tabButton} />
-                    <Tab icon={<PersonIcon className={classes.btnIcon} />} label={<div>Assign <br /> Rider/Van</div>} {...a11yProps(3)} className={classes.tabButton} />
-                    {/* <Tab label="Step 5" {...a11yProps(4)} className={classes.tabButton} /> */}
-                </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-                <Step1 values={formValues} onChange={handleCallerContactChange} />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <Step2 
-                  values={formValues} 
-                  // onSelect={onPickUpLocationSaved}
-                  taskUUID={task.uuid} 
-                  onChange={handleDeliverablesChange} />
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                <Step3 
-                  values={formValues} 
-                  onChange={handleReceiverContactChange}
-                  onSelectDropoffLocation={onDropoffLocationSaved}
-                  onSelectDropoffTime={onDropOffTimeSaved}
-                  onSelectPickupLocation={onPickUpLocationSaved}
-                  onSelectPickupTime={onPickUpTimeSaved} />
-            </TabPanel>
-            <TabPanel value={value} index={3}>
-                <Step4 values={formValues} onChange={() => {}} />
-            </TabPanel>
-            <TabPanel value={value} index={4}>
-                <Step5 values={formValues} taskUUID={task.uuid} onChange={handleDeliverablesChange} />
-            </TabPanel>
+          <AppBar position="static">
+              <Tabs 
+                value={value} 
+                onChange={handleChange} 
+                aria-label="coordianator setup tab" 
+                className={classes.tabs}
+                classes={{
+                  indicator: classes.indicator
+                }}
+              >
+                  <Tab icon={<PersonIcon className={classes.btnIcon} />} label="Caller" {...a11yProps(0)} className={classes.tabButton} />
+                  <Tab icon={<PersonIcon className={classes.btnIcon} />} label={<div>{`Items &`} <br /> {`Priority`}</div>} {...a11yProps(1)} className={classes.tabButton} />
+                  <Tab icon={<PersonIcon className={classes.btnIcon} />} label={<div>Pick-up <br /> Drop-off</div>} {...a11yProps(2)} className={classes.tabButton} />
+                  <Tab icon={<PersonIcon className={classes.btnIcon} />} label={<div>Assign <br /> Rider/Van</div>} {...a11yProps(3)} className={classes.tabButton} />
+                  {/* <Tab label="Step 5" {...a11yProps(4)} className={classes.tabButton} /> */}
+              </Tabs>
+          </AppBar>
+          <TabPanel value={value} index={0}>
+              <Step1 values={formValues} onChange={handleCallerContactChange} />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+              <Step2 
+                values={formValues} 
+                // onSelect={onPickUpLocationSaved}
+                taskUUID={task.uuid} 
+                onChange={handleDeliverablesChange} />
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+              <Step3 
+                values={formValues} 
+                onChange={handleReceiverContactChange}
+                onSelectDropoffLocation={onDropoffLocationSaved}
+                onSelectDropoffTime={onDropOffTimeSaved}
+                onSelectPickupLocation={onPickUpLocationSaved}
+                onSelectPickupTime={onPickUpTimeSaved} />
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+              <Step4 values={formValues} onChange={() => {}} />
+          </TabPanel>
+          <TabPanel value={value} index={4}>
+              <Step5 values={formValues} taskUUID={task.uuid} onChange={handleDeliverablesChange} />
+          </TabPanel>
         </div>
-        <div className={classes.btnWrapper}>
-            <Button autoFocus onClick={onShowTaskOverview} color="primary">
-                Skip to overview
-            </Button>
-            <div>
-            {value > 0 && (
-                <Button autoFocus onClick={() => setValue(value => value -1)} color="primary">
-                    Previous
-                </Button>)}
-            {value < 4 
-            ? (<Button autoFocus onClick={() => setValue(value => value +1)} color="primary">
-                    Next
-                </Button>)
-            : (<Button 
-                autoFocus 
-                onClick={() => {
-                  onShowTaskOverview()
-                  onCloseForm()
-                }} 
-                color="primary">
-                    Finish
-                </Button>)}
-            </div>
-        </div>
+        <Button className={classes.btn} autoFocus onClick={onShowTaskOverview} color="primary">
+          Skip to detailed overview
+        </Button>
     </div>
   );
 }
