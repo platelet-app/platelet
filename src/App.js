@@ -35,6 +35,7 @@ if (
         ...config.default,
         ssr: true,
     });
+    Amplify.register(Auth);
 }
 Logger.LOG_LEVEL = "ERROR";
 
