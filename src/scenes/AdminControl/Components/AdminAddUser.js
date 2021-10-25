@@ -73,6 +73,7 @@ function AdminAddUser() {
         try {
             setIsPosting(true);
             if (
+                false ||
                 !process.env.REACT_APP_OFFLINE_ONLY ||
                 process.env.REACT_APP_OFFLINE_ONLY === "false"
             ) {
