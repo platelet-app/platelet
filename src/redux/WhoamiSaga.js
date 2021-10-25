@@ -58,11 +58,11 @@ function* getWhoami() {
                     loggedInUser.attributes.sub
                 );
                 if (!result) {
-                    result = yield call([API, API.graphql], {
-                        query: queries.getUser,
-                        variables: { id: loggedInUser.attributes.sub },
-                    });
-                    yield put(getWhoamiSuccess(result.data.getUser));
+                    //result = yield call([API, API.graphql], {
+                    //                       query: queries.getUser,
+                    //   variables: { id: loggedInUser.attributes.sub },
+                    //});
+                    yield put(getWhoamiSuccess(fakeUser));
                 } else {
                     yield put(getWhoamiSuccess(result));
                 }
