@@ -23,6 +23,10 @@ import {
 } from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
+import { DataStore } from "@aws-amplify/datastore";
+import * as models from "./models/index";
+window.models = models;
+window.DataStore = DataStore;
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
