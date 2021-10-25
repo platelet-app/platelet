@@ -73,19 +73,17 @@ function AdminAddUser() {
         try {
             setIsPosting(true);
             if (
-                false ||
                 !process.env.REACT_APP_OFFLINE_ONLY ||
                 process.env.REACT_APP_OFFLINE_ONLY === "false"
             ) {
-                const { userSub } = await Auth.signUp({
-                    ...state,
-                });
-                dispatch(
-                    displayInfoNotification(
-                        "User registered and will be available after they confirm their account"
-                    )
-                );
-            } else {
+                //const { userSub } = await Auth.signUp({
+                //                   ...state,
+                //              });
+                //             dispatch(
+                //                displayInfoNotification(
+                //         ("User registered and will be available after they confirm their account");
+                //               )
+                //          );
                 // Only add the user to DataStore if we're working offline, otherwise get it from amplify once user is confirmed
                 const newContact = await DataStore.save(
                     new models.AddressAndContactDetails({
