@@ -274,6 +274,8 @@ function TaskDialogCompact(props) {
     async function onDeleteAssignment(assignmentId) {
         try {
             if (!assignmentId) throw new Error("Assignment ID not provided");
+            const result = await DataStore.query(models.Task, taskUUID);
+            if (!result) throw new Error("Task doesn't exist");
             debugger;
             const existingAssignment = await DataStore.query(
                 models.TaskAssignee,
@@ -283,9 +285,7 @@ function TaskDialogCompact(props) {
                 existingAssignment &&
                 existingAssignment.role === userRoles.rider
             ) {
-                const result = await DataStore.query(models.Task, taskUUID);
                 let riderResponsibility = null;
-                if (!result) throw new Error("Task doesn't exist");
                 const riders = Object.values(state.assignees)
                     .filter(
                         (a) =>
@@ -299,8 +299,6 @@ function TaskDialogCompact(props) {
                             models.RiderResponsibility,
                             rider.userRiderResponsibilityId
                         );
-                    } else {
-                        riderResponsibility = null;
                     }
                 }
                 await DataStore.save(
@@ -314,9 +312,19 @@ function TaskDialogCompact(props) {
                 }));
             }
             if (existingAssignment) await DataStore.delete(existingAssignment);
+            const status = determineTaskStatus({
+                ...state,
+                assignees: _.omit(state.assignees, assignmentId),
+            });
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.status = status;
+                })
+            );
             setState((prevState) => ({
                 ...prevState,
                 assignees: _.omit(prevState.assignees, assignmentId),
+                status,
             }));
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
