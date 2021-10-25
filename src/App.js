@@ -40,7 +40,7 @@ if (
         ssr: true,
     });
 }
-Logger.LOG_LEVEL = "ERROR";
+Logger.LOG_LEVEL = "DEBUG";
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
