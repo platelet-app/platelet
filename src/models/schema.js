@@ -1167,6 +1167,13 @@ export const schema = {
                         "targetName": "deliverableDeliverableTypeId"
                     }
                 },
+                "taskDeliverablesId": {
+                    "name": "taskDeliverablesId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "task": {
                     "name": "task",
                     "isArray": false,
@@ -1232,13 +1239,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "taskDeliverablesId": {
-                    "name": "taskDeliverablesId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,

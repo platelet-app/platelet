@@ -841,7 +841,163 @@ export const onCreateDeliverable = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      taskDeliverablesId
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       count
       unit
       orderInGrid
@@ -883,7 +1039,163 @@ export const onUpdateDeliverable = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      taskDeliverablesId
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       count
       unit
       orderInGrid
@@ -925,7 +1237,163 @@ export const onDeleteDeliverable = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      taskDeliverablesId
+      task {
+        id
+        name
+        createdBy {
+          id
+          username
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        requesterContact {
+          id
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       count
       unit
       orderInGrid
@@ -1506,7 +1974,6 @@ export const onCreateTask = /* GraphQL */ `
       deliverables {
         items {
           id
-          taskDeliverablesId
           count
           unit
           orderInGrid
@@ -2110,7 +2577,6 @@ export const onUpdateTask = /* GraphQL */ `
       deliverables {
         items {
           id
-          taskDeliverablesId
           count
           unit
           orderInGrid
@@ -2714,7 +3180,6 @@ export const onDeleteTask = /* GraphQL */ `
       deliverables {
         items {
           id
-          taskDeliverablesId
           count
           unit
           orderInGrid
