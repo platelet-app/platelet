@@ -1,4 +1,6 @@
-type User @model {
+type User @model
+  @auth(rules: [{ allow: private }])
+{
   id: ID!
   username: String!
   contact: AddressAndContactDetails @connection
@@ -16,14 +18,18 @@ type User @model {
   active: Int!
 }
 
-type Group @model {
+type Group @model
+  @auth(rules: [{ allow: private }])
+{
   id: ID!
   taskGroupId: ID
   name: String
   users: [User] @connection(name: "GroupMembers")
 }
 
-type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
+type Vehicle @model
+  @auth(rules: [{ allow: private }])
+  @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   id: ID!
   assignedUserID: ID
   name: String!
@@ -35,7 +41,9 @@ type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type AddressAndContactDetails @model {
+type AddressAndContactDetails @model
+  @auth(rules: [{ allow: private }])
+{
   id: ID!
   name: String
   telephoneNumber: String
@@ -53,7 +61,9 @@ type AddressAndContactDetails @model {
   what3words: String
 }
 
-type Deliverable @model {
+type Deliverable @model
+  @auth(rules: [{ allow: private }])
+{
   id: ID!
   deliverableType: DeliverableType! @connection
   taskDeliverablesId: ID
@@ -64,7 +74,9 @@ type Deliverable @model {
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type Location @model {
+type Location @model
+  @auth(rules: [{ allow: private }])
+{
   id: ID!
   name: String
   listed: Int
@@ -85,6 +97,7 @@ type Location @model {
 }
 
 type Task
+  @auth(rules: [{ allow: private }])
   @model
   @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
   @key(name: "byPickUpLocation", fields: ["pickUpLocationId",])
@@ -116,6 +129,7 @@ type Task
 
 type TaskAssignee
 @model(queries: null)
+@auth(rules: [{ allow: private }])
 @key(name: "byTask", fields: ["taskId", "assigneeId"])
 @key(name: "byAssignee", fields: ["assigneeId", "taskId"])
 {
@@ -127,7 +141,9 @@ type TaskAssignee
   assignee: User! @connection(fields: ["assigneeId"])
 }
 
-type Comment @model @key(name: "byParent", fields: ["parentId"]) {
+type Comment @model
+@auth(rules: [{ allow: private }])
+@key(name: "byParent", fields: ["parentId"]) {
   id: ID!
   parentId: ID!
   body: String!
@@ -135,7 +151,9 @@ type Comment @model @key(name: "byParent", fields: ["parentId"]) {
   visibility: CommentVisibility
 }
 
-type DeliverableType @model {
+type DeliverableType @model
+@auth(rules: [{ allow: private }])
+{
   id: ID!
   label: String!
   icon: DeliverableTypeIcon
@@ -150,7 +168,9 @@ enum DeliverableTypeIcon {
   OTHER
 }
 
-type RiderResponsibility @model {
+type RiderResponsibility
+@auth(rules: [{ allow: private }])
+@model {
   id: ID!
   label: String!
 }
