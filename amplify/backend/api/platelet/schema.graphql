@@ -56,6 +56,7 @@ type AddressAndContactDetails @model {
 type Deliverable @model {
   id: ID!
   deliverableType: DeliverableType! @connection
+  taskDeliverablesId: ID
   task: Task @connection
   count: Int
   unit: DeliverableUnit

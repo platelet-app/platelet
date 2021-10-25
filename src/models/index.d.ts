@@ -255,6 +255,7 @@ export declare class Location {
 export declare class Deliverable {
   readonly id: string;
   readonly deliverableType: DeliverableType;
+  readonly taskDeliverablesId?: string;
   readonly task?: Task;
   readonly count?: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
@@ -262,7 +263,6 @@ export declare class Deliverable {
   readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
-  readonly taskDeliverablesId?: string;
   constructor(init: ModelInit<Deliverable, DeliverableMetaData>);
   static copyOf(source: Deliverable, mutator: (draft: MutableModel<Deliverable, DeliverableMetaData>) => MutableModel<Deliverable, DeliverableMetaData> | void): Deliverable;
 }
