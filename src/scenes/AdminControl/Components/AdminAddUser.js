@@ -19,6 +19,7 @@ import { getWhoami } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 import { encodeUUID } from "../../../utilities";
+import { userRoles } from "../../../apiConsts";
 
 const useStyles = makeStyles({
     root: {
@@ -96,6 +97,7 @@ function AdminAddUser() {
                         displayName: state.attributes.name,
                         active: 1,
                         username: state.username,
+                        roles: [userRoles.user, userRoles.rider],
                         contact: newContact,
                     })
                 );
