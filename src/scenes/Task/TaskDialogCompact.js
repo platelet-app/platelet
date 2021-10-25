@@ -274,11 +274,45 @@ function TaskDialogCompact(props) {
     async function onDeleteAssignment(assignmentId) {
         try {
             if (!assignmentId) throw new Error("Assignment ID not provided");
+            debugger;
             const existingAssignment = await DataStore.query(
                 models.TaskAssignee,
                 assignmentId
             );
-            console.log(_.omit(state.assignees, assignmentId));
+            if (
+                existingAssignment &&
+                existingAssignment.role === userRoles.rider
+            ) {
+                const result = await DataStore.query(models.Task, taskUUID);
+                let riderResponsibility = null;
+                if (!result) throw new Error("Task doesn't exist");
+                const riders = Object.values(state.assignees)
+                    .filter(
+                        (a) =>
+                            a.role === userRoles.rider && a.id !== assignmentId
+                    )
+                    .map((a) => a.assignee);
+                if (riders.length > 0) {
+                    const rider = riders[riders.length - 1];
+                    if (rider.userRiderResponsibilityId) {
+                        riderResponsibility = await DataStore.query(
+                            models.RiderResponsibility,
+                            rider.userRiderResponsibilityId
+                        );
+                    } else {
+                        riderResponsibility = null;
+                    }
+                }
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.riderResponsibility = riderResponsibility;
+                    })
+                );
+                setState((prevState) => ({
+                    ...prevState,
+                    riderResponsibility,
+                }));
+            }
             if (existingAssignment) await DataStore.delete(existingAssignment);
             setState((prevState) => ({
                 ...prevState,
@@ -288,8 +322,6 @@ function TaskDialogCompact(props) {
             dispatch(displayErrorNotification(errorMessage));
         }
     }
-
-    useEffect(() => console.log(state.assignees), [state]);
 
     async function setTimeOfCall(value) {
         try {
