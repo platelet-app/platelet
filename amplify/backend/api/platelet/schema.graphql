@@ -128,7 +128,7 @@ type Task
 }
 
 type TaskAssignee
-@model(queries: null)
+@model
 @auth(rules: [{ allow: private }])
 @key(name: "byTask", fields: ["taskId", "assigneeId"])
 @key(name: "byAssignee", fields: ["assigneeId", "taskId"])
