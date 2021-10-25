@@ -232,17 +232,12 @@ function TaskDialogCompact(props) {
                     role,
                 })
             );
+            let riderResponsibility;
             if (role === userRoles.rider) {
                 if (user.riderResponsibility) {
-                    const responsibility = await DataStore.query(
+                    riderResponsibility = await DataStore.query(
                         models.RiderResponsibility,
                         user.riderResponsibility.id
-                    );
-                    await DataStore.save(
-                        models.Task.copyOf(task, (updated) => {
-                            updated.riderResponsibility =
-                                responsibility || null;
-                        })
                     );
                 }
                 const taskResult = await DataStore.query(models.Task, taskUUID);
@@ -254,13 +249,23 @@ function TaskDialogCompact(props) {
                 await DataStore.save(
                     models.Task.copyOf(taskResult, (updated) => {
                         updated.status = status;
+                        if (riderResponsibility)
+                            updated.riderResponsibility = riderResponsibility;
                     })
                 );
             }
-            setState((prevState) => ({
-                ...prevState,
-                assignees: { ...prevState.assignees, [result.id]: result },
-            }));
+            if (riderResponsibility) {
+                setState((prevState) => ({
+                    ...prevState,
+                    assignees: { ...prevState.assignees, [result.id]: result },
+                    riderResponsibility,
+                }));
+            } else {
+                setState((prevState) => ({
+                    ...prevState,
+                    assignees: { ...prevState.assignees, [result.id]: result },
+                }));
+            }
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
