@@ -443,8 +443,17 @@ function TaskDialogCompact(props) {
                 _deleted,
                 ...rest
             } = currentState;
+            const contactOmitted = _.omit(
+                contact,
+                "createdAt",
+                "updatedAt",
+                "id",
+                "_version",
+                "_lastChangedAt",
+                "_deleted"
+            );
             const newContact = await DataStore.save(
-                new models.AddressAndContactDetails({ ...contact })
+                new models.AddressAndContactDetails({ ...contactOmitted })
             );
             const newLocation = await DataStore.save(
                 new models.Location({
@@ -484,8 +493,17 @@ function TaskDialogCompact(props) {
                 _deleted,
                 ...rest
             } = currentState;
+            const contactOmitted = _.omit(
+                contact,
+                "createdAt",
+                "updatedAt",
+                "id",
+                "_version",
+                "_lastChangedAt",
+                "_deleted"
+            );
             const newContact = await DataStore.save(
-                new models.AddressAndContactDetails({ ...contact })
+                new models.AddressAndContactDetails({ ...contactOmitted })
             );
             const newLocation = await DataStore.save(
                 new models.Location({
