@@ -267,6 +267,7 @@ function TaskDialogCompact(props) {
                 }));
             }
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -327,6 +328,7 @@ function TaskDialogCompact(props) {
                 status,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -346,6 +348,7 @@ function TaskDialogCompact(props) {
                 timeOfCall: value,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -375,6 +378,7 @@ function TaskDialogCompact(props) {
                 [key]: value,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -389,6 +393,7 @@ function TaskDialogCompact(props) {
                 })
             );
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -419,6 +424,7 @@ function TaskDialogCompact(props) {
                 },
             };
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -458,6 +464,7 @@ function TaskDialogCompact(props) {
                 dropOffLocation: newLocation,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -498,6 +505,7 @@ function TaskDialogCompact(props) {
                 pickUpLocation: newLocation,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -518,6 +526,7 @@ function TaskDialogCompact(props) {
                 pickUpLocation: location,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -536,6 +545,7 @@ function TaskDialogCompact(props) {
                 pickUpLocation: null,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -555,6 +565,7 @@ function TaskDialogCompact(props) {
                 dropOffLocation: location,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -580,6 +591,7 @@ function TaskDialogCompact(props) {
                 );
             }
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -598,6 +610,7 @@ function TaskDialogCompact(props) {
                 dropOffLocation: null,
             }));
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -723,6 +736,7 @@ function TaskDialogCompact(props) {
                 };
             });
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
         props.refreshTask();
@@ -776,6 +790,7 @@ function TaskDialogCompact(props) {
                 taskDeliverablesRef.current[newDeliverable.id] = newDeliverable;
             }
         } catch (error) {
+            console.error(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
