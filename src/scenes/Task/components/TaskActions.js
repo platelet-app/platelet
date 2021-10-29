@@ -22,7 +22,6 @@ function TaskActions(props) {
     const cardClasses = dialogCardStyles();
 
     function onChange(key) {
-        debugger;
         const value = state.includes(key) ? null : new Date().toISOString();
         if (key === "pickedUp") props.onChangeTimePickedUp(value);
         else if (key === "droppedOff") props.onChangeTimeDroppedOff(value);
@@ -59,6 +58,8 @@ function TaskActions(props) {
     useEffect(updateStateFromProps, [props.task]);
     return (
         <Paper className={cardClasses.root}>
+            {props.task ? props.task.timePickedUp : ""}
+            {props.task ? props.task.timeDroppedOff : ""}
             <Stack direction={"column"} spacing={1}>
                 <Typography variant={"h6"}> Actions:</Typography>
                 <ToggleButtonGroup
