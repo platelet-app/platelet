@@ -243,6 +243,7 @@ async function populateTasks(whoamiId) {
                 new models.Deliverable({
                     deliverableType: _.sample(availableDeliverables),
                     count: getRandomInt(1, 4),
+                    orderInGrid: 0,
                     task: newTask,
                 })
             );
@@ -287,6 +288,7 @@ async function populateTasks(whoamiId) {
                 new models.Deliverable({
                     deliverableType: _.sample(availableDeliverables),
                     count: getRandomInt(1, 4),
+                    orderInGrid: 0,
                     task: newTask,
                 })
             );
@@ -332,6 +334,7 @@ async function populateTasks(whoamiId) {
                 new models.Deliverable({
                     deliverableType: _.sample(availableDeliverables),
                     count: getRandomInt(1, 4),
+                    orderInGrid: 0,
                     task: newTask,
                 })
             );
@@ -386,6 +389,7 @@ async function populateTasks(whoamiId) {
                 new models.Deliverable({
                     deliverableType: _.sample(availableDeliverables),
                     count: getRandomInt(1, 4),
+                    orderInGrid: 0,
                     task: newTask,
                 })
             );
@@ -441,6 +445,7 @@ async function populateTasks(whoamiId) {
                 new models.Deliverable({
                     deliverableType: _.sample(availableDeliverables),
                     count: getRandomInt(1, 4),
+                    orderInGrid: 0,
                     task: newTask,
                 })
             );
