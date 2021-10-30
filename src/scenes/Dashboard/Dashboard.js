@@ -126,80 +126,131 @@ function Dashboard(props) {
     }
     useEffect(setInitialRoleView, [whoami]);
 
-    function getTasks() {
+    function addAssigneesAndConvertToObject(tasks, allAssignees) {
+        const finalResult = {};
+        for (const t of tasks) {
+            const assignmentsFiltered = allAssignees.filter(
+                (a) => a.task.id === t.id
+            );
+            const assignees = convertListDataToObject(assignmentsFiltered);
+            finalResult[t.id] = { ...t, assignees };
+        }
+
+        return finalResult;
+    }
+
+    async function getTasks() {
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
             return;
         } else {
-            DataStore.query(models.Task, (task) =>
-                task.status("eq", tasksStatus.new)
-            ).then((result) => {
-                const resultObject = convertListDataToObject(result);
-                setTasks((prevState) => ({
-                    ...prevState,
-                    tasksNew: resultObject,
-                }));
-            });
-            DataStore.query(models.Task, (task) =>
-                task.status("eq", tasksStatus.active)
-            ).then((result) => {
-                const resultObject = convertListDataToObject(result);
-                setTasks((prevState) => ({
-                    ...prevState,
-                    tasksActive: resultObject,
-                }));
-            });
-            DataStore.query(models.Task, (task) =>
-                task.status("eq", tasksStatus.pickedUp)
-            ).then((result) => {
-                const resultObject = convertListDataToObject(result);
-                setTasks((prevState) => ({
-                    ...prevState,
-                    tasksPickedUp: resultObject,
-                }));
-            });
-            DataStore.query(models.Task, (task) =>
-                task.status("eq", tasksStatus.droppedOff)
-            ).then((result) => {
-                const resultObject = convertListDataToObject(result);
-                setTasks((prevState) => ({
-                    ...prevState,
-                    tasksDroppedOff: resultObject,
-                }));
-            });
-            DataStore.query(models.Task, (task) =>
-                task.status("eq", tasksStatus.cancelled)
-            ).then((result) => {
-                const resultObject = convertListDataToObject(result);
-                setTasks((prevState) => ({
-                    ...prevState,
-                    tasksCancelled: resultObject,
-                }));
-            });
-            DataStore.query(models.Task, (task) =>
-                task.status("eq", tasksStatus.rejected)
-            ).then((result) => {
-                const resultObject = convertListDataToObject(result);
-                setTasks((prevState) => ({
-                    ...prevState,
-                    tasksRejected: resultObject,
-                }));
-            });
-            tasksSubscription.current.unsubscribe();
-            tasksSubscription.current = DataStore.observe(
-                models.Task
-            ).subscribe(async (newTask) => {
-                if (newTask.opType === "UPDATE") {
-                    const replaceTask = await DataStore.query(
-                        models.Task,
-                        newTask.element.id
-                    );
-                    addTaskToState(replaceTask);
-                } else {
-                    const task = newTask.element;
-                    addTaskToState(task);
-                }
-            });
+            if (true) {
+                const allAssignments = await DataStore.query(
+                    models.TaskAssignee
+                );
+                DataStore.query(models.Task, (task) =>
+                    task.status("eq", tasksStatus.new)
+                ).then((result) => {
+                    setTasks((prevState) => ({
+                        ...prevState,
+                        tasksNew: addAssigneesAndConvertToObject(
+                            result,
+                            allAssignments
+                        ),
+                    }));
+                });
+                DataStore.query(models.Task, (task) =>
+                    task.status("eq", tasksStatus.active)
+                ).then((result) => {
+                    setTasks((prevState) => ({
+                        ...prevState,
+                        tasksActive: addAssigneesAndConvertToObject(
+                            result,
+                            allAssignments
+                        ),
+                    }));
+                });
+                DataStore.query(models.Task, (task) =>
+                    task.status("eq", tasksStatus.pickedUp)
+                ).then((result) => {
+                    setTasks((prevState) => ({
+                        ...prevState,
+                        tasksPickedUp: addAssigneesAndConvertToObject(
+                            result,
+                            allAssignments
+                        ),
+                    }));
+                });
+                DataStore.query(models.Task, (task) =>
+                    task.status("eq", tasksStatus.droppedOff)
+                ).then((result) => {
+                    setTasks((prevState) => ({
+                        ...prevState,
+                        tasksDroppedOff: addAssigneesAndConvertToObject(
+                            result,
+                            allAssignments
+                        ),
+                    }));
+                });
+                DataStore.query(models.Task, (task) =>
+                    task.status("eq", tasksStatus.cancelled)
+                ).then((result) => {
+                    setTasks((prevState) => ({
+                        ...prevState,
+                        tasksCancelled: addAssigneesAndConvertToObject(
+                            result,
+                            allAssignments
+                        ),
+                    }));
+                });
+                DataStore.query(models.Task, (task) =>
+                    task.status("eq", tasksStatus.rejected)
+                ).then((result) => {
+                    setTasks((prevState) => ({
+                        ...prevState,
+                        tasksRejected: addAssigneesAndConvertToObject(
+                            result,
+                            allAssignments
+                        ),
+                    }));
+                });
+                tasksSubscription.current.unsubscribe();
+                tasksSubscription.current = DataStore.observe(
+                    models.Task
+                ).subscribe(async (newTask) => {
+                    if (newTask.opType === "UPDATE") {
+                        const replaceTask = await DataStore.query(
+                            models.Task,
+                            newTask.element.id
+                        );
+                        addTaskToState(replaceTask);
+                    } else {
+                        const task = newTask.element;
+                        addTaskToState(task);
+                    }
+                });
+            } else {
+                const tasks = await DataStore.query(models.Task);
+                const result = {
+                    tasksNew: tasks.filter((t) => t.status === tasksStatus.new),
+                    tasksActive: tasks.filter(
+                        (t) => t.status === tasksStatus.active
+                    ),
+                    tasksPickedUp: tasks.filter(
+                        (t) => t.status === tasksStatus.pickedUp
+                    ),
+                    tasksDroppedOff: tasks.filter(
+                        (t) => t.status === tasksStatus.droppedOff
+                    ),
+                    tasksCancelled: tasks.filter(
+                        (t) => t.status === tasksStatus.cancelled
+                    ),
+                    tasksRejected: tasks.filter(
+                        (t) => t.status === tasksStatus.rejected
+                    ),
+                };
+                setTasks(result);
+            }
 
             setIsFetching(false);
         }
@@ -308,13 +359,6 @@ function Dashboard(props) {
 
     const dialog = props.match.params.task_uuid_b62 ? (
         <TaskDialogCompact
-            refreshTask={async (taskId) => {
-                // This is here because of the DataStore bug that prevents observe working
-                // Updates the dashboard with location details so that it shows on the card
-                // https://github.com/aws-amplify/amplify-js/issues/9034
-                const refreshTask = await DataStore.query(models.Task, taskId);
-                addTaskToState(refreshTask);
-            }}
             onClose={handleDialogClose}
             location={props.location}
             taskId={decodeUUID(props.match.params.task_uuid_b62)}

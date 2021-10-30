@@ -725,7 +725,6 @@ function TaskDialogCompact(props) {
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
         }
-        props.refreshTask();
     }
 
     async function updateDeliverables(value) {

@@ -28,25 +28,33 @@ function TaskItem(props) {
 
     // TODO: find out if this can be done more efficiently and avoided
     // i.e. get assignments from prop.task instead
-    async function sortAssignees() {
-        const assignees = (await DataStore.query(models.TaskAssignee)).filter(
-            (a) => a.task.id === props.task.id
-        );
-        const riders = assignees
-            .filter((assignment) => assignment.role === userRoles.rider)
-            .map((a) => a.assignee);
+    function sortAssignees() {
+        const riders =
+            props.task && props.task.assignees
+                ? Object.values(props.task.assignees)
+                      .filter(
+                          (assignment) => assignment.role === userRoles.rider
+                      )
+                      .map((a) => a.assignee)
+                : [];
         setAssignedRiders(riders);
         const ridersString = riders.map((u) => u.displayName).join(", ");
         setAssignedRidersDisplayString(ridersString);
-        const coordinators = assignees
-            .filter((assignment) => assignment.role === userRoles.coordinator)
-            .map((a) => a.assignee);
+        const coordinators =
+            props.task && props.task.assignees
+                ? Object.values(props.task.assignees)
+                      .filter(
+                          (assignment) =>
+                              assignment.role === userRoles.coordinator
+                      )
+                      .map((a) => a.assignee)
+                : [];
         setAssignedCoordinators(coordinators);
         const coordsString = coordinators.map((u) => u.displayName).join(", ");
         setAssignedCoordinatorsDisplayString(coordsString);
     }
 
-    useEffect(() => sortAssignees(), [props.task]);
+    useEffect(sortAssignees, [props.assignees]);
 
     async function setTimeValue(value, key) {
         const result = await DataStore.query(models.Task, props.taskUUID);
@@ -124,8 +132,6 @@ function TaskItem(props) {
 }
 
 TaskItem.defaultProps = {
-    assignedRiders: [],
-    assignedCoordinators: [],
     animate: true,
 };
 
