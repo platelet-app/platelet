@@ -76,7 +76,6 @@ function CommentsSection(props) {
                     (c) => c.parentId("eq", props.parentUUID)
                 ).subscribe(async (newComment) => {
                     const comment = newComment.element;
-                    debugger;
                     if (newComment.opType === "DELETE") {
                         removeCommentFromState(comment.id);
                         return;

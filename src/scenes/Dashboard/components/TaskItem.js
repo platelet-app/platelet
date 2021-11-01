@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import TaskCard from "./TaskCardsColoured";
 import {
     convertListDataToObject,
@@ -74,14 +74,16 @@ function TaskItem(props) {
         );
     }
 
+    const location = useLocation();
+
     return (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <div style={{ cursor: "context-menu", position: "relative" }}>
                 <Link
                     style={{ textDecoration: "none" }}
-                    key={props.taskUUID}
                     to={{
                         pathname: `/task/${encodeUUID(props.taskUUID)}`,
+                        state: { background: location },
                     }}
                 >
                     <TaskCard

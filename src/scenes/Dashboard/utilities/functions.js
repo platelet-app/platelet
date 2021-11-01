@@ -8,12 +8,10 @@ export function filterTasks(tasks, search) {
         //const searchTerm = search.toLowerCase();
         const results = [];
         for (const searchTerm of searchTerms) {
-            debugger;
             let filteredResult = [];
             for (const groupList of Object.values(tasks)) {
                 const filtered = Object.values(groupList)
                     .filter((task) => {
-                        debugger;
                         if (
                             task.assigneesString
                                 ? task.assigneesString

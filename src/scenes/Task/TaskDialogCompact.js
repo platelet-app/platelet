@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
-import { convertListDataToObject, determineTaskStatus } from "../../utilities";
+import {
+    convertListDataToObject,
+    decodeUUID,
+    determineTaskStatus,
+} from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { useTheme } from "@mui/material/styles";
@@ -24,6 +28,7 @@ import {
     displayErrorNotification,
     displayWarningNotification,
 } from "../../redux/notifications/NotificationsActions";
+import { useHistory, useParams } from "react-router";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -129,7 +134,9 @@ function TaskDialogCompact(props) {
     const deliverablesObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
 
-    const taskUUID = props.taskId;
+    //    const taskUUID = props.taskId;
+    let { task_uuid_b62 } = useParams();
+    const taskUUID = decodeUUID(task_uuid_b62);
 
     async function getTask() {
         if (!dataStoreReadyStatus) {
@@ -141,7 +148,6 @@ function TaskDialogCompact(props) {
                     const deliverables = (
                         await DataStore.query(models.Deliverable)
                     ).filter((d) => d.task && d.task.id === taskUUID);
-                    debugger;
                     const assignees = (
                         await DataStore.query(models.TaskAssignee)
                     ).filter((a) => a.task && a.task.id === taskUUID);
@@ -276,7 +282,6 @@ function TaskDialogCompact(props) {
             if (!assignmentId) throw new Error("Assignment ID not provided");
             const result = await DataStore.query(models.Task, taskUUID);
             if (!result) throw new Error("Task doesn't exist");
-            debugger;
             const existingAssignment = await DataStore.query(
                 models.TaskAssignee,
                 assignmentId
@@ -778,13 +783,18 @@ function TaskDialogCompact(props) {
             dispatch(displayErrorNotification(errorMessage));
         }
     }
+    const history = useHistory();
+    const onClose = (e) => {
+        e.stopPropagation();
+        history.goBack();
+    };
 
     const statusBar =
         !state || notFound ? (
-            <Button onClick={props.onClose}>Close</Button>
+            <Button onClick={onClose}>Close</Button>
         ) : (
             <StatusBar
-                handleClose={props.onClose}
+                handleClose={onClose}
                 status={state.status}
                 taskUUID={taskUUID}
             />
@@ -792,13 +802,13 @@ function TaskDialogCompact(props) {
 
     if (isFetching) {
         return (
-            <DialogWrapper handleClose={props.onClose}>
+            <DialogWrapper handleClose={onClose}>
                 <FormSkeleton />
             </DialogWrapper>
         );
     } else if (notFound) {
         return (
-            <DialogWrapper handleClose={props.onClose}>
+            <DialogWrapper handleClose={onClose}>
                 {statusBar}
                 <NotFound>
                     <Typography>
@@ -809,7 +819,7 @@ function TaskDialogCompact(props) {
         );
     } else if (errorState) {
         return (
-            <DialogWrapper handleClose={props.onClose}>
+            <DialogWrapper handleClose={onClose}>
                 {statusBar}
                 <GetError>
                     <Typography>
@@ -822,7 +832,7 @@ function TaskDialogCompact(props) {
         );
     } else {
         return (
-            <DialogWrapper handleClose={props.onClose}>
+            <DialogWrapper handleClose={onClose}>
                 <div className={classes.overview}>
                     {statusBar}
                     <TaskOverview

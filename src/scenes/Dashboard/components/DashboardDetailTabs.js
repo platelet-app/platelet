@@ -19,7 +19,7 @@ import Typography from "@mui/material/Typography";
 import { showHide } from "../../../styles/common";
 import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Divider, Hidden } from "@mui/material";
+import { Button, Divider, Hidden } from "@mui/material";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import CallIcon from "@mui/icons-material/Call";
 import { useTheme, useMediaQuery } from "@mui/material";
@@ -27,6 +27,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
 import { getWhoami } from "../../../redux/Selectors";
 import { userRoles } from "../../../apiConsts";
+import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
 
 export function TabPanel(props) {
     const { children, index, ...other } = props;
@@ -76,6 +77,7 @@ export function DashboardDetailTabs(props) {
     const [rightSideBarOpen, setRightSideBarOpen] = useState(false);
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(getWhoami);
+    const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const roleView = useSelector((state) => state.roleView);
     const classes = useStyles();
     const { show, hide } = showHide();
@@ -108,6 +110,28 @@ export function DashboardDetailTabs(props) {
                 <Tab label="Completed" {...a11yProps(1)} />
             </Tabs>
         </Box>
+    );
+
+    const addClearButton = !dashboardFilter ? (
+        <React.Fragment>
+            <Button
+                variant="contained"
+                color="primary"
+                disabled={props.disableAddButton}
+                onClick={props.onAddTaskClick}
+            >
+                Create New
+            </Button>
+        </React.Fragment>
+    ) : (
+        <Button
+            variant="contained"
+            color="primary"
+            disabled={props.disableAddButton}
+            onClick={() => dispatch(clearDashboardFilter())}
+        >
+            Clear Search
+        </Button>
     );
 
     return (
@@ -192,6 +216,7 @@ export function DashboardDetailTabs(props) {
                                         >
                                             <ArrowDropDownIcon />
                                         </IconButton>
+                                        {addClearButton}
                                         <Menu
                                             id="profile-menu"
                                             anchorEl={anchorElRoleMenu}
@@ -285,22 +310,6 @@ export function DashboardDetailTabs(props) {
                                         </Menu>
                                     </Grid>
                                 </Grid>
-                            </Grid>
-                            <Grid item>
-                                <Tooltip title="Recent Activity">
-                                    <IconButton
-                                        color="inherit"
-                                        aria-label="open drawer"
-                                        onClick={() =>
-                                            setRightSideBarOpen(
-                                                !rightSideBarOpen
-                                            )
-                                        }
-                                        size="large"
-                                    >
-                                        <TimelineIcon />
-                                    </IconButton>
-                                </Tooltip>
                             </Grid>
                         </Grid>
                     </Grid>

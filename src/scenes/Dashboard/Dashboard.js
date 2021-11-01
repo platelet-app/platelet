@@ -61,6 +61,7 @@ function getKeyFromEnum(value) {
 }
 
 function Dashboard(props) {
+    console.log("RENDERING");
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
@@ -351,21 +352,7 @@ function Dashboard(props) {
             assignees: { [assignment.id]: assignment },
         });
     }
-    function handleDialogClose(e) {
-        e.stopPropagation();
-        if (props.location.state) history.goBack();
-        else history.push("/");
-    }
 
-    const dialog = props.match.params.task_uuid_b62 ? (
-        <TaskDialogCompact
-            onClose={handleDialogClose}
-            location={props.location}
-            taskId={decodeUUID(props.match.params.task_uuid_b62)}
-        />
-    ) : (
-        <></>
-    );
     if (isFetching) {
         return <TasksGridSkeleton />;
     } else {
@@ -374,6 +361,7 @@ function Dashboard(props) {
                 <Paper>
                     <DashboardDetailTabs
                         value={viewMode}
+                        onAddTaskClick={addTask}
                         onChange={(event, newValue) => setViewMode(newValue)}
                     >
                         <TabPanel value={0} index={0}>
@@ -404,7 +392,6 @@ function Dashboard(props) {
                         </TabPanel>
                     </DashboardDetailTabs>
                 </Paper>
-                {dialog}
             </>
         );
     }

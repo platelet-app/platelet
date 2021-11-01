@@ -261,7 +261,7 @@ async function populateTasks(whoamiId) {
         t.status("eq", tasksStatus.cancelled).status("eq", tasksStatus.rejected)
     );
     if (tasksCancelledCheck.length === 0) {
-        for (const i in _.range(5)) {
+        for (const i in _.range(20)) {
             let timeOfCall = null;
             const pickUpLocation = _.sample(availableLocations);
             const dropOffLocation = _.sample(
@@ -307,7 +307,7 @@ async function populateTasks(whoamiId) {
     );
     if (tasksActiveCheck.length === 0) {
         let timeOfCall = null;
-        for (const i in _.range(6)) {
+        for (const i in _.range(20)) {
             timeOfCall = generateTimes(timeOfCall, 3).timeOfCall;
             const requesterContact = await DataStore.save(
                 new models.AddressAndContactDetails({})
@@ -360,7 +360,7 @@ async function populateTasks(whoamiId) {
     );
     if (tasksPickedUpCheck.length === 0) {
         let timeOfCall = null;
-        for (const i in _.range(3)) {
+        for (const i in _.range(10)) {
             const times = generateTimes(timeOfCall, 3);
             timeOfCall = times.timeOfCall;
             const requesterContact = await DataStore.save(
@@ -415,7 +415,7 @@ async function populateTasks(whoamiId) {
     );
     if (tasksDroppedOffCheck.length === 0) {
         let timeOfCall = null;
-        for (const i in _.range(20)) {
+        for (const i in _.range(50)) {
             const times = generateTimes(timeOfCall, 10);
             timeOfCall = times.timeOfCall;
             const requesterContact = await DataStore.save(
