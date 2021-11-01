@@ -28,7 +28,7 @@ import {
     displayErrorNotification,
     displayWarningNotification,
 } from "../../redux/notifications/NotificationsActions";
-import { useHistory, useParams } from "react-router";
+import { useHistory, useLocation, useParams } from "react-router";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -784,10 +784,13 @@ function TaskDialogCompact(props) {
         }
     }
     const history = useHistory();
-    const onClose = (e) => {
+    const location = useLocation();
+
+    function onClose(e) {
         e.stopPropagation();
-        history.goBack();
-    };
+        if (location.state) history.goBack();
+        else history.push("/");
+    }
 
     const statusBar =
         !state || notFound ? (

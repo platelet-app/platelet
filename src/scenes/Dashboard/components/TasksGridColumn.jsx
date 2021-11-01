@@ -82,7 +82,6 @@ function TasksGridColumn(props) {
     const endlessLoadIsFetching = useSelector((state) =>
         isFetchingSelector(state)
     );
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const roleView = useSelector((state) => state.roleView);
 
     function updateStateFromTaskProp() {
