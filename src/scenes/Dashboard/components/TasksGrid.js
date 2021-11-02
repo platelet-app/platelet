@@ -165,7 +165,6 @@ TaskGroup.propTypes = {
 function TasksGrid(props) {
     const classes = useStyles();
     const [showGuidedSetup, setShowGuidedSetup] = useState(false);
-    const { show, hide } = showHide();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -185,32 +184,26 @@ function TasksGrid(props) {
                     tasksStatus.droppedOff,
                     tasksStatus.cancelled,
                     tasksStatus.rejected,
-                ].map((taskKey) => {
-                    const title = getColumnTitle(taskKey);
-                    return (
-                        <Grid
-                            item
-                            key={taskKey}
-                            className={clsx([
-                                props.excludeColumnList &&
-                                props.excludeColumnList.includes(taskKey)
-                                    ? hide
-                                    : show,
-                                classes.column,
-                            ])}
-                        >
-                            <TasksGridColumn
-                                title={title}
-                                classes={classes}
-                                onAddTaskClick={props.onAddTaskClick}
-                                deleteDisabled
-                                taskKey={taskKey}
-                                showTasks={props.showTaskIds}
-                                key={title}
-                            />
-                        </Grid>
-                    );
-                })}
+                ]
+                    .filter(
+                        (column) => !props.excludeColumnList.includes(column)
+                    )
+                    .map((taskKey) => {
+                        const title = getColumnTitle(taskKey);
+                        return (
+                            <Grid item key={taskKey} className={classes.column}>
+                                <TasksGridColumn
+                                    title={title}
+                                    classes={classes}
+                                    onAddTaskClick={props.onAddTaskClick}
+                                    deleteDisabled
+                                    taskKey={taskKey}
+                                    showTasks={props.showTaskIds}
+                                    key={title}
+                                />
+                            </Grid>
+                        );
+                    })}
             </Grid>
             <GuidedSetup
                 show={showGuidedSetup}

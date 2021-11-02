@@ -60,48 +60,12 @@ function getKeyFromEnum(value) {
     }
 }
 
-function Dashboard(props) {
+function Dashboard() {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
-    const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const [viewMode, setViewMode] = useState(0);
-    const [isFetching, setIsFetching] = useState(false);
     const roleView = useSelector((state) => state.roleView);
-    const [tasks, setTasks] = useState(initialTasksState);
-    const tasksSubscription = useRef({
-        unsubscribe: () => {},
-    });
-
-    function doSearch() {
-        const result = filterTasks(tasks, dashboardFilter);
-        setFilteredTasksIds(result);
-    }
-
-    useEffect(doSearch, [dashboardFilter, tasks]);
-
-    async function filterTasksByRole() {
-        if (roleView === "all") {
-            setFilteredTasksIds(null);
-            return;
-        }
-        const assignments = (
-            await DataStore.query(models.TaskAssignee, (a) =>
-                a.role("eq", roleView.toUpperCase())
-            )
-        ).filter((a) => a.assignee.id === whoami.id);
-        const allTasks = await DataStore.query(models.Task);
-        const ids = assignments.map((a) => a.task.id);
-        const allIds = allTasks.map((t) => t.id);
-        const include = [];
-        for (const i of allIds) {
-            if (ids.includes(i)) include.push(i);
-        }
-
-        setFilteredTasksIds(include);
-    }
-    useEffect(() => filterTasksByRole(), [roleView, tasks]);
 
     function setInitialRoleView() {
         if (whoami.id) {
@@ -123,52 +87,38 @@ function Dashboard(props) {
     }
     useEffect(setInitialRoleView, [whoami]);
 
-    useEffect(() => {
-        return () => {
-            if (tasksSubscription.current)
-                tasksSubscription.current.unsubscribe();
-        };
-    }, []);
-
-    if (isFetching) {
-        return <TasksGridSkeleton />;
-    } else {
-        return (
-            <>
-                <Paper>
-                    <DashboardDetailTabs
-                        value={viewMode}
-                        onChange={(event, newValue) => setViewMode(newValue)}
-                    >
-                        <TabPanel value={0} index={0}>
-                            <TasksGrid
-                                showTaskIds={filteredTasksIds}
-                                modalView={"edit"}
-                                hideRelayIcons={roleView === "rider"}
-                                hideAddButton={!postPermission}
-                                excludeColumnList={
-                                    viewMode === 1
-                                        ? [
-                                              tasksStatus.new,
-                                              tasksStatus.active,
-                                              tasksStatus.pickedUp,
-                                          ]
-                                        : [
-                                              roleView === "rider"
-                                                  ? tasksStatus.new
-                                                  : "",
-                                              tasksStatus.droppedOff,
-                                              tasksStatus.cancelled,
-                                              tasksStatus.rejected,
-                                          ]
-                                }
-                            />
-                        </TabPanel>
-                    </DashboardDetailTabs>
-                </Paper>
-            </>
-        );
-    }
+    return (
+        <Paper>
+            <DashboardDetailTabs
+                value={viewMode}
+                onChange={(event, newValue) => setViewMode(newValue)}
+            >
+                <TabPanel value={0} index={0}>
+                    <TasksGrid
+                        modalView={"edit"}
+                        hideRelayIcons={roleView === "rider"}
+                        hideAddButton={!postPermission}
+                        excludeColumnList={
+                            viewMode === 1
+                                ? [
+                                      tasksStatus.new,
+                                      tasksStatus.active,
+                                      tasksStatus.pickedUp,
+                                  ]
+                                : [
+                                      roleView === "rider"
+                                          ? tasksStatus.new
+                                          : "",
+                                      tasksStatus.droppedOff,
+                                      tasksStatus.cancelled,
+                                      tasksStatus.rejected,
+                                  ]
+                        }
+                    />
+                </TabPanel>
+            </DashboardDetailTabs>
+        </Paper>
+    );
 }
 
 export default Dashboard;

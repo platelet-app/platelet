@@ -12,7 +12,6 @@ import { Waypoint } from "react-waypoint";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { CircularProgress, Stack, Typography } from "@mui/material";
-import Divider from "@mui/material/Divider";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import {
@@ -29,6 +28,7 @@ import {
 import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
 import { tasksStatus, userRoles } from "../../../apiConsts";
+import { filterTasks } from "../utilities/functions";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -85,7 +85,7 @@ function TasksGridColumn(props) {
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
     const dispatch = useDispatch();
-    //const tasks = useSelector(getTasksSelector)[props.taskKey];
+    const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const whoami = useSelector(getWhoami);
     let selectorsString = "";
     if (props.taskKey === "tasksDroppedOff")
@@ -97,6 +97,7 @@ function TasksGridColumn(props) {
     const notFoundSelector = createNotFoundSelector([selectorsString]);
     const endlessLoadEnd = useSelector((state) => notFoundSelector(state));
     const isFetchingSelector = createSimpleLoadingSelector([selectorsString]);
+    const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const endlessLoadIsFetching = useSelector((state) =>
         isFetchingSelector(state)
     );
@@ -104,6 +105,9 @@ function TasksGridColumn(props) {
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
+    const previousRoleView = useRef(null);
+
+    useEffect(() => console.log(filteredTasksIds), [filteredTasksIds]);
 
     function addTaskToState(newTask) {
         setState((prevState) => ({
@@ -118,6 +122,32 @@ function TasksGridColumn(props) {
             else return prevState;
         });
     }
+
+    async function filterTasksByRole() {
+        if (roleView === "all" && !!!dashboardFilter) {
+            setFilteredTasksIds(null);
+            return;
+        }
+        const allIds = Object.values(state).map((t) => t.id);
+        let roleTasks = state;
+        if (previousRoleView.current !== roleView) {
+            const assignments = (
+                await DataStore.query(models.TaskAssignee, (a) =>
+                    a.role("eq", roleView.toUpperCase())
+                )
+            ).filter((a) => a.assignee.id === whoami.id);
+            const myTasks = assignments.map((a) => a.task);
+            roleTasks = myTasks.filter((t) => allIds.includes(t.id));
+            previousRoleView.current = roleView;
+        }
+        if (!!dashboardFilter) {
+            const searchResult = filterTasks(roleTasks, dashboardFilter);
+            setFilteredTasksIds(searchResult);
+        } else {
+            setFilteredTasksIds(Object.values(roleTasks).map((t) => t.id));
+        }
+    }
+    useEffect(() => filterTasksByRole(), [roleView, dashboardFilter, state]);
 
     async function getTasks() {
         if (!dataStoreReadyStatus) {
@@ -206,8 +236,8 @@ function TasksGridColumn(props) {
                         <div
                             className={clsx(
                                 classes.taskItem,
-                                props.showTasks === null ||
-                                    props.showTasks.includes(task.id)
+                                filteredTasksIds === null ||
+                                    filteredTasksIds.includes(task.id)
                                     ? show
                                     : hide
                             )}
