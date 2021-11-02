@@ -8,14 +8,40 @@ import {
 } from "../../../utilities";
 import PropTypes from "prop-types";
 import { Grow } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
-import { contextDots } from "../../../styles/common";
 import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
 
+const useStyles = makeStyles((theme) => ({
+    root: {
+        position: "relative",
+        "&:hover": {
+            "& $dots": {
+                display: "inline",
+            },
+        },
+    },
+    dots: () => {
+        const background =
+            theme.palette.mode === "dark"
+                ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
+                : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
+        return {
+            background: background,
+            borderRadius: "1em",
+            position: "absolute",
+            bottom: 4,
+            right: 4,
+            display: "none",
+            zIndex: 1000,
+        };
+    },
+}));
+
 function TaskItem(props) {
-    const classes = contextDots();
+    const classes = useStyles();
     const { task } = props;
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [assignedCoordinators, setAssignedCoordinators] = useState([]);
@@ -78,7 +104,10 @@ function TaskItem(props) {
 
     return (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
-            <div style={{ cursor: "context-menu", position: "relative" }}>
+            <div
+                className={classes.root}
+                style={{ cursor: "context-menu", position: "relative" }}
+            >
                 <Link
                     style={{ textDecoration: "none" }}
                     to={{
@@ -108,7 +137,7 @@ function TaskItem(props) {
                         }
                     />
                 </Link>
-                <div className={classes.root}>
+                <div className={classes.dots}>
                     <TaskContextMenu
                         disableDeleted={props.deleteDisabled}
                         disableRelay={!!props.relayNext}

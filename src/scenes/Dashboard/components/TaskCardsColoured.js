@@ -3,11 +3,10 @@ import PropTypes from "prop-types";
 import "../../../App.css";
 import CardContent from "@mui/material/CardContent";
 import Moment from "react-moment";
-import Grid from "@mui/material/Grid";
 import CardItem from "../../../components/CardItem";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
-import { Tooltip } from "@mui/material";
+import { Stack, Tooltip } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
@@ -43,16 +42,6 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
         height: 30,
         paddingBottom: 10,
-    },
-    gridItem: {
-        width: "100%",
-        paddingRight: 20,
-    },
-    contextDots: {
-        zIndex: 100,
-        position: "relative",
-        bottom: 35,
-        left: 20,
     },
 }));
 
@@ -100,82 +89,59 @@ const TaskCard = React.memo((props) => {
         : [];
     const cardInnerContent = (
         <CardContent className={classes.cardContent}>
-            <Grid
-                container
+            <Stack
                 spacing={0}
                 alignItems={"flex-end"}
                 justifyContent={"flex-start"}
                 direction={"column"}
             >
-                <Grid
-                    container
-                    item
+                <Stack
                     className={classes.itemTopBarContainer}
                     direction={"row"}
                     justifyContent={"space-between"}
                     alignItems={"center"}
                 >
-                    <Grid item>
-                        <Tooltip
-                            title={props.assignedCoordinatorsDisplayString}
-                        >
-                            <AvatarGroup>
-                                {coordAvatars.map((u) => (
-                                    <UserAvatar
-                                        key={u.id}
-                                        size={3}
-                                        userUUID={u.id}
-                                        displayName={u.displayName}
-                                        avatarURL={u.profilePictureThumbnailURL}
-                                    />
-                                ))}
-                            </AvatarGroup>
-                        </Tooltip>
-                    </Grid>
-                    <Grid item>
-                        <Tooltip title={props.assignedRidersDisplayString}>
-                            <AvatarGroup>
-                                {riderAvatars.map((u) => (
-                                    <UserAvatar
-                                        key={u.id}
-                                        size={3}
-                                        userUUID={u.id}
-                                        displayName={u.displayName}
-                                        avatarURL={u.profilePictureThumbnailURL}
-                                    />
-                                ))}
-                            </AvatarGroup>
-                        </Tooltip>
-                    </Grid>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"Responsibility"}>
-                        {props.riderResponsibility}
-                    </CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"From"}>{pickUpTitle}</CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"Ward"}>{pickUpWard}</CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"To"}>{dropOffTitle}</CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"Ward"}>{dropOffWard}</CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"TOC"}>
-                        <Moment local calendar>
-                            {props.timeOfCall}
-                        </Moment>
-                    </CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"Priority"}>{props.priority}</CardItem>
-                </Grid>
-            </Grid>
+                    <Tooltip title={props.assignedCoordinatorsDisplayString}>
+                        <AvatarGroup>
+                            {coordAvatars.map((u) => (
+                                <UserAvatar
+                                    key={u.id}
+                                    size={3}
+                                    userUUID={u.id}
+                                    displayName={u.displayName}
+                                    avatarURL={u.profilePictureThumbnailURL}
+                                />
+                            ))}
+                        </AvatarGroup>
+                    </Tooltip>
+                    <Tooltip title={props.assignedRidersDisplayString}>
+                        <AvatarGroup>
+                            {riderAvatars.map((u) => (
+                                <UserAvatar
+                                    key={u.id}
+                                    size={3}
+                                    userUUID={u.id}
+                                    displayName={u.displayName}
+                                    avatarURL={u.profilePictureThumbnailURL}
+                                />
+                            ))}
+                        </AvatarGroup>
+                    </Tooltip>
+                </Stack>
+                <CardItem label={"Responsibility"}>
+                    {props.riderResponsibility}
+                </CardItem>
+                <CardItem label={"From"}>{pickUpTitle}</CardItem>
+                <CardItem label={"Ward"}>{pickUpWard}</CardItem>
+                <CardItem label={"To"}>{dropOffTitle}</CardItem>
+                <CardItem label={"Ward"}>{dropOffWard}</CardItem>
+                <CardItem label={"TOC"}>
+                    <Moment local calendar>
+                        {props.timeOfCall}
+                    </Moment>
+                </CardItem>
+                <CardItem label={"Priority"}>{props.priority}</CardItem>
+            </Stack>
         </CardContent>
     );
 
