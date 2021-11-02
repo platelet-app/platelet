@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
-import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import TimelineIcon from "@mui/icons-material/Timeline";
 import Grid from "@mui/material/Grid";
 import SideInfoSection from "./SideInfoSection";
 import Toolbar from "@mui/material/Toolbar";
@@ -26,8 +24,10 @@ import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
 import { getWhoami } from "../../../redux/Selectors";
-import { userRoles } from "../../../apiConsts";
+import { tasksStatus, userRoles } from "../../../apiConsts";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models/index";
 
 export function TabPanel(props) {
     const { children, index, ...other } = props;
@@ -60,10 +60,6 @@ function a11yProps(index) {
 }
 
 const useStyles = makeStyles((theme) => {
-    const appBarBack =
-        theme.palette.mode === "dark"
-            ? theme.palette.background.paper
-            : theme.palette.primary.main;
     return {
         appBar: {
             width: "100%",
@@ -84,6 +80,30 @@ export function DashboardDetailTabs(props) {
 
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+
+    async function addTask() {
+        const date = new Date();
+        const timeOfCall = date.toISOString();
+        const requesterContact = await DataStore.save(
+            new models.AddressAndContactDetails({})
+        );
+        const createdBy = await DataStore.query(models.User, whoami.id);
+        const newTask = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+                timeOfCall,
+                requesterContact,
+                createdBy,
+            })
+        );
+        await DataStore.save(
+            new models.TaskAssignee({
+                task: newTask,
+                assignee: createdBy,
+                role: userRoles.coordinator,
+            })
+        );
+    }
 
     const handleChange = (event, newValue) => {
         props.onChange(event, newValue);
@@ -118,7 +138,7 @@ export function DashboardDetailTabs(props) {
                 variant="contained"
                 color="primary"
                 disabled={props.disableAddButton}
-                onClick={props.onAddTaskClick}
+                onClick={addTask}
             >
                 Create New
             </Button>

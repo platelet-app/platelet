@@ -61,18 +61,15 @@ function getKeyFromEnum(value) {
 }
 
 function Dashboard(props) {
-    console.log("RENDERING");
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const [viewMode, setViewMode] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
     const roleView = useSelector((state) => state.roleView);
     const [tasks, setTasks] = useState(initialTasksState);
-    const history = useHistory();
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
@@ -89,7 +86,6 @@ function Dashboard(props) {
             setFilteredTasksIds(null);
             return;
         }
-        console.log("e");
         const assignments = (
             await DataStore.query(models.TaskAssignee, (a) =>
                 a.role("eq", roleView.toUpperCase())
@@ -127,231 +123,12 @@ function Dashboard(props) {
     }
     useEffect(setInitialRoleView, [whoami]);
 
-    function addAssigneesAndConvertToObject(tasks, allAssignees) {
-        const finalResult = {};
-        for (const t of tasks) {
-            const assignmentsFiltered = allAssignees.filter(
-                (a) => a.task.id === t.id
-            );
-            const assignees = convertListDataToObject(assignmentsFiltered);
-            finalResult[t.id] = { ...t, assignees };
-        }
-
-        return finalResult;
-    }
-
-    async function getTasks() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-            return;
-        } else {
-            if (true) {
-                const allAssignments = await DataStore.query(
-                    models.TaskAssignee
-                );
-                DataStore.query(models.Task, (task) =>
-                    task.status("eq", tasksStatus.new)
-                ).then((result) => {
-                    setTasks((prevState) => ({
-                        ...prevState,
-                        tasksNew: addAssigneesAndConvertToObject(
-                            result,
-                            allAssignments
-                        ),
-                    }));
-                });
-                DataStore.query(models.Task, (task) =>
-                    task.status("eq", tasksStatus.active)
-                ).then((result) => {
-                    setTasks((prevState) => ({
-                        ...prevState,
-                        tasksActive: addAssigneesAndConvertToObject(
-                            result,
-                            allAssignments
-                        ),
-                    }));
-                });
-                DataStore.query(models.Task, (task) =>
-                    task.status("eq", tasksStatus.pickedUp)
-                ).then((result) => {
-                    setTasks((prevState) => ({
-                        ...prevState,
-                        tasksPickedUp: addAssigneesAndConvertToObject(
-                            result,
-                            allAssignments
-                        ),
-                    }));
-                });
-                DataStore.query(models.Task, (task) =>
-                    task.status("eq", tasksStatus.droppedOff)
-                ).then((result) => {
-                    setTasks((prevState) => ({
-                        ...prevState,
-                        tasksDroppedOff: addAssigneesAndConvertToObject(
-                            result,
-                            allAssignments
-                        ),
-                    }));
-                });
-                DataStore.query(models.Task, (task) =>
-                    task.status("eq", tasksStatus.cancelled)
-                ).then((result) => {
-                    setTasks((prevState) => ({
-                        ...prevState,
-                        tasksCancelled: addAssigneesAndConvertToObject(
-                            result,
-                            allAssignments
-                        ),
-                    }));
-                });
-                DataStore.query(models.Task, (task) =>
-                    task.status("eq", tasksStatus.rejected)
-                ).then((result) => {
-                    setTasks((prevState) => ({
-                        ...prevState,
-                        tasksRejected: addAssigneesAndConvertToObject(
-                            result,
-                            allAssignments
-                        ),
-                    }));
-                });
-                tasksSubscription.current.unsubscribe();
-                tasksSubscription.current = DataStore.observe(
-                    models.Task
-                ).subscribe(async (newTask) => {
-                    if (newTask.opType === "UPDATE") {
-                        const replaceTask = await DataStore.query(
-                            models.Task,
-                            newTask.element.id
-                        );
-                        addTaskToState(replaceTask);
-                    } else {
-                        const task = newTask.element;
-                        addTaskToState(task);
-                    }
-                });
-            } else {
-                const tasks = await DataStore.query(models.Task);
-                const result = {
-                    tasksNew: tasks.filter((t) => t.status === tasksStatus.new),
-                    tasksActive: tasks.filter(
-                        (t) => t.status === tasksStatus.active
-                    ),
-                    tasksPickedUp: tasks.filter(
-                        (t) => t.status === tasksStatus.pickedUp
-                    ),
-                    tasksDroppedOff: tasks.filter(
-                        (t) => t.status === tasksStatus.droppedOff
-                    ),
-                    tasksCancelled: tasks.filter(
-                        (t) => t.status === tasksStatus.cancelled
-                    ),
-                    tasksRejected: tasks.filter(
-                        (t) => t.status === tasksStatus.rejected
-                    ),
-                };
-                setTasks(result);
-            }
-
-            setIsFetching(false);
-        }
-    }
-
-    useEffect(() => getTasks(), [dataStoreReadyStatus]);
-
     useEffect(() => {
         return () => {
             if (tasksSubscription.current)
                 tasksSubscription.current.unsubscribe();
         };
     }, []);
-
-    function addTaskToState(task) {
-        setTasks((prevState) => {
-            let key;
-            if (task.status) {
-                switch (task.status) {
-                    case tasksStatus.new:
-                        key = "tasksNew";
-                        break;
-                    case tasksStatus.active:
-                        key = "tasksActive";
-                        break;
-                    case tasksStatus.pickedUp:
-                        key = "tasksPickedUp";
-                        break;
-                    case tasksStatus.droppedOff:
-                        key = "tasksDroppedOff";
-                        break;
-                    case tasksStatus.cancelled:
-                        key = "tasksCancelled";
-                        break;
-                    case tasksStatus.rejected:
-                        key = "tasksRejected";
-                        break;
-                    default:
-                        key = undefined;
-                }
-            }
-            let taskResult;
-            if (!!!task.createdAt) {
-                const d = new Date();
-                taskResult = { ...task, createdAt: d.toISOString() };
-            } else {
-                taskResult = task;
-            }
-            const current = findTask(prevState, task.id);
-            if (task.status) {
-                const omitted = _.omit(prevState[current.key], task.id);
-                const newList = {
-                    ...prevState[key],
-                    [task.id]: { ...current.task, ...task },
-                };
-                return {
-                    ...prevState,
-                    [current.key]: omitted,
-                    [key]: newList,
-                };
-            } else {
-                return {
-                    ...prevState,
-                    [current.key]: {
-                        ...prevState[current.key],
-                        [taskResult.id]: { ...current.task, ...taskResult },
-                    },
-                };
-            }
-        });
-    }
-
-    async function addTask() {
-        const date = new Date();
-        const timeOfCall = date.toISOString();
-        const requesterContact = await DataStore.save(
-            new models.AddressAndContactDetails({})
-        );
-        const createdBy = await DataStore.query(models.User, whoami.id);
-        const newTask = await DataStore.save(
-            new models.Task({
-                status: tasksStatus.new,
-                timeOfCall,
-                requesterContact,
-                createdBy,
-            })
-        );
-        const assignment = await DataStore.save(
-            new models.TaskAssignee({
-                task: newTask,
-                assignee: createdBy,
-                role: userRoles.coordinator,
-            })
-        );
-        addTaskToState({
-            ...newTask,
-            createdBy,
-            assignees: { [assignment.id]: assignment },
-        });
-    }
 
     if (isFetching) {
         return <TasksGridSkeleton />;
@@ -361,13 +138,10 @@ function Dashboard(props) {
                 <Paper>
                     <DashboardDetailTabs
                         value={viewMode}
-                        onAddTaskClick={addTask}
                         onChange={(event, newValue) => setViewMode(newValue)}
                     >
                         <TabPanel value={0} index={0}>
                             <TasksGrid
-                                tasks={tasks}
-                                onAddTaskClick={addTask}
                                 showTaskIds={filteredTasksIds}
                                 modalView={"edit"}
                                 hideRelayIcons={roleView === "rider"}
@@ -375,17 +149,17 @@ function Dashboard(props) {
                                 excludeColumnList={
                                     viewMode === 1
                                         ? [
-                                              "tasksNew",
-                                              "tasksActive",
-                                              "tasksPickedUp",
+                                              tasksStatus.new,
+                                              tasksStatus.active,
+                                              tasksStatus.pickedUp,
                                           ]
                                         : [
                                               roleView === "rider"
-                                                  ? "tasksNew"
+                                                  ? tasksStatus.new
                                                   : "",
-                                              "tasksDroppedOff",
-                                              "tasksCancelled",
-                                              "tasksRejected",
+                                              tasksStatus.droppedOff,
+                                              tasksStatus.cancelled,
+                                              tasksStatus.rejected,
                                           ]
                                 }
                             />

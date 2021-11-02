@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import _ from "lodash";
 import Grid from "@mui/material/Grid";
 import TaskItem from "./TaskItem";
-import { useDispatch, useSelector } from "react-redux";
-import { addTaskRelayRequest } from "../../../redux/tasks/TasksActions";
+import { useSelector } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { filterTasks } from "../utilities/functions";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -15,27 +13,22 @@ import makeStyles from "@mui/styles/makeStyles";
 import clsx from "clsx";
 import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
 import TasksGridColumn from "./TasksGridColumn";
-import columns from "./tasksGridColumns";
-import * as models from "../../../models/index";
-import { DataStore } from "@aws-amplify/datastore";
-import { getWhoami } from "../../../redux/Selectors";
+import { tasksStatus } from "../../../apiConsts";
 
 const getColumnTitle = (key) => {
     switch (key) {
-        case "tasksNew":
+        case tasksStatus.new:
             return "New".toUpperCase();
-        case "tasksActive":
+        case tasksStatus.active:
             return "Active".toUpperCase();
-        case "tasksPickedUp":
+        case tasksStatus.pickedUp:
             return "Picked Up".toUpperCase();
-        case "tasksDroppedOff":
+        case tasksStatus.droppedOff:
             return "Delivered".toUpperCase();
-        case "tasksRejected":
+        case tasksStatus.rejected:
             return "Rejected".toUpperCase();
-        case "tasksCancelled":
+        case tasksStatus.cancelled:
             return "Cancelled".toUpperCase();
-        case "tasksRejectedCancelled":
-            return "Rejected/Cancelled".toUpperCase();
         default:
             return "";
     }
@@ -185,7 +178,14 @@ function TasksGrid(props) {
                 justifyContent={isSm ? "center" : "flex-start"}
                 alignItems={"stretch"}
             >
-                {Object.keys(columns).map((taskKey) => {
+                {[
+                    tasksStatus.new,
+                    tasksStatus.active,
+                    tasksStatus.pickedUp,
+                    tasksStatus.droppedOff,
+                    tasksStatus.cancelled,
+                    tasksStatus.rejected,
+                ].map((taskKey) => {
                     const title = getColumnTitle(taskKey);
                     return (
                         <Grid
@@ -205,7 +205,6 @@ function TasksGrid(props) {
                                 onAddTaskClick={props.onAddTaskClick}
                                 deleteDisabled
                                 taskKey={taskKey}
-                                tasks={props.tasks[taskKey]}
                                 showTasks={props.showTaskIds}
                                 key={title}
                             />

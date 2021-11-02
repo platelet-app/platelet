@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import Grid from "@mui/material/Grid";
 import TaskItem from "./TaskItem";
+import * as models from "../../../models/index";
 import {
     createNotFoundSelector,
     createSimpleLoadingSelector,
 } from "../../../redux/LoadingSelectors";
 import { useDispatch, useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
-import Button from "@mui/material/Button";
 import { Waypoint } from "react-waypoint";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -21,11 +20,15 @@ import {
     appendTasksDeliveredRequest,
     appendTasksRejectedRequest,
 } from "../../../redux/tasks/TasksWaypointActions";
-import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
 import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
-import { getWhoami } from "../../../redux/Selectors";
-import { sortByCreatedTime } from "../../../utilities";
+import {
+    dataStoreReadyStatusSelector,
+    getWhoami,
+} from "../../../redux/Selectors";
+import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
+import { DataStore } from "aws-amplify";
+import { tasksStatus, userRoles } from "../../../apiConsts";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -61,11 +64,26 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+function addAssigneesAndConvertToObject(tasks, allAssignees) {
+    const finalResult = {};
+    for (const t of tasks) {
+        const assignmentsFiltered = allAssignees.filter(
+            (a) => a.task.id === t.id
+        );
+        const assignees = convertListDataToObject(assignmentsFiltered);
+        finalResult[t.id] = { ...t, assignees };
+    }
+
+    return finalResult;
+}
+
 function TasksGridColumn(props) {
     const classes = useStyles();
     const [state, setState] = useState([]);
     const loaderClass = loaderStyles();
     const { show, hide } = showHide();
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const [isFetching, setIsFetching] = useState(false);
     const dispatch = useDispatch();
     //const tasks = useSelector(getTasksSelector)[props.taskKey];
     const whoami = useSelector(getWhoami);
@@ -83,13 +101,63 @@ function TasksGridColumn(props) {
         isFetchingSelector(state)
     );
     const roleView = useSelector((state) => state.roleView);
+    const tasksSubscription = useRef({
+        unsubscribe: () => {},
+    });
 
-    function updateStateFromTaskProp() {
-        const listReversed = Object.values(props.tasks).reverse();
-        const listSorted = sortByCreatedTime(listReversed, "newest");
-        setState(listSorted);
+    function addTaskToState(newTask) {
+        setState((prevState) => ({
+            ...prevState,
+            [newTask.id]: newTask,
+        }));
     }
-    useEffect(updateStateFromTaskProp, [props.tasks]);
+
+    function removeTaskFromState(newTask) {
+        setState((prevState) => {
+            if (prevState[newTask.id]) return _.omit(prevState, newTask.id);
+            else return prevState;
+        });
+    }
+
+    async function getTasks() {
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
+            return;
+        } else {
+            const allAssignments = await DataStore.query(models.TaskAssignee);
+            const tasksResult = await DataStore.query(models.Task, (task) =>
+                task.status("eq", props.taskKey)
+            );
+            setState(
+                addAssigneesAndConvertToObject(tasksResult, allAssignments)
+            );
+            tasksSubscription.current.unsubscribe();
+            tasksSubscription.current = DataStore.observe(
+                models.Task
+            ).subscribe(async (newTask) => {
+                if (newTask.opType === "UPDATE") {
+                    const replaceTask = await DataStore.query(
+                        models.Task,
+                        newTask.element.id
+                    );
+                    if (replaceTask.status === props.taskKey) {
+                        const assignees = (
+                            await DataStore.query(models.TaskAssignee)
+                        ).filter((a) => a.task.id === replaceTask.id);
+                        addTaskToState({ ...replaceTask, assignees });
+                    } else {
+                        removeTaskFromState(replaceTask);
+                    }
+                } else {
+                    const task = newTask.element;
+                    if (task.status === props.taskKey) addTaskToState(task);
+                }
+            });
+            setIsFetching(false);
+        }
+    }
+
+    useEffect(() => getTasks(), [dataStoreReadyStatus, props.taskKey]);
 
     const dispatchAppendFunctions = {
         tasksCancelled:
@@ -124,14 +192,16 @@ function TasksGridColumn(props) {
     return (
         <TasksKanbanColumn>
             {header}
-            <Divider className={classes.divider} />
             <Stack
                 direction={"column"}
                 spacing={4}
                 alignItems={"center"}
                 justifyContent={"flex-start"}
             >
-                {state.map((task) => {
+                {sortByCreatedTime(
+                    Object.values(state).reverse(),
+                    "newest"
+                ).map((task) => {
                     return (
                         <div
                             className={clsx(
