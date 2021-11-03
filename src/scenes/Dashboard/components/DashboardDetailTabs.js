@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import Tabs from "@mui/material/Tabs";
@@ -17,17 +17,16 @@ import Typography from "@mui/material/Typography";
 import { showHide } from "../../../styles/common";
 import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Button, Divider, Hidden } from "@mui/material";
+import { Button, Divider, Fab, Hidden } from "@mui/material";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import CallIcon from "@mui/icons-material/Call";
 import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
 import { getWhoami } from "../../../redux/Selectors";
-import { tasksStatus, userRoles } from "../../../apiConsts";
+import { userRoles } from "../../../apiConsts";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
-import { DataStore } from "aws-amplify";
-import * as models from "../../../models/index";
+import { addTask } from "../utilities";
 
 export function TabPanel(props) {
     const { children, index, ...other } = props;
@@ -81,30 +80,6 @@ export function DashboardDetailTabs(props) {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
-    async function addTask() {
-        const date = new Date();
-        const timeOfCall = date.toISOString();
-        const requesterContact = await DataStore.save(
-            new models.AddressAndContactDetails({})
-        );
-        const createdBy = await DataStore.query(models.User, whoami.id);
-        const newTask = await DataStore.save(
-            new models.Task({
-                status: tasksStatus.new,
-                timeOfCall,
-                requesterContact,
-                createdBy,
-            })
-        );
-        await DataStore.save(
-            new models.TaskAssignee({
-                task: newTask,
-                assignee: createdBy,
-                role: userRoles.coordinator,
-            })
-        );
-    }
-
     const handleChange = (event, newValue) => {
         props.onChange(event, newValue);
     };
@@ -133,16 +108,14 @@ export function DashboardDetailTabs(props) {
     );
 
     const addClearButton = !dashboardFilter ? (
-        <React.Fragment>
-            <Button
-                variant="contained"
-                color="primary"
-                disabled={props.disableAddButton}
-                onClick={addTask}
-            >
-                Create New
-            </Button>
-        </React.Fragment>
+        <Button
+            variant="contained"
+            color="primary"
+            disabled={props.disableAddButton}
+            onClick={() => addTask(whoami ? whoami.id : null)}
+        >
+            Create New
+        </Button>
     ) : (
         <Button
             variant="contained"
@@ -153,7 +126,6 @@ export function DashboardDetailTabs(props) {
             Clear Search
         </Button>
     );
-
     return (
         <React.Fragment>
             <Toolbar className={classes.appBar} variant="dense">
@@ -236,7 +208,7 @@ export function DashboardDetailTabs(props) {
                                         >
                                             <ArrowDropDownIcon />
                                         </IconButton>
-                                        {addClearButton}
+                                        <Hidden smDown>{addClearButton}</Hidden>
                                         <Menu
                                             id="profile-menu"
                                             anchorEl={anchorElRoleMenu}

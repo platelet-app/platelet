@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../../App.css";
-import { useHistory } from "react-router";
+import AddIcon from "@mui/icons-material/Add";
 import * as models from "../../models/index";
 import Paper from "@mui/material/Paper";
 import { setRoleView } from "../../redux/Actions";
@@ -10,19 +10,14 @@ import {
     DashboardDetailTabs,
     TabPanel,
 } from "./components/DashboardDetailTabs";
-import {
-    convertListDataToObject,
-    decodeUUID,
-    getDashboardRoleMode,
-    saveDashboardRoleMode,
-} from "../../utilities";
+import { getDashboardRoleMode, saveDashboardRoleMode } from "../../utilities";
 import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
-import { tasksStatus, userRoles } from "../../apiConsts";
+import { tasksStatus } from "../../apiConsts";
 import { DataStore } from "aws-amplify";
-import TasksGridSkeleton from "./components/TasksGridSkeleton";
 import _ from "lodash";
-import TaskDialogCompact from "../Task/TaskDialogCompact";
-import { filterTasks } from "./utilities/functions";
+import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
+import { Fab, Hidden } from "@mui/material";
+import { addTask } from "./utilities";
 
 const initialTasksState = {
     tasksNew: {},
@@ -60,6 +55,32 @@ function getKeyFromEnum(value) {
     }
 }
 
+function AddClearFab() {
+    const dispatch = useDispatch();
+    const whoami = useSelector(getWhoami);
+    const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const addClearFab = !dashboardFilter ? (
+        <Fab
+            sx={{ position: "absolute", zIndex: 2000, bottom: 30, right: 30 }}
+            variant="contained"
+            color="primary"
+            onClick={() => addTask(whoami ? whoami.id : null)}
+        >
+            <AddIcon />
+        </Fab>
+    ) : (
+        <Fab
+            variant="contained"
+            sx={{ position: "absolute", zIndex: 2000, bottom: 30, right: 30 }}
+            color="primary"
+            onClick={() => dispatch(clearDashboardFilter())}
+        >
+            Clear Search
+        </Fab>
+    );
+    return addClearFab;
+}
+
 function Dashboard() {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
@@ -88,36 +109,41 @@ function Dashboard() {
     useEffect(setInitialRoleView, [whoami]);
 
     return (
-        <Paper>
-            <DashboardDetailTabs
-                value={viewMode}
-                onChange={(event, newValue) => setViewMode(newValue)}
-            >
-                <TabPanel value={0} index={0}>
-                    <TasksGrid
-                        modalView={"edit"}
-                        hideRelayIcons={roleView === "rider"}
-                        hideAddButton={!postPermission}
-                        excludeColumnList={
-                            viewMode === 1
-                                ? [
-                                      tasksStatus.new,
-                                      tasksStatus.active,
-                                      tasksStatus.pickedUp,
-                                  ]
-                                : [
-                                      roleView === "rider"
-                                          ? tasksStatus.new
-                                          : "",
-                                      tasksStatus.droppedOff,
-                                      tasksStatus.cancelled,
-                                      tasksStatus.rejected,
-                                  ]
-                        }
-                    />
-                </TabPanel>
-            </DashboardDetailTabs>
-        </Paper>
+        <>
+            <Paper>
+                <DashboardDetailTabs
+                    value={viewMode}
+                    onChange={(event, newValue) => setViewMode(newValue)}
+                >
+                    <TabPanel value={0} index={0}>
+                        <TasksGrid
+                            modalView={"edit"}
+                            hideRelayIcons={roleView === "rider"}
+                            hideAddButton={!postPermission}
+                            excludeColumnList={
+                                viewMode === 1
+                                    ? [
+                                          tasksStatus.new,
+                                          tasksStatus.active,
+                                          tasksStatus.pickedUp,
+                                      ]
+                                    : [
+                                          roleView === "rider"
+                                              ? tasksStatus.new
+                                              : "",
+                                          tasksStatus.droppedOff,
+                                          tasksStatus.cancelled,
+                                          tasksStatus.rejected,
+                                      ]
+                            }
+                        />
+                    </TabPanel>
+                </DashboardDetailTabs>
+            </Paper>
+            <Hidden smUp>
+                <AddClearFab />
+            </Hidden>
+        </>
     );
 }
 
