@@ -1,21 +1,9 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import UserCard from "../../../components/UserCard";
-import Divider from "@mui/material/Divider";
-import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
 import { Stack } from "@mui/material";
 import { userRoles } from "../../../apiConsts";
-
-const useStyles = makeStyles({
-    root: {
-        minWidth: 300,
-        padding: 10,
-    },
-    spacer: {
-        height: 15,
-    },
-});
 
 function TaskAssignees(props) {
     return [userRoles.coordinator, userRoles.rider].map((role) => {

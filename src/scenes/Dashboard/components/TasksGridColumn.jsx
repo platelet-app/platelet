@@ -210,12 +210,11 @@ function TasksGridColumn(props) {
 
     const animate = useRef(false);
     useEffect(() => {
-        if (state.length > 0) {
-            setTimeout(() => (animate.current = true), 3000);
-        } else {
-            animate.current = true;
-        }
-    }, [state]);
+        // this is a bit of a hack really
+        // prevents the cards from animating on first mount
+        if (isFetching) animate.current = false;
+        else setTimeout(() => (animate.current = true), 3000);
+    }, [isFetching]);
 
     if (isFetching) {
         return (
