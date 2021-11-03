@@ -23,7 +23,10 @@ import CallIcon from "@mui/icons-material/Call";
 import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
-import { getWhoami } from "../../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    getWhoami,
+} from "../../../redux/Selectors";
 import { userRoles } from "../../../apiConsts";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
 import { addTask } from "../utilities";
@@ -77,6 +80,7 @@ export function DashboardDetailTabs(props) {
     const classes = useStyles();
     const { show, hide } = showHide();
 
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -111,7 +115,7 @@ export function DashboardDetailTabs(props) {
         <Button
             variant="contained"
             color="primary"
-            disabled={props.disableAddButton}
+            disabled={!dataStoreReadyStatus}
             onClick={() => addTask(whoami ? whoami.id : null)}
         >
             Create New

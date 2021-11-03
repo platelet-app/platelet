@@ -59,10 +59,12 @@ function AddClearFab() {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const addClearFab = !dashboardFilter ? (
         <Fab
             sx={{ position: "absolute", zIndex: 2000, bottom: 30, right: 30 }}
             variant="contained"
+            disabled={!dataStoreReadyStatus}
             color="primary"
             onClick={() => addTask(whoami ? whoami.id : null)}
         >
