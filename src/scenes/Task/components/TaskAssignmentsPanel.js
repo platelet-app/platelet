@@ -23,7 +23,7 @@ function TaskAssignmentsPanel(props) {
     const [assignedCoordinators, setAssignedCoordinators] = useState([]);
     const [assigneesDisplayString, setAssigneesDisplayString] = useState(null);
     const [role, setRole] = useState(userRoles.rider);
-    const assigneesSorted = useRef(false);
+    const deleting = useRef(false);
 
     function onSelect(value) {
         if (value) props.onSelect(value, role);
@@ -36,8 +36,12 @@ function TaskAssignmentsPanel(props) {
     }
 
     useEffect(() => {
-        if (assigneesSorted.current && !editMode && assignedRiders.length === 0)
-            setEditMode(true);
+        if (deleting.current) {
+            deleting.current = false;
+            return;
+        }
+        if (assignedRiders.length === 0) setEditMode(true);
+        else setEditMode(false);
     }, [assignedRiders]);
 
     function sortAssignees() {
@@ -66,7 +70,6 @@ function TaskAssignmentsPanel(props) {
             setAssignedRiders([]);
             setAssigneesDisplayString(null);
         }
-        assigneesSorted.current = true;
     }
 
     useEffect(sortAssignees, [props.task.assignees]);
@@ -74,7 +77,10 @@ function TaskAssignmentsPanel(props) {
     const assigneeSelector = editMode ? (
         <>
             <TaskAssignees
-                onRemove={props.onDelete}
+                onRemove={(v) => {
+                    deleting.current = true;
+                    props.onDelete(v);
+                }}
                 assignees={task.assignees ? task.assignees : []}
             />
             <UserRoleSelect
