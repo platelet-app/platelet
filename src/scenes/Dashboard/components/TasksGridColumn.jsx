@@ -218,9 +218,10 @@ function TasksGridColumn(props) {
 
     useEffect(() => {
         // to prevent role view changes from animating cards
+        if (isFetching) return;
         animate.current = false;
         setTimeout(() => (animate.current = true), 3000);
-    }, [roleView]);
+    }, [roleView, isFetching]);
 
     if (isFetching) {
         return (
