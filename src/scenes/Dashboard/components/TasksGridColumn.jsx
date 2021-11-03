@@ -123,13 +123,19 @@ function TasksGridColumn(props) {
         });
     }
 
+    function doSearch() {
+        const searchResult = filterTasks(state, dashboardFilter);
+        setFilteredTasksIds(searchResult);
+    }
+    useEffect(doSearch, [dashboardFilter, state]);
+
     async function filterTasksByRole() {
+        return;
         if (roleView === "all" && !!!dashboardFilter) {
             setFilteredTasksIds(null);
             return;
         }
         const allIds = Object.values(state).map((t) => t.id);
-        let roleTasks = state;
         if (previousRoleView.current !== roleView) {
             const assignments = (
                 await DataStore.query(models.TaskAssignee, (a) =>
@@ -137,15 +143,19 @@ function TasksGridColumn(props) {
                 )
             ).filter((a) => a.assignee.id === whoami.id);
             const myTasks = assignments.map((a) => a.task);
-            roleTasks = myTasks.filter((t) => allIds.includes(t.id));
+            const roleTasks = myTasks.filter((t) => allIds.includes(t.id));
+            const roleTasksIds = roleTasks.map((t) => t.id);
+            setFilteredTasksIds((prevState) => {
+                if (prevState) return [...prevState, ...roleTasksIds];
+                else return roleTasksIds;
+            });
             previousRoleView.current = roleView;
         }
-        if (!!dashboardFilter) {
-            const searchResult = filterTasks(roleTasks, dashboardFilter);
-            setFilteredTasksIds(searchResult);
-        } else {
-            setFilteredTasksIds(Object.values(roleTasks).map((t) => t.id));
-        }
+        const searchResult = filterTasks(state, dashboardFilter);
+        setFilteredTasksIds((prevState) => {
+            if (prevState) return _.intersection(prevState, searchResult);
+            else return searchResult;
+        });
     }
     useEffect(() => filterTasksByRole(), [roleView, dashboardFilter, state]);
 
@@ -155,9 +165,24 @@ function TasksGridColumn(props) {
             return;
         } else {
             const allAssignments = await DataStore.query(models.TaskAssignee);
-            const tasksResult = await DataStore.query(models.Task, (task) =>
-                task.status("eq", props.taskKey)
-            );
+            let tasksResult = [];
+            if (roleView === "all") {
+                tasksResult = await DataStore.query(models.Task, (task) =>
+                    task.status("eq", props.taskKey)
+                );
+            } else {
+                const assignments = (
+                    await DataStore.query(models.TaskAssignee, (a) =>
+                        a.role("eq", roleView.toUpperCase())
+                    )
+                ).filter((a) => a.assignee.id === whoami.id);
+                // once DataStore implements lazy loading, get the tasks for assignments instead
+                const taskIds = assignments.map((a) => a.task.id);
+                const tasks = await DataStore.query(models.Task, (t) =>
+                    t.status("eq", props.taskKey)
+                );
+                tasksResult = tasks.filter((t) => taskIds.includes(t.id));
+            }
             setState(
                 addAssigneesAndConvertToObject(tasksResult, allAssignments)
             );
@@ -187,7 +212,10 @@ function TasksGridColumn(props) {
         }
     }
 
-    useEffect(() => getTasks(), [dataStoreReadyStatus, props.taskKey]);
+    useEffect(
+        () => getTasks(),
+        [dataStoreReadyStatus, roleView, props.taskKey]
+    );
 
     const dispatchAppendFunctions = {
         tasksCancelled:
