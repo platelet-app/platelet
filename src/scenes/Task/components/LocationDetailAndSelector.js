@@ -180,7 +180,6 @@ function LocationDetailAndSelector(props) {
                     }
                 >
                     <ClearButtonWithConfirmation
-                        label={props.label}
                         disabled={props.disabled}
                         onClear={onClickClearButton}
                     />
