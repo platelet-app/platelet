@@ -75,6 +75,7 @@ function AddClearFab() {
             variant="contained"
             sx={{ position: "fixed", zIndex: 2000, bottom: 30, right: 30 }}
             color="primary"
+            variant="extended"
             onClick={() => dispatch(clearDashboardFilter())}
         >
             Clear Search
