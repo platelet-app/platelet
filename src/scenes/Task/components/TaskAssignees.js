@@ -18,58 +18,33 @@ const useStyles = makeStyles({
 });
 
 function TaskAssignees(props) {
-    const classes = useStyles();
-
-    const noAssigneeMessage = props.assignees ? (
-        props.assignees.length === 0 ? (
-            <Typography>No assignees</Typography>
-        ) : (
-            <></>
-        )
-    ) : (
-        <></>
-    );
-
-    return (
-        <Stack
-            direction={"column"}
-            justifyContent={"center"}
-            alignItems={"flex-start"}
-        >
-            {noAssigneeMessage}
-            {[userRoles.coordinator, userRoles.rider].map((role) => (
-                <>
-                    <Typography>
-                        {role === userRoles.coordinator
-                            ? "Coordinators:"
-                            : "Riders:"}
-                    </Typography>
-                    {Object.values(props.assignees)
-                        .filter((a) => a.role === role)
-                        .map((assignment) => {
-                            const user = assignment.assignee || null;
-                            return (
-                                <React.Fragment key={assignment.id}>
-                                    <UserCard
-                                        compact
-                                        onDelete={() =>
-                                            props.onRemove(assignment.id)
-                                        }
-                                        userUUID={user.id}
-                                        displayName={user.displayName}
-                                        avatarURL={
-                                            user.profilePictureThumbnailURL
-                                        }
-                                    />
-                                    <Divider />
-                                    <div className={classes.spacer} />
-                                </React.Fragment>
-                            );
-                        })}
-                </>
-            ))}
-        </Stack>
-    );
+    return [userRoles.coordinator, userRoles.rider].map((role) => {
+        const assignments = Object.values(props.assignees).filter(
+            (a) => a.role === role
+        );
+        const message = assignments.length === 0 ? "No one assigned" : "";
+        const label =
+            role === userRoles.coordinator ? "Coordinators:" : "Riders:";
+        return (
+            <Stack direction="column" spacing={1}>
+                <Typography>{label}</Typography>
+                <Typography>{message}</Typography>
+                {assignments.map((assignment) => {
+                    const user = assignment.assignee || null;
+                    return (
+                        <UserCard
+                            key={assignment.id}
+                            compact
+                            onDelete={() => props.onRemove(assignment.id)}
+                            userUUID={user.id}
+                            displayName={user.displayName}
+                            avatarURL={user.profilePictureThumbnailURL}
+                        />
+                    );
+                })}
+            </Stack>
+        );
+    });
 }
 
 TaskAssignees.propTypes = {

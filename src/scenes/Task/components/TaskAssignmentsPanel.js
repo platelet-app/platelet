@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Paper, Stack, Tooltip } from "@mui/material";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import makeStyles from "@mui/styles/makeStyles";
@@ -23,6 +23,7 @@ function TaskAssignmentsPanel(props) {
     const [assignedCoordinators, setAssignedCoordinators] = useState([]);
     const [assigneesDisplayString, setAssigneesDisplayString] = useState(null);
     const [role, setRole] = useState(userRoles.rider);
+    const assigneesSorted = useRef(false);
 
     function onSelect(value) {
         if (value) props.onSelect(value, role);
@@ -34,7 +35,10 @@ function TaskAssignmentsPanel(props) {
         setRole(userRoles.rider);
     }
 
-    useEffect(() => setEditMode(assignedRiders.length === 0), [assignedRiders]);
+    useEffect(() => {
+        if (assigneesSorted.current && !editMode && assignedRiders.length === 0)
+            setEditMode(true);
+    }, [assignedRiders]);
 
     function sortAssignees() {
         if (
@@ -62,15 +66,16 @@ function TaskAssignmentsPanel(props) {
             setAssignedRiders([]);
             setAssigneesDisplayString(null);
         }
+        assigneesSorted.current = true;
     }
 
     useEffect(sortAssignees, [props.task.assignees]);
 
     const assigneeSelector = editMode ? (
-        <Stack direction={"column"} spacing={1}>
+        <>
             <TaskAssignees
                 onRemove={props.onDelete}
-                assignees={task.assignees ? Object.values(task.assignees) : []}
+                assignees={task.assignees ? task.assignees : []}
             />
             <UserRoleSelect
                 value={role}
@@ -93,8 +98,8 @@ function TaskAssignmentsPanel(props) {
                     exclude={assignedCoordinators.map((u) => u.id)}
                 />
             )}
-            <Button onClick={clearEditMode}>Cancel</Button>
-        </Stack>
+            <Button onClick={clearEditMode}>Close</Button>
+        </>
     ) : (
         <></>
     );
