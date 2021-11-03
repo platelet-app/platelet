@@ -892,12 +892,12 @@ function TaskDialogCompact(props) {
                 </Hidden>
                 <Hidden mdUp>
                     <Stack direction="column" spacing={2}>
-                        <CommentsSection parentUUID={taskUUID} />
                         <TaskAssignmentsPanel
                             onSelect={addAssignee}
                             onDelete={onDeleteAssignment}
                             task={state}
                         />
+                        <CommentsSection parentUUID={taskUUID} />
                     </Stack>
                 </Hidden>
             </DialogWrapper>
