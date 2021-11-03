@@ -216,6 +216,12 @@ function TasksGridColumn(props) {
         else setTimeout(() => (animate.current = true), 3000);
     }, [isFetching]);
 
+    useEffect(() => {
+        // to prevent role view changes from animating cards
+        animate.current = false;
+        setTimeout(() => (animate.current = true), 3000);
+    }, [roleView]);
+
     if (isFetching) {
         return (
             <TasksKanbanColumn>
