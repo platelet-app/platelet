@@ -17,7 +17,7 @@ import GetError from "../../ErrorComponents/GetError";
 import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
-import { Button, Hidden } from "@mui/material";
+import { Button, Hidden, Stack } from "@mui/material";
 import CommentsSection from "../Comments/CommentsSection";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
@@ -891,12 +891,14 @@ function TaskDialogCompact(props) {
                     />
                 </Hidden>
                 <Hidden mdUp>
-                    <CommentsSection parentUUID={taskUUID} />
-                    <TaskAssignmentsPanel
-                        onSelect={addAssignee}
-                        onDelete={onDeleteAssignment}
-                        task={props.task}
-                    />
+                    <Stack direction="column" spacing={2}>
+                        <CommentsSection parentUUID={taskUUID} />
+                        <TaskAssignmentsPanel
+                            onSelect={addAssignee}
+                            onDelete={onDeleteAssignment}
+                            task={state}
+                        />
+                    </Stack>
                 </Hidden>
             </DialogWrapper>
         );
