@@ -11,7 +11,7 @@ import { TasksKanbanColumn } from "../styles/TaskColumns";
 import { Waypoint } from "react-waypoint";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { CircularProgress, Stack, Typography } from "@mui/material";
+import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import {
@@ -129,36 +129,6 @@ function TasksGridColumn(props) {
     }
     useEffect(doSearch, [dashboardFilter, state]);
 
-    async function filterTasksByRole() {
-        return;
-        if (roleView === "all" && !!!dashboardFilter) {
-            setFilteredTasksIds(null);
-            return;
-        }
-        const allIds = Object.values(state).map((t) => t.id);
-        if (previousRoleView.current !== roleView) {
-            const assignments = (
-                await DataStore.query(models.TaskAssignee, (a) =>
-                    a.role("eq", roleView.toUpperCase())
-                )
-            ).filter((a) => a.assignee.id === whoami.id);
-            const myTasks = assignments.map((a) => a.task);
-            const roleTasks = myTasks.filter((t) => allIds.includes(t.id));
-            const roleTasksIds = roleTasks.map((t) => t.id);
-            setFilteredTasksIds((prevState) => {
-                if (prevState) return [...prevState, ...roleTasksIds];
-                else return roleTasksIds;
-            });
-            previousRoleView.current = roleView;
-        }
-        const searchResult = filterTasks(state, dashboardFilter);
-        setFilteredTasksIds((prevState) => {
-            if (prevState) return _.intersection(prevState, searchResult);
-            else return searchResult;
-        });
-    }
-    useEffect(() => filterTasksByRole(), [roleView, dashboardFilter, state]);
-
     async function getTasks() {
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
@@ -240,99 +210,122 @@ function TasksGridColumn(props) {
 
     const animate = useRef(false);
     useEffect(() => {
-        if (state.length === 0) {
-            setTimeout(() => (animate.current = true), 1000);
-            return;
+        if (state.length > 0) {
+            setTimeout(() => (animate.current = true), 3000);
+        } else {
+            animate.current = true;
         }
-        animate.current = true;
     }, [state]);
 
-    return (
-        <TasksKanbanColumn>
-            {header}
-            <Stack
-                direction={"column"}
-                spacing={4}
-                alignItems={"center"}
-                justifyContent={"flex-start"}
-            >
-                {sortByCreatedTime(
-                    Object.values(state).reverse(),
-                    "newest"
-                ).map((task) => {
-                    return (
-                        <div
-                            className={clsx(
-                                classes.taskItem,
-                                filteredTasksIds === null ||
-                                    filteredTasksIds.includes(task.id)
-                                    ? show
-                                    : hide
-                            )}
-                            key={task.id}
-                        >
-                            <TaskItem
-                                animate={animate.current}
-                                task={task}
-                                taskUUID={task.id}
-                                view={props.modalView}
-                                deleteDisabled={props.deleteDisabled}
-                            />
+    if (isFetching) {
+        return (
+            <TasksKanbanColumn>
+                <Stack direction="column" spacing={4}>
+                    <Skeleton
+                        variant="rectangular"
+                        width={"100%"}
+                        height={50}
+                    />
+                    {_.range(4).map((i) => (
+                        <Skeleton
+                            variant="rectangular"
+                            width={"100%"}
+                            height={200}
+                        />
+                    ))}
+                </Stack>
+            </TasksKanbanColumn>
+        );
+    } else {
+        return (
+            <TasksKanbanColumn>
+                {header}
+                <Stack
+                    direction={"column"}
+                    spacing={4}
+                    alignItems={"center"}
+                    justifyContent={"flex-start"}
+                >
+                    {sortByCreatedTime(
+                        Object.values(state).reverse(),
+                        "newest"
+                    ).map((task) => {
+                        return (
                             <div
-                                className={
-                                    !!task.relayNext &&
-                                    props.showTasks === null &&
-                                    !props.hideRelayIcons &&
-                                    roleView !== "rider"
+                                className={clsx(
+                                    classes.taskItem,
+                                    filteredTasksIds === null ||
+                                        filteredTasksIds.includes(task.id)
                                         ? show
                                         : hide
-                                }
+                                )}
+                                key={task.id}
                             >
-                                <Tooltip title="Relay">
-                                    <ArrowDownwardIcon
-                                        style={{
-                                            height: "35px",
-                                        }}
-                                    />
-                                </Tooltip>
+                                <TaskItem
+                                    animate={animate.current}
+                                    task={task}
+                                    taskUUID={task.id}
+                                    view={props.modalView}
+                                    deleteDisabled={props.deleteDisabled}
+                                />
+                                <div
+                                    className={
+                                        !!task.relayNext &&
+                                        props.showTasks === null &&
+                                        !props.hideRelayIcons &&
+                                        roleView !== "rider"
+                                            ? show
+                                            : hide
+                                    }
+                                >
+                                    <Tooltip title="Relay">
+                                        <ArrowDownwardIcon
+                                            style={{
+                                                height: "35px",
+                                            }}
+                                        />
+                                    </Tooltip>
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </Stack>
-            {["tasksDroppedOff", "tasksRejected", "tasksCancelled"].includes(
-                props.taskKey
-            ) ? (
-                <React.Fragment>
-                    <Waypoint
-                        onEnter={() => {
-                            if (props.showTasks) return;
-                            if (false) {
-                                dispatch(
-                                    appendFunction(
-                                        whoami.id,
-                                        1,
-                                        roleView,
-                                        props.taskKey,
-                                        null
-                                    )
-                                );
-                            }
-                        }}
-                    />
-                    {endlessLoadIsFetching ? (
-                        <div className={loaderClass.root}>
-                            <CircularProgress color="secondary" />
-                        </div>
-                    ) : (
-                        <></>
-                    )}
-                </React.Fragment>
-            ) : (
-                <></>
-            )}
-        </TasksKanbanColumn>
-    );
+                        );
+                    })}
+                </Stack>
+                {[
+                    "tasksDroppedOff",
+                    "tasksRejected",
+                    "tasksCancelled",
+                ].includes(props.taskKey) ? (
+                    <React.Fragment>
+                        <Waypoint
+                            onEnter={() => {
+                                if (props.showTasks) return;
+                                if (false) {
+                                    dispatch(
+                                        appendFunction(
+                                            whoami.id,
+                                            1,
+                                            roleView,
+                                            props.taskKey,
+                                            null
+                                        )
+                                    );
+                                }
+                            }}
+                        />
+                        {endlessLoadIsFetching ? (
+                            <div className={loaderClass.root}>
+                                <CircularProgress color="secondary" />
+                            </div>
+                        ) : (
+                            <></>
+                        )}
+                    </React.Fragment>
+                ) : (
+                    <></>
+                )}
+            </TasksKanbanColumn>
+        );
+    }
 }
 
 TasksGridColumn.propTypes = {
