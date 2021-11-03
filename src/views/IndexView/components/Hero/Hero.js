@@ -1,58 +1,58 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, Typography } from '@material-ui/core';
-import { SectionHeader, TypedText } from 'components/molecules';
-import { HeroShaped } from 'components/organisms';
-import bike1 from '../../../../assets/images/bike1.jpg'
+import React from "react";
+import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/core/styles";
+import { Button, Typography } from "@material-ui/core";
+import { SectionHeader, TypedText } from "components/molecules";
+import { HeroShaped } from "components/organisms";
+import bike1 from "../../../../assets/images/bike1.jpg";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   fontWeight900: {
     fontWeight: 900,
   },
   leftSideContent: {
-    '& .section-header__cta-container': {
-      [theme.breakpoints.down('xs')]: {
-        flexDirection: 'column',
-        '& .section-header__cta-item-wrapper': {
-          width: '100%',
-          '&:last-child': {
+    "& .section-header__cta-container": {
+      [theme.breakpoints.down("xs")]: {
+        flexDirection: "column",
+        "& .section-header__cta-item-wrapper": {
+          width: "100%",
+          "&:last-child": {
             marginLeft: 0,
             marginTop: theme.spacing(1),
           },
-          '& .MuiButtonBase-root': {
-            width: '100%',
+          "& .MuiButtonBase-root": {
+            width: "100%",
           },
         },
       },
-    }
+    },
   },
   heroShaped: {
-    '& .hero-shaped__image': {
+    "& .hero-shaped__image": {
       backgroundColor: theme.palette.alternate.main,
     },
-    [theme.breakpoints.down('sm')]: {
-      '& .hero-shaped__image': {
-        position: 'relative',
-        left: -150
+    [theme.breakpoints.down("sm")]: {
+      "& .hero-shaped__image": {
+        position: "relative",
+        left: -150,
       },
-      '& .hero-shaped__wrapper': {
-        flexDirection: 'column',
+      "& .hero-shaped__wrapper": {
+        flexDirection: "column",
       },
     },
   },
   imageAnimation: {
     background: `url(${bike1})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundAttachment: 'scroll',
-    backgroundSize: 'cover',
-    width: '900px',
-    height: '900px',
+    backgroundRepeat: "no-repeat",
+    backgroundAttachment: "scroll",
+    backgroundSize: "cover",
+    width: "900px",
+    height: "900px",
     backgroundColor: theme.palette.alternate.dark,
-  }
+  },
 }));
 
-const Hero = ({ themeMode = 'light', className, ...rest }) => {
+const Hero = ({ themeMode = "light", className, ...rest }) => {
   const classes = useStyles();
 
   const title = (
@@ -62,26 +62,36 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
     </Typography>
   );
 
-  const subtitle = 'Connect from anywhere to coordinate fleets and record deliveries.';
+  const subtitle =
+    "Connect from anywhere to coordinate fleets and record deliveries.";
 
   const findOutMore = (
     <Button
-        size="large"
-        variant="contained"
-        color="primary"
-        onClick={() => {
-            const element = document.getElementById("mailing-list");
-            console.log(element)
-            element.scrollIntoView(false);
-        }}
-        >
+      variant="contained"
+      color="primary"
+      onClick={() => {
+        const element = document.getElementById("mailing-list");
+        console.log(element);
+        element.scrollIntoView(false);
+      }}
+    >
       Sign up to our mailing list
+    </Button>
+  );
+  const viewDemo = (
+    <Button
+      variant="contained"
+      color="primary"
+      component="a"
+      href="https://demo.platelet.app"
+    >
+      View a demo
     </Button>
   );
 
   const loginButton = (
     <Button
-      style={{display: "none"}}
+      style={{ display: "none" }}
       size="large"
       variant="contained"
       color="primary"
@@ -98,10 +108,10 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
       subtitle={subtitle}
       align="left"
       titleProps={{
-        variant: 'h2',
-        color: 'textPrimary',
+        variant: "h2",
+        color: "textPrimary",
       }}
-      ctaGroup={[findOutMore, loginButton]}
+      ctaGroup={[findOutMore, viewDemo]}
       data-aos="fade-right"
       disableGutter
       className={classes.leftSideContent}
@@ -112,11 +122,7 @@ const Hero = ({ themeMode = 'light', className, ...rest }) => {
       <HeroShaped
         className={classes.heroShaped}
         leftSide={leftSideContent}
-        rightSide={(
-          <div
-            className={classes.imageAnimation}
-          />
-        )}
+        rightSide={<div className={classes.imageAnimation} />}
       />
     </div>
   );
