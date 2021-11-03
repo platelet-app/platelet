@@ -29,6 +29,7 @@ import {
     displayWarningNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { useHistory, useLocation, useParams } from "react-router";
+import TaskAssignmentsPanel from "./components/TaskAssignmentsPanel";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -841,8 +842,6 @@ function TaskDialogCompact(props) {
                     <TaskOverview
                         task={state}
                         taskUUID={taskUUID}
-                        onSelectAssignee={addAssignee}
-                        onDeleteAssignment={onDeleteAssignment}
                         onSelectPriority={selectPriority}
                         onSelectPickUpPreset={selectPickUpPreset}
                         onEditPickUpPreset={editPickUpPreset}
@@ -884,12 +883,20 @@ function TaskDialogCompact(props) {
                 </div>
                 <Hidden mdDown>
                     <CommentsSideBar
+                        onAddAssignee={addAssignee}
+                        onDeleteAssignment={onDeleteAssignment}
+                        task={state}
                         width={isMd ? drawerWidthMd : drawerWidth}
                         parentUUID={taskUUID}
                     />
                 </Hidden>
                 <Hidden mdUp>
                     <CommentsSection parentUUID={taskUUID} />
+                    <TaskAssignmentsPanel
+                        onSelect={addAssignee}
+                        onDelete={onDeleteAssignment}
+                        task={props.task}
+                    />
                 </Hidden>
             </DialogWrapper>
         );

@@ -121,11 +121,6 @@ function TaskOverview(props) {
                             onChange={props.onUpdateDeliverable}
                             onDelete={props.onDeleteDeliverable}
                         />
-                        <TaskAssignmentsPanel
-                            onSelect={props.onSelectAssignee}
-                            onDelete={props.onDeleteAssignment}
-                            task={props.task}
-                        />
                     </Stack>
                 </Grid>
             </Grid>
