@@ -16,17 +16,6 @@ function ClearButtonWithConfirmation(props) {
     const [open, setOpen] = useState(false);
     const classes = useStyles();
 
-    useEffect(() => {
-        window.history.pushState(null, null, window.location.pathname);
-        window.addEventListener("popstate", onBackButtonEvent);
-        return () => window.removeEventListener("popstate", onBackButtonEvent);
-    }, []);
-
-    const onBackButtonEvent = (event) => {
-        event.preventDefault();
-        setOpen(false);
-    };
-
     function onClick() {
         setOpen(true);
     }
