@@ -25,6 +25,26 @@ export const useStyles = makeStyles(() => ({
     },
 }));
 
+// function to sort by user role
+const sortByUserRole = (a, b) => {
+    if (a.role === b.userRole) {
+        return 0;
+    }
+    if (a.role === userRoles.rider) {
+        return -1;
+    }
+    if (b.role === userRoles.rider) {
+        return 1;
+    }
+    if (a.role === userRoles.coordinator) {
+        return -1;
+    }
+    if (b.role === userRoles.coordinator) {
+        return 1;
+    }
+    return 0;
+};
+
 function TaskAssignmentsPanel(props) {
     const [collapsed, setCollapsed] = useState(true);
     const [assigneesDisplayString, setAssigneesDisplayString] = useState(null);
@@ -173,9 +193,7 @@ function TaskAssignmentsPanel(props) {
             setAssigneesDisplayString(null);
         } else {
             const assigneesDisplayString = Object.values(state)
-                .sort((a, b) => {
-                    return a.role < b.role;
-                })
+                .sort(sortByUserRole)
                 .map((a) => (a.assignee ? a.assignee.displayName : ""))
                 .join(", ");
             setAssigneesDisplayString(assigneesDisplayString);
@@ -206,14 +224,21 @@ function TaskAssignmentsPanel(props) {
                 <RiderPicker
                     onSelect={onSelect}
                     exclude={Object.values(state)
-                        .filter((a) => a && a.role === userRoles.rider)
+                        .filter(
+                            (a) => a && a.assignee && a.role === userRoles.rider
+                        )
                         .map((a) => a.assignee.id)}
                 />
             ) : (
                 <CoordinatorPicker
                     onSelect={onSelect}
                     exclude={Object.values(state)
-                        .filter((a) => a && a.role === userRoles.coordinator)
+                        .filter(
+                            (a) =>
+                                a &&
+                                a.assignee &&
+                                a.role === userRoles.coordinator
+                        )
                         .map((a) => a.assignee.id)}
                 />
             )}
@@ -233,24 +258,26 @@ function TaskAssignmentsPanel(props) {
                 >
                     <Tooltip title={assigneesDisplayString}>
                         <AvatarGroup>
-                            {Object.values(state).map((u) => {
-                                const user = u.assignee || null;
-                                if (user) {
-                                    return (
-                                        <UserAvatar
-                                            key={user.id}
-                                            size={4}
-                                            userUUID={user.id}
-                                            displayName={user.displayName}
-                                            avatarURL={
-                                                user.profilePictureThumbnailURL
-                                            }
-                                        />
-                                    );
-                                } else {
-                                    return <></>;
-                                }
-                            })}
+                            {Object.values(state)
+                                .sort(sortByUserRole)
+                                .map((assignment) => {
+                                    if (assignment && assignment.assignee) {
+                                        const user = assignment.assignee;
+                                        return (
+                                            <UserAvatar
+                                                key={user.id}
+                                                size={4}
+                                                userUUID={user.id}
+                                                displayName={user.displayName}
+                                                avatarURL={
+                                                    user.profilePictureThumbnailURL
+                                                }
+                                            />
+                                        );
+                                    } else {
+                                        return <></>;
+                                    }
+                                })}
                         </AvatarGroup>
                     </Tooltip>
                 </Stack>
