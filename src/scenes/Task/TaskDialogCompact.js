@@ -45,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         alignItems: "center",
         justify: "center",
-        zIndex: 1500,
     },
     overview: {
         marginRight: drawerWidth,

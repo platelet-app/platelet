@@ -1,17 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
-import { styled } from "@mui/material/styles";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";
 import UnitSelector from "../../../components/UnitSelector";
-import { showHide } from "../../../styles/common";
-import {
-    ClickAwayListener,
-    Grid,
-    IconButton,
-    Stack,
-    Tooltip,
-} from "@mui/material";
+import { IconButton, Stack, Tooltip } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import ArchitectureIcon from "@mui/icons-material/Architecture";
 
@@ -28,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 function EditableDeliverable(props) {
     const deliverable = props.deliverable;
+    console.log(deliverable.unit);
     const [showUnit, setShowUnit] = useState(false);
     const classes = useStyles();
     const unitSelect = showUnit ? (
