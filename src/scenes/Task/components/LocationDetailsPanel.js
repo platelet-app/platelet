@@ -244,7 +244,11 @@ function LocationDetailsPanel(props) {
                         justifyContent={"space-between"}
                     >
                         <Grid item>
-                            <Typography variant={"h6"}>Collect from</Typography>
+                            <Typography variant={"h6"}>
+                                {props.locationKey === "pickUpLocation"
+                                    ? "Collect from"
+                                    : "Deliver to"}
+                            </Typography>
                         </Grid>
                     </Grid>
                 </Grid>
