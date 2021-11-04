@@ -149,12 +149,8 @@ function TaskDialogCompact(props) {
                     const deliverables = (
                         await DataStore.query(models.Deliverable)
                     ).filter((d) => d.task && d.task.id === taskUUID);
-                    const assignees = (
-                        await DataStore.query(models.TaskAssignee)
-                    ).filter((a) => a.task && a.task.id === taskUUID);
                     setState({
                         ...taskData,
-                        assignees: convertListDataToObject(assignees),
                         deliverables: deliverables
                             ? convertListDataToObject(deliverables)
                             : {},
