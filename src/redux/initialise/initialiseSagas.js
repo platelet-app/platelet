@@ -239,9 +239,11 @@ async function populateTasks(whoamiId) {
                     createdBy: whoami,
                 })
             );
+            const deliverableType = _.sample(availableDeliverables);
             await DataStore.save(
                 new models.Deliverable({
-                    deliverableType: _.sample(availableDeliverables),
+                    deliverableType,
+                    unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
                     task: newTask,
@@ -287,9 +289,11 @@ async function populateTasks(whoamiId) {
                     createdBy: whoami,
                 })
             );
+            const deliverableType = _.sample(availableDeliverables);
             await DataStore.save(
                 new models.Deliverable({
-                    deliverableType: _.sample(availableDeliverables),
+                    deliverableType,
+                    unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
                     task: newTask,
@@ -333,9 +337,11 @@ async function populateTasks(whoamiId) {
                     createdBy: whoami,
                 })
             );
+            const deliverableType = _.sample(availableDeliverables);
             await DataStore.save(
                 new models.Deliverable({
-                    deliverableType: _.sample(availableDeliverables),
+                    deliverableType,
+                    unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
                     task: newTask,
@@ -388,9 +394,11 @@ async function populateTasks(whoamiId) {
                     createdBy: whoami,
                 })
             );
+            const deliverableType = _.sample(availableDeliverables);
             await DataStore.save(
                 new models.Deliverable({
-                    deliverableType: _.sample(availableDeliverables),
+                    deliverableType,
+                    unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
                     task: newTask,
@@ -444,9 +452,11 @@ async function populateTasks(whoamiId) {
                     createdBy: whoami,
                 })
             );
+            const deliverableType = _.sample(availableDeliverables);
             await DataStore.save(
                 new models.Deliverable({
-                    deliverableType: _.sample(availableDeliverables),
+                    deliverableType,
+                    unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
                     task: newTask,
