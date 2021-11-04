@@ -159,7 +159,36 @@ function TaskDialogCompact(props) {
                     taskObserver.current = DataStore.observe(
                         models.Task,
                         taskUUID
-                    ).subscribe((observeResult) => {
+                    ).subscribe(async (observeResult) => {
+                        const taskData = observeResult.element;
+                        if (observeResult.opType === "INSERT") {
+                            setState(taskData);
+                        } else if (observeResult.opType === "UPDATE") {
+                            if (
+                                taskData.taskRiderResponsibilityId ||
+                                taskData.taskRiderResponsibilityId === null
+                            ) {
+                                let riderResponsibility = null;
+                                if (taskData.taskRiderResponsibilityId)
+                                    riderResponsibility = await DataStore.query(
+                                        models.RiderResponsibility,
+                                        taskData.taskRiderResponsibilityId
+                                    );
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    ...taskData,
+                                    riderResponsibility,
+                                }));
+                            } else {
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    ...taskData,
+                                }));
+                            }
+                        } else if (observeResult.opType === "DELETE") {
+                            setNotFound(true);
+                            setState(initialState);
+                        }
                         const task = observeResult.element;
                         setState((prevState) => ({ ...prevState, ...task }));
                     });

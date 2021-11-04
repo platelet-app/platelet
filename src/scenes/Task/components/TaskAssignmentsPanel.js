@@ -141,12 +141,15 @@ function TaskAssignmentsPanel(props) {
                 existingAssignment.role === userRoles.rider
             ) {
                 let riderResponsibility = null;
-                const riders = Object.values(state).filter(
-                    (a) => a.role === userRoles.rider && a.id !== assignmentId
-                );
+                const riders = Object.values(state)
+                    .filter(
+                        (a) =>
+                            a.role === userRoles.rider && a.id !== assignmentId
+                    )
+                    .map((a) => a.assignee);
                 if (riders.length > 0) {
                     const rider = riders[riders.length - 1];
-                    if (rider.userRiderResponsibilityId) {
+                    if (rider && rider.userRiderResponsibilityId) {
                         riderResponsibility = await DataStore.query(
                             models.RiderResponsibility,
                             rider.userRiderResponsibilityId

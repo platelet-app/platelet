@@ -3,7 +3,6 @@ import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
 import PropTypes from "prop-types";
 
 function DeliverableDetails(props) {
-    console.log(props.deliverables);
     return (
         <DeliverableGridSelect
             deliverables={props.deliverables}
