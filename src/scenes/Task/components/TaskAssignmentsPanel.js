@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Paper, Stack, Tooltip } from "@mui/material";
+import { Paper, Stack, Tooltip, Typography } from "@mui/material";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import makeStyles from "@mui/styles/makeStyles";
 import { userRoles } from "../../../apiConsts";
 import RiderPicker from "../../../components/RiderPicker";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import UserRoleSelect from "../../../components/UserRoleSelect";
-import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
 import TaskAssignees from "./TaskAssignees";
 import UserAvatar from "../../../components/UserAvatar";
+import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -18,7 +18,7 @@ export const useStyles = makeStyles(() => ({
 
 function TaskAssignmentsPanel(props) {
     const { task } = props;
-    const [editMode, setEditMode] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [assignedCoordinators, setAssignedCoordinators] = useState([]);
     const [assigneesDisplayString, setAssigneesDisplayString] = useState(null);
@@ -31,7 +31,7 @@ function TaskAssignmentsPanel(props) {
     }
 
     function clearEditMode() {
-        setEditMode(false);
+        setCollapsed(true);
         setRole(userRoles.rider);
     }
 
@@ -40,8 +40,8 @@ function TaskAssignmentsPanel(props) {
             deleting.current = false;
             return;
         }
-        if (assignedRiders.length === 0) setEditMode(true);
-        else setEditMode(false);
+        if (assignedRiders.length === 0) setCollapsed(false);
+        else setCollapsed(true);
     }, [assignedRiders]);
 
     function sortAssignees() {
@@ -74,7 +74,7 @@ function TaskAssignmentsPanel(props) {
 
     useEffect(sortAssignees, [props.task.assignees]);
 
-    const assigneeSelector = editMode ? (
+    const assigneeSelector = !collapsed ? (
         <>
             <TaskAssignees
                 onRemove={(v) => {
@@ -83,6 +83,7 @@ function TaskAssignmentsPanel(props) {
                 }}
                 assignees={task.assignees ? task.assignees : []}
             />
+            <Typography>Assign a user:</Typography>
             <UserRoleSelect
                 value={role}
                 onSelect={(value) => setRole(value)}
@@ -104,7 +105,6 @@ function TaskAssignmentsPanel(props) {
                     exclude={assignedCoordinators.map((u) => u.id)}
                 />
             )}
-            <Button onClick={clearEditMode}>Close</Button>
         </>
     ) : (
         <></>
@@ -113,6 +113,7 @@ function TaskAssignmentsPanel(props) {
     return (
         <Paper sx={{ padding: 1 }}>
             <Stack direction="column" spacing={2}>
+                <Typography>People assigned to this task:</Typography>
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -132,15 +133,12 @@ function TaskAssignmentsPanel(props) {
                             )}
                         </AvatarGroup>
                     </Tooltip>
-                    <EditModeToggleButton
-                        tooltipDefault={"Edit assignees"}
-                        value={editMode}
-                        onChange={(v) => {
-                            setEditMode(v);
-                        }}
-                    />
                 </Stack>
                 {assigneeSelector}
+                <CollapsibleToggle
+                    onClick={() => setCollapsed((prevState) => !prevState)}
+                    value={collapsed}
+                />
             </Stack>
         </Paper>
     );

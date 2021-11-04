@@ -14,6 +14,7 @@ import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Link from "@mui/material/Link";
+import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
 const useStyles = makeStyles({
     root: {
@@ -255,28 +256,10 @@ function LocationDetailAndSelector(props) {
                     </Box>
                 </Stack>
                 <Divider />
-                <Stack
-                    alignItems={"center"}
-                    justifyContent={"flex-start"}
-                    direction={"row"}
-                >
-                    <IconButton
-                        onClick={() => setCollapsed((prevState) => !prevState)}
-                        size="large"
-                    >
-                        <ExpandMoreIcon />
-                    </IconButton>
-                    <Link
-                        href="#"
-                        onClick={(e) => {
-                            setCollapsed((prevState) => !prevState);
-                            e.preventDefault();
-                        }}
-                        color="inherit"
-                    >
-                        {collapsed ? "Expand to see more" : "Show less"}
-                    </Link>
-                </Stack>
+                <CollapsibleToggle
+                    onClick={() => setCollapsed((prevState) => !prevState)}
+                    value={collapsed}
+                />
             </Stack>
         </Box>
     );
