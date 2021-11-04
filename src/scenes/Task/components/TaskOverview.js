@@ -2,16 +2,14 @@ import React from "react";
 import { PropTypes } from "prop-types";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import PickUpDetails from "./PickUpDetails";
-import DropOffDetails from "./DropOffDetails";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
-import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
 import { Stack } from "@mui/material";
+import LocationDetailsPanel from "./LocationDetailsPanel";
 
 const useStyles = makeStyles((theme) => ({
     dialogContent: {
@@ -84,28 +82,24 @@ function TaskOverview(props) {
                 </Grid>
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
-                        <PickUpDetails
-                            taskUUID={taskUUID}
-                            onClearPickUpLocation={props.onClearPickUpLocation}
-                            onChange={props.onChangePickUpLocation}
-                            onSelectPickupPreset={props.onSelectPickUpPreset}
-                            onEditPreset={props.onEditPickUpPreset}
-                            location={task.pickUpLocation}
-                            time={task.timePickedUp}
-                            showContact
-                        />
-                        <DropOffDetails
-                            disableTimeButton={!!!task.timePickedUp}
-                            taskUUID={taskUUID}
-                            onSelectDropOffPreset={props.onSelectDropOffPreset}
-                            onClearDropOffLocation={
-                                props.onClearDropOffLocation
+                        <LocationDetailsPanel
+                            taskId={taskUUID}
+                            locationId={
+                                task.pickUpLocation
+                                    ? task.pickUpLocation.id
+                                    : null
                             }
-                            onEditPreset={props.onEditDropOffPreset}
-                            onChange={props.onChangeDropOffLocation}
-                            location={task.dropOffLocation}
-                            time={task.timeDroppedOff}
-                            showContact
+                            locationKey={"pickUpLocation"}
+                        />
+
+                        <LocationDetailsPanel
+                            taskId={taskUUID}
+                            locationId={
+                                task.dropOffLocation
+                                    ? task.dropOffLocation.id
+                                    : null
+                            }
+                            locationKey={"dropOffLocation"}
                         />
                     </Stack>
                 </Grid>
