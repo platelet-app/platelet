@@ -12,8 +12,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import { showHide, ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Link from "@mui/material/Link";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
 const useStyles = makeStyles({
@@ -241,8 +239,8 @@ function LocationDetailAndSelector(props) {
                                                         [key]: v,
                                                     },
                                                 }));
-                                                props.onChange({
-                                                    contact: { [key]: v },
+                                                props.onChangeContact({
+                                                    [key]: v,
                                                 });
                                             }}
                                             value={state.contact[key]}
@@ -272,6 +270,7 @@ LocationDetailAndSelector.propTypes = {
     className: PropTypes.string,
     displayPresets: PropTypes.bool,
     onChange: PropTypes.func,
+    onChangeContact: PropTypes.func,
     disableClear: PropTypes.bool,
     onClear: PropTypes.func,
     onEditPreset: PropTypes.func,
@@ -285,6 +284,7 @@ LocationDetailAndSelector.defaultProps = {
     location: null,
     onSelectPreset: () => {},
     onChange: () => {},
+    onChangeContact: () => {},
     onClear: () => {},
     onEditPreset: () => {},
     showContact: false,

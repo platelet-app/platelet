@@ -12,6 +12,7 @@ import {
 import * as models from "../../../models/index";
 import { DataStore } from "@aws-amplify/datastore";
 import _ from "lodash";
+import { protectedFields } from "../../../apiConsts";
 
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
@@ -108,10 +109,41 @@ function LocationDetailsPanel(props) {
         }
     }
 
+    async function changeContactDetails(values) {
+        if (!state.contact || !state.contact.id) {
+            displayErrorNotification(errorMessage);
+            console.error("Tried to update a non-existent contact");
+            return;
+        }
+        const existingContact = await DataStore.query(
+            models.AddressAndContactDetails,
+            state.contact.id
+        );
+        if (!existingContact) {
+            displayErrorNotification(errorMessage);
+            console.error(`Location could not be found${state.contact.id}`);
+            return;
+        }
+        const contactResult = await DataStore.save(
+            models.AddressAndContactDetails.copyOf(
+                existingContact,
+                (updated) => {
+                    for (const [key, v] of Object.entries(values)) {
+                        if (!protectedFields.includes(key)) updated[key] = v;
+                    }
+                }
+            )
+        );
+        setState((prevState) => ({
+            ...prevState,
+            contact: contactResult,
+        }));
+    }
+
     async function changeLocationDetails(values) {
-        // display error if some location that doesn't exist is attempted to be created
-        const locationId = state.id;
+        const locationId = state ? state.id : null;
         const key = props.locationKey;
+        // display error if some location that doesn't exist is attempted to be created
         if (!["dropOffLocation", "pickUpLocation"].includes(key)) {
             dispatch(displayErrorNotification(errorMessage));
             console.error(`Trying to edit a bad location: ${key}`);
@@ -119,7 +151,6 @@ function LocationDetailsPanel(props) {
         }
         try {
             //separate any contact details with location details
-            const { contact, ...rest } = values;
             let locationResult;
             let contactResult;
             // if we are updating an existing location
@@ -140,50 +171,23 @@ function LocationDetailsPanel(props) {
                     return;
                 }
                 // if rest is empty, only contact data was sent
-                if (!_.isEmpty(rest) && existingLocation) {
+                if (!_.isEmpty(values) && existingLocation) {
                     // update the location and get the updated version back to locationResult
                     locationResult = await DataStore.save(
                         models.Location.copyOf(existingLocation, (updated) => {
-                            for (const [key, v] of Object.entries(rest)) {
-                                updated[key] = v;
+                            for (const [key, v] of Object.entries(values)) {
+                                if (!protectedFields.includes(key))
+                                    updated[key] = v;
                             }
                         })
-                    );
-                }
-                // if contact is undefined, no contact data was sent
-                if (contact && existingLocation) {
-                    // get the existing contact model
-                    const existingContact = await DataStore.query(
-                        models.AddressAndContactDetails,
-                        existingLocation.contact.id
-                    );
-                    // update the existing contact model and save the final version to contactResult
-                    contactResult = await DataStore.save(
-                        models.AddressAndContactDetails.copyOf(
-                            existingContact,
-                            (updated) => {
-                                for (const [key, v] of Object.entries(
-                                    contact
-                                )) {
-                                    updated[key] = v;
-                                }
-                            }
-                        )
                     );
                 }
             } else {
                 // if no location exists yet
                 // make sure we aren't just sending empty values
                 const result = {};
-                if (!_.isEmpty(rest)) {
-                    for (const [key, value] of Object.entries(rest)) {
-                        if (!!value) {
-                            result[key] = value;
-                        }
-                    }
-                }
-                if (contact) {
-                    for (const [key, value] of Object.entries(contact)) {
+                if (!_.isEmpty(values)) {
+                    for (const [key, value] of Object.entries(values)) {
                         if (!!value) {
                             result[key] = value;
                         }
@@ -193,12 +197,12 @@ function LocationDetailsPanel(props) {
 
                 // create a contact model
                 contactResult = await DataStore.save(
-                    new models.AddressAndContactDetails(contact || {})
+                    new models.AddressAndContactDetails({})
                 );
                 // create a new location and link it to the new contact model
                 locationResult = await DataStore.save(
                     new models.Location({
-                        ...rest,
+                        ...values,
                         contact: contactResult,
                     })
                 );
@@ -218,15 +222,7 @@ function LocationDetailsPanel(props) {
 
             // update local state, but find data from prevState to fill contactResult or locationResult if they are undefined
             setState((prevState) => {
-                if (!contactResult)
-                    contactResult = prevState[key]
-                        ? prevState[key].contact
-                        : null;
-                if (!locationResult) locationResult = prevState[key];
-                return {
-                    ...locationResult,
-                    contact: contactResult,
-                };
+                return { ...prevState, ...locationResult };
             });
         } catch (error) {
             dispatch(displayErrorNotification(errorMessage));
@@ -259,11 +255,12 @@ function LocationDetailsPanel(props) {
                     <LocationDetailAndSelector
                         onSelectPreset={selectPreset}
                         onChange={changeLocationDetails}
+                        onChangeContact={changeContactDetails}
                         onEditPreset={editPreset}
                         onClear={clearLocation}
                         location={state}
                         displayPresets={true}
-                        showContact={true}
+                        showContact={state && state.contact && state.contact.id}
                     />
                 </Grid>
             </Grid>
@@ -273,7 +270,7 @@ function LocationDetailsPanel(props) {
 
 LocationDetailsPanel.propTypes = {
     locationId: PropTypes.string.isRequired,
-    locationKey: PropTypes.string.isRequired,
+    locationKey: PropTypes.oneOf(["pickUpLocation", "dropOffLocation"]),
     taskId: PropTypes.string.isRequired,
 };
 
