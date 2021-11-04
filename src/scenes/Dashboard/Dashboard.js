@@ -62,7 +62,7 @@ function AddClearFab() {
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const addClearFab = !dashboardFilter ? (
         <Fab
-            sx={{ position: "fixed", zIndex: 2000, bottom: 30, right: 30 }}
+            sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
             variant="contained"
             disabled={!dataStoreReadyStatus}
             color="primary"
@@ -72,7 +72,7 @@ function AddClearFab() {
         </Fab>
     ) : (
         <Fab
-            sx={{ position: "fixed", zIndex: 2000, bottom: 30, right: 30 }}
+            sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
             color="primary"
             variant="extended"
             onClick={() => dispatch(clearDashboardFilter())}

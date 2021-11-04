@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
 
 function EditableDeliverable(props) {
     const deliverable = props.deliverable;
-    console.log(deliverable.unit);
     const [showUnit, setShowUnit] = useState(false);
     const classes = useStyles();
     const unitSelect = showUnit ? (
