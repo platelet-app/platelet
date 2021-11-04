@@ -52,11 +52,7 @@ export default function CommentsSideBar(props) {
                 variant="permanent"
                 open
             >
-                <TaskAssignmentsPanel
-                    onSelect={props.onAddAssignee}
-                    onDelete={props.onDeleteAssignment}
-                    task={props.task}
-                />
+                <TaskAssignmentsPanel taskId={props.taskId} />
                 <CommentsSection parentUUID={props.parentUUID} />
             </Drawer>
         </Hidden>

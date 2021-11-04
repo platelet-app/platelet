@@ -9,6 +9,15 @@ import UserRoleSelect from "../../../components/UserRoleSelect";
 import TaskAssignees from "./TaskAssignees";
 import UserAvatar from "../../../components/UserAvatar";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models";
+import {
+    convertListDataToObject,
+    determineTaskStatus,
+} from "../../../utilities";
+import { useDispatch } from "react-redux";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import _ from "lodash";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -17,16 +26,16 @@ export const useStyles = makeStyles(() => ({
 }));
 
 function TaskAssignmentsPanel(props) {
-    const { task } = props;
     const [collapsed, setCollapsed] = useState(true);
-    const [assignedRiders, setAssignedRiders] = useState([]);
-    const [assignedCoordinators, setAssignedCoordinators] = useState([]);
     const [assigneesDisplayString, setAssigneesDisplayString] = useState(null);
     const [role, setRole] = useState(userRoles.rider);
     const deleting = useRef(false);
+    const [state, setState] = useState([]);
+    const dispatch = useDispatch();
+    const errorMessage = "Sorry, an error occurred";
 
     function onSelect(value) {
-        if (value) props.onSelect(value, role);
+        if (value) addAssignee(value, role);
         clearEditMode();
     }
 
@@ -35,53 +44,152 @@ function TaskAssignmentsPanel(props) {
         setRole(userRoles.rider);
     }
 
+    async function getAssignees() {
+        try {
+            const result = (await DataStore.query(models.TaskAssignee)).filter(
+                (assignee) => assignee.task && assignee.task.id === props.taskId
+            );
+            setState(convertListDataToObject(result));
+        } catch (e) {
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+    useEffect(() => {
+        getAssignees();
+    }, [props.taskId]);
+
+    async function addAssignee(user, role) {
+        try {
+            const assignee = await DataStore.query(models.User, user.id);
+            const task = await DataStore.query(models.Task, props.taskId);
+            if (!assignee || !task)
+                throw new Error(
+                    `Can't find assignee or task: ${props.taskId}, userId: ${user.id}`
+                );
+            const result = await DataStore.save(
+                new models.TaskAssignee({
+                    assignee,
+                    task,
+                    role,
+                })
+            );
+            let riderResponsibility;
+            if (role === userRoles.rider) {
+                if (user.riderResponsibility) {
+                    riderResponsibility = await DataStore.query(
+                        models.RiderResponsibility,
+                        user.riderResponsibility.id
+                    );
+                }
+                const taskResult = await DataStore.query(
+                    models.Task,
+                    props.taskId
+                );
+                if (!taskResult) throw new Error("Task doesn't exist");
+                const status = determineTaskStatus({
+                    ...taskResult,
+                    assignees: [result],
+                });
+                await DataStore.save(
+                    models.Task.copyOf(taskResult, (updated) => {
+                        updated.status = status;
+                        if (riderResponsibility)
+                            updated.riderResponsibility = riderResponsibility;
+                    })
+                );
+            }
+            setState({ ...state, [result.id]: result });
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+
+    async function deleteAssignment(assignmentId) {
+        try {
+            if (!assignmentId) throw new Error("Assignment ID not provided");
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
+            if (!existingTask) throw new Error("Task doesn't exist");
+            const existingAssignment = await DataStore.query(
+                models.TaskAssignee,
+                assignmentId
+            );
+            if (
+                existingAssignment &&
+                existingAssignment.role === userRoles.rider
+            ) {
+                let riderResponsibility = null;
+                const riders = Object.values(state).filter(
+                    (a) => a.role === userRoles.rider && a.id !== assignmentId
+                );
+                if (riders.length > 0) {
+                    const rider = riders[riders.length - 1];
+                    if (rider.userRiderResponsibilityId) {
+                        riderResponsibility = await DataStore.query(
+                            models.RiderResponsibility,
+                            rider.userRiderResponsibilityId
+                        );
+                    }
+                }
+                await DataStore.save(
+                    models.Task.copyOf(existingTask, (updated) => {
+                        updated.riderResponsibility = riderResponsibility;
+                    })
+                );
+            }
+            if (existingAssignment) await DataStore.delete(existingAssignment);
+            const status = determineTaskStatus({
+                ...existingTask,
+                assignees: _.omit(state, assignmentId),
+            });
+            await DataStore.save(
+                models.Task.copyOf(existingTask, (updated) => {
+                    updated.status = status;
+                })
+            );
+            setState((prevState) => _.omit(prevState, assignmentId));
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+
     useEffect(() => {
         if (deleting.current) {
             deleting.current = false;
             return;
         }
-        if (assignedRiders.length === 0) setCollapsed(false);
-        else setCollapsed(true);
-    }, [assignedRiders]);
-
-    function sortAssignees() {
         if (
-            props.task.assignees &&
-            Object.values(props.task.assignees).length > 0
-        ) {
-            const riders = Object.values(props.task.assignees)
-                .filter((assignment) => assignment.role === userRoles.rider)
-                .map((a) => a.assignee);
-            setAssignedRiders(riders);
-            const coordinators = Object.values(task.assignees)
-                .filter(
-                    (assignment) => assignment.role === userRoles.coordinator
-                )
-                .map((a) => a.assignee);
+            Object.values(state).filter((a) => a.role === userRoles.rider)
+                .length === 0
+        )
+            setCollapsed(false);
+        else setCollapsed(true);
+    }, [state]);
 
-            setAssignedCoordinators(coordinators);
-            setAssigneesDisplayString(
-                [...coordinators, ...riders]
-                    .map((u) => u.displayName)
-                    .join(", ")
-            );
-        } else {
-            setAssignedCoordinators([]);
-            setAssignedRiders([]);
+    useEffect(() => {
+        if (Object.values(state).length === 0) {
             setAssigneesDisplayString(null);
+        } else {
+            const assigneesDisplayString = Object.values(state)
+                .sort((a, b) => {
+                    return a.role < b.role;
+                })
+                .map((a) => (a.assignee ? a.assignee.displayName : ""))
+                .join(", ");
+            setAssigneesDisplayString(assigneesDisplayString);
         }
-    }
-
-    useEffect(sortAssignees, [props.task.assignees]);
+    }, [state]);
 
     const assigneeSelector = !collapsed ? (
         <>
             <TaskAssignees
                 onRemove={(v) => {
                     deleting.current = true;
-                    props.onDelete(v);
+                    deleteAssignment(v);
                 }}
-                assignees={task.assignees ? task.assignees : []}
+                assignees={state}
             />
             <Typography>Assign a user:</Typography>
             <UserRoleSelect
@@ -97,12 +205,16 @@ function TaskAssignmentsPanel(props) {
             {role === userRoles.rider ? (
                 <RiderPicker
                     onSelect={onSelect}
-                    exclude={assignedRiders.map((u) => u.id)}
+                    exclude={Object.values(state)
+                        .filter((a) => a && a.role === userRoles.rider)
+                        .map((a) => a.assignee.id)}
                 />
             ) : (
                 <CoordinatorPicker
                     onSelect={onSelect}
-                    exclude={assignedCoordinators.map((u) => u.id)}
+                    exclude={Object.values(state)
+                        .filter((a) => a && a.role === userRoles.coordinator)
+                        .map((a) => a.assignee.id)}
                 />
             )}
         </>
@@ -121,16 +233,24 @@ function TaskAssignmentsPanel(props) {
                 >
                     <Tooltip title={assigneesDisplayString}>
                         <AvatarGroup>
-                            {[...assignedCoordinators, ...assignedRiders].map(
-                                (u) => (
-                                    <UserAvatar
-                                        size={4}
-                                        userUUID={u.id}
-                                        displayName={u.displayName}
-                                        avatarURL={u.profilePictureThumbnailURL}
-                                    />
-                                )
-                            )}
+                            {Object.values(state).map((u) => {
+                                const user = u.assignee || null;
+                                if (user) {
+                                    return (
+                                        <UserAvatar
+                                            key={user.id}
+                                            size={4}
+                                            userUUID={user.id}
+                                            displayName={user.displayName}
+                                            avatarURL={
+                                                user.profilePictureThumbnailURL
+                                            }
+                                        />
+                                    );
+                                } else {
+                                    return <></>;
+                                }
+                            })}
                         </AvatarGroup>
                     </Tooltip>
                 </Stack>

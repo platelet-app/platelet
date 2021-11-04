@@ -224,119 +224,6 @@ function TaskDialogCompact(props) {
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
 
-    async function addAssignee(user, role) {
-        try {
-            const assignee = await DataStore.query(models.User, user.id);
-            const task = await DataStore.query(models.Task, taskUUID);
-            if (!assignee || !task)
-                throw new Error(
-                    `Can't find assignee or task: ${taskUUID}, userId: ${user.id}`
-                );
-            const result = await DataStore.save(
-                new models.TaskAssignee({
-                    assignee,
-                    task,
-                    role,
-                })
-            );
-            let riderResponsibility;
-            if (role === userRoles.rider) {
-                if (user.riderResponsibility) {
-                    riderResponsibility = await DataStore.query(
-                        models.RiderResponsibility,
-                        user.riderResponsibility.id
-                    );
-                }
-                const taskResult = await DataStore.query(models.Task, taskUUID);
-                if (!taskResult) throw new Error("Task doesn't exist");
-                const status = determineTaskStatus({
-                    ...taskResult,
-                    assignees: [result],
-                });
-                await DataStore.save(
-                    models.Task.copyOf(taskResult, (updated) => {
-                        updated.status = status;
-                        if (riderResponsibility)
-                            updated.riderResponsibility = riderResponsibility;
-                    })
-                );
-            }
-            if (riderResponsibility) {
-                setState((prevState) => ({
-                    ...prevState,
-                    assignees: { ...prevState.assignees, [result.id]: result },
-                    riderResponsibility,
-                }));
-            } else {
-                setState((prevState) => ({
-                    ...prevState,
-                    assignees: { ...prevState.assignees, [result.id]: result },
-                }));
-            }
-        } catch (error) {
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
-    async function onDeleteAssignment(assignmentId) {
-        try {
-            if (!assignmentId) throw new Error("Assignment ID not provided");
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            const existingAssignment = await DataStore.query(
-                models.TaskAssignee,
-                assignmentId
-            );
-            if (
-                existingAssignment &&
-                existingAssignment.role === userRoles.rider
-            ) {
-                let riderResponsibility = null;
-                const riders = Object.values(state.assignees)
-                    .filter(
-                        (a) =>
-                            a.role === userRoles.rider && a.id !== assignmentId
-                    )
-                    .map((a) => a.assignee);
-                if (riders.length > 0) {
-                    const rider = riders[riders.length - 1];
-                    if (rider.userRiderResponsibilityId) {
-                        riderResponsibility = await DataStore.query(
-                            models.RiderResponsibility,
-                            rider.userRiderResponsibilityId
-                        );
-                    }
-                }
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.riderResponsibility = riderResponsibility;
-                    })
-                );
-                setState((prevState) => ({
-                    ...prevState,
-                    riderResponsibility,
-                }));
-            }
-            if (existingAssignment) await DataStore.delete(existingAssignment);
-            const status = determineTaskStatus({
-                ...state,
-                assignees: _.omit(state.assignees, assignmentId),
-            });
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.status = status;
-                })
-            );
-            setState((prevState) => ({
-                ...prevState,
-                assignees: _.omit(prevState.assignees, assignmentId),
-                status,
-            }));
-        } catch (error) {
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
     async function setTimeOfCall(value) {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
@@ -663,20 +550,14 @@ function TaskDialogCompact(props) {
                 </div>
                 <Hidden mdDown>
                     <CommentsSideBar
-                        onAddAssignee={addAssignee}
-                        onDeleteAssignment={onDeleteAssignment}
-                        task={state}
+                        taskId={taskUUID}
                         width={isMd ? drawerWidthMd : drawerWidth}
                         parentUUID={taskUUID}
                     />
                 </Hidden>
                 <Hidden mdUp>
                     <Stack direction="column" spacing={2}>
-                        <TaskAssignmentsPanel
-                            onSelect={addAssignee}
-                            onDelete={onDeleteAssignment}
-                            task={state}
-                        />
+                        <TaskAssignmentsPanel taskId={taskUUID} />
                         <CommentsSection parentUUID={taskUUID} />
                     </Stack>
                 </Hidden>
