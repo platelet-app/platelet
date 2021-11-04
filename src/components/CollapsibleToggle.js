@@ -1,6 +1,7 @@
 import React from "react";
 import { IconButton, Link, Stack } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import PropTypes from "prop-types";
 
 function CollapsibleToggle(props) {
@@ -11,7 +12,7 @@ function CollapsibleToggle(props) {
             direction={"row"}
         >
             <IconButton onClick={props.onClick} size="large">
-                <ExpandMoreIcon />
+                {props.value ? <ExpandMoreIcon /> : <ExpandLessIcon />}
             </IconButton>
             <Link
                 href="#"
