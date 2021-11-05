@@ -35,31 +35,19 @@ function DeliverableDetails(props) {
                 if (observeResult.opType === "INSERT") {
                     setState((prevState) => ({
                         ...prevState,
-                        deliverables: {
-                            ...prevState.deliverables,
-                            [deliverable.id]: deliverable,
-                        },
+                        [deliverable.id]: deliverable,
                     }));
                 } else if (observeResult.opType === "UPDATE") {
                     setState((prevState) => ({
                         ...prevState,
-                        deliverables: {
-                            ...prevState.deliverables,
-                            [deliverable.id]: {
-                                ...prevState.deliverables[deliverable.id],
-                                ...deliverables,
-                            },
+                        [deliverable.id]: {
+                            ...prevState[deliverable.id],
+                            ...deliverable,
                         },
                     }));
                 }
                 if (observeResult.opType === "DELETE") {
-                    setState((prevState) => ({
-                        ...prevState,
-                        deliverables: _.omit(
-                            prevState.deliverables,
-                            deliverable.id
-                        ),
-                    }));
+                    setState((prevState) => _.omit(prevState, deliverable.id));
                 }
             });
         }
@@ -67,7 +55,10 @@ function DeliverableDetails(props) {
     useEffect(() => {
         getDeliverables();
     }, [props.taskId]);
+
+    // stop observer when component unmounts
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
+
     async function updateDeliverable(value) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved

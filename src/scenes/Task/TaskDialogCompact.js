@@ -125,8 +125,6 @@ function TaskDialogCompact(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(null);
     const [state, setState] = useState(initialState);
-    // taskDeliverablesRef exists to keep track of which deliverables
-    // have been added or removed without resending data to DeliverableGridSelect props by updating state
     const taskRef = useRef();
     taskRef.current = state;
     const taskObserver = useRef({ unsubscribe: () => {} });
