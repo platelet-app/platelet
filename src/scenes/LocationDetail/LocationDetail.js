@@ -12,13 +12,8 @@ import NotFound from "../../ErrorComponents/NotFound";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
-import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import { Divider, Grid, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
-import { TextFieldUncontrolled } from "../../components/TextFields";
-import { EditModeToggleButton } from "../../components/EditModeToggleButton";
-import SaveCancelButtons from "../../components/SaveCancelButtons";
 import LocationProfile from "./components/LocationProfile";
 import { protectedFields } from "../../apiConsts";
 

@@ -11,7 +11,6 @@ export function EditModeToggleButton(props) {
                 aria-controls="simple-menu"
                 aria-haspopup="true"
                 onClick={() => props.onChange(false)}
-                size="large"
             >
                 <EditIcon />
             </IconButton>
@@ -19,10 +18,10 @@ export function EditModeToggleButton(props) {
     ) : (
         <Tooltip title={props.tooltipDefault || "Edit"}>
             <IconButton
+                className={props.className}
                 aria-controls="simple-menu"
                 aria-haspopup="true"
                 onClick={() => props.onChange(true)}
-                size="large"
             >
                 <EditIcon />
             </IconButton>

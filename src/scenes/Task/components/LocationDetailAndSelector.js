@@ -167,7 +167,6 @@ function LocationDetailAndSelector(props) {
                             edge={"end"}
                             disabled={props.disabled}
                             onClick={onClickEditButton}
-                            size="large"
                         >
                             <EditIcon />
                         </IconButton>

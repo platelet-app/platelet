@@ -10,6 +10,11 @@ import { convertListDataToObject } from "../../../utilities";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 import _ from "lodash";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+    button: { height: 30 },
+});
 
 function DeliverableDetails(props) {
     const cardClasses = dialogCardStyles();
@@ -175,6 +180,8 @@ function DeliverableDetails(props) {
             onDelete={deleteDeliverable}
         />
     );
+
+    const classes = useStyles();
     return (
         <Paper className={cardClasses.root}>
             <Stack direction={"column"} justifyContent={"center"} spacing={1}>
@@ -185,6 +192,7 @@ function DeliverableDetails(props) {
                 >
                     <Typography variant={"h6"}>Inventory</Typography>
                     <EditModeToggleButton
+                        className={classes.button}
                         value={!collapsed}
                         onChange={() => setCollapsed((prevState) => !prevState)}
                     />
