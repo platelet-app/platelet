@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Paper, Stack, Tooltip, Typography } from "@mui/material";
+import { Divider, Paper, Stack, Tooltip, Typography } from "@mui/material";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import makeStyles from "@mui/styles/makeStyles";
 import { userRoles } from "../../../apiConsts";
@@ -253,7 +253,10 @@ function TaskAssignmentsPanel(props) {
     return (
         <Paper sx={{ padding: 1 }}>
             <Stack direction="column" spacing={2}>
-                <Typography>People assigned to this task:</Typography>
+                <Typography variant={"h6"}>
+                    People assigned to this task:
+                </Typography>
+                <Divider />
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -285,6 +288,7 @@ function TaskAssignmentsPanel(props) {
                     </Tooltip>
                 </Stack>
                 {assigneeSelector}
+                <Divider />
                 <CollapsibleToggle
                     onClick={() => setCollapsed((prevState) => !prevState)}
                     value={collapsed}
