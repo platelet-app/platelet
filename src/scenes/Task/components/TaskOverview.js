@@ -112,8 +112,6 @@ function TaskOverview(props) {
                                     : []
                             }
                             taskId={taskUUID}
-                            onChange={props.onUpdateDeliverable}
-                            onDelete={props.onDeleteDeliverable}
                         />
                     </Stack>
                 </Grid>
@@ -125,23 +123,15 @@ function TaskOverview(props) {
 TaskOverview.propTypes = {
     task: PropTypes.object,
     taskUUID: PropTypes.string,
-    onUpdateDeliverable: PropTypes.func,
-    onDeleteDeliverable: PropTypes.func,
     onChangeTimeCancelled: PropTypes.func,
     onChangeTimeRejected: PropTypes.func,
     onChangeTimeOfCall: PropTypes.func,
-    onSelectAssignee: PropTypes.func,
-    onDeleteAssignment: PropTypes.func,
 };
 
 TaskOverview.defaultProps = {
-    onUpdateDeliverable: () => {},
-    onDeleteDeliverable: () => {},
     onChangeTimeCancelled: () => {},
     onChangeTimeRejected: () => {},
     onChangeTimeOfCall: () => {},
-    onSelectAssignee: () => {},
-    onDeleteAssignment: () => {},
 };
 
 export default TaskOverview;
