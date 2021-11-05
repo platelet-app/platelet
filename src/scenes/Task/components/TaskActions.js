@@ -59,7 +59,7 @@ function TaskActions(props) {
     return (
         <Paper className={cardClasses.root}>
             <Stack direction={"column"} spacing={1}>
-                <Typography variant={"h6"}> Actions:</Typography>
+                <Typography variant={"h6"}> Actions</Typography>
                 <ToggleButtonGroup
                     value={state}
                     onChange={props.onChange}

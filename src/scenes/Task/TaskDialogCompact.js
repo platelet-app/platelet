@@ -2,11 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    convertListDataToObject,
-    decodeUUID,
-    determineTaskStatus,
-} from "../../utilities";
+import { decodeUUID, determineTaskStatus } from "../../utilities";
 
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { useTheme } from "@mui/material/styles";
@@ -23,11 +19,7 @@ import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import _ from "lodash";
-import { userRoles } from "../../apiConsts";
-import {
-    displayErrorNotification,
-    displayWarningNotification,
-} from "../../redux/notifications/NotificationsActions";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useHistory, useLocation, useParams } from "react-router";
 import TaskAssignmentsPanel from "./components/TaskAssignmentsPanel";
 
@@ -285,82 +277,6 @@ function TaskDialogCompact(props) {
             dispatch(displayErrorNotification(errorMessage));
         }
     }
-    async function editDropOffPreset(currentState) {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            const {
-                createdAt,
-                updatedAt,
-                id,
-                name,
-                contact,
-                _version,
-                _lastChangedAt,
-                _deleted,
-                ...rest
-            } = currentState;
-            const newContact = await DataStore.save(
-                new models.AddressAndContactDetails({ ...contact })
-            );
-            const newLocation = await DataStore.save(
-                new models.Location({
-                    ...rest,
-                    listed: 0,
-                    contact: newContact,
-                    name: `Copy of ${name}`,
-                })
-            );
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.dropOffLocation = newLocation;
-                })
-            );
-            setState((prevState) => ({
-                ...prevState,
-                dropOffLocation: newLocation,
-            }));
-        } catch (error) {
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
-    async function selectDropOffPreset(location) {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            if (!location) throw new Error("Location was not provided");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.dropOffLocation = location;
-                })
-            );
-            setState((prevState) => ({
-                ...prevState,
-                dropOffLocation: location,
-            }));
-        } catch (error) {
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
-    async function clearDropOffLocation() {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.dropOffLocation = null;
-                })
-            );
-            setState((prevState) => ({
-                ...prevState,
-                dropOffLocation: null,
-            }));
-        } catch (error) {
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
 
     const history = useHistory();
     const location = useLocation();
@@ -421,9 +337,6 @@ function TaskDialogCompact(props) {
                         task={state}
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}
-                        onSelectDropOffPreset={selectDropOffPreset}
-                        onEditDropOffPreset={editDropOffPreset}
-                        onClearDropOffLocation={clearDropOffLocation}
                         onChangeTimePickedUp={(value) =>
                             setTimeWithKey(value, "timePickedUp")
                         }

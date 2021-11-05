@@ -254,7 +254,7 @@ function TaskAssignmentsPanel(props) {
         <Paper sx={{ padding: 1 }}>
             <Stack direction="column" spacing={2}>
                 <Typography variant={"h6"}>
-                    People assigned to this task:
+                    People assigned to this task
                 </Typography>
                 <Divider />
                 <Stack
