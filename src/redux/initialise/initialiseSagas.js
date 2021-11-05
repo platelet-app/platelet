@@ -185,7 +185,11 @@ async function populateFakeData() {
             for (const value of Object.values(fakeData.locations)) {
                 const { address, ...rest } = value;
                 const contact = await DataStore.save(
-                    new models.AddressAndContactDetails({ ...address })
+                    new models.AddressAndContactDetails({
+                        telephoneNumber: "01234567890",
+                        emailAddress: "fake@email.com",
+                        name: "Someone Person",
+                    })
                 );
                 await DataStore.save(
                     new models.Location({
