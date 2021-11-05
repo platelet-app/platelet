@@ -1,4 +1,5 @@
 import {
+    Divider,
     Paper,
     Stack,
     ToggleButton,
@@ -58,8 +59,9 @@ function TaskActions(props) {
     useEffect(updateStateFromProps, [props.task]);
     return (
         <Paper className={cardClasses.root}>
-            <Stack direction={"column"} spacing={1}>
+            <Stack direction={"column"} spacing={2}>
                 <Typography variant={"h6"}> Actions</Typography>
+                <Divider />
                 <ToggleButtonGroup
                     value={state}
                     onChange={props.onChange}

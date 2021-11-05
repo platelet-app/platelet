@@ -1,16 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { AppBar, Hidden } from "@mui/material";
+import { AppBar, Hidden, Stack } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
-import { encodeUUID, taskStatusHumanReadable } from "../../../utilities";
+import { taskStatusHumanReadable } from "../../../utilities";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
-import { useSelector } from "react-redux";
 import IconButton from "@mui/material/IconButton";
 import clsx from "clsx";
 
@@ -69,118 +67,37 @@ const dialogComponent = (props) =>
 
 function StatusBar(props) {
     const classes = dialogComponent(props)();
-    const { show, hide } = showHide();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
-    const task = useSelector((state) => state.task.task);
-    const roleView = useSelector((state) => state.roleView);
     const statusHumanReadable = taskStatusHumanReadable(props.status);
-    // don't change container to container item, it breaks the layout for some reason
     return (
         <AppBar
             position={isSm ? "relative" : "sticky"}
             className={classes.root}
         >
-            <Grid
-                className={classes.items}
-                container
+            <Stack
                 direction={"row"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
+                sx={{ paddingTop: 1, width: "50%" }}
             >
-                <Grid item>
-                    <Hidden mdDown>
-                        <Button onClick={props.handleClose}>Close</Button>
-                    </Hidden>
-                    <Hidden smUp>
-                        <IconButton size={"small"} onClick={props.handleClose}>
-                            <ArrowButton size={3} direction={"back"} />
-                        </IconButton>
-                    </Hidden>
-                </Grid>
-                <Grid item>
-                    <Grid
-                        container
-                        direction={"row"}
-                        alignItems={"center"}
-                        justifyContent={"flex-start"}
-                        spacing={2}
-                    >
-                        <Grid item>
-                            <Grid container spacing={1} direction={"row"}>
-                                <Grid item>
-                                    <Typography
-                                        className={clsx(
-                                            classes.italic,
-                                            classes.text
-                                        )}
-                                    >
-                                        Status:
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography className={classes.text}>
-                                        {statusHumanReadable}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item>
-                    <Grid
-                        container
-                        direction={"row"}
-                        alignItems={"center"}
-                        justifyContent={"flex-start"}
-                        spacing={2}
-                    >
-                        <Hidden mdDown>
-                            <Grid item>
-                                <ArrowButton
-                                    linkTo={encodeUUID(
-                                        task.relay_previous_uuid
-                                    )}
-                                    direction={"back"}
-                                    size={3}
-                                    tooltip={"Previous relay"}
-                                    className={
-                                        !!task.relay_previous_uuid &&
-                                        roleView !== "rider"
-                                            ? show
-                                            : hide
-                                    }
-                                />
-                            </Grid>
-                            <Grid item>
-                                <ArrowButton
-                                    linkTo={encodeUUID(
-                                        task.relay_next
-                                            ? task.relay_next.uuid
-                                            : null
-                                    )}
-                                    direction={"forward"}
-                                    size={3}
-                                    tooltip={"Next relay"}
-                                    className={
-                                        !!task.relay_next &&
-                                        roleView !== "rider"
-                                            ? show
-                                            : hide
-                                    }
-                                />
-                            </Grid>
-                        </Hidden>
-                    </Grid>
-                </Grid>
-            </Grid>
+                <Hidden mdDown>
+                    <Button onClick={props.handleClose}>Close</Button>
+                </Hidden>
+                <Hidden smUp>
+                    <IconButton size={"small"} onClick={props.handleClose}>
+                        <ArrowButton size={3} direction={"back"} />
+                    </IconButton>
+                </Hidden>
+                <Typography className={clsx(classes.italic, classes.text)}>
+                    Status: {statusHumanReadable}
+                </Typography>
+            </Stack>
         </AppBar>
     );
 }
 
 StatusBar.propTypes = {
-    assignedCoordinators: PropTypes.array,
-    assignedRiders: PropTypes.array,
     handleClose: PropTypes.func,
     status: PropTypes.string,
     relayNext: PropTypes.string,
@@ -189,9 +106,8 @@ StatusBar.propTypes = {
 };
 
 StatusBar.defaultProps = {
-    assignedCoordinators: [],
-    assignedRiders: [],
     status: null,
+    handleClose: () => {},
 };
 
 export default StatusBar;
