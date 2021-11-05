@@ -1,40 +1,187 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
 import PropTypes from "prop-types";
 import { Divider, Paper, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models";
+import { convertListDataToObject } from "../../../utilities";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import { useDispatch } from "react-redux";
+import _ from "lodash";
 
 function DeliverableDetails(props) {
     const cardClasses = dialogCardStyles();
-    const [collapsed, setCollapsed] = React.useState(true);
+    const [collapsed, setCollapsed] = useState(true);
+    const [state, setState] = useState({});
+    const deliverablesObserver = useRef({ unsubscribe: () => {} });
+    const dispatch = useDispatch();
+    const errorMessage = "Sorry, an error occurred";
+
+    async function getDeliverables() {
+        const deliverables = (await DataStore.query(models.Deliverable)).filter(
+            (d) => d.task && d.task.id === props.taskId
+        );
+        setState(convertListDataToObject(deliverables));
+
+        if (deliverables) {
+            deliverablesObserver.current.unsubscribe();
+            deliverablesObserver.current = DataStore.observe(
+                models.Deliverable,
+                (t) => t.taskDeliverablesId("eq", props.taskId)
+            ).subscribe((observeResult) => {
+                const deliverable = observeResult.element;
+                if (observeResult.opType === "INSERT") {
+                    setState((prevState) => ({
+                        ...prevState,
+                        deliverables: {
+                            ...prevState.deliverables,
+                            [deliverable.id]: deliverable,
+                        },
+                    }));
+                } else if (observeResult.opType === "UPDATE") {
+                    setState((prevState) => ({
+                        ...prevState,
+                        deliverables: {
+                            ...prevState.deliverables,
+                            [deliverable.id]: {
+                                ...prevState.deliverables[deliverable.id],
+                                ...deliverables,
+                            },
+                        },
+                    }));
+                }
+                if (observeResult.opType === "DELETE") {
+                    setState((prevState) => ({
+                        ...prevState,
+                        deliverables: _.omit(
+                            prevState.deliverables,
+                            deliverable.id
+                        ),
+                    }));
+                }
+            });
+        }
+    }
+    useEffect(() => {
+        getDeliverables();
+    }, [props.taskId]);
+    useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
+    async function updateDeliverable(value) {
+        // receive DeliverableType from selector component
+        // check if one of this DeliverableType has already been saved
+        try {
+            const existing = Object.values(state).find(
+                (d) => d.deliverableType.id === value.id
+            );
+            if (existing) {
+                const existingDeliverable = await DataStore.query(
+                    models.Deliverable,
+                    existing.id
+                );
+                if (existingDeliverable) {
+                    const updateDeliverable = await DataStore.save(
+                        models.Deliverable.copyOf(
+                            existingDeliverable,
+                            (updated) => {
+                                for (const [key, v] of Object.entries(value)) {
+                                    updated[key] = v;
+                                }
+                            }
+                        )
+                    );
+                    setState((prevState) => ({
+                        ...prevState,
+                        [existing.id]: updateDeliverable,
+                    }));
+                }
+            } else {
+                const existingTask = await DataStore.query(
+                    models.Task,
+                    props.taskId
+                );
+                if (!existingTask) throw new Error("Task does not exist");
+                const { id, ...rest } = value;
+                const deliverableType = await DataStore.query(
+                    models.DeliverableType,
+                    id
+                );
+                if (!deliverableType)
+                    throw new Error("Deliverable type does not exist");
+                const newDeliverable = await DataStore.save(
+                    new models.Deliverable({
+                        task: existingTask,
+                        deliverableType,
+                        ...rest,
+                    })
+                );
+                // add it to the tracking reference
+                setState((prevState) => ({
+                    ...prevState,
+                    [newDeliverable.id]: newDeliverable,
+                }));
+            }
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+
+    async function deleteDeliverable(deliverableTypeId) {
+        // receive DeliverableTypeId only from selector component
+        // check if one of this DeliverableType has already been saved so we can delete it
+        const existing = Object.values(state).find(
+            (d) => d.deliverableType.id === deliverableTypeId
+        );
+        try {
+            if (existing) {
+                const existingDeliverable = await DataStore.query(
+                    models.Deliverable,
+                    existing.id
+                );
+                if (existingDeliverable)
+                    await DataStore.delete(existingDeliverable);
+                // remove it from the tracking reference
+                setState((prevState) => _.omit(prevState, existing.id));
+            }
+        } catch (error) {
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
 
     const contents = collapsed ? (
-        props.deliverables && props.deliverables.length === 0 ? (
+        state && Object.values(state).length === 0 ? (
             <Typography>No items.</Typography>
         ) : (
-            props.deliverables.map((deliverable) => {
-                const countString = `${deliverable.count} x ${deliverable.unit}`;
-                return (
-                    <Stack direction={"row"} justifyContent={"space-between"}>
-                        <Typography>
-                            {deliverable &&
-                            deliverable.deliverableType &&
-                            deliverable.deliverableType.label
-                                ? deliverable.deliverableType.label
-                                : "Unknown"}
-                        </Typography>
-                        <Typography>{countString}</Typography>
-                    </Stack>
-                );
-            })
+            Object.values(state)
+                .sort(
+                    (a, b) => parseInt(a.orderInGrid) - parseInt(b.orderInGrid)
+                )
+                .map((deliverable) => {
+                    const countString = `${deliverable.count} x ${deliverable.unit}`;
+                    return (
+                        <Stack
+                            direction={"row"}
+                            justifyContent={"space-between"}
+                        >
+                            <Typography>
+                                {deliverable &&
+                                deliverable.deliverableType &&
+                                deliverable.deliverableType.label
+                                    ? deliverable.deliverableType.label
+                                    : "Unknown"}
+                            </Typography>
+                            <Typography>{countString}</Typography>
+                        </Stack>
+                    );
+                })
         )
     ) : (
         <DeliverableGridSelect
-            deliverables={props.deliverables}
-            taskUUID={props.taskUUID}
-            onChange={props.onChange}
-            onDelete={props.onDelete}
+            deliverables={Object.values(state)}
+            taskUUID={props.taskId}
+            onChange={updateDeliverable}
+            onDelete={deleteDeliverable}
         />
     );
     return (

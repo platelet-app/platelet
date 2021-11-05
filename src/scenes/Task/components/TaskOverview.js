@@ -111,7 +111,7 @@ function TaskOverview(props) {
                                     ? Object.values(task.deliverables)
                                     : []
                             }
-                            taskUUID={taskUUID}
+                            taskId={taskUUID}
                             onChange={props.onUpdateDeliverable}
                             onDelete={props.onDeleteDeliverable}
                         />

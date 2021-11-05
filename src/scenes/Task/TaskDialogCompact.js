@@ -127,15 +127,10 @@ function TaskDialogCompact(props) {
     const [state, setState] = useState(initialState);
     // taskDeliverablesRef exists to keep track of which deliverables
     // have been added or removed without resending data to DeliverableGridSelect props by updating state
-    const taskDeliverablesRef = useRef({});
-    taskDeliverablesRef.current = state.deliverables;
     const taskRef = useRef();
     taskRef.current = state;
     const taskObserver = useRef({ unsubscribe: () => {} });
-    const deliverablesObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
-
-    //    const taskUUID = props.taskId;
     let { task_uuid_b62 } = useParams();
     const taskUUID = decodeUUID(task_uuid_b62);
 
@@ -146,14 +141,8 @@ function TaskDialogCompact(props) {
             try {
                 const taskData = await DataStore.query(models.Task, taskUUID);
                 if (taskData) {
-                    const deliverables = (
-                        await DataStore.query(models.Deliverable)
-                    ).filter((d) => d.task && d.task.id === taskUUID);
                     setState({
                         ...taskData,
-                        deliverables: deliverables
-                            ? convertListDataToObject(deliverables)
-                            : {},
                     });
                     taskObserver.current.unsubscribe();
                     taskObserver.current = DataStore.observe(
@@ -192,47 +181,6 @@ function TaskDialogCompact(props) {
                         const task = observeResult.element;
                         setState((prevState) => ({ ...prevState, ...task }));
                     });
-
-                    if (deliverables) {
-                        deliverablesObserver.current.unsubscribe();
-                        deliverablesObserver.current = DataStore.observe(
-                            models.Deliverable,
-                            (t) => t.taskDeliverablesId("eq", taskUUID)
-                        ).subscribe((observeResult) => {
-                            const deliverable = observeResult.element;
-                            if (observeResult.opType === "INSERT") {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    deliverables: {
-                                        ...prevState.deliverables,
-                                        [deliverable.id]: deliverable,
-                                    },
-                                }));
-                            } else if (observeResult.opType === "UPDATE") {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    deliverables: {
-                                        ...prevState.deliverables,
-                                        [deliverable.id]: {
-                                            ...prevState.deliverables[
-                                                deliverable.id
-                                            ],
-                                            ...deliverables,
-                                        },
-                                    },
-                                }));
-                            }
-                            if (observeResult.opType === "DELETE") {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    deliverables: _.omit(
-                                        prevState.deliverables,
-                                        deliverable.id
-                                    ),
-                                }));
-                            }
-                        });
-                    }
                 } else {
                     setNotFound(true);
                 }
@@ -247,7 +195,6 @@ function TaskDialogCompact(props) {
     useEffect(() => getTask(), [dataStoreReadyStatus, props.taskId]);
 
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
-    useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
 
     async function setTimeOfCall(value) {
         try {
@@ -399,31 +346,6 @@ function TaskDialogCompact(props) {
         }
     }
 
-    async function deleteDeliverable(deliverableTypeId) {
-        // receive DeliverableTypeId only from selector component
-        // check if one of this DeliverableType has already been saved so we can delete it
-        const existing = Object.values(taskDeliverablesRef.current).find(
-            (d) => d.deliverableType.id === deliverableTypeId
-        );
-        try {
-            if (existing) {
-                const existingDeliverable = await DataStore.query(
-                    models.Deliverable,
-                    existing.id
-                );
-                if (existingDeliverable)
-                    await DataStore.delete(existingDeliverable);
-                // remove it from the tracking reference
-                taskDeliverablesRef.current = _.omit(
-                    taskDeliverablesRef.current,
-                    existing.id
-                );
-            }
-        } catch (error) {
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
     async function clearDropOffLocation() {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
@@ -442,57 +364,6 @@ function TaskDialogCompact(props) {
         }
     }
 
-    async function updateDeliverables(value) {
-        // receive DeliverableType from selector component
-        // check if one of this DeliverableType has already been saved
-        try {
-            const existing = Object.values(taskDeliverablesRef.current).find(
-                (d) => d.deliverableType.id === value.id
-            );
-            if (existing) {
-                const existingDeliverable = await DataStore.query(
-                    models.Deliverable,
-                    existing.id
-                );
-                if (existingDeliverable) {
-                    await DataStore.save(
-                        models.Deliverable.copyOf(
-                            existingDeliverable,
-                            (updated) => {
-                                for (const [key, v] of Object.entries(value)) {
-                                    updated[key] = v;
-                                }
-                            }
-                        )
-                    );
-                }
-            } else {
-                const existingTask = await DataStore.query(
-                    models.Task,
-                    taskUUID
-                );
-                if (!existingTask) throw new Error("Task does not exist");
-                const { id, ...rest } = value;
-                const deliverableType = await DataStore.query(
-                    models.DeliverableType,
-                    id
-                );
-                if (!deliverableType)
-                    throw new Error("Deliverable type does not exist");
-                const newDeliverable = await DataStore.save(
-                    new models.Deliverable({
-                        task: existingTask,
-                        deliverableType,
-                        ...rest,
-                    })
-                );
-                // add it to the tracking reference
-                taskDeliverablesRef.current[newDeliverable.id] = newDeliverable;
-            }
-        } catch (error) {
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
     const history = useHistory();
     const location = useLocation();
 
@@ -569,8 +440,6 @@ function TaskDialogCompact(props) {
                         }
                         onChangeTimeOfCall={setTimeOfCall}
                         onChangeRequesterContact={updateRequesterContact}
-                        onUpdateDeliverable={updateDeliverables}
-                        onDeleteDeliverable={deleteDeliverable}
                     />
                 </div>
                 <Hidden mdDown>
