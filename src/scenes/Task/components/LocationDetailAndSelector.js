@@ -229,6 +229,7 @@ function LocationDetailAndSelector(props) {
                                     <LabelItemPair label={label}>
                                         <ClickableTextField
                                             label={label}
+                                            tel={key === "telephoneNumber"}
                                             disabled={protectedLocation}
                                             onFinished={(v) => {
                                                 setState((prevState) => ({
