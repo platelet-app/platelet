@@ -28,6 +28,7 @@ import {
 import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
+import GetError from "../../../ErrorComponents/GetError";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -83,6 +84,7 @@ function TasksGridColumn(props) {
     const { show, hide } = showHide();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
+    const [errorState, setErrorState] = useState(false);
     const dispatch = useDispatch();
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const whoami = useSelector(getWhoami);
@@ -104,7 +106,6 @@ function TasksGridColumn(props) {
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
-    const previousRoleView = useRef(null);
 
     useEffect(() => console.log(filteredTasksIds), [filteredTasksIds]);
 
@@ -129,55 +130,63 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
+        setIsFetching(true);
         if (!dataStoreReadyStatus) {
-            setIsFetching(true);
             return;
         } else {
-            const allAssignments = await DataStore.query(models.TaskAssignee);
-            let tasksResult = [];
-            if (roleView === "all") {
-                tasksResult = await DataStore.query(models.Task, (task) =>
-                    task.status("eq", props.taskKey)
+            try {
+                const allAssignments = await DataStore.query(
+                    models.TaskAssignee
                 );
-            } else {
-                const assignments = (
-                    await DataStore.query(models.TaskAssignee, (a) =>
-                        a.role("eq", roleView.toUpperCase())
-                    )
-                ).filter((a) => a.assignee.id === whoami.id);
-                // once DataStore implements lazy loading, get the tasks for assignments instead
-                const taskIds = assignments.map((a) => a.task.id);
-                const tasks = await DataStore.query(models.Task, (t) =>
-                    t.status("eq", props.taskKey)
-                );
-                tasksResult = tasks.filter((t) => taskIds.includes(t.id));
-            }
-            setState(
-                addAssigneesAndConvertToObject(tasksResult, allAssignments)
-            );
-            tasksSubscription.current.unsubscribe();
-            tasksSubscription.current = DataStore.observe(
-                models.Task
-            ).subscribe(async (newTask) => {
-                if (newTask.opType === "UPDATE") {
-                    const replaceTask = await DataStore.query(
-                        models.Task,
-                        newTask.element.id
+                let tasksResult = [];
+                if (roleView === "all") {
+                    tasksResult = await DataStore.query(models.Task, (task) =>
+                        task.status("eq", props.taskKey)
                     );
-                    if (replaceTask.status === props.taskKey) {
-                        const assignees = (
-                            await DataStore.query(models.TaskAssignee)
-                        ).filter((a) => a.task.id === replaceTask.id);
-                        addTaskToState({ ...replaceTask, assignees });
-                    } else {
-                        removeTaskFromState(replaceTask);
-                    }
                 } else {
-                    const task = newTask.element;
-                    if (task.status === props.taskKey) addTaskToState(task);
+                    const assignments = (
+                        await DataStore.query(models.TaskAssignee, (a) =>
+                            a.role("eq", roleView.toUpperCase())
+                        )
+                    ).filter((a) => a.assignee.id === whoami.id);
+                    // once DataStore implements lazy loading, get the tasks for assignments instead
+                    const taskIds = assignments.map((a) => a.task.id);
+                    const tasks = await DataStore.query(models.Task, (t) =>
+                        t.status("eq", props.taskKey)
+                    );
+                    tasksResult = tasks.filter((t) => taskIds.includes(t.id));
                 }
-            });
-            setIsFetching(false);
+                setState(
+                    addAssigneesAndConvertToObject(tasksResult, allAssignments)
+                );
+                tasksSubscription.current.unsubscribe();
+                tasksSubscription.current = DataStore.observe(
+                    models.Task
+                ).subscribe(async (newTask) => {
+                    if (newTask.opType === "UPDATE") {
+                        const replaceTask = await DataStore.query(
+                            models.Task,
+                            newTask.element.id
+                        );
+                        if (replaceTask.status === props.taskKey) {
+                            const assignees = (
+                                await DataStore.query(models.TaskAssignee)
+                            ).filter((a) => a.task.id === replaceTask.id);
+                            addTaskToState({ ...replaceTask, assignees });
+                        } else {
+                            removeTaskFromState(replaceTask);
+                        }
+                    } else {
+                        const task = newTask.element;
+                        if (task.status === props.taskKey) addTaskToState(task);
+                    }
+                });
+                setIsFetching(false);
+            } catch (error) {
+                setErrorState(true);
+                setIsFetching(false);
+                console.error(error);
+            }
         }
     }
 
@@ -222,7 +231,9 @@ function TasksGridColumn(props) {
         setTimeout(() => (animate.current = true), 3000);
     }, [roleView, isFetching]);
 
-    if (isFetching) {
+    if (errorState) {
+        return <GetError />;
+    } else if (isFetching) {
         return (
             <TasksKanbanColumn>
                 <Stack direction="column" spacing={4}>
