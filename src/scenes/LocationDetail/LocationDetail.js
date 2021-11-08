@@ -3,11 +3,6 @@ import CommentsSection from "../Comments/CommentsSection";
 import { decodeUUID } from "../../utilities";
 import { PaddedPaper } from "../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
-import { getLocationRequest } from "../../redux/locations/LocationsActions";
-import {
-    createLoadingSelector,
-    createNotFoundSelector,
-} from "../../redux/LoadingSelectors";
 import NotFound from "../../ErrorComponents/NotFound";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { DataStore } from "aws-amplify";
@@ -39,7 +34,6 @@ export default function LocationDetail(props) {
     const [location, setLocation] = useState(initialLocationState);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
-    const [isPosting, setIsPosting] = useState(false);
 
     async function newLocationProfile() {
         if (!dataStoreReadyStatus) {
@@ -106,11 +100,9 @@ export default function LocationDetail(props) {
                     )
                 );
             }
-            setIsPosting(false);
         } catch (error) {
             console.log("Update request failed", error);
             dispatch(displayErrorNotification(error.message));
-            setIsPosting(false);
         }
     }
 

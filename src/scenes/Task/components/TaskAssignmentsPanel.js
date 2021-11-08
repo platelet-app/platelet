@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Paper, Stack, Tooltip, Typography } from "@mui/material";
+import {
+    Divider,
+    Paper,
+    Skeleton,
+    Stack,
+    Tooltip,
+    Typography,
+} from "@mui/material";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import makeStyles from "@mui/styles/makeStyles";
 import { userRoles } from "../../../apiConsts";
@@ -15,9 +22,11 @@ import {
     convertListDataToObject,
     determineTaskStatus,
 } from "../../../utilities";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import _ from "lodash";
+import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import GetError from "../../../ErrorComponents/GetError";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -49,6 +58,9 @@ function TaskAssignmentsPanel(props) {
     const [collapsed, setCollapsed] = useState(true);
     const [assigneesDisplayString, setAssigneesDisplayString] = useState(null);
     const [role, setRole] = useState(userRoles.rider);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const [isFetching, setIsFetching] = useState(true);
+    const [errorState, setErrorState] = useState(false);
     const deleting = useRef(false);
     const [state, setState] = useState([]);
     const dispatch = useDispatch();
@@ -65,18 +77,23 @@ function TaskAssignmentsPanel(props) {
     }
 
     async function getAssignees() {
+        setIsFetching(true);
+        if (!dataStoreReadyStatus) return;
         try {
             const result = (await DataStore.query(models.TaskAssignee)).filter(
                 (assignee) => assignee.task && assignee.task.id === props.taskId
             );
             setState(convertListDataToObject(result));
+            setIsFetching(false);
         } catch (e) {
-            dispatch(displayErrorNotification(errorMessage));
+            console.error(e);
+            setErrorState(true);
+            setIsFetching(false);
         }
     }
     useEffect(() => {
         getAssignees();
-    }, [props.taskId]);
+    }, [props.taskId, dataStoreReadyStatus]);
 
     async function addAssignee(user, role) {
         try {
@@ -203,99 +220,127 @@ function TaskAssignmentsPanel(props) {
         }
     }, [state]);
 
-    const assigneeSelector = !collapsed ? (
-        <>
-            <TaskAssignees
-                onRemove={(v) => {
-                    deleting.current = true;
-                    deleteAssignment(v);
-                }}
-                assignees={state}
-            />
-            <Typography>Assign a user:</Typography>
-            <UserRoleSelect
-                value={role}
-                onSelect={(value) => setRole(value)}
-                exclude={Object.values(userRoles).filter(
-                    (value) =>
-                        ![userRoles.rider, userRoles.coordinator].includes(
-                            value
-                        )
+    const assigneeSelector =
+        !collapsed && !isFetching ? (
+            <>
+                <TaskAssignees
+                    onRemove={(v) => {
+                        deleting.current = true;
+                        deleteAssignment(v);
+                    }}
+                    assignees={state}
+                />
+                <Typography>Assign a user:</Typography>
+                <UserRoleSelect
+                    value={role}
+                    onSelect={(value) => setRole(value)}
+                    exclude={Object.values(userRoles).filter(
+                        (value) =>
+                            ![userRoles.rider, userRoles.coordinator].includes(
+                                value
+                            )
+                    )}
+                />
+                {role === userRoles.rider ? (
+                    <RiderPicker
+                        onSelect={onSelect}
+                        exclude={Object.values(state)
+                            .filter(
+                                (a) =>
+                                    a &&
+                                    a.assignee &&
+                                    a.role === userRoles.rider
+                            )
+                            .map((a) => a.assignee.id)}
+                    />
+                ) : (
+                    <CoordinatorPicker
+                        onSelect={onSelect}
+                        exclude={Object.values(state)
+                            .filter(
+                                (a) =>
+                                    a &&
+                                    a.assignee &&
+                                    a.role === userRoles.coordinator
+                            )
+                            .map((a) => a.assignee.id)}
+                    />
                 )}
-            />
-            {role === userRoles.rider ? (
-                <RiderPicker
-                    onSelect={onSelect}
-                    exclude={Object.values(state)
-                        .filter(
-                            (a) => a && a.assignee && a.role === userRoles.rider
-                        )
-                        .map((a) => a.assignee.id)}
-                />
-            ) : (
-                <CoordinatorPicker
-                    onSelect={onSelect}
-                    exclude={Object.values(state)
-                        .filter(
-                            (a) =>
-                                a &&
-                                a.assignee &&
-                                a.role === userRoles.coordinator
-                        )
-                        .map((a) => a.assignee.id)}
-                />
-            )}
-        </>
-    ) : (
-        <></>
-    );
+            </>
+        ) : (
+            <></>
+        );
 
-    return (
-        <Paper sx={{ padding: 1 }}>
-            <Stack direction="column" spacing={2}>
-                <Typography variant={"h6"}>
-                    People assigned to this task
-                </Typography>
-                <Divider />
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent={"space-between"}
-                >
-                    <Tooltip title={assigneesDisplayString}>
-                        <AvatarGroup>
-                            {Object.values(state)
-                                .sort(sortByUserRole)
-                                .map((assignment) => {
-                                    if (assignment && assignment.assignee) {
-                                        const user = assignment.assignee;
-                                        return (
-                                            <UserAvatar
-                                                key={user.id}
-                                                size={4}
-                                                userUUID={user.id}
-                                                displayName={user.displayName}
-                                                avatarURL={
-                                                    user.profilePictureThumbnailURL
-                                                }
-                                            />
-                                        );
-                                    } else {
-                                        return <></>;
-                                    }
-                                })}
-                        </AvatarGroup>
-                    </Tooltip>
+    if (errorState) {
+        return <GetError />;
+    } else {
+        return (
+            <Paper sx={{ padding: 1 }}>
+                <Stack direction="column" spacing={2}>
+                    <Typography variant={"h6"}>
+                        People assigned to this task
+                    </Typography>
+                    <Divider />
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent={"space-between"}
+                    >
+                        <Tooltip title={assigneesDisplayString}>
+                            {isFetching ? (
+                                <Skeleton
+                                    variant={"rectangular"}
+                                    width={"100%"}
+                                    height={40}
+                                />
+                            ) : (
+                                <AvatarGroup>
+                                    {Object.values(state)
+                                        .sort(sortByUserRole)
+                                        .map((assignment) => {
+                                            if (
+                                                assignment &&
+                                                assignment.assignee
+                                            ) {
+                                                const user =
+                                                    assignment.assignee;
+                                                return (
+                                                    <UserAvatar
+                                                        key={user.id}
+                                                        size={4}
+                                                        userUUID={user.id}
+                                                        displayName={
+                                                            user.displayName
+                                                        }
+                                                        avatarURL={
+                                                            user.profilePictureThumbnailURL
+                                                        }
+                                                    />
+                                                );
+                                            } else {
+                                                return <></>;
+                                            }
+                                        })}
+                                </AvatarGroup>
+                            )}
+                        </Tooltip>
+                    </Stack>
+                    {assigneeSelector}
+                    <Divider />
+                    {isFetching ? (
+                        <></>
+                    ) : (
+                        <CollapsibleToggle
+                            onClick={() =>
+                                setCollapsed((prevState) => !prevState)
+                            }
+                            value={collapsed}
+                        />
+                    )}
                 </Stack>
-                {assigneeSelector}
-                <Divider />
-                <CollapsibleToggle
-                    onClick={() => setCollapsed((prevState) => !prevState)}
-                    value={collapsed}
-                />
-            </Stack>
-        </Paper>
-    );
+            </Paper>
+        );
+    }
 }
 
 export default TaskAssignmentsPanel;

@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
 import PropTypes from "prop-types";
-import { Divider, Paper, Stack, Typography } from "@mui/material";
+import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { convertListDataToObject } from "../../../utilities";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import { makeStyles } from "@mui/styles";
+import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import GetError from "../../../ErrorComponents/GetError";
 
 const useStyles = makeStyles({
     button: { height: 30 },
@@ -21,45 +23,60 @@ function DeliverableDetails(props) {
     const [collapsed, setCollapsed] = useState(true);
     const [state, setState] = useState({});
     const deliverablesObserver = useRef({ unsubscribe: () => {} });
+    const [isFetching, setIsFetching] = useState(true);
+    const [errorState, setErrorState] = useState(false);
     const dispatch = useDispatch();
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const errorMessage = "Sorry, an error occurred";
 
     async function getDeliverables() {
-        const deliverables = (await DataStore.query(models.Deliverable)).filter(
-            (d) => d.task && d.task.id === props.taskId
-        );
-        setState(convertListDataToObject(deliverables));
+        setIsFetching(true);
+        if (!dataStoreReadyStatus) {
+            return;
+        }
+        try {
+            const deliverables = (
+                await DataStore.query(models.Deliverable)
+            ).filter((d) => d.task && d.task.id === props.taskId);
+            setState(convertListDataToObject(deliverables));
 
-        if (deliverables) {
-            deliverablesObserver.current.unsubscribe();
-            deliverablesObserver.current = DataStore.observe(
-                models.Deliverable,
-                (t) => t.taskDeliverablesId("eq", props.taskId)
-            ).subscribe((observeResult) => {
-                const deliverable = observeResult.element;
-                if (observeResult.opType === "INSERT") {
-                    setState((prevState) => ({
-                        ...prevState,
-                        [deliverable.id]: deliverable,
-                    }));
-                } else if (observeResult.opType === "UPDATE") {
-                    setState((prevState) => ({
-                        ...prevState,
-                        [deliverable.id]: {
-                            ...prevState[deliverable.id],
-                            ...deliverable,
-                        },
-                    }));
-                }
-                if (observeResult.opType === "DELETE") {
-                    setState((prevState) => _.omit(prevState, deliverable.id));
-                }
-            });
+            if (deliverables) {
+                deliverablesObserver.current.unsubscribe();
+                deliverablesObserver.current = DataStore.observe(
+                    models.Deliverable,
+                    (t) => t.taskDeliverablesId("eq", props.taskId)
+                ).subscribe((observeResult) => {
+                    const deliverable = observeResult.element;
+                    if (observeResult.opType === "INSERT") {
+                        setState((prevState) => ({
+                            ...prevState,
+                            [deliverable.id]: deliverable,
+                        }));
+                    } else if (observeResult.opType === "UPDATE") {
+                        setState((prevState) => ({
+                            ...prevState,
+                            [deliverable.id]: {
+                                ...prevState[deliverable.id],
+                                ...deliverable,
+                            },
+                        }));
+                    }
+                    if (observeResult.opType === "DELETE") {
+                        setState((prevState) =>
+                            _.omit(prevState, deliverable.id)
+                        );
+                    }
+                });
+                setIsFetching(false);
+            }
+        } catch (error) {
+            console.error(error);
+            setErrorState(true);
         }
     }
     useEffect(() => {
         getDeliverables();
-    }, [props.taskId]);
+    }, [props.taskId, dataStoreReadyStatus]);
 
     // stop observer when component unmounts
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
@@ -182,26 +199,51 @@ function DeliverableDetails(props) {
     );
 
     const classes = useStyles();
-    return (
-        <Paper className={cardClasses.root}>
-            <Stack direction={"column"} justifyContent={"center"} spacing={1}>
+    if (errorState) {
+        return <GetError />;
+    } else {
+        return (
+            <Paper className={cardClasses.root}>
                 <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
+                    direction={"column"}
+                    justifyContent={"center"}
+                    spacing={1}
                 >
-                    <Typography variant={"h6"}>Inventory</Typography>
-                    <EditModeToggleButton
-                        className={classes.button}
-                        value={!collapsed}
-                        onChange={() => setCollapsed((prevState) => !prevState)}
-                    />
+                    <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                    >
+                        <Typography variant={"h6"}>Inventory</Typography>
+                        <EditModeToggleButton
+                            className={classes.button}
+                            value={!collapsed}
+                            onChange={() =>
+                                setCollapsed((prevState) => !prevState)
+                            }
+                        />
+                    </Stack>
+                    <Divider />
+                    {isFetching ? (
+                        <Stack spacing={1}>
+                            <Skeleton
+                                variant={"rectangular"}
+                                height={30}
+                                width={"100%"}
+                            />
+                            <Skeleton
+                                variant={"rectangular"}
+                                height={30}
+                                width={"100%"}
+                            />
+                        </Stack>
+                    ) : (
+                        contents
+                    )}
                 </Stack>
-                <Divider />
-                {contents}
-            </Stack>
-        </Paper>
-    );
+            </Paper>
+        );
+    }
 }
 
 DeliverableDetails.propTypes = {

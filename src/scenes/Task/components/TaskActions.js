@@ -71,7 +71,9 @@ function TaskActions(props) {
                     {Object.entries(fields).map(([key, value]) => {
                         return (
                             <ToggleButton
-                                disabled={checkDisabled(key)}
+                                disabled={
+                                    props.isFetching || checkDisabled(key)
+                                }
                                 aria-label={key}
                                 value={key}
                                 onClick={() => onChange(key)}
@@ -88,6 +90,7 @@ function TaskActions(props) {
 
 TaskActions.propTypes = {
     task: PropTypes.object,
+    isFetching: PropTypes.bool,
     onChangeTimeRejected: PropTypes.func,
     onChangeTimeCancelled: PropTypes.func,
     onChangeTimePickedUp: PropTypes.func,
@@ -95,6 +98,7 @@ TaskActions.propTypes = {
 };
 
 TaskActions.defaultProps = {
+    isFetching: false,
     onChangeTimeRejected: () => {},
     onChangeTimeCancelled: () => {},
     onChangeTimePickedUp: () => {},

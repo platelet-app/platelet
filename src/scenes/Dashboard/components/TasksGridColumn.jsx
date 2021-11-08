@@ -27,7 +27,6 @@ import {
 } from "../../../redux/Selectors";
 import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import { filterTasks } from "../utilities/functions";
 
 const loaderStyles = makeStyles((theme) => ({

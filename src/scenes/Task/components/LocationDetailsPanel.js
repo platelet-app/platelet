@@ -1,10 +1,9 @@
-import Grid from "@mui/material/Grid";
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Divider, Paper, Typography } from "@mui/material";
+import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     displayErrorNotification,
     displayWarningNotification,
@@ -13,15 +12,25 @@ import * as models from "../../../models/index";
 import { DataStore } from "@aws-amplify/datastore";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
+import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import GetError from "../../../ErrorComponents/GetError";
 
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
     const dispatch = useDispatch();
     const [state, setState] = useState(null);
+    const [errorState, setErrorState] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    console.log(isFetching);
 
     const errorMessage = "Sorry, an error occurred";
 
     async function getLocation() {
+        setIsFetching(true);
+        if (!dataStoreReadyStatus) {
+            return;
+        }
         try {
             if (!props.locationId) {
                 setState(null);
@@ -32,13 +41,14 @@ function LocationDetailsPanel(props) {
                 );
                 setState(location);
             }
+            setIsFetching(false);
         } catch (err) {
-            displayErrorNotification(errorMessage);
+            setErrorState(true);
             console.error(err);
         }
     }
 
-    useEffect(() => getLocation(), [props.locationId]);
+    useEffect(() => getLocation(), [props.locationId, dataStoreReadyStatus]);
 
     async function editPreset(currentState) {
         try {
@@ -219,8 +229,6 @@ function LocationDetailsPanel(props) {
                     })
                 );
             }
-
-            // update local state, but find data from prevState to fill contactResult or locationResult if they are undefined
             setState((prevState) => {
                 return { ...prevState, ...locationResult };
             });
@@ -229,47 +237,46 @@ function LocationDetailsPanel(props) {
         }
     }
 
-    return (
-        <Paper className={classes.root}>
-            <Grid
-                container
-                direction={"column"}
-                justifyContent={"space-between"}
-                spacing={1}
-            >
-                <Grid item>
-                    <Grid
-                        container
-                        direction={"row"}
-                        justifyContent={"space-between"}
-                    >
-                        <Grid item>
-                            <Typography variant={"h6"}>
-                                {props.locationKey === "pickUpLocation"
-                                    ? "Collect from"
-                                    : "Deliver to"}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item>
+    if (errorState) {
+        return <GetError />;
+    } else {
+        return (
+            <Paper className={classes.root}>
+                <Stack
+                    direction={"column"}
+                    justifyContent={"space-between"}
+                    spacing={1}
+                >
+                    <Typography variant={"h6"}>
+                        {props.locationKey === "pickUpLocation"
+                            ? "Collect from"
+                            : "Deliver to"}
+                    </Typography>
                     <Divider />
-                </Grid>
-                <Grid item>
-                    <LocationDetailAndSelector
-                        onSelectPreset={selectPreset}
-                        onChange={changeLocationDetails}
-                        onChangeContact={changeContactDetails}
-                        onEditPreset={editPreset}
-                        onClear={clearLocation}
-                        location={state}
-                        displayPresets={true}
-                        showContact={state && state.contact && state.contact.id}
-                    />
-                </Grid>
-            </Grid>
-        </Paper>
-    );
+                    {isFetching ? (
+                        <Skeleton
+                            variant={"rectangular"}
+                            width={"100%"}
+                            height={130}
+                        />
+                    ) : (
+                        <LocationDetailAndSelector
+                            onSelectPreset={selectPreset}
+                            onChange={changeLocationDetails}
+                            onChangeContact={changeContactDetails}
+                            onEditPreset={editPreset}
+                            onClear={clearLocation}
+                            location={state}
+                            displayPresets={true}
+                            showContact={
+                                state && state.contact && state.contact.id
+                            }
+                        />
+                    )}
+                </Stack>
+            </Paper>
+        );
+    }
 }
 
 LocationDetailsPanel.propTypes = {

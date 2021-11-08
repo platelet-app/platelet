@@ -125,8 +125,9 @@ function TaskDialogCompact(props) {
     const taskUUID = decodeUUID(task_uuid_b62);
 
     async function getTask() {
+        setIsFetching(true);
         if (!dataStoreReadyStatus) {
-            setIsFetching(true);
+            return;
         } else {
             try {
                 const taskData = await DataStore.query(models.Task, taskUUID);
@@ -298,13 +299,7 @@ function TaskDialogCompact(props) {
             />
         );
 
-    if (isFetching) {
-        return (
-            <DialogWrapper handleClose={onClose}>
-                <FormSkeleton />
-            </DialogWrapper>
-        );
-    } else if (notFound) {
+    if (notFound) {
         return (
             <DialogWrapper handleClose={onClose}>
                 {statusBar}
@@ -334,6 +329,7 @@ function TaskDialogCompact(props) {
                 <div className={classes.overview}>
                     {statusBar}
                     <TaskOverview
+                        isFetching={isFetching}
                         task={state}
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}

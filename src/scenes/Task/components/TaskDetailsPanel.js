@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import ClickableTextField from "../../../components/ClickableTextField";
 import TimePicker from "./TimePicker";
-import { Paper } from "@mui/material";
+import { Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import TaskActions from "./TaskActions";
 
@@ -83,11 +83,16 @@ function TaskDetailsPanel(props) {
     function onChangeRequesterContact(value) {
         props.onChangeRequesterContact(value);
     }
-
-    return (
-        <Paper className={cardClasses.root}>
-            <Grid container direction={"column"} spacing={3}>
-                <Grid item>
+    if (props.isFetching) {
+        return (
+            <Paper className={cardClasses.root}>
+                <Skeleton variant="rectangular" width="100%" height={200} />
+            </Paper>
+        );
+    } else {
+        return (
+            <Paper className={cardClasses.root}>
+                <Stack direction={"column"} spacing={1}>
                     <LabelItemPair label={"Reference"}>
                         <Typography>{state.reference}</Typography>
                     </LabelItemPair>
@@ -145,19 +150,21 @@ function TaskDetailsPanel(props) {
                                 : ""}
                         </Typography>
                     </LabelItemPair>
-                </Grid>
-            </Grid>
-        </Paper>
-    );
+                </Stack>
+            </Paper>
+        );
+    }
 }
 
 TaskDetailsPanel.propTypes = {
     task: PropTypes.object,
+    isFetching: PropTypes.bool,
     onSelectPriority: PropTypes.func,
     onChangeRequesterContact: PropTypes.func,
 };
 
 TaskDetailsPanel.defaultProps = {
+    isFetching: false,
     onSelectPriority: () => {},
     onChangeRequesterContact: () => {},
 };

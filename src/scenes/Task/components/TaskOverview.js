@@ -8,7 +8,7 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
-import { Stack } from "@mui/material";
+import { Skeleton, Stack } from "@mui/material";
 import LocationDetailsPanel from "./LocationDetailsPanel";
 
 const useStyles = makeStyles((theme) => ({
@@ -62,6 +62,7 @@ function TaskOverview(props) {
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <TaskDetailsPanel
+                            isFetching={props.isFetching}
                             onSelectPriority={props.onSelectPriority}
                             onChangeTimeOfCall={props.onChangeTimeOfCall}
                             onChangeRequesterContact={
@@ -70,6 +71,7 @@ function TaskOverview(props) {
                             task={task}
                         />
                         <TaskActions
+                            isFetching={props.isFetching}
                             onChangeTimePickedUp={props.onChangeTimePickedUp}
                             onChangeTimeCancelled={props.onChangeTimeCancelled}
                             onChangeTimeDroppedOff={
@@ -122,6 +124,7 @@ function TaskOverview(props) {
 
 TaskOverview.propTypes = {
     task: PropTypes.object,
+    isFetching: PropTypes.bool,
     taskUUID: PropTypes.string,
     onChangeTimeCancelled: PropTypes.func,
     onChangeTimeRejected: PropTypes.func,
@@ -129,6 +132,7 @@ TaskOverview.propTypes = {
 };
 
 TaskOverview.defaultProps = {
+    isFetching: false,
     onChangeTimeCancelled: () => {},
     onChangeTimeRejected: () => {},
     onChangeTimeOfCall: () => {},
