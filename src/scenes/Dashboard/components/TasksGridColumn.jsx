@@ -354,7 +354,7 @@ function TasksGridColumn(props) {
                         <></>
                     )}
                 </Stack>
-                {[
+                {/*[
                     tasksStatus.droppedOff,
                     tasksStatus.cancelled,
                     tasksStatus.rejected,
@@ -362,6 +362,7 @@ function TasksGridColumn(props) {
                     <React.Fragment>
                         <Waypoint
                             onEnter={() => {
+                                return;
                                 if (
                                     (filteredTasksIds &&
                                         filteredTasksIds.length > 0) ||
@@ -375,7 +376,7 @@ function TasksGridColumn(props) {
                     </React.Fragment>
                 ) : (
                     <></>
-                )}
+                )*/}
             </TasksKanbanColumn>
         );
     }
