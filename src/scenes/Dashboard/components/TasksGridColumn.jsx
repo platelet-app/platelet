@@ -14,11 +14,6 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
-import {
-    appendTasksCancelledRequest,
-    appendTasksDeliveredRequest,
-    appendTasksRejectedRequest,
-} from "../../../redux/tasks/TasksWaypointActions";
 import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
 import {
@@ -26,9 +21,10 @@ import {
     getWhoami,
 } from "../../../redux/Selectors";
 import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
-import { DataStore } from "aws-amplify";
+import { DataStore, Predicates } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
+import { tasksStatus } from "../../../apiConsts";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -85,29 +81,16 @@ function TasksGridColumn(props) {
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(false);
-    const dispatch = useDispatch();
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const whoami = useSelector(getWhoami);
-    let selectorsString = "";
-    if (props.taskKey === "tasksDroppedOff")
-        selectorsString = "APPEND_TASKS_DELIVERED";
-    else if (props.taskKey === "tasksCancelled")
-        selectorsString = "APPEND_TASKS_CANCELLED";
-    else if (props.taskKey === "tasksRejected")
-        selectorsString = "APPEND_TASKS_REJECTED";
-    const notFoundSelector = createNotFoundSelector([selectorsString]);
-    const endlessLoadEnd = useSelector((state) => notFoundSelector(state));
-    const isFetchingSelector = createSimpleLoadingSelector([selectorsString]);
+    const [endlessLoadEnd, setEndlessLoadEnd] = useState(false);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
-    const endlessLoadIsFetching = useSelector((state) =>
-        isFetchingSelector(state)
-    );
+    const page = useRef(1);
+    const [endlessLoadIsFetching, setEndlessLoadIsFetching] = useState(false);
     const roleView = useSelector((state) => state.roleView);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
-
-    useEffect(() => console.log(filteredTasksIds), [filteredTasksIds]);
 
     function addTaskToState(newTask) {
         setState((prevState) => ({
@@ -140,9 +123,27 @@ function TasksGridColumn(props) {
                 );
                 let tasksResult = [];
                 if (roleView === "all") {
-                    tasksResult = await DataStore.query(models.Task, (task) =>
-                        task.status("eq", props.taskKey)
-                    );
+                    if (
+                        [
+                            tasksStatus.droppedOff,
+                            tasksStatus.cancelled,
+                            tasksStatus.rejected,
+                        ].includes(props.taskKey)
+                    ) {
+                        tasksResult = await DataStore.query(
+                            models.Task,
+                            (task) => task.status("eq", props.taskKey),
+                            {
+                                page: 0,
+                                limit: 10,
+                            }
+                        );
+                    } else {
+                        tasksResult = await DataStore.query(
+                            models.Task,
+                            (task) => task.status("eq", props.taskKey)
+                        );
+                    }
                 } else {
                     const assignments = (
                         await DataStore.query(models.TaskAssignee, (a) =>
@@ -151,9 +152,28 @@ function TasksGridColumn(props) {
                     ).filter((a) => a.assignee.id === whoami.id);
                     // once DataStore implements lazy loading, get the tasks for assignments instead
                     const taskIds = assignments.map((a) => a.task.id);
-                    const tasks = await DataStore.query(models.Task, (t) =>
-                        t.status("eq", props.taskKey)
-                    );
+                    let tasks;
+                    if (
+                        [
+                            tasksStatus.droppedOff,
+                            tasksStatus.cancelled,
+                            tasksStatus.rejected,
+                        ].includes(props.taskKey)
+                    ) {
+                        tasks = await DataStore.query(
+                            models.Task,
+                            Predicates.ALL,
+                            {
+                                page: 0,
+                                limit: 4,
+                            }
+                        );
+                    } else {
+                        console.log("aww eyeye");
+                        tasks = await DataStore.query(models.Task, (t) =>
+                            t.status("eq", props.taskKey)
+                        );
+                    }
                     tasksResult = tasks.filter((t) => taskIds.includes(t.id));
                 }
                 setState(
@@ -195,22 +215,43 @@ function TasksGridColumn(props) {
         [dataStoreReadyStatus, roleView, props.taskKey]
     );
 
-    const dispatchAppendFunctions = {
-        tasksCancelled:
-            endlessLoadEnd || endlessLoadIsFetching
-                ? () => ({ type: "IGNORE" })
-                : appendTasksCancelledRequest,
-        tasksDroppedOff:
-            endlessLoadEnd || endlessLoadIsFetching
-                ? () => ({ type: "IGNORE" })
-                : appendTasksDeliveredRequest,
-        tasksRejected:
-            endlessLoadEnd || endlessLoadIsFetching
-                ? () => ({ type: "IGNORE" })
-                : appendTasksRejectedRequest,
-    };
-    let appendFunction = () => {};
-    appendFunction = dispatchAppendFunctions[props.taskKey];
+    async function appendTasks() {
+        setEndlessLoadIsFetching(true);
+        try {
+            const tasksResult = await DataStore.query(
+                models.Task,
+                (task) => task.status("eq", props.taskKey),
+                {
+                    page: page.current,
+                    limit: 10,
+                }
+            );
+            if (tasksResult.length === 0) {
+                setEndlessLoadEnd(true);
+            } else {
+                let assignments;
+                if (roleView === "all") {
+                    assignments = await DataStore.query(models.TaskAssignee);
+                } else {
+                    assignments = (
+                        await DataStore.query(models.TaskAssignee, (a) =>
+                            a.role("eq", roleView.toUpperCase())
+                        )
+                    ).filter((a) => a.assignee.id === whoami.id);
+                }
+                const finalResult = addAssigneesAndConvertToObject(
+                    tasksResult,
+                    assignments
+                );
+
+                setState((prevState) => ({ ...finalResult, ...prevState }));
+                page.current++;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+        setEndlessLoadIsFetching(false);
+    }
 
     const header = (
         <Typography className={classes.header}>{props.title}</Typography>
@@ -305,36 +346,32 @@ function TasksGridColumn(props) {
                             </div>
                         );
                     })}
+                    {endlessLoadIsFetching ? (
+                        <div className={loaderClass.root}>
+                            <CircularProgress color="secondary" />
+                        </div>
+                    ) : (
+                        <></>
+                    )}
                 </Stack>
                 {[
-                    "tasksDroppedOff",
-                    "tasksRejected",
-                    "tasksCancelled",
+                    tasksStatus.droppedOff,
+                    tasksStatus.cancelled,
+                    tasksStatus.rejected,
                 ].includes(props.taskKey) ? (
                     <React.Fragment>
                         <Waypoint
                             onEnter={() => {
-                                if (props.showTasks) return;
-                                if (false) {
-                                    dispatch(
-                                        appendFunction(
-                                            whoami.id,
-                                            1,
-                                            roleView,
-                                            props.taskKey,
-                                            null
-                                        )
-                                    );
-                                }
+                                if (
+                                    (filteredTasksIds &&
+                                        filteredTasksIds.length > 0) ||
+                                    endlessLoadIsFetching ||
+                                    endlessLoadEnd
+                                )
+                                    return;
+                                appendTasks();
                             }}
                         />
-                        {endlessLoadIsFetching ? (
-                            <div className={loaderClass.root}>
-                                <CircularProgress color="secondary" />
-                            </div>
-                        ) : (
-                            <></>
-                        )}
                     </React.Fragment>
                 ) : (
                     <></>
