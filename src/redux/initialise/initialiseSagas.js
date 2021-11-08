@@ -287,6 +287,8 @@ async function populateTasks(whoamiId) {
                         i > 1 ? tasksStatus.rejected : tasksStatus.cancelled,
                     priority,
                     timeOfCall,
+                    timeRejected: i > 1 ? new Date().toISOString() : null,
+                    timeCancelled: i > 1 ? null : new Date().toISOString(),
                     pickUpLocation,
                     dropOffLocation,
                     requesterContact,
