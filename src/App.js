@@ -33,7 +33,6 @@ if (
     const config = require("../src/aws-exports");
     Amplify.configure({
         ...config.default,
-        ssr: true,
     });
 }
 Logger.LOG_LEVEL = "ERROR";

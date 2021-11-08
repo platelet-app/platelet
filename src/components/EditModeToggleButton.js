@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 export function EditModeToggleButton(props) {
     return props.value ? (
-        <Tooltip title={props.tooltipEdit || "Cancel"}>
+        <Tooltip title={props.tooltipEdit || "Finish"}>
             <IconButton
                 color="secondary"
                 aria-controls="simple-menu"
