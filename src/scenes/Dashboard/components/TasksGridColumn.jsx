@@ -135,7 +135,7 @@ function TasksGridColumn(props) {
                             (task) => task.status("eq", props.taskKey),
                             {
                                 page: 0,
-                                limit: 10,
+                                limit: 100,
                             }
                         );
                     } else {
@@ -162,14 +162,13 @@ function TasksGridColumn(props) {
                     ) {
                         tasks = await DataStore.query(
                             models.Task,
-                            Predicates.ALL,
+                            (task) => task.status("eq", props.taskKey),
                             {
                                 page: 0,
-                                limit: 4,
+                                limit: 100,
                             }
                         );
                     } else {
-                        console.log("aww eyeye");
                         tasks = await DataStore.query(models.Task, (t) =>
                             t.status("eq", props.taskKey)
                         );
