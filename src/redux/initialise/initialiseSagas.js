@@ -139,7 +139,16 @@ async function populateFakeData() {
                 let { address, dateOfBirth, ...rest } = userToSave;
                 dateOfBirth = new Date().toISOString();
                 const addressContact = await DataStore.save(
-                    new models.AddressAndContactDetails(address)
+                    new models.AddressAndContactDetails({
+                        emailAddress: "fake@email.com",
+                        telephoneNumber: "01234567890",
+                        mobileNumber: "0771234567890",
+                        line1: "1 Fake Street",
+                        line2: "Fake Flat Name",
+                        town: "Fake Town",
+                        county: "Fake County",
+                        postcode: "FA1 1FA",
+                    })
                 );
                 await DataStore.save(
                     new models.User({

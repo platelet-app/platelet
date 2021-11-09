@@ -4,7 +4,6 @@ import _ from "lodash";
 
 import { useDispatch, useSelector } from "react-redux";
 import UserProfile from "./components/UserProfile";
-import Grid from "@mui/material/Grid";
 import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";
@@ -14,6 +13,8 @@ import { DataStore } from "@aws-amplify/datastore";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { protectedFields } from "../../apiConsts";
+import { Stack, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/styles";
 
 const initialUserState = {
     id: "",
@@ -41,15 +42,19 @@ export default function UserDetail(props) {
     const [notFound, setNotFound] = useState(false);
     const [usersDisplayNames, setUsersDisplayNames] = useState([]);
     const dispatch = useDispatch();
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
     async function newUserProfile() {
+        setNotFound(false);
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
         } else {
             try {
-                const user = await DataStore.query(models.User, userUUID);
+                const userResult = await DataStore.query(models.User, userUUID);
+                console.log(userResult);
                 setIsFetching(false);
-                if (user) setUser(user);
+                if (userResult) setUser(userResult);
                 else setNotFound(true);
             } catch (error) {
                 setIsFetching(false);
@@ -86,6 +91,7 @@ export default function UserDetail(props) {
     useEffect(() => getDisplayNames(), []);
 
     async function onUpdate(value) {
+        console.log(value);
         setIsPosting(true);
         try {
             const existingUser = await DataStore.query(models.User, user.id);
@@ -138,7 +144,7 @@ export default function UserDetail(props) {
             }
             setIsPosting(false);
         } catch (error) {
-            console.log("Update request failed", error);
+            console.error("Update request failed", error);
             dispatch(displayErrorNotification(error.message));
             setIsPosting(false);
         }
@@ -149,29 +155,24 @@ export default function UserDetail(props) {
         return <NotFound>User {userUUID} could not be found.</NotFound>;
     } else {
         return (
-            <Grid container direction={"row"} spacing={4}>
-                <Grid item>
-                    <PaddedPaper width={"600px"}>
-                        <UserProfile
-                            displayNames={usersDisplayNames}
-                            user={user}
-                            onUpdate={onUpdate}
-                            isPosting={isPosting}
-                        />
-                    </PaddedPaper>
-                </Grid>
-                <Grid item>
-                    <ProfilePicture
-                        pictureURL={user.profilePictureURL}
-                        userUUID={user.id}
-                        altText={user.displayName}
-                        editable={
-                            user.id === whoami.id ||
-                            whoami.roles.includes("ADMIN")
-                        }
+            <Stack direction={isSm ? "column" : "row"} spacing={1}>
+                <PaddedPaper>
+                    <UserProfile
+                        displayNames={usersDisplayNames}
+                        user={user}
+                        onUpdate={onUpdate}
+                        isPosting={isPosting}
                     />
-                </Grid>
-            </Grid>
+                </PaddedPaper>
+                <ProfilePicture
+                    pictureURL={user.profilePictureURL}
+                    userUUID={user.id}
+                    altText={user.displayName}
+                    editable={
+                        user.id === whoami.id || whoami.roles.includes("ADMIN")
+                    }
+                />
+            </Stack>
         );
     }
 }

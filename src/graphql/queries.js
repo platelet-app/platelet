@@ -704,6 +704,7 @@ export const syncDeliverables = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        taskDeliverablesId
         task {
           id
           name
@@ -755,6 +756,7 @@ export const getDeliverable = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      taskDeliverablesId
       task {
         id
         name
@@ -958,6 +960,7 @@ export const listDeliverables = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        taskDeliverablesId
         task {
           id
           name
@@ -1651,6 +1654,7 @@ export const getTask = /* GraphQL */ `
       deliverables {
         items {
           id
+          taskDeliverablesId
           count
           unit
           orderInGrid

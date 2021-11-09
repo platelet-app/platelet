@@ -841,6 +841,7 @@ export const onCreateDeliverable = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      taskDeliverablesId
       task {
         id
         name
@@ -1039,6 +1040,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      taskDeliverablesId
       task {
         id
         name
@@ -1237,6 +1239,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      taskDeliverablesId
       task {
         id
         name
@@ -1974,6 +1977,7 @@ export const onCreateTask = /* GraphQL */ `
       deliverables {
         items {
           id
+          taskDeliverablesId
           count
           unit
           orderInGrid
@@ -2577,6 +2581,7 @@ export const onUpdateTask = /* GraphQL */ `
       deliverables {
         items {
           id
+          taskDeliverablesId
           count
           unit
           orderInGrid
@@ -3180,6 +3185,7 @@ export const onDeleteTask = /* GraphQL */ `
       deliverables {
         items {
           id
+          taskDeliverablesId
           count
           unit
           orderInGrid
