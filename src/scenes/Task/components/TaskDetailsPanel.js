@@ -10,6 +10,7 @@ import TimePicker from "./TimePicker";
 import { Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import TaskActions from "./TaskActions";
+import Moment from "react-moment";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -58,6 +59,8 @@ function TaskDetailsPanel(props) {
     const [state, setState] = useState({
         reference: null,
         timeOfCall: null,
+        timePickedUp: null,
+        timeDroppedOff: null,
         priority: null,
         riderResponsibility: null,
         id: null,
@@ -148,6 +151,24 @@ function TaskDetailsPanel(props) {
                             {state.riderResponsibility
                                 ? state.riderResponsibility.label
                                 : ""}
+                        </Typography>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Time picked up"}>
+                        <Typography>
+                            {state.timePickedUp ? (
+                                <Moment calendar>{state.timePickedUp}</Moment>
+                            ) : (
+                                ""
+                            )}
+                        </Typography>
+                    </LabelItemPair>
+                    <LabelItemPair label={"Time delivered"}>
+                        <Typography>
+                            {state.timeDroppedOff ? (
+                                <Moment calendar>{state.timeDroppedOff}</Moment>
+                            ) : (
+                                ""
+                            )}
                         </Typography>
                     </LabelItemPair>
                 </Stack>
