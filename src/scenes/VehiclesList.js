@@ -59,7 +59,7 @@ function VehicleList() {
                 {addButton}
                 <PaddedPaper width={"800px"}>
                     <Stack
-                        spacing={3}
+                        spacing={1}
                         direction={"column"}
                         justifyContent={"flex-start"}
                     >

@@ -1,24 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
-import { updateVehicleRequest } from "../../../redux/vehicles/VehiclesActions";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import UsersSelect from "../../../components/UsersSelect";
-import { PaddedPaper } from "../../../styles/common";
 import EditIcon from "@mui/icons-material/Edit";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
+import { Stack, TextField, Typography } from "@mui/material";
 
 const fields = {
     name: "Name",
     manufacturer: "Manufacturer",
     model: "Model",
-    dateOfManufacture: "Manufacture date",
-    dateOfRegistration: "Registration date",
 };
 
 function VehicleProfile(props) {
@@ -72,7 +69,8 @@ function VehicleProfile(props) {
                     setEditMode(!editMode);
                     setState(oldState);
                 }}
-                size="large">
+                size="large"
+            >
                 <EditIcon />
             </IconButton>
         ) : (
@@ -82,7 +80,8 @@ function VehicleProfile(props) {
                 onClick={() => {
                     setEditMode(!editMode);
                 }}
-                size="large">
+                size="large"
+            >
                 <EditIcon />
             </IconButton>
         );
@@ -119,70 +118,54 @@ function VehicleProfile(props) {
         </div>
     );
     return (
-        <Grid
-            container
-            direction={"column"}
-            justifyContent={"flex-start"}
-            alignItems={"flex-start"}
-            spacing={4}
-        >
-            <Grid item>
-                <Grid
-                    container
-                    direction={"column"}
-                    justifyContent={"flex-start"}
-                    spacing={3}
-                >
-                    <Grid item>
-                        <Grid
-                            container
-                            direction={"row"}
-                            justifyContent={"space-between"}
-                            alignItems={"flex-end"}
-                            spacing={3}
-                        >
-                            <Grid item>{header}</Grid>
-                            <Grid item>{editToggle}</Grid>
-                        </Grid>
-                    </Grid>
+        <Stack spacing={3} direction={"column"}>
+            <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                spacing={3}
+            >
+                {header}
+                {editToggle}
+            </Stack>
+            <Divider />
 
-                    {Object.keys(fields).map((key) => {
+            <Stack>
+                {Object.keys(fields).map((key) => {
+                    if (editMode) {
                         return (
-                            <Grid key={key} style={{ width: "50%" }} item>
-                                <TextFieldUncontrolled
-                                    value={state[key]}
-                                    InputProps={{
-                                        readOnly: !editMode,
-                                        disableUnderline: !editMode,
-                                    }}
-                                    fullWidth
-                                    label={fields[key]}
-                                    id={key}
-                                    onChange={(e) => {
-                                        setState({
-                                            ...state,
-                                            [key]: e.target.value,
-                                        });
-                                    }}
-                                />
-                                {divider}
-                            </Grid>
+                            <TextField
+                                key={key}
+                                value={state[key]}
+                                variant={"standard"}
+                                fullWidth
+                                label={fields[key]}
+                                id={key}
+                                onChange={(e) => {
+                                    setState({
+                                        ...state,
+                                        [key]: e.target.value,
+                                    });
+                                }}
+                            />
                         );
-                    })}
+                    } else {
+                        return (
+                            <Stack
+                                direction={"row"}
+                                justifyContent={"space-between"}
+                                key={key}
+                            >
+                                <Typography>{fields[key]}</Typography>
+                                <Typography>{state[key]}</Typography>
+                            </Stack>
+                        );
+                    }
+                })}
+            </Stack>
 
-                    <Grid
-                        container
-                        direction={"row"}
-                        justifyContent={"space-between"}
-                        alignItems={"flex-end"}
-                        spacing={3}
-                    >
-                        <Grid item>{userAssign}</Grid>
-                    </Grid>
-                    <Grid item>{saveButtons}</Grid>
-                </Grid>
-            </Grid>
-        </Grid>
+            {saveButtons}
+        </Stack>
     );
 }
 
