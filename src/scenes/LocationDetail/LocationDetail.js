@@ -113,7 +113,7 @@ export default function LocationDetail(props) {
     } else {
         return (
             <React.Fragment>
-                <PaddedPaper>
+                <PaddedPaper maxWidth={700}>
                     <LocationProfile onUpdate={onUpdate} location={location} />
                 </PaddedPaper>
                 <CommentsSection parentUUID={locationUUID} />
