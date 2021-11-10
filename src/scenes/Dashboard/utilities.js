@@ -41,6 +41,7 @@ export async function addTask(whoamiId) {
             role: userRoles.coordinator,
         })
     );
+    return newTask;
 }
 
 export const getTaskUUIDEtags = (tasks) => {

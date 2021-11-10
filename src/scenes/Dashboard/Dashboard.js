@@ -10,7 +10,11 @@ import {
     DashboardDetailTabs,
     TabPanel,
 } from "./components/DashboardDetailTabs";
-import { getDashboardRoleMode, saveDashboardRoleMode } from "../../utilities";
+import {
+    encodeUUID,
+    getDashboardRoleMode,
+    saveDashboardRoleMode,
+} from "../../utilities";
 import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import { tasksStatus } from "../../apiConsts";
 import { DataStore } from "aws-amplify";
@@ -18,6 +22,7 @@ import _ from "lodash";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
 import { Fab, Hidden } from "@mui/material";
 import { addTask } from "./utilities";
+import { useHistory } from "react-router";
 
 const initialTasksState = {
     tasksNew: {},
@@ -60,13 +65,17 @@ function AddClearFab() {
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const history = useHistory();
     const addClearFab = !dashboardFilter ? (
         <Fab
             sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
             variant="contained"
             disabled={!dataStoreReadyStatus}
             color="primary"
-            onClick={() => addTask(whoami ? whoami.id : null)}
+            onClick={async () => {
+                const newTask = await addTask(whoami ? whoami.id : null);
+                history.push(`/task/${encodeUUID(newTask.id)}`);
+            }}
         >
             <AddIcon />
         </Fab>
