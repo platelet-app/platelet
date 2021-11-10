@@ -287,7 +287,10 @@ async function populateTasks(whoamiId) {
             );
             timeOfCall = generateTimes(timeOfCall, 3).timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({})
+                new models.AddressAndContactDetails({
+                    telephoneNumber: "01234567890",
+                    name: "Someone Person",
+                })
             );
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
@@ -332,7 +335,10 @@ async function populateTasks(whoamiId) {
         for (const i in _.range(10)) {
             timeOfCall = generateTimes(timeOfCall, 3).timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({})
+                new models.AddressAndContactDetails({
+                    telephoneNumber: "01234567890",
+                    name: "Someone Person",
+                })
             );
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);
@@ -388,7 +394,10 @@ async function populateTasks(whoamiId) {
             const times = generateTimes(timeOfCall, 3);
             timeOfCall = times.timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({})
+                new models.AddressAndContactDetails({
+                    telephoneNumber: "01234567890",
+                    name: "Someone Person",
+                })
             );
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);
@@ -445,7 +454,10 @@ async function populateTasks(whoamiId) {
             const times = generateTimes(timeOfCall, 10);
             timeOfCall = times.timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({})
+                new models.AddressAndContactDetails({
+                    telephoneNumber: "01234567890",
+                    name: "Someone Person",
+                })
             );
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);
