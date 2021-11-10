@@ -13,6 +13,7 @@ import _ from "lodash";
 import { makeStyles } from "@mui/styles";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
+import { deliverableUnits } from "../../../apiConsts";
 
 const useStyles = makeStyles({
     button: { height: 30 },
@@ -171,7 +172,12 @@ function DeliverableDetails(props) {
                     (a, b) => parseInt(a.orderInGrid) - parseInt(b.orderInGrid)
                 )
                 .map((deliverable) => {
-                    const countString = `${deliverable.count} x ${deliverable.unit}`;
+                    let countString = "";
+                    if (deliverable.unit === deliverableUnits.none) {
+                        countString = `x ${deliverable.count}`;
+                    } else {
+                        countString = `${deliverable.count} x ${deliverable.unit}`;
+                    }
                     return (
                         <Stack
                             direction={"row"}
