@@ -1,23 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserCard from "../components/UserCard";
-import Grid from "@mui/material/Grid";
-import * as queries from "../graphql/queries";
-import API from "@aws-amplify/api";
-import { TextFieldControlled } from "../components/TextFields";
-import { AddCircleButton } from "../components/Buttons";
-import { addUserRequest } from "../redux/users/UsersActions";
-import UserContextMenu from "../components/ContextMenus/UserContextMenu";
 import { contextDots, PaddedPaper } from "../styles/common";
-import { createPostingSelector } from "../redux/LoadingSelectors";
 import { sortByCreatedTime } from "../utilities";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
 import { Button, Stack } from "@mui/material";
 import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
 import { Link } from "react-router-dom";
-import { DataStore, Hub } from "aws-amplify";
+import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
+import { userRoles } from "../apiConsts";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -50,7 +43,6 @@ function filterUsers(users, search) {
 }
 
 export default function UsersList(props) {
-    const contextClass = contextDots();
     const [users, setUsers] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
@@ -79,7 +71,7 @@ export default function UsersList(props) {
 
     useEffect(() => getUsers(), [dataStoreReadyStatus]);
 
-    const addButton = whoami.roles.includes("ADMIN") ? (
+    const addButton = whoami.roles.includes(userRoles.admin) ? (
         <Button component={Link} to={`/admin/add-user`}>
             Add user
         </Button>
