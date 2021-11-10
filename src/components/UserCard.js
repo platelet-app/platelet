@@ -1,18 +1,18 @@
 import React from "react";
 import { encodeUUID } from "../utilities";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
 import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Box, Stack, styled } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { ThemedLink, showHide } from "../styles/common";
+import { ThemedLink } from "../styles/common";
 
 const UserBox = styled(Box)({
     backgroundColor: "rgba(180, 180, 180, 0.1)",
     paddingLeft: 10,
     width: "100%",
+    maxWidth: 500,
 });
 
 const useStyles = makeStyles((theme) => ({

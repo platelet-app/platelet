@@ -9,7 +9,7 @@ import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
-import { Button } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 
 export default function LocationsList() {
@@ -52,31 +52,27 @@ export default function LocationsList() {
         return <CardsGridSkeleton />;
     } else {
         return (
-            <Grid
-                container
+            <Stack
                 direction={"column"}
                 spacing={3}
                 alignItems={"flex-start"}
                 justifyContent={"center"}
             >
-                <Grid item>{addButton}</Grid>
-                <Grid item>
-                    <PaddedPaper>
-                        <Grid container direction={"row"} spacing={3}>
-                            {Object.values(locations).map((loc) => {
-                                return (
-                                    <Grid item key={loc.id}>
-                                        <LocationCard
-                                            uuid={loc.id}
-                                            name={loc.name}
-                                        />
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                    </PaddedPaper>
-                </Grid>
-            </Grid>
+                {addButton}
+                <PaddedPaper>
+                    <Stack direction={"column"} spacing={3}>
+                        {Object.values(locations).map((loc) => {
+                            return (
+                                <LocationCard
+                                    key={loc.id}
+                                    uuid={loc.id}
+                                    name={loc.name}
+                                />
+                            );
+                        })}
+                    </Stack>
+                </PaddedPaper>
+            </Stack>
         );
     }
 }
