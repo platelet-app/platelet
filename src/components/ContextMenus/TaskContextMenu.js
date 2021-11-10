@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 import Menu from "@mui/material/Menu";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import MenuItem from "@mui/material/MenuItem";
 import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -157,97 +157,89 @@ function TaskContextMenu(props) {
         setState(initialState);
     };
 
-    return <>
-        <IconButton
-            aria-label="more"
-            aria-controls="long-menu"
-            aria-haspopup="true"
-            onClick={handleClick}
-            disabled={isPosting}
-            size="large">
-            <MoreVertIcon className={classes.button} />
-        </IconButton>
-        <Menu
-            keepMounted
-            open={state.mouseY !== null}
-            onClose={handleClose}
-            anchorReference="anchorPosition"
-            anchorPosition={
-                state.mouseY !== null && state.mouseX !== null
-                    ? { top: state.mouseY, left: state.mouseX }
-                    : undefined
-            }
-        >
-            <MenuItem
-                disabled={
-                    task === null ||
-                    !!task.timePickedUp ||
-                    !props.assignedRiders.length > 0 ||
-                    !!task.timeRejected ||
-                    !!task.timeCancelled
-                }
-                onClick={onSelectPickedUp}
+    return (
+        <>
+            <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+                disabled={isPosting}
+                size="large"
             >
-                Mark picked up
-            </MenuItem>
-            <MenuItem
-                disabled={
-                    task === null ||
-                    !!task.timeDroppedOff ||
-                    !!!task.timePickedUp ||
-                    !!task.timeRejected ||
-                    !!task.timeCancelled
+                <MoreVertIcon className={classes.button} />
+            </IconButton>
+            <Menu
+                keepMounted
+                open={state.mouseY !== null}
+                onClose={handleClose}
+                anchorReference="anchorPosition"
+                anchorPosition={
+                    state.mouseY !== null && state.mouseX !== null
+                        ? { top: state.mouseY, left: state.mouseX }
+                        : undefined
                 }
-                onClick={onSelectDroppedOff}
             >
-                Mark delivered
-            </MenuItem>
-            <MenuItem
-                disabled={
-                    task === null ||
-                    !!task.timeRejected ||
-                    !!task.timeCancelled
-                }
-                onClick={onSelectRejected}
-            >
-                Mark rejected
-            </MenuItem>
-            <MenuItem
-                disabled={
-                    task === null ||
-                    !!task.timeCancelled ||
-                    !!task.timeRejected
-                }
-                onClick={onSelectCancelled}
-            >
-                Mark cancelled
-            </MenuItem>
-            <MenuItem
-                disabled={
-                    props.disableRelay ||
-                    task === null ||
-                    !!task.timeCancelled ||
-                    !!task.timeRejected
-                }
-                onClick={addRelay}
-            >
-                Add relay
-            </MenuItem>
-            <MenuItem onClick={copyTaskDataToClipboard}>
-                Save to clipboard
-            </MenuItem>
-            <MenuItem
-                className={
-                    props.disableDeleted
-                        ? deleteButtonClasses.deleteButtonDisabled
-                        : deleteButtonClasses.deleteButton
-                }
-                onClick={onDelete}
-            >
-                Delete
-            </MenuItem>
-        </Menu>
-    </>;
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        !!task.timePickedUp ||
+                        !props.assignedRiders.length > 0 ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
+                    }
+                    onClick={onSelectPickedUp}
+                >
+                    Mark picked up
+                </MenuItem>
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        !!task.timeDroppedOff ||
+                        !!!task.timePickedUp ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
+                    }
+                    onClick={onSelectDroppedOff}
+                >
+                    Mark delivered
+                </MenuItem>
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
+                    }
+                    onClick={onSelectRejected}
+                >
+                    Mark rejected
+                </MenuItem>
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        !!task.timeCancelled ||
+                        !!task.timeRejected
+                    }
+                    onClick={onSelectCancelled}
+                >
+                    Mark cancelled
+                </MenuItem>
+                <MenuItem onClick={copyTaskDataToClipboard}>
+                    Save to clipboard
+                </MenuItem>
+                <MenuItem
+                    className={
+                        props.disableDeleted
+                            ? deleteButtonClasses.deleteButtonDisabled
+                            : deleteButtonClasses.deleteButton
+                    }
+                    onClick={onDelete}
+                >
+                    Delete
+                </MenuItem>
+            </Menu>
+        </>
+    );
 }
 
 TaskContextMenu.propTypes = {
