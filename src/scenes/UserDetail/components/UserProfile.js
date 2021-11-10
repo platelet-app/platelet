@@ -134,6 +134,7 @@ export default function UserProfile(props) {
                         toChange.current = {
                             ...toChange.current,
                             riderResponsibility,
+                            userRiderResponsibilityId: value,
                         };
                         setState((prevState) => ({
                             ...prevState,

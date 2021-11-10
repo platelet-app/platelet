@@ -91,13 +91,12 @@ export default function UserDetail(props) {
     useEffect(() => getDisplayNames(), []);
 
     async function onUpdate(value) {
-        console.log(value);
         setIsPosting(true);
         try {
             const existingUser = await DataStore.query(models.User, user.id);
             const {
                 userRiderResponsibilityId,
-                responsibility,
+                riderResponsibility,
                 contact,
                 ...rest
             } = value;
@@ -141,11 +140,24 @@ export default function UserDetail(props) {
                         }
                     )
                 );
+            } else if (userRiderResponsibilityId === null) {
+                const existingUserResponsibility = await DataStore.query(
+                    models.User,
+                    user.id
+                );
+                await DataStore.save(
+                    models.User.copyOf(
+                        existingUserResponsibility,
+                        (updated) => {
+                            updated.riderResponsibility = null;
+                        }
+                    )
+                );
             }
             setIsPosting(false);
         } catch (error) {
             console.error("Update request failed", error);
-            dispatch(displayErrorNotification(error.message));
+            dispatch(displayErrorNotification("Sorry, an error occurred"));
             setIsPosting(false);
         }
     }
