@@ -168,9 +168,7 @@ export default function UserDetail(props) {
                     pictureURL={user.profilePictureURL}
                     userUUID={user.id}
                     altText={user.displayName}
-                    editable={
-                        user.id === whoami.id || whoami.roles.includes("ADMIN")
-                    }
+                    editable={false}
                 />
             </Stack>
         );
