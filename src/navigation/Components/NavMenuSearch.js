@@ -69,15 +69,6 @@ function NavMenuSearch() {
                 >
                     Locations
                 </MenuItem>
-                <MenuItem
-                    onClick={() => {
-                        setAnchorElDashMenu(null);
-                    }}
-                    component={Link}
-                    to={"/statistics"}
-                >
-                    Statistics
-                </MenuItem>
                 {adminLink}
             </List>
         );
@@ -127,7 +118,8 @@ function NavMenuSearch() {
                                 onClick={(event) => {
                                     setAnchorElDashMenu(event.currentTarget);
                                 }}
-                                size="large">
+                                size="large"
+                            >
                                 <ArrowDropDownIcon />
                             </IconButton>
                             <Menu
