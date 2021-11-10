@@ -167,8 +167,12 @@ export default function UserDetail(props) {
         return <NotFound>User {userUUID} could not be found.</NotFound>;
     } else {
         return (
-            <Stack direction={isSm ? "column" : "row"} spacing={1}>
-                <PaddedPaper>
+            <Stack
+                alignItems={isSm ? "center" : "flex-start"}
+                direction={isSm ? "column" : "row"}
+                spacing={1}
+            >
+                <PaddedPaper maxWidth={700}>
                     <UserProfile
                         displayNames={usersDisplayNames}
                         user={user}
