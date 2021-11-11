@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import makeStyles from "@mui/styles/makeStyles";
-import { userRoles } from "../../../apiConsts";
+import { tasksStatus, userRoles } from "../../../apiConsts";
 import RiderPicker from "../../../components/RiderPicker";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import UserRoleSelect from "../../../components/UserRoleSelect";
@@ -23,7 +23,10 @@ import {
     determineTaskStatus,
 } from "../../../utilities";
 import { useDispatch, useSelector } from "react-redux";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../../redux/notifications/NotificationsActions";
 import _ from "lodash";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
@@ -134,6 +137,12 @@ function TaskAssignmentsPanel(props) {
                             updated.riderResponsibility = riderResponsibility;
                     })
                 );
+                if (
+                    task.status === tasksStatus.new &&
+                    status === tasksStatus.active
+                ) {
+                    dispatch(displayInfoNotification("Task moved to ACTIVE"));
+                }
             }
             setState({ ...state, [result.id]: result });
         } catch (error) {
