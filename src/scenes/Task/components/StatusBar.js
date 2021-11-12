@@ -4,13 +4,24 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { AppBar, Hidden, Stack } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
-import { showHide } from "../../../styles/common";
-import { taskStatusHumanReadable } from "../../../utilities";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import {
+    copyTaskDataToClipboard,
+    taskStatusHumanReadable,
+} from "../../../utilities";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import IconButton from "@mui/material/IconButton";
 import clsx from "clsx";
+import { useDispatch } from "react-redux";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../../redux/notifications/NotificationsActions";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models";
+import Tooltip from "@mui/material/Tooltip";
 
 const colourBarPercent = "90%";
 
@@ -70,6 +81,38 @@ function StatusBar(props) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const statusHumanReadable = taskStatusHumanReadable(props.status);
+    const dispatch = useDispatch();
+
+    async function copyToClipboard(e) {
+        if (!props.taskUUID) {
+            dispatch(displayErrorNotification("Copy failed."));
+            return;
+        }
+        try {
+            const taskResult = await DataStore.query(
+                models.Task,
+                props.taskUUID
+            );
+            if (taskResult) {
+                copyTaskDataToClipboard(taskResult).then(
+                    function () {
+                        dispatch(
+                            displayInfoNotification("Copied to clipboard.")
+                        );
+                        /* clipboard successfully set */
+                    },
+                    function () {
+                        dispatch(displayErrorNotification("Copy failed."));
+                        /* clipboard write failed */
+                    }
+                );
+            } else {
+                dispatch(displayErrorNotification("Copy failed."));
+            }
+        } catch (e) {
+            dispatch(displayErrorNotification("Copy failed."));
+        }
+    }
     return (
         <AppBar
             position={isSm ? "relative" : "sticky"}
@@ -79,7 +122,7 @@ function StatusBar(props) {
                 direction={"row"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                sx={{ paddingTop: 1, width: "50%" }}
+                sx={{ paddingTop: 1, width: "100%" }}
             >
                 <Hidden mdDown>
                     <Button onClick={props.handleClose}>Close</Button>
@@ -92,6 +135,11 @@ function StatusBar(props) {
                 <Typography className={clsx(classes.italic, classes.text)}>
                     Status: {statusHumanReadable}
                 </Typography>
+                <Tooltip title={"Copy to clipboard"}>
+                    <IconButton size={"small"} onClick={copyToClipboard}>
+                        <AssignmentIcon />
+                    </IconButton>
+                </Tooltip>
             </Stack>
         </AppBar>
     );

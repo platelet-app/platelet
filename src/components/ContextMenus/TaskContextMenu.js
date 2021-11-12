@@ -15,6 +15,7 @@ import {
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
+import { copyTaskDataToClipboard } from "../../utilities";
 
 const initialState = {
     mouseX: null,
@@ -44,51 +45,34 @@ function TaskContextMenu(props) {
     ]);
     const isPosting = useSelector((state) => postingSelector(state));
 
-    async function copyTaskDataToClipboard(e) {
+    async function copyToClipboard(e) {
         handleClose(e);
         if (!props.task || !props.task.id) {
             dispatch(displayErrorNotification("Copy failed."));
             return;
         }
-        const taskResult = await DataStore.query(models.Task, props.task.id);
-        if (taskResult) {
-            const { pickUpLocation, priority, dropOffLocation, timeOfCall } =
-                taskResult;
-            const data = {
-                FROM: pickUpLocation
-                    ? `${pickUpLocation.ward || ""} - ${
-                          pickUpLocation.line1 || ""
-                      }`
-                    : undefined,
-                TO: dropOffLocation
-                    ? `${dropOffLocation.ward || ""} - ${
-                          dropOffLocation.line1 || ""
-                      }`
-                    : undefined,
-                PRIORITY: priority || undefined,
-                TOC: timeOfCall
-                    ? moment(timeOfCall).format("HH:mm")
-                    : undefined,
-            };
-
-            let result = "";
-            let first = true;
-            for (const [key, value] of Object.entries(data)) {
-                if (value) result += `${first ? "" : " "}${key}: ${value}`;
-                first = false;
-            }
-
-            navigator.clipboard.writeText(result).then(
-                function () {
-                    dispatch(displayInfoNotification("Copied to clipboard."));
-                    /* clipboard successfully set */
-                },
-                function () {
-                    dispatch(displayErrorNotification("Copy failed."));
-                    /* clipboard write failed */
-                }
+        try {
+            const taskResult = await DataStore.query(
+                models.Task,
+                props.task.id
             );
-        } else {
+            if (taskResult) {
+                copyTaskDataToClipboard(taskResult).then(
+                    function () {
+                        dispatch(
+                            displayInfoNotification("Copied to clipboard.")
+                        );
+                        /* clipboard successfully set */
+                    },
+                    function () {
+                        dispatch(displayErrorNotification("Copy failed."));
+                        /* clipboard write failed */
+                    }
+                );
+            } else {
+                dispatch(displayErrorNotification("Copy failed."));
+            }
+        } catch (e) {
             dispatch(displayErrorNotification("Copy failed."));
         }
     }
@@ -224,9 +208,7 @@ function TaskContextMenu(props) {
                 >
                     Mark cancelled
                 </MenuItem>
-                <MenuItem onClick={copyTaskDataToClipboard}>
-                    Save to clipboard
-                </MenuItem>
+                <MenuItem onClick={copyToClipboard}>Save to clipboard</MenuItem>
                 <MenuItem
                     className={
                         props.disableDeleted

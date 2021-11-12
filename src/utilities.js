@@ -7,6 +7,7 @@ import ChildIcon from "./components/deliverableIcons/ChildIcon";
 import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
 import OtherIcon from "./components/deliverableIcons/OtherIcon";
 import DocumentIcon from "./components/deliverableIcons/DocumentIcon";
+import moment from "moment";
 
 export function convertListDataToObject(list) {
     const result = {};
@@ -15,6 +16,30 @@ export function convertListDataToObject(list) {
     }
     return result;
 }
+
+export function copyTaskDataToClipboard(task) {
+    const { pickUpLocation, priority, dropOffLocation, timeOfCall } = task;
+    const data = {
+        FROM: pickUpLocation
+            ? `${pickUpLocation.ward || ""} - ${pickUpLocation.line1 || ""}`
+            : undefined,
+        TO: dropOffLocation
+            ? `${dropOffLocation.ward || ""} - ${dropOffLocation.line1 || ""}`
+            : undefined,
+        PRIORITY: priority || undefined,
+        TOC: timeOfCall ? moment(timeOfCall).format("HH:mm") : undefined,
+    };
+
+    let result = "";
+    let first = true;
+    for (const [key, value] of Object.entries(data)) {
+        if (value) result += `${first ? "" : " "}${key}: ${value}`;
+        first = false;
+    }
+
+    return navigator.clipboard.writeText(result);
+}
+
 export function getDeliverableIconByEnum(deliverableType, size) {
     switch (deliverableType) {
         case deliverableIcons.bug:
@@ -96,6 +121,18 @@ export function sortByCreatedTime(items, order = "newest") {
     else
         return items.sort((a, b) => {
             return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+}
+
+export function sortByTimeOfCall(items, order = "newest") {
+    if (!items || items.length === 0) return [];
+    if (order !== "newest")
+        return items.sort((a, b) => {
+            return new Date(a.timeOfCall) - new Date(b.timeOfCall);
+        });
+    else
+        return items.sort((a, b) => {
+            return new Date(b.timeOfCall) - new Date(a.timeOfCall);
         });
 }
 
