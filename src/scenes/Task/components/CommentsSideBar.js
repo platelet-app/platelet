@@ -1,5 +1,5 @@
 import React from "react";
-import { Drawer, Hidden, useTheme } from "@mui/material";
+import { Divider, Drawer, Hidden, Stack, useTheme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useState } from "react";
 import CommentsSection from "../../Comments/CommentsSection";
@@ -52,8 +52,11 @@ export default function CommentsSideBar(props) {
                 variant="permanent"
                 open
             >
-                <TaskAssignmentsPanel taskId={props.taskId} />
-                <CommentsSection parentUUID={props.parentUUID} />
+                <Stack direction={"column"} spacing={2}>
+                    <TaskAssignmentsPanel taskId={props.taskId} />
+                    <Divider />
+                    <CommentsSection parentUUID={props.parentUUID} />
+                </Stack>
             </Drawer>
         </Hidden>
     );
