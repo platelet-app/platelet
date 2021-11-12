@@ -85,7 +85,6 @@ function RiderPicker(props) {
                                 profilePictureURL={
                                     option.profilePictureThumbnailURL
                                 }
-                                vehicleName={"no"}
                             />
                         </Box>
                     );
