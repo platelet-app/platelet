@@ -113,7 +113,7 @@ function Dashboard() {
                 </DashboardDetailTabs>
             </Paper>
             <Hidden smUp>
-                {roleView.toUpperCase() === userRoles.rider ? (
+                {roleView && roleView === userRoles.rider.toLowerCase() ? (
                     <></>
                 ) : (
                     <AddClearFab />

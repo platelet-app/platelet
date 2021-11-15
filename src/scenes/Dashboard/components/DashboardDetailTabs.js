@@ -117,7 +117,7 @@ export function DashboardDetailTabs(props) {
             color="primary"
             disabled={
                 !dataStoreReadyStatus ||
-                userRoles.rider.toLowerCase() === roleView
+                (roleView && roleView === userRoles.rider.toLowerCase())
             }
             onClick={() => addTask(whoami ? whoami.id : null)}
         >
