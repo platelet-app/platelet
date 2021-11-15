@@ -1,5 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
+import { Scrollbars } from 'react-custom-scrollbars';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -156,6 +157,11 @@ export const EnhancedTable = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
+      <Scrollbars 
+        autoHide 
+        autoHeight
+        autoHeightMin={450}
+        autoHeightMax={350}>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -201,6 +207,7 @@ export const EnhancedTable = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+        </Scrollbars>
       </Paper>
     </Box>
   );

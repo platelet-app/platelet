@@ -7,8 +7,8 @@ import { encodeUUID } from "../../../utilities";
 
 const useStyles = makeStyles({
     root: {
-        maxWidth: "350px",
-        marginBottom: "50px",
+        width: "100%",
+        marginBottom: "30px",
     },
     button: {
         height: 9,
@@ -18,6 +18,9 @@ const useStyles = makeStyles({
     },
     separator: {
         height: 10,
+    },
+    selectDropdown: {
+        width: "100%",
     },
 });
 
@@ -41,7 +44,7 @@ export const LocationDropdownSelector = (props) => {
                 alignItems={"center"}
                 direction={"row"}
             >
-                <Grid item>
+                <Grid item className={classes.selectDropdown}>
                     <FavouriteLocationsSelect
                         label={props.label}
                         onSelect={(value) => props.onSelectLocation(value)}

@@ -32,7 +32,7 @@ function FavouriteLocationsSelect(props) {
             filterOptions={filterOptions}
             options={availableLocations}
             getOptionLabel={(option) => option.name}
-            size={"small"}
+            size={"medium"}
             renderInput={(params) => (
                 <TextField
                     {...params}

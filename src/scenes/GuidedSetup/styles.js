@@ -19,5 +19,10 @@ export const Styles = makeStyles(({
     },
     block: {
         marginBottom: "60px",
+    },
+    flexWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
     }
 }));

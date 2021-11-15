@@ -25,7 +25,8 @@ const initialState = {
 
 const useStyles = makeStyles({
     root: {
-        maxWidth: "350px",
+        width: "100%",
+        padding: "0 5px 30px 5px",
     },
     button: {
         height: 9,

@@ -63,6 +63,9 @@ const guidedSetupStyles = makeStyles((theme) => ({
     flexDirection: "column",
     height: "100%"
   },
+  appBar: {
+    boxShadow: "none",
+  },
   tabs: {
     "& .MuiTabs-flexContainer": {
       justifyContent: "space-around"
@@ -74,8 +77,12 @@ const guidedSetupStyles = makeStyles((theme) => ({
       justifyContent: "flex-start",
       height: "100%",
     },
+    display: "grid",
+    justifyItems: "center",
+    alignItems: "self-start",
+    gridTemplateRows: "45px 1fr",
     color: "black",
-    minWidth: "110px",
+    minWidth: "80px",
     borderBottom: "solid rgba(0, 0, 0, 0.55) 5px",
   },
   indicator: {
@@ -91,11 +98,12 @@ const guidedSetupStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
   btn: {
-    height: "60px",
-    width: "250px",
     position: "absolute",
-    right: "0",
-    bottom: "5%",
+    height: "60px",
+    width: "220px",
+    right: "25px",
+    bottom: "8%",
+    border: "1px solid #1976d2",
   }
 }));
 
@@ -250,7 +258,7 @@ export const GuidedSetup = ({ show, onClose }) => {
   return (
     <div className={classes.wrapper} open={show} onClose={onCloseForm} >
         <div className={classes.tabContent}>
-          <AppBar position="static">
+          <AppBar position="static" className={classes.appBar}>
               <Tabs 
                 value={value} 
                 onChange={handleChange} 
