@@ -98,11 +98,9 @@ const guidedSetupStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
   btn: {
-    position: "absolute",
-    height: "60px",
+    alignSelf: "end",
+    height: "50px",
     width: "220px",
-    right: "25px",
-    bottom: "8%",
     border: "1px solid #1976d2",
   }
 }));

@@ -20,6 +20,8 @@ import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
 import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";
 import AdminAddDeliverableType from "../scenes/AdminControl/Components/AdminAddDeliverableType";
 import AdminAddRiderResponsibility from "../scenes/AdminControl/Components/AdminAddRiderResponsibility";
+import { CoordinatorSetup } from '../scenes/CoordinatorSetup/CoordinatorSetup'
+
 
 function MainWindowContainer(props) {
     const styles = makeStyles((theme) => ({
@@ -164,6 +166,14 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("dashboard"));
                             return <Dashboard {...props} />;
+                        }}
+                    />
+                     <Route
+                        exact
+                        path="/coordinator_setup"
+                        render={(props) => {
+                            dispatch(setMenuIndex("dashboard"));
+                            return <CoordinatorSetup {...props} />;
                         }}
                     />
                     <Route component={NotFound} />

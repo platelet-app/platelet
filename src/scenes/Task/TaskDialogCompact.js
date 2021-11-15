@@ -141,7 +141,6 @@ function TaskDialogCompact(props) {
                     const deliverables = (
                         await DataStore.query(models.Deliverable)
                     ).filter((d) => d.task.id === taskUUID);
-                    debugger;
                     const assignees = (
                         await DataStore.query(models.TaskAssignee)
                     ).filter((a) => a.task.id === taskUUID);

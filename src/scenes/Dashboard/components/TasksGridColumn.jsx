@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import Grid from "@mui/material/Grid";
 import TaskItem from "./TaskItem";
+import { Link } from "react-router-dom";
 import { dashboardQuery } from "../queries/tasksGridQuery";
 import {
     createNotFoundSelector,
@@ -118,21 +119,29 @@ function TasksGridColumn(props) {
         !props.hideAddButton &&
         props.showTasks === null ? (
             <React.Fragment>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={props.disableAddButton}
-                    onClick={props.onAddTaskClick}
-                    className={
-                        props.taskKey === "tasksNew" &&
-                        !props.hideAddButton &&
-                        props.showTasks === null
-                            ? show
-                            : hide
-                    }
+                <Link
+                    style={{ textDecoration: "none" }}
+                    key={props.taskUUID}
+                    to={{
+                        pathname: `/coordinator_setup`,
+                    }}
                 >
-                    Create New
-                </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={props.disableAddButton}
+                        onClick={props.onAddTaskClick}
+                        className={
+                            props.taskKey === "tasksNew" &&
+                            !props.hideAddButton &&
+                            props.showTasks === null
+                                ? show
+                                : hide
+                        }
+                    >
+                        Create New
+                    </Button>
+                </Link>
             </React.Fragment>
         ) : props.showTasks !== null && props.taskKey === "tasksNew" ? (
             <Button

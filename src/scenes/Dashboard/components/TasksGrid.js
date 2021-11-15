@@ -169,7 +169,6 @@ TaskGroup.propTypes = {
 function TasksGrid(props) {
     const classes = useStyles();
     const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
-    const [showGuidedSetup, setShowGuidedSetup] = useState(false);
 
     const dispatch = useDispatch();
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
@@ -214,10 +213,7 @@ function TasksGrid(props) {
                             <TasksGridColumn
                                 title={title}
                                 classes={classes}
-                                onAddTaskClick={() => {
-                                    props.onAddTaskClick()
-                                    setShowGuidedSetup(true)
-                                }}
+                                onAddTaskClick={() => props.onAddTaskClick()}
                                 onAddRelayClick={addRelay}
                                 deleteDisabled
                                 taskKey={taskKey}
@@ -229,7 +225,6 @@ function TasksGrid(props) {
                     );
                 })}
             </Grid>
-            {showGuidedSetup && <CoordinatorSetup onClose={() => setShowGuidedSetup(false)}/> }
         </>
     );
 }
