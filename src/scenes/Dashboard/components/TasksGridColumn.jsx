@@ -2,11 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
-import {
-    createNotFoundSelector,
-    createSimpleLoadingSelector,
-} from "../../../redux/LoadingSelectors";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
 import { Waypoint } from "react-waypoint";
 import Tooltip from "@mui/material/Tooltip";
@@ -21,7 +17,7 @@ import {
     getWhoami,
 } from "../../../redux/Selectors";
 import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
-import { DataStore, Predicates } from "aws-amplify";
+import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
 import { tasksStatus } from "../../../apiConsts";
@@ -349,6 +345,7 @@ function TasksGridColumn(props) {
                 {header}
                 <Stack
                     direction={"column"}
+                    id={`tasks-kanban-column-${props.taskKey}`}
                     spacing={4}
                     alignItems={"center"}
                     justifyContent={"flex-start"}

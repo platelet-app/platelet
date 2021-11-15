@@ -3,8 +3,6 @@ import StatusBar from "./components/StatusBar";
 import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { decodeUUID, determineTaskStatus } from "../../utilities";
-
-import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import useMediaQuery from "@mui/material/useMediaQuery";

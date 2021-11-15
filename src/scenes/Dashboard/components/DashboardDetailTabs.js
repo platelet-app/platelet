@@ -115,6 +115,7 @@ export function DashboardDetailTabs(props) {
         <Button
             variant="contained"
             color="primary"
+            id="create-task-button"
             disabled={
                 !dataStoreReadyStatus ||
                 (roleView && roleView === userRoles.rider.toLowerCase())
