@@ -78,6 +78,16 @@ function TaskDetailsPanel(props) {
             props.onChangeTimeOfCall(value);
         }
     }
+    function onChangeTimeDroppedOff(value) {
+        if (value) {
+            props.onChangeTimeDroppedOff(value);
+        }
+    }
+    function onChangeTimePickedUp(value) {
+        if (value) {
+            props.onChangeTimePickedUp(value);
+        }
+    }
 
     function onSelectPriority(priority) {
         props.onSelectPriority(priority);
@@ -103,7 +113,6 @@ function TaskDetailsPanel(props) {
                         <TimePicker
                             onChange={onChangeTimeOfCall}
                             disableClear={true}
-                            label={"Time of call"}
                             time={state.timeOfCall}
                         />
                     </LabelItemPair>
@@ -154,22 +163,18 @@ function TaskDetailsPanel(props) {
                         </Typography>
                     </LabelItemPair>
                     <LabelItemPair label={"Time picked up"}>
-                        <Typography>
-                            {state.timePickedUp ? (
-                                <Moment calendar>{state.timePickedUp}</Moment>
-                            ) : (
-                                ""
-                            )}
-                        </Typography>
+                        <TimePicker
+                            onChange={onChangeTimePickedUp}
+                            disableClear
+                            time={state.timePickedUp}
+                        />
                     </LabelItemPair>
                     <LabelItemPair label={"Time delivered"}>
-                        <Typography>
-                            {state.timeDroppedOff ? (
-                                <Moment calendar>{state.timeDroppedOff}</Moment>
-                            ) : (
-                                ""
-                            )}
-                        </Typography>
+                        <TimePicker
+                            disableClear
+                            onChange={onChangeTimeDroppedOff}
+                            time={state.timeDroppedOff}
+                        />
                     </LabelItemPair>
                 </Stack>
             </Paper>

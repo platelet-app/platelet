@@ -65,6 +65,10 @@ function TaskOverview(props) {
                             isFetching={props.isFetching}
                             onSelectPriority={props.onSelectPriority}
                             onChangeTimeOfCall={props.onChangeTimeOfCall}
+                            onChangeTimeDroppedOff={
+                                props.onChangeTimeDroppedOff
+                            }
+                            onChangeTimePickedUp={props.onChangeTimePickedUp}
                             onChangeRequesterContact={
                                 props.onChangeRequesterContact
                             }
