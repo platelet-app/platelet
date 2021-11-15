@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../App.css";
 import AddIcon from "@mui/icons-material/Add";
-import * as models from "../../models/index";
 import Paper from "@mui/material/Paper";
 import { setRoleView } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
@@ -16,49 +15,11 @@ import {
     saveDashboardRoleMode,
 } from "../../utilities";
 import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
-import { tasksStatus } from "../../apiConsts";
-import { DataStore } from "aws-amplify";
-import _ from "lodash";
+import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
 import { Fab, Hidden } from "@mui/material";
 import { addTask } from "./utilities";
 import { useHistory } from "react-router";
-
-const initialTasksState = {
-    tasksNew: {},
-    tasksActive: {},
-    tasksPickedUp: {},
-    tasksDroppedOff: {},
-    tasksRejected: {},
-    tasksCancelled: {},
-};
-function findTask(tasks, taskId) {
-    if (!tasks || !taskId) return { task: undefined, key: undefined };
-    for (const taskKey of Object.keys(initialTasksState)) {
-        if (tasks[taskKey][taskId])
-            return { task: tasks[taskKey][taskId], key: taskKey };
-    }
-    return { task: undefined, key: undefined };
-}
-
-function getKeyFromEnum(value) {
-    switch (value) {
-        case tasksStatus.new:
-            return "tasksNew";
-        case tasksStatus.active:
-            return "tasksActive";
-        case tasksStatus.pickedUp:
-            return "tasksPickedUp";
-        case tasksStatus.droppedOff:
-            return "tasksDroppedOff";
-        case tasksStatus.cancelled:
-            return "tasksCancelled";
-        case tasksStatus.rejected:
-            return "tasksRejected";
-        default:
-            return "";
-    }
-}
 
 function AddClearFab() {
     const dispatch = useDispatch();
@@ -152,7 +113,11 @@ function Dashboard() {
                 </DashboardDetailTabs>
             </Paper>
             <Hidden smUp>
-                <AddClearFab />
+                {roleView.toUpperCase() === userRoles.rider ? (
+                    <></>
+                ) : (
+                    <AddClearFab />
+                )}
             </Hidden>
         </>
     );

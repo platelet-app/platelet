@@ -17,7 +17,7 @@ import Typography from "@mui/material/Typography";
 import { showHide } from "../../../styles/common";
 import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Button, Divider, Fab, Hidden } from "@mui/material";
+import { Button, Divider, Hidden } from "@mui/material";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import CallIcon from "@mui/icons-material/Call";
 import { useTheme, useMediaQuery } from "@mui/material";
@@ -115,7 +115,10 @@ export function DashboardDetailTabs(props) {
         <Button
             variant="contained"
             color="primary"
-            disabled={!dataStoreReadyStatus}
+            disabled={
+                !dataStoreReadyStatus ||
+                userRoles.rider.toLowerCase() === roleView
+            }
             onClick={() => addTask(whoami ? whoami.id : null)}
         >
             Create New
