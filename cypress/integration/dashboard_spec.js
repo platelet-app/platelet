@@ -14,5 +14,6 @@ describe("create a new task and open it", () => {
         cy.visit("/");
         cy.get("#create-task-button").click();
         cy.get("#tasks-kanban-column-NEW").first().click();
+        cy.url().should("include", "/task/");
     });
 });
