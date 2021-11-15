@@ -22,7 +22,6 @@ function LocationDetailsPanel(props) {
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    console.log(isFetching);
 
     const errorMessage = "Sorry, an error occurred";
 

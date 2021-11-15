@@ -76,6 +76,7 @@ function addAssigneesAndConvertToObject(tasks, allAssignees) {
 function TasksGridColumn(props) {
     const classes = useStyles();
     const [state, setState] = useState([]);
+    const stateRef = useRef({});
     const loaderClass = loaderStyles();
     const { show, hide } = showHide();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
@@ -91,6 +92,11 @@ function TasksGridColumn(props) {
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
+    const locationsSubscription = useRef({
+        unsubscribe: () => {},
+    });
+
+    stateRef.current = state;
 
     function addTaskToState(newTask) {
         setState((prevState) => ({
@@ -200,6 +206,45 @@ function TasksGridColumn(props) {
                         if (task.status === props.taskKey) addTaskToState(task);
                     }
                 });
+                locationsSubscription.current.unsubscribe();
+                locationsSubscription.current = DataStore.observe(
+                    models.Location
+                ).subscribe(async (location) => {
+                    if (location.opType === "UPDATE") {
+                        for (const task of Object.values(stateRef.current)) {
+                            if (
+                                task.pickUpLocation &&
+                                task.pickUpLocation.id === location.element.id
+                            ) {
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    [task.id]: {
+                                        ...prevState[task.id],
+                                        pickUpLocation: {
+                                            ...task.pickUpLocation,
+                                            ...location.element,
+                                        },
+                                    },
+                                }));
+                            }
+                            if (
+                                task.dropOffLocation &&
+                                task.dropOffLocation.id === location.element.id
+                            ) {
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    [task.id]: {
+                                        ...prevState[task.id],
+                                        dropOffLocation: {
+                                            ...task.dropOffLocation,
+                                            ...location.element,
+                                        },
+                                    },
+                                }));
+                            }
+                        }
+                    }
+                });
                 setIsFetching(false);
             } catch (error) {
                 setErrorState(true);
@@ -213,6 +258,12 @@ function TasksGridColumn(props) {
         () => getTasks(),
         [dataStoreReadyStatus, roleView, props.taskKey]
     );
+    useEffect(() => {
+        return () => {
+            tasksSubscription.current.unsubscribe();
+            locationsSubscription.current.unsubscribe();
+        };
+    }, []);
 
     async function appendTasks() {
         setEndlessLoadIsFetching(true);
