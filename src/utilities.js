@@ -18,7 +18,13 @@ export function convertListDataToObject(list) {
 }
 
 export function copyTaskDataToClipboard(task) {
-    const { pickUpLocation, priority, dropOffLocation, timeOfCall } = task;
+    const {
+        pickUpLocation,
+        priority,
+        dropOffLocation,
+        timeOfCall,
+        deliverables,
+    } = task;
     const data = {
         FROM: pickUpLocation
             ? `${pickUpLocation.ward || ""} - ${pickUpLocation.line1 || ""}`
@@ -29,6 +35,17 @@ export function copyTaskDataToClipboard(task) {
         PRIORITY: priority || undefined,
         TOC: timeOfCall ? moment(timeOfCall).format("HH:mm") : undefined,
     };
+
+    if (deliverables) {
+        data["ITEMS"] = deliverables
+            .map((deliverable) => {
+                const { deliverableType, count } = deliverable;
+                return `${
+                    deliverableType ? deliverableType.label : ""
+                } x ${count}`;
+            })
+            .join(", ");
+    }
 
     let result = "";
     let first = true;

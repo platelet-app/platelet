@@ -84,17 +84,18 @@ function StatusBar(props) {
     const dispatch = useDispatch();
 
     async function copyToClipboard(e) {
-        if (!props.taskUUID) {
+        if (!props.taskId) {
             dispatch(displayErrorNotification("Copy failed."));
             return;
         }
         try {
-            const taskResult = await DataStore.query(
-                models.Task,
-                props.taskUUID
-            );
+            const taskResult = await DataStore.query(models.Task, props.taskId);
             if (taskResult) {
-                copyTaskDataToClipboard(taskResult).then(
+                const deliverables = (
+                    await DataStore.query(models.Deliverable)
+                ).filter((d) => d.task && d.task.id === taskResult.id);
+                const result = { ...taskResult, deliverables };
+                copyTaskDataToClipboard(result).then(
                     function () {
                         dispatch(
                             displayInfoNotification("Copied to clipboard.")
@@ -150,7 +151,7 @@ StatusBar.propTypes = {
     status: PropTypes.string,
     relayNext: PropTypes.string,
     relayPrevious: PropTypes.string,
-    taskUUID: PropTypes.string.isRequired,
+    taskId: PropTypes.string.isRequired,
 };
 
 StatusBar.defaultProps = {

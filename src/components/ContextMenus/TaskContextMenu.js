@@ -57,7 +57,11 @@ function TaskContextMenu(props) {
                 props.task.id
             );
             if (taskResult) {
-                copyTaskDataToClipboard(taskResult).then(
+                const deliverables = (
+                    await DataStore.query(models.Deliverable)
+                ).filter((d) => d.task && d.task.id === taskResult.id);
+                const result = { ...taskResult, deliverables };
+                copyTaskDataToClipboard(result).then(
                     function () {
                         dispatch(
                             displayInfoNotification("Copied to clipboard.")

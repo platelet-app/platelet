@@ -295,7 +295,7 @@ function TaskDialogCompact(props) {
             <StatusBar
                 handleClose={onClose}
                 status={state.status}
-                taskUUID={taskUUID}
+                taskId={taskUUID}
             />
         );
 
