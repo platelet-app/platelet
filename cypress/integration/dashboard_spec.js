@@ -1,4 +1,8 @@
 describe("open the dashboard", () => {
+    // clear DataStore before running tests
+    before(() => {
+        indexedDB.deleteDatabase("amplify-datastore");
+    });
     it("successfully loads", () => {
         cy.visit("/");
     });
@@ -37,6 +41,10 @@ describe("open the dashboard", () => {
 });
 
 describe("create a new task and open it", () => {
+    // clear DataStore before running tests
+    before(() => {
+        indexedDB.deleteDatabase("amplify-datastore");
+    });
     it("successfully creates a new task", () => {
         cy.visit("/");
         cy.get("#create-task-button").click();
@@ -90,6 +98,8 @@ describe("filter tasks by various terms", () => {
     it("successfully filters tasks by priority", () => {
         cy.visit("/");
         cy.get("#tasks-filter-input").type("LOW");
+        // wait because of debounce
+        cy.wait(400);
         for (const status of ["NEW", "ACTIVE", "PICKED_UP"]) {
             cy.get(`#tasks-kanban-column-${status}`)
                 .children()
@@ -105,7 +115,7 @@ describe("filter tasks by various terms", () => {
     it("clears the filter term", () => {
         cy.visit("/");
         cy.get("#tasks-filter-input").type("LOW");
-        cy.get("#create-task-button").click();
+        cy.get("#clear-search-button").click();
         // tasks-filter-input should be empty
         cy.get("#tasks-filter-input").should("have.value", "");
     });

@@ -128,6 +128,7 @@ export function DashboardDetailTabs(props) {
         <Button
             variant="contained"
             color="primary"
+            id="clear-search-button"
             disabled={props.disableAddButton}
             onClick={() => dispatch(clearDashboardFilter())}
         >
