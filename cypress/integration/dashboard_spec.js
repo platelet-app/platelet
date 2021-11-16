@@ -67,6 +67,8 @@ describe("change the role view of the dashboard", () => {
             "#role-menu > .MuiPaper-root > .MuiList-root > :nth-child(3)"
         ).click();
         cy.get("#role-identifier").should("contain", "RIDER");
+        // assert that tasks-kanban-column-NEW is not present
+        cy.get("#tasks-kanban-column-NEW").should("not.exist");
     });
     it("successfully changes the role view to ALL", () => {
         cy.visit("/");
@@ -76,5 +78,35 @@ describe("change the role view of the dashboard", () => {
             "#role-menu > .MuiPaper-root > .MuiList-root > :nth-child(1)"
         ).click();
         cy.get("#role-identifier").should("contain", "ALL");
+    });
+});
+
+describe("filter tasks by various terms", () => {
+    const filterCheck = ($el) => {
+        if ($el.hasClass(".makeStyles-taskItem-26.makeStyles-show-4")) {
+            cy.wrap($el).should("contain", "LOW");
+        }
+    };
+    it("successfully filters tasks by priority", () => {
+        cy.visit("/");
+        cy.get("#tasks-filter-input").type("LOW");
+        for (const status of ["NEW", "ACTIVE", "PICKED_UP"]) {
+            cy.get(`#tasks-kanban-column-${status}`)
+                .children()
+                .each(filterCheck);
+        }
+        cy.get("#dashboard-tab-1").click();
+        for (const status of ["DROPPED_OFF", "CANCELLED", "REJECTED"]) {
+            cy.get(`#tasks-kanban-column-${status}`)
+                .children()
+                .each(filterCheck);
+        }
+    });
+    it("clears the filter term", () => {
+        cy.visit("/");
+        cy.get("#tasks-filter-input").type("LOW");
+        cy.get("#create-task-button").click();
+        // tasks-filter-input should be empty
+        cy.get("#tasks-filter-input").should("have.value", "");
     });
 });
