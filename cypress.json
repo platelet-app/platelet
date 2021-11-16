@@ -3,5 +3,7 @@
     "component": {
         "testFiles": "**/*.test.{js,ts,jsx,tsx}",
         "componentFolder": "src"
-    }
+    },
+    "viewportWidth": 1280,
+    "viewportHeight": 800
 }
