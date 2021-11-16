@@ -39,8 +39,8 @@ export function TabPanel(props) {
         <div
             role="tabpanel"
             hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
+            id={`dashboard-tabpanel-${index}`}
+            aria-labelledby={`dashboard-tab-${index}`}
             {...other}
         >
             {value === index && <Box p={1}>{children}</Box>}
@@ -56,7 +56,7 @@ TabPanel.propTypes = {
 
 function a11yProps(index) {
     return {
-        id: `simple-tab-${index}`,
+        id: `dashboard-tab-${index}`,
         "aria-controls": `simple-tabpanel-${index}`,
     };
 }
@@ -190,7 +190,7 @@ export function DashboardDetailTabs(props) {
                                 >
                                     <Grid item>
                                         <Hidden mdDown>
-                                            <Typography>
+                                            <Typography id="role-identifier">
                                                 {`${roleView} view`.toUpperCase()}
                                             </Typography>
                                         </Hidden>
@@ -204,6 +204,7 @@ export function DashboardDetailTabs(props) {
                                     </Grid>
                                     <Grid item>
                                         <IconButton
+                                            id="role-menu-button"
                                             color="inherit"
                                             aria-controls="simple-menu"
                                             aria-haspopup="true"
@@ -218,7 +219,7 @@ export function DashboardDetailTabs(props) {
                                         </IconButton>
                                         <Hidden smDown>{addClearButton}</Hidden>
                                         <Menu
-                                            id="profile-menu"
+                                            id="role-menu"
                                             anchorEl={anchorElRoleMenu}
                                             keepMounted
                                             open={Boolean(anchorElRoleMenu)}

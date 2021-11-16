@@ -121,7 +121,11 @@ function LightToggleProfileMenu(props) {
                                     color: "white",
                                 }}
                             >
-                                <Typography variant="h6" noWrap>
+                                <Typography
+                                    id="whoami-display-name"
+                                    variant="h6"
+                                    noWrap
+                                >
                                     {whoami.displayName}
                                 </Typography>
                             </Link>
