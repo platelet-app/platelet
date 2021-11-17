@@ -331,6 +331,7 @@ function TasksGridColumn(props) {
                     />
                     {_.range(4).map((i) => (
                         <Skeleton
+                            key={i}
                             variant="rectangular"
                             width={"100%"}
                             height={200}
