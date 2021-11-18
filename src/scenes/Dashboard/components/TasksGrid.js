@@ -194,9 +194,7 @@ function TasksGrid(props) {
                             <Grid item key={taskKey} className={classes.column}>
                                 <TasksGridColumn
                                     title={title}
-                                    classes={classes}
                                     onAddTaskClick={props.onAddTaskClick}
-                                    deleteDisabled
                                     taskKey={taskKey}
                                     showTasks={props.showTaskIds}
                                     key={title}

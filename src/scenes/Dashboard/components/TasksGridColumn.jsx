@@ -370,8 +370,7 @@ function TasksGridColumn(props) {
                                     animate={animate.current}
                                     task={task}
                                     taskUUID={task.id}
-                                    view={props.modalView}
-                                    deleteDisabled={props.deleteDisabled}
+                                    deleteDisabled
                                 />
                                 <div
                                     className={
@@ -432,17 +431,15 @@ function TasksGridColumn(props) {
 
 TasksGridColumn.propTypes = {
     title: PropTypes.string,
-    classes: PropTypes.object,
-    onAddTaskClick: PropTypes.func,
-    onAddRelayClick: PropTypes.bool,
-    disableAddButton: PropTypes.bool,
-    taskKey: PropTypes.string,
+    taskKey: PropTypes.string.isRequired,
     showTasks: PropTypes.arrayOf(PropTypes.string),
-    tasks: PropTypes.array,
+    hideRelayIcons: PropTypes.bool,
 };
 
 TasksGridColumn.defaultProps = {
-    tasks: [],
+    showTasks: [],
+    title: "TASKS",
+    hideRelayIcons: false,
 };
 
 export default TasksGridColumn;

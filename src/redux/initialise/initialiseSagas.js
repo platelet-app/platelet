@@ -212,7 +212,7 @@ async function populateFakeData() {
     }
 }
 
-async function populateTasks(whoamiId) {
+async function populateTasks() {
     const whoamiFind = await DataStore.query(models.User, (u) =>
         u.username("eq", "offline")
     );
