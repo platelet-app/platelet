@@ -1,12 +1,12 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import StatusBar from "./StatusBar";
-import { render, testingReduxStore } from "../../../test-utils";
+import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import { tasksStatus } from "../../../apiConsts";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import userEvent from "@testing-library/user-event";
+import mediaQuery from "css-mediaquery";
 import {
     displayErrorNotification,
     displayInfoNotification,
@@ -31,9 +31,19 @@ jest.mock("react-redux", () => ({
     useDispatch: () => mockDispatch,
 }));
 
+function createMatchMedia(width) {
+    return (query) => ({
+        matches: mediaQuery.match(query, {
+            width,
+        }),
+        addListener: () => {},
+        removeListener: () => {},
+    });
+}
+
 describe("StatusBar", () => {
-    beforeEach(() => {
-        jest.resetModules();
+    beforeAll(() => {
+        window.matchMedia = createMatchMedia(window.innerWidth);
     });
     it("renders correctly", () => {
         render(<StatusBar />);
@@ -71,7 +81,9 @@ describe("StatusBar", () => {
             })
         );
         render(<StatusBar taskId={newTask.id} />);
-        const copyButton = screen.getByRole("button");
+        const copyButton = screen.getByRole("button", {
+            name: "Copy to clipboard",
+        });
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
         jest.spyOn(utils, "copyTaskDataToClipboard");
@@ -91,7 +103,9 @@ describe("StatusBar", () => {
     it("fails to copy task data to clipboard", async () => {
         jest.restoreAllMocks();
         render(<StatusBar taskId={"nope"} />);
-        const copyButton = screen.getByRole("button");
+        const copyButton = screen.getByRole("button", {
+            name: "Copy to clipboard",
+        });
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
         jest.spyOn(reactRedux, "useDispatch");
@@ -100,5 +114,13 @@ describe("StatusBar", () => {
                 displayErrorNotification("Copy failed.")
             )
         );
+    });
+    test("click the close button", async () => {
+        const mockClose = jest.fn();
+        render(<StatusBar handleClose={mockClose} />);
+        const closeButton = screen.getByRole("button", { name: "Close" });
+        expect(closeButton).toBeInTheDocument();
+        userEvent.click(closeButton);
+        expect(mockClose).toHaveBeenCalled();
     });
 });
