@@ -22,6 +22,7 @@ import {
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import Tooltip from "@mui/material/Tooltip";
+import { tasksStatus } from "../../../apiConsts";
 
 const colourBarPercent = "90%";
 
@@ -83,34 +84,30 @@ function StatusBar(props) {
     const statusHumanReadable = taskStatusHumanReadable(props.status);
     const dispatch = useDispatch();
 
-    async function copyToClipboard(e) {
+    async function copyToClipboard() {
         if (!props.taskId) {
             dispatch(displayErrorNotification("Copy failed."));
             return;
         }
         try {
             const taskResult = await DataStore.query(models.Task, props.taskId);
-            if (taskResult) {
-                const deliverables = (
-                    await DataStore.query(models.Deliverable)
-                ).filter((d) => d.task && d.task.id === taskResult.id);
-                const result = { ...taskResult, deliverables };
-                copyTaskDataToClipboard(result).then(
-                    function () {
-                        dispatch(
-                            displayInfoNotification("Copied to clipboard.")
-                        );
-                        /* clipboard successfully set */
-                    },
-                    function () {
-                        dispatch(displayErrorNotification("Copy failed."));
-                        /* clipboard write failed */
-                    }
-                );
-            } else {
-                dispatch(displayErrorNotification("Copy failed."));
-            }
+            if (!taskResult) throw new Error("Task not found.");
+            const deliverables = (
+                await DataStore.query(models.Deliverable)
+            ).filter((d) => d.task && d.task.id === taskResult.id);
+            const result = { ...taskResult, deliverables };
+            copyTaskDataToClipboard(result).then(
+                function () {
+                    dispatch(displayInfoNotification("Copied to clipboard."));
+                    /* clipboard successfully set */
+                },
+                function () {
+                    dispatch(displayErrorNotification("Copy failed."));
+                    /* clipboard write failed */
+                }
+            );
         } catch (e) {
+            console.error(e);
             dispatch(displayErrorNotification("Copy failed."));
         }
     }
@@ -148,10 +145,10 @@ function StatusBar(props) {
 
 StatusBar.propTypes = {
     handleClose: PropTypes.func,
-    status: PropTypes.string,
+    status: PropTypes.oneOf(Object.values(tasksStatus)),
     relayNext: PropTypes.string,
     relayPrevious: PropTypes.string,
-    taskId: PropTypes.string.isRequired,
+    taskId: PropTypes.string,
 };
 
 StatusBar.defaultProps = {
