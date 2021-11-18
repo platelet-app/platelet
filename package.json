@@ -15,7 +15,6 @@
         "@mui/styled-engine-sc": "^5.0.3",
         "@mui/styles": "^5.0.1",
         "@reduxjs/toolkit": "^1.6.1",
-        "@testing-library/jest-dom": "^5.11.4",
         "@testing-library/react": "^11.1.0",
         "@testing-library/user-event": "^12.1.10",
         "autosuggest-highlight": "^3.1.1",
@@ -86,6 +85,9 @@
     "devDependencies": {
         "@cypress/react": "^5.10.3",
         "@cypress/webpack-dev-server": "^1.7.0",
+        "@peculiar/webcrypto": "^1.2.2",
+        "@testing-library/jest-dom": "^5.15.0",
+        "canvas": "^2.8.0",
         "cypress": "^9.0.0"
     }
 }
