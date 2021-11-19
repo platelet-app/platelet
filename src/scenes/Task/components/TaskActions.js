@@ -23,7 +23,7 @@ function TaskActions(props) {
     const cardClasses = dialogCardStyles();
 
     function onChange(key) {
-        const value = state.includes(key) ? null : new Date().toISOString();
+        const value = state.includes(key) ? null : new Date();
         if (key === "pickedUp") props.onChangeTimePickedUp(value);
         else if (key === "droppedOff") props.onChangeTimeDroppedOff(value);
         else if (key === "cancelled") props.onChangeTimeCancelled(value);
@@ -51,9 +51,19 @@ function TaskActions(props) {
         if (key === "droppedOff") return !state.includes("pickedUp") || stopped;
         else if (key === "pickedUp")
             return state.includes("droppedOff") || stopped;
-        else if (key === "rejected" || key === "cancelled")
-            return state.includes("pickedUp") && state.includes("droppedOff");
-        else return false;
+        else if (key === "rejected") {
+            if (state.includes("rejected")) return false;
+            return (
+                (state.includes("pickedUp") && state.includes("droppedOff")) ||
+                stopped
+            );
+        } else if (key === "cancelled") {
+            if (state.includes("cancelled")) return false;
+            return (
+                (state.includes("pickedUp") && state.includes("droppedOff")) ||
+                stopped
+            );
+        } else return false;
     }
 
     useEffect(updateStateFromProps, [props.task]);
@@ -71,7 +81,11 @@ function TaskActions(props) {
                     {Object.entries(fields).map(([key, value]) => {
                         return (
                             <ToggleButton
+                                key={key}
                                 disabled={
+                                    props.isFetching || checkDisabled(key)
+                                }
+                                aria-disabled={
                                     props.isFetching || checkDisabled(key)
                                 }
                                 aria-label={key}
