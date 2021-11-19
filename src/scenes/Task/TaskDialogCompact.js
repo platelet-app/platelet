@@ -206,19 +206,25 @@ function TaskDialogCompact(props) {
 
     async function setTimeWithKey(value, key) {
         try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
+            let result;
+            if (value && typeof value === "object" && !!value.toISOString) {
+                result = value.toISOString();
+            } else {
+                result = value;
+            }
+            const existingTask = await DataStore.query(models.Task, taskUUID);
+            if (!existingTask) throw new Error("Task doesn't exist");
             const assignees = (
                 await DataStore.query(models.TaskAssignee)
             ).filter((a) => a.task.id === taskUUID);
             const status = determineTaskStatus({
-                ...result,
-                [key]: value,
+                ...existingTask,
+                [key]: result,
                 assignees,
             });
             await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated[key] = value;
+                models.Task.copyOf(existingTask, (updated) => {
+                    updated[key] = result;
                     updated.status = status;
                 })
             );
