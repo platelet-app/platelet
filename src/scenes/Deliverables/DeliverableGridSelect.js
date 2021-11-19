@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import { Paper, Stack } from "@mui/material";
-import { dialogCardStyles } from "../Task/styles/DialogCompactStyles";
+import { Stack } from "@mui/material";
 import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
@@ -13,6 +12,7 @@ import PropTypes from "prop-types";
 import EditableDeliverable from "./components/EditableDeliverable";
 import AddableDeliverable from "./components/AddableDeliverable";
 import _ from "lodash";
+import GetError from "../../ErrorComponents/GetError";
 
 const initialDeliverablesSortedState = {
     deliverables: [],
@@ -24,6 +24,7 @@ function DeliverableGridSelect(props) {
         initialDeliverablesSortedState
     );
     const [state, setState] = useState({});
+    const [errorState, setErrorState] = useState(null);
     const [truncated, setTruncated] = useState(true);
     const [availableDeliverables, setAvailableDeliverables] = useState({});
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
@@ -74,17 +75,22 @@ function DeliverableGridSelect(props) {
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
         } else {
-            const availableDeliverablesResult = await DataStore.query(
-                models.DeliverableType,
-                Predicates.ALL,
-                {
-                    sort: (s) => s.createdAt(SortDirection.ASCENDING),
-                }
-            );
-            setAvailableDeliverables(
-                convertListDataToObject(availableDeliverablesResult)
-            );
-            setIsFetching(false);
+            try {
+                const availableDeliverablesResult = await DataStore.query(
+                    models.DeliverableType,
+                    Predicates.ALL,
+                    {
+                        sort: (s) => s.createdAt(SortDirection.ASCENDING),
+                    }
+                );
+                setAvailableDeliverables(
+                    convertListDataToObject(availableDeliverablesResult)
+                );
+                setIsFetching(false);
+            } catch (e) {
+                setErrorState(e);
+                console.log(e);
+            }
         }
     }
 
@@ -146,7 +152,9 @@ function DeliverableGridSelect(props) {
         [availableDeliverables]
     );
 
-    if (isFetching) {
+    if (!!errorState) {
+        return <GetError />;
+    } else if (isFetching) {
         return <DeliverablesSkeleton />;
     } else {
         let count = 0;
@@ -161,40 +169,46 @@ function DeliverableGridSelect(props) {
                 justifyContent={"flex-start"}
                 direction={"column"}
             >
-                <Stack container spacing={1} direction={"column"}>
+                <Stack spacing={1} direction={"column"}>
                     {deliverablesSorted.deliverables.map((deliverable) => {
                         count++;
-                        return (
-                            <Grid item key={deliverable.id}>
-                                {count > 5 && truncated ? (
-                                    <></>
-                                ) : (
-                                    <EditableDeliverable
-                                        onChangeCount={onChangeCount}
-                                        onChangeUnit={onChangeUnit}
-                                        onDelete={onDelete}
-                                        deliverable={deliverable}
-                                    />
-                                )}
-                            </Grid>
-                        );
+                        if (count > 5 && truncated) {
+                            return (
+                                <React.Fragment
+                                    key={deliverable.id}
+                                ></React.Fragment>
+                            );
+                        } else {
+                            return (
+                                <EditableDeliverable
+                                    key={deliverable.id}
+                                    onChangeCount={onChangeCount}
+                                    onChangeUnit={onChangeUnit}
+                                    onDelete={onDelete}
+                                    deliverable={deliverable}
+                                />
+                            );
+                        }
                     })}
                 </Stack>
-                <Stack container spacing={1} direction={"column"}>
+                <Stack spacing={1} direction={"column"}>
                     {deliverablesSorted.defaults.map((deliverableType) => {
                         count++;
-                        return (
-                            <Grid item key={deliverableType.id}>
-                                {count > 5 && truncated ? (
-                                    <></>
-                                ) : (
-                                    <AddableDeliverable
-                                        onAdd={onAddNewDeliverable}
-                                        deliverableType={deliverableType}
-                                    />
-                                )}
-                            </Grid>
-                        );
+                        if (count > 5 && truncated) {
+                            return (
+                                <React.Fragment
+                                    key={deliverableType.id}
+                                ></React.Fragment>
+                            );
+                        } else {
+                            return (
+                                <AddableDeliverable
+                                    key={deliverableType.id}
+                                    onAdd={onAddNewDeliverable}
+                                    deliverableType={deliverableType}
+                                />
+                            );
+                        }
                     })}
                 </Stack>
                 <Link
