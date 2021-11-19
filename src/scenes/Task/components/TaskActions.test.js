@@ -115,4 +115,73 @@ describe("TaskActions", () => {
             screen.getByRole("button", { name: "cancelled" })
         ).toBeDisabled();
     });
+
+    test("untoggle timePickedUp", () => {
+        const mockFunction = jest.fn();
+        render(
+            <TaskActions
+                onChangeTimePickedUp={mockFunction}
+                task={{
+                    timePickedUp: new Date().toISOString(),
+                }}
+            />
+        );
+        const button = screen.getByRole("button", { name: "pickedUp" });
+        expect(button).toBeInTheDocument();
+        userEvent.click(button);
+        // expect the mock function to have been called with null
+        expect(mockFunction).toHaveBeenCalledWith(null);
+    });
+
+    test("untoggle timeDroppedOff", () => {
+        const mockFunction = jest.fn();
+        render(
+            <TaskActions
+                onChangeTimeDroppedOff={mockFunction}
+                task={{
+                    timePickedUp: new Date().toISOString(),
+                    timeDroppedOff: new Date().toISOString(),
+                }}
+            />
+        );
+        const button = screen.getByRole("button", { name: "droppedOff" });
+        expect(button).toBeInTheDocument();
+        userEvent.click(button);
+        // expect the mock function to have been called with null
+        expect(mockFunction).toHaveBeenCalledWith(null);
+    });
+
+    test("untoggle timeCancelled", () => {
+        const mockFunction = jest.fn();
+        render(
+            <TaskActions
+                onChangeTimeCancelled={mockFunction}
+                task={{
+                    timeCancelled: new Date().toISOString(),
+                }}
+            />
+        );
+        const button = screen.getByRole("button", { name: "cancelled" });
+        expect(button).toBeInTheDocument();
+        userEvent.click(button);
+        // expect the mock function to have been called with null
+        expect(mockFunction).toHaveBeenCalledWith(null);
+    });
+
+    test("untoggle timeRejected", () => {
+        const mockFunction = jest.fn();
+        render(
+            <TaskActions
+                onChangeTimeRejected={mockFunction}
+                task={{
+                    timeRejected: new Date().toISOString(),
+                }}
+            />
+        );
+        const button = screen.getByRole("button", { name: "rejected" });
+        expect(button).toBeInTheDocument();
+        userEvent.click(button);
+        // expect the mock function to have been called with null
+        expect(mockFunction).toHaveBeenCalledWith(null);
+    });
 });
