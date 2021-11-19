@@ -107,7 +107,7 @@ function StatusBar(props) {
                 }
             );
         } catch (e) {
-            console.error(e);
+            console.log(e);
             dispatch(displayErrorNotification("Copy failed."));
         }
     }
