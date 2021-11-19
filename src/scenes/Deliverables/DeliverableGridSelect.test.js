@@ -5,6 +5,7 @@ import DeliverableGridSelect from "./DeliverableGridSelect";
 import * as amplify from "aws-amplify";
 import { act } from "react-dom/test-utils";
 import userEvent from "@testing-library/user-event";
+import { deliverableUnits } from "../../apiConsts";
 
 jest.mock("aws-amplify");
 jest.mock("../../redux/Selectors", () => ({
@@ -145,9 +146,11 @@ describe("DeliverableGridSelect", () => {
         await act(async () => {
             userEvent.click(items[0]);
         });
-        expect(
-            screen.getByRole("button", { name: /Click to change/ })
-        ).toBeInTheDocument();
+        const decrement = await screen.findByRole("button", {
+            name: "decrement",
+        });
+        expect(decrement).toBeInTheDocument();
+        expect(decrement).toBeDisabled();
         expect(onChange).toHaveBeenCalledWith({
             count: 1,
             id: mockData[0].id,
@@ -184,13 +187,16 @@ describe("DeliverableGridSelect", () => {
             orderInGrid: 0,
             unit: mockData[0].defaultUnit,
         });
-        await act(async () => {
-            userEvent.click(screen.getByRole("button", { name: /increment/ }));
-        });
+        userEvent.click(screen.getByRole("button", { name: /increment/ }));
         expect(onChange).toHaveBeenCalledWith({
             count: 2,
             id: mockData[0].id,
         });
+        const decrement = await screen.findByRole("button", {
+            name: "decrement",
+        });
+        expect(decrement).toBeInTheDocument();
+        expect(decrement).toBeEnabled();
         await act(async () => {
             userEvent.click(screen.getByRole("button", { name: /decrement/ }));
         });
@@ -198,6 +204,7 @@ describe("DeliverableGridSelect", () => {
             count: 1,
             id: mockData[0].id,
         });
+        expect(decrement).toBeDisabled();
     });
 
     it("deletes an item", async () => {
@@ -221,6 +228,40 @@ describe("DeliverableGridSelect", () => {
             userEvent.click(screen.getByRole("button", { name: /delete/ }));
         });
         expect(onDelete).toHaveBeenCalledWith(mockData[0].id);
+    });
+
+    test("change the unit", async () => {
+        const onChange = jest.fn();
+        amplify.DataStore.query.mockResolvedValue(mockData);
+        render(<DeliverableGridSelect onChange={onChange} />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalled();
+        });
+        const items = await screen.findAllByRole("button");
+        expect(items).toHaveLength(5);
+        userEvent.click(items[0]);
+        expect(onChange).toHaveBeenCalled();
+        const unitButton = await screen.findByRole("button", {
+            name: "ITEM. Click to change",
+        });
+        expect(unitButton).toBeInTheDocument();
+        userEvent.click(unitButton);
+        const unitMenu = await screen.findByRole("button", { name: "ITEM" });
+        expect(unitMenu).toBeInTheDocument();
+        userEvent.click(unitMenu);
+        const unitMenuItems = await screen.findAllByRole("option");
+        expect(unitMenuItems).toHaveLength(
+            Object.values(deliverableUnits).length
+        );
+        userEvent.click(unitMenuItems[0]);
+        const unitButtonUpdated = await screen.findByRole("button", {
+            name: "NONE. Click to change",
+        });
+        expect(unitButtonUpdated).toBeInTheDocument();
+        expect(onChange).toHaveBeenCalledWith({
+            id: mockData[0].id,
+            unit: deliverableUnits.none,
+        });
     });
 
     test("feeding a list of deliverables into props", async () => {
