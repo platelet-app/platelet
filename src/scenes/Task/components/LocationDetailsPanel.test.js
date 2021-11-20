@@ -1,5 +1,6 @@
 import React from "react";
 import LocationDetailsPanel from "./LocationDetailsPanel";
+import TestComponent from "./TestComponent";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
@@ -146,6 +147,9 @@ const mockLocations = [
         },
     },
 ];
+const task = {
+    id: "dba579ba-3d50-4038-9d29-ba06c964f49c",
+};
 
 describe("LocationDetailsPanel", () => {
     it("renders without crashing", () => {
@@ -161,18 +165,9 @@ describe("LocationDetailsPanel", () => {
     });
 
     test.only("selecting a location from a preset", async () => {
-        expect(true).toBe(true);
-        return;
-        const task = {
-            id: "dba579ba-3d50-4038-9d29-ba06c964f49c",
-        };
-        //amplify.DataStore.query
-        //    .mockResolvedValueOnce(mockLocations)
-        //    .mockResolvedValue(task);
-        amplify.DataStore.query.mockImplementation(async (...args) => {
-            console.log("amplify.DataStore.query called with", ...args);
-            return mockLocations;
-        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockLocations)
+            .mockResolvedValue(task);
         await amplify.DataStore.save(new models.Task({}));
         render(<LocationDetailsPanel locationKey={"pickUpLocation"} />);
         await waitFor(() =>

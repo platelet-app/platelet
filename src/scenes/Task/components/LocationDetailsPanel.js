@@ -9,7 +9,7 @@ import {
     displayWarningNotification,
 } from "../../../redux/notifications/NotificationsActions";
 import * as models from "../../../models/index";
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
