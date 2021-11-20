@@ -62,6 +62,7 @@
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
+        "test:debug": "react-scripts --inspect test --runInBand --no-cache --testTimeout=100000000",
         "eject": "react-scripts eject"
     },
     "eslintConfig": {
