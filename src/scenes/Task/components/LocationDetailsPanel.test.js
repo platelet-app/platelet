@@ -187,31 +187,5 @@ describe("LocationDetailsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
-        await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenCalledWith(
-                "Task",
-                expect.objectContaining({
-                    pickUpLocation: {
-                        name: "Great Western Hospital - A&E",
-                        listed: 1,
-                        ward: "Accident and Emergency",
-                        line1: "Great Western Hospital",
-                        line2: "Marlborough Road",
-                        town: "Swindon",
-                        county: "Swindon",
-                        country: "UK",
-                        postcode: "SN3 6BB",
-                        what3words: "some.what.words",
-                        id: "645d242f-7835-4392-81e5-ab6cd4fb442d",
-                        contact: {
-                            telephoneNumber: "01234567890",
-                            emailAddress: "fake@email.com",
-                            name: "Someone Person",
-                            id: "711216d6-54f1-4704-9766-4b67d1a04690",
-                        },
-                    },
-                })
-            );
-        });
     });
 });
