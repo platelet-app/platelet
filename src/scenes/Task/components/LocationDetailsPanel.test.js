@@ -1,6 +1,5 @@
 import React from "react";
 import LocationDetailsPanel from "./LocationDetailsPanel";
-import TestComponent from "./TestComponent";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
@@ -147,10 +146,7 @@ const mockLocations = [
         },
     },
 ];
-const task = {
-    id: "dba579ba-3d50-4038-9d29-ba06c964f49c",
-};
-
+const task = new models.Task({});
 describe("LocationDetailsPanel", () => {
     it("renders without crashing", () => {
         render(<LocationDetailsPanel />);

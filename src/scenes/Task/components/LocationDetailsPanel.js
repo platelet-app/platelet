@@ -88,8 +88,6 @@ function LocationDetailsPanel(props) {
     async function selectPreset(location) {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
-            console.log("task", result);
-            console.log("location", location);
             if (!result) throw new Error("Task doesn't exist");
             if (!location) throw new Error("Location was not provided");
             if (result && location) {
