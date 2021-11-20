@@ -129,7 +129,11 @@ function StatusBar(props) {
                     <Button onClick={props.handleClose}>Close</Button>
                 </Hidden>
                 <Hidden smUp>
-                    <IconButton size={"small"} onClick={props.handleClose}>
+                    <IconButton
+                        aria-label={"Close"}
+                        size={"small"}
+                        onClick={props.handleClose}
+                    >
                         <ArrowButton size={3} direction={"back"} />
                     </IconButton>
                 </Hidden>

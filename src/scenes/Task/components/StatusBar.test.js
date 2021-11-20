@@ -165,4 +165,14 @@ describe("StatusBar", () => {
         userEvent.click(closeButton);
         expect(mockClose).toHaveBeenCalled();
     });
+
+    test("click the back button on mobile", async () => {
+        window.matchMedia = createMatchMedia(240);
+        const mockClose = jest.fn();
+        render(<StatusBar handleClose={mockClose} />);
+        const closeButton = screen.getByRole("button", { name: "Close" });
+        expect(closeButton).toBeInTheDocument();
+        userEvent.click(closeButton);
+        expect(mockClose).toHaveBeenCalled();
+    });
 });
