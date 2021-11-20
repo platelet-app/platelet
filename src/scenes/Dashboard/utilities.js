@@ -1,4 +1,4 @@
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { tasksStatus } from "../../apiConsts";
 import { userRoles } from "../../apiConsts";

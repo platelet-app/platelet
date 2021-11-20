@@ -4,7 +4,7 @@ import { GET_WHOAMI_SUCCESS, getWhoamiRequest } from "../Actions";
 import * as actions from "./initialiseActions";
 import * as fakeData from "../fakeOfflineData.json";
 import * as models from "../../models/index";
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import path from "path";
 import { priorities, tasksStatus, userRoles } from "../../apiConsts";

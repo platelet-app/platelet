@@ -18,7 +18,6 @@ import { Auth } from "aws-amplify";
 import SignalWifiOff from "@mui/icons-material/SignalWifiOff";
 import { showHide } from "../../styles/common";
 import { networkStatusSelector } from "../../redux/Selectors";
-import { DataStore } from "@aws-amplify/datastore";
 
 function LightToggleProfileMenu(props) {
     const whoami = useSelector(getWhoami);

@@ -12,7 +12,7 @@ import UserCard from "../../components/UserCard";
 import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import { protectedFields } from "../../apiConsts";
 import { Stack } from "@mui/material";
 

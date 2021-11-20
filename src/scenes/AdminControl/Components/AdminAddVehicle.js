@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
 import * as models from "../../../models/index";
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import {
     displayErrorNotification,
     displayInfoNotification,
