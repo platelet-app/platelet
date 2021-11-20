@@ -11,6 +11,12 @@ import {
 import { CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
     ACTIVE: "cornflowerblue",
@@ -46,12 +52,19 @@ const store = createStore(rootReducer, applyMiddleware(sagaMiddleWare));
 const AllTheProviders = ({ children }) => {
     return (
         <Provider store={store}>
-            <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <SnackbarProvider maxSnack={1}>{children}</SnackbarProvider>
-                </ThemeProvider>
-            </StyledEngineProvider>
+            <BrowserRouter>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <ReactNotification />
+                    <StyledEngineProvider injectFirst>
+                        <ThemeProvider theme={theme}>
+                            <CssBaseline />
+                            <SnackbarProvider maxSnack={1}>
+                                {children}
+                            </SnackbarProvider>
+                        </ThemeProvider>
+                    </StyledEngineProvider>
+                </LocalizationProvider>
+            </BrowserRouter>
         </Provider>
     );
 };
