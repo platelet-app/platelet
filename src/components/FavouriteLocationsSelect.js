@@ -17,7 +17,6 @@ function FavouriteLocationsSelect(props) {
     };
 
     async function getLocations() {
-        console.log("MOCKED", "DataStore.query", DataStore.query);
         const locations = await DataStore.query(models.Location, (l) =>
             l.listed("eq", 1)
         );

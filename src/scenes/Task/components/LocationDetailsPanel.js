@@ -86,22 +86,12 @@ function LocationDetailsPanel(props) {
         }
     }
     async function selectPreset(location) {
-        console.log(
-            "MOCKED",
-            "selectPreset",
-            "DataStore.query",
-            DataStore.query
-        );
-        //console.log("MOCKED", "DataStore.query", DataStore.query);
-
-        console.log("AAAAAAAAA");
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             console.log("task", result);
             console.log("location", location);
             if (!result) throw new Error("Task doesn't exist");
             if (!location) throw new Error("Location was not provided");
-            console.log("AAAAAAAAA");
             if (result && location) {
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
@@ -111,8 +101,6 @@ function LocationDetailsPanel(props) {
             }
             setState(location);
         } catch (error) {
-            throw error;
-
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
