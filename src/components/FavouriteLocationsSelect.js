@@ -17,6 +17,7 @@ function FavouriteLocationsSelect(props) {
     };
 
     async function getLocations() {
+        console.log("MOCKED", "DataStore.query", DataStore.query);
         const locations = await DataStore.query(models.Location, (l) =>
             l.listed("eq", 1)
         );
@@ -29,6 +30,7 @@ function FavouriteLocationsSelect(props) {
         <Autocomplete
             disablePortal
             fullWidth
+            aria-label={props.label}
             filterOptions={filterOptions}
             options={availableLocations}
             getOptionLabel={(option) => option.name}
@@ -52,6 +54,7 @@ FavouriteLocationsSelect.propTypes = {
 };
 FavouriteLocationsSelect.defaultProps = {
     onSelect: () => {},
+    label: "Directory locations",
 };
 
 export default FavouriteLocationsSelect;
