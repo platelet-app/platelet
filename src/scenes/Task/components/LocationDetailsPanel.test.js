@@ -458,10 +458,23 @@ describe("LocationDetailsPanel", () => {
                 expect.objectContaining(_.omit(fakeContactModel, "id"))
             );
             expect(amplify.DataStore.save).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(fakeLocationModel, "id"))
+                expect.objectContaining({
+                    ..._.omit(fakeLocationModel, "id"),
+                    contact: expect.objectContaining(
+                        _.omit(fakeContactModel, "id")
+                    ),
+                })
             );
             expect(amplify.DataStore.save).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(fakeTaskModel, "id"))
+                expect.objectContaining({
+                    ..._.omit(fakeTaskModel, "id"),
+                    [locationKey]: expect.objectContaining({
+                        ..._.omit(fakeLocationModel, "id"),
+                        contact: expect.objectContaining(
+                            _.omit(fakeContactModel, "id")
+                        ),
+                    }),
+                })
             );
         }
     );
