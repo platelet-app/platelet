@@ -67,7 +67,6 @@ function LocationDetailAndSelector(props) {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
     const [protectedLocation, setProtectedLocation] = useState(false);
-    const { show, hide } = showHide();
     const [collapsed, setCollapsed] = useState(true);
 
     function updateStateFromProps() {
@@ -156,11 +155,7 @@ function LocationDetailAndSelector(props) {
                 justifyContent={"flex-end"}
                 alignItems={"center"}
             >
-                <Box
-                    className={
-                        props.location && props.location.listed ? show : hide
-                    }
-                >
+                {props.location && props.location.listed ? (
                     <Tooltip title={"Edit"}>
                         <IconButton
                             className={classes.button}
@@ -171,17 +166,17 @@ function LocationDetailAndSelector(props) {
                             <EditIcon />
                         </IconButton>
                     </Tooltip>
-                </Box>
-                <Box
-                    className={
-                        props.location && !props.disableClear ? show : hide
-                    }
-                >
+                ) : (
+                    <></>
+                )}
+                {props.location && !props.disableClear ? (
                     <ClearButtonWithConfirmation
                         disabled={props.disabled}
                         onClear={onClickClearButton}
                     />
-                </Box>
+                ) : (
+                    <></>
+                )}
             </Stack>
         </Stack>
     ) : (
@@ -225,38 +220,54 @@ function LocationDetailAndSelector(props) {
                     })}
 
                     <Box className={classes.separator} />
-                    <Box className={props.showContact ? show : hide}>
-                        {Object.entries(contactFields).map(([key, label]) => {
-                            if (!collapsed) {
-                                return (
-                                    <LabelItemPair key={key} label={label}>
-                                        <ClickableTextField
-                                            label={label}
-                                            tel={key === "telephoneNumber"}
-                                            disabled={protectedLocation}
-                                            onFinished={(v) => {
-                                                setState((prevState) => ({
-                                                    ...prevState,
-                                                    contact: {
-                                                        ...state.contact,
-                                                        [key]: v,
-                                                    },
-                                                }));
-                                                props.onChangeContact({
-                                                    [key]: v,
-                                                });
-                                            }}
-                                            value={state.contact[key]}
-                                        />
-                                    </LabelItemPair>
-                                );
-                            } else {
-                                return (
-                                    <React.Fragment key={key}></React.Fragment>
-                                );
-                            }
-                        })}
-                    </Box>
+                    {props.showContact ? (
+                        <Box>
+                            {Object.entries(contactFields).map(
+                                ([key, label]) => {
+                                    if (!collapsed) {
+                                        return (
+                                            <LabelItemPair
+                                                key={key}
+                                                label={label}
+                                            >
+                                                <ClickableTextField
+                                                    label={label}
+                                                    tel={
+                                                        key ===
+                                                        "telephoneNumber"
+                                                    }
+                                                    disabled={protectedLocation}
+                                                    onFinished={(v) => {
+                                                        setState(
+                                                            (prevState) => ({
+                                                                ...prevState,
+                                                                contact: {
+                                                                    ...state.contact,
+                                                                    [key]: v,
+                                                                },
+                                                            })
+                                                        );
+                                                        props.onChangeContact({
+                                                            [key]: v,
+                                                        });
+                                                    }}
+                                                    value={state.contact[key]}
+                                                />
+                                            </LabelItemPair>
+                                        );
+                                    } else {
+                                        return (
+                                            <React.Fragment
+                                                key={key}
+                                            ></React.Fragment>
+                                        );
+                                    }
+                                }
+                            )}
+                        </Box>
+                    ) : (
+                        <></>
+                    )}
                 </Stack>
                 <Divider />
                 <CollapsibleToggle
