@@ -198,7 +198,10 @@ function LocationDetailAndSelector(props) {
                     {Object.entries(addressFields).map(([key, label]) => {
                         if (collapsedShowFields.includes(key) || !collapsed) {
                             return (
-                                <LabelItemPair label={collapsed ? label : ""}>
+                                <LabelItemPair
+                                    key={key}
+                                    label={collapsed ? label : ""}
+                                >
                                     <ClickableTextField
                                         label={label}
                                         disabled={protectedLocation}
@@ -217,7 +220,7 @@ function LocationDetailAndSelector(props) {
                                 </LabelItemPair>
                             );
                         } else {
-                            return <></>;
+                            return <React.Fragment key={key}></React.Fragment>;
                         }
                     })}
 
@@ -226,7 +229,7 @@ function LocationDetailAndSelector(props) {
                         {Object.entries(contactFields).map(([key, label]) => {
                             if (!collapsed) {
                                 return (
-                                    <LabelItemPair label={label}>
+                                    <LabelItemPair key={key} label={label}>
                                         <ClickableTextField
                                             label={label}
                                             tel={key === "telephoneNumber"}
@@ -248,7 +251,9 @@ function LocationDetailAndSelector(props) {
                                     </LabelItemPair>
                                 );
                             } else {
-                                return <></>;
+                                return (
+                                    <React.Fragment key={key}></React.Fragment>
+                                );
                             }
                         })}
                     </Box>
