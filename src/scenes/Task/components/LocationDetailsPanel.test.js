@@ -5,6 +5,7 @@ import { screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models/index";
+import _ from "lodash";
 
 jest.mock("aws-amplify");
 
@@ -163,6 +164,26 @@ describe("LocationDetailsPanel", () => {
         ).toBeInTheDocument();
     });
 
+    it("renders the correct location name", async () => {
+        amplify.DataStore.query.mockResolvedValueOnce(mockLocations[1]);
+        const mockLocation = mockLocations[1];
+        render(
+            <LocationDetailsPanel
+                locationId={mockLocation.id}
+                locationKey={"pickUpLocation"}
+            />
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        expect(amplify.DataStore.query).toHaveBeenCalledWith(
+            models.Location,
+            mockLocation.id
+        );
+        expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.ward)).toBeInTheDocument();
+    });
+
     test.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
@@ -197,6 +218,13 @@ describe("LocationDetailsPanel", () => {
             ...task,
             [locationKey]: mockLocations[6],
         });
+        expect(screen.queryByRole("textbox")).toBeNull();
+        expect(
+            screen.getByRole("button", { name: "Edit" })
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: "Clear" })
+        ).toBeInTheDocument();
     });
 
     test.each`
@@ -239,5 +267,103 @@ describe("LocationDetailsPanel", () => {
             [locationKey]: null,
         });
         expect(screen.queryByText(mockLocations[0].line1)).toBeNull();
+        expect(screen.getByRole("textbox")).toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
+        expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
+    });
+
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `("copy a preset and enable editing", async ({ locationKey }) => {
+        const task = new models.Task({ [locationKey]: mockLocations[0] });
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockLocations[0])
+            .mockResolvedValueOnce(task)
+            .mockResolvedValue(mockLocations);
+        const fakeContact = new models.AddressAndContactDetails({
+            ...mockLocations[0].contact,
+        });
+        const fakeLocation = new models.Location({
+            ...mockLocations[0],
+            listed: 0,
+            contact: fakeContact,
+            name: `Copy of ${mockLocations[0].name}`,
+        });
+        const fakeTask = new models.Task({
+            ...task,
+            [locationKey]: fakeLocation,
+        });
+        amplify.DataStore.save
+            .mockResolvedValueOnce(fakeContact)
+            .mockResolvedValueOnce(fakeLocation)
+            .mockResolvedValueOnce(fakeTask);
+
+        render(
+            <LocationDetailsPanel
+                locationId={mockLocations[0].id}
+                locationKey={locationKey}
+            />
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        expect(
+            screen.getAllByText(mockLocations[0].line1)[0]
+        ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
+        );
+        expect(amplify.DataStore.save).toHaveBeenCalledWith(
+            expect.objectContaining(_.omit(fakeContact, "id"))
+        );
+        expect(amplify.DataStore.save).toHaveBeenCalledWith(
+            expect.objectContaining(_.omit(fakeLocation, "id"))
+        );
+        expect(amplify.DataStore.save).toHaveBeenCalledWith(
+            expect.objectContaining(_.omit(fakeTask, "id"))
+        );
+        expect(
+            screen.getByText(`Copy of ${mockLocations[0].name}`)
+        ).toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
+    });
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `("edit the details of a location", async ({ locationKey }) => {
+        const fakeInputData = "new data";
+        const fakeModel = new models.Location({
+            ...mockLocations[1],
+            listed: 0,
+        });
+        amplify.DataStore.query.mockResolvedValue(fakeModel);
+        amplify.DataStore.save.mockResolvedValueOnce({
+            ...fakeModel,
+            ward: fakeInputData,
+        });
+        render(
+            <LocationDetailsPanel
+                locationId={fakeModel.id}
+                locationKey={locationKey}
+            />
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        screen.getByText(mockLocations[1].ward).click();
+        const textBox = screen.getByRole("textbox");
+        expect(textBox).toBeInTheDocument();
+        expect(textBox).toHaveValue(mockLocations[1].ward);
+        userEvent.type(textBox, " new data");
+        userEvent.type(textBox, "{enter}");
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
+        );
+        expect(amplify.DataStore.save).toHaveBeenCalledWith({
+            ...fakeModel,
+            ward: `${fakeModel.ward} ${fakeInputData}`,
+        });
     });
 });

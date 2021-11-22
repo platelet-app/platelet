@@ -82,6 +82,7 @@ function LocationDetailsPanel(props) {
             );
             setState(newLocation);
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -162,7 +163,6 @@ function LocationDetailsPanel(props) {
         try {
             //separate any contact details with location details
             let locationResult;
-            let contactResult;
             // if we are updating an existing location
             if (locationId) {
                 const existingLocation = await DataStore.query(
@@ -180,8 +180,8 @@ function LocationDetailsPanel(props) {
                     );
                     return;
                 }
-                // if rest is empty, only contact data was sent
-                if (!_.isEmpty(values) && existingLocation) {
+                // don't do anything if values is empty
+                if (!_.isEmpty(values)) {
                     // update the location and get the updated version back to locationResult
                     locationResult = await DataStore.save(
                         models.Location.copyOf(existingLocation, (updated) => {
@@ -206,7 +206,7 @@ function LocationDetailsPanel(props) {
                 if (_.isEmpty(result)) return;
 
                 // create a contact model
-                contactResult = await DataStore.save(
+                const contactResult = await DataStore.save(
                     new models.AddressAndContactDetails({})
                 );
                 // create a new location and link it to the new contact model
@@ -233,6 +233,7 @@ function LocationDetailsPanel(props) {
                 return { ...prevState, ...locationResult };
             });
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -269,7 +270,7 @@ function LocationDetailsPanel(props) {
                             location={state}
                             displayPresets={true}
                             showContact={
-                                state && state.contact && state.contact.id
+                                !!(state && state.contact && state.contact.id)
                             }
                         />
                     )}
