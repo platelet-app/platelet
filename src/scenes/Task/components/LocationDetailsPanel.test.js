@@ -184,6 +184,55 @@ describe("LocationDetailsPanel", () => {
         expect(screen.getByText(mockLocation.ward)).toBeInTheDocument();
     });
 
+    it("expands the location details", async () => {
+        const mockLocation = {
+            name: "Bristol Royal Infirmary - A&E",
+            listed: 1,
+            ward: "Accident and Emergency",
+            line1: "Bristol Royal Infirmary",
+            line2: "Marlborough Street",
+            town: "Unique Town",
+            county: "Some County",
+            country: "UK",
+            postcode: "BS2 8HW",
+            what3words: "some.what.words",
+            id: "66642db5-746a-4fb1-8397-db46b634fadb",
+            contact: {
+                telephoneNumber: "01234567890",
+                emailAddress: "fake@email.com",
+                name: "Someone Person",
+                id: "9b346c7d-e579-460b-8106-1866cf139f3c",
+            },
+        };
+        amplify.DataStore.query.mockResolvedValue(mockLocation);
+        render(
+            <LocationDetailsPanel
+                locationId={mockLocation.id}
+                locationKey={"pickUpLocation"}
+            />
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+
+        userEvent.click(screen.getByText("Expand to see more"));
+        expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.ward)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.line1)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.line2)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.town)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.county)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.country)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.postcode)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation.contact.name)).toBeInTheDocument();
+        expect(
+            screen.getByText(mockLocation.contact.telephoneNumber)
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(mockLocation.contact.emailAddress)
+        ).toBeInTheDocument();
+    });
+
     test.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
@@ -353,12 +402,15 @@ describe("LocationDetailsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
-        screen.getByText(mockLocations[1].ward).click();
+        userEvent.click(screen.getByText(mockLocations[1].ward));
         const textBox = screen.getByRole("textbox");
         expect(textBox).toBeInTheDocument();
         expect(textBox).toHaveValue(mockLocations[1].ward);
         userEvent.type(textBox, " new data");
         userEvent.type(textBox, "{enter}");
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
+        );
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
         );
@@ -368,7 +420,7 @@ describe("LocationDetailsPanel", () => {
         });
     });
 
-    test.each`
+    test.only.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `(
@@ -379,7 +431,14 @@ describe("LocationDetailsPanel", () => {
                 listed: 0,
             });
             const fakeContactModel = new models.AddressAndContactDetails({});
-            amplify.DataStore.save.mockResolvedValueOnce(fakeLocationModel);
+            const fakeTaskModel = new models.Task({});
+            amplify.DataStore.query.mockResolvedValue(fakeTaskModel);
+            amplify.DataStore.save
+                .mockResolvedValueOnce(fakeContactModel)
+                .mockResolvedValue({
+                    ...fakeLocationModel,
+                    contact: fakeContactModel,
+                });
             render(
                 <LocationDetailsPanel
                     locationId={null}
@@ -393,13 +452,16 @@ describe("LocationDetailsPanel", () => {
             userEvent.type(textBox, "new data");
             userEvent.type(textBox, "{enter}");
             await waitFor(() =>
-                expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
+                expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
             );
             expect(amplify.DataStore.save).toHaveBeenCalledWith(
                 expect.objectContaining(_.omit(fakeContactModel, "id"))
             );
             expect(amplify.DataStore.save).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(fakeContactModel, "id"))
+                expect.objectContaining(_.omit(fakeLocationModel, "id"))
+            );
+            expect(amplify.DataStore.save).toHaveBeenCalledWith(
+                expect.objectContaining(_.omit(fakeTaskModel, "id"))
             );
         }
     );
@@ -433,8 +495,8 @@ describe("LocationDetailsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
-        screen.getByText("Expand to see more").click();
-        screen.getByText(fakeContactModel.emailAddress).click();
+        userEvent.click(screen.getByText("Expand to see more"));
+        userEvent.click(screen.getByText(fakeContactModel.emailAddress));
         const textBox = screen.getByRole("textbox");
         expect(textBox).toBeInTheDocument();
         expect(textBox).toHaveValue(fakeContactModel.emailAddress);

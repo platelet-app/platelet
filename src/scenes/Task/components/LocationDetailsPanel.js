@@ -161,7 +161,6 @@ function LocationDetailsPanel(props) {
             return;
         }
         try {
-            //separate any contact details with location details
             let locationResult;
             // if we are updating an existing location
             if (locationId) {
@@ -214,6 +213,7 @@ function LocationDetailsPanel(props) {
                     new models.Location({
                         ...values,
                         contact: contactResult,
+                        listed: 0,
                     })
                 );
                 // find the existing task
