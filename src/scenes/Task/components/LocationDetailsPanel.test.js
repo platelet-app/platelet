@@ -420,7 +420,7 @@ describe("LocationDetailsPanel", () => {
         });
     });
 
-    test.only.each`
+    test.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `(
