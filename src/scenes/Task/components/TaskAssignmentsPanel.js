@@ -7,6 +7,7 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
+import PropTypes from "prop-types";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import makeStyles from "@mui/styles/makeStyles";
 import { tasksStatus, userRoles } from "../../../apiConsts";
@@ -121,17 +122,12 @@ function TaskAssignmentsPanel(props) {
                         user.riderResponsibility.id
                     );
                 }
-                const taskResult = await DataStore.query(
-                    models.Task,
-                    props.taskId
-                );
-                if (!taskResult) throw new Error("Task doesn't exist");
                 const status = determineTaskStatus({
-                    ...taskResult,
+                    ...task,
                     assignees: [result],
                 });
                 await DataStore.save(
-                    models.Task.copyOf(taskResult, (updated) => {
+                    models.Task.copyOf(task, (updated) => {
                         updated.status = status;
                         if (riderResponsibility)
                             updated.riderResponsibility = riderResponsibility;
@@ -146,6 +142,7 @@ function TaskAssignmentsPanel(props) {
             }
             setState({ ...state, [result.id]: result });
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -351,5 +348,9 @@ function TaskAssignmentsPanel(props) {
         );
     }
 }
+
+TaskAssignmentsPanel.propTypes = {
+    taskId: PropTypes.string.isRequired,
+};
 
 export default TaskAssignmentsPanel;

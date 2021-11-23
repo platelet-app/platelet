@@ -29,6 +29,7 @@ function CoordinatorPicker(props) {
     useEffect(() => {
         const filteredSuggestions = availableUsers.filter(
             (u) =>
+                u.roles &&
                 u.roles.includes(userRoles.coordinator) &&
                 !props.exclude.includes(u.id)
         );
