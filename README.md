@@ -18,6 +18,10 @@ Some of Platelet's goals are:
 
 It can be deployed to AWS using Amplify or can be used fully offline with no online synchronization.
 
+![dashboard](dashboard.png "Dashboard")
+
+![overview](overview.png "Overview")
+
 [Click for a demo](https://demo.platelet.app)
 
 [Homepage](https://platelet.app)
