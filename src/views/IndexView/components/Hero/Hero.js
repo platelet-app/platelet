@@ -65,19 +65,6 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
   const subtitle =
     "Connect from anywhere to coordinate fleets and record deliveries.";
 
-  const findOutMore = (
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={() => {
-        const element = document.getElementById("mailing-list");
-        console.log(element);
-        element.scrollIntoView(false);
-      }}
-    >
-      Sign up to our mailing list
-    </Button>
-  );
   const viewDemo = (
     <Button
       variant="contained"
@@ -111,7 +98,7 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
         variant: "h2",
         color: "textPrimary",
       }}
-      ctaGroup={[findOutMore, viewDemo]}
+      ctaGroup={[viewDemo]}
       data-aos="fade-right"
       disableGutter
       className={classes.leftSideContent}
