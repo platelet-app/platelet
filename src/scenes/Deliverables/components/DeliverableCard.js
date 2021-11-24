@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
         backgroundColor: "rgba(180, 180, 180, 0.1)",
     }),
     label: {
-        maxWidth: 120,
+        maxWidth: 200,
     },
 }));
 
@@ -37,7 +37,7 @@ function DeliverableCard(props) {
                 {getDeliverableIconByEnum(props.icon, 4)}
                 <Tooltip
                     title={
-                        props.label && props.label.length > 14
+                        props.label && props.label.length > 22
                             ? props.label
                             : ""
                     }
