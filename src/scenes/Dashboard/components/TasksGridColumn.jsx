@@ -180,6 +180,7 @@ function TasksGridColumn(props) {
                 setState(
                     addAssigneesAndConvertToObject(tasksResult, allAssignments)
                 );
+                //TODO this needs an observer for assignees
                 tasksSubscription.current.unsubscribe();
                 tasksSubscription.current = DataStore.observe(
                     models.Task

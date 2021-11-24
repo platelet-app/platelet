@@ -85,6 +85,7 @@ function DeliverableDetails(props) {
     async function updateDeliverable(value) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
+        // TODO: this needs a debouncer
         try {
             const existing = Object.values(state).find(
                 (d) => d.deliverableType.id === value.id
