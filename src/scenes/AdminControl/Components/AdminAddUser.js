@@ -73,47 +73,40 @@ function AdminAddUser() {
     async function signUp() {
         try {
             setIsPosting(true);
-            if (
-                !process.env.REACT_APP_OFFLINE_ONLY ||
-                process.env.REACT_APP_OFFLINE_ONLY === "false"
-            ) {
-                const { userSub } = await Auth.signUp({
-                    ...state,
-                });
-                dispatch(
-                    displayInfoNotification(
-                        "User registered and will be available after they confirm their account"
-                    )
-                );
-            } else {
-                // Only add the user to DataStore if we're working offline, otherwise get it from amplify once user is confirmed
-                const newContact = await DataStore.save(
-                    new models.AddressAndContactDetails({
-                        emailAddress: state.attributes.email,
-                    })
-                );
-                const newUser = await DataStore.save(
-                    new models.User({
-                        name: state.attributes.name,
-                        displayName: state.attributes.name,
-                        active: 1,
-                        username: state.username,
-                        contact: newContact,
-                        roles: [
-                            userRoles.user,
-                            userRoles.rider,
-                            userRoles.coordinator,
-                        ],
-                    })
-                );
-                dispatch(
-                    displayInfoNotification(
-                        "User added",
-                        undefined,
-                        `/user/${encodeUUID(newUser.id)}`
-                    )
-                );
-            }
+            const { userSub } = await Auth.adminCreateUser({
+                ...state,
+            });
+            //             dispatch(
+            //                 displayInfoNotification(
+            //                     "User registered and will be available after they confirm their account"
+            //                 )
+            //             );
+            const newContact = await DataStore.save(
+                new models.AddressAndContactDetails({
+                    emailAddress: state.attributes.email,
+                })
+            );
+            const newUser = await DataStore.save(
+                new models.User({
+                    name: state.attributes.name,
+                    displayName: state.attributes.name,
+                    active: 1,
+                    username: state.username,
+                    contact: newContact,
+                    roles: [
+                        userRoles.user,
+                        userRoles.rider,
+                        userRoles.coordinator,
+                    ],
+                })
+            );
+            dispatch(
+                displayInfoNotification(
+                    "User added",
+                    undefined,
+                    `/user/${encodeUUID(newUser.id)}`
+                )
+            );
             setState(initialState);
             setIsPosting(false);
         } catch (error) {
