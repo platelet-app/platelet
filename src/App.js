@@ -24,6 +24,13 @@ import {
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
 
+import { DataStore } from "@aws-amplify/datastore";
+//import locs from "./locs.json";
+import * as models from "./models/index";
+window.models = models;
+window.DataStore = DataStore;
+//window.locs = locs;
+
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
         process.env.REACT_APP_OFFLINE_ONLY === "false") &&
