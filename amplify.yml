@@ -27,4 +27,4 @@ test:
         - npm ci
     test:
       commands:
-        - npm test
+        - npm test -- --watchAll=false
