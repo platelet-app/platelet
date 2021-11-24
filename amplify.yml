@@ -21,7 +21,19 @@ frontend:
     paths:
       - node_modules/**/*
 test:
+  artifacts:
+    baseDirectory: cypress
+    configFilePath: '**/mochawesome.json'
+    files:
+      - '**/*.png'
+      - '**/*.mp4'
   phases:
+    artifacts: # arbitrary values (other than baseDirectory) bc amplify test phase will fail without them
+      baseDirectory: ./
+      configFilePath: '**/mochawesome.json'
+      files:
+        - '**/*.png'
+        - '**/*.mp4'
     preTest:
       commands:
         - npm ci
