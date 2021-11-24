@@ -73,14 +73,16 @@ function AdminAddUser() {
     async function signUp() {
         try {
             setIsPosting(true);
-            const { userSub } = await Auth.adminCreateUser({
-                ...state,
-            });
+            //  const { userSub } = await Auth.signUp({
+            //      ...state,
+            //  });
             //             dispatch(
             //                 displayInfoNotification(
             //                     "User registered and will be available after they confirm their account"
             //                 )
             //             );
+            // adminCreateUser on aws cognito
+
             const newContact = await DataStore.save(
                 new models.AddressAndContactDetails({
                     emailAddress: state.attributes.email,
