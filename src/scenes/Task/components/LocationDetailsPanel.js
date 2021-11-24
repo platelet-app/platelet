@@ -65,7 +65,17 @@ function LocationDetailsPanel(props) {
                 ...rest
             } = currentState;
             const newContact = await DataStore.save(
-                new models.AddressAndContactDetails({ ...contact })
+                new models.AddressAndContactDetails(
+                    _.omit(
+                        contact,
+                        "createdAt",
+                        "id",
+                        "updatedAt",
+                        "_version",
+                        "_lastChangedAt",
+                        "_deleted"
+                    )
+                )
             );
             const newLocation = await DataStore.save(
                 new models.Location({
