@@ -28,7 +28,7 @@ function UserRoleSelect(props) {
                             ([key, value]) => !props.exclude.includes(value)
                         )
                         .map(([key, value]) => (
-                            <MenuItem value={value}>
+                            <MenuItem key={key} value={value}>
                                 {key.toUpperCase()}
                             </MenuItem>
                         ))}

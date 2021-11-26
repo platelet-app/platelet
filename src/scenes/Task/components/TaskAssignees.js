@@ -14,7 +14,7 @@ function TaskAssignees(props) {
         const label =
             role === userRoles.coordinator ? "Coordinators:" : "Riders:";
         return (
-            <Stack direction="column" spacing={1}>
+            <Stack key={role} direction="column" spacing={1}>
                 <Typography>{label}</Typography>
                 <Typography>{message}</Typography>
                 {assignments.map((assignment) => {
@@ -36,12 +36,12 @@ function TaskAssignees(props) {
 }
 
 TaskAssignees.propTypes = {
-    assignees: PropTypes.arrayOf(PropTypes.object),
+    assignees: PropTypes.object,
     onRemove: PropTypes.func,
 };
 
 TaskAssignees.defaultProps = {
-    assignees: [],
+    assignees: {},
     onRemove: () => {},
 };
 
