@@ -42,8 +42,8 @@ function LocationDetailsPanel(props) {
             }
             setIsFetching(false);
         } catch (err) {
+            console.log(err);
             setErrorState(true);
-            console.error(err);
         }
     }
 
@@ -133,7 +133,7 @@ function LocationDetailsPanel(props) {
     async function changeContactDetails(values) {
         if (!state.contact || !state.contact.id) {
             displayErrorNotification(errorMessage);
-            console.error("Tried to update a non-existent contact");
+            console.log("Tried to update a non-existent contact");
             return;
         }
         const existingContact = await DataStore.query(
@@ -142,7 +142,7 @@ function LocationDetailsPanel(props) {
         );
         if (!existingContact) {
             displayErrorNotification(errorMessage);
-            console.error(`Location could not be found${state.contact.id}`);
+            console.log(`Location could not be found${state.contact.id}`);
             return;
         }
         const contactResult = await DataStore.save(
@@ -167,7 +167,7 @@ function LocationDetailsPanel(props) {
         // display error if some location that doesn't exist is attempted to be created
         if (!["dropOffLocation", "pickUpLocation"].includes(key)) {
             dispatch(displayErrorNotification(errorMessage));
-            console.error(`Trying to edit a bad location: ${key}`);
+            console.log(`Trying to edit a bad location: ${key}`);
             return;
         }
         try {
