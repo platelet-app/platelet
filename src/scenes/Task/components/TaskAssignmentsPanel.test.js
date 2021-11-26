@@ -8,7 +8,10 @@ import _ from "lodash";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../../redux/notifications/NotificationsActions";
 
 jest.mock("aws-amplify");
 
@@ -164,9 +167,9 @@ describe("TaskAssignmentsPanel", () => {
         ).toBeInTheDocument();
     });
 
-    test("select and assign a rider", async () => {
+    test.only("select and assign a rider", async () => {
         const mockUser = new models.User(fakeUsers[0]);
-        const mockTask = new models.Task({});
+        const mockTask = new models.Task({ status: tasksStatus.new });
         const mockAssignment = new models.TaskAssignee({
             assignee: mockUser,
             task: mockTask,
@@ -220,6 +223,10 @@ describe("TaskAssignmentsPanel", () => {
                     _.omit(mockRiderResponsibility, "id")
                 ),
             })
+        );
+        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
+        expect(mockDispatch).toHaveBeenCalledWith(
+            displayInfoNotification("Task moved to ACTIVE")
         );
     });
 
