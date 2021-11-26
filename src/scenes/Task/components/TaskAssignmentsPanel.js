@@ -68,7 +68,7 @@ function TaskAssignmentsPanel(props) {
     const deleting = useRef(false);
     const [state, setState] = useState({});
     const dispatch = useDispatch();
-    const errorMessage = "Sorry, an error occurred";
+    const errorMessage = "Sorry, something went wrong";
 
     function onSelect(value) {
         if (value) addAssignee(value, role);

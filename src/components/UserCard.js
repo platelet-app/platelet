@@ -35,6 +35,7 @@ export default function UserCard(props) {
 
     const deleteButton = props.onDelete ? (
         <IconButton
+            aria-label="delete"
             className={classes.iconButton}
             color={"inherit"}
             onClick={(event) => {

@@ -8,11 +8,18 @@ import _ from "lodash";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 jest.mock("aws-amplify");
 
 jest.mock("../../../redux/Selectors", () => ({
     dataStoreReadyStatusSelector: () => true,
+}));
+
+const mockDispatch = jest.fn();
+jest.mock("react-redux", () => ({
+    ...jest.requireActual("react-redux"),
+    useDispatch: () => mockDispatch,
 }));
 
 const errorMessage = "Sorry, something went wrong";
@@ -25,6 +32,8 @@ const fakeAssignments = [
         id: "1",
         assignee: {
             id: "someId",
+            riderResponsibility: "Something",
+            userRiderResponsibilityId: "responsibilityId",
             displayName: "Some Person",
             profilePictureThumbnailURL,
         },
@@ -45,6 +54,8 @@ const fakeAssignments = [
         id: "3",
         assignee: {
             id: "someId3",
+            riderResponsibility: "Something",
+            riderResponsibilityId: "responsibilityId",
             displayName: "Nope",
             profilePictureThumbnailURL,
         },
@@ -275,5 +286,179 @@ describe("TaskAssignmentsPanel", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
         expect(screen.getByText(errorMessage)).toBeInTheDocument();
+    });
+
+    test("failure on assigning a user", async () => {
+        const mockUser = new models.User(fakeUsers[0]);
+        const mockTask = new models.Task({});
+        amplify.DataStore.query
+            .mockResolvedValueOnce([fakeAssignments[1]])
+            .mockResolvedValueOnce(fakeUsers)
+            .mockResolvedValueOnce(mockUser)
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValueOnce(fakeUsers);
+        amplify.DataStore.save.mockRejectedValueOnce(new Error("test"));
+        render(<TaskAssignmentsPanel taskId="test" />);
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        expect(screen.getByText("RIDER")).toBeInTheDocument();
+        const textBox = screen.getByRole("textbox");
+        userEvent.type(textBox, mockUser.displayName);
+        const option = screen.getByText(mockUser.displayName);
+        expect(option).toBeInTheDocument();
+        userEvent.click(option);
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
+        );
+        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
+        expect(mockDispatch).toHaveBeenCalledWith(
+            displayErrorNotification(errorMessage)
+        );
+    });
+
+    it("deletes a coordinator assignment", async () => {
+        const mockAssignment = new models.TaskAssignee(fakeAssignments[1]);
+        const mockTask = new models.Task({ status: tasksStatus.new });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([mockAssignment])
+            .mockResolvedValueOnce(fakeUsers)
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValueOnce(mockAssignment);
+        amplify.DataStore.delete.mockResolvedValueOnce(mockAssignment);
+        amplify.DataStore.save.mockResolvedValueOnce({
+            ...mockTask,
+            status: tasksStatus.new,
+        });
+        render(<TaskAssignmentsPanel taskId="test" />);
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
+        );
+        userEvent.click(screen.getByRole("button", { name: "delete" }));
+        await waitFor(() =>
+            expect(amplify.DataStore.delete).toHaveBeenCalledTimes(1)
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
+        );
+        expect(amplify.DataStore.delete).toHaveBeenCalledWith(mockAssignment);
+        expect(amplify.DataStore.save).toHaveBeenCalledWith({
+            ...mockTask,
+            status: tasksStatus.new,
+        });
+    });
+
+    it("deletes a rider assignment", async () => {
+        const mockAssignment = new models.TaskAssignee(fakeAssignments[0]);
+        const mockTask = new models.Task({ status: tasksStatus.active });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([mockAssignment])
+            .mockResolvedValueOnce(fakeUsers)
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValueOnce(mockAssignment);
+        amplify.DataStore.delete.mockResolvedValueOnce(mockAssignment);
+        amplify.DataStore.save.mockResolvedValueOnce({
+            ...mockTask,
+            status: tasksStatus.new,
+        });
+        render(<TaskAssignmentsPanel taskId="test" />);
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        userEvent.click(screen.getByText("Expand to see more"));
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
+        );
+        userEvent.click(screen.getByRole("button", { name: "delete" }));
+        await waitFor(() =>
+            expect(amplify.DataStore.delete).toHaveBeenCalledTimes(1)
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
+        );
+        expect(amplify.DataStore.delete).toHaveBeenCalledWith(mockAssignment);
+        expect(amplify.DataStore.save).toHaveBeenCalledWith({
+            ...mockTask,
+            status: tasksStatus.new,
+        });
+        expect(amplify.DataStore.save).toHaveBeenCalledWith({
+            ...mockTask,
+            riderResponsibility: null,
+        });
+    });
+
+    it("deletes a rider assignment with multiple riders", async () => {
+        const mockAssignment = new models.TaskAssignee(fakeAssignments[0]);
+        const mockAssignment2 = new models.TaskAssignee({
+            ...fakeAssignments[0],
+            id: "anotherId",
+        });
+        const mockRiderResponsibility = new models.RiderResponsibility({
+            label: "Something",
+        });
+        const mockTask = new models.Task({ status: tasksStatus.active });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([mockAssignment, mockAssignment2])
+            .mockResolvedValueOnce(fakeUsers)
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValueOnce(mockAssignment)
+            .mockResolvedValue(mockRiderResponsibility);
+        amplify.DataStore.delete.mockResolvedValueOnce(mockAssignment);
+        amplify.DataStore.save.mockResolvedValueOnce({
+            ...mockTask,
+            status: tasksStatus.new,
+        });
+        render(<TaskAssignmentsPanel taskId="test" />);
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        userEvent.click(screen.getByText("Expand to see more"));
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
+        );
+        const deleteButtons = await screen.findAllByRole("button", {
+            name: "delete",
+        });
+        expect(deleteButtons).toHaveLength(2);
+        userEvent.click(deleteButtons[0]);
+        await waitFor(() =>
+            expect(amplify.DataStore.delete).toHaveBeenCalledTimes(1)
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
+        );
+        expect(amplify.DataStore.delete).toHaveBeenCalledWith(mockAssignment);
+        expect(amplify.DataStore.save).toHaveBeenCalledWith({
+            ...mockTask,
+            status: tasksStatus.active,
+        });
+        expect(amplify.DataStore.save).toHaveBeenCalledWith({
+            ...mockTask,
+            riderResponsibility: mockRiderResponsibility,
+        });
+    });
+
+    test("delete assignment error", async () => {
+        amplify.DataStore.query
+            .mockResolvedValueOnce(fakeAssignments)
+            .mockResolvedValueOnce(fakeUsers)
+            .mockRejectedValue(new Error("test error"));
+        render(<TaskAssignmentsPanel taskId="test" />);
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        userEvent.click(screen.getByText("Expand to see more"));
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
+        );
+        const deleteButtons = await screen.findAllByRole("button", {
+            name: "delete",
+        });
+        expect(deleteButtons).toHaveLength(2);
+        userEvent.click(deleteButtons[0]);
+        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
+        expect(mockDispatch).toHaveBeenCalledWith(
+            displayErrorNotification(errorMessage)
+        );
     });
 });
