@@ -1,7 +1,7 @@
 import React from "react";
 import LocationDetailsPanel from "./LocationDetailsPanel";
 import { render } from "../../../test-utils";
-import { screen, waitFor } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models/index";
@@ -150,14 +150,22 @@ const mockLocations = [
 ];
 
 describe("LocationDetailsPanel", () => {
-    it("renders without crashing", () => {
+    it("renders without crashing", async () => {
+        amplify.DataStore.query.mockResolvedValue([]);
         render(<LocationDetailsPanel />);
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
     });
     it.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
-    `("renders the correct title", ({ locationKey }) => {
+    `("renders the correct title", async ({ locationKey }) => {
+        amplify.DataStore.query.mockResolvedValue([]);
         render(<LocationDetailsPanel locationKey={locationKey} />);
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
         expect(
             screen.getByText(
                 locationKey === "pickUpLocation" ? "Collect from" : "Deliver to"
@@ -433,7 +441,9 @@ describe("LocationDetailsPanel", () => {
             });
             const fakeContactModel = new models.AddressAndContactDetails({});
             const fakeTaskModel = new models.Task({});
-            amplify.DataStore.query.mockResolvedValue(fakeTaskModel);
+            amplify.DataStore.query
+                .mockResolvedValueOnce(mockLocations)
+                .mockResolvedValue(fakeTaskModel);
             amplify.DataStore.save
                 .mockResolvedValueOnce(fakeContactModel)
                 .mockResolvedValue({
