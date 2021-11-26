@@ -109,9 +109,12 @@ const mockDeliverables = [
 ];
 
 describe("DeliverableGridSelect", () => {
-    it("renders", () => {
+    it("renders", async () => {
         amplify.DataStore.query.mockResolvedValue(mockData);
         render(<DeliverableGridSelect />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalled();
+        });
     });
 
     it("renders available items", async () => {
