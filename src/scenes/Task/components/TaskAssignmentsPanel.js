@@ -60,13 +60,13 @@ const sortByUserRole = (a, b) => {
 
 function TaskAssignmentsPanel(props) {
     const [collapsed, setCollapsed] = useState(true);
-    const [assigneesDisplayString, setAssigneesDisplayString] = useState(null);
+    const [assigneesDisplayString, setAssigneesDisplayString] = useState("");
     const [role, setRole] = useState(userRoles.rider);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const deleting = useRef(false);
-    const [state, setState] = useState([]);
+    const [state, setState] = useState({});
     const dispatch = useDispatch();
     const errorMessage = "Sorry, an error occurred";
 
@@ -216,7 +216,7 @@ function TaskAssignmentsPanel(props) {
 
     useEffect(() => {
         if (Object.values(state).length === 0) {
-            setAssigneesDisplayString(null);
+            setAssigneesDisplayString("");
         } else {
             const assigneesDisplayString = Object.values(state)
                 .sort(sortByUserRole)
