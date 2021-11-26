@@ -167,7 +167,7 @@ describe("TaskAssignmentsPanel", () => {
         ).toBeInTheDocument();
     });
 
-    test.only("select and assign a rider", async () => {
+    test("select and assign a rider", async () => {
         const mockUser = new models.User(fakeUsers[0]);
         const mockTask = new models.Task({ status: tasksStatus.new });
         const mockAssignment = new models.TaskAssignee({
