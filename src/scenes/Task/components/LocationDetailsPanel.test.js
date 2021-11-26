@@ -12,6 +12,7 @@ jest.mock("aws-amplify");
 jest.mock("../../../redux/Selectors", () => ({
     dataStoreReadyStatusSelector: () => true,
 }));
+const errorMessage = "Sorry, something went wrong";
 
 const mockLocations = [
     {
@@ -522,5 +523,20 @@ describe("LocationDetailsPanel", () => {
             ...fakeContactModel,
             emailAddress: `${fakeContactModel.emailAddress} ${fakeInputData}`,
         });
+    });
+
+    test("error on location get", async () => {
+        const fakeError = new Error("fake error");
+        amplify.DataStore.query.mockRejectedValue(fakeError);
+        render(
+            <LocationDetailsPanel
+                locationId={"fakeId"}
+                locationKey={"pickUpLocation"}
+            />
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 });
