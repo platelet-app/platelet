@@ -82,7 +82,7 @@ function TaskOverview(props) {
                                 props.onChangeTimeDroppedOff
                             }
                             onChangeTimeRejected={props.onChangeTimeRejected}
-                            task={props.task}
+                            taskId={taskUUID}
                         />
                     </Stack>
                 </Grid>

@@ -173,12 +173,7 @@ function TaskItem(props) {
     ) : (
         <Skeleton variant="rectangle" width="100%" height={200} />
     );
-    return (
-        <>
-            <div ref={ref} />
-            {contents}
-        </>
-    );
+    return <div ref={ref}>{contents}</div>;
 }
 
 TaskItem.defaultProps = {
