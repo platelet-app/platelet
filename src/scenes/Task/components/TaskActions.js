@@ -10,6 +10,11 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models/index";
+import GetError from "../../../ErrorComponents/GetError";
+import { useSelector } from "react-redux";
+import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 
 const fields = {
     pickedUp: "Picked up",
@@ -20,6 +25,9 @@ const fields = {
 
 function TaskActions(props) {
     const [state, setState] = useState([]);
+    const [isFetching, setIsFetching] = useState(true);
+    const [errorState, setErrorState] = useState(null);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const cardClasses = dialogCardStyles();
 
     function onChange(key) {
@@ -35,15 +43,29 @@ function TaskActions(props) {
         });
     }
 
-    function updateStateFromProps() {
-        if (!props.task) return;
-        const result = [];
-        if (!!props.task.timePickedUp) result.push("pickedUp");
-        if (!!props.task.timeDroppedOff) result.push("droppedOff");
-        if (!!props.task.timeRejected) result.push("rejected");
-        if (!!props.task.timeCancelled) result.push("cancelled");
-        setState(result);
+    async function updateStateFromTask() {
+        if (!dataStoreReadyStatus) return;
+        try {
+            const task = await DataStore.query(models.Task, props.taskId);
+            if (!task) throw new Error("Task not found");
+            const result = [];
+            if (task.timePickedUp) result.push("pickedUp");
+            if (task.timeDroppedOff) result.push("droppedOff");
+            if (task.timeRejected) result.push("rejected");
+            if (task.timeCancelled) result.push("cancelled");
+            setState(result);
+            setIsFetching(false);
+        } catch (e) {
+            setIsFetching(false);
+            console.log(e);
+            setErrorState(e);
+        }
     }
+
+    useEffect(
+        () => updateStateFromTask(),
+        [props.taskId, dataStoreReadyStatus]
+    );
 
     function checkDisabled(key) {
         const stopped =
@@ -66,40 +88,41 @@ function TaskActions(props) {
         } else return false;
     }
 
-    useEffect(updateStateFromProps, [props.task]);
-    return (
-        <Paper className={cardClasses.root}>
-            <Stack direction={"column"} spacing={2}>
-                <Typography variant={"h6"}> Actions</Typography>
-                <Divider />
-                <ToggleButtonGroup
-                    value={state}
-                    onChange={props.onChange}
-                    orientation="vertical"
-                    aria-label="text formatting"
-                >
-                    {Object.entries(fields).map(([key, value]) => {
-                        return (
-                            <ToggleButton
-                                key={key}
-                                disabled={
-                                    props.isFetching || checkDisabled(key)
-                                }
-                                aria-disabled={
-                                    props.isFetching || checkDisabled(key)
-                                }
-                                aria-label={key}
-                                value={key}
-                                onClick={() => onChange(key)}
-                            >
-                                {value}
-                            </ToggleButton>
-                        );
-                    })}
-                </ToggleButtonGroup>
-            </Stack>
-        </Paper>
-    );
+    if (errorState) {
+        return <GetError />;
+    } else {
+        return (
+            <Paper className={cardClasses.root}>
+                <Stack direction={"column"} spacing={2}>
+                    <Typography variant={"h6"}> Actions</Typography>
+                    <Divider />
+                    <ToggleButtonGroup
+                        value={state}
+                        onChange={props.onChange}
+                        orientation="vertical"
+                        aria-label="text formatting"
+                    >
+                        {Object.entries(fields).map(([key, value]) => {
+                            return (
+                                <ToggleButton
+                                    key={key}
+                                    disabled={isFetching || checkDisabled(key)}
+                                    aria-disabled={
+                                        isFetching || checkDisabled(key)
+                                    }
+                                    aria-label={key}
+                                    value={key}
+                                    onClick={() => onChange(key)}
+                                >
+                                    {value}
+                                </ToggleButton>
+                            );
+                        })}
+                    </ToggleButtonGroup>
+                </Stack>
+            </Paper>
+        );
+    }
 }
 
 TaskActions.propTypes = {
