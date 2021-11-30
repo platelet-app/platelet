@@ -72,6 +72,7 @@ function TaskOverview(props) {
                             onChangeRequesterContact={
                                 props.onChangeRequesterContact
                             }
+                            taskId={taskUUID}
                             task={task}
                         />
                         <TaskActions taskId={taskUUID} />

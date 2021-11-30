@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
-import Grid from "@mui/material/Grid";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
@@ -9,8 +8,12 @@ import ClickableTextField from "../../../components/ClickableTextField";
 import TimePicker from "./TimePicker";
 import { Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
-import TaskActions from "./TaskActions";
-import Moment from "react-moment";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models";
+import { determineTaskStatus } from "../../../utilities";
+import { useDispatch, useSelector } from "react-redux";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -69,23 +72,76 @@ function TaskDetailsPanel(props) {
             telephoneNumber: null,
         },
     });
+    const [isFetching, setIsFetching] = useState(true);
+    const [errorState, setErrorState] = useState(null);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const dispatch = useDispatch();
     const classes = useStyles();
 
-    useEffect(() => setState(extractTaskData(props.task)), [props.task]);
+    const errorMessage = "Sorry, something went wrong";
+
+    async function getTask() {
+        if (!dataStoreReadyStatus) {
+            return;
+        }
+        try {
+            const task = await DataStore.query(models.Task, props.taskId);
+            if (!task) throw new Error("Task not found");
+            setState(extractTaskData(task));
+            setIsFetching(false);
+        } catch (error) {
+            console.log(error);
+            setErrorState(error);
+            setIsFetching(false);
+        }
+    }
+    useEffect(() => getTask(), [props.taskId]);
+
+    async function setTimeWithKey(key, value) {
+        try {
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
+            if (!existingTask) throw new Error("Task doesn't exist");
+            const assignees = (
+                await DataStore.query(models.TaskAssignee)
+            ).filter((a) => a.task && a.task.id === props.taskId);
+            const status = determineTaskStatus({
+                ...existingTask,
+                [key]: value.toISOString(),
+                assignees,
+            });
+            await DataStore.save(
+                models.Task.copyOf(existingTask, (updated) => {
+                    updated[key] = value.toISOString();
+                    updated.status = status;
+                })
+            );
+            setState((prevState) => ({
+                ...prevState,
+                [key]: value.toISOString(),
+            }));
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
 
     function onChangeTimeOfCall(value) {
-        if (value) {
-            props.onChangeTimeOfCall(value);
+        //check value is a Date object
+        if (value && value instanceof Date) {
+            setTimeWithKey("timeOfCall", value);
         }
     }
     function onChangeTimeDroppedOff(value) {
-        if (value) {
-            props.onChangeTimeDroppedOff(value);
+        if (value && value instanceof Date) {
+            setTimeWithKey("timeDroppedOff", value);
         }
     }
     function onChangeTimePickedUp(value) {
-        if (value) {
-            props.onChangeTimePickedUp(value);
+        if (value && value instanceof Date) {
+            setTimeWithKey("timePickedUp", value);
         }
     }
 
@@ -183,16 +239,7 @@ function TaskDetailsPanel(props) {
 }
 
 TaskDetailsPanel.propTypes = {
-    task: PropTypes.object,
-    isFetching: PropTypes.bool,
-    onSelectPriority: PropTypes.func,
-    onChangeRequesterContact: PropTypes.func,
-};
-
-TaskDetailsPanel.defaultProps = {
-    isFetching: false,
-    onSelectPriority: () => {},
-    onChangeRequesterContact: () => {},
+    taskId: PropTypes.string.isRequired,
 };
 
 export default TaskDetailsPanel;
