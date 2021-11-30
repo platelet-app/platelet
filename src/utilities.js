@@ -1,7 +1,12 @@
 import React from "react";
 import uuidBase62 from "uuid-base62";
 import { v4 as uuidv4 } from "uuid";
-import { deliverableIcons, tasksStatus, userRoles } from "./apiConsts";
+import {
+    deliverableIcons,
+    priorities,
+    tasksStatus,
+    userRoles,
+} from "./apiConsts";
 import BugIcon from "./components/deliverableIcons/BugIcon";
 import ChildIcon from "./components/deliverableIcons/ChildIcon";
 import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
@@ -15,6 +20,19 @@ export function convertListDataToObject(list) {
         result[item.id] = item;
     }
     return result;
+}
+
+function convertPriority(priority) {
+    switch (priority) {
+        case priorities.high:
+            return "Emergency";
+        case priorities.medium:
+            return "Urgent";
+        case priorities.low:
+            return "Non-urgent";
+        default:
+            return "";
+    }
 }
 
 export function copyTaskDataToClipboard(task) {
@@ -33,7 +51,7 @@ export function copyTaskDataToClipboard(task) {
         TO: dropOffLocation
             ? `${dropOffLocation.ward || ""} - ${dropOffLocation.line1 || ""}`
             : undefined,
-        PRIORITY: priority ? priority.toLowerCase() : undefined,
+        PRIORITY: priority ? convertPriority(priority) : undefined,
     };
 
     if (deliverables) {
