@@ -74,16 +74,7 @@ function TaskOverview(props) {
                             }
                             task={task}
                         />
-                        <TaskActions
-                            isFetching={props.isFetching}
-                            onChangeTimePickedUp={props.onChangeTimePickedUp}
-                            onChangeTimeCancelled={props.onChangeTimeCancelled}
-                            onChangeTimeDroppedOff={
-                                props.onChangeTimeDroppedOff
-                            }
-                            onChangeTimeRejected={props.onChangeTimeRejected}
-                            taskId={taskUUID}
-                        />
+                        <TaskActions taskId={taskUUID} />
                     </Stack>
                 </Grid>
                 <Grid item className={classes.item}>
