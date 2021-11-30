@@ -29,6 +29,7 @@ import { DataStore } from "@aws-amplify/datastore";
 import * as models from "./models/index";
 window.models = models;
 window.DataStore = DataStore;
+window.AmplifyLogger = Logger;
 //window.locs = locs;
 
 if (
