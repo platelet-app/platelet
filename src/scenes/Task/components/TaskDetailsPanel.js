@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PrioritySelect from "./PrioritySelect";
@@ -25,39 +25,6 @@ const useStyles = makeStyles({
     },
 });
 
-function extractTaskData(task) {
-    let {
-        reference,
-        timeOfCall,
-        riderResponsibility,
-        id,
-        requesterContact,
-        priority,
-        timeRejected,
-        timeCancelled,
-        timePickedUp,
-        timeDroppedOff,
-    } = task;
-    if (requesterContact === null) {
-        requesterContact = {
-            name: null,
-            telephoneNumber: null,
-        };
-    }
-    return {
-        reference,
-        timeOfCall,
-        riderResponsibility,
-        id,
-        requesterContact,
-        priority,
-        timeRejected,
-        timeCancelled,
-        timePickedUp,
-        timeDroppedOff,
-    };
-}
-
 function TaskDetailsPanel(props) {
     const cardClasses = dialogCardStyles();
     const [state, setState] = useState({
@@ -75,6 +42,7 @@ function TaskDetailsPanel(props) {
     });
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(null);
+    const taskObserver = useRef({ unsubscribe: () => {} });
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
     const classes = useStyles();
@@ -88,15 +56,51 @@ function TaskDetailsPanel(props) {
         try {
             const task = await DataStore.query(models.Task, props.taskId);
             if (!task) throw new Error("Task not found");
-            setState(extractTaskData(task));
+            setState(task);
             setIsFetching(false);
+            taskObserver.current.unsubscribe();
+            taskObserver.current = DataStore.observe(
+                models.Task,
+                props.taskId
+            ).subscribe(async (observeResult) => {
+                const taskData = observeResult.element;
+                if (observeResult.opType === "INSERT") {
+                    setState(taskData);
+                } else if (observeResult.opType === "UPDATE") {
+                    if (
+                        taskData.taskRiderResponsibilityId ||
+                        taskData.taskRiderResponsibilityId === null
+                    ) {
+                        let riderResponsibility = null;
+                        if (taskData.taskRiderResponsibilityId)
+                            riderResponsibility = await DataStore.query(
+                                models.RiderResponsibility,
+                                taskData.taskRiderResponsibilityId
+                            );
+                        setState((prevState) => ({
+                            ...prevState,
+                            ...taskData,
+                            riderResponsibility,
+                        }));
+                    } else {
+                        setState((prevState) => ({
+                            ...prevState,
+                            ...taskData,
+                        }));
+                    }
+                } else if (observeResult.opType === "DELETE") {
+                    setErrorState(new Error("Task was deleted"));
+                }
+                const task = observeResult.element;
+                setState((prevState) => ({ ...prevState, ...task }));
+            });
         } catch (error) {
             console.log(error);
             setErrorState(error);
             setIsFetching(false);
         }
     }
-    useEffect(() => getTask(), [props.taskId]);
+    useEffect(() => getTask(), [props.taskId, dataStoreReadyStatus]);
 
     async function setTimeWithKey(key, value) {
         try {

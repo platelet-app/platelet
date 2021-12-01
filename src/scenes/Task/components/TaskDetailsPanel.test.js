@@ -53,6 +53,9 @@ describe("TaskDetailsPanel", () => {
                 name: "Someone Person",
             },
         });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskDetailsPanel taskId={"test"} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -86,6 +89,9 @@ describe("TaskDetailsPanel", () => {
                 name: "Someone Person",
             },
         });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskDetailsPanel taskId={"test"} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -105,6 +111,9 @@ describe("TaskDetailsPanel", () => {
                 telephoneNumber: "01234567890",
                 name: "Someone Person",
             },
+        });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskDetailsPanel taskId={"test"} />);
         await waitFor(async () => {
@@ -128,6 +137,9 @@ describe("TaskDetailsPanel", () => {
         amplify.DataStore.save.mockResolvedValue({
             ...mockTask,
             [timeKey]: time,
+        });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskDetailsPanel taskId={"test"} />);
         await waitFor(async () => {
