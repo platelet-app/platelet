@@ -36,6 +36,7 @@ if (
     });
 }
 Logger.LOG_LEVEL = "ERROR";
+window.amplifyLogger = Logger;
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
