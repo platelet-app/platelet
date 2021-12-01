@@ -35,14 +35,20 @@ describe("TaskActions", () => {
     });
     it("renders", async () => {
         amplify.DataStore.query.mockResolvedValue({});
-        render(<TaskActions />);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(<TaskActions taskId={"test"} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
     });
     test("all buttons are disabled when isFetching state is set", async () => {
         amplify.DataStore.query.mockResolvedValue({});
-        render(<TaskActions />);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(<TaskActions taskId={"test"} />);
         expect(
             screen.getByRole("button", { name: "Picked up" })
         ).toBeDisabled();
@@ -69,6 +75,9 @@ describe("TaskActions", () => {
             timePickedUp: isoDate,
             status: tasksStatus.new,
         });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -93,7 +102,10 @@ describe("TaskActions", () => {
 
     test("delivered button is disabled without timePickedUp set", async () => {
         amplify.DataStore.query.mockResolvedValue({ timePickedUp: null });
-        render(<TaskActions />);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(<TaskActions taskId={"test"} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
@@ -118,6 +130,9 @@ describe("TaskActions", () => {
             ...mockTask,
             timeDroppedOff: isoDate,
             status: tasksStatus.droppedOff,
+        });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(async () => {
@@ -147,6 +162,9 @@ describe("TaskActions", () => {
         amplify.DataStore.save.mockResolvedValue({
             ...mockTask,
             status: tasksStatus.new,
+        });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(async () => {
@@ -182,6 +200,9 @@ describe("TaskActions", () => {
             ...mockTask,
             status: tasksStatus.new,
         });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -214,7 +235,10 @@ describe("TaskActions", () => {
             timeDroppedOff: new Date().toISOString(),
             timePickedUp: new Date().toISOString(),
         });
-        render(<TaskActions />);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(<TaskActions taskId={"test"} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
@@ -231,6 +255,9 @@ describe("TaskActions", () => {
             .mockResolvedValueOnce(mockTask)
             .mockResolvedValue([]);
         amplify.DataStore.save.mockResolvedValue({});
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -263,6 +290,9 @@ describe("TaskActions", () => {
             .mockResolvedValueOnce(mockTask)
             .mockResolvedValue(mockAssignments);
         amplify.DataStore.save.mockResolvedValue({});
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -289,6 +319,9 @@ describe("TaskActions", () => {
             .mockResolvedValueOnce(mockTask)
             .mockResolvedValue([]);
         amplify.DataStore.save.mockResolvedValue({});
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -315,6 +348,9 @@ describe("TaskActions", () => {
             .mockResolvedValueOnce(mockTask)
             .mockResolvedValue([]);
         amplify.DataStore.save.mockResolvedValue({});
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);

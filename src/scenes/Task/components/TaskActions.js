@@ -6,7 +6,7 @@ import {
     ToggleButtonGroup,
     Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
@@ -29,6 +29,7 @@ function TaskActions(props) {
     const [state, setState] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(null);
+    const taskObserver = useRef({ unsubscribe: () => {} });
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
@@ -72,16 +73,37 @@ function TaskActions(props) {
         }
     }
 
+    function calculateState(task) {
+        return Object.keys(fields).filter((key) => {
+            return !!task[key];
+        });
+    }
+
     async function getTaskAndUpdateState() {
         if (!dataStoreReadyStatus) return;
         try {
             const task = await DataStore.query(models.Task, props.taskId);
             if (!task) throw new Error("Task not found");
-            const result = Object.keys(fields).filter((key) => {
-                return !!task[key];
-            });
-            setState(result);
+            setState(calculateState(task));
             setIsFetching(false);
+            taskObserver.current = DataStore.observe(
+                models.Task,
+                props.taskId
+            ).subscribe(async (observeResult) => {
+                const taskData = observeResult.element;
+                if (observeResult.opType === "INSERT") {
+                    setState(calculateState(taskData));
+                } else if (observeResult.opType === "UPDATE") {
+                    const observedTask = await DataStore.query(
+                        models.Task,
+                        props.taskId
+                    );
+                    setState(calculateState(observedTask));
+                } else if (observeResult.opType === "DELETE") {
+                    // just disable the buttons if the task is deleted
+                    setIsFetching(true);
+                }
+            });
         } catch (e) {
             setIsFetching(false);
             console.log(e);
@@ -93,6 +115,7 @@ function TaskActions(props) {
         () => getTaskAndUpdateState(),
         [props.taskId, dataStoreReadyStatus]
     );
+    useEffect(() => taskObserver.current.unsubscribe(), []);
 
     function checkDisabled(key) {
         const stopped =
