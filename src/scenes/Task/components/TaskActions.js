@@ -86,6 +86,7 @@ function TaskActions(props) {
             if (!task) throw new Error("Task not found");
             setState(calculateState(task));
             setIsFetching(false);
+            taskObserver.current.unsubscribe();
             taskObserver.current = DataStore.observe(
                 models.Task,
                 props.taskId
