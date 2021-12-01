@@ -14,6 +14,7 @@ import { determineTaskStatus } from "../../../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import GetError from "../../../ErrorComponents/GetError";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -112,12 +113,21 @@ function TaskDetailsPanel(props) {
                 [key]: value.toISOString(),
                 assignees,
             });
-            await DataStore.save(
-                models.Task.copyOf(existingTask, (updated) => {
-                    updated[key] = value.toISOString();
-                    updated.status = status;
-                })
-            );
+            if (existingTask.status === status) {
+                await DataStore.save(
+                    models.Task.copyOf(existingTask, (updated) => {
+                        updated[key] = value.toISOString();
+                        updated.status = status;
+                    })
+                );
+            } else {
+                await DataStore.save(
+                    models.Task.copyOf(existingTask, (updated) => {
+                        updated[key] = value.toISOString();
+                        updated.status = status;
+                    })
+                );
+            }
             setState((prevState) => ({
                 ...prevState,
                 [key]: value.toISOString(),
@@ -152,7 +162,9 @@ function TaskDetailsPanel(props) {
     function onChangeRequesterContact(value) {
         props.onChangeRequesterContact(value);
     }
-    if (props.isFetching) {
+    if (errorState) {
+        return <GetError />;
+    } else if (isFetching) {
         return (
             <Paper className={cardClasses.root}>
                 <Skeleton variant="rectangular" width="100%" height={200} />
