@@ -11,6 +11,8 @@ import makeStyles from "@mui/styles/makeStyles";
 import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
 import { getWhoami } from "../../../redux/Selectors";
+import Badge from "@mui/material/Badge";
+import MailIcon from "@mui/icons-material/Mail";
 
 const colourBarPercent = "90%";
 
@@ -102,19 +104,18 @@ const TaskCard = React.memo((props) => {
                     justifyContent={"space-between"}
                     alignItems={"center"}
                 >
-                    <Tooltip title={props.assignedCoordinatorsDisplayString}>
-                        <AvatarGroup>
-                            {coordAvatars.map((u) => (
-                                <UserAvatar
-                                    key={u.id}
-                                    size={3}
-                                    userUUID={u.id}
-                                    displayName={u.displayName}
-                                    avatarURL={u.profilePictureThumbnailURL}
-                                />
-                            ))}
-                        </AvatarGroup>
-                    </Tooltip>
+                    {props.commentCount > 0 ? (
+                        <Tooltip
+                            title={`${props.commentCount} comments`}
+                            placement={"top"}
+                        >
+                            <Badge color={"primary"}>
+                                <MailIcon />
+                            </Badge>
+                        </Tooltip>
+                    ) : (
+                        <div></div>
+                    )}
                     <Tooltip title={props.assignedRidersDisplayString}>
                         <AvatarGroup>
                             {riderAvatars.map((u) => (

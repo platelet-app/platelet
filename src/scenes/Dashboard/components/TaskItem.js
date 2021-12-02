@@ -10,10 +10,15 @@ import PropTypes from "prop-types";
 import { Grow, Skeleton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
-import { userRoles } from "../../../apiConsts";
+import { commentVisibility, userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
 import useOnScreen from "../../../hooks/useOnScreen";
+import { useSelector } from "react-redux";
+import {
+    dataStoreReadyStatusSelector,
+    getWhoami,
+} from "../../../redux/Selectors";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,7 +48,9 @@ const useStyles = makeStyles((theme) => ({
 
 function TaskItem(props) {
     const classes = useStyles();
+    const whoami = useSelector(getWhoami);
     const { task } = props;
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [assignedCoordinators, setAssignedCoordinators] = useState([]);
     const [assignedRidersDisplayString, setAssignedRidersDisplayString] =
@@ -55,6 +62,7 @@ function TaskItem(props) {
     const ref = React.useRef();
     const isVisible = useOnScreen(ref);
     const [visibility, setVisibility] = useState(false);
+    const [commentCount, setCommentCount] = useState(0);
 
     useEffect(() => {
         if (isVisible && !visibility) {
@@ -92,6 +100,24 @@ function TaskItem(props) {
     }
 
     useEffect(sortAssignees, [props.assignees, isVisible]);
+
+    async function calculateCommentCount() {
+        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+        const commentsResult = (
+            await DataStore.query(models.Comment, (c) =>
+                c.parentId("eq", props.task.id)
+            )
+        ).filter(
+            (c) =>
+                c.visibility === commentVisibility.everyone ||
+                (c.visibility === commentVisibility.me &&
+                    c.author.id === whoami.id)
+        );
+        setCommentCount(commentsResult.length);
+    }
+    useEffect(() => {
+        calculateCommentCount();
+    }, [visibility, props.task, dataStoreReadyStatus]);
 
     async function setTimeValue(value, key) {
         const result = await DataStore.query(models.Task, props.taskUUID);
@@ -146,6 +172,7 @@ function TaskItem(props) {
                         assignedCoordinatorsDisplayString={
                             assignedCoordinatorsDisplayString
                         }
+                        commentCount={commentCount}
                     />
                 </Link>
                 <div className={classes.dots}>
