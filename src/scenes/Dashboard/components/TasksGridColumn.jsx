@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import _ from "lodash";
 import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
@@ -119,31 +119,50 @@ function TasksGridColumn(props) {
         if (!dataStoreReadyStatus) {
             return;
         } else {
+            const isCompletedTab =
+                _.intersection(
+                    [
+                        tasksStatus.droppedOff,
+                        tasksStatus.cancelled,
+                        tasksStatus.rejected,
+                    ],
+                    props.taskKey
+                ).length > 0;
             try {
                 const allAssignments = await DataStore.query(
                     models.TaskAssignee
                 );
                 let tasksResult = [];
                 if (roleView === "all") {
-                    if (
-                        [
-                            tasksStatus.droppedOff,
-                            tasksStatus.cancelled,
-                            tasksStatus.rejected,
-                        ].includes(props.taskKey)
-                    ) {
+                    if (isCompletedTab) {
                         tasksResult = await DataStore.query(
                             models.Task,
-                            (task) => task.status("eq", props.taskKey),
+
+                            (task) =>
+                                task.or((task) =>
+                                    task
+                                        // TODO: not ideal since it sometimes is one index but works for now
+                                        .status("eq", props.taskKey[0])
+                                        .status("eq", props.taskKey[1])
+                                ),
+
                             {
-                                page: 0,
+                                sort: (s) => s.createdAt("desc"),
                                 limit: 100,
                             }
                         );
                     } else {
                         tasksResult = await DataStore.query(
                             models.Task,
-                            (task) => task.status("eq", props.taskKey)
+                            (task) =>
+                                task.or((task) =>
+                                    task
+                                        .status("eq", props.taskKey[0])
+                                        .status("eq", props.taskKey[1])
+                                ),
+                            {
+                                sort: (s) => s.createdAt("desc"),
+                            }
                         );
                     }
                 } else {
@@ -155,13 +174,7 @@ function TasksGridColumn(props) {
                     // once DataStore implements lazy loading, get the tasks for assignments instead
                     const taskIds = assignments.map((a) => a.task.id);
                     let tasks;
-                    if (
-                        [
-                            tasksStatus.droppedOff,
-                            tasksStatus.cancelled,
-                            tasksStatus.rejected,
-                        ].includes(props.taskKey)
-                    ) {
+                    if (isCompletedTab) {
                         tasks = await DataStore.query(
                             models.Task,
                             (task) => task.status("eq", props.taskKey),
@@ -190,7 +203,7 @@ function TasksGridColumn(props) {
                             models.Task,
                             newTask.element.id
                         );
-                        if (replaceTask.status === props.taskKey) {
+                        if (props.taskKey.includes(replaceTask.status)) {
                             const assignees = (
                                 await DataStore.query(models.TaskAssignee)
                             ).filter((a) => a.task.id === replaceTask.id);
@@ -253,7 +266,8 @@ function TasksGridColumn(props) {
 
     useEffect(
         () => getTasks(),
-        [dataStoreReadyStatus, roleView, props.taskKey]
+        // JSON.stringify prevents component remount from an array prop
+        [dataStoreReadyStatus, roleView, JSON.stringify(props.taskKey)]
     );
     useEffect(() => {
         return () => {
@@ -402,29 +416,6 @@ function TasksGridColumn(props) {
                         <></>
                     )}
                 </Stack>
-                {/*[
-                    tasksStatus.droppedOff,
-                    tasksStatus.cancelled,
-                    tasksStatus.rejected,
-                ].includes(props.taskKey) ? (
-                    <React.Fragment>
-                        <Waypoint
-                            onEnter={() => {
-                                return;
-                                if (
-                                    (filteredTasksIds &&
-                                        filteredTasksIds.length > 0) ||
-                                    endlessLoadIsFetching ||
-                                    endlessLoadEnd
-                                )
-                                    return;
-                                appendTasks();
-                            }}
-                        />
-                    </React.Fragment>
-                ) : (
-                    <></>
-                )*/}
             </TasksKanbanColumn>
         );
     }
@@ -432,7 +423,7 @@ function TasksGridColumn(props) {
 
 TasksGridColumn.propTypes = {
     title: PropTypes.string,
-    taskKey: PropTypes.string.isRequired,
+    taskKey: PropTypes.array.isRequired,
     showTasks: PropTypes.arrayOf(PropTypes.string),
     hideRelayIcons: PropTypes.bool,
 };
@@ -442,5 +433,6 @@ TasksGridColumn.defaultProps = {
     title: "TASKS",
     hideRelayIcons: false,
 };
+TasksGridColumn.whyDidYouRender = true;
 
 export default TasksGridColumn;

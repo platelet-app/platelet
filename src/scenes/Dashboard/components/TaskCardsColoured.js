@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     ACTIVE: generateClass(theme, "ACTIVE"),
     PICKED_UP: generateClass(theme, "PICKED_UP"),
     DROPPED_OFF: generateClass(theme, "DROPPED_OFF"),
+    COMPLETED: generateClass(theme, "COMPLETED"),
     CANCELLED: generateClass(theme, "CANCELLED"),
     REJECTED: generateClass(theme, "REJECTED"),
     itemTopBarContainer: {

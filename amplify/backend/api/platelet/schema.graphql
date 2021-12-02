@@ -163,6 +163,8 @@ enum TaskStatus {
   DROPPED_OFF
   CANCELLED
   REJECTED
+  ABANDONED
+  COMPLETED
 }
 
 enum Priority {

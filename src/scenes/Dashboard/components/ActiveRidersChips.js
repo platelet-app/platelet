@@ -33,8 +33,9 @@ function ActiveRidersChips() {
                 const taskData = observeResult.element;
                 if (observeResult.opType === "INSERT") {
                 } else if (observeResult.opType === "UPDATE") {
-                    //change to completed
-                    if (taskData.status === tasksStatus.droppedOff) {
+                    // if the task status is completed then we should check and see if the rider is still active on other tasks
+                    if (taskData.status === tasksStatus.completed) {
+                        // get all the assignees on this task
                         const assignees = (
                             await DataStore.query(models.TaskAssignee, (a) =>
                                 a.role("eq", userRoles.rider)
@@ -42,7 +43,9 @@ function ActiveRidersChips() {
                         )
                             .filter((a) => a.task && a.task.id === taskData.id)
                             .map((a) => a.assignee);
+                        // if there are none don't do anything
                         if (assignees.length === 0) return;
+                        // for each assignee get all their tasks
                         for (const rider of assignees) {
                             const ridersTasks = (
                                 await DataStore.query(
@@ -58,18 +61,19 @@ function ActiveRidersChips() {
                             const activeTasks = ridersTasks.filter(
                                 (t) =>
                                     ![
-                                        tasksStatus.droppedOff,
+                                        tasksStatus.completed,
                                         tasksStatus.cancelled,
                                         tasksStatus.rejected,
                                         tasksStatus.new,
                                     ].includes(t.status)
                             );
-                            console.log(activeTasks);
+                            // if there are no more tasks that aren't completed, remove the rider from the active riders list
                             if (activeTasks.length === 0) {
                                 setActiveRiders((prevState) =>
                                     _.omit(prevState, rider.id)
                                 );
                             } else {
+                                // else make sure they're in the list
                                 if (!activeRiders[rider.id]) {
                                     setActiveRiders((prevState) => ({
                                         ...prevState,
@@ -88,7 +92,6 @@ function ActiveRidersChips() {
             models.TaskAssignee
         ).subscribe(async (observeResult) => {
             const taskAssigneeData = observeResult.element;
-            console.log(observeResult);
             if (observeResult.opType === "INSERT") {
                 const task = await DataStore.query(
                     models.Task,
@@ -121,13 +124,34 @@ function ActiveRidersChips() {
     useEffect(() => {
         getActiveRiders();
     }, [dataStoreReadyStatus]);
-    useEffect(() => console.log(activeRiders), [activeRiders]);
+
+    async function updateRiderHome(userId) {
+        const allRiderAssignedTasks = (
+            await DataStore.query(models.TaskAssignee, (a) =>
+                a.role("eq", userRoles.rider)
+            )
+        ).filter((a) => a.assignee && a.assignee.id === userId);
+        const tasksToUpdate = allRiderAssignedTasks
+            .map((a) => a.task)
+            .filter((t) => t.status === tasksStatus.droppedOff);
+        // for every task in the list, update the task status to completed
+        for (const task of tasksToUpdate) {
+            await DataStore.save(
+                models.Task.copyOf(task, (updated) => {
+                    updated.status = tasksStatus.completed;
+                })
+            );
+        }
+    }
+
     return (
         <Stack sx={{ padding: 1 }} direction={"row"} spacing={2}>
             {Object.values(activeRiders).map((rider) => {
                 if (rider.profilePictureThumbnailURL) {
                     return (
                         <Chip
+                            key={rider.id}
+                            onClick={() => updateRiderHome(rider.id)}
                             avatar={
                                 <Avatar
                                     alt={rider.displayName}
@@ -138,7 +162,13 @@ function ActiveRidersChips() {
                         />
                     );
                 } else {
-                    return <Chip key={rider.id} label={rider.name} />;
+                    return (
+                        <Chip
+                            onClick={() => updateRiderHome(rider.id)}
+                            key={rider.id}
+                            label={rider.name}
+                        />
+                    );
                 }
             })}
         </Stack>

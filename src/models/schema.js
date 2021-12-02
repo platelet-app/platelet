@@ -1366,7 +1366,9 @@ export const schema = {
                 "PICKED_UP",
                 "DROPPED_OFF",
                 "CANCELLED",
-                "REJECTED"
+                "REJECTED",
+                "ABANDONED",
+                "COMPLETED"
             ]
         },
         "Patch": {
