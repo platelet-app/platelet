@@ -75,7 +75,6 @@ function TaskItem(props) {
             (assignment) => assignment.task && assignment.task.id === task.id
         );
         */
-        debugger;
         const assignmentsNotMe =
             props.task && props.task.assignees
                 ? Object.values(props.task.assignees).filter((assignment) => {
