@@ -213,7 +213,8 @@ function TasksGridColumn(props) {
                         }
                     } else {
                         const task = newTask.element;
-                        if (task.status === props.taskKey) addTaskToState(task);
+                        if (props.taskKey.includes(task.status))
+                            addTaskToState(task);
                     }
                 });
                 locationsSubscription.current.unsubscribe();

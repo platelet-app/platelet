@@ -8,9 +8,7 @@ import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import { Stack, Tooltip } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
-import { getWhoami } from "../../../redux/Selectors";
 import Badge from "@mui/material/Badge";
 import MailIcon from "@mui/icons-material/Mail";
 
@@ -49,9 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TaskCard = React.memo((props) => {
-    const whoami = useSelector(getWhoami);
     const classes = useStyles();
-    const roleView = useSelector((state) => state.roleView);
     let pickUpTitle = "";
     if (props.pickUpLocation) {
         pickUpTitle = props.pickUpLocation.line1
@@ -74,22 +70,8 @@ const TaskCard = React.memo((props) => {
             ? props.dropOffLocation.ward
             : "";
     }
-    const hasRider = props.assignedRiders
-        ? !!props.assignedRiders.length
-        : false;
-
     const className = classes[props.status];
 
-    const coordAvatars = props.assignedCoordinators
-        ? ["coordinator", "all"].includes(roleView)
-            ? props.assignedCoordinators.filter((u) => u.id !== whoami.id)
-            : props.assignedCoordinators
-        : [];
-    const riderAvatars = props.assignedRiders
-        ? roleView === "rider"
-            ? props.assignedRiders.filter((u) => u.id !== whoami.id)
-            : props.assignedRiders
-        : [];
     const cardInnerContent = (
         <CardContent className={classes.cardContent}>
             <Stack
@@ -118,7 +100,7 @@ const TaskCard = React.memo((props) => {
                     )}
                     <Tooltip title={props.assignedRidersDisplayString}>
                         <AvatarGroup>
-                            {riderAvatars.map((u) => (
+                            {props.assignees.map((u) => (
                                 <UserAvatar
                                     key={u.id}
                                     size={3}

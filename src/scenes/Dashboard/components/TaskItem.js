@@ -17,6 +17,7 @@ import useOnScreen from "../../../hooks/useOnScreen";
 import { useSelector } from "react-redux";
 import {
     dataStoreReadyStatusSelector,
+    getRoleView,
     getWhoami,
 } from "../../../redux/Selectors";
 
@@ -51,18 +52,13 @@ function TaskItem(props) {
     const whoami = useSelector(getWhoami);
     const { task } = props;
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const [assignees, setAssignees] = useState([]);
     const [assignedRiders, setAssignedRiders] = useState([]);
-    const [assignedCoordinators, setAssignedCoordinators] = useState([]);
-    const [assignedRidersDisplayString, setAssignedRidersDisplayString] =
-        useState("");
-    const [
-        assignedCoordinatorsDisplayString,
-        setAssignedCoordinatorsDisplayString,
-    ] = useState("");
     const ref = React.useRef();
     const isVisible = useOnScreen(ref);
     const [visibility, setVisibility] = useState(false);
     const [commentCount, setCommentCount] = useState(0);
+    const roleView = useSelector(getRoleView);
 
     useEffect(() => {
         if (isVisible && !visibility) {
@@ -70,36 +66,46 @@ function TaskItem(props) {
         }
     }, [isVisible]);
 
-    // TODO: find out if this can be done more efficiently and avoided
-    // i.e. get assignments from prop.task instead
-    function sortAssignees() {
-        if (!isVisible) return;
+    async function getAssignees() {
+        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+        // inefficient method of getting assignees
+        /*const allAssignments = (
+            await DataStore.query(models.TaskAssignee)
+        ).filter(
+            (assignment) => assignment.task && assignment.task.id === task.id
+        );
+        */
+        debugger;
+        const assignmentsNotMe =
+            props.task && props.task.assignees
+                ? Object.values(props.task.assignees).filter((assignment) => {
+                      const actualRole =
+                          roleView.toLowerCase() === "all"
+                              ? userRoles.coordinator
+                              : roleView;
+                      if (
+                          assignment.role.toLowerCase() !==
+                              actualRole.toLowerCase() ||
+                          assignment.assignee.id !== whoami.id
+                      ) {
+                          return true;
+                      }
+                      return false;
+                  })
+                : [];
+        const assignees = assignmentsNotMe.map((a) => a.assignee);
+        setAssignees(assignees);
         const riders =
             props.task && props.task.assignees
                 ? Object.values(props.task.assignees)
-                      .filter(
-                          (assignment) => assignment.role === userRoles.rider
-                      )
+                      .filter((a) => a.role === userRoles.rider)
                       .map((a) => a.assignee)
                 : [];
         setAssignedRiders(riders);
-        const ridersString = riders.map((u) => u.displayName).join(", ");
-        setAssignedRidersDisplayString(ridersString);
-        const coordinators =
-            props.task && props.task.assignees
-                ? Object.values(props.task.assignees)
-                      .filter(
-                          (assignment) =>
-                              assignment.role === userRoles.coordinator
-                      )
-                      .map((a) => a.assignee)
-                : [];
-        setAssignedCoordinators(coordinators);
-        const coordsString = coordinators.map((u) => u.displayName).join(", ");
-        setAssignedCoordinatorsDisplayString(coordsString);
     }
-
-    useEffect(sortAssignees, [props.assignees, isVisible]);
+    useEffect(() => {
+        getAssignees();
+    }, [visibility, props.task, dataStoreReadyStatus]);
 
     async function calculateCommentCount() {
         if ((visibility && !dataStoreReadyStatus) || !props.task) return;
@@ -164,14 +170,10 @@ function TaskItem(props) {
                                 : ""
                         }
                         dropOffLocation={task.dropOffLocation}
-                        assignedRiders={assignedRiders}
-                        assignedCoordinators={assignedCoordinators}
-                        assignedRidersDisplayString={
-                            assignedRidersDisplayString
-                        }
-                        assignedCoordinatorsDisplayString={
-                            assignedCoordinatorsDisplayString
-                        }
+                        assignees={assignees}
+                        assigneeDisplayString={assignees
+                            .map((a) => a.displayName)
+                            .join(", ")}
                         commentCount={commentCount}
                     />
                 </Link>
