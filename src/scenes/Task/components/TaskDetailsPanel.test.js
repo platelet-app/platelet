@@ -1,6 +1,6 @@
 import React from "react";
 import { screen, waitFor } from "@testing-library/react";
-import { render } from "../../../test-utils";
+import { generateTimes, render } from "../../../test-utils";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models";
@@ -24,6 +24,7 @@ function createMatchMedia(width) {
         removeListener: () => {},
     });
 }
+
 describe("TaskDetailsPanel", () => {
     const isoDate = "2021-11-29T23:24:58.987Z";
     beforeAll(() => {
@@ -32,15 +33,16 @@ describe("TaskDetailsPanel", () => {
 
     it("renders", async () => {
         amplify.DataStore.query.mockResolvedValue({});
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
         render(<TaskDetailsPanel taskId={"test"} />);
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
     });
     it("renders task details", async () => {
-        const timePickedUp = "2021-11-29T21:24:58.987Z";
-        const timeDroppedOff = "2021-11-29T22:24:58.987Z";
-        const timeOfCall = isoDate;
+        const { timePickedUp, timeDroppedOff, timeOfCall } = generateTimes();
         amplify.DataStore.query.mockResolvedValue({
             riderResponsibility: { label: "North" },
             timePickedUp,
@@ -165,5 +167,22 @@ describe("TaskDetailsPanel", () => {
                 [timeKey]: time,
             });
         });
+    });
+    it("unsubscribes to task observer on unmount", async () => {
+        const mockTask = new models.Task({
+            status: tasksStatus.new,
+        });
+        amplify.DataStore.query.mockResolvedValue(mockTask);
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        const component = render(<TaskDetailsPanel taskId={"test"} />);
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        expect(unsubscribe).toHaveBeenCalledTimes(0);
+        component.unmount();
+        expect(unsubscribe).toHaveBeenCalledTimes(1);
     });
 });

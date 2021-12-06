@@ -101,7 +101,7 @@ function TaskDetailsPanel(props) {
         }
     }
     useEffect(() => getTask(), [props.taskId, dataStoreReadyStatus]);
-    useEffect(() => taskObserver.current.unsubscribe(), []);
+    useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
     async function setTimeWithKey(key, value) {
         try {
