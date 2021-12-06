@@ -35,6 +35,27 @@ const theme = createTheme({
     },
 });
 
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
+export function generateTimes(previous = null, hours = 2) {
+    let date;
+    if (previous) date = new Date(previous);
+    else date = new Date();
+    if (!previous) date.setHours(date.getHours() - hours);
+    date.setMinutes(date.getMinutes() + getRandomInt(20, 30));
+    const timeOfCall = date.toISOString();
+    date.setMinutes(date.getMinutes() + getRandomInt(20, 30));
+    const timePickedUp = date.toISOString();
+    date.setMinutes(date.getMinutes() + getRandomInt(20, 30));
+    const timeDroppedOff = date.toISOString();
+
+    return { timeDroppedOff, timePickedUp, timeOfCall };
+}
+
 const sagaOptions = {
     onErraor: (action, error) => {
         console.log("An uncaught exception has occurred in redux-saga:");
