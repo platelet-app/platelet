@@ -86,6 +86,7 @@ function TaskActions(props) {
             if (!task) throw new Error("Task not found");
             setState(calculateState(task));
             setIsFetching(false);
+            taskObserver.current.unsubscribe();
             taskObserver.current = DataStore.observe(
                 models.Task,
                 props.taskId
@@ -115,7 +116,8 @@ function TaskActions(props) {
         () => getTaskAndUpdateState(),
         [props.taskId, dataStoreReadyStatus]
     );
-    useEffect(() => taskObserver.current.unsubscribe(), []);
+
+    useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
     function checkDisabled(key) {
         const stopped =
@@ -147,7 +149,7 @@ function TaskActions(props) {
         return (
             <Paper className={cardClasses.root}>
                 <Stack direction={"column"} spacing={2}>
-                    <Typography variant={"h6"}> Actions</Typography>
+                    <Typography variant={"h6"}>Actions</Typography>
                     <Divider />
                     <ToggleButtonGroup
                         value={state}

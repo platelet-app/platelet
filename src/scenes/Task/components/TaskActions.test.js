@@ -367,4 +367,23 @@ describe("TaskActions", () => {
             });
         });
     });
+    test.only("observer is unsubscribed on unmount", async () => {
+        const mockTask = new models.Task({
+            timePickedUp: new Date().toISOString(),
+        });
+        const unsubscribe = jest.fn();
+        amplify.DataStore.query.mockResolvedValue(mockTask);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        const component = render(<TaskActions taskId={mockTask.id} />);
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        expect(unsubscribe).toHaveBeenCalledTimes(0);
+        component.unmount();
+        await waitFor(async () => {
+            expect(unsubscribe).toHaveBeenCalledTimes(1);
+        });
+    });
 });
