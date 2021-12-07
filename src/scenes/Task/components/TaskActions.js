@@ -6,117 +6,181 @@ import {
     ToggleButtonGroup,
     Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
+import { DataStore } from "aws-amplify";
+import * as models from "../../../models/index";
+import GetError from "../../../ErrorComponents/GetError";
+import { useDispatch, useSelector } from "react-redux";
+import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import { determineTaskStatus } from "../../../utilities";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 const fields = {
-    pickedUp: "Picked up",
-    droppedOff: "Delivered",
-    cancelled: "Cancelled",
-    rejected: "Rejected",
+    timePickedUp: "Picked up",
+    timeDroppedOff: "Delivered",
+    timeCancelled: "Cancelled",
+    timeRejected: "Rejected",
 };
 
 function TaskActions(props) {
     const [state, setState] = useState([]);
+    const [isFetching, setIsFetching] = useState(true);
+    const [errorState, setErrorState] = useState(null);
+    const taskObserver = useRef({ unsubscribe: () => {} });
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
 
+    const errorMessage = "Sorry, something went wrong";
+
     function onChange(key) {
-        const value = state.includes(key) ? null : new Date();
-        if (key === "pickedUp") props.onChangeTimePickedUp(value);
-        else if (key === "droppedOff") props.onChangeTimeDroppedOff(value);
-        else if (key === "cancelled") props.onChangeTimeCancelled(value);
-        else if (key === "rejected") props.onChangeTimeRejected(value);
+        const value = state.includes(key) ? null : new Date().toISOString();
         setState((prevState) => {
             if (prevState.includes(key))
                 return prevState.filter((v) => v !== key);
             else return [...prevState, key];
         });
+        setTimeWithKey(key, value);
     }
 
-    function updateStateFromProps() {
-        if (!props.task) return;
-        const result = [];
-        if (!!props.task.timePickedUp) result.push("pickedUp");
-        if (!!props.task.timeDroppedOff) result.push("droppedOff");
-        if (!!props.task.timeRejected) result.push("rejected");
-        if (!!props.task.timeCancelled) result.push("cancelled");
-        setState(result);
+    async function setTimeWithKey(key, value) {
+        try {
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
+            if (!existingTask) throw new Error("Task doesn't exist");
+            const assignees = (
+                await DataStore.query(models.TaskAssignee)
+            ).filter((a) => a.task && a.task.id === props.taskId);
+            const status = determineTaskStatus({
+                ...existingTask,
+                [key]: value,
+                assignees,
+            });
+            await DataStore.save(
+                models.Task.copyOf(existingTask, (updated) => {
+                    updated[key] = value;
+                    updated.status = status;
+                })
+            );
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
+        }
     }
+
+    function calculateState(task) {
+        return Object.keys(fields).filter((key) => {
+            return !!task[key];
+        });
+    }
+
+    async function getTaskAndUpdateState() {
+        if (!dataStoreReadyStatus) return;
+        try {
+            const task = await DataStore.query(models.Task, props.taskId);
+            if (!task) throw new Error("Task not found");
+            setState(calculateState(task));
+            setIsFetching(false);
+            taskObserver.current.unsubscribe();
+            taskObserver.current = DataStore.observe(
+                models.Task,
+                props.taskId
+            ).subscribe(async (observeResult) => {
+                const taskData = observeResult.element;
+                if (observeResult.opType === "INSERT") {
+                    setState(calculateState(taskData));
+                } else if (observeResult.opType === "UPDATE") {
+                    const observedTask = await DataStore.query(
+                        models.Task,
+                        props.taskId
+                    );
+                    setState(calculateState(observedTask));
+                } else if (observeResult.opType === "DELETE") {
+                    // just disable the buttons if the task is deleted
+                    setIsFetching(true);
+                }
+            });
+        } catch (e) {
+            setIsFetching(false);
+            console.log(e);
+            setErrorState(e);
+        }
+    }
+
+    useEffect(
+        () => getTaskAndUpdateState(),
+        [props.taskId, dataStoreReadyStatus]
+    );
+
+    useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
     function checkDisabled(key) {
         const stopped =
-            state.includes("cancelled") || state.includes("rejected");
-        if (key === "droppedOff") return !state.includes("pickedUp") || stopped;
-        else if (key === "pickedUp")
-            return state.includes("droppedOff") || stopped;
-        else if (key === "rejected") {
-            if (state.includes("rejected")) return false;
+            state.includes("timeCancelled") || state.includes("timeRejected");
+        if (key === "timeDroppedOff")
+            return !state.includes("timePickedUp") || stopped;
+        else if (key === "timePickedUp")
+            return state.includes("timeDroppedOff") || stopped;
+        else if (key === "timeRejected") {
+            if (state.includes("timeRejected")) return false;
             return (
-                (state.includes("pickedUp") && state.includes("droppedOff")) ||
+                (state.includes("timePickedUp") &&
+                    state.includes("timeDroppedOff")) ||
                 stopped
             );
-        } else if (key === "cancelled") {
-            if (state.includes("cancelled")) return false;
+        } else if (key === "timeCancelled") {
+            if (state.includes("timeCancelled")) return false;
             return (
-                (state.includes("pickedUp") && state.includes("droppedOff")) ||
+                (state.includes("timePickedUp") &&
+                    state.includes("timeDroppedOff")) ||
                 stopped
             );
         } else return false;
     }
 
-    useEffect(updateStateFromProps, [props.task]);
-    return (
-        <Paper className={cardClasses.root}>
-            <Stack direction={"column"} spacing={2}>
-                <Typography variant={"h6"}> Actions</Typography>
-                <Divider />
-                <ToggleButtonGroup
-                    value={state}
-                    onChange={props.onChange}
-                    orientation="vertical"
-                    aria-label="text formatting"
-                >
-                    {Object.entries(fields).map(([key, value]) => {
-                        return (
-                            <ToggleButton
-                                key={key}
-                                disabled={
-                                    props.isFetching || checkDisabled(key)
-                                }
-                                aria-disabled={
-                                    props.isFetching || checkDisabled(key)
-                                }
-                                aria-label={key}
-                                value={key}
-                                onClick={() => onChange(key)}
-                            >
-                                {value}
-                            </ToggleButton>
-                        );
-                    })}
-                </ToggleButtonGroup>
-            </Stack>
-        </Paper>
-    );
+    if (errorState) {
+        return <GetError />;
+    } else {
+        return (
+            <Paper className={cardClasses.root}>
+                <Stack direction={"column"} spacing={2}>
+                    <Typography variant={"h6"}>Actions</Typography>
+                    <Divider />
+                    <ToggleButtonGroup
+                        value={state}
+                        orientation="vertical"
+                        aria-label="task actions"
+                    >
+                        {Object.entries(fields).map(([key, value]) => {
+                            return (
+                                <ToggleButton
+                                    key={key}
+                                    disabled={isFetching || checkDisabled(key)}
+                                    aria-disabled={
+                                        isFetching || checkDisabled(key)
+                                    }
+                                    aria-label={value}
+                                    value={key}
+                                    onClick={() => onChange(key)}
+                                >
+                                    {value}
+                                </ToggleButton>
+                            );
+                        })}
+                    </ToggleButtonGroup>
+                </Stack>
+            </Paper>
+        );
+    }
 }
 
 TaskActions.propTypes = {
-    task: PropTypes.object,
-    isFetching: PropTypes.bool,
-    onChangeTimeRejected: PropTypes.func,
-    onChangeTimeCancelled: PropTypes.func,
-    onChangeTimePickedUp: PropTypes.func,
-    onChangeTimeDroppedOff: PropTypes.func,
-};
-
-TaskActions.defaultProps = {
-    isFetching: false,
-    onChangeTimeRejected: () => {},
-    onChangeTimeCancelled: () => {},
-    onChangeTimePickedUp: () => {},
-    onChangeTimeDroppedOff: () => {},
+    taskId: PropTypes.string.isRequired,
 };
 
 export default TaskActions;

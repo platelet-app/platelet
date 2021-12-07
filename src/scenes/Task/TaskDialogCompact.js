@@ -20,6 +20,7 @@ import _ from "lodash";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useHistory, useLocation, useParams } from "react-router";
 import TaskAssignmentsPanel from "./components/TaskAssignmentsPanel";
+import PropTypes from "prop-types";
 
 const drawerWidth = 500;
 const drawerWidthMd = 400;
@@ -371,5 +372,9 @@ function TaskDialogCompact(props) {
         );
     }
 }
+
+TaskDialogCompact.propTypes = {
+    taskId: PropTypes.string.isRequired,
+};
 
 export default TaskDialogCompact;

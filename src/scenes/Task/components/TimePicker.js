@@ -31,6 +31,7 @@ function TimePicker(props) {
     const classes = useStyles();
     const { show, hide } = showHide();
     const dispatch = useDispatch();
+    const errorMessage = "Sorry, something went wrong";
 
     useEffect(() => {
         setState(new Date(props.time));
@@ -80,11 +81,12 @@ function TimePicker(props) {
                         <IconButton
                             className={classes.button}
                             edge={"end"}
+                            aria-label={"Finish"}
                             disabled={props.disabled}
                             onClick={() => {
                                 if (state) {
                                     try {
-                                        props.onChange(state.toISOString());
+                                        props.onChange(state);
                                     } catch (error) {
                                         dispatch(
                                             displayErrorNotification(
@@ -105,6 +107,7 @@ function TimePicker(props) {
                     <Tooltip title={"Cancel"}>
                         <IconButton
                             className={classes.button}
+                            aria-label={"Cancel"}
                             edge={"end"}
                             disabled={props.disabled}
                             onClick={() => {
@@ -141,6 +144,7 @@ function TimePicker(props) {
                     <Tooltip title={"Edit"}>
                         <IconButton
                             className={classes.button}
+                            aria-label={"Edit"}
                             edge={"end"}
                             disabled={props.disabled}
                             onClick={toggleEditMode}
@@ -152,6 +156,7 @@ function TimePicker(props) {
                     <div className={props.disableClear ? hide : show}>
                         <Tooltip title={"Clear"}>
                             <IconButton
+                                aria-label={"Clear"}
                                 className={classes.button}
                                 edge={"end"}
                                 disabled={props.disabled}

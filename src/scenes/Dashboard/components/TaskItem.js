@@ -7,12 +7,13 @@ import {
     encodeUUID,
 } from "../../../utilities";
 import PropTypes from "prop-types";
-import { Grow } from "@mui/material";
+import { Grow, Skeleton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
+import useOnScreen from "../../../hooks/useOnScreen";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -51,10 +52,20 @@ function TaskItem(props) {
         assignedCoordinatorsDisplayString,
         setAssignedCoordinatorsDisplayString,
     ] = useState("");
+    const ref = React.useRef();
+    const isVisible = useOnScreen(ref);
+    const [visibility, setVisibility] = useState(false);
+
+    useEffect(() => {
+        if (isVisible && !visibility) {
+            setVisibility(true);
+        }
+    }, [isVisible]);
 
     // TODO: find out if this can be done more efficiently and avoided
     // i.e. get assignments from prop.task instead
     function sortAssignees() {
+        if (!isVisible) return;
         const riders =
             props.task && props.task.assignees
                 ? Object.values(props.task.assignees)
@@ -80,7 +91,7 @@ function TaskItem(props) {
         setAssignedCoordinatorsDisplayString(coordsString);
     }
 
-    useEffect(sortAssignees, [props.assignees]);
+    useEffect(sortAssignees, [props.assignees, isVisible]);
 
     async function setTimeValue(value, key) {
         const result = await DataStore.query(models.Task, props.taskUUID);
@@ -102,7 +113,7 @@ function TaskItem(props) {
 
     const location = useLocation();
 
-    return (
+    const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <div
                 className={classes.root}
@@ -159,7 +170,10 @@ function TaskItem(props) {
                 </div>
             </div>
         </Grow>
+    ) : (
+        <Skeleton variant="rectangle" width="100%" height={200} />
     );
+    return <div ref={ref}>{contents}</div>;
 }
 
 TaskItem.defaultProps = {
