@@ -367,6 +367,7 @@ describe("TaskActions", () => {
             });
         });
     });
+
     test("observer is unsubscribed on unmount", async () => {
         const mockTask = new models.Task({
             timePickedUp: new Date().toISOString(),

@@ -153,7 +153,6 @@ function TaskActions(props) {
                     <Divider />
                     <ToggleButtonGroup
                         value={state}
-                        onChange={props.onChange}
                         orientation="vertical"
                         aria-label="task actions"
                     >
