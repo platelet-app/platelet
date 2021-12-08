@@ -9,7 +9,7 @@ import Divider from "@mui/material/Divider";
 import { Box, Stack, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import { showHide, ThemedLink } from "../../../styles/common";
+import { ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
@@ -143,10 +143,7 @@ function LocationDetailAndSelector(props) {
             direction={"row"}
         >
             {!props.location ? (
-                <FavouriteLocationsSelect
-                    label={props.label}
-                    onSelect={onSelectPreset}
-                />
+                <FavouriteLocationsSelect onSelect={onSelectPreset} />
             ) : (
                 locationTitle
             )}
@@ -171,6 +168,7 @@ function LocationDetailAndSelector(props) {
                 )}
                 {props.location && !props.disableClear ? (
                     <ClearButtonWithConfirmation
+                        label={props.label}
                         disabled={props.disabled}
                         onClear={onClickClearButton}
                     />

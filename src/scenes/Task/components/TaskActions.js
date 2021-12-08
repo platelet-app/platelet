@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { determineTaskStatus } from "../../../utilities";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import TaskActionConfirmationDialogContents from "./TaskActionConfirmationDialogContents";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -25,19 +27,58 @@ const fields = {
     timeRejected: "Rejected",
 };
 
+function humanReadableConfirmation(field, nullify) {
+    switch (field) {
+        case "timePickedUp":
+            return nullify
+                ? "Clear the picked up time?"
+                : "Set the picked up time?";
+        case "timeDroppedOff":
+            return nullify
+                ? "Clear the delivered time?"
+                : "Set the delivered time?";
+        case "timeCancelled":
+            return nullify
+                ? "Clear the cancelled time?"
+                : "Set the cancelled time?";
+        case "timeRejected":
+            return nullify
+                ? "Clear the rejected time?"
+                : "Set the rejected time?";
+        default:
+            return "";
+    }
+}
+
 function TaskActions(props) {
     const [state, setState] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(null);
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const confirmationKey = useRef(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
+    const timeSet = useRef(new Date());
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
 
     const errorMessage = "Sorry, something went wrong";
 
+    function onClickToggle(key) {
+        confirmationKey.current = key;
+        timeSet.current = new Date();
+        setConfirmDialogOpen(true);
+    }
+
+    function onAdjustTimeSet(time) {
+        console.log("onAdjustTimeSet", time);
+        timeSet.current = time;
+    }
+
     function onChange(key) {
-        const value = state.includes(key) ? null : new Date().toISOString();
+        const value = state.includes(key)
+            ? null
+            : timeSet.current.toISOString();
         setState((prevState) => {
             if (prevState.includes(key))
                 return prevState.filter((v) => v !== key);
@@ -147,34 +188,55 @@ function TaskActions(props) {
         return <GetError />;
     } else {
         return (
-            <Paper className={cardClasses.root}>
-                <Stack direction={"column"} spacing={2}>
-                    <Typography variant={"h6"}>Actions</Typography>
-                    <Divider />
-                    <ToggleButtonGroup
-                        value={state}
-                        orientation="vertical"
-                        aria-label="task actions"
-                    >
-                        {Object.entries(fields).map(([key, value]) => {
-                            return (
-                                <ToggleButton
-                                    key={key}
-                                    disabled={isFetching || checkDisabled(key)}
-                                    aria-disabled={
-                                        isFetching || checkDisabled(key)
-                                    }
-                                    aria-label={value}
-                                    value={key}
-                                    onClick={() => onChange(key)}
-                                >
-                                    {value}
-                                </ToggleButton>
-                            );
-                        })}
-                    </ToggleButtonGroup>
-                </Stack>
-            </Paper>
+            <>
+                <Paper className={cardClasses.root}>
+                    <Stack direction={"column"} spacing={2}>
+                        <Typography variant={"h6"}>Actions</Typography>
+                        <Divider />
+                        <ToggleButtonGroup
+                            value={state}
+                            orientation="vertical"
+                            aria-label="task actions"
+                        >
+                            {Object.entries(fields).map(([key, value]) => {
+                                return (
+                                    <ToggleButton
+                                        key={key}
+                                        disabled={
+                                            isFetching || checkDisabled(key)
+                                        }
+                                        aria-disabled={
+                                            isFetching || checkDisabled(key)
+                                        }
+                                        aria-label={value}
+                                        value={key}
+                                        onClick={() => onClickToggle(key)}
+                                    >
+                                        {value}
+                                    </ToggleButton>
+                                );
+                            })}
+                        </ToggleButtonGroup>
+                    </Stack>
+                </Paper>
+                <ConfirmationDialog
+                    open={confirmDialogOpen}
+                    dialogTitle={humanReadableConfirmation(
+                        confirmationKey.current,
+                        state.includes(confirmationKey.current)
+                    )}
+                    onSelect={(confirmation) => {
+                        if (confirmation) onChange(confirmationKey.current);
+                    }}
+                    onClose={() => setConfirmDialogOpen(false)}
+                >
+                    <TaskActionConfirmationDialogContents
+                        onChange={(v) => onAdjustTimeSet(v)}
+                        nullify={state.includes(confirmationKey.current)}
+                        field={confirmationKey.current}
+                    />
+                </ConfirmationDialog>
+            </>
         );
     }
 }

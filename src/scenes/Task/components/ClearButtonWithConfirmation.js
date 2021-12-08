@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Tooltip } from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
@@ -35,9 +35,13 @@ function ClearButtonWithConfirmation(props) {
                 onSelect={onSelect}
                 dialogTitle={"Are you sure?"}
                 onClose={handleClose}
-                dialogText={`Are you sure you want to clear the ${props.label.toLowerCase()} location?`}
                 open={open}
-            />
+            >
+                <Typography>
+                    Are you sure you want to clear the{" "}
+                    {props.label.toLowerCase()} location?
+                </Typography>
+            </ConfirmationDialog>
             <Tooltip title={"Clear"}>
                 <IconButton
                     className={classes.button}

@@ -6,10 +6,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
 
 function ConfirmationDialog(props) {
-    const theme = useTheme();
     return (
         <Dialog
             open={props.open}
@@ -20,11 +18,7 @@ function ConfirmationDialog(props) {
             <DialogTitle id="alert-dialog-title">
                 {props.dialogTitle}
             </DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    {props.dialogText}
-                </DialogContentText>
-            </DialogContent>
+            <DialogContent>{props.children}</DialogContent>
             <DialogActions>
                 <Button
                     onClick={() => {
