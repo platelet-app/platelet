@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { determineTaskStatus } from "../../../utilities";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -25,16 +26,46 @@ const fields = {
     timeRejected: "Rejected",
 };
 
+function humanReadableConfirmation(field, nullify) {
+    switch (field) {
+        case "timePickedUp":
+            return nullify
+                ? "clear the picked up time"
+                : "set the picked up time";
+        case "timeDroppedOff":
+            return nullify
+                ? "clear the delivered time"
+                : "set the delivered time";
+        case "timeCancelled":
+            return nullify
+                ? "clear the cancelled time"
+                : "set the cancelled time";
+        case "timeRejected":
+            return nullify
+                ? "clear the rejected time"
+                : "set the rejected time";
+        default:
+            return "";
+    }
+}
+
 function TaskActions(props) {
     const [state, setState] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(null);
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const confirmationKey = useRef(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
 
     const errorMessage = "Sorry, something went wrong";
+
+    function onClickToggle(key) {
+        setConfirmDialogOpen(true);
+        confirmationKey.current = key;
+    }
 
     function onChange(key) {
         const value = state.includes(key) ? null : new Date().toISOString();
@@ -147,34 +178,54 @@ function TaskActions(props) {
         return <GetError />;
     } else {
         return (
-            <Paper className={cardClasses.root}>
-                <Stack direction={"column"} spacing={2}>
-                    <Typography variant={"h6"}>Actions</Typography>
-                    <Divider />
-                    <ToggleButtonGroup
-                        value={state}
-                        orientation="vertical"
-                        aria-label="task actions"
-                    >
-                        {Object.entries(fields).map(([key, value]) => {
-                            return (
-                                <ToggleButton
-                                    key={key}
-                                    disabled={isFetching || checkDisabled(key)}
-                                    aria-disabled={
-                                        isFetching || checkDisabled(key)
-                                    }
-                                    aria-label={value}
-                                    value={key}
-                                    onClick={() => onChange(key)}
-                                >
-                                    {value}
-                                </ToggleButton>
-                            );
-                        })}
-                    </ToggleButtonGroup>
-                </Stack>
-            </Paper>
+            <>
+                <Paper className={cardClasses.root}>
+                    <Stack direction={"column"} spacing={2}>
+                        <Typography variant={"h6"}>Actions</Typography>
+                        <Divider />
+                        <ToggleButtonGroup
+                            value={state}
+                            orientation="vertical"
+                            aria-label="task actions"
+                        >
+                            {Object.entries(fields).map(([key, value]) => {
+                                return (
+                                    <ToggleButton
+                                        key={key}
+                                        disabled={
+                                            isFetching || checkDisabled(key)
+                                        }
+                                        aria-disabled={
+                                            isFetching || checkDisabled(key)
+                                        }
+                                        aria-label={value}
+                                        value={key}
+                                        onClick={() => onClickToggle(key)}
+                                    >
+                                        {value}
+                                    </ToggleButton>
+                                );
+                            })}
+                        </ToggleButtonGroup>
+                    </Stack>
+                </Paper>
+                <ConfirmationDialog
+                    open={confirmDialogOpen}
+                    onSelect={(confirmation) => {
+                        if (confirmation) onChange(confirmationKey.current);
+                    }}
+                    onClose={() => setConfirmDialogOpen(false)}
+                >
+                    <Typography>
+                        Are you sure you want to{" "}
+                        {humanReadableConfirmation(
+                            confirmationKey.current,
+                            state.includes(confirmationKey.current)
+                        )}
+                        ?
+                    </Typography>
+                </ConfirmationDialog>
+            </>
         );
     }
 }

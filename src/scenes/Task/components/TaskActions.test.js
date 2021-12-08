@@ -85,9 +85,12 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Picked up" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
         // expect button to be toggled
         expect(button).toHaveAttribute("aria-pressed", "true");
-        const buttonDroppedOff = screen.getByRole("button", {
+        const buttonDroppedOff = await screen.findByRole("button", {
             name: "Delivered",
         });
         expect(buttonDroppedOff).toBeEnabled();
@@ -141,6 +144,9 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Delivered" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
         // expect the mock function to have been called with a Date object
         // expect button to be toggled
         expect(button).toHaveAttribute("aria-pressed", "true");
@@ -172,6 +178,9 @@ describe("TaskActions", () => {
         });
         const button = screen.getByRole("button", { name: "Cancelled" });
         userEvent.click(button);
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
         await waitFor(async () => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
@@ -180,7 +189,9 @@ describe("TaskActions", () => {
             });
         });
         expect(button).toHaveAttribute("aria-pressed", "true");
-        expect(screen.getByRole("button", { name: "Cancelled" })).toBeEnabled();
+        expect(
+            await screen.findByRole("button", { name: "Cancelled" })
+        ).toBeEnabled();
         expect(screen.getByRole("button", { name: "Rejected" })).toBeDisabled();
         expect(
             screen.getByRole("button", { name: "Delivered" })
@@ -209,6 +220,9 @@ describe("TaskActions", () => {
         });
         const button = screen.getByRole("button", { name: "Rejected" });
         userEvent.click(button);
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
         await waitFor(async () => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
@@ -218,7 +232,9 @@ describe("TaskActions", () => {
         });
         // expect button to be toggled
         expect(button).toHaveAttribute("aria-pressed", "true");
-        expect(screen.getByRole("button", { name: "Rejected" })).toBeEnabled();
+        expect(
+            await screen.findByRole("button", { name: "Rejected" })
+        ).toBeEnabled();
         expect(
             screen.getByRole("button", { name: "Cancelled" })
         ).toBeDisabled();
@@ -265,6 +281,9 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Picked up" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
         await waitFor(async () => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
@@ -300,6 +319,9 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Delivered" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
         // expect the mock function to have been called with null
         await waitFor(async () => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
@@ -329,6 +351,9 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Cancelled" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
         // expect the mock function to have been called with null
         await waitFor(async () => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
@@ -358,6 +383,9 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Rejected" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
         // expect the mock function to have been called with null
         await waitFor(async () => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
