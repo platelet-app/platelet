@@ -18,6 +18,7 @@ import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { determineTaskStatus } from "../../../utilities";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import TaskActionConfirmationDialogContents from "./TaskActionConfirmationDialogContents";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -30,20 +31,20 @@ function humanReadableConfirmation(field, nullify) {
     switch (field) {
         case "timePickedUp":
             return nullify
-                ? "clear the picked up time"
-                : "set the picked up time";
+                ? "Clear the picked up time?"
+                : "Set the picked up time?";
         case "timeDroppedOff":
             return nullify
-                ? "clear the delivered time"
-                : "set the delivered time";
+                ? "Clear the delivered time?"
+                : "Set the delivered time?";
         case "timeCancelled":
             return nullify
-                ? "clear the cancelled time"
-                : "set the cancelled time";
+                ? "Clear the cancelled time?"
+                : "Set the cancelled time?";
         case "timeRejected":
             return nullify
-                ? "clear the rejected time"
-                : "set the rejected time";
+                ? "Clear the rejected time?"
+                : "Set the rejected time?";
         default:
             return "";
     }
@@ -56,6 +57,7 @@ function TaskActions(props) {
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const confirmationKey = useRef(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
+    const timeSet = useRef(new Date());
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
@@ -63,12 +65,20 @@ function TaskActions(props) {
     const errorMessage = "Sorry, something went wrong";
 
     function onClickToggle(key) {
-        setConfirmDialogOpen(true);
         confirmationKey.current = key;
+        timeSet.current = new Date();
+        setConfirmDialogOpen(true);
+    }
+
+    function onAdjustTimeSet(time) {
+        console.log("onAdjustTimeSet", time);
+        timeSet.current = time;
     }
 
     function onChange(key) {
-        const value = state.includes(key) ? null : new Date().toISOString();
+        const value = state.includes(key)
+            ? null
+            : timeSet.current.toISOString();
         setState((prevState) => {
             if (prevState.includes(key))
                 return prevState.filter((v) => v !== key);
@@ -211,19 +221,20 @@ function TaskActions(props) {
                 </Paper>
                 <ConfirmationDialog
                     open={confirmDialogOpen}
+                    dialogTitle={humanReadableConfirmation(
+                        confirmationKey.current,
+                        state.includes(confirmationKey.current)
+                    )}
                     onSelect={(confirmation) => {
                         if (confirmation) onChange(confirmationKey.current);
                     }}
                     onClose={() => setConfirmDialogOpen(false)}
                 >
-                    <Typography>
-                        Are you sure you want to{" "}
-                        {humanReadableConfirmation(
-                            confirmationKey.current,
-                            state.includes(confirmationKey.current)
-                        )}
-                        ?
-                    </Typography>
+                    <TaskActionConfirmationDialogContents
+                        onChange={(v) => onAdjustTimeSet(v)}
+                        nullify={state.includes(confirmationKey.current)}
+                        field={confirmationKey.current}
+                    />
                 </ConfirmationDialog>
             </>
         );
