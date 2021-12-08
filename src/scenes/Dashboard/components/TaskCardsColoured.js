@@ -88,7 +88,11 @@ const TaskCard = React.memo((props) => {
                 >
                     {props.commentCount > 0 ? (
                         <Tooltip
-                            title={`${props.commentCount} comments`}
+                            title={`${props.commentCount} ${
+                                props.commentCount === 1
+                                    ? "comment"
+                                    : "comments"
+                            }`}
                             placement={"top"}
                         >
                             <Badge color={"primary"}>
