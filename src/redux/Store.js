@@ -1,41 +1,26 @@
-import {applyMiddleware, createStore} from "redux";
+import { applyMiddleware, createStore } from "redux";
 import rootReducer from "./Reducers";
 import rootSaga from "./RootSagas";
-import createSagaMiddleware from "redux-saga"
-import {
-    createSubscribeAssignmentsSocketMiddleware,
-    createSubscribeCommentsSocketMiddleware,
-    createSubscribeSocketMiddleware
-} from "./sockets/SubscribeSocketMiddleware";
+import createSagaMiddleware from "redux-saga";
 
 const sagaOptions = {
-    onErraor: (action, error) => {
+    onError: (action, error) => {
         console.log("An uncaught exception has occurred in redux-saga:");
-        console.log(action)
+        console.log(action);
         if (error) {
-            console.log(error.message)
+            console.log(error.message);
         }
         throw error;
-    }
-}
+    },
+};
 const sagaMiddleWare = createSagaMiddleware(sagaOptions);
-const subscribeSocketMiddleware = createSubscribeSocketMiddleware();
-const subscribeCommentsSocketMiddleware = createSubscribeCommentsSocketMiddleware();
-const subscribeAssignmentsSocketMiddleware = createSubscribeAssignmentsSocketMiddleware();
 
 let store;
 
 if (process.env.REACT_APP_DISABLE_SOCKETS === "true") {
-    store = createStore(
-        rootReducer,
-        applyMiddleware(sagaMiddleWare)
-    );
-
+    store = createStore(rootReducer, applyMiddleware(sagaMiddleWare));
 } else {
-    store = createStore(
-        rootReducer,
-        applyMiddleware(sagaMiddleWare, subscribeSocketMiddleware, subscribeCommentsSocketMiddleware, subscribeAssignmentsSocketMiddleware)
-    );
+    store = createStore(rootReducer, applyMiddleware(sagaMiddleWare));
 }
 
 sagaMiddleWare.run(rootSaga);

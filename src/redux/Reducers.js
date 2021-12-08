@@ -16,34 +16,8 @@ import {
     SET_DARK_MODE,
 } from "./Actions";
 import { dashboardFilter } from "./dashboardFilter/DashboardFilterReducers";
-import { tasks, onChangeTask } from "./tasks/TasksReducers";
-import { task } from "./activeTask/ActiveTaskReducer";
-import { userStatistics } from "./statistics/statisticsReducers";
-import {
-    availableDeliverables,
-    deliverables,
-    deliverablesSorted,
-} from "./deliverables/DeliverablesReducers";
-import { availableLocations, location } from "./locations/LocationsReducers";
 import { apiControl, authStatus } from "./login/LoginReducers";
-import { availablePatches } from "./patches/PatchesReducers";
-import { availablePriorities } from "./priorities/PrioritiesReducers";
-import { users, user } from "./users/UsersReducers";
-import { vehicle, vehicles } from "./vehicles/VehiclesReducers";
-import { comments } from "./comments/CommentsReducers";
-import { serverSettings } from "./ServerSettings/ServerSettingsReducers";
-import {
-    subscription,
-    commentsSubscription,
-    socketCommentsConnectionStatus,
-    socketConnectionStatus,
-} from "./sockets/SocketReducers";
 import { notification } from "./notifications/NotificationsReducers";
-import { CLEAR_FORCE_RESET_PASSWORD_STATUS } from "./users/UsersActions";
-import {
-    actionsRecord,
-    tasksActionsRecord,
-} from "./actionsRecord/ActionsRecordReducers";
 import { LOGOUT } from "./login/LoginActions";
 import { getDarkModePreference } from "./redux_utilities";
 import { awsHubDataStoreEventsReducer } from "./awsHubListener/awsHubListenerReducers";
@@ -152,11 +126,6 @@ function whoami(state = whoamiInitialState, action) {
             return { ...whoamiInitialState, error: action.error };
         case CLEAR_WHOAMI:
             return whoamiInitialState;
-        case CLEAR_FORCE_RESET_PASSWORD_STATUS:
-            return {
-                user: { ...state.user, password_reset_on_login: false },
-                error: null,
-            };
         default:
             return state;
     }
@@ -274,21 +243,7 @@ export function error(state = null, action) {
 }
 
 const appReducer = combineReducers({
-    task,
-    tasks,
-    deliverables,
-    deliverablesSorted,
-    availableDeliverables,
-    availablePriorities,
-    availablePatches,
-    availableLocations,
-    location,
-    vehicles,
-    vehicle,
-    users,
-    user,
     whoami,
-    comments,
     loadingReducer,
     postingReducer,
     deletingReducer,
@@ -303,21 +258,12 @@ const appReducer = combineReducers({
     mobileView,
     menuIndex,
     commentsObjectUUID,
-    serverSettings,
     taskContextMenuSnack,
-    subscription,
-    commentsSubscription,
-    socketConnectionStatus,
-    socketCommentsConnectionStatus,
     notification,
     dashboardFilter,
-    actionsRecord,
-    tasksActionsRecord,
     idleStatus,
-    userStatistics,
     darkMode,
     awsHubDataStoreEventsReducer,
-    onChangeTask,
 });
 
 const rootReducer = (state, action) => {

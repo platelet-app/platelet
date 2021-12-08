@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import VehicleProfile from "./components/VehicleProfile";
 import { decodeUUID } from "../../utilities";
-import { updateVehicleRequest } from "../../redux/vehicles/VehiclesActions";
 import { useDispatch, useSelector } from "react-redux";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
@@ -32,7 +31,6 @@ export default function VehicleDetail(props) {
     const [isPosting, setIsPosting] = useState(false);
     const [vehicle, setVehicle] = useState(initialVehicleState);
     const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
-    const whoami = useSelector(getWhoami);
     const assignedUser = false;
 
     async function newVehicleProfile() {
@@ -87,14 +85,7 @@ export default function VehicleDetail(props) {
     }
 
     function onAssignUser(user) {
-        if (user)
-            dispatch(
-                updateVehicleRequest(vehicle.uuid, {
-                    ...vehicle,
-                    assigned_user: user,
-                    assigned_user_uuid: user.uuid,
-                })
-            );
+        return;
     }
 
     if (isFetching) {
