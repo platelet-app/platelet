@@ -273,6 +273,11 @@ function LocationDetailsPanel(props) {
                     ) : (
                         <LocationDetailAndSelector
                             onSelectPreset={selectPreset}
+                            label={
+                                props.locationKey === "pickUpLocation"
+                                    ? "pick up"
+                                    : "delivery"
+                            }
                             onChange={changeLocationDetails}
                             onChangeContact={changeContactDetails}
                             onEditPreset={editPreset}
