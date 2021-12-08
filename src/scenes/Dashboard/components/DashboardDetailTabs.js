@@ -273,6 +273,7 @@ export function DashboardDetailTabs(props) {
                             </Menu>
                         </Stack>
                     </Stack>
+                    <Divider />
                     <ActiveRidersChips />
                 </Stack>
             </Toolbar>

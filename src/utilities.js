@@ -124,6 +124,8 @@ export function taskStatusHumanReadable(status) {
             return "Rejected";
         case "CANCELLED":
             return "Cancelled";
+        case "COMPLETED":
+            return "Completed";
         default:
             return "Unknown status";
     }
