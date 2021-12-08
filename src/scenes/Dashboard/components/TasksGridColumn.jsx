@@ -366,6 +366,7 @@ function TasksGridColumn(props) {
     } else {
         let displayDate = false;
         let lastTime = new Date();
+        const filteredTasksIdsList = filteredTasksIds || [];
         return (
             <TasksKanbanColumn>
                 {header}
@@ -386,8 +387,8 @@ function TasksGridColumn(props) {
                         );
                         if (
                             timeComparison &&
-                            // filteredTasksIds &&
-                            // filteredTasksIds.includes(task.id) &&
+                            (filteredTasksIdsList.length === 0 ||
+                                filteredTasksIdsList.includes(task.id)) &&
                             timeComparison.getDate() <= lastTime.getDate() - 1
                         ) {
                             lastTime = timeComparison;
