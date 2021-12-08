@@ -85,6 +85,7 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Picked up" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        expect(screen.getByText(/set the picked up time/)).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
@@ -144,6 +145,7 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Delivered" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        expect(screen.getByText(/set the delivered time/)).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
@@ -178,6 +180,7 @@ describe("TaskActions", () => {
         });
         const button = screen.getByRole("button", { name: "Cancelled" });
         userEvent.click(button);
+        expect(screen.getByText(/set the cancelled time/)).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
@@ -220,6 +223,7 @@ describe("TaskActions", () => {
         });
         const button = screen.getByRole("button", { name: "Rejected" });
         userEvent.click(button);
+        expect(screen.getByText(/set the rejected time/)).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
@@ -281,6 +285,9 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Picked up" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        expect(
+            screen.getByText(/clear the picked up time/)
+        ).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
@@ -319,6 +326,9 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Delivered" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        expect(
+            screen.getByText(/clear the delivered time/)
+        ).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
@@ -351,6 +361,9 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Cancelled" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        expect(
+            screen.getByText(/clear the cancelled time/)
+        ).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
@@ -383,6 +396,7 @@ describe("TaskActions", () => {
         const button = screen.getByRole("button", { name: "Rejected" });
         expect(button).toBeInTheDocument();
         userEvent.click(button);
+        expect(screen.getByText(/clear the rejected time/)).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
