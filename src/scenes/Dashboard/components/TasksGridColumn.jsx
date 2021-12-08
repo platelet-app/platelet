@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
 import { useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
-import { Waypoint } from "react-waypoint";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
@@ -21,6 +20,7 @@ import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
 import { tasksStatus } from "../../../apiConsts";
+import moment from "moment";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -53,6 +53,13 @@ const useStyles = makeStyles((theme) => ({
     },
     gridItem: {
         width: "100%",
+    },
+    date: {
+        fontStyle: "italic",
+        color: "gray",
+        "&:hover": {
+            color: theme.palette.mode === "dark" ? "white" : "black",
+        },
     },
 }));
 
@@ -357,6 +364,8 @@ function TasksGridColumn(props) {
             </TasksKanbanColumn>
         );
     } else {
+        let displayDate = false;
+        let lastTime = new Date();
         return (
             <TasksKanbanColumn>
                 {header}
@@ -365,12 +374,25 @@ function TasksGridColumn(props) {
                     id={`tasks-kanban-column-${props.taskKey}`}
                     spacing={4}
                     alignItems={"center"}
-                    justifyContent={"flex-start"}
+                    justifyContent={"center"}
                 >
                     {sortByCreatedTime(
                         Object.values(state).reverse(),
                         "newest"
                     ).map((task) => {
+                        displayDate = false;
+                        const timeComparison = new Date(
+                            task.createdAt || task.timeOfCall || null
+                        );
+                        if (
+                            timeComparison &&
+                            // filteredTasksIds &&
+                            // filteredTasksIds.includes(task.id) &&
+                            timeComparison.getDate() <= lastTime.getDate() - 1
+                        ) {
+                            lastTime = timeComparison;
+                            displayDate = true;
+                        }
                         return (
                             <div
                                 className={clsx(
@@ -382,6 +404,18 @@ function TasksGridColumn(props) {
                                 )}
                                 key={task.id}
                             >
+                                {displayDate && (
+                                    <Typography className={classes.date}>
+                                        {moment(lastTime).calendar(null, {
+                                            lastDay: "[Yesterday]",
+                                            sameDay: "[Today]",
+                                            nextDay: "[Tomorrow]",
+                                            lastWeek: "[last] dddd",
+                                            nextWeek: "dddd",
+                                            sameElse: "L",
+                                        })}
+                                    </Typography>
+                                )}
                                 <TaskItem
                                     animate={animate.current}
                                     task={task}
