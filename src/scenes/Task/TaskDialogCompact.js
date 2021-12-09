@@ -365,7 +365,7 @@ function TaskDialogCompact(props) {
                     <Stack direction="column" spacing={2}>
                         <TaskAssignmentsPanel taskId={taskUUID} />
                         <Divider />
-                        <CommentsSection parentUUID={taskUUID} />
+                        <CommentsSection parentId={taskUUID} />
                     </Stack>
                 </Hidden>
             </DialogWrapper>

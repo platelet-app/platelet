@@ -59,7 +59,7 @@ function CommentsSection(props) {
             try {
                 const commentsResult = (
                     await DataStore.query(models.Comment, (c) =>
-                        c.parentId("eq", props.parentUUID)
+                        c.parentId("eq", props.parentId)
                     )
                 ).filter(
                     (c) =>
@@ -73,7 +73,7 @@ function CommentsSection(props) {
                 commentsSubscription.current.unsubscribe();
                 commentsSubscription.current = DataStore.observe(
                     models.Comment,
-                    (c) => c.parentId("eq", props.parentUUID)
+                    (c) => c.parentId("eq", props.parentId)
                 ).subscribe(async (newComment) => {
                     const comment = newComment.element;
                     if (newComment.opType === "DELETE") {
@@ -101,7 +101,7 @@ function CommentsSection(props) {
             }
         }
     }
-    useEffect(() => getComments(), [props.parentUUID, dataStoreReadyStatus]);
+    useEffect(() => getComments(), [props.parentId, dataStoreReadyStatus]);
 
     useEffect(() => {
         return () => {
@@ -126,7 +126,7 @@ function CommentsSection(props) {
         return (
             <CommentsMain
                 onNewComment={addCommentToState}
-                parentUUID={props.parentUUID}
+                parentUUID={props.parentId}
                 comments={Object.values(comments).filter((c) => !c._deleted)}
                 onRestore={(comment) => {
                     setComments((prevState) => {
@@ -156,11 +156,11 @@ function CommentsSection(props) {
 }
 
 CommentsSection.propTypes = {
-    parentUUID: PropTypes.string,
+    parentId: PropTypes.string,
 };
 
 CommentsSection.defaultProps = {
-    parentUUID: "",
+    parentId: "",
 };
 
 export default CommentsSection;

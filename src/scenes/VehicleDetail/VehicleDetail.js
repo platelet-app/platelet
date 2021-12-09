@@ -122,7 +122,7 @@ export default function VehicleDetail(props) {
                         )}
                     </Stack>
                 </PaddedPaper>
-                <CommentsSection parentUUID={vehicleUUID} />
+                <CommentsSection parentId={vehicleUUID} />
             </Stack>
         );
     }
