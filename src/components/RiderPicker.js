@@ -18,8 +18,11 @@ function RiderPicker(props) {
     const [filteredRiderSuggestions, setFilteredRiderSuggestions] = useState(
         []
     );
+    const [reset, setReset] = useState(false);
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
+        // toggle reset so that the key changes and the rider select re-renders
+        setReset((prevState) => !prevState);
     };
 
     async function getRiders() {
@@ -50,6 +53,7 @@ function RiderPicker(props) {
             <Autocomplete
                 disablePortal
                 fullWidth
+                key={reset}
                 filterOptions={filterOptions}
                 id="combo-box-riders"
                 options={filteredRiderSuggestions}
