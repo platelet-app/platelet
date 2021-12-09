@@ -1,21 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-    Divider,
-    Paper,
-    Skeleton,
-    Stack,
-    Tooltip,
-    Typography,
-} from "@mui/material";
+import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import PropTypes from "prop-types";
-import AvatarGroup from "@mui/material/AvatarGroup";
 import makeStyles from "@mui/styles/makeStyles";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import RiderPicker from "../../../components/RiderPicker";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import UserRoleSelect from "../../../components/UserRoleSelect";
 import TaskAssignees from "./TaskAssignees";
-import UserAvatar from "../../../components/UserAvatar";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
@@ -31,6 +22,7 @@ import {
 import _ from "lodash";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
+import UserChip from "../../../components/UserChip";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -38,41 +30,35 @@ export const useStyles = makeStyles(() => ({
     },
 }));
 
-// function to sort by user role
 const sortByUserRole = (a, b) => {
-    if (a.role === b.userRole) {
-        return 0;
-    }
-    if (a.role === userRoles.rider) {
-        return -1;
-    }
-    if (b.role === userRoles.rider) {
-        return 1;
-    }
+    // coordinators first and riders second
     if (a.role === userRoles.coordinator) {
         return -1;
-    }
-    if (b.role === userRoles.coordinator) {
+    } else if (b.role === userRoles.coordinator) {
         return 1;
+    } else if (a.role === userRoles.rider) {
+        return -1;
+    } else if (b.role === userRoles.rider) {
+        return 1;
+    } else {
+        return 0;
     }
-    return 0;
 };
 
 function TaskAssignmentsPanel(props) {
     const [collapsed, setCollapsed] = useState(true);
-    const [assigneesDisplayString, setAssigneesDisplayString] = useState("");
     const [role, setRole] = useState(userRoles.rider);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
-    const deleting = useRef(false);
+    const updating = useRef(false);
     const [state, setState] = useState({});
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
 
     function onSelect(value) {
+        updating.current = true;
         if (value) addAssignee(value, role);
-        clearEditMode();
     }
 
     function clearEditMode() {
@@ -202,8 +188,8 @@ function TaskAssignmentsPanel(props) {
     }
 
     useEffect(() => {
-        if (deleting.current) {
-            deleting.current = false;
+        if (updating.current) {
+            updating.current = false;
             return;
         }
         if (
@@ -214,24 +200,12 @@ function TaskAssignmentsPanel(props) {
         else setCollapsed(true);
     }, [state]);
 
-    useEffect(() => {
-        if (Object.values(state).length === 0) {
-            setAssigneesDisplayString("");
-        } else {
-            const assigneesDisplayString = Object.values(state)
-                .sort(sortByUserRole)
-                .map((a) => (a.assignee ? a.assignee.displayName : ""))
-                .join(", ");
-            setAssigneesDisplayString(assigneesDisplayString);
-        }
-    }, [state]);
-
     const assigneeSelector =
         !collapsed && !isFetching ? (
             <>
                 <TaskAssignees
                     onRemove={(v) => {
-                        deleting.current = true;
+                        updating.current = true;
                         deleteAssignment(v);
                     }}
                     assignees={state}
@@ -279,6 +253,8 @@ function TaskAssignmentsPanel(props) {
 
     if (errorState) {
         return <GetError />;
+    } else if (isFetching) {
+        return <Skeleton variant={"rectangular"} width={"100%"} height={40} />;
     } else {
         return (
             <Paper sx={{ padding: 1 }}>
@@ -292,44 +268,25 @@ function TaskAssignmentsPanel(props) {
                         alignItems="center"
                         justifyContent={"space-between"}
                     >
-                        <Tooltip title={assigneesDisplayString}>
-                            {isFetching ? (
-                                <Skeleton
-                                    variant={"rectangular"}
-                                    width={"100%"}
-                                    height={40}
-                                />
-                            ) : (
-                                <AvatarGroup>
-                                    {Object.values(state)
-                                        .sort(sortByUserRole)
-                                        .map((assignment) => {
-                                            if (
-                                                assignment &&
-                                                assignment.assignee
-                                            ) {
-                                                const user =
-                                                    assignment.assignee;
-                                                return (
-                                                    <UserAvatar
-                                                        key={user.id}
-                                                        size={4}
-                                                        userUUID={user.id}
-                                                        displayName={
-                                                            user.displayName
-                                                        }
-                                                        avatarURL={
-                                                            user.profilePictureThumbnailURL
-                                                        }
-                                                    />
-                                                );
-                                            } else {
-                                                return <></>;
-                                            }
-                                        })}
-                                </AvatarGroup>
-                            )}
-                        </Tooltip>
+                        {collapsed && (
+                            <Stack spacing={1} direction={"row"}>
+                                {Object.values(state)
+                                    .sort(sortByUserRole)
+                                    .map((assignment) => {
+                                        if (assignment && assignment.assignee) {
+                                            const user = assignment.assignee;
+                                            return (
+                                                <UserChip
+                                                    key={user.id}
+                                                    user={user}
+                                                />
+                                            );
+                                        } else {
+                                            return <></>;
+                                        }
+                                    })}
+                            </Stack>
+                        )}
                     </Stack>
                     {assigneeSelector}
                     <Divider />

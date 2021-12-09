@@ -109,11 +109,15 @@ const fakeUsers = [
 ];
 
 describe("TaskAssignmentsPanel", () => {
-    it("renders", () => {
-        render(<TaskAssignmentsPanel />);
+    it("renders", async () => {
+        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        render(<TaskAssignmentsPanel taskId={"test"} />);
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
     });
 
-    it("displays an avatar group of assigned users", async () => {
+    it("displays chips of the assigned users", async () => {
         amplify.DataStore.query.mockResolvedValue(fakeAssignments);
         render(<TaskAssignmentsPanel taskId="test" />);
         await waitFor(() =>
@@ -121,14 +125,13 @@ describe("TaskAssignmentsPanel", () => {
         );
         const avatarGroup = screen.queryAllByRole("img");
         // expect to have the correct number of avatars
+        // and correct names
         expect(avatarGroup).toHaveLength(2);
-        // mouse over the avatar group to show the tooltip
-        fireEvent.mouseOver(avatarGroup[0]);
-        const displayString = fakeAssignments
-            .filter((assignment) => assignment.task.id === "test")
-            .map((assignment) => assignment.assignee.displayName)
-            .join(", ");
-        expect(await screen.findByText(displayString)).toBeInTheDocument();
+        for (const user of fakeAssignments
+            .filter((a) => a.task.id === "test")
+            .map((a) => a.assignee)) {
+            expect(screen.getByText(user.displayName)).toBeInTheDocument();
+        }
     });
 
     it("displays cards for the assigned users when expanded", async () => {
@@ -141,14 +144,14 @@ describe("TaskAssignmentsPanel", () => {
         );
         // click the expand button
         userEvent.click(screen.getByText("Expand to see more"));
-        const rider = screen.getByRole("link", {
-            name: "Some Person Some Person",
-        });
-        const coord = screen.getByRole("link", {
-            name: "Another Individual Another Individual",
-        });
-        expect(rider).toBeInTheDocument();
-        expect(coord).toBeInTheDocument();
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
+        );
+        for (const user of fakeAssignments
+            .filter((a) => a.task.id === "test")
+            .map((a) => a.assignee)) {
+            expect(screen.getByText(user.displayName)).toBeInTheDocument();
+        }
     });
 
     it("is expanded by default when there are no riders assignees", async () => {
@@ -160,11 +163,7 @@ describe("TaskAssignmentsPanel", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
         expect(screen.getByText("Show less")).toBeInTheDocument();
-        expect(
-            screen.getByRole("link", {
-                name: "Another Individual Another Individual",
-            })
-        ).toBeInTheDocument();
+        expect(screen.getByText("Another Individual")).toBeInTheDocument();
     });
 
     test("select and assign a rider", async () => {
@@ -201,13 +200,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
         );
-        const expandLink = screen.getByText("Expand to see more");
-        userEvent.click(expandLink);
-        expect(
-            screen.getByRole("link", {
-                name: `${mockUser.displayName} ${mockUser.displayName}`,
-            })
-        ).toBeInTheDocument();
+        expect(screen.getByText(mockUser.displayName)).toBeInTheDocument();
         expect(amplify.DataStore.save).toHaveBeenCalledWith(
             expect.objectContaining({
                 ..._.omit(mockAssignment, "id"),
@@ -272,11 +265,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
         );
-        expect(
-            screen.getByRole("link", {
-                name: `${mockUser.displayName} ${mockUser.displayName}`,
-            })
-        ).toBeInTheDocument();
+        expect(screen.getByText(mockUser.displayName)).toBeInTheDocument();
         expect(amplify.DataStore.save).toHaveBeenCalledWith(
             expect.objectContaining({
                 ..._.omit(mockAssignment, "id"),
@@ -341,7 +330,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
-        userEvent.click(screen.getByRole("button", { name: "delete" }));
+        userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() =>
             expect(amplify.DataStore.delete).toHaveBeenCalledTimes(1)
         );
@@ -376,7 +365,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
-        userEvent.click(screen.getByRole("button", { name: "delete" }));
+        userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() =>
             expect(amplify.DataStore.delete).toHaveBeenCalledTimes(1)
         );
@@ -423,9 +412,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
-        const deleteButtons = await screen.findAllByRole("button", {
-            name: "delete",
-        });
+        const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
         userEvent.click(deleteButtons[0]);
         await waitFor(() =>
@@ -458,9 +445,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
-        const deleteButtons = await screen.findAllByRole("button", {
-            name: "delete",
-        });
+        const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
         userEvent.click(deleteButtons[0]);
         await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));

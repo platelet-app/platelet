@@ -1,9 +1,9 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import UserCard from "../../../components/UserCard";
 import PropTypes from "prop-types";
 import { Stack } from "@mui/material";
 import { userRoles } from "../../../apiConsts";
+import UserChip from "../../../components/UserChip";
 
 function TaskAssignees(props) {
     return [userRoles.coordinator, userRoles.rider].map((role) => {
@@ -14,19 +14,16 @@ function TaskAssignees(props) {
         const label =
             role === userRoles.coordinator ? "Coordinators:" : "Riders:";
         return (
-            <Stack key={role} direction="column" spacing={1}>
+            <Stack key={role} direction="row" alignItems="center" spacing={1}>
                 <Typography>{label}</Typography>
                 <Typography>{message}</Typography>
                 {assignments.map((assignment) => {
                     const user = assignment.assignee || null;
                     return (
-                        <UserCard
+                        <UserChip
+                            user={user}
                             key={assignment.id}
-                            compact
                             onDelete={() => props.onRemove(assignment.id)}
-                            userUUID={user.id}
-                            displayName={user.displayName}
-                            avatarURL={user.profilePictureThumbnailURL}
                         />
                     );
                 })}
