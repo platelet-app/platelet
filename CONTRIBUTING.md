@@ -1,6 +1,6 @@
 ## Setup
 
-There is minimal setup required for running this project. On Ubuntu 20.04, install the package `npm`
+There is minimal setup required for running this project. On Ubuntu, install the package `npm`
 
 `sudo apt install npm`
 
