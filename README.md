@@ -22,6 +22,8 @@ It can be deployed to AWS using Amplify or can be used fully offline with no onl
 
 ![overview](overview.png "Overview")
 
-[Click for a demo](https://demo.platelet.app)
+[Demo](https://demo.platelet.app)
 
 [Homepage](https://platelet.app)
+
+If you're interested in developing on Platelet take a look at [CONTRIBUTING](CONTRIBUTING.md).
