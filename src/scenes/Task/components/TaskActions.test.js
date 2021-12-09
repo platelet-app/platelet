@@ -429,4 +429,58 @@ describe("TaskActions", () => {
             expect(unsubscribe).toHaveBeenCalledTimes(1);
         });
     });
+
+    test("observer updates component on task update", async () => {
+        const mockTask = new models.Task({
+            timePickedUp: new Date().toISOString(),
+        });
+        const mockObservedResult = {
+            element: { timeDroppedOff: new Date().toISOString() },
+            opType: "INSERT",
+        };
+        amplify.DataStore.query.mockResolvedValue(mockTask);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: jest.fn().mockImplementation((callback) => {
+                callback(mockObservedResult);
+                return { unsubscribe: jest.fn() };
+            }),
+        });
+        render(<TaskActions taskId={mockTask.id} />);
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        await waitFor(async () => {
+            expect(amplify.DataStore.observe).toHaveBeenCalledTimes(1);
+        });
+        const button = screen.getByRole("button", { name: "Delivered" });
+        expect(button).toHaveAttribute("aria-pressed", "true");
+    });
+
+    test("observer updates component on task deleted", async () => {
+        const mockTask = new models.Task({
+            timePickedUp: new Date().toISOString(),
+        });
+        const mockObservedResult = {
+            opType: "DELETE",
+        };
+        amplify.DataStore.query.mockResolvedValue(mockTask);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: jest.fn().mockImplementation((callback) => {
+                callback(mockObservedResult);
+                return { unsubscribe: jest.fn() };
+            }),
+        });
+        render(<TaskActions taskId={mockTask.id} />);
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        await waitFor(async () => {
+            expect(amplify.DataStore.observe).toHaveBeenCalledTimes(1);
+        });
+        const buttons = screen.getAllByRole("button");
+        // expect all buttons to be disabled
+        buttons.forEach((button) => {
+            expect(button).toBeDisabled();
+        });
+    });
 });
