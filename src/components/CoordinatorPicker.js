@@ -17,8 +17,12 @@ function CoordinatorPicker(props) {
     const [availableUsers, setAvailableUsers] = useState([]);
     const [filteredCoordinatorSuggestions, setFilteredCoordinatorSuggestions] =
         useState([]);
+    const [reset, setReset] = useState(false);
+
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
+        // toggle reset so that the key changes and the coordinator select re-renders
+        setReset((prevState) => !prevState);
     };
     async function getCoordinators() {
         const coords = await DataStore.query(models.User);
@@ -48,6 +52,7 @@ function CoordinatorPicker(props) {
             <Autocomplete
                 disablePortal
                 fullWidth
+                key={reset}
                 filterOptions={filterOptions}
                 id="combo-box-coordinators"
                 options={filteredCoordinatorSuggestions}
