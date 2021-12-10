@@ -16,6 +16,7 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { render as rtlRender } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
+import App from "./App";
 
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
@@ -87,14 +88,7 @@ function render(
                 <BrowserRouter>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <ReactNotification />
-                        <StyledEngineProvider injectFirst>
-                            <ThemeProvider theme={theme}>
-                                <CssBaseline />
-                                <SnackbarProvider maxSnack={1}>
-                                    {children}
-                                </SnackbarProvider>
-                            </ThemeProvider>
-                        </StyledEngineProvider>
+                        <App>{children}</App>
                     </LocalizationProvider>
                 </BrowserRouter>
             </Provider>
@@ -114,14 +108,7 @@ const AllTheProviders = ({ children }) => {
             <BrowserRouter>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <ReactNotification />
-                    <StyledEngineProvider injectFirst>
-                        <ThemeProvider theme={theme}>
-                            <CssBaseline />
-                            <SnackbarProvider maxSnack={1}>
-                                {children}
-                            </SnackbarProvider>
-                        </ThemeProvider>
-                    </StyledEngineProvider>
+                    <App>{children}</App>
                 </LocalizationProvider>
             </BrowserRouter>
         </Provider>
