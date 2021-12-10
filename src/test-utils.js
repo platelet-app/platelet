@@ -1,8 +1,6 @@
 import React from "react";
-import { applyMiddleware, createStore } from "redux";
 import rootReducer from "./redux/Reducers";
 import createSagaMiddleware from "redux-saga";
-import { render } from "@testing-library/react";
 import {
     ThemeProvider,
     StyledEngineProvider,
@@ -16,6 +14,8 @@ import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { render as rtlRender } from "@testing-library/react";
+import { configureStore } from "@reduxjs/toolkit";
 
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
@@ -68,11 +68,49 @@ const sagaOptions = {
 };
 
 const sagaMiddleWare = createSagaMiddleware(sagaOptions);
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleWare));
+
+function render(
+    ui,
+    {
+        preloadedState,
+        store = configureStore({
+            reducer: rootReducer,
+            preloadedState,
+            middleware: [sagaMiddleWare],
+        }),
+        ...renderOptions
+    } = {}
+) {
+    function Wrapper({ children }) {
+        return (
+            <Provider store={store}>
+                <BrowserRouter>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <ReactNotification />
+                        <StyledEngineProvider injectFirst>
+                            <ThemeProvider theme={theme}>
+                                <CssBaseline />
+                                <SnackbarProvider maxSnack={1}>
+                                    {children}
+                                </SnackbarProvider>
+                            </ThemeProvider>
+                        </StyledEngineProvider>
+                    </LocalizationProvider>
+                </BrowserRouter>
+            </Provider>
+        );
+    }
+    return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
+}
+
+// re-export everything
+export * from "@testing-library/react";
+// override render method
+export { render };
 
 const AllTheProviders = ({ children }) => {
     return (
-        <Provider store={store}>
+        <Provider store={null}>
             <BrowserRouter>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <ReactNotification />
@@ -92,9 +130,3 @@ const AllTheProviders = ({ children }) => {
 
 const customRender = (ui, options) =>
     render(ui, { wrapper: AllTheProviders, ...options });
-
-// re-export everything
-export * from "@testing-library/react";
-
-// override render method
-export { customRender as render };
