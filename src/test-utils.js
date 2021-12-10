@@ -8,7 +8,7 @@ import {
 } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
@@ -16,7 +16,7 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { render as rtlRender } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
-import App from "./App";
+import { initialiseApp } from "./redux/initialise/initialiseActions";
 
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
@@ -70,6 +70,29 @@ const sagaOptions = {
 
 const sagaMiddleWare = createSagaMiddleware(sagaOptions);
 
+function TestApp({ children }) {
+    const dispatch = useDispatch();
+    function initialise() {
+        dispatch(initialiseApp());
+    }
+    React.useEffect(initialise, []);
+    return (
+        <BrowserRouter>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <ReactNotification />
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <SnackbarProvider maxSnack={1}>
+                            {children}
+                        </SnackbarProvider>
+                    </ThemeProvider>
+                </StyledEngineProvider>
+            </LocalizationProvider>
+        </BrowserRouter>
+    );
+}
+
 function render(
     ui,
     {
@@ -85,12 +108,7 @@ function render(
     function Wrapper({ children }) {
         return (
             <Provider store={store}>
-                <BrowserRouter>
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <ReactNotification />
-                        <App>{children}</App>
-                    </LocalizationProvider>
-                </BrowserRouter>
+                <TestApp>{children}</TestApp>
             </Provider>
         );
     }
@@ -101,19 +119,3 @@ function render(
 export * from "@testing-library/react";
 // override render method
 export { render };
-
-const AllTheProviders = ({ children }) => {
-    return (
-        <Provider store={null}>
-            <BrowserRouter>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <ReactNotification />
-                    <App>{children}</App>
-                </LocalizationProvider>
-            </BrowserRouter>
-        </Provider>
-    );
-};
-
-const customRender = (ui, options) =>
-    render(ui, { wrapper: AllTheProviders, ...options });

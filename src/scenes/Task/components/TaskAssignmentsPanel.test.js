@@ -19,12 +19,6 @@ jest.mock("../../../redux/Selectors", () => ({
     dataStoreReadyStatusSelector: () => true,
 }));
 
-const mockDispatch = jest.fn();
-jest.mock("react-redux", () => ({
-    ...jest.requireActual("react-redux"),
-    useDispatch: () => mockDispatch,
-}));
-
 const errorMessage = "Sorry, something went wrong";
 
 const profilePictureThumbnailURL =
@@ -217,10 +211,6 @@ describe("TaskAssignmentsPanel", () => {
                 ),
             })
         );
-        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
-        expect(mockDispatch).toHaveBeenCalledWith(
-            displayInfoNotification("Task moved to ACTIVE")
-        );
     });
 
     test("select and assign a coordinator", async () => {
@@ -306,10 +296,6 @@ describe("TaskAssignmentsPanel", () => {
         userEvent.click(option);
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
-        );
-        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
-        expect(mockDispatch).toHaveBeenCalledWith(
-            displayErrorNotification(errorMessage)
         );
     });
 
@@ -448,9 +434,5 @@ describe("TaskAssignmentsPanel", () => {
         const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
         userEvent.click(deleteButtons[0]);
-        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
-        expect(mockDispatch).toHaveBeenCalledWith(
-            displayErrorNotification(errorMessage)
-        );
     });
 });
