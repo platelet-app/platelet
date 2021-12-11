@@ -6,16 +6,11 @@ import { tasksStatus } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import userEvent from "@testing-library/user-event";
 import mediaQuery from "css-mediaquery";
-import {
-    displayErrorNotification,
-    displayInfoNotification,
-} from "../../../redux/notifications/NotificationsActions";
 import * as amplify from "aws-amplify";
 
 jest.mock("aws-amplify");
 
 const utils = require("../../../utilities");
-const reactRedux = require("react-redux");
 
 jest.mock("../../../utilities", () => {
     return {
@@ -120,7 +115,6 @@ describe("StatusBar", () => {
             name: "Copy to clipboard",
         });
         expect(copyButton).toBeInTheDocument();
-        //jest.spyOn(reactRedux, "useDispatch");
         userEvent.click(copyButton);
         jest.spyOn(utils, "copyTaskDataToClipboard");
         await waitFor(() =>
@@ -129,11 +123,9 @@ describe("StatusBar", () => {
                 deliverables: [],
             })
         );
-        // await waitFor(() =>
-        //     expect(mockDispatch).toHaveBeenCalledWith(
-        //         displayInfoNotification("Copied to clipboard.")
-        //     )
-        // );
+        //  await waitFor(() =>
+        //      expect(screen.getByText(/Copied to clipboard/)).toBeInTheDocument()
+        //  );
     });
     it("fails to copy task data to clipboard", async () => {
         jest.restoreAllMocks();
