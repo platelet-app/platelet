@@ -95,10 +95,12 @@ function TasksGridColumn(props) {
     stateRef.current = state;
 
     function addTaskToState(newTask) {
+        animate.current = true;
         setState((prevState) => ({
             ...prevState,
             [newTask.id]: newTask,
         }));
+        animate.current = false;
     }
 
     function removeTaskFromState(newTask) {
@@ -305,19 +307,6 @@ function TasksGridColumn(props) {
     );
 
     const animate = useRef(false);
-    useEffect(() => {
-        // this is a bit of a hack really
-        // prevents the cards from animating on first mount
-        if (isFetching) animate.current = false;
-        else setTimeout(() => (animate.current = true), 3000);
-    }, [isFetching]);
-
-    useEffect(() => {
-        // to prevent role view changes from animating cards
-        if (isFetching) return;
-        animate.current = false;
-        setTimeout(() => (animate.current = true), 3000);
-    }, [roleView, isFetching]);
 
     if (errorState) {
         return <GetError />;
