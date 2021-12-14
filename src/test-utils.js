@@ -15,8 +15,9 @@ import "react-notifications-component/dist/theme.css";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { render as rtlRender } from "@testing-library/react";
-import { configureStore } from "@reduxjs/toolkit";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
+import rootSaga from "./redux/RootSagas";
+import store from "./redux/Store";
 
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
@@ -58,7 +59,7 @@ export function generateTimes(previous = null, hours = 2) {
 }
 
 const sagaOptions = {
-    onErraor: (action, error) => {
+    onError: (action, error) => {
         console.log("An uncaught exception has occurred in redux-saga:");
         console.log(action);
         if (error) {
@@ -93,28 +94,21 @@ function TestApp({ children }) {
     );
 }
 
-function render(
-    ui,
-    {
-        preloadedState,
-        store = configureStore({
-            reducer: rootReducer,
-            preloadedState,
-            middleware: [sagaMiddleWare],
-        }),
-        ...renderOptions
-    } = {}
-) {
+function render(ui, { preloadedState, ...renderOptions } = {}) {
     function Wrapper({ children }) {
         return (
             <Provider store={store}>
-                <TestApp>{children}</TestApp>
+                <BrowserRouter>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <ReactNotification />
+                        <TestApp>{children}</TestApp>
+                    </LocalizationProvider>
+                </BrowserRouter>
             </Provider>
         );
     }
     return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
 }
-
 // re-export everything
 export * from "@testing-library/react";
 // override render method
