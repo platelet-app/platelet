@@ -8,16 +8,8 @@ import _ from "lodash";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {
-    displayErrorNotification,
-    displayInfoNotification,
-} from "../../../redux/notifications/NotificationsActions";
 
 jest.mock("aws-amplify");
-
-jest.mock("../../../redux/Selectors", () => ({
-    dataStoreReadyStatusSelector: () => true,
-}));
 
 const errorMessage = "Sorry, something went wrong";
 
@@ -103,12 +95,17 @@ const fakeUsers = [
 ];
 
 describe("TaskAssignmentsPanel", () => {
+    beforeEach(() => {
+        amplify.Hub.listen.mockReturnValue(
+            jest.fn().mockImplementation((callback) => {
+                callback({ event: "ready" });
+            })
+        );
+    });
     it("renders", async () => {
         amplify.DataStore.query.mockResolvedValue(fakeAssignments);
-        render(<TaskAssignmentsPanel taskId={"test"} />);
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
-        );
+        render(<TaskAssignmentsPanel taskId="test" />);
+        expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
     });
 
     it("displays chips of the assigned users", async () => {
@@ -211,6 +208,9 @@ describe("TaskAssignmentsPanel", () => {
                 ),
             })
         );
+        expect(
+            await screen.findByText("Task moved to ACTIVE")
+        ).toBeInTheDocument();
     });
 
     test("select and assign a coordinator", async () => {
