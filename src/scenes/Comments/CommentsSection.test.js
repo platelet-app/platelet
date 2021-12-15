@@ -5,7 +5,6 @@ import * as amplify from "aws-amplify";
 import { screen, waitFor } from "@testing-library/react";
 import { commentVisibility } from "../../apiConsts";
 import userEvent from "@testing-library/user-event";
-import { displayInfoNotification } from "../../redux/notifications/NotificationsActions";
 import _ from "lodash";
 import * as models from "../../models";
 
@@ -106,7 +105,7 @@ describe("CommentsSection", () => {
         expect(screen.queryByText("Private Person")).not.toBeInTheDocument();
     });
 
-    it.skip("posts a new comment", async () => {
+    it("posts a new comment", async () => {
         const mockWhoami = {
             id: "whoami",
             displayName: "Mock User",
@@ -118,7 +117,9 @@ describe("CommentsSection", () => {
             createdAt: "2020-01-01T00:00:00.000Z",
             author: mockWhoami,
         };
-        amplify.DataStore.query.mockResolvedValueOnce([]);
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValue(mockWhoami);
         amplify.DataStore.save.mockResolvedValue(mockComment);
         const unsubscribe = jest.fn();
         amplify.DataStore.observe.mockReturnValue({

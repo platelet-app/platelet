@@ -90,7 +90,6 @@ function CommentsSection(props) {
                     } else if (
                         ["UPDATE", "INSERT"].includes(newComment.opType)
                     ) {
-                        console.log("yeee");
                         addCommentToState(comment);
                     }
                 });

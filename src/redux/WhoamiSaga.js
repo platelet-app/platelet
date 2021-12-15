@@ -24,8 +24,7 @@ const fakeUser = {
     active: 1,
 };
 
-const testUser = {
-    id: "whoami",
+const testUserModel = new models.User({
     username: "whoami",
     displayName: "Mock User",
     roles: Object.values(userRoles),
@@ -34,7 +33,8 @@ const testUser = {
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
     active: 1,
-};
+});
+const testUser = { ...testUserModel, id: "whoami" };
 
 function* getWhoami() {
     if (process.env.NODE_ENV === "test") {
