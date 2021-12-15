@@ -28,7 +28,7 @@ jobs:
         CI: false
         GENERATE_SOURCEMAP: false
     - name: NPM test
-      run: npm test
+      run: npm run test
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
