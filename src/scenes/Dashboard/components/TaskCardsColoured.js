@@ -10,7 +10,7 @@ import { Stack, Tooltip } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { StyledCard } from "../../../styles/common";
 import Badge from "@mui/material/Badge";
-import MailIcon from "@mui/icons-material/Mail";
+import MessageIcon from "@mui/icons-material/Message";
 
 const colourBarPercent = "90%";
 
@@ -96,7 +96,7 @@ const TaskCard = React.memo((props) => {
                             placement={"top"}
                         >
                             <Badge color={"primary"}>
-                                <MailIcon />
+                                <MessageIcon />
                             </Badge>
                         </Tooltip>
                     ) : (

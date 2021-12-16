@@ -274,7 +274,7 @@ export function DashboardDetailTabs(props) {
                         </Stack>
                     </Stack>
                     <Divider />
-                    <ActiveRidersChips />
+                    {false && <ActiveRidersChips />}
                 </Stack>
             </Toolbar>
             <Divider />

@@ -456,7 +456,7 @@ async function populateTasks() {
     }
     // tasksDroppedOff
     const tasksDroppedOffCheck = await DataStore.query(models.Task, (task) =>
-        task.status("eq", tasksStatus.droppedOff)
+        task.status("eq", tasksStatus.completed)
     );
     if (tasksDroppedOffCheck.length === 0) {
         let timeOfCall = null;
@@ -477,7 +477,7 @@ async function populateTasks() {
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
-                    status: tasksStatus.droppedOff,
+                    status: tasksStatus.completed,
                     priority,
                     timeOfCall,
                     pickUpLocation,
