@@ -16,8 +16,6 @@ import { showHide } from "../../../styles/common";
 import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import { Button, Divider, Hidden, Stack } from "@mui/material";
-import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
-import CallIcon from "@mui/icons-material/Call";
 import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
@@ -170,11 +168,7 @@ export function DashboardDetailTabs(props) {
                                 </Typography>
                             </Hidden>
                             <Hidden mdUp>
-                                {roleView === "rider" ? (
-                                    <TwoWheelerIcon />
-                                ) : (
-                                    <CallIcon />
-                                )}
+                                {`${roleView.substring(0, 5).toUpperCase()}`}
                             </Hidden>
                             <IconButton
                                 id="role-menu-button"
