@@ -20,6 +20,7 @@ import {
     getRoleView,
     getWhoami,
 } from "../../../redux/Selectors";
+import { useInView } from "react-intersection-observer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,17 +55,19 @@ function TaskItem(props) {
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [assignees, setAssignees] = useState([]);
     const [assignedRiders, setAssignedRiders] = useState([]);
-    const ref = React.useRef();
-    const isVisible = useOnScreen(ref);
     const [visibility, setVisibility] = useState(false);
     const [commentCount, setCommentCount] = useState(0);
     const roleView = useSelector(getRoleView);
 
+    const { ref, inView, entry } = useInView({
+        threshold: 0,
+    });
+
     useEffect(() => {
-        if (isVisible && !visibility) {
+        if (inView && !visibility) {
             setVisibility(true);
         }
-    }, [isVisible]);
+    }, [inView]);
 
     async function getAssignees() {
         if ((visibility && !dataStoreReadyStatus) || !props.task) return;
