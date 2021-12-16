@@ -21,6 +21,7 @@ import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
 import { tasksStatus } from "../../../apiConsts";
 import moment from "moment";
+import Box from "@mui/material/Box";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -269,7 +270,7 @@ function TasksGridColumn(props) {
             } catch (error) {
                 setErrorState(true);
                 setIsFetching(false);
-                console.error(error);
+                console.log(error);
             }
         }
     }
@@ -362,7 +363,7 @@ function TasksGridColumn(props) {
                 <Stack
                     direction={"column"}
                     id={`tasks-kanban-column-${props.taskKey}`}
-                    spacing={4}
+                    spacing={0}
                     alignItems={"center"}
                     justifyContent={"center"}
                 >
@@ -394,18 +395,24 @@ function TasksGridColumn(props) {
                                 )}
                                 key={task.id}
                             >
-                                {displayDate && (
-                                    <Typography className={classes.date}>
-                                        {moment(lastTime).calendar(null, {
-                                            lastDay: "[Yesterday]",
-                                            sameDay: "[Today]",
-                                            nextDay: "[Tomorrow]",
-                                            lastWeek: "[last] dddd",
-                                            nextWeek: "dddd",
-                                            sameElse: "L",
-                                        })}
-                                    </Typography>
-                                )}
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    height={35}
+                                >
+                                    {displayDate && (
+                                        <Typography className={classes.date}>
+                                            {moment(lastTime).calendar(null, {
+                                                lastDay: "[Yesterday]",
+                                                sameDay: "[Today]",
+                                                nextDay: "[Tomorrow]",
+                                                lastWeek: "[last] dddd",
+                                                nextWeek: "dddd",
+                                                sameElse: "L",
+                                            })}
+                                        </Typography>
+                                    )}
+                                </Box>
                                 <TaskItem
                                     animate={animate.current}
                                     task={task}
