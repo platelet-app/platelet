@@ -6,11 +6,12 @@ import Moment from "react-moment";
 import CardItem from "../../../components/CardItem";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
-import { Stack, Tooltip } from "@mui/material";
+import { Avatar, Stack, Tooltip } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { StyledCard } from "../../../styles/common";
 import Badge from "@mui/material/Badge";
 import MessageIcon from "@mui/icons-material/Message";
+import { styled } from "@mui/material/styles";
 
 const colourBarPercent = "90%";
 
@@ -43,6 +44,18 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
         height: 30,
         paddingBottom: 10,
+    },
+    badgeCircle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 32,
+        height: 32,
+        borderRadius: "50%",
+        backgroundColor:
+            theme.palette.mode === "dark"
+                ? "rgba(0,0,0,0.4)"
+                : "rgba(255,255,255,0.5)",
     },
 }));
 
@@ -96,7 +109,9 @@ const TaskCard = React.memo((props) => {
                             placement={"top"}
                         >
                             <Badge color={"primary"}>
-                                <MessageIcon />
+                                <div className={classes.badgeCircle}>
+                                    <MessageIcon />
+                                </div>
                             </Badge>
                         </Tooltip>
                     ) : (
