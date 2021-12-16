@@ -41,7 +41,6 @@ const loaderStyles = makeStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
     header: {
         fontWeight: "bold",
-        padding: "6px",
     },
     divider: {
         width: "95%",
