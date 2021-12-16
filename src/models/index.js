@@ -43,7 +43,9 @@ const TaskStatus = {
   "PICKED_UP": "PICKED_UP",
   "DROPPED_OFF": "DROPPED_OFF",
   "CANCELLED": "CANCELLED",
-  "REJECTED": "REJECTED"
+  "REJECTED": "REJECTED",
+  "ABANDONED": "ABANDONED",
+  "COMPLETED": "COMPLETED"
 };
 
 const Patch = {

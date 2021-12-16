@@ -38,16 +38,24 @@ function importAll(r) {
     return images;
 }
 
-const profilePictures = importAll(
-    require.context("../../assets/profilePictures", false, /\.(png|jpe?g|svg)$/)
-);
-const profilePictureThumbnails = importAll(
-    require.context(
-        "../../assets/profilePictureThumbnails",
-        false,
-        /\.(png|jpe?g|svg)$/
-    )
-);
+let profilePictures = {};
+let profilePictureThumbnails = {};
+if (process.env.NODE_ENV !== "test") {
+    profilePictures = importAll(
+        require.context(
+            "../../assets/profilePictures",
+            false,
+            /\.(png|jpe?g|svg)$/
+        )
+    );
+    profilePictureThumbnails = importAll(
+        require.context(
+            "../../assets/profilePictureThumbnails",
+            false,
+            /\.(png|jpe?g|svg)$/
+        )
+    );
+}
 
 function* initialiseApp() {
     if (process.env.REACT_APP_DEMO_MODE === "true") {
@@ -56,13 +64,15 @@ function* initialiseApp() {
         yield call([DataStore, DataStore.clear]);
         yield call([DataStore, DataStore.start]);
     }
-    if (
-        process.env.REACT_APP_DEMO_MODE === "true" ||
-        (process.env.REACT_APP_OFFLINE_ONLY === "true" &&
-            process.env.REACT_APP_POPULATE_FAKE_DATA === "true")
-    ) {
-        yield call(populateFakeData);
-        yield call(populateTasks);
+    if (process.env.NODE_ENV !== "test") {
+        if (
+            process.env.REACT_APP_DEMO_MODE === "true" ||
+            (process.env.REACT_APP_OFFLINE_ONLY === "true" &&
+                process.env.REACT_APP_POPULATE_FAKE_DATA === "true")
+        ) {
+            yield call(populateFakeData);
+            yield call(populateTasks);
+        }
     }
     yield put(getWhoamiRequest());
 }
@@ -446,7 +456,7 @@ async function populateTasks() {
     }
     // tasksDroppedOff
     const tasksDroppedOffCheck = await DataStore.query(models.Task, (task) =>
-        task.status("eq", tasksStatus.droppedOff)
+        task.status("eq", tasksStatus.completed)
     );
     if (tasksDroppedOffCheck.length === 0) {
         let timeOfCall = null;
@@ -467,7 +477,7 @@ async function populateTasks() {
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
-                    status: tasksStatus.droppedOff,
+                    status: tasksStatus.completed,
                     priority,
                     timeOfCall,
                     pickUpLocation,

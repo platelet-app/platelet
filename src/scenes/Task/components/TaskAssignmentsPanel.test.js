@@ -8,22 +8,8 @@ import _ from "lodash";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {
-    displayErrorNotification,
-    displayInfoNotification,
-} from "../../../redux/notifications/NotificationsActions";
 
 jest.mock("aws-amplify");
-
-jest.mock("../../../redux/Selectors", () => ({
-    dataStoreReadyStatusSelector: () => true,
-}));
-
-const mockDispatch = jest.fn();
-jest.mock("react-redux", () => ({
-    ...jest.requireActual("react-redux"),
-    useDispatch: () => mockDispatch,
-}));
 
 const errorMessage = "Sorry, something went wrong";
 
@@ -109,12 +95,17 @@ const fakeUsers = [
 ];
 
 describe("TaskAssignmentsPanel", () => {
+    beforeEach(() => {
+        amplify.Hub.listen.mockReturnValue(
+            jest.fn().mockImplementation((callback) => {
+                callback({ event: "ready" });
+            })
+        );
+    });
     it("renders", async () => {
         amplify.DataStore.query.mockResolvedValue(fakeAssignments);
-        render(<TaskAssignmentsPanel taskId={"test"} />);
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
-        );
+        render(<TaskAssignmentsPanel taskId="test" />);
+        expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
     });
 
     it("displays chips of the assigned users", async () => {
@@ -217,10 +208,9 @@ describe("TaskAssignmentsPanel", () => {
                 ),
             })
         );
-        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
-        expect(mockDispatch).toHaveBeenCalledWith(
-            displayInfoNotification("Task moved to ACTIVE")
-        );
+        expect(
+            await screen.findByText("Task moved to ACTIVE")
+        ).toBeInTheDocument();
     });
 
     test("select and assign a coordinator", async () => {
@@ -306,10 +296,6 @@ describe("TaskAssignmentsPanel", () => {
         userEvent.click(option);
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
-        );
-        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
-        expect(mockDispatch).toHaveBeenCalledWith(
-            displayErrorNotification(errorMessage)
         );
     });
 
@@ -448,9 +434,5 @@ describe("TaskAssignmentsPanel", () => {
         const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
         userEvent.click(deleteButtons[0]);
-        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
-        expect(mockDispatch).toHaveBeenCalledWith(
-            displayErrorNotification(errorMessage)
-        );
     });
 });

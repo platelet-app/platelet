@@ -25,7 +25,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-src/wdyr.js
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend

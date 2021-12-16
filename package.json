@@ -24,6 +24,7 @@
         "downshift": "^6.1.7",
         "framer-motion": "^4.1.17",
         "immutability-helper": "^3.1.1",
+        "intersection-observer": "^0.12.0",
         "jest-canvas-mock": "^2.3.1",
         "jest-fetch-mock": "^3.0.3",
         "libphonenumber-js": "^1.9.25",
@@ -39,6 +40,7 @@
         "react-dom": "^17.0.2",
         "react-helmet": "^6.1.0",
         "react-idle-timer": "^4.6.4",
+        "react-intersection-observer": "^8.33.1",
         "react-linkify": "^1.0.0-alpha",
         "react-moment": "^1.1.1",
         "react-notifications-component": "^3.1.0",
@@ -88,6 +90,7 @@
         "@cypress/webpack-dev-server": "^1.7.0",
         "@peculiar/webcrypto": "^1.2.2",
         "@testing-library/jest-dom": "^5.15.0",
+        "@welldone-software/why-did-you-render": "^6.2.3",
         "canvas": "^2.8.0",
         "css-mediaquery": "^0.1.2",
         "cypress": "^9.0.0"

@@ -4,7 +4,6 @@ import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
 import { useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
-import { Waypoint } from "react-waypoint";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
@@ -21,6 +20,8 @@ import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
 import { tasksStatus } from "../../../apiConsts";
+import moment from "moment";
+import Box from "@mui/material/Box";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -40,7 +41,6 @@ const loaderStyles = makeStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
     header: {
         fontWeight: "bold",
-        padding: "6px",
     },
     divider: {
         width: "95%",
@@ -53,6 +53,13 @@ const useStyles = makeStyles((theme) => ({
     },
     gridItem: {
         width: "100%",
+    },
+    date: {
+        fontStyle: "italic",
+        color: "gray",
+        "&:hover": {
+            color: theme.palette.mode === "dark" ? "white" : "black",
+        },
     },
 }));
 
@@ -95,10 +102,12 @@ function TasksGridColumn(props) {
     stateRef.current = state;
 
     function addTaskToState(newTask) {
+        animate.current = true;
         setState((prevState) => ({
             ...prevState,
             [newTask.id]: newTask,
         }));
+        animate.current = false;
     }
 
     function removeTaskFromState(newTask) {
@@ -119,31 +128,50 @@ function TasksGridColumn(props) {
         if (!dataStoreReadyStatus) {
             return;
         } else {
+            const isCompletedTab =
+                _.intersection(
+                    [
+                        tasksStatus.droppedOff,
+                        tasksStatus.cancelled,
+                        tasksStatus.rejected,
+                    ],
+                    props.taskKey
+                ).length > 0;
             try {
                 const allAssignments = await DataStore.query(
                     models.TaskAssignee
                 );
                 let tasksResult = [];
                 if (roleView === "all") {
-                    if (
-                        [
-                            tasksStatus.droppedOff,
-                            tasksStatus.cancelled,
-                            tasksStatus.rejected,
-                        ].includes(props.taskKey)
-                    ) {
+                    if (isCompletedTab) {
                         tasksResult = await DataStore.query(
                             models.Task,
-                            (task) => task.status("eq", props.taskKey),
+
+                            (task) =>
+                                task.or((task) =>
+                                    task
+                                        // TODO: not ideal since it sometimes is one index but works for now
+                                        .status("eq", props.taskKey[0])
+                                        .status("eq", props.taskKey[1])
+                                ),
+
                             {
-                                page: 0,
+                                sort: (s) => s.createdAt("desc"),
                                 limit: 100,
                             }
                         );
                     } else {
                         tasksResult = await DataStore.query(
                             models.Task,
-                            (task) => task.status("eq", props.taskKey)
+                            (task) =>
+                                task.or((task) =>
+                                    task
+                                        .status("eq", props.taskKey[0])
+                                        .status("eq", props.taskKey[1])
+                                ),
+                            {
+                                sort: (s) => s.createdAt("desc"),
+                            }
                         );
                     }
                 } else {
@@ -155,13 +183,7 @@ function TasksGridColumn(props) {
                     // once DataStore implements lazy loading, get the tasks for assignments instead
                     const taskIds = assignments.map((a) => a.task.id);
                     let tasks;
-                    if (
-                        [
-                            tasksStatus.droppedOff,
-                            tasksStatus.cancelled,
-                            tasksStatus.rejected,
-                        ].includes(props.taskKey)
-                    ) {
+                    if (isCompletedTab) {
                         tasks = await DataStore.query(
                             models.Task,
                             (task) => task.status("eq", props.taskKey),
@@ -190,7 +212,7 @@ function TasksGridColumn(props) {
                             models.Task,
                             newTask.element.id
                         );
-                        if (replaceTask.status === props.taskKey) {
+                        if (props.taskKey.includes(replaceTask.status)) {
                             const assignees = (
                                 await DataStore.query(models.TaskAssignee)
                             ).filter((a) => a.task.id === replaceTask.id);
@@ -200,7 +222,8 @@ function TasksGridColumn(props) {
                         }
                     } else {
                         const task = newTask.element;
-                        if (task.status === props.taskKey) addTaskToState(task);
+                        if (props.taskKey.includes(task.status))
+                            addTaskToState(task);
                     }
                 });
                 locationsSubscription.current.unsubscribe();
@@ -246,14 +269,15 @@ function TasksGridColumn(props) {
             } catch (error) {
                 setErrorState(true);
                 setIsFetching(false);
-                console.error(error);
+                console.log(error);
             }
         }
     }
 
     useEffect(
         () => getTasks(),
-        [dataStoreReadyStatus, roleView, props.taskKey]
+        // JSON.stringify prevents component remount from an array prop
+        [dataStoreReadyStatus, roleView, JSON.stringify(props.taskKey)]
     );
     useEffect(() => {
         return () => {
@@ -305,19 +329,6 @@ function TasksGridColumn(props) {
     );
 
     const animate = useRef(false);
-    useEffect(() => {
-        // this is a bit of a hack really
-        // prevents the cards from animating on first mount
-        if (isFetching) animate.current = false;
-        else setTimeout(() => (animate.current = true), 3000);
-    }, [isFetching]);
-
-    useEffect(() => {
-        // to prevent role view changes from animating cards
-        if (isFetching) return;
-        animate.current = false;
-        setTimeout(() => (animate.current = true), 3000);
-    }, [roleView, isFetching]);
 
     if (errorState) {
         return <GetError />;
@@ -342,20 +353,36 @@ function TasksGridColumn(props) {
             </TasksKanbanColumn>
         );
     } else {
+        let displayDate = false;
+        let lastTime = new Date();
+        const filteredTasksIdsList = filteredTasksIds || [];
         return (
             <TasksKanbanColumn>
                 {header}
                 <Stack
                     direction={"column"}
                     id={`tasks-kanban-column-${props.taskKey}`}
-                    spacing={4}
+                    spacing={0}
                     alignItems={"center"}
-                    justifyContent={"flex-start"}
+                    justifyContent={"center"}
                 >
                     {sortByCreatedTime(
                         Object.values(state).reverse(),
                         "newest"
                     ).map((task) => {
+                        displayDate = false;
+                        const timeComparison = new Date(
+                            task.createdAt || task.timeOfCall || null
+                        );
+                        if (
+                            timeComparison &&
+                            (filteredTasksIdsList.length === 0 ||
+                                filteredTasksIdsList.includes(task.id)) &&
+                            timeComparison.getDate() <= lastTime.getDate() - 1
+                        ) {
+                            lastTime = timeComparison;
+                            displayDate = true;
+                        }
                         return (
                             <div
                                 className={clsx(
@@ -367,6 +394,24 @@ function TasksGridColumn(props) {
                                 )}
                                 key={task.id}
                             >
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    height={35}
+                                >
+                                    {displayDate && (
+                                        <Typography className={classes.date}>
+                                            {moment(lastTime).calendar(null, {
+                                                lastDay: "[Yesterday]",
+                                                sameDay: "[Today]",
+                                                nextDay: "[Tomorrow]",
+                                                lastWeek: "[last] dddd",
+                                                nextWeek: "dddd",
+                                                sameElse: "L",
+                                            })}
+                                        </Typography>
+                                    )}
+                                </Box>
                                 <TaskItem
                                     animate={animate.current}
                                     task={task}
@@ -402,29 +447,6 @@ function TasksGridColumn(props) {
                         <></>
                     )}
                 </Stack>
-                {/*[
-                    tasksStatus.droppedOff,
-                    tasksStatus.cancelled,
-                    tasksStatus.rejected,
-                ].includes(props.taskKey) ? (
-                    <React.Fragment>
-                        <Waypoint
-                            onEnter={() => {
-                                return;
-                                if (
-                                    (filteredTasksIds &&
-                                        filteredTasksIds.length > 0) ||
-                                    endlessLoadIsFetching ||
-                                    endlessLoadEnd
-                                )
-                                    return;
-                                appendTasks();
-                            }}
-                        />
-                    </React.Fragment>
-                ) : (
-                    <></>
-                )*/}
             </TasksKanbanColumn>
         );
     }
@@ -432,7 +454,7 @@ function TasksGridColumn(props) {
 
 TasksGridColumn.propTypes = {
     title: PropTypes.string,
-    taskKey: PropTypes.string.isRequired,
+    taskKey: PropTypes.array.isRequired,
     showTasks: PropTypes.arrayOf(PropTypes.string),
     hideRelayIcons: PropTypes.bool,
 };
@@ -442,5 +464,6 @@ TasksGridColumn.defaultProps = {
     title: "TASKS",
     hideRelayIcons: false,
 };
+TasksGridColumn.whyDidYouRender = true;
 
 export default TasksGridColumn;

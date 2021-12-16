@@ -63,6 +63,7 @@ function NewCommentCard(props) {
             props.onNewComment(newComment);
         } catch (error) {
             dispatch(displayErrorNotification("Sorry, an error occurred."));
+            console.log(error);
             setIsPosting(false);
         }
     }

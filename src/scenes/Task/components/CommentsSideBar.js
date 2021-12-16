@@ -55,7 +55,7 @@ export default function CommentsSideBar(props) {
                 <Stack direction={"column"} spacing={2}>
                     <TaskAssignmentsPanel taskId={props.taskId} />
                     <Divider />
-                    <CommentsSection parentUUID={props.parentUUID} />
+                    <CommentsSection parentId={props.parentUUID} />
                 </Stack>
             </Drawer>
         </Hidden>

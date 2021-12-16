@@ -6,16 +6,11 @@ import { tasksStatus } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import userEvent from "@testing-library/user-event";
 import mediaQuery from "css-mediaquery";
-import {
-    displayErrorNotification,
-    displayInfoNotification,
-} from "../../../redux/notifications/NotificationsActions";
 import * as amplify from "aws-amplify";
 
 jest.mock("aws-amplify");
 
 const utils = require("../../../utilities");
-const reactRedux = require("react-redux");
 
 jest.mock("../../../utilities", () => {
     return {
@@ -26,13 +21,6 @@ jest.mock("../../../utilities", () => {
             }),
     };
 });
-
-const mockDispatch = jest.fn();
-jest.mock("react-redux", () => ({
-    ...jest.requireActual("react-redux"),
-    useSelector: jest.fn(),
-    useDispatch: () => mockDispatch,
-}));
 
 function createMatchMedia(width) {
     return (query) => ({
@@ -127,7 +115,6 @@ describe("StatusBar", () => {
             name: "Copy to clipboard",
         });
         expect(copyButton).toBeInTheDocument();
-        jest.spyOn(reactRedux, "useDispatch");
         userEvent.click(copyButton);
         jest.spyOn(utils, "copyTaskDataToClipboard");
         await waitFor(() =>
@@ -136,11 +123,9 @@ describe("StatusBar", () => {
                 deliverables: [],
             })
         );
-        await waitFor(() =>
-            expect(mockDispatch).toHaveBeenCalledWith(
-                displayInfoNotification("Copied to clipboard.")
-            )
-        );
+        expect(
+            await screen.findByText(/Copied to clipboard/)
+        ).toBeInTheDocument();
     });
     it("fails to copy task data to clipboard", async () => {
         jest.restoreAllMocks();
@@ -150,12 +135,7 @@ describe("StatusBar", () => {
         });
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
-        jest.spyOn(reactRedux, "useDispatch");
-        await waitFor(() =>
-            expect(mockDispatch).toHaveBeenCalledWith(
-                displayErrorNotification("Copy failed.")
-            )
-        );
+        expect(await screen.findByText("Copy failed.")).toBeInTheDocument();
     });
     test("click the close button", async () => {
         const mockClose = jest.fn();

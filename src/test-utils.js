@@ -1,21 +1,25 @@
 import React from "react";
-import { applyMiddleware, createStore } from "redux";
 import rootReducer from "./redux/Reducers";
 import createSagaMiddleware from "redux-saga";
-import { render } from "@testing-library/react";
 import {
     ThemeProvider,
     StyledEngineProvider,
     createTheme,
 } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-import { SnackbarProvider } from "notistack";
-import { Provider } from "react-redux";
+import { SnackbarProvider, withSnackbar } from "notistack";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { render as rtlRender } from "@testing-library/react";
+import { initialiseApp } from "./redux/initialise/initialiseActions";
+import rootSaga from "./redux/RootSagas";
+import store from "./redux/Store";
+import { DismissButton } from "./styles/common";
+import SnackNotificationButtons from "./components/SnackNotificationButtons";
 
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
@@ -57,7 +61,7 @@ export function generateTimes(previous = null, hours = 2) {
 }
 
 const sagaOptions = {
-    onErraor: (action, error) => {
+    onError: (action, error) => {
         console.log("An uncaught exception has occurred in redux-saga:");
         console.log(action);
         if (error) {
@@ -67,34 +71,73 @@ const sagaOptions = {
     },
 };
 
-const sagaMiddleWare = createSagaMiddleware(sagaOptions);
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleWare));
+function TestApp(props) {
+    const dispatch = useDispatch();
+    function initialise() {
+        dispatch(initialiseApp());
+    }
+    React.useEffect(initialise, []);
 
-const AllTheProviders = ({ children }) => {
-    return (
-        <Provider store={store}>
-            <BrowserRouter>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <ReactNotification />
-                    <StyledEngineProvider injectFirst>
-                        <ThemeProvider theme={theme}>
-                            <CssBaseline />
-                            <SnackbarProvider maxSnack={1}>
-                                {children}
-                            </SnackbarProvider>
-                        </ThemeProvider>
-                    </StyledEngineProvider>
-                </LocalizationProvider>
-            </BrowserRouter>
-        </Provider>
+    const incomingNotification = useSelector((state) => state.notification);
+
+    const snackDismissAction = (key) => (
+        <React.Fragment>
+            <DismissButton onClick={() => props.closeSnackbar(key)} />
+        </React.Fragment>
     );
-};
 
-const customRender = (ui, options) =>
-    render(ui, { wrapper: AllTheProviders, ...options });
+    function showNotification() {
+        if (incomingNotification) {
+            const { message, options, restoreCallback, viewLink } =
+                incomingNotification;
+            options.action = (key) => (
+                <SnackNotificationButtons
+                    restoreCallback={restoreCallback}
+                    viewLink={viewLink}
+                    snackKey={key}
+                    closeSnackbar={props.closeSnackbar}
+                />
+            );
+            props.enqueueSnackbar(message, options);
+        }
+    }
 
+    React.useEffect(showNotification, [incomingNotification]);
+    return (
+        <BrowserRouter>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <ReactNotification />
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        {props.children}
+                    </ThemeProvider>
+                </StyledEngineProvider>
+            </LocalizationProvider>
+        </BrowserRouter>
+    );
+}
+
+const AppSnacked = withSnackbar(TestApp);
+
+function render(ui, { preloadedState, ...renderOptions } = {}) {
+    function Wrapper(props) {
+        return (
+            <Provider store={store}>
+                <BrowserRouter>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <ReactNotification />
+                        <SnackbarProvider maxSnack={1}>
+                            <AppSnacked {...props}>{props.children}</AppSnacked>
+                        </SnackbarProvider>
+                    </LocalizationProvider>
+                </BrowserRouter>
+            </Provider>
+        );
+    }
+    return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
+}
 // re-export everything
 export * from "@testing-library/react";
-
 // override render method
-export { customRender as render };
+export { render };

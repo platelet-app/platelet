@@ -33,6 +33,8 @@ export const tasksStatus = {
     droppedOff: "DROPPED_OFF",
     rejected: "REJECTED",
     cancelled: "CANCELLED",
+    abandoned: "ABANDONED",
+    completed: "COMPLETED",
 };
 
 export const priorities = {

@@ -84,11 +84,7 @@ export function MenuMainContainer() {
                                         </IconButton>
                                     </Grid>
                                     <Grid item>
-                                        {searchMode ? (
-                                            <TaskFilterTextField />
-                                        ) : (
-                                            <></>
-                                        )}
+                                        {searchMode && <TaskFilterTextField />}
                                     </Grid>
                                 </Grid>
                             </Hidden>
