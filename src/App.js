@@ -157,7 +157,8 @@ const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
     ACTIVE: "cornflowerblue",
     PICKED_UP: "orange",
-    DROPPED_OFF: "lightgreen",
+    DROPPED_OFF: "darkgreen",
+    COMPLETED: "lightgreen",
     CANCELLED: "blue",
     REJECTED: "grey",
 };

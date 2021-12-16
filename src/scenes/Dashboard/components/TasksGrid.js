@@ -1,37 +1,26 @@
 import React, { useState } from "react";
 import _ from "lodash";
 import Grid from "@mui/material/Grid";
-import TaskItem from "./TaskItem";
-import { useSelector } from "react-redux";
-import Tooltip from "@mui/material/Tooltip";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import PropTypes from "prop-types";
-import { showHide } from "../../../styles/common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
-import clsx from "clsx";
 import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
 import TasksGridColumn from "./TasksGridColumn";
 import { tasksStatus } from "../../../apiConsts";
 
 const getColumnTitle = (key) => {
-    switch (key) {
-        case tasksStatus.new:
-            return "New".toUpperCase();
-        case tasksStatus.active:
-            return "Active".toUpperCase();
-        case tasksStatus.pickedUp:
-            return "Picked Up".toUpperCase();
-        case tasksStatus.droppedOff:
-            return "Delivered".toUpperCase();
-        case tasksStatus.rejected:
-            return "Rejected".toUpperCase();
-        case tasksStatus.cancelled:
-            return "Cancelled".toUpperCase();
-        default:
-            return "";
-    }
+    if (key.includes(tasksStatus.new)) return "New".toUpperCase();
+    else if (key.includes(tasksStatus.active)) return "Active".toUpperCase();
+    else if (key.includes(tasksStatus.pickedUp))
+        return "Picked Up".toUpperCase();
+    else if (key.includes(tasksStatus.droppedOff))
+        return "Delivered".toUpperCase();
+    else if (key.includes(tasksStatus.rejected))
+        return "Rejected".toUpperCase();
+    else if (key.includes(tasksStatus.cancelled))
+        return "Cancelled".toUpperCase();
+    else return "";
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -61,107 +50,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const taskGroupStyles = makeStyles({
-    hoverDiv: {
-        width: "100%",
-        height: "35px",
-        "& .hidden-button": {
-            display: "none",
-        },
-        "&:hover .hidden-button": {
-            display: "inline",
-        },
-    },
-    root: {
-        width: "100%",
-    },
-});
-
-const TaskGroup = (props) => {
-    const classes = taskGroupStyles();
-    const { show, hide } = showHide();
-    const taskArr = Object.values(props.group).map((value) => value);
-    const roleView = useSelector((state) => state.roleView);
-
-    //taskArr.sort((a, b) => a.orderInRelay - b.orderInRelay);
-    return taskArr.length === 0 ? (
-        <></>
-    ) : (
-        taskArr.map((task, i, arr) => {
-            return (
-                <div
-                    className={clsx(
-                        classes.taskItem,
-                        props.showTasks === null ||
-                            props.showTasks.includes(task.id)
-                            ? show
-                            : hide
-                    )}
-                    key={task.id}
-                >
-                    <Grid
-                        container
-                        className={classes.root}
-                        alignItems={"center"}
-                        justifyContent={"center"}
-                    >
-                        <Grid item className={classes.root}>
-                            <TaskItem
-                                animate={props.animate}
-                                timeOfCall={task.timeOfCall}
-                                assignedCoordinatorsDisplayString={
-                                    task.assignedCoordinatorsDisplayString
-                                }
-                                assignedRidersDisplayString={
-                                    task.assignedRidersDisplayString
-                                }
-                                timePickedUp={task.timePickedUp}
-                                assignedRiders={[]}
-                                assignedCoordinators={[]}
-                                timeDroppedOff={task.timeDroppedOff}
-                                timeRejected={task.timeRejected}
-                                timeCancelled={task.timeCancelled}
-                                relayNext={task.relayNext}
-                                taskUUID={task.id}
-                                parentID={1}
-                                view={props.modalView}
-                                deleteDisabled={props.deleteDisabled}
-                            />
-                            <Grid
-                                container
-                                alignItems={"center"}
-                                justifyContent={"center"}
-                            >
-                                <Grid
-                                    className={
-                                        !!task.relayNext &&
-                                        props.showTasks === null &&
-                                        !props.hideRelayIcons &&
-                                        roleView !== "rider"
-                                            ? show
-                                            : hide
-                                    }
-                                    item
-                                >
-                                    <Tooltip title="Relay">
-                                        <ArrowDownwardIcon
-                                            style={{ height: "35px" }}
-                                        />
-                                    </Tooltip>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </div>
-            );
-        })
-    );
-};
-
-TaskGroup.propTypes = {
-    showTasks: PropTypes.arrayOf(PropTypes.string),
-};
-
 function TasksGrid(props) {
     const classes = useStyles();
     const [showGuidedSetup, setShowGuidedSetup] = useState(false);
@@ -178,26 +66,29 @@ function TasksGrid(props) {
                 alignItems={"stretch"}
             >
                 {[
-                    tasksStatus.new,
-                    tasksStatus.active,
-                    tasksStatus.pickedUp,
-                    tasksStatus.droppedOff,
-                    tasksStatus.cancelled,
-                    tasksStatus.rejected,
+                    [tasksStatus.new],
+                    [tasksStatus.active],
+                    [tasksStatus.pickedUp],
+                    [tasksStatus.droppedOff, tasksStatus.completed],
+                    [tasksStatus.cancelled],
+                    [tasksStatus.rejected],
                 ]
                     .filter(
-                        (column) => !props.excludeColumnList.includes(column)
+                        (column) =>
+                            _.intersection(props.excludeColumnList, column)
+                                .length === 0
                     )
                     .map((taskKey) => {
                         const title = getColumnTitle(taskKey);
+                        console.log(title);
+                        console.log(taskKey);
                         return (
-                            <Grid item key={taskKey} className={classes.column}>
+                            <Grid item key={title} className={classes.column}>
                                 <TasksGridColumn
                                     title={title}
                                     onAddTaskClick={props.onAddTaskClick}
                                     taskKey={taskKey}
                                     showTasks={props.showTaskIds}
-                                    key={title}
                                 />
                             </Grid>
                         );
