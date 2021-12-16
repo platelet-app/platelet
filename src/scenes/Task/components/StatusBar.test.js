@@ -123,9 +123,9 @@ describe("StatusBar", () => {
                 deliverables: [],
             })
         );
-        //  await waitFor(() =>
-        //      expect(screen.getByText(/Copied to clipboard/)).toBeInTheDocument()
-        //  );
+        expect(
+            await screen.findByText(/Copied to clipboard/)
+        ).toBeInTheDocument();
     });
     it("fails to copy task data to clipboard", async () => {
         jest.restoreAllMocks();
@@ -135,12 +135,7 @@ describe("StatusBar", () => {
         });
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
-        // jest.spyOn(reactRedux, "useDispatch");
-        // await waitFor(() =>
-        //     expect(mockDispatch).toHaveBeenCalledWith(
-        //         displayErrorNotification("Copy failed.")
-        //     )
-        // );
+        expect(await screen.findByText("Copy failed.")).toBeInTheDocument();
     });
     test("click the close button", async () => {
         const mockClose = jest.fn();
