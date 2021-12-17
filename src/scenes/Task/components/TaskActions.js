@@ -71,7 +71,6 @@ function TaskActions(props) {
     }
 
     function onAdjustTimeSet(time) {
-        console.log("onAdjustTimeSet", time);
         timeSet.current = time;
     }
 

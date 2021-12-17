@@ -249,6 +249,9 @@ function TaskDetailsPanel(props) {
                             time={state.timeDroppedOff}
                         />
                     </LabelItemPair>
+                    <LabelItemPair label={"Time rider home"}>
+                        <TimePicker disableClear time={state.timeRiderHome} />
+                    </LabelItemPair>
                 </Stack>
             </Paper>
         );

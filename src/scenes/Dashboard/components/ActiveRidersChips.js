@@ -6,87 +6,55 @@ import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { convertListDataToObject } from "../../../utilities";
 import { Avatar, Chip, Stack } from "@mui/material";
+import { TransitionGroup } from "react-transition-group";
+import Slide from "@mui/material/Slide";
 import _ from "lodash";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import RiderConfirmationHomeContents from "./RiderConfirmationHomeContents";
+
+async function calculateRidersStatus() {
+    console.log("calculating active riders");
+    const assignments = await DataStore.query(models.TaskAssignee, (a) =>
+        a.role("eq", userRoles.rider)
+    );
+    const activeRidersFiltered = assignments
+        .filter(
+            (assignment) =>
+                assignment.task &&
+                assignment.task.status !== tasksStatus.completed
+        )
+        .map((a) => a.assignee);
+    return convertListDataToObject(activeRidersFiltered);
+}
 
 function ActiveRidersChips() {
     const [activeRiders, setActiveRiders] = useState({});
+    const [updatingRider, setUpdatingRider] = useState(null);
+    const timeSet = useRef(null);
     const tasksObserver = useRef({ unsubscribe: () => {} });
     const assignmentsObserver = useRef({ unsubscribe: () => {} });
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const animate = useRef(false);
+
+    // debounce the call because multiple tasks are being updated at once
+    const debouncedCalculateRidersStatus = _.debounce(
+        async () => setActiveRiders(await calculateRidersStatus()),
+        1000
+    );
 
     async function getActiveRiders() {
         if (!dataStoreReadyStatus) return;
-        const assignments = await DataStore.query(models.TaskAssignee, (a) =>
-            a.role("eq", userRoles.rider)
-        );
-        const activeRidersFiltered = assignments
-            .filter(
-                (assignment) =>
-                    assignment.task &&
-                    assignment.task.status !== tasksStatus.droppedOff
-            )
-            .map((a) => a.assignee);
-        setActiveRiders(convertListDataToObject(activeRidersFiltered));
+        setActiveRiders(await calculateRidersStatus());
         tasksObserver.current.unsubscribe();
         tasksObserver.current = DataStore.observe(models.Task).subscribe(
             async (observeResult) => {
-                const taskData = observeResult.element;
-                if (observeResult.opType === "INSERT") {
-                } else if (observeResult.opType === "UPDATE") {
-                    // if the task status is completed then we should check and see if the rider is still active on other tasks
-                    if (taskData.status === tasksStatus.completed) {
-                        // get all the assignees on this task
-                        const assignees = (
-                            await DataStore.query(models.TaskAssignee, (a) =>
-                                a.role("eq", userRoles.rider)
-                            )
-                        )
-                            .filter((a) => a.task && a.task.id === taskData.id)
-                            .map((a) => a.assignee);
-                        // if there are none don't do anything
-                        if (assignees.length === 0) return;
-                        // for each assignee get all their tasks
-                        for (const rider of assignees) {
-                            const ridersTasks = (
-                                await DataStore.query(
-                                    models.TaskAssignee,
-                                    (a) => a.role("eq", userRoles.rider)
-                                )
-                            )
-                                .filter(
-                                    (a) =>
-                                        a.assignee && a.assignee.id === rider.id
-                                )
-                                .map((a) => a.task);
-                            const activeTasks = ridersTasks.filter(
-                                (t) =>
-                                    ![
-                                        tasksStatus.completed,
-                                        tasksStatus.cancelled,
-                                        tasksStatus.rejected,
-                                        tasksStatus.new,
-                                    ].includes(t.status)
-                            );
-                            // if there are no more tasks that aren't completed, remove the rider from the active riders list
-                            if (activeTasks.length === 0) {
-                                setActiveRiders((prevState) =>
-                                    _.omit(prevState, rider.id)
-                                );
-                            } else {
-                                // else make sure they're in the list
-                                if (!activeRiders[rider.id]) {
-                                    setActiveRiders((prevState) => ({
-                                        ...prevState,
-                                        [rider.id]: rider,
-                                    }));
-                                }
-                            }
-                        }
-                    }
-                } else if (observeResult.opType === "DELETE") {
+                const task = observeResult.element;
+                if (task.status === tasksStatus.completed) {
+                    debouncedCalculateRidersStatus();
                 }
             }
         );
+        animate.current = true;
         assignmentsObserver.current.unsubscribe();
         assignmentsObserver.current = DataStore.observe(
             models.TaskAssignee
@@ -126,6 +94,7 @@ function ActiveRidersChips() {
     }, [dataStoreReadyStatus]);
 
     async function updateRiderHome(userId) {
+        console.log("updating rider home", userId);
         const allRiderAssignedTasks = (
             await DataStore.query(models.TaskAssignee, (a) =>
                 a.role("eq", userRoles.rider)
@@ -139,39 +108,84 @@ function ActiveRidersChips() {
             await DataStore.save(
                 models.Task.copyOf(task, (updated) => {
                     updated.status = tasksStatus.completed;
+                    updated.timeRiderHome = timeSet.current.toISOString();
                 })
             );
         }
     }
 
     return (
-        <Stack sx={{ padding: 1 }} direction={"row"} spacing={2}>
-            {Object.values(activeRiders).map((rider) => {
-                if (rider.profilePictureThumbnailURL) {
-                    return (
-                        <Chip
-                            key={rider.id}
-                            onClick={() => updateRiderHome(rider.id)}
-                            avatar={
-                                <Avatar
-                                    alt={rider.displayName}
-                                    src={rider.profilePictureThumbnailURL}
-                                />
-                            }
-                            label={rider.displayName}
-                        />
-                    );
-                } else {
-                    return (
-                        <Chip
-                            onClick={() => updateRiderHome(rider.id)}
-                            key={rider.id}
-                            label={rider.name}
-                        />
-                    );
-                }
-            })}
-        </Stack>
+        <React.Fragment>
+            <ConfirmationDialog
+                onClose={() => setUpdatingRider(null)}
+                onSelect={(result) => {
+                    if (result && timeSet.current)
+                        updateRiderHome(updatingRider);
+                }}
+                open={!!updatingRider}
+            >
+                {updatingRider && (
+                    <RiderConfirmationHomeContents
+                        onChangeTimeHome={(time) => (timeSet.current = time)}
+                        userId={updatingRider}
+                    />
+                )}
+            </ConfirmationDialog>
+            <Stack sx={{ padding: 1 }} direction={"row"} spacing={2}>
+                <TransitionGroup>
+                    {Object.values(activeRiders).map((rider) => {
+                        if (rider.profilePictureThumbnailURL) {
+                            return (
+                                <Slide
+                                    key={rider.id}
+                                    direction="right"
+                                    timeout={animate.current ? 100 : 0}
+                                    mountOnEnter
+                                    unmountOnExit
+                                >
+                                    <Chip
+                                        sx={{ marginRight: 1 }}
+                                        onClick={() => {
+                                            setUpdatingRider(rider.id);
+                                            timeSet.current = new Date();
+                                        }}
+                                        avatar={
+                                            <Avatar
+                                                alt={rider.displayName}
+                                                src={
+                                                    rider.profilePictureThumbnailURL
+                                                }
+                                            />
+                                        }
+                                        label={rider.displayName}
+                                    />
+                                </Slide>
+                            );
+                        } else {
+                            return (
+                                <Slide
+                                    key={rider.id}
+                                    timeout={animate.current ? 100 : 0}
+                                    direction="right"
+                                    mountOnEnter
+                                    unmountOnExit
+                                >
+                                    <Chip
+                                        sx={{ marginRight: 1 }}
+                                        onClick={() => {
+                                            setUpdatingRider(rider.id);
+                                            timeSet.current = new Date();
+                                        }}
+                                        key={rider.id}
+                                        label={rider.name}
+                                    />
+                                </Slide>
+                            );
+                        }
+                    })}
+                </TransitionGroup>
+            </Stack>
+        </React.Fragment>
     );
 }
 
