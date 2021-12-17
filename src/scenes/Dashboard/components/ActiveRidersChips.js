@@ -51,7 +51,13 @@ function ActiveRidersChips() {
         tasksObserver.current = DataStore.observe(models.Task).subscribe(
             async (observeResult) => {
                 const task = observeResult.element;
-                if (task.status === tasksStatus.completed) {
+                if (
+                    [
+                        tasksStatus.cancelled,
+                        tasksStatus.rejected,
+                        tasksStatus.completed,
+                    ].includes(task.status)
+                ) {
                     debouncedCalculateRidersStatus();
                 }
             }
