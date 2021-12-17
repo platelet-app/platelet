@@ -98,7 +98,7 @@ describe("TaskDetailsPanel", () => {
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
-        expect(screen.getAllByText("Not set")).toHaveLength(1);
+        expect(screen.getAllByText("Not set")).toHaveLength(2);
     });
     it("renders task details with no timeDroppedOff", async () => {
         const timePickedUp = "2021-11-29T21:24:58.987Z";
@@ -121,7 +121,7 @@ describe("TaskDetailsPanel", () => {
         await waitFor(async () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
-        expect(screen.getAllByText("Not set")).toHaveLength(1);
+        expect(screen.getAllByText("Not set")).toHaveLength(2);
     });
     test.each`
         timeKey
