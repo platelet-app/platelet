@@ -142,7 +142,7 @@ function TasksGridColumn(props) {
                     models.TaskAssignee
                 );
                 let tasksResult = [];
-                if (roleView === "all") {
+                if (roleView.toUpperCase() === "ALL") {
                     if (isCompletedTab) {
                         tasksResult = await DataStore.query(
                             models.Task,
@@ -175,26 +175,37 @@ function TasksGridColumn(props) {
                         );
                     }
                 } else {
+                    debugger;
                     const assignments = (
                         await DataStore.query(models.TaskAssignee, (a) =>
                             a.role("eq", roleView.toUpperCase())
                         )
                     ).filter((a) => a.assignee.id === whoami.id);
+
                     // once DataStore implements lazy loading, get the tasks for assignments instead
                     const taskIds = assignments.map((a) => a.task.id);
                     let tasks;
                     if (isCompletedTab) {
                         tasks = await DataStore.query(
                             models.Task,
-                            (task) => task.status("eq", props.taskKey),
+                            (task) =>
+                                task.or((task) =>
+                                    task
+                                        .status("eq", props.taskKey[0])
+                                        .status("eq", props.taskKey[1])
+                                ),
                             {
                                 page: 0,
                                 limit: 100,
                             }
                         );
                     } else {
-                        tasks = await DataStore.query(models.Task, (t) =>
-                            t.status("eq", props.taskKey)
+                        tasks = await DataStore.query(models.Task, (task) =>
+                            task.or((task) =>
+                                task
+                                    .status("eq", props.taskKey[0])
+                                    .status("eq", props.taskKey[1])
+                            )
                         );
                     }
                     tasksResult = tasks.filter((t) => taskIds.includes(t.id));
