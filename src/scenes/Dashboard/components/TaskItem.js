@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import TaskCard from "./TaskCardsColoured";
 import {
@@ -57,6 +57,7 @@ function TaskItem(props) {
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [visibility, setVisibility] = useState(false);
     const [commentCount, setCommentCount] = useState(0);
+    const commentObserver = useRef({ unsubscribe: () => {} });
     const roleView = useSelector(getRoleView);
 
     const { ref, inView, entry } = useInView({
@@ -109,8 +110,8 @@ function TaskItem(props) {
         getAssignees();
     }, [visibility, props.task, dataStoreReadyStatus]);
 
-    async function calculateCommentCount() {
-        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+    async function getCommentCount() {
+        if (!props.task || !props.task.id) return 0;
         const commentsResult = (
             await DataStore.query(models.Comment, (c) =>
                 c.parentId("eq", props.task.id)
@@ -121,11 +122,31 @@ function TaskItem(props) {
                 (c.visibility === commentVisibility.me &&
                     c.author.id === whoami.id)
         );
-        setCommentCount(commentsResult.length);
+        return commentsResult.length;
+    }
+
+    async function calculateCommentCount() {
+        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+        const commentCount = await getCommentCount();
+        setCommentCount(commentCount);
+        commentObserver.current.unsubscribe();
+        commentObserver.current = DataStore.observe(models.Comment, (c) =>
+            c.parentId("eq", props.task.id)
+        ).subscribe(async (observedResult) => {
+            if (
+                observedResult.opType === "INSERT" ||
+                observedResult.opType === "UPDATE"
+            ) {
+                const commentCount = await getCommentCount();
+                setCommentCount(commentCount);
+            }
+        });
     }
     useEffect(() => {
         calculateCommentCount();
     }, [visibility, props.task, dataStoreReadyStatus]);
+
+    useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
     async function setTimeValue(value, key) {
         const result = await DataStore.query(models.Task, props.taskUUID);
