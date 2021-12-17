@@ -13,8 +13,14 @@ import { DataStore } from "@aws-amplify/datastore";
 import * as models from "../../../models";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import GetError from "../../../ErrorComponents/GetError";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
-function RiderConfirmationHomeContents({ userId, onChangeTimeHome }) {
+function RiderConfirmationHomeContents({
+    userId,
+    onChangeTimeHome,
+    onClose,
+    onSelect,
+}) {
     const [fixedTime, setFixedTime] = React.useState(true);
     const [time, setTime] = React.useState(null);
 
@@ -77,45 +83,54 @@ function RiderConfirmationHomeContents({ userId, onChangeTimeHome }) {
         setTime(value);
     }
     return (
-        <Stack direction="column" spacing={1}>
-            <ActiveRiderStats
-                droppedOff={state.droppedOff}
-                active={state.notDroppedOff}
-                displayName={rider.displayName}
-            />
-            {state.droppedOff > 0 && (
-                <>
-                    <Typography>Are they home?</Typography>
-                    <DateTimePicker
-                        label={"Rider home time"}
-                        disabled={fixedTime}
-                        value={time}
-                        inputFormat={"dd/MM/yyyy HH:mm"}
-                        openTo="hours"
-                        onChange={handleTimeChange}
-                        renderInput={(params) => (
-                            <TextField
-                                variant={"standard"}
-                                fullWidth
-                                {...params}
-                            />
-                        )}
-                    />
-                    <FormControlLabel
-                        value="edit"
-                        control={
-                            <Switch
-                                color="primary"
-                                checked={fixedTime}
-                                onChange={toggleEditMode}
-                            />
-                        }
-                        label="Use current time?"
-                        labelPlacement="start"
-                    />
-                </>
-            )}
-        </Stack>
+        <ConfirmationDialog
+            onClose={onClose}
+            hideCancel={state.droppedOff === 0}
+            onSelect={(result) => {
+                onSelect(result);
+            }}
+            open={!!userId}
+        >
+            <Stack direction="column" spacing={1}>
+                <ActiveRiderStats
+                    droppedOff={state.droppedOff}
+                    active={state.notDroppedOff}
+                    displayName={rider.displayName}
+                />
+                {state.droppedOff > 0 && (
+                    <>
+                        <Typography>Are they home?</Typography>
+                        <DateTimePicker
+                            label={"Rider home time"}
+                            disabled={fixedTime}
+                            value={time}
+                            inputFormat={"dd/MM/yyyy HH:mm"}
+                            openTo="hours"
+                            onChange={handleTimeChange}
+                            renderInput={(params) => (
+                                <TextField
+                                    variant={"standard"}
+                                    fullWidth
+                                    {...params}
+                                />
+                            )}
+                        />
+                        <FormControlLabel
+                            value="edit"
+                            control={
+                                <Switch
+                                    color="primary"
+                                    checked={fixedTime}
+                                    onChange={toggleEditMode}
+                                />
+                            }
+                            label="Use current time?"
+                            labelPlacement="start"
+                        />
+                    </>
+                )}
+            </Stack>
+        </ConfirmationDialog>
     );
 }
 

@@ -18,7 +18,7 @@ function ActiveRiderStats(props) {
     } else {
         return (
             <Typography>
-                {`${props.displayName} has ${props.droppedOff} delivered tasks and ${props.active} still tasks still active.`}
+                {`${props.displayName} has ${props.droppedOff} delivered tasks and ${props.active} tasks still active.`}
             </Typography>
         );
     }

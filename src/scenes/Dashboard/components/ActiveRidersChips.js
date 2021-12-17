@@ -116,21 +116,15 @@ function ActiveRidersChips() {
 
     return (
         <React.Fragment>
-            <ConfirmationDialog
+            <RiderConfirmationHomeContents
+                onChangeTimeHome={(time) => (timeSet.current = time)}
+                userId={updatingRider}
                 onClose={() => setUpdatingRider(null)}
                 onSelect={(result) => {
                     if (result && timeSet.current)
                         updateRiderHome(updatingRider);
                 }}
-                open={!!updatingRider}
-            >
-                {updatingRider && (
-                    <RiderConfirmationHomeContents
-                        onChangeTimeHome={(time) => (timeSet.current = time)}
-                        userId={updatingRider}
-                    />
-                )}
-            </ConfirmationDialog>
+            />
             <Stack sx={{ padding: 1 }} direction={"row"} spacing={2}>
                 <TransitionGroup>
                     {Object.values(activeRiders).map((rider) => {
