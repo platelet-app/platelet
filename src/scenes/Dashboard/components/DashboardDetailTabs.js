@@ -268,7 +268,9 @@ export function DashboardDetailTabs(props) {
                         </Stack>
                     </Stack>
                     <Divider />
-                    {true && <ActiveRidersChips />}
+                    {[userRoles.coordinator.toLowerCase(), "all"].includes(
+                        roleView.toLowerCase()
+                    ) && <ActiveRidersChips />}
                 </Stack>
             </Toolbar>
             <Divider />
