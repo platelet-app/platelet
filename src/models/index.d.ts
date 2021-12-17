@@ -212,6 +212,7 @@ export declare class Task {
   readonly timeDroppedOff?: string;
   readonly timeCancelled?: string;
   readonly timeRejected?: string;
+  readonly timeRiderHome?: string;
   readonly requesterContact?: AddressAndContactDetails;
   readonly pickUpLocation?: Location;
   readonly dropOffLocation?: Location;

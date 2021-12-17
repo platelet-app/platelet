@@ -456,11 +456,15 @@ async function populateTasks() {
     }
     // tasksDroppedOff
     const tasksDroppedOffCheck = await DataStore.query(models.Task, (task) =>
-        task.status("eq", tasksStatus.completed)
+        task.or((task) =>
+            task
+                .status("eq", tasksStatus.droppedOff)
+                .status("eq", tasksStatus.completed)
+        )
     );
     if (tasksDroppedOffCheck.length === 0) {
         let timeOfCall = null;
-        for (const i in _.range(10)) {
+        for (const i in _.range(16)) {
             const times = generateTimes(timeOfCall, 10);
             timeOfCall = times.timeOfCall;
             const requesterContact = await DataStore.save(
@@ -477,7 +481,8 @@ async function populateTasks() {
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
-                    status: tasksStatus.completed,
+                    status:
+                        i < 8 ? tasksStatus.completed : tasksStatus.droppedOff,
                     priority,
                     timeOfCall,
                     pickUpLocation,

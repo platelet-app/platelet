@@ -1,18 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import clsx from "clsx";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { SwipeableDrawer } from "@mui/material";
 import ActionsRecord from "../../ActionsRecord/ActionsRecord";
-import { getTasksActionsRecordRequest } from "../../../redux/actionsRecord/ActionsRecordActions";
 import Typography from "@mui/material/Typography";
-import { getWhoami } from "../../../redux/Selectors";
 
 const drawerWidth = 400;
 
@@ -59,14 +57,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SideInfoSection(props) {
-    const dispatch = useDispatch();
     const classes = useStyles();
     const theme = useTheme();
-    const whoami = useSelector(getWhoami);
-    const actionsRecord = useSelector(
-        (state) => state.tasksActionsRecord.actionsRecord
-    );
-
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -102,7 +94,7 @@ export default function SideInfoSection(props) {
                     </IconButton>
                 </div>
                 <Divider />
-                <ActionsRecord taskLinks={true} actions={actionsRecord} />
+                <ActionsRecord taskLinks={true} actions={[]} />
             </SwipeableDrawer>
         </div>
     );

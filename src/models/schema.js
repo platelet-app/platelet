@@ -763,6 +763,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "timeRiderHome": {
+                    "name": "timeRiderHome",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "requesterContact": {
                     "name": "requesterContact",
                     "isArray": false,
@@ -1384,5 +1391,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "3a3448a66d6a4e5f3f6ffa643b36a55c"
+    "version": "9c20def9f6d2e418ca2f255de7914a25"
 };

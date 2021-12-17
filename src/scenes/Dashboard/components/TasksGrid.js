@@ -80,8 +80,6 @@ function TasksGrid(props) {
                     )
                     .map((taskKey) => {
                         const title = getColumnTitle(taskKey);
-                        console.log(title);
-                        console.log(taskKey);
                         return (
                             <Grid item key={title} className={classes.column}>
                                 <TasksGridColumn

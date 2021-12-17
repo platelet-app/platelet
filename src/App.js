@@ -48,7 +48,6 @@ window.amplifyLogger = Logger;
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
-    const serverSettings = useSelector((state) => state.serverSettings);
     const error = useSelector((state) => state.error);
     const dispatch = useDispatch();
 
@@ -141,10 +140,10 @@ function AppContents(props) {
 
     function checkServerSettings() {
         Moment.globalMoment = moment;
-        Moment.globalLocale = serverSettings.locale.code;
+        Moment.globalLocale = "en-GB";
     }
 
-    useEffect(checkServerSettings, [serverSettings]);
+    useEffect(checkServerSettings, []);
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));

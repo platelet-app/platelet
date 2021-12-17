@@ -13,8 +13,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { encodeUUID } from "../../utilities";
 import { generateMessage } from "./utilities/functions";
 import _ from "lodash";
-import { getActionsRecordRequest } from "../../redux/actionsRecord/ActionsRecordActions";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { ThemedLink } from "../../styles/common";
 import { getWhoami } from "../../redux/Selectors";
@@ -33,19 +32,14 @@ const displayFields = [
 ];
 
 function ActionsRecord(props) {
-    const dispatch = useDispatch();
-    const actions = useSelector((state) => state.actionsRecord.actionsRecord);
     const whoami = useSelector(getWhoami);
 
-    function componentDidMount() {
-        if (props.parentUUID)
-            dispatch(getActionsRecordRequest(props.parentUUID));
-    }
+    function componentDidMount() {}
 
     useEffect(componentDidMount, []);
     return (
         <Timeline>
-            {actions.map((record, index, arr) => {
+            {[].map((record, index, arr) => {
                 if (!record.data_fields)
                     return <React.Fragment key={record.uuid} />;
                 const fields = _.intersection(

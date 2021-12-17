@@ -13,11 +13,9 @@ import MenuItem from "@mui/material/MenuItem";
 import { saveDashboardRoleMode } from "../../../utilities";
 import Typography from "@mui/material/Typography";
 import { showHide } from "../../../styles/common";
-import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
+import { setRoleView } from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import { Button, Divider, Hidden, Stack } from "@mui/material";
-import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
-import CallIcon from "@mui/icons-material/Call";
 import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
@@ -170,11 +168,7 @@ export function DashboardDetailTabs(props) {
                                 </Typography>
                             </Hidden>
                             <Hidden mdUp>
-                                {roleView === "rider" ? (
-                                    <TwoWheelerIcon />
-                                ) : (
-                                    <CallIcon />
-                                )}
+                                {`${roleView.substring(0, 5).toUpperCase()}`}
                             </Hidden>
                             <IconButton
                                 id="role-menu-button"
@@ -209,13 +203,7 @@ export function DashboardDetailTabs(props) {
                                     onClick={() => {
                                         setAnchorElRoleMenu(null);
                                         if (roleView !== "all") {
-                                            dispatch(
-                                                setRoleViewAndGetTasks(
-                                                    whoami.id,
-                                                    "",
-                                                    "all"
-                                                )
-                                            );
+                                            dispatch(setRoleView("all"));
                                             saveDashboardRoleMode("all");
                                         }
                                     }}
@@ -234,11 +222,7 @@ export function DashboardDetailTabs(props) {
                                         setAnchorElRoleMenu(null);
                                         if (roleView !== "coordinator") {
                                             dispatch(
-                                                setRoleViewAndGetTasks(
-                                                    whoami.id,
-                                                    "",
-                                                    "coordinator"
-                                                )
+                                                setRoleView("coordinator")
                                             );
                                             saveDashboardRoleMode(
                                                 "coordinator"
@@ -257,13 +241,7 @@ export function DashboardDetailTabs(props) {
                                     onClick={() => {
                                         setAnchorElRoleMenu(null);
                                         if (roleView !== "rider") {
-                                            dispatch(
-                                                setRoleViewAndGetTasks(
-                                                    whoami.id,
-                                                    "",
-                                                    "rider"
-                                                )
-                                            );
+                                            dispatch(setRoleView("rider"));
                                             saveDashboardRoleMode("rider");
                                         }
                                     }}
@@ -274,7 +252,9 @@ export function DashboardDetailTabs(props) {
                         </Stack>
                     </Stack>
                     <Divider />
-                    {false && <ActiveRidersChips />}
+                    {[userRoles.coordinator.toLowerCase(), "all"].includes(
+                        roleView.toLowerCase()
+                    ) && <ActiveRidersChips />}
                 </Stack>
             </Toolbar>
             <Divider />
