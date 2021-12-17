@@ -57,9 +57,12 @@ function RiderConfirmationHomeContents({
             const notDroppedOff = riderTasks.filter(
                 (t) =>
                     t &&
-                    ![tasksStatus.droppedOff, tasksStatus.completed].includes(
-                        t.status
-                    )
+                    ![
+                        tasksStatus.droppedOff,
+                        tasksStatus.completed,
+                        tasksStatus.rejected,
+                        tasksStatus.cancelled,
+                    ].includes(t.status)
             ).length;
             if (droppedOff > 0) setTime(new Date());
             setState({ droppedOff, notDroppedOff });

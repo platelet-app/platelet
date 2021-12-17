@@ -9,11 +9,9 @@ import { Avatar, Chip, Stack } from "@mui/material";
 import { TransitionGroup } from "react-transition-group";
 import Slide from "@mui/material/Slide";
 import _ from "lodash";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import RiderConfirmationHomeContents from "./RiderConfirmationHomeContents";
 
 async function calculateRidersStatus() {
-    console.log("calculating active riders");
     const assignments = await DataStore.query(models.TaskAssignee, (a) =>
         a.role("eq", userRoles.rider)
     );
@@ -21,7 +19,11 @@ async function calculateRidersStatus() {
         .filter(
             (assignment) =>
                 assignment.task &&
-                assignment.task.status !== tasksStatus.completed
+                ![
+                    tasksStatus.completed,
+                    tasksStatus.rejected,
+                    tasksStatus.cancelled,
+                ].includes(assignment.task.status)
         )
         .map((a) => a.assignee);
     return convertListDataToObject(activeRidersFiltered);
