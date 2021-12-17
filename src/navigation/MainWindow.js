@@ -6,7 +6,6 @@ import VehicleList from "../scenes/VehiclesList";
 import UsersList from "../scenes/UsersList";
 import UserDetail from "../scenes/UserDetail/UserDetail";
 import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
-import { AdminControl } from "../scenes/AdminControl/AdminControl";
 import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
 import LocationDetail from "../scenes/LocationDetail/LocationDetail";
@@ -94,14 +93,6 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("users"));
                             return <UsersList {...props} />;
-                        }}
-                    />
-                    <Route
-                        exact
-                        path="/admin"
-                        render={(props) => {
-                            dispatch(setMenuIndex("admin"));
-                            return <AdminControl {...props} />;
                         }}
                     />
                     <Route

@@ -13,7 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { saveDashboardRoleMode } from "../../../utilities";
 import Typography from "@mui/material/Typography";
 import { showHide } from "../../../styles/common";
-import { setRoleViewAndGetTasks } from "../../../redux/tasks/TasksActions";
+import { setRoleView } from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import { Button, Divider, Hidden, Stack } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
@@ -203,13 +203,7 @@ export function DashboardDetailTabs(props) {
                                     onClick={() => {
                                         setAnchorElRoleMenu(null);
                                         if (roleView !== "all") {
-                                            dispatch(
-                                                setRoleViewAndGetTasks(
-                                                    whoami.id,
-                                                    "",
-                                                    "all"
-                                                )
-                                            );
+                                            dispatch(setRoleView("all"));
                                             saveDashboardRoleMode("all");
                                         }
                                     }}
@@ -228,11 +222,7 @@ export function DashboardDetailTabs(props) {
                                         setAnchorElRoleMenu(null);
                                         if (roleView !== "coordinator") {
                                             dispatch(
-                                                setRoleViewAndGetTasks(
-                                                    whoami.id,
-                                                    "",
-                                                    "coordinator"
-                                                )
+                                                setRoleView("coordinator")
                                             );
                                             saveDashboardRoleMode(
                                                 "coordinator"
@@ -251,13 +241,7 @@ export function DashboardDetailTabs(props) {
                                     onClick={() => {
                                         setAnchorElRoleMenu(null);
                                         if (roleView !== "rider") {
-                                            dispatch(
-                                                setRoleViewAndGetTasks(
-                                                    whoami.id,
-                                                    "",
-                                                    "rider"
-                                                )
-                                            );
+                                            dispatch(setRoleView("rider"));
                                             saveDashboardRoleMode("rider");
                                         }
                                     }}

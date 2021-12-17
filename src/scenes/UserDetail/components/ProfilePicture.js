@@ -4,7 +4,6 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { PaddedPaper } from "../../../styles/common";
 import "cropperjs/dist/cropper.css";
-import { uploadUserProfilePictureRequest } from "../../../redux/users/UsersActions";
 import { useDispatch, useSelector } from "react-redux";
 import {
     createErrorSelector,
@@ -60,12 +59,6 @@ export default function ProfilePicture(props) {
     const sendPictureData = () => {
         if (typeof cropper !== "undefined") {
             const dataUURL = cropper.getCroppedCanvas().toDataURL("image/jpeg");
-            dispatch(
-                uploadUserProfilePictureRequest({
-                    userUUID: props.userUUID,
-                    payload: { image_data: dataUURL.split(";base64,")[1] },
-                })
-            );
             setNewImage(dataUURL);
         }
     };
