@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import clsx from "clsx";
@@ -80,17 +80,13 @@ function TasksGridColumn(props) {
     const classes = useStyles();
     const [state, setState] = useState([]);
     const stateRef = useRef({});
-    const loaderClass = loaderStyles();
     const { show, hide } = showHide();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const whoami = useSelector(getWhoami);
-    const [endlessLoadEnd, setEndlessLoadEnd] = useState(false);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
-    const page = useRef(1);
-    const [endlessLoadIsFetching, setEndlessLoadIsFetching] = useState(false);
     const roleView = useSelector((state) => state.roleView);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
@@ -122,6 +118,7 @@ function TasksGridColumn(props) {
         setFilteredTasksIds(searchResult);
     }
     useEffect(doSearch, [dashboardFilter, state]);
+    console.log(moment().subtract(1, "week").toISOString());
 
     async function getTasks() {
         setIsFetching(true);
@@ -157,8 +154,14 @@ function TasksGridColumn(props) {
 
                             {
                                 sort: (s) => s.createdAt("desc"),
-                                limit: 100,
+                                limit: 200,
                             }
+                        );
+                        // filter tasksResult to only return tasks that were created in the last week
+                        tasksResult = tasksResult.filter((task) =>
+                            moment(task.createdAt).isAfter(
+                                moment().subtract(1, "week")
+                            )
                         );
                     } else {
                         tasksResult = await DataStore.query(
@@ -175,7 +178,6 @@ function TasksGridColumn(props) {
                         );
                     }
                 } else {
-                    debugger;
                     const assignments = (
                         await DataStore.query(models.TaskAssignee, (a) =>
                             a.role("eq", roleView.toUpperCase())
@@ -195,17 +197,28 @@ function TasksGridColumn(props) {
                                         .status("eq", props.taskKey[1])
                                 ),
                             {
-                                page: 0,
-                                limit: 100,
+                                sort: (s) => s.createdAt("desc"),
+                                limit: 200,
                             }
                         );
-                    } else {
-                        tasks = await DataStore.query(models.Task, (task) =>
-                            task.or((task) =>
-                                task
-                                    .status("eq", props.taskKey[0])
-                                    .status("eq", props.taskKey[1])
+                        // filter tasksResult to only return tasks that were created in the last week
+                        tasks = tasks.filter((task) =>
+                            moment(task.createdAt).isAfter(
+                                moment().subtract(1, "week")
                             )
+                        );
+                    } else {
+                        tasks = await DataStore.query(
+                            models.Task,
+                            (task) =>
+                                task.or((task) =>
+                                    task
+                                        .status("eq", props.taskKey[0])
+                                        .status("eq", props.taskKey[1])
+                                ),
+                            {
+                                sort: (s) => s.createdAt("desc"),
+                            }
                         );
                     }
                     tasksResult = tasks.filter((t) => taskIds.includes(t.id));
@@ -296,44 +309,6 @@ function TasksGridColumn(props) {
             locationsSubscription.current.unsubscribe();
         };
     }, []);
-
-    async function appendTasks() {
-        setEndlessLoadIsFetching(true);
-        try {
-            const tasksResult = await DataStore.query(
-                models.Task,
-                (task) => task.status("eq", props.taskKey),
-                {
-                    page: page.current,
-                    limit: 10,
-                }
-            );
-            if (tasksResult.length === 0) {
-                setEndlessLoadEnd(true);
-            } else {
-                let assignments;
-                if (roleView === "all") {
-                    assignments = await DataStore.query(models.TaskAssignee);
-                } else {
-                    assignments = (
-                        await DataStore.query(models.TaskAssignee, (a) =>
-                            a.role("eq", roleView.toUpperCase())
-                        )
-                    ).filter((a) => a.assignee.id === whoami.id);
-                }
-                const finalResult = addAssigneesAndConvertToObject(
-                    tasksResult,
-                    assignments
-                );
-
-                setState((prevState) => ({ ...finalResult, ...prevState }));
-                page.current++;
-            }
-        } catch (error) {
-            console.error(error);
-        }
-        setEndlessLoadIsFetching(false);
-    }
 
     const header = (
         <Typography className={classes.header}>{props.title}</Typography>
@@ -450,13 +425,6 @@ function TasksGridColumn(props) {
                             </div>
                         );
                     })}
-                    {endlessLoadIsFetching ? (
-                        <div className={loaderClass.root}>
-                            <CircularProgress color="secondary" />
-                        </div>
-                    ) : (
-                        <></>
-                    )}
                 </Stack>
             </TasksKanbanColumn>
         );
@@ -475,6 +443,5 @@ TasksGridColumn.defaultProps = {
     title: "TASKS",
     hideRelayIcons: false,
 };
-TasksGridColumn.whyDidYouRender = true;
 
 export default TasksGridColumn;
