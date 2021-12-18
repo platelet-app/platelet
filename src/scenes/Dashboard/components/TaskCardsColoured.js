@@ -6,7 +6,7 @@ import Moment from "react-moment";
 import CardItem from "../../../components/CardItem";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
-import { Avatar, Stack, Tooltip } from "@mui/material";
+import { Avatar, Divider, Stack, Tooltip, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { StyledCard } from "../../../styles/common";
 import Badge from "@mui/material/Badge";
@@ -45,6 +45,8 @@ const useStyles = makeStyles((theme) => ({
         height: 30,
         paddingBottom: 10,
     },
+    divider: { width: "0%", margin: 4 },
+    typography: { fontSize: "14px" },
     badgeCircle: {
         display: "flex",
         justifyContent: "center",
@@ -89,7 +91,7 @@ const TaskCard = React.memo((props) => {
         <CardContent className={classes.cardContent}>
             <Stack
                 spacing={0}
-                alignItems={"flex-end"}
+                alignItems={"center"}
                 justifyContent={"flex-start"}
                 direction={"column"}
             >
@@ -131,19 +133,70 @@ const TaskCard = React.memo((props) => {
                         </AvatarGroup>
                     </Tooltip>
                 </Stack>
-                <CardItem label={"Responsibility"}>
-                    {props.riderResponsibility}
+                <Stack
+                    sx={{ width: "100%" }}
+                    spacing={1}
+                    direction={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                >
+                    <Stack spacing={1} direction="row" alignItems="center">
+                        <Typography className={classes.typography}>
+                            Responsibility:
+                        </Typography>
+                        <Typography
+                            sx={{
+                                fontStyle: props.riderResponsibility
+                                    ? "normal"
+                                    : "italic",
+                                fontWeight: props.riderResponsibility
+                                    ? "bold"
+                                    : "normal",
+                            }}
+                            className={classes.typography}
+                        >
+                            {props.riderResponsibility || "Unset"}
+                        </Typography>
+                    </Stack>
+                    <Stack spacing={1} direction="row" alignItems="center">
+                        <Typography className={classes.typography}>
+                            Priority:
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color:
+                                    props.priority === "HIGH"
+                                        ? "red"
+                                        : "inherit",
+                                fontStyle: props.priority ? "normal" : "italic",
+                                fontWeight: props.priority ? "bold" : "normal",
+                            }}
+                            className={classes.typography}
+                        >
+                            {props.priority || "Unset"}
+                        </Typography>
+                    </Stack>
+                </Stack>
+                <Divider className={classes.divider} />
+                <CardItem fullWidth label={"From"}>
+                    {pickUpTitle}
                 </CardItem>
-                <CardItem label={"From"}>{pickUpTitle}</CardItem>
-                <CardItem label={"Ward"}>{pickUpWard}</CardItem>
-                <CardItem label={"To"}>{dropOffTitle}</CardItem>
-                <CardItem label={"Ward"}>{dropOffWard}</CardItem>
-                <CardItem label={"TOC"}>
+                <CardItem fullWidth label={"Ward"}>
+                    {pickUpWard}
+                </CardItem>
+                <Divider className={classes.divider} />
+                <CardItem fullWidth label={"To"}>
+                    {dropOffTitle}
+                </CardItem>
+                <CardItem fullWidth label={"Ward"}>
+                    {dropOffWard}
+                </CardItem>
+                <Divider className={classes.divider} />
+                <CardItem fullWidth label={"TOC"}>
                     <Moment local calendar>
                         {props.timeOfCall}
                     </Moment>
                 </CardItem>
-                <CardItem label={"Priority"}>{props.priority}</CardItem>
             </Stack>
         </CardContent>
     );
