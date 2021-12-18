@@ -87,6 +87,13 @@ const TaskCard = React.memo((props) => {
     }
     const className = classes[props.status];
 
+    let priorityColor = "inherit";
+    if (props.priority === "HIGH") {
+        priorityColor = "red";
+    } else if (props.priority === "MEDIUM") {
+        priorityColor = "orange";
+    }
+
     const cardInnerContent = (
         <CardContent className={classes.cardContent}>
             <Stack
@@ -164,10 +171,7 @@ const TaskCard = React.memo((props) => {
                         </Typography>
                         <Typography
                             sx={{
-                                color:
-                                    props.priority === "HIGH"
-                                        ? "red"
-                                        : "inherit",
+                                color: priorityColor,
                                 fontStyle: props.priority ? "normal" : "italic",
                                 fontWeight: props.priority ? "bold" : "normal",
                             }}
