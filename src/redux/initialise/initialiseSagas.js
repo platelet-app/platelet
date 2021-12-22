@@ -7,7 +7,12 @@ import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import path from "path";
-import { priorities, tasksStatus, userRoles } from "../../apiConsts";
+import {
+    commentVisibility,
+    priorities,
+    tasksStatus,
+    userRoles,
+} from "../../apiConsts";
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -222,6 +227,27 @@ async function populateFakeData() {
     }
 }
 
+async function randomComment(task) {
+    // random chance in 4 of making a comment on a task
+    const body = "A comment!";
+
+    if (Math.floor(Math.random() * 10000) % 4 === 0) {
+        const author = await DataStore.query(models.User, (u) =>
+            u.username("eq", "offline")
+        );
+        if (author[0]) {
+            await DataStore.save(
+                new models.Comment({
+                    author: author[0],
+                    body,
+                    parentId: task.id,
+                    visibility: commentVisibility.everyone,
+                })
+            );
+        }
+    }
+}
+
 async function populateTasks() {
     const whoamiFind = await DataStore.query(models.User, (u) =>
         u.username("eq", "offline")
@@ -334,6 +360,7 @@ async function populateTasks() {
                     role: userRoles.coordinator,
                 })
             );
+            randomComment(newTask);
         }
     }
     // tasksActive
@@ -392,6 +419,7 @@ async function populateTasks() {
                     role: userRoles.rider,
                 })
             );
+            randomComment(newTask);
         }
     }
     // tasksPickedUp
@@ -452,6 +480,7 @@ async function populateTasks() {
                     role: userRoles.rider,
                 })
             );
+            randomComment(newTask);
         }
     }
     // tasksDroppedOff
@@ -518,6 +547,7 @@ async function populateTasks() {
                     role: userRoles.rider,
                 })
             );
+            randomComment(newTask);
         }
     }
 }
