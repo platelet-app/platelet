@@ -123,7 +123,9 @@ export function DashboardDetailTabs(props) {
     );
     return (
         <Stack
-            sx={{ height: 1, width: "100%" }}
+            sx={{
+                width: "100%",
+            }}
             spacing={2}
             direction={"row"}
             justifyContent={"space-between"}
@@ -152,11 +154,12 @@ export function DashboardDetailTabs(props) {
                     </Typography>
                 </Hidden>
                 <Hidden mdUp>
-                    {`${roleView.substring(0, 5).toUpperCase()}`}
+                    <Typography id="role-identifier">
+                        {`${roleView.substring(0, 5).toUpperCase()}`}
+                    </Typography>
                 </Hidden>
                 <IconButton
                     id="role-menu-button"
-                    color="inherit"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={(event) => {

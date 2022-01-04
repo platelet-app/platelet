@@ -19,22 +19,19 @@ import MobileNavigationDrawer from "./MobileNavigationDrawer";
 import { menuIndexSelector } from "../redux/Selectors";
 
 const useStyles = makeStyles((theme) => {
-    const appBarBack =
-        theme.palette.mode === "dark"
-            ? theme.palette.background.paper
-            : theme.palette.primary.main;
     return {
         appBarComponents: {
             margin: "auto",
             width: "100%",
             padding: 5,
             maxWidth: "1280px",
+            color: theme.palette.text.primary,
         },
         appBar: {
             [theme.breakpoints.up("sm")]: {
                 width: "100%",
             },
-            background: appBarBack,
+            background: theme.palette.background.paper,
         },
     };
 });

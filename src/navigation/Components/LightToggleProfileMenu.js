@@ -46,7 +46,7 @@ function LightToggleProfileMenu() {
                 >
                     <Grid item className={networkStatus ? hide : show}>
                         <Tooltip title={"You are working offline"}>
-                            <IconButton color="inherit" size="large">
+                            <IconButton size="large">
                                 <SignalWifiOff />
                             </IconButton>
                         </Tooltip>
@@ -54,7 +54,6 @@ function LightToggleProfileMenu() {
                     <Grid item>
                         <Tooltip title={"Toggle dark/light mode"}>
                             <IconButton
-                                color="inherit"
                                 onClick={() => {
                                     dispatch(setDarkMode(!darkMode));
                                 }}
