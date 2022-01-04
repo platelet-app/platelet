@@ -149,24 +149,6 @@ const TaskCard = React.memo((props) => {
                 >
                     <Stack spacing={1} direction="row" alignItems="center">
                         <Typography className={classes.typography}>
-                            Responsibility:
-                        </Typography>
-                        <Typography
-                            sx={{
-                                fontStyle: props.riderResponsibility
-                                    ? "normal"
-                                    : "italic",
-                                fontWeight: props.riderResponsibility
-                                    ? "bold"
-                                    : "normal",
-                            }}
-                            className={classes.typography}
-                        >
-                            {props.riderResponsibility || "Unset"}
-                        </Typography>
-                    </Stack>
-                    <Stack spacing={1} direction="row" alignItems="center">
-                        <Typography className={classes.typography}>
                             Priority:
                         </Typography>
                         <Typography
@@ -180,6 +162,26 @@ const TaskCard = React.memo((props) => {
                             {props.priority || "Unset"}
                         </Typography>
                     </Stack>
+                    {props.riderResponsibility && (
+                        <Stack spacing={1} direction="row" alignItems="center">
+                            <Typography className={classes.typography}>
+                                Responsibility:
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    fontStyle: props.riderResponsibility
+                                        ? "normal"
+                                        : "italic",
+                                    fontWeight: props.riderResponsibility
+                                        ? "bold"
+                                        : "normal",
+                                }}
+                                className={classes.typography}
+                            >
+                                {props.riderResponsibility || "Unset"}
+                            </Typography>
+                        </Stack>
+                    )}
                 </Stack>
                 <Divider className={classes.divider} />
                 <CardItem fullWidth label={"From"}>
