@@ -18,7 +18,6 @@ import {
 import { dashboardFilter } from "./dashboardFilter/DashboardFilterReducers";
 import { apiControl, authStatus } from "./login/LoginReducers";
 import { notification } from "./notifications/NotificationsReducers";
-import { LOGOUT } from "./login/LoginActions";
 import { getDarkModePreference } from "./redux_utilities";
 import { awsHubDataStoreEventsReducer } from "./awsHubListener/awsHubListenerReducers";
 
@@ -277,10 +276,6 @@ const appReducer = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-    if (action.type === LOGOUT) {
-        const { serverSettings } = state;
-        state = { serverSettings };
-    }
     return appReducer(state, action);
 };
 

@@ -88,6 +88,9 @@ function Dashboard() {
     return (
         <>
             <Paper>
+                <Hidden mdUp>
+                    <DashboardDetailTabs />
+                </Hidden>
                 {[userRoles.coordinator.toLowerCase(), "all"].includes(
                     roleView.toLowerCase()
                 ) && <ActiveRidersChips />}

@@ -6,7 +6,7 @@ import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import MainWindow from "./MainWindow";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Grid, Hidden, Stack, Typography } from "@mui/material";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
 import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
@@ -16,6 +16,7 @@ import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterAc
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { DashboardDetailTabs } from "../scenes/Dashboard/components/DashboardDetailTabs";
 import MobileNavigationDrawer from "./MobileNavigationDrawer";
+import { menuIndexSelector } from "../redux/Selectors";
 
 const useStyles = makeStyles((theme) => {
     const appBarBack =
@@ -41,6 +42,7 @@ const useStyles = makeStyles((theme) => {
 export function MenuMainContainer() {
     const classes = useStyles();
     const [searchMode, setSearchMode] = useState(false);
+    const menuIndex = useSelector(menuIndexSelector);
     const lightToggleProfileMenu = searchMode ? (
         <></>
     ) : (
@@ -70,12 +72,18 @@ export function MenuMainContainer() {
                     justifyContent="space-between"
                     className={classes.appBarComponents}
                 >
-                    <Grid sx={{ width: "85%" }} item>
+                    <Grid item>
                         <Hidden mdUp>
                             <MobileNavigationDrawer />
                         </Hidden>
-                        <DashboardDetailTabs />
                     </Grid>
+                    {menuIndex === "dashboard" && (
+                        <Hidden mdDown>
+                            <Grid sx={{ width: "80%" }} item>
+                                <DashboardDetailTabs />
+                            </Grid>
+                        </Hidden>
+                    )}
                     <Grid item>
                         <Hidden mdUp>
                             <Stack alignItems={"center"} direction={"row"}>
