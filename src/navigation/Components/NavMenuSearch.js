@@ -69,6 +69,15 @@ function NavMenuSearch() {
                 >
                     Locations
                 </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        setAnchorElDashMenu(null);
+                    }}
+                    component={Link}
+                    to={"/statistics"}
+                >
+                    Statistics
+                </MenuItem>
                 {adminLink}
             </List>
         );

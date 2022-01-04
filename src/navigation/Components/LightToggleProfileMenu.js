@@ -1,16 +1,14 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useHistory } from "react-router-dom";
 import { encodeUUID } from "../../utilities";
-import { Hidden, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import { setDarkMode } from "../../redux/Actions";
 import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Typography from "@mui/material/Typography";
 import UserAvatar from "../../components/UserAvatar";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
@@ -19,7 +17,7 @@ import SignalWifiOff from "@mui/icons-material/SignalWifiOff";
 import { showHide } from "../../styles/common";
 import { networkStatusSelector } from "../../redux/Selectors";
 
-function LightToggleProfileMenu(props) {
+function LightToggleProfileMenu() {
     const whoami = useSelector(getWhoami);
     const darkMode = useSelector((state) => state.darkMode);
     const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
@@ -36,48 +34,7 @@ function LightToggleProfileMenu(props) {
             alignItems={"center"}
         >
             <Grid item>
-                <div>
-                    <IconButton
-                        color="inherit"
-                        aria-controls="simple-menu"
-                        aria-haspopup="true"
-                        onClick={(event) => {
-                            setAnchorElProfileMenu(event.currentTarget);
-                        }}
-                        size="large"
-                    >
-                        <ArrowDropDownIcon />
-                    </IconButton>
-                    <Menu
-                        id="profile-menu"
-                        anchorEl={anchorElProfileMenu}
-                        keepMounted
-                        open={Boolean(anchorElProfileMenu)}
-                        onClose={() => {
-                            setAnchorElProfileMenu(null);
-                        }}
-                    >
-                        <MenuItem
-                            onClick={() => {
-                                setAnchorElProfileMenu(null);
-                            }}
-                            component={Link}
-                            to={`/user/${encodeUUID(whoami.id)}`}
-                        >
-                            Profile
-                        </MenuItem>
-                        <MenuItem
-                            onClick={() => {
-                                setAnchorElProfileMenu(null);
-                                //dispatch(logoutUser());
-                                history.push("/");
-                                Auth.signOut();
-                            }}
-                        >
-                            Logout
-                        </MenuItem>
-                    </Menu>
-                </div>
+                <div></div>
             </Grid>
             <Grid item>
                 <Grid
@@ -111,36 +68,47 @@ function LightToggleProfileMenu(props) {
                             </IconButton>
                         </Tooltip>
                     </Grid>
-                    <Hidden mdDown>
-                        <Grid item>
-                            <Link
-                                to={`/user/${encodeUUID(whoami.id)}`}
-                                style={{
-                                    textDecoration: "none",
-                                    color: "white",
-                                }}
-                            >
-                                <Typography
-                                    id="whoami-display-name"
-                                    variant="h6"
-                                    noWrap
-                                >
-                                    {whoami.displayName}
-                                </Typography>
-                            </Link>
-                        </Grid>
-                    </Hidden>
                     <Grid item>
-                        <Link
-                            to={`/user/${encodeUUID(whoami.id)}`}
-                            style={{ textDecoration: "none" }}
-                        >
+                        <div>
                             <UserAvatar
+                                onClick={(event) => {
+                                    setAnchorElProfileMenu(event.currentTarget);
+                                }}
                                 userUUID={whoami.id}
                                 displayName={whoami.displayName}
                                 avatarURL={whoami.profilePictureThumbnailURL}
                             />
-                        </Link>
+
+                            <Menu
+                                id="profile-menu"
+                                anchorEl={anchorElProfileMenu}
+                                keepMounted
+                                open={Boolean(anchorElProfileMenu)}
+                                onClose={() => {
+                                    setAnchorElProfileMenu(null);
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        setAnchorElProfileMenu(null);
+                                    }}
+                                    component={Link}
+                                    to={`/user/${encodeUUID(whoami.id)}`}
+                                >
+                                    Profile
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        setAnchorElProfileMenu(null);
+                                        //dispatch(logoutUser());
+                                        history.push("/");
+                                        Auth.signOut();
+                                    }}
+                                >
+                                    Logout
+                                </MenuItem>
+                            </Menu>
+                        </div>
                     </Grid>
                 </Grid>
             </Grid>

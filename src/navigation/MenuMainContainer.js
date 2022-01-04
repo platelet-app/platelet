@@ -5,17 +5,17 @@ import makeStyles from "@mui/styles/makeStyles";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
-import Grid from "@mui/material/Grid";
 import MainWindow from "./MainWindow";
 import { useDispatch } from "react-redux";
-import { Hidden } from "@mui/material";
+import { Grid, Hidden, Stack, Typography } from "@mui/material";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
-import NavMenuSearch from "./Components/NavMenuSearch";
 import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterActions";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { DashboardDetailTabs } from "../scenes/Dashboard/components/DashboardDetailTabs";
+import MobileNavigationDrawer from "./MobileNavigationDrawer";
 
 const useStyles = makeStyles((theme) => {
     const appBarBack =
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => {
         appBarComponents: {
             margin: "auto",
             width: "100%",
+            padding: 5,
             maxWidth: "1280px",
         },
         appBar: {
@@ -40,7 +41,6 @@ const useStyles = makeStyles((theme) => {
 export function MenuMainContainer() {
     const classes = useStyles();
     const [searchMode, setSearchMode] = useState(false);
-    const navMenuSearch = searchMode ? <></> : <NavMenuSearch />;
     const lightToggleProfileMenu = searchMode ? (
         <></>
     ) : (
@@ -63,35 +63,35 @@ export function MenuMainContainer() {
                 position={isSm ? "relative" : "sticky"}
                 className={classes.appBar}
             >
-                <Toolbar className={classes.appBarComponents}>
-                    <Grid container justifyContent={"space-between"}>
-                        <Grid item>{navMenuSearch}</Grid>
-                        <Grid item>
-                            <Hidden mdUp>
-                                <Grid
-                                    container
-                                    item
-                                    alignItems={"center"}
-                                    direction={"row"}
-                                >
-                                    <Grid item>
-                                        <IconButton
-                                            onClick={toggleSearchMode}
-                                            color="inherit"
-                                            size="large"
-                                        >
-                                            {toggleIcon}
-                                        </IconButton>
-                                    </Grid>
-                                    <Grid item>
-                                        {searchMode && <TaskFilterTextField />}
-                                    </Grid>
-                                </Grid>
-                            </Hidden>
-                        </Grid>
-                        <Grid item>{lightToggleProfileMenu}</Grid>
+                <Grid
+                    container
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    className={classes.appBarComponents}
+                >
+                    <Grid sx={{ width: "85%" }} item>
+                        <Hidden mdUp>
+                            <MobileNavigationDrawer />
+                        </Hidden>
+                        <DashboardDetailTabs />
                     </Grid>
-                </Toolbar>
+                    <Grid item>
+                        <Hidden mdUp>
+                            <Stack alignItems={"center"} direction={"row"}>
+                                <IconButton
+                                    onClick={toggleSearchMode}
+                                    color="inherit"
+                                    size="large"
+                                >
+                                    {toggleIcon}
+                                </IconButton>
+                                {searchMode && <TaskFilterTextField />}
+                            </Stack>
+                        </Hidden>
+                    </Grid>
+                    <Grid item>{lightToggleProfileMenu}</Grid>
+                </Grid>
             </AppBar>
             <MainWindow />
         </React.Fragment>

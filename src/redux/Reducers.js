@@ -131,6 +131,15 @@ function whoami(state = whoamiInitialState, action) {
     }
 }
 
+function dashboardTabIndex(state = 0, action) {
+    switch (action.type) {
+        case "SET_DASHBOARD_TAB_INDEX":
+            return action.data;
+        default:
+            return state;
+    }
+}
+
 function idleStatus(state = false, action) {
     switch (action.type) {
         case SET_IDLE_STATUS:
@@ -263,6 +272,7 @@ const appReducer = combineReducers({
     dashboardFilter,
     idleStatus,
     darkMode,
+    dashboardTabIndex,
     awsHubDataStoreEventsReducer,
 });
 

@@ -14,12 +14,17 @@ import {
     getDashboardRoleMode,
     saveDashboardRoleMode,
 } from "../../utilities";
-import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import {
+    dashboardTabIndexSelector,
+    dataStoreReadyStatusSelector,
+    getWhoami,
+} from "../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
 import { Fab, Hidden } from "@mui/material";
 import { addTask } from "./utilities";
 import { useHistory } from "react-router";
+import ActiveRidersChips from "./components/ActiveRidersChips";
 
 function AddClearFab() {
     const dispatch = useDispatch();
@@ -57,8 +62,8 @@ function Dashboard() {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
-    const [viewMode, setViewMode] = useState(0);
     const roleView = useSelector((state) => state.roleView);
+    const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
 
     function setInitialRoleView() {
         if (whoami.id) {
@@ -83,34 +88,28 @@ function Dashboard() {
     return (
         <>
             <Paper>
-                <DashboardDetailTabs
-                    value={viewMode}
-                    onChange={(event, newValue) => setViewMode(newValue)}
-                >
-                    <TabPanel value={0} index={0}>
-                        <TasksGrid
-                            modalView={"edit"}
-                            hideRelayIcons={roleView === "rider"}
-                            hideAddButton={!postPermission}
-                            excludeColumnList={
-                                viewMode === 1
-                                    ? [
-                                          tasksStatus.new,
-                                          tasksStatus.active,
-                                          tasksStatus.pickedUp,
-                                      ]
-                                    : [
-                                          roleView === "rider"
-                                              ? tasksStatus.new
-                                              : "",
-                                          tasksStatus.droppedOff,
-                                          tasksStatus.cancelled,
-                                          tasksStatus.rejected,
-                                      ]
-                            }
-                        />
-                    </TabPanel>
-                </DashboardDetailTabs>
+                {[userRoles.coordinator.toLowerCase(), "all"].includes(
+                    roleView.toLowerCase()
+                ) && <ActiveRidersChips />}
+                <TasksGrid
+                    modalView={"edit"}
+                    hideRelayIcons={roleView === "rider"}
+                    hideAddButton={!postPermission}
+                    excludeColumnList={
+                        dashboardTabIndex === 1
+                            ? [
+                                  tasksStatus.new,
+                                  tasksStatus.active,
+                                  tasksStatus.pickedUp,
+                              ]
+                            : [
+                                  roleView === "rider" ? tasksStatus.new : "",
+                                  tasksStatus.droppedOff,
+                                  tasksStatus.cancelled,
+                                  tasksStatus.rejected,
+                              ]
+                    }
+                />
             </Paper>
             <Hidden smUp>
                 {roleView && roleView === userRoles.rider.toLowerCase() ? (
