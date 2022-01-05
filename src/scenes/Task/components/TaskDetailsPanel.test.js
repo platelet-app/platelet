@@ -42,11 +42,9 @@ describe("TaskDetailsPanel", () => {
         });
     });
     it("renders task details", async () => {
-        const { timePickedUp, timeDroppedOff, timeOfCall } = generateTimes();
+        const { timeOfCall } = generateTimes();
         amplify.DataStore.query.mockResolvedValue({
             riderResponsibility: { label: "North" },
-            timePickedUp,
-            timeDroppedOff,
             timeOfCall,
             priority: priorities.high,
             reference: "test-reference",
@@ -67,63 +65,12 @@ describe("TaskDetailsPanel", () => {
         expect(screen.getByText("Someone Person")).toBeInTheDocument();
         expect(screen.getByText("01234567890")).toBeInTheDocument();
         expect(screen.getByText("HIGH")).toBeInTheDocument();
+        expect(screen.getByText(/Today at/)).toBeInTheDocument();
         expect(
-            screen.getByText(moment(timeOfCall).calendar())
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(moment(timePickedUp).calendar())
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(moment(timeDroppedOff).calendar())
+            screen.getByText(moment(timeOfCall).format("HH:mm"))
         ).toBeInTheDocument();
     });
-    it("renders task details with no timePickedUp", async () => {
-        const timeDroppedOff = "2021-11-29T22:24:58.987Z";
-        const timeOfCall = isoDate;
-        amplify.DataStore.query.mockResolvedValue({
-            riderResponsibility: { label: "North" },
-            timeDroppedOff,
-            timeOfCall,
-            priority: priorities.high,
-            reference: "test-reference",
-            requesterContact: {
-                telephoneNumber: "01234567890",
-                name: "Someone Person",
-            },
-        });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TaskDetailsPanel taskId={"test"} />);
-        await waitFor(async () => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
-        });
-        expect(screen.getAllByText("Not set")).toHaveLength(2);
-    });
-    it("renders task details with no timeDroppedOff", async () => {
-        const timePickedUp = "2021-11-29T21:24:58.987Z";
-        const timeOfCall = isoDate;
-        amplify.DataStore.query.mockResolvedValue({
-            riderResponsibility: { label: "North" },
-            timePickedUp,
-            timeOfCall,
-            priority: priorities.high,
-            reference: "test-reference",
-            requesterContact: {
-                telephoneNumber: "01234567890",
-                name: "Someone Person",
-            },
-        });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TaskDetailsPanel taskId={"test"} />);
-        await waitFor(async () => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
-        });
-        expect(screen.getAllByText("Not set")).toHaveLength(2);
-    });
-    test.each`
+    test.skip.each`
         timeKey
         ${"timePickedUp"} | ${"timeDroppedOff"}
     `("sets timePickedUp and timeDroppedOff", async ({ timeKey }) => {

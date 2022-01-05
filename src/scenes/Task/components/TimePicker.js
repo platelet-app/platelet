@@ -38,11 +38,6 @@ function TimePicker(props) {
         originalTime.current = new Date(props.time);
     }, [props.time]);
 
-    function onButtonClick() {
-        const timeNow = new Date().toISOString();
-        props.onChange(timeNow);
-    }
-
     function onClear() {
         props.onChange(null);
     }
@@ -53,6 +48,17 @@ function TimePicker(props) {
 
     function onChange(value) {
         setState(value);
+    }
+
+    // check if props.time is today
+    function isToday() {
+        const today = new Date();
+        const date = new Date(props.time);
+        return (
+            today.getDate() === date.getDate() &&
+            today.getMonth() === date.getMonth() &&
+            today.getFullYear() === date.getFullYear()
+        );
     }
 
     if (props.time) {
@@ -90,7 +96,7 @@ function TimePicker(props) {
                                     } catch (error) {
                                         dispatch(
                                             displayErrorNotification(
-                                                error.message
+                                                errorMessage
                                             )
                                         );
                                         return;
@@ -138,7 +144,18 @@ function TimePicker(props) {
                         }
                     >
                         <Typography>
-                            <Moment calendar>{props.time}</Moment>
+                            {isToday() ? (
+                                <>
+                                    Today at{" "}
+                                    <Moment format={"HH:mm"}>
+                                        {props.time}
+                                    </Moment>
+                                </>
+                            ) : (
+                                <Moment format={"DD/MM/YYYY, HH:mm"}>
+                                    {props.time}
+                                </Moment>
+                            )}
                         </Typography>
                     </Tooltip>
                     <Tooltip title={"Edit"}>
@@ -171,7 +188,11 @@ function TimePicker(props) {
             );
         }
     } else {
-        return <Typography className={classes.label}>Not set</Typography>;
+        return props.disableUnsetMessage ? (
+            <></>
+        ) : (
+            <Typography className={classes.label}>Unset</Typography>
+        );
     }
 }
 
@@ -181,6 +202,7 @@ TimePicker.propTypes = {
     label: PropTypes.string,
     disabled: PropTypes.bool,
     disableClear: PropTypes.bool,
+    disableUnsetMessage: PropTypes.bool,
 };
 TimePicker.defaultProps = {
     time: "",
@@ -188,6 +210,7 @@ TimePicker.defaultProps = {
     label: "",
     disabled: false,
     disableClear: false,
+    disableUnsetMessage: false,
 };
 
 export default TimePicker;

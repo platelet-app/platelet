@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
+import { saveTaskTimeWithKey } from "../utilities";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -105,34 +106,7 @@ function TaskDetailsPanel(props) {
 
     async function setTimeWithKey(key, value) {
         try {
-            const existingTask = await DataStore.query(
-                models.Task,
-                props.taskId
-            );
-            if (!existingTask) throw new Error("Task doesn't exist");
-            const assignees = (
-                await DataStore.query(models.TaskAssignee)
-            ).filter((a) => a.task && a.task.id === props.taskId);
-            const status = determineTaskStatus({
-                ...existingTask,
-                [key]: value.toISOString(),
-                assignees,
-            });
-            if (existingTask.status === status) {
-                await DataStore.save(
-                    models.Task.copyOf(existingTask, (updated) => {
-                        updated[key] = value.toISOString();
-                        updated.status = status;
-                    })
-                );
-            } else {
-                await DataStore.save(
-                    models.Task.copyOf(existingTask, (updated) => {
-                        updated[key] = value.toISOString();
-                        updated.status = status;
-                    })
-                );
-            }
+            saveTaskTimeWithKey(key, value, props.taskId);
             setState((prevState) => ({
                 ...prevState,
                 [key]: value.toISOString(),
@@ -147,16 +121,6 @@ function TaskDetailsPanel(props) {
         //check value is a Date object
         if (value && value instanceof Date) {
             setTimeWithKey("timeOfCall", value);
-        }
-    }
-    function onChangeTimeDroppedOff(value) {
-        if (value && value instanceof Date) {
-            setTimeWithKey("timeDroppedOff", value);
-        }
-    }
-    function onChangeTimePickedUp(value) {
-        if (value && value instanceof Date) {
-            setTimeWithKey("timePickedUp", value);
         }
     }
 
@@ -234,23 +198,6 @@ function TaskDetailsPanel(props) {
                                 ? state.riderResponsibility.label
                                 : ""}
                         </Typography>
-                    </LabelItemPair>
-                    <LabelItemPair label={"Time picked up"}>
-                        <TimePicker
-                            onChange={onChangeTimePickedUp}
-                            disableClear
-                            time={state.timePickedUp}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"Time delivered"}>
-                        <TimePicker
-                            disableClear
-                            onChange={onChangeTimeDroppedOff}
-                            time={state.timeDroppedOff}
-                        />
-                    </LabelItemPair>
-                    <LabelItemPair label={"Time rider home"}>
-                        <TimePicker disableClear time={state.timeRiderHome} />
                     </LabelItemPair>
                 </Stack>
             </Paper>

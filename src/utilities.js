@@ -104,9 +104,18 @@ export function determineTaskStatus(task) {
         assignedRiders &&
         assignedRiders.length > 0 &&
         !!task.timePickedUp &&
-        !!task.timeDroppedOff
+        !!task.timeDroppedOff &&
+        !!!task.timeRiderHome
     ) {
         return tasksStatus.droppedOff;
+    } else if (
+        assignedRiders &&
+        assignedRiders.length > 0 &&
+        !!task.timePickedUp &&
+        !!task.timeDroppedOff &&
+        !!task.timeRiderHome
+    ) {
+        return tasksStatus.completed;
     }
 }
 

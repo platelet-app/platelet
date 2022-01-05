@@ -457,9 +457,7 @@ describe("TaskActions", () => {
     });
 
     test("observer updates component on task deleted", async () => {
-        const mockTask = new models.Task({
-            timePickedUp: new Date().toISOString(),
-        });
+        const mockTask = new models.Task({});
         const mockObservedResult = {
             opType: "DELETE",
         };

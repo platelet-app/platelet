@@ -15,16 +15,21 @@ import * as models from "../../../models/index";
 import GetError from "../../../ErrorComponents/GetError";
 import { useDispatch, useSelector } from "react-redux";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
-import { determineTaskStatus } from "../../../utilities";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import TaskActionConfirmationDialogContents from "./TaskActionConfirmationDialogContents";
+import TimePicker from "./TimePicker";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import { saveTaskTimeWithKey } from "../utilities";
+import { tasksStatus } from "../../../apiConsts";
 
 const fields = {
     timePickedUp: "Picked up",
     timeDroppedOff: "Delivered",
     timeCancelled: "Cancelled",
     timeRejected: "Rejected",
+    timeRiderHome: "Rider home",
 };
 
 function humanReadableConfirmation(field, nullify) {
@@ -45,6 +50,10 @@ function humanReadableConfirmation(field, nullify) {
             return nullify
                 ? "Clear the rejected time?"
                 : "Set the rejected time?";
+        case "timeRiderHome":
+            return nullify
+                ? "Clear the rider home time?"
+                : "Set the rider home time?";
         default:
             return "";
     }
@@ -52,6 +61,7 @@ function humanReadableConfirmation(field, nullify) {
 
 function TaskActions(props) {
     const [state, setState] = useState([]);
+    const [task, setTask] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(null);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -75,9 +85,7 @@ function TaskActions(props) {
     }
 
     function onChange(key) {
-        const value = state.includes(key)
-            ? null
-            : timeSet.current.toISOString();
+        const value = state.includes(key) ? null : timeSet.current;
         setState((prevState) => {
             if (prevState.includes(key))
                 return prevState.filter((v) => v !== key);
@@ -88,25 +96,7 @@ function TaskActions(props) {
 
     async function setTimeWithKey(key, value) {
         try {
-            const existingTask = await DataStore.query(
-                models.Task,
-                props.taskId
-            );
-            if (!existingTask) throw new Error("Task doesn't exist");
-            const assignees = (
-                await DataStore.query(models.TaskAssignee)
-            ).filter((a) => a.task && a.task.id === props.taskId);
-            const status = determineTaskStatus({
-                ...existingTask,
-                [key]: value,
-                assignees,
-            });
-            await DataStore.save(
-                models.Task.copyOf(existingTask, (updated) => {
-                    updated[key] = value;
-                    updated.status = status;
-                })
-            );
+            saveTaskTimeWithKey(key, value, props.taskId);
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -125,6 +115,7 @@ function TaskActions(props) {
             const task = await DataStore.query(models.Task, props.taskId);
             if (!task) throw new Error("Task not found");
             setState(calculateState(task));
+            setTask(task);
             setIsFetching(false);
             taskObserver.current.unsubscribe();
             taskObserver.current = DataStore.observe(
@@ -134,12 +125,14 @@ function TaskActions(props) {
                 const taskData = observeResult.element;
                 if (observeResult.opType === "INSERT") {
                     setState(calculateState(taskData));
+                    setTask((prevState) => ({ ...prevState, ...taskData }));
                 } else if (observeResult.opType === "UPDATE") {
                     const observedTask = await DataStore.query(
                         models.Task,
                         props.taskId
                     );
                     setState(calculateState(observedTask));
+                    setTask(observedTask);
                 } else if (observeResult.opType === "DELETE") {
                     // just disable the buttons if the task is deleted
                     setIsFetching(true);
@@ -166,7 +159,10 @@ function TaskActions(props) {
             return !state.includes("timePickedUp") || stopped;
         else if (key === "timePickedUp")
             return state.includes("timeDroppedOff") || stopped;
-        else if (key === "timeRejected") {
+        else if (key === "timeRiderHome") {
+            if (task && task.status === tasksStatus.new) return true;
+            return !state.includes("timeDroppedOff");
+        } else if (key === "timeRejected") {
             if (state.includes("timeRejected")) return false;
             return (
                 (state.includes("timePickedUp") &&
@@ -192,30 +188,76 @@ function TaskActions(props) {
                     <Stack direction={"column"} spacing={2}>
                         <Typography variant={"h6"}>Actions</Typography>
                         <Divider />
-                        <ToggleButtonGroup
-                            value={state}
-                            orientation="vertical"
-                            aria-label="task actions"
+                        <Stack
+                            justifyContent="flex-start"
+                            alignItems="center"
+                            spacing={2}
+                            direction="row"
                         >
-                            {Object.entries(fields).map(([key, value]) => {
-                                return (
-                                    <ToggleButton
-                                        key={key}
-                                        disabled={
-                                            isFetching || checkDisabled(key)
-                                        }
-                                        aria-disabled={
-                                            isFetching || checkDisabled(key)
-                                        }
-                                        aria-label={value}
-                                        value={key}
-                                        onClick={() => onClickToggle(key)}
-                                    >
-                                        {value}
-                                    </ToggleButton>
-                                );
-                            })}
-                        </ToggleButtonGroup>
+                            <ToggleButtonGroup
+                                value={state}
+                                orientation="vertical"
+                                aria-label="task actions"
+                            >
+                                {Object.entries(fields).map(([key, value]) => {
+                                    return (
+                                        <ToggleButton
+                                            key={key}
+                                            disabled={
+                                                isFetching || checkDisabled(key)
+                                            }
+                                            aria-disabled={
+                                                isFetching || checkDisabled(key)
+                                            }
+                                            aria-label={value}
+                                            value={key}
+                                            onClick={() => onClickToggle(key)}
+                                        >
+                                            {state.includes(key) ? (
+                                                <CheckBoxIcon />
+                                            ) : (
+                                                <CheckBoxOutlineBlankIcon />
+                                            )}
+                                        </ToggleButton>
+                                    );
+                                })}
+                            </ToggleButtonGroup>
+                            <Stack
+                                spacing={3}
+                                sx={{ width: "100%" }}
+                                direction="column"
+                            >
+                                {Object.entries(fields).map(([key, value]) => {
+                                    return (
+                                        <Stack
+                                            justifyContent="space-between"
+                                            direction="row"
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    color: checkDisabled(key)
+                                                        ? "gray"
+                                                        : "text.primary",
+                                                }}
+                                            >
+                                                {value.toUpperCase()}
+                                            </Typography>
+                                            <TimePicker
+                                                onChange={(newValue) =>
+                                                    setTimeWithKey(
+                                                        key,
+                                                        newValue
+                                                    )
+                                                }
+                                                disableClear
+                                                disableUnsetMessage
+                                                time={task && task[key]}
+                                            />
+                                        </Stack>
+                                    );
+                                })}
+                            </Stack>
+                        </Stack>
                     </Stack>
                 </Paper>
                 <ConfirmationDialog
