@@ -84,6 +84,10 @@ function TaskActions(props) {
         timeSet.current = time;
     }
 
+    function handleTimeChange(value) {
+        props.onChange(value);
+    }
+
     function onChange(key) {
         const value = state.includes(key) ? null : timeSet.current;
         setState((prevState) => {
@@ -156,7 +160,11 @@ function TaskActions(props) {
         const stopped =
             state.includes("timeCancelled") || state.includes("timeRejected");
         if (key === "timeDroppedOff")
-            return !state.includes("timePickedUp") || stopped;
+            return (
+                state.includes("timeRiderHome") ||
+                !state.includes("timePickedUp") ||
+                stopped
+            );
         else if (key === "timePickedUp")
             return state.includes("timeDroppedOff") || stopped;
         else if (key === "timeRiderHome") {

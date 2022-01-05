@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import CheckIcon from "@mui/icons-material/Check";
 import { useState } from "react";
 import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
@@ -13,7 +12,7 @@ import makeStyles from "@mui/styles/makeStyles";
 import { DateTimePicker } from "@mui/lab";
 import moment from "moment";
 import { useDispatch } from "react-redux";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const useStyles = makeStyles({
     button: {
@@ -30,8 +29,6 @@ function TimePicker(props) {
     const originalTime = useRef(new Date(props.time));
     const classes = useStyles();
     const { show, hide } = showHide();
-    const dispatch = useDispatch();
-    const errorMessage = "Sorry, something went wrong";
 
     useEffect(() => {
         setState(new Date(props.time));
@@ -62,73 +59,8 @@ function TimePicker(props) {
     }
 
     if (props.time) {
-        if (editMode) {
-            return (
-                <Stack
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
-                    direction={"row"}
-                >
-                    <DateTimePicker
-                        label={props.label}
-                        inputFormat={"dd/MM/yyyy HH:mm"}
-                        openTo="hours"
-                        value={state}
-                        onChange={onChange}
-                        renderInput={(params) => (
-                            <TextField
-                                variant={"standard"}
-                                fullWidth
-                                {...params}
-                            />
-                        )}
-                    />
-                    <Tooltip title={"Finish"}>
-                        <IconButton
-                            className={classes.button}
-                            edge={"end"}
-                            aria-label={"Finish"}
-                            disabled={props.disabled}
-                            onClick={() => {
-                                if (state) {
-                                    try {
-                                        props.onChange(state);
-                                    } catch (error) {
-                                        dispatch(
-                                            displayErrorNotification(
-                                                errorMessage
-                                            )
-                                        );
-                                        return;
-                                    }
-                                    originalTime.current = state;
-                                    toggleEditMode();
-                                }
-                            }}
-                            size="large"
-                        >
-                            <CheckIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title={"Cancel"}>
-                        <IconButton
-                            className={classes.button}
-                            aria-label={"Cancel"}
-                            edge={"end"}
-                            disabled={props.disabled}
-                            onClick={() => {
-                                setState(originalTime.current);
-                                toggleEditMode();
-                            }}
-                            size="large"
-                        >
-                            <CancelIcon />
-                        </IconButton>
-                    </Tooltip>
-                </Stack>
-            );
-        } else {
-            return (
+        return (
+            <>
                 <Stack
                     direction={"row"}
                     justifyContent={"space-between"}
@@ -185,8 +117,32 @@ function TimePicker(props) {
                         </Tooltip>
                     </div>
                 </Stack>
-            );
-        }
+                <ConfirmationDialog
+                    onClose={() => setEditMode(false)}
+                    onSelect={(result) => {
+                        if (result) {
+                            props.onChange(state);
+                        }
+                    }}
+                    open={editMode}
+                >
+                    <DateTimePicker
+                        label={props.label}
+                        value={state}
+                        inputFormat={"dd/MM/yyyy HH:mm"}
+                        openTo="hours"
+                        onChange={(value) => setState(value)}
+                        renderInput={(params) => (
+                            <TextField
+                                variant={"standard"}
+                                fullWidth
+                                {...params}
+                            />
+                        )}
+                    />
+                </ConfirmationDialog>
+            </>
+        );
     } else {
         return props.disableUnsetMessage ? (
             <></>
