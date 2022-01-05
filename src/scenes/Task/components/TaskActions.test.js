@@ -161,6 +161,69 @@ describe("TaskActions", () => {
         });
     });
 
+    it("clicks the rider home button", async () => {
+        const mockTask = new models.Task({
+            timePickedUp: isoDate,
+            timeDroppedOff: isoDate,
+        });
+        const mockAssignments = [
+            new models.TaskAssignee({
+                task: { id: mockTask.id },
+                role: userRoles.rider,
+            }),
+        ];
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValue(mockAssignments);
+        amplify.DataStore.save.mockResolvedValue({
+            ...mockTask,
+            timeDroppedOff: isoDate,
+            status: tasksStatus.droppedOff,
+        });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(<TaskActions taskId={mockTask.id} />);
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        const button = screen.getByRole("button", { name: "Rider home" });
+        expect(button).toBeInTheDocument();
+        userEvent.click(button);
+        expect(screen.getByText(/Set the rider home time/)).toBeInTheDocument();
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
+        // expect the mock function to have been called with a Date object
+        // expect button to be toggled
+        expect(button).toHaveAttribute("aria-pressed", "true");
+        await waitFor(async () => {
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                timeRiderHome: isoDate,
+                status: tasksStatus.completed,
+            });
+        });
+    });
+
+    test("rider home button is disabled", async () => {
+        amplify.DataStore.query.mockResolvedValue({
+            timePickedUp: isoDate,
+            timeDroppedOff: null,
+        });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(<TaskActions taskId={"test"} />);
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        const button = screen.getByRole("button", { name: "Rider home" });
+        expect(button).toBeInTheDocument();
+        expect(button).toBeDisabled();
+    });
+
     it("clicks the cancelled button", async () => {
         const mockTask = new models.Task({});
         amplify.DataStore.query
