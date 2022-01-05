@@ -331,6 +331,23 @@ describe("TaskActions", () => {
         ).toBeDisabled();
     });
 
+    test("delivered is disabled it rider home is set", async () => {
+        amplify.DataStore.query.mockResolvedValue({
+            timeDroppedOff: new Date().toISOString(),
+            timeRiderHome: new Date().toISOString(),
+        });
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(<TaskActions taskId={"test"} />);
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            screen.getByRole("button", { name: "Delivered" })
+        ).toBeDisabled();
+    });
+
     test("untoggle timePickedUp", async () => {
         const mockTask = new models.Task({ timePickedUp: isoDate });
         amplify.DataStore.query
