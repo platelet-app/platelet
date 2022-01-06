@@ -1,4 +1,5 @@
 import { put, takeLatest, call, all } from "redux-saga/effects";
+import faker from "faker/locale/en_GB";
 import { initialiseAwsDataStoreListener } from "../awsHubListener/awsHubListenerActions";
 import { GET_WHOAMI_SUCCESS, getWhoamiRequest } from "../Actions";
 import * as actions from "./initialiseActions";
@@ -103,79 +104,86 @@ async function populateFakeData() {
             }
         }
     }
-    if (fakeData.users) {
-        const profilePicsArray = _.shuffle(
-            Object.entries(profilePictures).map(([key, value]) => ({
-                key,
-                value: value.default,
-            }))
+    const profilePicsArray = _.shuffle(
+        Object.entries(profilePictures).map(([key, value]) => ({
+            key,
+            value: value.default,
+        }))
+    );
+    const checker = await DataStore.query(models.User);
+    if (checker.length === 0) {
+        const responsibilities = await DataStore.query(
+            models.RiderResponsibility
         );
-        const checker = await DataStore.query(models.User);
-        if (checker.length === 0) {
-            const responsibilities = await DataStore.query(
-                models.RiderResponsibility
-            );
-            for (const value of Object.values(fakeData.users)) {
-                let userToSave = value;
-                if (
-                    value.username === "offline" &&
-                    process.env.REACT_APP_DEMO_MODE === "true"
-                ) {
-                    userToSave = {
-                        ...value,
-                        name: "Demo User",
-                        userRiderResponsibilityId:
-                            _.sample(responsibilities).id || null,
-                        displayName: "Demo User",
-                        roles: [
-                            userRoles.rider,
-                            userRoles.coordinator,
-                            userRoles.user,
-                        ],
-                    };
-                }
-                const profilePicture = profilePicsArray.pop();
-                let thumbnail = null;
-                let profilePicURL = null;
-                if (profilePicture) {
-                    profilePicURL = profilePicture.value;
-                    const extension = path.extname(profilePicURL);
-                    const baseName = path.basename(
-                        profilePicture.key,
-                        extension
-                    );
-                    const thumbnailGet =
-                        profilePictureThumbnails[
-                            `${baseName}_thumbnail${extension}`
-                        ];
+        let offlineUserDone = false;
+        for (const i in _.range(10)) {
+            const generatedName = faker.name.findName();
+            let userToSave = {
+                username: faker.internet.userName(),
+                name: generatedName,
+                displayName: generatedName,
+                dateOfBirth: faker.date.past(50, new Date()).toISOString(),
+                contact: {
+                    line1: faker.address.streetAddress(),
+                    line2: faker.address.secondaryAddress(),
+                    town: faker.address.city(),
+                    postcode: faker.address.zipCode(),
+                    country: faker.address.country(),
+                    what3words: "some.what.words",
+                    telephoneNumber: faker.phone.phoneNumber(),
+                    emailAddress: faker.internet.email(),
+                    mobileNumber: faker.phone.phoneNumber(),
+                },
 
-                    thumbnail = thumbnailGet ? thumbnailGet.default : "";
-                }
-                let { address, dateOfBirth, ...rest } = userToSave;
-                dateOfBirth = new Date().toISOString();
-                const addressContact = await DataStore.save(
-                    new models.AddressAndContactDetails({
-                        emailAddress: "fake@email.com",
-                        telephoneNumber: "01234567890",
-                        mobileNumber: "0771234567890",
-                        line1: "1 Fake Street",
-                        line2: "Fake Flat Name",
-                        town: "Fake Town",
-                        county: "Fake County",
-                        postcode: "FA1 1FA",
-                    })
-                );
-                await DataStore.save(
-                    new models.User({
-                        ...rest,
-                        dateOfBirth,
-                        riderResponsibility: _.sample(responsibilities) || null,
-                        profilePictureURL: profilePicURL,
-                        profilePictureThumbnailURL: thumbnail,
-                        contact: addressContact,
-                    })
-                );
+                roles: [userRoles.rider, userRoles.coordinator, userRoles.user],
+                active: 1,
+            };
+            if (
+                !offlineUserDone &&
+                process.env.REACT_APP_DEMO_MODE === "true"
+            ) {
+                userToSave = {
+                    ...userToSave,
+                    name: "Demo User",
+                    username: "offline",
+                    userRiderResponsibilityId:
+                        _.sample(responsibilities).id || null,
+                    displayName: "Demo User",
+                    roles: [
+                        userRoles.rider,
+                        userRoles.coordinator,
+                        userRoles.user,
+                    ],
+                };
+                offlineUserDone = true;
             }
+            const profilePicture = profilePicsArray.pop();
+            let thumbnail = null;
+            let profilePicURL = null;
+            if (profilePicture) {
+                profilePicURL = profilePicture.value;
+                const extension = path.extname(profilePicURL);
+                const baseName = path.basename(profilePicture.key, extension);
+                const thumbnailGet =
+                    profilePictureThumbnails[
+                        `${baseName}_thumbnail${extension}`
+                    ];
+
+                thumbnail = thumbnailGet ? thumbnailGet.default : "";
+            }
+            let { contact, ...rest } = userToSave;
+            const addressContact = await DataStore.save(
+                new models.AddressAndContactDetails(userToSave.contact)
+            );
+            await DataStore.save(
+                new models.User({
+                    ...rest,
+                    riderResponsibility: _.sample(responsibilities) || null,
+                    profilePictureURL: profilePicURL,
+                    profilePictureThumbnailURL: thumbnail,
+                    contact: addressContact,
+                })
+            );
         }
     }
     if (fakeData.vehicles) {
@@ -210,9 +218,9 @@ async function populateFakeData() {
                 const { address, ...rest } = value;
                 const contact = await DataStore.save(
                     new models.AddressAndContactDetails({
-                        telephoneNumber: "01234567890",
-                        emailAddress: "fake@email.com",
-                        name: "Someone Person",
+                        telephoneNumber: faker.phone.phoneNumber(),
+                        emailAddress: faker.internet.email(),
+                        name: faker.name.findName(),
                     })
                 );
                 await DataStore.save(
@@ -248,6 +256,13 @@ async function randomComment(task) {
     }
 }
 
+function generateRequesterContact() {
+    return {
+        name: faker.name.findName(),
+        telephoneNumber: faker.phone.phoneNumber(),
+    };
+}
+
 async function populateTasks() {
     const whoamiFind = await DataStore.query(models.User, (u) =>
         u.username("eq", "offline")
@@ -274,7 +289,7 @@ async function populateTasks() {
             );
             timeOfCall = generateTimes(timeOfCall, 2).timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({})
+                new models.AddressAndContactDetails(generateRequesterContact())
             );
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
@@ -323,10 +338,7 @@ async function populateTasks() {
             );
             timeOfCall = generateTimes(timeOfCall, 3).timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({
-                    telephoneNumber: "01234567890",
-                    name: "Someone Person",
-                })
+                new models.AddressAndContactDetails(generateRequesterContact())
             );
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
@@ -372,10 +384,7 @@ async function populateTasks() {
         for (const i in _.range(10)) {
             timeOfCall = generateTimes(timeOfCall, 3).timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({
-                    telephoneNumber: "01234567890",
-                    name: "Someone Person",
-                })
+                new models.AddressAndContactDetails(generateRequesterContact())
             );
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);
@@ -432,10 +441,7 @@ async function populateTasks() {
             const times = generateTimes(timeOfCall, 3);
             timeOfCall = times.timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({
-                    telephoneNumber: "01234567890",
-                    name: "Someone Person",
-                })
+                new models.AddressAndContactDetails(generateRequesterContact())
             );
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);
@@ -497,10 +503,7 @@ async function populateTasks() {
             const times = generateTimes(timeOfCall, 10);
             timeOfCall = times.timeOfCall;
             const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails({
-                    telephoneNumber: "01234567890",
-                    name: "Someone Person",
-                })
+                new models.AddressAndContactDetails(generateRequesterContact())
             );
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);

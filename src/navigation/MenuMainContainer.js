@@ -66,7 +66,7 @@ export function MenuMainContainer() {
                     justifyContent="space-between"
                     className={classes.appBarComponents}
                 >
-                    <Box sx={{ width: 120 }}>
+                    <Box sx={{ width: 140 }}>
                         <MobileNavigationDrawer />
                     </Box>
                     {menuIndex === "dashboard" && (

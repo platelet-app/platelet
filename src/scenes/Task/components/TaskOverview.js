@@ -8,13 +8,10 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
-import { Skeleton, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import LocationDetailsPanel from "./LocationDetailsPanel";
 
 const useStyles = makeStyles((theme) => ({
-    dialogContent: {
-        overflow: "",
-    },
     root: {
         maxWidth: 1800,
         paddingTop: 20,
