@@ -55,6 +55,7 @@ function TasksGrid(props) {
     const [showGuidedSetup, setShowGuidedSetup] = useState(false);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
+    const isMd = useMediaQuery(theme.breakpoints.down("lg"));
 
     return (
         <>
@@ -62,7 +63,9 @@ function TasksGrid(props) {
                 container
                 spacing={2}
                 direction={"row"}
-                justifyContent={isSm ? "center" : "flex-start"}
+                justifyContent={
+                    isSm ? "center" : isMd ? "flex-start" : "space-evenly"
+                }
                 alignItems={"stretch"}
             >
                 {[
