@@ -40,6 +40,7 @@
         "react-cropper": "^2.1.8",
         "react-dom": "^17.0.2",
         "react-helmet": "^6.1.0",
+        "react-horizontal-scrolling-menu": "^2.7.0",
         "react-idle-timer": "^4.6.4",
         "react-intersection-observer": "^8.33.1",
         "react-linkify": "^1.0.0-alpha",
