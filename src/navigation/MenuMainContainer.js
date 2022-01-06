@@ -6,7 +6,7 @@ import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import MainWindow from "./MainWindow";
 import { useDispatch, useSelector } from "react-redux";
-import { Grid, Hidden, Stack } from "@mui/material";
+import { Box, Grid, Hidden, Stack } from "@mui/material";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
 import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
 import SearchIcon from "@mui/icons-material/Search";
@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => {
             margin: "auto",
             width: "100%",
             padding: 5,
-            maxWidth: "1280px",
             color: theme.palette.text.primary,
         },
         appBar: {
@@ -61,41 +60,36 @@ export function MenuMainContainer() {
                 position={isSm ? "relative" : "sticky"}
                 className={classes.appBar}
             >
-                <Grid
-                    container
+                <Stack
                     direction="row"
                     alignItems="center"
                     justifyContent="space-between"
                     className={classes.appBarComponents}
                 >
-                    <Grid item>
-                        <Hidden mdUp>
-                            <MobileNavigationDrawer />
-                        </Hidden>
-                    </Grid>
+                    <Box sx={{ width: 120 }}>
+                        <MobileNavigationDrawer />
+                    </Box>
                     {menuIndex === "dashboard" && (
                         <Hidden mdDown>
-                            <Grid sx={{ width: "80%" }} item>
+                            <Box sx={{ width: "100%", maxWidth: 1100 }}>
                                 <DashboardDetailTabs />
-                            </Grid>
+                            </Box>
                         </Hidden>
                     )}
-                    <Grid item>
-                        <Hidden mdUp>
-                            <Stack alignItems={"center"} direction={"row"}>
-                                <IconButton
-                                    onClick={toggleSearchMode}
-                                    color="inherit"
-                                    size="large"
-                                >
-                                    {toggleIcon}
-                                </IconButton>
-                                {searchMode && <TaskFilterTextField />}
-                            </Stack>
-                        </Hidden>
-                    </Grid>
-                    <Grid item>{lightToggleProfileMenu}</Grid>
-                </Grid>
+                    <Hidden mdUp>
+                        <Stack alignItems={"center"} direction={"row"}>
+                            <IconButton
+                                onClick={toggleSearchMode}
+                                color="inherit"
+                                size="large"
+                            >
+                                {toggleIcon}
+                            </IconButton>
+                            {searchMode && <TaskFilterTextField />}
+                        </Stack>
+                    </Hidden>
+                    {lightToggleProfileMenu}
+                </Stack>
             </AppBar>
             <MainWindow />
         </React.Fragment>
