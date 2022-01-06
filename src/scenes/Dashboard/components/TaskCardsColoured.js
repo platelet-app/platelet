@@ -62,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TaskCard = React.memo((props) => {
+    const assigneesDisplayString = props.assignees
+        .map((assignee) => assignee.displayName)
+        .join(", ");
     const classes = useStyles();
     let pickUpTitle = "";
     if (props.pickUpLocation) {
@@ -126,7 +129,7 @@ const TaskCard = React.memo((props) => {
                     ) : (
                         <div></div>
                     )}
-                    <Tooltip title={props.assignedRidersDisplayString}>
+                    <Tooltip title={assigneesDisplayString}>
                         <AvatarGroup>
                             {props.assignees.map((u) => (
                                 <UserAvatar
@@ -217,20 +220,12 @@ const TaskCard = React.memo((props) => {
 TaskCard.propTypes = {
     pickUpAddress: PropTypes.object,
     dropOffAddress: PropTypes.object,
-    assignedRiders: PropTypes.arrayOf(PropTypes.object),
-    assignedCoordinators: PropTypes.arrayOf(PropTypes.object),
     riderResponsibility: PropTypes.string,
-    timePickedUp: PropTypes.string,
-    timeDroppedOff: PropTypes.string,
-    assignedCoordinatorsDisplayString: PropTypes.string,
-    assignedRidersDisplayString: PropTypes.string,
     timeOfCall: PropTypes.string,
     priority: PropTypes.string,
 };
 
 TaskCard.defaultProps = {
-    assignedRiders: [],
-    assignedCoordinators: [],
     riderResponsibility: "",
     priority: "",
 };
