@@ -13,7 +13,6 @@ import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { commentVisibility, userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
-import useOnScreen from "../../../hooks/useOnScreen";
 import { useSelector } from "react-redux";
 import {
     dataStoreReadyStatusSelector,

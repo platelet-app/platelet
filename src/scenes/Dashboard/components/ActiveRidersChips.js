@@ -5,11 +5,36 @@ import { useSelector } from "react-redux";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { convertListDataToObject } from "../../../utilities";
-import { Avatar, Chip, Stack } from "@mui/material";
-import { TransitionGroup } from "react-transition-group";
-import Slide from "@mui/material/Slide";
+import { Avatar, Box, Chip, IconButton, Stack } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+// disable horizontal scrollbar
+import "./hideActiveRiderChipsScrollBar.css";
 import _ from "lodash";
 import RiderConfirmationHomeContents from "./RiderConfirmationHomeContents";
+import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+
+// use for transparency on arrows sometime
+const useStyles = makeStyles((theme) => ({
+    dots: () => {
+        const background =
+            theme.palette.mode === "dark"
+                ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
+                : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
+        return {
+            background: background,
+            width: 300,
+            height: 100,
+            borderRadius: "1em",
+            position: "absolute",
+            bottom: 4,
+            right: 4,
+            display: "none",
+            zIndex: 90,
+        };
+    },
+}));
 
 async function calculateRidersStatus() {
     const assignments = await DataStore.query(models.TaskAssignee, (a) =>
@@ -27,6 +52,37 @@ async function calculateRidersStatus() {
         )
         .map((a) => a.assignee);
     return convertListDataToObject(activeRidersFiltered);
+}
+
+function LeftArrow() {
+    const { isFirstItemVisible, isLastItemVisible, scrollPrev } =
+        React.useContext(VisibilityContext);
+
+    if (isFirstItemVisible && isLastItemVisible) {
+        return null;
+    }
+
+    return (
+        <IconButton disabled={isFirstItemVisible} onClick={() => scrollPrev()}>
+            <ArrowBackIosIcon>Left</ArrowBackIosIcon>
+        </IconButton>
+    );
+}
+
+function RightArrow() {
+    const { isLastItemVisible, isFirstItemVisible, scrollNext } =
+        React.useContext(VisibilityContext);
+
+    if (isFirstItemVisible && isLastItemVisible) {
+        return null;
+    }
+    return (
+        <IconButton disabled={isLastItemVisible} onClick={() => scrollNext()}>
+            <ArrowForwardIosIcon sx={{ height: "100%" }}>
+                Right
+            </ArrowForwardIosIcon>
+        </IconButton>
+    );
 }
 
 function ActiveRidersChips() {
@@ -133,60 +189,57 @@ function ActiveRidersChips() {
                         updateRiderHome(updatingRider);
                 }}
             />
-            <Stack sx={{ padding: 1 }} direction={"row"} spacing={2}>
-                <TransitionGroup>
-                    {Object.values(activeRiders).map((rider) => {
-                        if (rider.profilePictureThumbnailURL) {
-                            return (
-                                <Slide
+            <ScrollMenu
+                alignItems="center"
+                LeftArrow={LeftArrow}
+                RightArrow={RightArrow}
+            >
+                {Object.values(activeRiders).map((rider) => {
+                    if (rider.profilePictureThumbnailURL) {
+                        return (
+                            <Box
+                                itemId={rider.id}
+                                sx={{ margin: 0.5 }}
+                                key={rider.id}
+                            >
+                                <Chip
+                                    onClick={() => {
+                                        setUpdatingRider(rider.id);
+                                        timeSet.current = new Date();
+                                    }}
+                                    avatar={
+                                        <Avatar
+                                            alt={rider.displayName}
+                                            src={
+                                                rider.profilePictureThumbnailURL
+                                            }
+                                        />
+                                    }
+                                    label={rider.displayName}
+                                />
+                            </Box>
+                        );
+                    } else {
+                        return (
+                            <Box
+                                itemId={rider.id}
+                                sx={{ margin: 0.5 }}
+                                key={rider.id}
+                            >
+                                <Chip
                                     key={rider.id}
-                                    direction="right"
-                                    timeout={animate.current ? 100 : 0}
-                                    mountOnEnter
-                                    unmountOnExit
-                                >
-                                    <Chip
-                                        sx={{ marginRight: 1 }}
-                                        onClick={() => {
-                                            setUpdatingRider(rider.id);
-                                            timeSet.current = new Date();
-                                        }}
-                                        avatar={
-                                            <Avatar
-                                                alt={rider.displayName}
-                                                src={
-                                                    rider.profilePictureThumbnailURL
-                                                }
-                                            />
-                                        }
-                                        label={rider.displayName}
-                                    />
-                                </Slide>
-                            );
-                        } else {
-                            return (
-                                <Slide
-                                    key={rider.id}
-                                    timeout={animate.current ? 100 : 0}
-                                    direction="right"
-                                    mountOnEnter
-                                    unmountOnExit
-                                >
-                                    <Chip
-                                        sx={{ marginRight: 1 }}
-                                        onClick={() => {
-                                            setUpdatingRider(rider.id);
-                                            timeSet.current = new Date();
-                                        }}
-                                        key={rider.id}
-                                        label={rider.name}
-                                    />
-                                </Slide>
-                            );
-                        }
-                    })}
-                </TransitionGroup>
-            </Stack>
+                                    itemId={rider.id}
+                                    onClick={() => {
+                                        setUpdatingRider(rider.id);
+                                        timeSet.current = new Date();
+                                    }}
+                                    label={rider.name}
+                                />
+                            </Box>
+                        );
+                    }
+                })}
+            </ScrollMenu>
         </React.Fragment>
     );
 }
