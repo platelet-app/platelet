@@ -7,7 +7,9 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
 import TasksGridColumn from "./TasksGridColumn";
-import { tasksStatus } from "../../../apiConsts";
+import { tasksStatus, userRoles } from "../../../apiConsts";
+import { getRoleView } from "../../../redux/Selectors";
+import { useSelector } from "react-redux";
 
 const getColumnTitle = (key) => {
     if (key.includes(tasksStatus.new)) return "New".toUpperCase();
@@ -56,6 +58,16 @@ function TasksGrid(props) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
+    const roleView = useSelector(getRoleView);
+
+    let justifyContent = "space-evenly";
+    if (isSm) {
+        justifyContent = "center";
+    } else if (roleView && roleView.toUpperCase() === userRoles.rider) {
+        justifyContent = "flex-start";
+    } else if (isMd) {
+        justifyContent = "flex-start";
+    }
 
     return (
         <>
@@ -63,9 +75,7 @@ function TasksGrid(props) {
                 container
                 spacing={2}
                 direction={"row"}
-                justifyContent={
-                    isSm ? "center" : isMd ? "flex-start" : "space-evenly"
-                }
+                justifyContent={justifyContent}
                 alignItems={"stretch"}
             >
                 {[
