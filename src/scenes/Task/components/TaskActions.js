@@ -236,14 +236,23 @@ function TaskActions(props) {
                                 direction="column"
                             >
                                 {Object.entries(fields).map(([key, value]) => {
+                                    const disabled =
+                                        isFetching || checkDisabled(key);
                                     return (
                                         <Stack
                                             justifyContent="space-between"
                                             direction="row"
                                         >
                                             <Typography
+                                                onClick={() => {
+                                                    if (disabled) return;
+                                                    onClickToggle(key);
+                                                }}
                                                 sx={{
-                                                    color: checkDisabled(key)
+                                                    cursor: disabled
+                                                        ? "default"
+                                                        : "pointer",
+                                                    color: disabled
                                                         ? "gray"
                                                         : "text.primary",
                                                 }}
