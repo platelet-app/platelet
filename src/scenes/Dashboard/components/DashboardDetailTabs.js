@@ -104,7 +104,7 @@ export function DashboardDetailTabs(props) {
             id="create-task-button"
             disabled={
                 !dataStoreReadyStatus ||
-                (roleView && roleView === userRoles.rider.toLowerCase())
+                (roleView && roleView.toUpperCase() === userRoles.rider)
             }
             onClick={() => addTask(whoami ? whoami.id : null)}
         >
@@ -169,7 +169,11 @@ export function DashboardDetailTabs(props) {
                 >
                     <ArrowDropDownIcon />
                 </IconButton>
-                <Hidden smDown>{addClearButton}</Hidden>
+                <Hidden smDown>
+                    {["ALL", userRoles.coordinator].includes(
+                        roleView.toUpperCase()
+                    ) && addClearButton}
+                </Hidden>
                 <Menu
                     id="role-menu"
                     anchorEl={anchorElRoleMenu}
