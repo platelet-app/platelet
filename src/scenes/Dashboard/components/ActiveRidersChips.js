@@ -191,8 +191,12 @@ function ActiveRidersChips() {
             />
             <ScrollMenu
                 alignItems="center"
-                LeftArrow={LeftArrow}
-                RightArrow={RightArrow}
+                LeftArrow={
+                    !activeRiders || _.isEmpty(activeRiders) ? null : LeftArrow
+                }
+                RightArrow={
+                    !activeRiders || _.isEmpty(activeRiders) ? null : RightArrow
+                }
             >
                 {Object.values(activeRiders).map((rider) => {
                     if (rider.profilePictureThumbnailURL) {
