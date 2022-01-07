@@ -63,7 +63,7 @@ function TasksGrid(props) {
     let justifyContent = "space-evenly";
     if (isSm) {
         justifyContent = "center";
-    } else if (roleView && roleView.toUpperCase() === userRoles.rider) {
+    } else if (roleView && roleView === userRoles.rider) {
         justifyContent = "flex-start";
     } else if (isMd) {
         justifyContent = "flex-start";

@@ -57,7 +57,7 @@ function viewMode(state = null, action) {
     }
 }
 
-function roleView(state = "all", action) {
+function roleView(state = "ALL", action) {
     switch (action.type) {
         case SET_ROLE_VIEW:
             return action.data;

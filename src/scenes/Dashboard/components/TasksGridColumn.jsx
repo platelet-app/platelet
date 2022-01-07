@@ -13,13 +13,14 @@ import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
 import {
     dataStoreReadyStatusSelector,
+    getRoleView,
     getWhoami,
 } from "../../../redux/Selectors";
 import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
-import { tasksStatus } from "../../../apiConsts";
+import { tasksStatus, userRoles } from "../../../apiConsts";
 import moment from "moment";
 import Box from "@mui/material/Box";
 
@@ -87,7 +88,7 @@ function TasksGridColumn(props) {
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
-    const roleView = useSelector((state) => state.roleView);
+    const roleView = useSelector(getRoleView);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
@@ -139,7 +140,7 @@ function TasksGridColumn(props) {
                     models.TaskAssignee
                 );
                 let tasksResult = [];
-                if (roleView.toUpperCase() === "ALL") {
+                if (roleView === "ALL") {
                     if (isCompletedTab) {
                         tasksResult = await DataStore.query(
                             models.Task,
@@ -180,7 +181,7 @@ function TasksGridColumn(props) {
                 } else {
                     const assignments = (
                         await DataStore.query(models.TaskAssignee, (a) =>
-                            a.role("eq", roleView.toUpperCase())
+                            a.role("eq", roleView)
                         )
                     ).filter((a) => a.assignee.id === whoami.id);
 
@@ -409,7 +410,7 @@ function TasksGridColumn(props) {
                                         !!task.relayNext &&
                                         props.showTasks === null &&
                                         !props.hideRelayIcons &&
-                                        roleView !== "rider"
+                                        roleView !== userRoles.rider
                                             ? show
                                             : hide
                                     }

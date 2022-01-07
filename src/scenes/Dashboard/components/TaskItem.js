@@ -82,9 +82,7 @@ function TaskItem(props) {
             props.task && props.task.assignees
                 ? Object.values(props.task.assignees).filter((assignment) => {
                       const actualRole =
-                          roleView.toLowerCase() === "all"
-                              ? userRoles.coordinator
-                              : roleView;
+                          roleView === "ALL" ? userRoles.coordinator : roleView;
                       if (
                           assignment.role.toLowerCase() !==
                               actualRole.toLowerCase() ||

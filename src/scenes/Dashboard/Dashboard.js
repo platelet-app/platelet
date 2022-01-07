@@ -17,6 +17,7 @@ import {
 import {
     dashboardTabIndexSelector,
     dataStoreReadyStatusSelector,
+    getRoleView,
     getWhoami,
 } from "../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../apiConsts";
@@ -62,7 +63,7 @@ function Dashboard() {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const [postPermission, setPostPermission] = useState(true);
-    const roleView = useSelector((state) => state.roleView);
+    const roleView = useSelector(getRoleView);
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
 
     function setInitialRoleView() {
@@ -70,16 +71,16 @@ function Dashboard() {
             const savedRoleMode = getDashboardRoleMode();
             if (
                 whoami.roles.includes(savedRoleMode) ||
-                (savedRoleMode === "all" &&
-                    whoami.roles.includes("COORDINATOR"))
+                (savedRoleMode === "ALL" &&
+                    whoami.roles.includes(userRoles.coordinator))
             ) {
                 dispatch(setRoleView(savedRoleMode));
-            } else if (whoami.roles.includes("COORDINATOR")) {
-                dispatch(setRoleView("coordinator"));
-                saveDashboardRoleMode("coordinator");
-            } else if (whoami.roles.includes("RIDER")) {
-                dispatch(setRoleView("rider"));
-                saveDashboardRoleMode("rider");
+            } else if (whoami.roles.includes(userRoles.coordinator)) {
+                dispatch(setRoleView(userRoles.coordinator));
+                saveDashboardRoleMode(userRoles.coordinator);
+            } else if (whoami.roles.includes(userRoles.rider)) {
+                dispatch(setRoleView(userRoles.rider));
+                saveDashboardRoleMode(userRoles.rider);
             }
         }
     }
@@ -91,12 +92,12 @@ function Dashboard() {
                 <Hidden mdUp>
                     <DashboardDetailTabs />
                 </Hidden>
-                {[userRoles.coordinator.toLowerCase(), "all"].includes(
-                    roleView.toLowerCase()
-                ) && <ActiveRidersChips />}
+                {[userRoles.coordinator, "ALL"].includes(roleView) && (
+                    <ActiveRidersChips />
+                )}
                 <TasksGrid
                     modalView={"edit"}
-                    hideRelayIcons={roleView === "rider"}
+                    hideRelayIcons={roleView === userRoles.rider}
                     hideAddButton={!postPermission}
                     excludeColumnList={
                         dashboardTabIndex === 1
@@ -106,7 +107,9 @@ function Dashboard() {
                                   tasksStatus.pickedUp,
                               ]
                             : [
-                                  roleView === "rider" ? tasksStatus.new : "",
+                                  roleView === userRoles.rider
+                                      ? tasksStatus.new
+                                      : "",
                                   tasksStatus.droppedOff,
                                   tasksStatus.cancelled,
                                   tasksStatus.rejected,
@@ -115,7 +118,7 @@ function Dashboard() {
                 />
             </Paper>
             <Hidden smUp>
-                {roleView && roleView === userRoles.rider.toLowerCase() ? (
+                {roleView && roleView === userRoles.rider ? (
                     <></>
                 ) : (
                     <AddClearFab />

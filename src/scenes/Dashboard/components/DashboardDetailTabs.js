@@ -104,7 +104,7 @@ export function DashboardDetailTabs(props) {
             id="create-task-button"
             disabled={
                 !dataStoreReadyStatus ||
-                (roleView && roleView.toUpperCase() === userRoles.rider)
+                (roleView && roleView === userRoles.rider)
             }
             onClick={() => addTask(whoami ? whoami.id : null)}
         >
@@ -170,9 +170,8 @@ export function DashboardDetailTabs(props) {
                     <ArrowDropDownIcon />
                 </IconButton>
                 <Hidden smDown>
-                    {["ALL", userRoles.coordinator].includes(
-                        roleView.toUpperCase()
-                    ) && addClearButton}
+                    {["ALL", userRoles.coordinator].includes(roleView) &&
+                        addClearButton}
                 </Hidden>
                 <Menu
                     id="role-menu"
@@ -191,9 +190,9 @@ export function DashboardDetailTabs(props) {
                         }
                         onClick={() => {
                             setAnchorElRoleMenu(null);
-                            if (roleView !== "all") {
-                                dispatch(setRoleView("all"));
-                                saveDashboardRoleMode("all");
+                            if (roleView !== "ALL") {
+                                dispatch(setRoleView("ALL"));
+                                saveDashboardRoleMode("ALL");
                             }
                         }}
                     >
@@ -207,9 +206,9 @@ export function DashboardDetailTabs(props) {
                         }
                         onClick={() => {
                             setAnchorElRoleMenu(null);
-                            if (roleView !== "coordinator") {
-                                dispatch(setRoleView("coordinator"));
-                                saveDashboardRoleMode("coordinator");
+                            if (roleView !== userRoles.coordinator) {
+                                dispatch(setRoleView(userRoles.coordinator));
+                                saveDashboardRoleMode(userRoles.coordinator);
                             }
                         }}
                     >
@@ -221,9 +220,9 @@ export function DashboardDetailTabs(props) {
                         }
                         onClick={() => {
                             setAnchorElRoleMenu(null);
-                            if (roleView !== "rider") {
-                                dispatch(setRoleView("rider"));
-                                saveDashboardRoleMode("rider");
+                            if (roleView !== userRoles.rider) {
+                                dispatch(setRoleView(userRoles.rider));
+                                saveDashboardRoleMode(userRoles.rider);
                             }
                         }}
                     >
