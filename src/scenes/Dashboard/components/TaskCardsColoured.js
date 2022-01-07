@@ -6,12 +6,11 @@ import Moment from "react-moment";
 import CardItem from "../../../components/CardItem";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
-import { Avatar, Divider, Stack, Tooltip, Typography } from "@mui/material";
+import { Divider, Stack, Tooltip, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { StyledCard } from "../../../styles/common";
 import Badge from "@mui/material/Badge";
 import MessageIcon from "@mui/icons-material/Message";
-import { styled } from "@mui/material/styles";
 
 const colourBarPercent = "90%";
 

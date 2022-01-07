@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Skeleton, Stack, Typography } from "@mui/material";
+import { Divider, Skeleton, Stack, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import clsx from "clsx";
@@ -23,6 +23,7 @@ import GetError from "../../../ErrorComponents/GetError";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import moment from "moment";
 import Box from "@mui/material/Box";
+import DateStampDivider from "./TimeStampDivider";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -54,13 +55,6 @@ const useStyles = makeStyles((theme) => ({
     },
     gridItem: {
         width: "100%",
-    },
-    date: {
-        fontStyle: "italic",
-        color: "gray",
-        "&:hover": {
-            color: theme.palette.mode === "dark" ? "white" : "black",
-        },
     },
 }));
 
@@ -383,20 +377,13 @@ function TasksGridColumn(props) {
                             >
                                 <Box
                                     display="flex"
+                                    justifyContent="center"
                                     alignItems="center"
                                     height={35}
+                                    sx={{ width: "100%" }}
                                 >
                                     {displayDate && (
-                                        <Typography className={classes.date}>
-                                            {moment(lastTime).calendar(null, {
-                                                lastDay: "[Yesterday]",
-                                                sameDay: "[Today]",
-                                                nextDay: "[Tomorrow]",
-                                                lastWeek: "[last] dddd",
-                                                nextWeek: "dddd",
-                                                sameElse: "L",
-                                            })}
-                                        </Typography>
+                                        <DateStampDivider date={lastTime} />
                                     )}
                                 </Box>
                                 <TaskItem
