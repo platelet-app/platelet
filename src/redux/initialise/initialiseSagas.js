@@ -110,12 +110,39 @@ async function populateFakeData() {
             value: value.default,
         }))
     );
-    const checker = await DataStore.query(models.User);
-    if (checker.length === 0) {
-        const responsibilities = await DataStore.query(
-            models.RiderResponsibility
+    const responsibilities = await DataStore.query(models.RiderResponsibility);
+    const offlineUser = await DataStore.query(models.User, (u) =>
+        u.username("eq", "offline")
+    );
+    if (offlineUser.length === 0) {
+        const profilePicture = profilePicsArray.pop();
+        let thumbnail = null;
+        let profilePicURL = null;
+        if (profilePicture) {
+            profilePicURL = profilePicture.value;
+            const extension = path.extname(profilePicURL);
+            const baseName = path.basename(profilePicture.key, extension);
+            const thumbnailGet =
+                profilePictureThumbnails[`${baseName}_thumbnail${extension}`];
+
+            thumbnail = thumbnailGet ? thumbnailGet.default : "";
+        }
+        await DataStore.save(
+            new models.User({
+                name: "Demo User",
+                username: "offline",
+                userRiderResponsibilityId:
+                    _.sample(responsibilities).id || null,
+                displayName: "Demo User",
+                dateOfBirth: faker.date.past(50, new Date()).toISOString(),
+                profilePictureURL: profilePicURL,
+                profilePictureThumbnailURL: thumbnail,
+                roles: [userRoles.rider, userRoles.coordinator, userRoles.user],
+            })
         );
-        let offlineUserDone = false;
+    }
+    const checker = await DataStore.query(models.User);
+    if (checker.length < 2) {
         for (const i in _.range(10)) {
             const generatedName = faker.name.findName();
             let userToSave = {
@@ -138,25 +165,6 @@ async function populateFakeData() {
                 roles: [userRoles.rider, userRoles.coordinator, userRoles.user],
                 active: 1,
             };
-            if (
-                !offlineUserDone &&
-                process.env.REACT_APP_DEMO_MODE === "true"
-            ) {
-                userToSave = {
-                    ...userToSave,
-                    name: "Demo User",
-                    username: "offline",
-                    userRiderResponsibilityId:
-                        _.sample(responsibilities).id || null,
-                    displayName: "Demo User",
-                    roles: [
-                        userRoles.rider,
-                        userRoles.coordinator,
-                        userRoles.user,
-                    ],
-                };
-                offlineUserDone = true;
-            }
             const profilePicture = profilePicsArray.pop();
             let thumbnail = null;
             let profilePicURL = null;
