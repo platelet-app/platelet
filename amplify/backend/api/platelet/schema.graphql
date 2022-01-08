@@ -1,4 +1,4 @@
-type User @auth @model {
+type User @auth(rules: [{ allow: groups, groups: ["users"] }]) @model {
   id: ID!
   username: String!
   contact: AddressAndContactDetails @connection
@@ -16,14 +16,14 @@ type User @auth @model {
   active: Int!
 }
 
-type Group @auth @model {
+type Group @auth(rules: [{ allow: groups, groups: ["users"] }]) @model {
   id: ID!
   taskGroupId: ID
   name: String
   users: [User] @connection(name: "GroupMembers")
 }
 
-type Vehicle @auth @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
+type Vehicle @auth(rules: [{ allow: groups, groups: ["users"] }]) @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   id: ID!
   assignedUserID: ID
   name: String!
@@ -35,7 +35,7 @@ type Vehicle @auth @model @key(name: "byAssignedUser", fields: ["assignedUserID"
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type AddressAndContactDetails @auth @model {
+type AddressAndContactDetails @auth(rules: [{ allow: groups, groups: ["users"] }]) @model {
   id: ID!
   name: String
   telephoneNumber: String
@@ -53,7 +53,7 @@ type AddressAndContactDetails @auth @model {
   what3words: String
 }
 
-type Deliverable @auth @model {
+type Deliverable @auth(rules: [{ allow: groups, groups: ["users"] }]) @model {
   id: ID!
   deliverableType: DeliverableType! @connection
   taskDeliverablesId: ID
@@ -64,7 +64,7 @@ type Deliverable @auth @model {
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type Location @auth @model {
+type Location @auth(rules: [{ allow: groups, groups: ["users"] }]) @model {
   id: ID!
   name: String
   listed: Int
@@ -86,7 +86,7 @@ type Location @auth @model {
 
 type Task
   @model
-  @auth
+  @auth(rules: [{ allow: groups, groups: ["users"] }])
   @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
   @key(name: "byPickUpLocation", fields: ["pickUpLocationId",])
   @key(name: "byDropOffLocation", fields: ["dropOffLocationId",])
@@ -118,7 +118,7 @@ type Task
 
 type TaskAssignee
 @model(queries: null)
-@auth
+@auth(rules: [{ allow: groups, groups: ["users"] }])
 @key(name: "byTask", fields: ["taskId", "assigneeId"])
 @key(name: "byAssignee", fields: ["assigneeId", "taskId"])
 {
@@ -130,15 +130,15 @@ type TaskAssignee
   assignee: User! @connection(fields: ["assigneeId"])
 }
 
-type Comment @auth @model @key(name: "byParent", fields: ["parentId"]) {
+type Comment @auth(rules: [{ allow: groups, groups: ["users"] }]) @model @key(name: "byParent", fields: ["parentId"]) {
   id: ID!
-  parentId: ID!
-  body: String!
-  author: User! @connection
+  parentId: ID
+  body: String
+  author: User @connection
   visibility: CommentVisibility
 }
 
-type DeliverableType @auth @model {
+type DeliverableType @auth(rules: [{ allow: groups, groups: ["users"] }]) @model {
   id: ID!
   label: String!
   icon: DeliverableTypeIcon
@@ -153,7 +153,7 @@ enum DeliverableTypeIcon {
   OTHER
 }
 
-type RiderResponsibility @auth @model {
+type RiderResponsibility @auth(rules: [{ allow: groups, groups: ["users"] }]) @model {
   id: ID!
   label: String!
 }
