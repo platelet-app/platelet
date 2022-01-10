@@ -28,7 +28,7 @@ export const Step3 = ({
         <Scrollbars 
             autoHide 
             autoHeight
-            autoHeightMin={450}
+            autoHeightMin={700}
             autoHeightMax={350}>
             <div className={classes.columnWrapper}>
                 <div className={classes.block}>

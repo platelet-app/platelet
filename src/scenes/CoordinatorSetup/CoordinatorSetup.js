@@ -45,7 +45,7 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
   }));
 
-export const CoordinatorSetup = ({ show, onClose }) => {
+export const CoordinatorSetup = ({ onClose }) => {
     const classes = setupStyles();
     
     return (

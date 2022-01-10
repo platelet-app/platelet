@@ -2,7 +2,7 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import { Scrollbars } from 'react-custom-scrollbars';
 
-import ItemSelector from './components/ItemSelector'
+// import ItemSelector from './components/ItemSelector'
 import PrioritySelect from "../../scenes/Task/components/PrioritySelect";
 
 import { Styles } from './styles'
@@ -18,7 +18,7 @@ export const Step2 = ({ values, onChange, onSelect, taskUUID }) => {
         <div className={classes.columnWrapper}>
           <div classes={classes.block}>
             <Typography variant="h6" gutterBottom >{"Select number of items and priority"}</Typography>
-            <ItemSelector taskUUID={taskUUID}/>
+            {/* <ItemSelector taskUUID={taskUUID}/> */}
 
             <div>
               <PrioritySelect />

@@ -3,15 +3,12 @@ import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 // import { useDispatch, useSelector } from "react-redux";
 import makeStyles from "@mui/styles/makeStyles";
-import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { v4 as uuidv4 } from "uuid";
-
-import PersonIcon from '@mui/icons-material/Person';
 
 import { encodeUUID } from "../../utilities";
 // import { addTaskRequest } from "../../redux/tasks/TasksActions";
@@ -20,7 +17,6 @@ import { encodeUUID } from "../../utilities";
 //   addDeliverableRequest, updateDeliverableRequest,
 // } from "../../redux/deliverables/DeliverablesActions";
 
-import { CustomizedDialogs } from '../../components/CustomizedDialogs'
 import { Step1, Step2, Step3, Step4, Step5 } from './index'
 
 
@@ -63,27 +59,23 @@ const guidedSetupStyles = makeStyles((theme) => ({
     flexDirection: "column",
     height: "100%"
   },
-  appBar: {
-    boxShadow: "none",
-  },
-  tabs: {
-    "& .MuiTabs-flexContainer": {
-      justifyContent: "space-around"
-    },
-    backgroundColor: "white"
-  },
   tabButton: {
-    "& .MuiTab-wrapper": {
-      justifyContent: "flex-start",
-      height: "100%",
-    },
-    display: "grid",
-    justifyItems: "center",
-    alignItems: "self-start",
-    gridTemplateRows: "45px 1fr",
-    color: "black",
-    minWidth: "80px",
     borderBottom: "solid rgba(0, 0, 0, 0.55) 5px",
+    color: 'black',
+    opacity: 0.7,
+    margin: '0 20px',
+    '&:hover': {
+      color: '#40a9ff',
+      opacity: 1,
+    },
+    '&.Mui-selected': {
+      fontWeight: theme.typography.fontWeightMedium,
+      borderBottom: "solid rgba(0, 0, 0, 1) 5px",
+      color: 'black',
+    },
+    '&.Mui-focusVisible': {
+      backgroundColor: '#d1eaff',
+    },
   },
   indicator: {
     backgroundColor: "black",
@@ -94,14 +86,21 @@ const guidedSetupStyles = makeStyles((theme) => ({
     marginBottom: "10px",
   },
   tabContent: {
-    flexGrow: 1,
+    minHeight: '800px',
     backgroundColor: theme.palette.background.paper,
+  },
+  btnWrapper: {
+    alignSelf: "end",
+    display: 'flex',
+    flexDirection: 'column',
   },
   btn: {
     alignSelf: "end",
-    height: "50px",
-    width: "220px",
+    margin: '5px 5px',
     border: "1px solid #1976d2",
+  },
+  previousNextBtn: {
+    alignSelf: "end",
   }
 }));
 
@@ -240,19 +239,18 @@ export const GuidedSetup = ({ show, onClose }) => {
     return (
         <div className={classes.wrapper}>
             <div className={classes.tabContent}>
-                <AppBar position="static">
-                    <Tabs
-                        value={value}
-                        onChange={handleChange}
-                        aria-label="simple tabs example"
-                    >
-                        <Tab label="Step 1" {...a11yProps(0)} />
-                        <Tab label="Step 2" {...a11yProps(1)} />
-                        <Tab label="Step 3" {...a11yProps(2)} />
-                        <Tab label="Step 4" {...a11yProps(3)} />
-                        <Tab label="Step 5" {...a11yProps(4)} />
-                    </Tabs>
-                </AppBar>
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    aria-label="guided-setup-5-tabs"
+                    centered
+                >
+                    <Tab label="Step 1" {...a11yProps(0)} className={classes.tabButton}/>
+                    <Tab label="Step 2" {...a11yProps(1)} className={classes.tabButton}/>
+                    <Tab label="Step 3" {...a11yProps(2)} className={classes.tabButton}/>
+                    <Tab label="Step 4" {...a11yProps(3)} className={classes.tabButton}/>
+                    <Tab label="Step 5" {...a11yProps(4)} className={classes.tabButton}/>
+                </Tabs>
                 <TabPanel value={value} index={0}>
                     <Step1
                         values={formValues}
@@ -288,16 +286,16 @@ export const GuidedSetup = ({ show, onClose }) => {
                 <Button
                     autoFocus
                     onClick={onShowTaskOverview}
-                    color="primary"
+                    className={classes.btn}
                 >
                     Skip to overview
                 </Button>
-                <div>
+                <div className={classes.previousNextBtn}>
                     {value > 0 && (
                         <Button
                             autoFocus
                             onClick={() => setValue((value) => value - 1)}
-                            color="primary"
+                            className={classes.btn}
                         >
                             Previous
                         </Button>
@@ -306,7 +304,7 @@ export const GuidedSetup = ({ show, onClose }) => {
                         <Button
                             autoFocus
                             onClick={() => setValue((value) => value + 1)}
-                            color="primary"
+                            className={classes.btn}
                         >
                             Next
                         </Button>
@@ -317,7 +315,7 @@ export const GuidedSetup = ({ show, onClose }) => {
                                 onShowTaskOverview();
                                 onCloseForm();
                             }}
-                            color="primary"
+                            className={classes.btn}
                         >
                             Finish
                         </Button>
