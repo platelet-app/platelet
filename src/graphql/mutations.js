@@ -905,6 +905,7 @@ export const createDeliverable = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -995,6 +996,7 @@ export const createDeliverable = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1013,6 +1015,7 @@ export const createDeliverable = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1107,6 +1110,7 @@ export const updateDeliverable = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -1197,6 +1201,7 @@ export const updateDeliverable = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1215,6 +1220,7 @@ export const updateDeliverable = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1309,6 +1315,7 @@ export const deleteDeliverable = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -1399,6 +1406,7 @@ export const deleteDeliverable = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1417,6 +1425,7 @@ export const deleteDeliverable = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1518,6 +1527,7 @@ export const createLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1540,6 +1550,7 @@ export const createLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1626,6 +1637,7 @@ export const updateLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1648,6 +1660,7 @@ export const updateLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1734,6 +1747,7 @@ export const deleteLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1756,6 +1770,7 @@ export const deleteLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1874,6 +1889,7 @@ export const createTask = /* GraphQL */ `
       timeDroppedOff
       timeCancelled
       timeRejected
+      timeRiderHome
       requesterContact {
         id
         name
@@ -2071,6 +2087,7 @@ export const createTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -2161,6 +2178,7 @@ export const createTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2179,6 +2197,7 @@ export const createTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2228,6 +2247,7 @@ export const createTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -2318,6 +2338,7 @@ export const createTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2336,6 +2357,7 @@ export const createTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2481,6 +2503,7 @@ export const updateTask = /* GraphQL */ `
       timeDroppedOff
       timeCancelled
       timeRejected
+      timeRiderHome
       requesterContact {
         id
         name
@@ -2678,6 +2701,7 @@ export const updateTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -2768,6 +2792,7 @@ export const updateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2786,6 +2811,7 @@ export const updateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2835,6 +2861,7 @@ export const updateTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -2925,6 +2952,7 @@ export const updateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2943,6 +2971,7 @@ export const updateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3088,6 +3117,7 @@ export const deleteTask = /* GraphQL */ `
       timeDroppedOff
       timeCancelled
       timeRejected
+      timeRiderHome
       requesterContact {
         id
         name
@@ -3285,6 +3315,7 @@ export const deleteTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -3375,6 +3406,7 @@ export const deleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3393,6 +3425,7 @@ export const deleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3442,6 +3475,7 @@ export const deleteTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -3532,6 +3566,7 @@ export const deleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3550,6 +3585,7 @@ export const deleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3647,6 +3683,7 @@ export const createTaskAssignee = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -3737,6 +3774,7 @@ export const createTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3755,6 +3793,7 @@ export const createTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3891,6 +3930,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -3981,6 +4021,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3999,6 +4040,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -4135,6 +4177,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
           id
           name
@@ -4225,6 +4268,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -4243,6 +4287,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority

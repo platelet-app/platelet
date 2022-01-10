@@ -162,9 +162,9 @@ export declare class Vehicle {
 
 export declare class Comment {
   readonly id: string;
-  readonly parentId: string;
-  readonly body: string;
-  readonly author: User;
+  readonly parentId?: string;
+  readonly body?: string;
+  readonly author?: User;
   readonly visibility?: CommentVisibility | keyof typeof CommentVisibility;
   readonly createdAt?: string;
   readonly updatedAt?: string;
