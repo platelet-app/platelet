@@ -14,6 +14,9 @@ import moment from "moment";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const useStyles = makeStyles({
+    button: {
+        height: 9,
+    },
     label: {
         color: "gray",
     },
@@ -88,9 +91,12 @@ function TimePicker(props) {
                     </Tooltip>
                     <Tooltip title={"Edit"}>
                         <IconButton
+                            className={classes.button}
                             aria-label={"Edit"}
+                            edge={"end"}
                             disabled={props.disabled}
                             onClick={toggleEditMode}
+                            size="large"
                         >
                             <EditIcon />
                         </IconButton>
@@ -99,8 +105,11 @@ function TimePicker(props) {
                         <Tooltip title={"Clear"}>
                             <IconButton
                                 aria-label={"Clear"}
+                                className={classes.button}
+                                edge={"end"}
                                 disabled={props.disabled}
                                 onClick={onClear}
+                                size="large"
                             >
                                 <CancelIcon />
                             </IconButton>
