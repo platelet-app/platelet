@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
-import { TextField } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "./TextFields";
@@ -12,6 +11,10 @@ const useStyles = makeStyles((theme) => ({
         [theme.breakpoints.down("lg")]: {
             maxWidth: 250,
         },
+    },
+    enabled: {
+        background:
+            theme.palette.mode === "dark" ? "rgb(70, 70, 70)" : "yellow",
     },
     label: {
         fontStyle: "italic",
@@ -82,7 +85,11 @@ function ClickableTextField(props) {
         <Typography
             noWrap
             aria-label={label}
-            className={clsx(classes.hoverHighlight, classes.text)}
+            className={clsx(
+                classes.hoverHighlight,
+                classes.enabled,
+                classes.text
+            )}
             align={"right"}
             onClick={toggleEditMode}
         >
@@ -104,6 +111,7 @@ function ClickableTextField(props) {
         return (
             <TextFieldUncontrolled
                 margin="dense"
+                variant="standard"
                 aria-labelledby={label}
                 className={clsx(classes.label, classes.text)}
                 tel={props.tel}
