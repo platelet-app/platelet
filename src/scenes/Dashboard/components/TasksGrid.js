@@ -213,7 +213,7 @@ function TasksGrid(props) {
                             <TasksGridColumn
                                 title={title}
                                 classes={classes}
-                                onAddTaskClick={() => props.onAddTaskClick()}
+                                onAddTaskClick={props.onAddTaskClick}
                                 onAddRelayClick={addRelay}
                                 deleteDisabled
                                 taskKey={taskKey}
