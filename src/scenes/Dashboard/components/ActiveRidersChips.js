@@ -2,7 +2,10 @@ import React, { useRef, useState, useEffect } from "react";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { useSelector } from "react-redux";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    getRoleView,
+} from "../../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { convertListDataToObject } from "../../../utilities";
 import { Avatar, Box, Chip, IconButton, Stack } from "@mui/material";
@@ -35,24 +38,6 @@ const useStyles = makeStyles((theme) => ({
         };
     },
 }));
-
-async function calculateRidersStatus() {
-    const assignments = await DataStore.query(models.TaskAssignee, (a) =>
-        a.role("eq", userRoles.rider)
-    );
-    const activeRidersFiltered = assignments
-        .filter(
-            (assignment) =>
-                assignment.task &&
-                ![
-                    tasksStatus.completed,
-                    tasksStatus.rejected,
-                    tasksStatus.cancelled,
-                ].includes(assignment.task.status)
-        )
-        .map((a) => a.assignee);
-    return convertListDataToObject(activeRidersFiltered);
-}
 
 function LeftArrow() {
     const { isFirstItemVisible, isLastItemVisible, scrollPrev } =
@@ -93,6 +78,25 @@ function ActiveRidersChips() {
     const assignmentsObserver = useRef({ unsubscribe: () => {} });
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
+    const roleView = useSelector(getRoleView);
+
+    async function calculateRidersStatus() {
+        const assignments = await DataStore.query(models.TaskAssignee, (a) =>
+            a.role("eq", userRoles.rider)
+        );
+        const activeRidersFiltered = assignments
+            .filter(
+                (assignment) =>
+                    assignment.task &&
+                    ![
+                        tasksStatus.completed,
+                        tasksStatus.rejected,
+                        tasksStatus.cancelled,
+                    ].includes(assignment.task.status)
+            )
+            .map((a) => a.assignee);
+        return convertListDataToObject(activeRidersFiltered);
+    }
 
     // debounce the call because multiple tasks are being updated at once
     const debouncedCalculateRidersStatus = _.debounce(
