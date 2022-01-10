@@ -20,6 +20,7 @@ import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation
 import AdminAddDeliverableType from "../scenes/AdminControl/Components/AdminAddDeliverableType";
 import AdminAddRiderResponsibility from "../scenes/AdminControl/Components/AdminAddRiderResponsibility";
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
+import { CoordinatorSetup } from "../scenes/CoordinatorSetup/CoordinatorSetup";
 
 function MainWindowContainer(props) {
     const styles = makeStyles((theme) => ({
@@ -157,6 +158,14 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("dashboard"));
                             return <TaskDialogCompact {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/coordinator_setup"
+                        render={(props) => {
+                            dispatch(setMenuIndex("dashboard"));
+                            return <CoordinatorSetup {...props} />;
                         }}
                     />
                     <Route component={NotFound} />

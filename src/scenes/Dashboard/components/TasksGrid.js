@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
-import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
 import TasksGridColumn from "./TasksGridColumn";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { getRoleView } from "../../../redux/Selectors";
@@ -54,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
 
 function TasksGrid(props) {
     const classes = useStyles();
-    const [showGuidedSetup, setShowGuidedSetup] = useState(false);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
@@ -105,10 +103,6 @@ function TasksGrid(props) {
                         );
                     })}
             </Grid>
-            <GuidedSetup
-                show={showGuidedSetup}
-                onClose={() => setShowGuidedSetup(false)}
-            />
         </>
     );
 }
