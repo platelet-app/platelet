@@ -24,6 +24,18 @@ const setupStyles = makeStyles((theme) => ({
         background: "white",
         padding: "20px 30px"
     },
+    leftSide: {
+        width: '60%',
+        [theme.breakpoints.down('md')]: {
+            width: '100%',
+        },
+    },
+    rightSide: {
+        width: '40%',
+        [theme.breakpoints.down('md')]: {
+            width: '100%',
+        },
+    }
   }));
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -42,17 +54,19 @@ export const CoordinatorSetup = ({ show, onClose }) => {
                 <Typography>{"Rider Job Activity"}</Typography>
             </Box>
             <Stack
-                divider={<Divider orientation="vertical" />}
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={{ xs: 1, sm: 2, md: 4 }}
+                divider={<Divider orientation={{ xs: 'horizontal', sm: 'horizontal', md: 'vertical', lg: 'vertical' }} />}
+                direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
+                spacing={2}
             >
-                <div>
+                <div className={classes.leftSide}>
                     <RiderJobActivity />
                     <EnhancedTable />
                 </div>
-                <div>
+
+                <div className={classes.rightSide}>
                     <GuidedSetup />
                 </div>
+
             </Stack> 
         </div>
     )

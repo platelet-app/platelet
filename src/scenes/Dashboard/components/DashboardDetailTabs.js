@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -57,6 +58,7 @@ function a11yProps(index) {
 }
 
 export function DashboardDetailTabs(props) {
+    console.log(props.taskUUID, 'taskUUID')
     const dispatch = useDispatch();
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(getWhoami);
@@ -98,18 +100,26 @@ export function DashboardDetailTabs(props) {
     );
 
     const addClearButton = !dashboardFilter ? (
-        <Button
-            variant="contained"
-            color="primary"
-            id="create-task-button"
-            disabled={
-                !dataStoreReadyStatus ||
-                (roleView && roleView === userRoles.rider)
-            }
-            onClick={() => addTask(whoami ? whoami.id : null)}
+        <Link
+            style={{ textDecoration: "none" }}
+            key={props.taskUUID}
+            to={{
+                pathname: `/coordinator_setup`,
+            }}
         >
-            Create New
-        </Button>
+            <Button
+                variant="contained"
+                color="primary"
+                id="create-task-button"
+                disabled={
+                    !dataStoreReadyStatus ||
+                    (roleView && roleView === userRoles.rider)
+                }
+                onClick={() => addTask(whoami ? whoami.id : null)}
+            >
+                Create New
+            </Button>
+        </Link>
     ) : (
         <Button
             variant="contained"
