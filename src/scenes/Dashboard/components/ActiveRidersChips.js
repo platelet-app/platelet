@@ -162,7 +162,6 @@ function ActiveRidersChips() {
     }, [dataStoreReadyStatus]);
 
     async function updateRiderHome(userId) {
-        console.log("updating rider home", userId);
         const allRiderAssignedTasks = (
             await DataStore.query(models.TaskAssignee, (a) =>
                 a.role("eq", userRoles.rider)
@@ -188,9 +187,11 @@ function ActiveRidersChips() {
                 onChangeTimeHome={(time) => (timeSet.current = time)}
                 userId={updatingRider}
                 onClose={() => setUpdatingRider(null)}
-                onSelect={(result) => {
-                    if (result && timeSet.current)
+                onSelect={() => {
+                    if (timeSet.current) {
+                        console.log("updating rider home", updatingRider);
                         updateRiderHome(updatingRider);
+                    }
                 }}
             />
             <ScrollMenu

@@ -283,8 +283,8 @@ function TaskActions(props) {
                         confirmationKey.current,
                         state.includes(confirmationKey.current)
                     )}
-                    onSelect={(confirmation) => {
-                        if (confirmation) onChange(confirmationKey.current);
+                    onConfirmation={() => {
+                        onChange(confirmationKey.current);
                     }}
                     onClose={() => setConfirmDialogOpen(false)}
                 >

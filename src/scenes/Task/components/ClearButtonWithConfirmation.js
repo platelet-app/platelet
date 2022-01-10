@@ -21,7 +21,7 @@ function ClearButtonWithConfirmation(props) {
     }
 
     function onSelect(result) {
-        if (result) props.onClear();
+        props.onClear();
         setOpen(false);
     }
 
@@ -32,7 +32,7 @@ function ClearButtonWithConfirmation(props) {
     return (
         <>
             <ConfirmationDialog
-                onSelect={onSelect}
+                onConfirmation={onSelect}
                 dialogTitle={"Are you sure?"}
                 onClose={handleClose}
                 open={open}
