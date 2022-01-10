@@ -4,18 +4,17 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
-import ClickableTextField from "../../../components/ClickableTextField";
 import TimePicker from "./TimePicker";
-import { Paper, Skeleton, Stack } from "@mui/material";
+import { Divider, IconButton, Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import { determineTaskStatus } from "../../../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import { saveTaskTimeWithKey } from "../utilities";
+import RequesterContact from "./RequesterContact";
 
 const useStyles = makeStyles({
     requesterContact: {
@@ -128,9 +127,6 @@ function TaskDetailsPanel(props) {
         props.onSelectPriority(priority);
     }
 
-    function onChangeRequesterContact(value) {
-        props.onChangeRequesterContact(value);
-    }
     if (errorState) {
         return <GetError />;
     } else if (isFetching) {
@@ -153,45 +149,35 @@ function TaskDetailsPanel(props) {
                             time={state.timeOfCall}
                         />
                     </LabelItemPair>
-                    <Typography>Requester contact:</Typography>
-                    <div className={classes.requesterContact}>
-                        <LabelItemPair label={"Name"}>
-                            <ClickableTextField
-                                onFinished={(value) =>
-                                    onChangeRequesterContact({
-                                        name: value,
-                                    })
-                                }
-                                value={
-                                    state.requesterContact
-                                        ? state.requesterContact.name
-                                        : null
-                                }
-                            />
-                        </LabelItemPair>
-                        <LabelItemPair label={"Tel"}>
-                            <ClickableTextField
-                                tel
-                                onFinished={(value) =>
-                                    onChangeRequesterContact({
-                                        telephoneNumber: value,
-                                    })
-                                }
-                                value={
-                                    state.requesterContact
-                                        ? state.requesterContact.telephoneNumber
-                                        : null
-                                }
-                            />
-                        </LabelItemPair>
-                    </div>
-                    <Typography>Priority:</Typography>
-                    <div className={classes.priority}>
+                    <Divider />
+                    <RequesterContact
+                        onChange={(value) =>
+                            props.onChangeRequesterContact(value)
+                        }
+                        telephoneNumber={
+                            state.requesterContact
+                                ? state.requesterContact.telephoneNumber
+                                : null
+                        }
+                        name={
+                            state.requesterContact
+                                ? state.requesterContact.name
+                                : null
+                        }
+                    />
+                    <Divider />
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                    >
+                        <Typography>Priority:</Typography>
                         <PrioritySelect
                             onSelect={onSelectPriority}
                             priority={state.priority}
                         />
-                    </div>
+                    </Stack>
+                    <Divider />
                     <LabelItemPair label={"Responsibility"}>
                         <Typography>
                             {state.riderResponsibility
