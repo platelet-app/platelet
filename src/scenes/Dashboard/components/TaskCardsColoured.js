@@ -3,15 +3,14 @@ import PropTypes from "prop-types";
 import "../../../App.css";
 import CardContent from "@mui/material/CardContent";
 import Moment from "react-moment";
-import Grid from "@mui/material/Grid";
 import CardItem from "../../../components/CardItem";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
-import { Tooltip } from "@mui/material";
+import { Divider, Stack, Tooltip, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { useSelector } from "react-redux";
 import { StyledCard } from "../../../styles/common";
-import { getWhoami } from "../../../redux/Selectors";
+import Badge from "@mui/material/Badge";
+import MessageIcon from "@mui/icons-material/Message";
 
 const colourBarPercent = "90%";
 
@@ -37,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     ACTIVE: generateClass(theme, "ACTIVE"),
     PICKED_UP: generateClass(theme, "PICKED_UP"),
     DROPPED_OFF: generateClass(theme, "DROPPED_OFF"),
+    COMPLETED: generateClass(theme, "COMPLETED"),
     CANCELLED: generateClass(theme, "CANCELLED"),
     REJECTED: generateClass(theme, "REJECTED"),
     itemTopBarContainer: {
@@ -44,22 +44,27 @@ const useStyles = makeStyles((theme) => ({
         height: 30,
         paddingBottom: 10,
     },
-    gridItem: {
-        width: "100%",
-        paddingRight: 20,
-    },
-    contextDots: {
-        zIndex: 100,
-        position: "relative",
-        bottom: 35,
-        left: 20,
+    divider: { width: "0%", margin: 4 },
+    typography: { fontSize: "14px" },
+    badgeCircle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 32,
+        height: 32,
+        borderRadius: "50%",
+        backgroundColor:
+            theme.palette.mode === "dark"
+                ? "rgba(0,0,0,0.4)"
+                : "rgba(255,255,255,0.5)",
     },
 }));
 
 const TaskCard = React.memo((props) => {
-    const whoami = useSelector(getWhoami);
+    const assigneesDisplayString = props.assignees
+        .map((assignee) => assignee.displayName)
+        .join(", ");
     const classes = useStyles();
-    const roleView = useSelector((state) => state.roleView);
     let pickUpTitle = "";
     if (props.pickUpLocation) {
         pickUpTitle = props.pickUpLocation.line1
@@ -82,100 +87,125 @@ const TaskCard = React.memo((props) => {
             ? props.dropOffLocation.ward
             : "";
     }
-    const hasRider = props.assignedRiders
-        ? !!props.assignedRiders.length
-        : false;
-
     const className = classes[props.status];
 
-    const coordAvatars = props.assignedCoordinators
-        ? ["coordinator", "all"].includes(roleView)
-            ? props.assignedCoordinators.filter((u) => u.id !== whoami.id)
-            : props.assignedCoordinators
-        : [];
-    const riderAvatars = props.assignedRiders
-        ? roleView === "rider"
-            ? props.assignedRiders.filter((u) => u.id !== whoami.id)
-            : props.assignedRiders
-        : [];
+    let priorityColor = "inherit";
+    if (props.priority === "HIGH") {
+        priorityColor = "red";
+    } else if (props.priority === "MEDIUM") {
+        priorityColor = "orange";
+    }
+
     const cardInnerContent = (
         <CardContent className={classes.cardContent}>
-            <Grid
-                container
+            <Stack
                 spacing={0}
-                alignItems={"flex-end"}
+                alignItems={"center"}
                 justifyContent={"flex-start"}
                 direction={"column"}
             >
-                <Grid
-                    container
-                    item
+                <Stack
                     className={classes.itemTopBarContainer}
                     direction={"row"}
                     justifyContent={"space-between"}
                     alignItems={"center"}
                 >
-                    <Grid item>
+                    {props.commentCount > 0 ? (
                         <Tooltip
-                            title={props.assignedCoordinatorsDisplayString}
+                            title={`${props.commentCount} ${
+                                props.commentCount === 1
+                                    ? "comment"
+                                    : "comments"
+                            }`}
+                            placement={"top"}
                         >
-                            <AvatarGroup>
-                                {coordAvatars.map((u) => (
-                                    <UserAvatar
-                                        key={u.id}
-                                        size={3}
-                                        userUUID={u.id}
-                                        displayName={u.displayName}
-                                        avatarURL={u.profilePictureThumbnailURL}
-                                    />
-                                ))}
-                            </AvatarGroup>
+                            <Badge color={"primary"}>
+                                <div className={classes.badgeCircle}>
+                                    <MessageIcon />
+                                </div>
+                            </Badge>
                         </Tooltip>
-                    </Grid>
-                    <Grid item>
-                        <Tooltip title={props.assignedRidersDisplayString}>
-                            <AvatarGroup>
-                                {riderAvatars.map((u) => (
-                                    <UserAvatar
-                                        key={u.id}
-                                        size={3}
-                                        userUUID={u.id}
-                                        displayName={u.displayName}
-                                        avatarURL={u.profilePictureThumbnailURL}
-                                    />
-                                ))}
-                            </AvatarGroup>
-                        </Tooltip>
-                    </Grid>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"Responsibility"}>
-                        {props.riderResponsibility}
-                    </CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"From"}>{pickUpTitle}</CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"Ward"}>{pickUpWard}</CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"To"}>{dropOffTitle}</CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"Ward"}>{dropOffWard}</CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"TOC"}>
-                        <Moment local calendar>
-                            {props.timeOfCall}
-                        </Moment>
-                    </CardItem>
-                </Grid>
-                <Grid className={classes.gridItem} item>
-                    <CardItem label={"Priority"}>{props.priority}</CardItem>
-                </Grid>
-            </Grid>
+                    ) : (
+                        <div></div>
+                    )}
+                    <Tooltip title={assigneesDisplayString}>
+                        <AvatarGroup>
+                            {props.assignees.map((u) => (
+                                <UserAvatar
+                                    key={u.id}
+                                    size={3}
+                                    userUUID={u.id}
+                                    displayName={u.displayName}
+                                    avatarURL={u.profilePictureThumbnailURL}
+                                />
+                            ))}
+                        </AvatarGroup>
+                    </Tooltip>
+                </Stack>
+                <Stack
+                    sx={{ width: "100%" }}
+                    spacing={1}
+                    direction={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                >
+                    <Stack spacing={1} direction="row" alignItems="center">
+                        <Typography className={classes.typography}>
+                            Priority:
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: priorityColor,
+                                fontStyle: props.priority ? "normal" : "italic",
+                                fontWeight: props.priority ? "bold" : "normal",
+                            }}
+                            className={classes.typography}
+                        >
+                            {props.priority || "Unset"}
+                        </Typography>
+                    </Stack>
+                    {props.riderResponsibility && (
+                        <Stack spacing={1} direction="row" alignItems="center">
+                            <Typography className={classes.typography}>
+                                Responsibility:
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    fontStyle: props.riderResponsibility
+                                        ? "normal"
+                                        : "italic",
+                                    fontWeight: props.riderResponsibility
+                                        ? "bold"
+                                        : "normal",
+                                }}
+                                className={classes.typography}
+                            >
+                                {props.riderResponsibility || "Unset"}
+                            </Typography>
+                        </Stack>
+                    )}
+                </Stack>
+                <Divider className={classes.divider} />
+                <CardItem fullWidth label={"From"}>
+                    {pickUpTitle}
+                </CardItem>
+                <CardItem fullWidth label={"Ward"}>
+                    {pickUpWard}
+                </CardItem>
+                <Divider className={classes.divider} />
+                <CardItem fullWidth label={"To"}>
+                    {dropOffTitle}
+                </CardItem>
+                <CardItem fullWidth label={"Ward"}>
+                    {dropOffWard}
+                </CardItem>
+                <Divider className={classes.divider} />
+                <CardItem fullWidth label={"TOC"}>
+                    <Moment local calendar>
+                        {props.timeOfCall}
+                    </Moment>
+                </CardItem>
+            </Stack>
         </CardContent>
     );
 
@@ -189,20 +219,12 @@ const TaskCard = React.memo((props) => {
 TaskCard.propTypes = {
     pickUpAddress: PropTypes.object,
     dropOffAddress: PropTypes.object,
-    assignedRiders: PropTypes.arrayOf(PropTypes.object),
-    assignedCoordinators: PropTypes.arrayOf(PropTypes.object),
     riderResponsibility: PropTypes.string,
-    timePickedUp: PropTypes.string,
-    timeDroppedOff: PropTypes.string,
-    assignedCoordinatorsDisplayString: PropTypes.string,
-    assignedRidersDisplayString: PropTypes.string,
     timeOfCall: PropTypes.string,
     priority: PropTypes.string,
 };
 
 TaskCard.defaultProps = {
-    assignedRiders: [],
-    assignedCoordinators: [],
     riderResponsibility: "",
     priority: "",
 };

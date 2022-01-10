@@ -1,22 +1,26 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Cropper from "react-cropper";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import {PaddedPaper} from "../../../styles/common";
+import { PaddedPaper } from "../../../styles/common";
 import "cropperjs/dist/cropper.css";
-import {uploadUserProfilePictureRequest} from "../../../redux/users/UsersActions";
-import {useDispatch, useSelector} from "react-redux";
-import {createErrorSelector, createPostingSelector} from "../../../redux/LoadingSelectors";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+    createErrorSelector,
+    createPostingSelector,
+} from "../../../redux/LoadingSelectors";
+import { Paper, Stack } from "@mui/material";
 
 export default function ProfilePicture(props) {
     const [image, setImage] = useState("");
-    const [newImage, setNewImage] = useState("")
+    const [newImage, setNewImage] = useState("");
     const [cropper, setCropper] = useState();
-    const postingSelector = createPostingSelector(["UPLOAD_USER_PROFILE_PICTURE"]);
-    const isPosting = useSelector(state => postingSelector(state));
+    const postingSelector = createPostingSelector([
+        "UPLOAD_USER_PROFILE_PICTURE",
+    ]);
+    const isPosting = useSelector((state) => postingSelector(state));
     const errorSelector = createErrorSelector(["UPLOAD_USER_PROFILE_PICTURE"]);
-    const isError = useSelector(state => errorSelector(state));
+    const isError = useSelector((state) => errorSelector(state));
     const dispatch = useDispatch();
     const firstUpdate = useRef(true);
 
@@ -26,16 +30,16 @@ export default function ProfilePicture(props) {
             firstUpdate.current = false;
         } else {
             if (!isPosting) {
-                setImage("")
+                setImage("");
             }
         }
-    }, [isPosting])
+    }, [isPosting]);
 
     useEffect(() => {
         if (isError) {
             setNewImage("");
         }
-    }, [isError])
+    }, [isError]);
 
     const onChange = (e) => {
         e.preventDefault();
@@ -55,19 +59,13 @@ export default function ProfilePicture(props) {
     const sendPictureData = () => {
         if (typeof cropper !== "undefined") {
             const dataUURL = cropper.getCroppedCanvas().toDataURL("image/jpeg");
-            dispatch(uploadUserProfilePictureRequest(
-                {
-                    userUUID: props.userUUID,
-                    payload: {image_data: dataUURL.split(';base64,')[1]}
-                }));
             setNewImage(dataUURL);
         }
     };
 
-
-    const profilePicture = image ?
+    const profilePicture = image ? (
         <Cropper
-            style={{height: 300, width: "50%"}}
+            style={{ height: 300, width: "50%" }}
             initialAspectRatio={1}
             aspectRatio={1}
             src={image}
@@ -84,22 +82,34 @@ export default function ProfilePicture(props) {
             onInitialized={(instance) => {
                 setCropper(instance);
             }}
-        /> : <img width={300} height={300} alt={props.altText} src={newImage || props.pictureURL}/>
+        />
+    ) : (
+        <img
+            width={300}
+            height={300}
+            alt={props.altText}
+            src={newImage || props.pictureURL}
+        />
+    );
 
-    const picUploadButton = image ?
+    const picUploadButton = image ? (
         <Grid container direction={"row"} justifyContent={"space-between"}>
             <Grid item>
-                <Button disabled={isPosting} onClick={sendPictureData}>Finish</Button>
+                <Button disabled={isPosting} onClick={sendPictureData}>
+                    Finish
+                </Button>
             </Grid>
             <Grid item>
-                <Button disabled={isPosting} onClick={() => setImage("")}>Discard</Button>
+                <Button disabled={isPosting} onClick={() => setImage("")}>
+                    Discard
+                </Button>
             </Grid>
         </Grid>
-        :
+    ) : (
         <>
             <input
                 accept="image/*"
-                style={{display: 'none'}}
+                style={{ display: "none" }}
                 id="raised-button-file"
                 type="file"
                 onChange={onChange}
@@ -110,19 +120,19 @@ export default function ProfilePicture(props) {
                 </Button>
             </label>
         </>
+    );
 
     return (
-        <PaddedPaper minWidth={"360px"} minHeight={"360px"}>
-            <Grid container direction={"column"} spacing={2}>
-                <Grid item>
-                    {profilePicture}
-                </Grid>
-                <Grid item>
-                    {props.editable ? picUploadButton : <></>}
-                </Grid>
-                <Grid item>
-                </Grid>
-            </Grid>
-        </PaddedPaper>
+        <Paper sx={{ width: 370, height: 370, padding: 4 }}>
+            <Stack
+                container
+                direction={"column"}
+                alignItems={"center"}
+                spacing={2}
+            >
+                {profilePicture}
+                {props.editable ? picUploadButton : <></>}
+            </Stack>
+        </Paper>
     );
-};
+}

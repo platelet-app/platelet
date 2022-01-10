@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import TaskCard from "./TaskCardsColoured";
 import {
     convertListDataToObject,
@@ -7,46 +7,143 @@ import {
     encodeUUID,
 } from "../../../utilities";
 import PropTypes from "prop-types";
-import { Grow } from "@mui/material";
+import { Grow, Skeleton } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
-import { contextDots } from "../../../styles/common";
-import { userRoles } from "../../../apiConsts";
+import { commentVisibility, userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
+import { useSelector } from "react-redux";
+import {
+    dataStoreReadyStatusSelector,
+    getRoleView,
+    getWhoami,
+} from "../../../redux/Selectors";
+import { useInView } from "react-intersection-observer";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        position: "relative",
+        "&:hover": {
+            "& $dots": {
+                display: "inline",
+            },
+        },
+    },
+    dots: () => {
+        const background =
+            theme.palette.mode === "dark"
+                ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
+                : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
+        return {
+            background: background,
+            borderRadius: "1em",
+            position: "absolute",
+            bottom: 4,
+            right: 4,
+            display: "none",
+            zIndex: 90,
+        };
+    },
+}));
 
 function TaskItem(props) {
-    const classes = contextDots();
+    const classes = useStyles();
+    const whoami = useSelector(getWhoami);
     const { task } = props;
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const [assignees, setAssignees] = useState([]);
     const [assignedRiders, setAssignedRiders] = useState([]);
-    const [assignedCoordinators, setAssignedCoordinators] = useState([]);
-    const [assignedRidersDisplayString, setAssignedRidersDisplayString] =
-        useState("");
-    const [
-        assignedCoordinatorsDisplayString,
-        setAssignedCoordinatorsDisplayString,
-    ] = useState("");
+    const [visibility, setVisibility] = useState(false);
+    const [commentCount, setCommentCount] = useState(0);
+    const commentObserver = useRef({ unsubscribe: () => {} });
+    const roleView = useSelector(getRoleView);
 
-    // TODO: find out if this can be done more efficiently and avoided
-    // i.e. get assignments from prop.task instead
-    async function sortAssignees() {
-        const assignees = (await DataStore.query(models.TaskAssignee)).filter(
-            (a) => a.task.id === props.task.id
+    const { ref, inView, entry } = useInView({
+        threshold: 0,
+    });
+
+    useEffect(() => {
+        if (inView && !visibility) {
+            setVisibility(true);
+        }
+    }, [inView]);
+
+    async function getAssignees() {
+        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+        // inefficient method of getting assignees
+        /*const allAssignments = (
+            await DataStore.query(models.TaskAssignee)
+        ).filter(
+            (assignment) => assignment.task && assignment.task.id === task.id
         );
-        const riders = assignees
-            .filter((assignment) => assignment.role === userRoles.rider)
-            .map((a) => a.assignee);
+        */
+        const assignmentsNotMe =
+            props.task && props.task.assignees
+                ? Object.values(props.task.assignees).filter((assignment) => {
+                      const actualRole =
+                          roleView === "ALL" ? userRoles.coordinator : roleView;
+                      if (
+                          assignment.role.toLowerCase() !==
+                              actualRole.toLowerCase() ||
+                          assignment.assignee.id !== whoami.id
+                      ) {
+                          return true;
+                      }
+                      return false;
+                  })
+                : [];
+        const assignees = assignmentsNotMe.map((a) => a.assignee);
+        setAssignees(assignees);
+        const riders =
+            props.task && props.task.assignees
+                ? Object.values(props.task.assignees)
+                      .filter((a) => a.role === userRoles.rider)
+                      .map((a) => a.assignee)
+                : [];
         setAssignedRiders(riders);
-        const ridersString = riders.map((u) => u.displayName).join(", ");
-        setAssignedRidersDisplayString(ridersString);
-        const coordinators = assignees
-            .filter((assignment) => assignment.role === userRoles.coordinator)
-            .map((a) => a.assignee);
-        setAssignedCoordinators(coordinators);
-        const coordsString = coordinators.map((u) => u.displayName).join(", ");
-        setAssignedCoordinatorsDisplayString(coordsString);
+    }
+    useEffect(() => {
+        getAssignees();
+    }, [visibility, props.task, dataStoreReadyStatus]);
+
+    async function getCommentCount() {
+        if (!props.task || !props.task.id) return 0;
+        const commentsResult = (
+            await DataStore.query(models.Comment, (c) =>
+                c.parentId("eq", props.task.id)
+            )
+        ).filter(
+            (c) =>
+                c.visibility === commentVisibility.everyone ||
+                (c.visibility === commentVisibility.me &&
+                    c.author.id === whoami.id)
+        );
+        return commentsResult.length;
     }
 
-    useEffect(() => sortAssignees(), [props.task]);
+    async function calculateCommentCount() {
+        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+        const commentCount = await getCommentCount();
+        setCommentCount(commentCount);
+        commentObserver.current.unsubscribe();
+        commentObserver.current = DataStore.observe(models.Comment, (c) =>
+            c.parentId("eq", props.task.id)
+        ).subscribe(async (observedResult) => {
+            if (
+                observedResult.opType === "INSERT" ||
+                observedResult.opType === "UPDATE"
+            ) {
+                const commentCount = await getCommentCount();
+                setCommentCount(commentCount);
+            }
+        });
+    }
+    useEffect(() => {
+        calculateCommentCount();
+    }, [visibility, props.task, dataStoreReadyStatus]);
+
+    useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
     async function setTimeValue(value, key) {
         const result = await DataStore.query(models.Task, props.taskUUID);
@@ -66,14 +163,19 @@ function TaskItem(props) {
         );
     }
 
-    return (
+    const location = useLocation();
+
+    const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
-            <div style={{ cursor: "context-menu", position: "relative" }}>
+            <div
+                className={classes.root}
+                style={{ cursor: "context-menu", position: "relative" }}
+            >
                 <Link
                     style={{ textDecoration: "none" }}
-                    key={props.taskUUID}
                     to={{
                         pathname: `/task/${encodeUUID(props.taskUUID)}`,
+                        state: { background: location },
                     }}
                 >
                     <TaskCard
@@ -88,17 +190,14 @@ function TaskItem(props) {
                                 : ""
                         }
                         dropOffLocation={task.dropOffLocation}
-                        assignedRiders={assignedRiders}
-                        assignedCoordinators={assignedCoordinators}
-                        assignedRidersDisplayString={
-                            assignedRidersDisplayString
-                        }
-                        assignedCoordinatorsDisplayString={
-                            assignedCoordinatorsDisplayString
-                        }
+                        assignees={assignees}
+                        assigneeDisplayString={assignees
+                            .map((a) => a.displayName)
+                            .join(", ")}
+                        commentCount={commentCount}
                     />
                 </Link>
-                <div className={classes.root}>
+                <div className={classes.dots}>
                     <TaskContextMenu
                         disableDeleted={props.deleteDisabled}
                         disableRelay={!!props.relayNext}
@@ -120,12 +219,13 @@ function TaskItem(props) {
                 </div>
             </div>
         </Grow>
+    ) : (
+        <Skeleton variant="rectangle" width="100%" height={200} />
     );
+    return <div ref={ref}>{contents}</div>;
 }
 
 TaskItem.defaultProps = {
-    assignedRiders: [],
-    assignedCoordinators: [],
     animate: true,
 };
 

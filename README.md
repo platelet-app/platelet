@@ -1,122 +1,29 @@
-# Platelet
+![platelet logo](platelet.png "Platelet")
 
-This is the main repository for the Platelet app. It uses React, AWS Amplify, DataStore, Material-UI, Redux, Redux-Saga and other libraries.
+Platelet is the only open source and cloud backed dispatch software for couriers and coordinators. It is being developed for Blood Bikers in the UK, but can be used for any delivery tracking.
 
-## Setup
+![dashboard](dashboard.png "Dashboard")
 
-There is minimal setup required for running this project. On Ubuntu 20.04, install the package `npm`
+![overview](overview.png "Overview")
 
-`sudo apt install npm`
+[Demo](https://demo.platelet.app)
 
-In the project directory run:
+[Homepage](https://platelet.app)
 
-`npm install`
+Some of Platelet's goals are:
 
-and
+- Provide a robust service for recording assignment details, synchronized across all devices
 
-`npm start`
+- Let volunteers coordinate cross country relays over a wide network of groups
 
-## Environment Variables
+- Focus on ease of use and a smooth user experience
 
-###### REACT_APP_OFFLINE_ONLY
+- Provide more detailed tracking information for deliveries
 
-When set to `true` the app will not attempt to connect to any AWS Amplify deployment and will work offline only.
+- Allow direct requests for deliveries by external users
 
-###### REACT_APP_POPULATE_FAKE_DATA
+- Provide reports and statistics
 
-When set to `true` the app will populate itself with some fake data. Best used with REACT_APP_OFFLINE_ONLY.
+It can be deployed to AWS using Amplify or can be used fully offline with no online synchronization.
 
-Note: you should clear site data before connecting to an AWS amplify deployment, to save fake data from being synchronised to the server.
-
-###### REACT_APP_DEMO_MODE
-
-When set to `true` the app will clear saved data on each page reload. Good for a demonstration of the app combined with REACT_APP_POPULATE_FAKE_DATA.
-
-###### REACT_APP_THROW_ERRORS
-
-Set this to `true` if Redux should throw errors instead of handling them and showing a notification. This can be helpful when developing.
-
-## Development
-
-When making changes to the graphql schema, you should run:
-
-`amplify codegen models`
-
-To generate new models for the DataStore.
-
-Run:
-
-`amplify push`
-
-to push changes to an online AWS Amplify dev environment.
-
----
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+If you're interested in developing on Platelet please take a look at [CONTRIBUTING](CONTRIBUTING.md).

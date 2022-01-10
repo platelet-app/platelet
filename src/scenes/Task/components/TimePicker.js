@@ -1,34 +1,39 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
 import Moment from "react-moment";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import CancelIcon from "@mui/icons-material/Cancel";
 import IconButton from "@mui/material/IconButton";
-import { Tooltip } from "@mui/material";
+import { Stack, TextField, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import DateTimePicker from "@mui/lab/DateTimePicker";
 import { showHide } from "../../../styles/common";
-import makeStyles from '@mui/styles/makeStyles';
-import TextField from "@mui/material/TextField";
+import makeStyles from "@mui/styles/makeStyles";
+import { DateTimePicker } from "@mui/lab";
+import moment from "moment";
+import { useDispatch } from "react-redux";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const useStyles = makeStyles({
     button: {
         height: 9,
     },
+    label: {
+        color: "gray",
+    },
 });
 
 function TimePicker(props) {
     const [editMode, setEditMode] = useState(false);
+    const [state, setState] = useState(new Date(props.time));
+    const originalTime = useRef(new Date(props.time));
     const classes = useStyles();
     const { show, hide } = showHide();
 
-    function onButtonClick() {
-        const timeNow = new Date().toISOString();
-        props.onChange(timeNow);
-    }
+    useEffect(() => {
+        setState(new Date(props.time));
+        originalTime.current = new Date(props.time);
+    }, [props.time]);
 
     function onClear() {
         props.onChange(null);
@@ -39,94 +44,110 @@ function TimePicker(props) {
     }
 
     function onChange(value) {
-        props.onChange(value.toISOString());
-        setEditMode(false);
+        setState(value);
+    }
+
+    // check if props.time is today
+    function isToday() {
+        const today = new Date();
+        const date = new Date(props.time);
+        return (
+            today.getDate() === date.getDate() &&
+            today.getMonth() === date.getMonth() &&
+            today.getFullYear() === date.getFullYear()
+        );
     }
 
     if (props.time) {
-        if (editMode) {
-            return (
-                <div className={classes.root}>
-                    <Grid
-                        container
-                        direction={"row"}
-                        justifyContent={"flex-end"}
-                        alignItems={"center"}
-                    >
-                        <Grid item>
-                            <DateTimePicker
-                                label="Date&Time picker"
-                                helperText="Set the date and time"
-                                value={props.time}
-                                onChange={onChange}
-                                renderInput={(params) => (
-                                    <TextField {...params} />
-                                )}
-                            />
-                            <Grid item>
-                                <Tooltip title={"Cancel"}>
-                                    <IconButton
-                                        className={classes.button}
-                                        disabled={props.disabled}
-                                        onClick={toggleEditMode}
-                                        size="large">
-                                        <CancelIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </div>
-            );
-        } else {
-            return (
-                <div className={classes.root}>
-                    <Grid
-                        container
-                        direction={"row"}
-                        justifyContent={"space-between"}
-                        alignItems={"center"}
-                    >
-                        <Grid item>
-                            <Typography>
-                                <Moment calendar>{props.time}</Moment>
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <Tooltip title={"Edit"}>
-                                <IconButton
-                                    className={classes.button}
-                                    edge={"end"}
-                                    disabled={props.disabled}
-                                    onClick={toggleEditMode}
-                                    size="large">
-                                    <EditIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
-                        <Grid className={props.disableClear ? hide : show} item>
-                            <Tooltip title={"Clear"}>
-                                <IconButton
-                                    className={classes.button}
-                                    edge={"end"}
-                                    disabled={props.disabled}
-                                    onClick={onClear}
-                                    size="large">
-                                    <CancelIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
-                    </Grid>
-                </div>
-            );
-        }
-    } else {
         return (
-            <div className={classes.root}>
-                <Button disabled={props.disabled} onClick={onButtonClick}>
-                    {props.label}
-                </Button>
-            </div>
+            <>
+                <Stack
+                    direction={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                >
+                    <Tooltip
+                        title={
+                            props.time
+                                ? moment(props.time).format(
+                                      "dddd, MMMM Do YYYY, H:mm"
+                                  )
+                                : ""
+                        }
+                    >
+                        <Typography>
+                            {isToday() ? (
+                                <>
+                                    Today at{" "}
+                                    <Moment format={"HH:mm"}>
+                                        {props.time}
+                                    </Moment>
+                                </>
+                            ) : (
+                                <Moment format={"DD/MM/YYYY, HH:mm"}>
+                                    {props.time}
+                                </Moment>
+                            )}
+                        </Typography>
+                    </Tooltip>
+                    <Tooltip title={"Edit"}>
+                        <IconButton
+                            className={classes.button}
+                            aria-label={"Edit"}
+                            edge={"end"}
+                            disabled={props.disabled}
+                            onClick={toggleEditMode}
+                            size="large"
+                        >
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <div className={props.disableClear ? hide : show}>
+                        <Tooltip title={"Clear"}>
+                            <IconButton
+                                aria-label={"Clear"}
+                                className={classes.button}
+                                edge={"end"}
+                                disabled={props.disabled}
+                                onClick={onClear}
+                                size="large"
+                            >
+                                <CancelIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
+                </Stack>
+                <ConfirmationDialog
+                    onClose={() => setEditMode(false)}
+                    onSelect={(result) => {
+                        if (result) {
+                            props.onChange(state);
+                        }
+                    }}
+                    open={editMode}
+                >
+                    <DateTimePicker
+                        label={props.label}
+                        value={state}
+                        inputFormat={"dd/MM/yyyy HH:mm"}
+                        openTo="hours"
+                        onChange={(value) => setState(value)}
+                        renderInput={(params) => (
+                            <TextField
+                                variant={"standard"}
+                                fullWidth
+                                {...params}
+                            />
+                        )}
+                    />
+                </ConfirmationDialog>
+            </>
+        );
+    } else {
+        return props.disableUnsetMessage ? (
+            <></>
+        ) : (
+            <Typography className={classes.label}>Unset</Typography>
         );
     }
 }
@@ -137,13 +158,15 @@ TimePicker.propTypes = {
     label: PropTypes.string,
     disabled: PropTypes.bool,
     disableClear: PropTypes.bool,
+    disableUnsetMessage: PropTypes.bool,
 };
 TimePicker.defaultProps = {
     time: "",
     onChange: () => {},
-    label: "Set time",
+    label: "",
     disabled: false,
     disableClear: false,
+    disableUnsetMessage: false,
 };
 
 export default TimePicker;

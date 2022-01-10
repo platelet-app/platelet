@@ -89,18 +89,6 @@ function NavDrawerItems(props) {
                     </ListItemIcon>
                     <ListItemText primary={"Locations"} />
                 </ListItem>
-                <ListItem
-                    onClick={onSelect}
-                    selected={menuIndex === "statistics"}
-                    component={Link}
-                    to="/statistics"
-                    button
-                >
-                    <ListItemIcon>
-                        <BarChartIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={"Statistics"} />
-                </ListItem>
                 {adminLink}
             </List>
         </div>

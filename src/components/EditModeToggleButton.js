@@ -2,17 +2,15 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import React from "react";
 import Tooltip from "@mui/material/Tooltip";
-import Grid from "@mui/material/Grid";
 
 export function EditModeToggleButton(props) {
     return props.value ? (
-        <Tooltip title={props.tooltipEdit || "Cancel"}>
+        <Tooltip title={props.tooltipEdit || "Finish"}>
             <IconButton
-                color="primary"
+                color="secondary"
                 aria-controls="simple-menu"
                 aria-haspopup="true"
                 onClick={() => props.onChange(false)}
-                size="large"
             >
                 <EditIcon />
             </IconButton>
@@ -20,11 +18,10 @@ export function EditModeToggleButton(props) {
     ) : (
         <Tooltip title={props.tooltipDefault || "Edit"}>
             <IconButton
-                color="secondary"
+                className={props.className}
                 aria-controls="simple-menu"
                 aria-haspopup="true"
                 onClick={() => props.onChange(true)}
-                size="large"
             >
                 <EditIcon />
             </IconButton>

@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 import Menu from "@mui/material/Menu";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import MenuItem from "@mui/material/MenuItem";
 import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -15,6 +15,7 @@ import {
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
+import { copyTaskDataToClipboard } from "../../utilities";
 
 const initialState = {
     mouseX: null,
@@ -44,51 +45,38 @@ function TaskContextMenu(props) {
     ]);
     const isPosting = useSelector((state) => postingSelector(state));
 
-    async function copyTaskDataToClipboard(e) {
+    async function copyToClipboard(e) {
         handleClose(e);
         if (!props.task || !props.task.id) {
             dispatch(displayErrorNotification("Copy failed."));
             return;
         }
-        const taskResult = await DataStore.query(models.Task, props.task.id);
-        if (taskResult) {
-            const { pickUpLocation, priority, dropOffLocation, timeOfCall } =
-                taskResult;
-            const data = {
-                FROM: pickUpLocation
-                    ? `${pickUpLocation.ward || ""} - ${
-                          pickUpLocation.line1 || ""
-                      }`
-                    : undefined,
-                TO: dropOffLocation
-                    ? `${dropOffLocation.ward || ""} - ${
-                          dropOffLocation.line1 || ""
-                      }`
-                    : undefined,
-                PRIORITY: priority || undefined,
-                TOC: timeOfCall
-                    ? moment(timeOfCall).format("HH:mm")
-                    : undefined,
-            };
-
-            let result = "";
-            let first = true;
-            for (const [key, value] of Object.entries(data)) {
-                if (value) result += `${first ? "" : " "}${key}: ${value}`;
-                first = false;
-            }
-
-            navigator.clipboard.writeText(result).then(
-                function () {
-                    dispatch(displayInfoNotification("Copied to clipboard."));
-                    /* clipboard successfully set */
-                },
-                function () {
-                    dispatch(displayErrorNotification("Copy failed."));
-                    /* clipboard write failed */
-                }
+        try {
+            const taskResult = await DataStore.query(
+                models.Task,
+                props.task.id
             );
-        } else {
+            if (taskResult) {
+                const deliverables = (
+                    await DataStore.query(models.Deliverable)
+                ).filter((d) => d.task && d.task.id === taskResult.id);
+                const result = { ...taskResult, deliverables };
+                copyTaskDataToClipboard(result).then(
+                    function () {
+                        dispatch(
+                            displayInfoNotification("Copied to clipboard.")
+                        );
+                        /* clipboard successfully set */
+                    },
+                    function () {
+                        dispatch(displayErrorNotification("Copy failed."));
+                        /* clipboard write failed */
+                    }
+                );
+            } else {
+                dispatch(displayErrorNotification("Copy failed."));
+            }
+        } catch (e) {
             dispatch(displayErrorNotification("Copy failed."));
         }
     }
@@ -157,97 +145,87 @@ function TaskContextMenu(props) {
         setState(initialState);
     };
 
-    return <>
-        <IconButton
-            aria-label="more"
-            aria-controls="long-menu"
-            aria-haspopup="true"
-            onClick={handleClick}
-            disabled={isPosting}
-            size="large">
-            <MoreVertIcon className={classes.button} />
-        </IconButton>
-        <Menu
-            keepMounted
-            open={state.mouseY !== null}
-            onClose={handleClose}
-            anchorReference="anchorPosition"
-            anchorPosition={
-                state.mouseY !== null && state.mouseX !== null
-                    ? { top: state.mouseY, left: state.mouseX }
-                    : undefined
-            }
-        >
-            <MenuItem
-                disabled={
-                    task === null ||
-                    !!task.timePickedUp ||
-                    !props.assignedRiders.length > 0 ||
-                    !!task.timeRejected ||
-                    !!task.timeCancelled
-                }
-                onClick={onSelectPickedUp}
+    return (
+        <>
+            <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+                disabled={isPosting}
+                size="large"
             >
-                Mark picked up
-            </MenuItem>
-            <MenuItem
-                disabled={
-                    task === null ||
-                    !!task.timeDroppedOff ||
-                    !!!task.timePickedUp ||
-                    !!task.timeRejected ||
-                    !!task.timeCancelled
+                <MoreVertIcon className={classes.button} />
+            </IconButton>
+            <Menu
+                keepMounted
+                open={state.mouseY !== null}
+                onClose={handleClose}
+                anchorReference="anchorPosition"
+                anchorPosition={
+                    state.mouseY !== null && state.mouseX !== null
+                        ? { top: state.mouseY, left: state.mouseX }
+                        : undefined
                 }
-                onClick={onSelectDroppedOff}
             >
-                Mark delivered
-            </MenuItem>
-            <MenuItem
-                disabled={
-                    task === null ||
-                    !!task.timeRejected ||
-                    !!task.timeCancelled
-                }
-                onClick={onSelectRejected}
-            >
-                Mark rejected
-            </MenuItem>
-            <MenuItem
-                disabled={
-                    task === null ||
-                    !!task.timeCancelled ||
-                    !!task.timeRejected
-                }
-                onClick={onSelectCancelled}
-            >
-                Mark cancelled
-            </MenuItem>
-            <MenuItem
-                disabled={
-                    props.disableRelay ||
-                    task === null ||
-                    !!task.timeCancelled ||
-                    !!task.timeRejected
-                }
-                onClick={addRelay}
-            >
-                Add relay
-            </MenuItem>
-            <MenuItem onClick={copyTaskDataToClipboard}>
-                Save to clipboard
-            </MenuItem>
-            <MenuItem
-                className={
-                    props.disableDeleted
-                        ? deleteButtonClasses.deleteButtonDisabled
-                        : deleteButtonClasses.deleteButton
-                }
-                onClick={onDelete}
-            >
-                Delete
-            </MenuItem>
-        </Menu>
-    </>;
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        !!task.timePickedUp ||
+                        !props.assignedRiders.length > 0 ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
+                    }
+                    onClick={onSelectPickedUp}
+                >
+                    Mark picked up
+                </MenuItem>
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        !!task.timeDroppedOff ||
+                        !!!task.timePickedUp ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
+                    }
+                    onClick={onSelectDroppedOff}
+                >
+                    Mark delivered
+                </MenuItem>
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        !!task.timeRejected ||
+                        !!task.timeCancelled
+                    }
+                    onClick={onSelectRejected}
+                >
+                    Mark rejected
+                </MenuItem>
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        !!task.timeCancelled ||
+                        !!task.timeRejected
+                    }
+                    onClick={onSelectCancelled}
+                >
+                    Mark cancelled
+                </MenuItem>
+                <MenuItem onClick={copyToClipboard}>Save to clipboard</MenuItem>
+                <MenuItem
+                    className={
+                        props.disableDeleted
+                            ? deleteButtonClasses.deleteButtonDisabled
+                            : deleteButtonClasses.deleteButton
+                    }
+                    onClick={onDelete}
+                >
+                    Delete
+                </MenuItem>
+            </Menu>
+        </>
+    );
 }
 
 TaskContextMenu.propTypes = {

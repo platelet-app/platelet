@@ -15,7 +15,9 @@ function UnitSelector(props) {
                 onChange={props.onChange}
             >
                 {Object.values(deliverableUnits).map((unit) => (
-                    <MenuItem value={unit}>{unit}</MenuItem>
+                    <MenuItem key={unit} value={unit}>
+                        {unit}
+                    </MenuItem>
                 ))}
             </Select>
         </FormControl>

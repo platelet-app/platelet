@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { TextField } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "./TextFields";
 import clsx from "clsx";
@@ -9,7 +9,7 @@ import clsx from "clsx";
 const useStyles = makeStyles((theme) => ({
     text: {
         maxWidth: 300,
-        [theme.breakpoints.down('lg')]: {
+        [theme.breakpoints.down("lg")]: {
             maxWidth: 250,
         },
     },
@@ -62,6 +62,9 @@ function ClickableTextField(props) {
         setValue(props.value);
     }, [props.value]);
 
+    const label =
+        props.disabled && !props.label ? "" : props.label || "Click to edit";
+
     const stuff = props.disabled ? (
         value ? (
             <Typography
@@ -78,6 +81,7 @@ function ClickableTextField(props) {
     ) : value ? (
         <Typography
             noWrap
+            aria-label={label}
             className={clsx(classes.hoverHighlight, classes.text)}
             align={"right"}
             onClick={toggleEditMode}
@@ -87,11 +91,12 @@ function ClickableTextField(props) {
     ) : (
         <Typography
             noWrap
+            aria-labelledby={label}
             onClick={toggleEditMode}
             className={clsx(classes.label, classes.text)}
             align={"right"}
         >
-            {props.label}
+            {label}
         </Typography>
     );
 
@@ -99,6 +104,7 @@ function ClickableTextField(props) {
         return (
             <TextFieldUncontrolled
                 margin="dense"
+                aria-labelledby={label}
                 className={clsx(classes.label, classes.text)}
                 tel={props.tel}
                 onPressEnter={(ev) => {
@@ -116,7 +122,6 @@ function ClickableTextField(props) {
                 autoFocus={true}
                 onBlur={(ev) => onFinishedEntry(ev)}
                 value={value}
-                InputProps={{ disableUnderline: true }}
                 onChange={onChange}
             />
         );
@@ -137,7 +142,6 @@ ClickableTextField.propTypes = {
 ClickableTextField.defaultProps = {
     value: "",
     disabled: false,
-    label: "Click to edit",
     onChange: () => {},
     onFinished: () => {},
     tel: false,

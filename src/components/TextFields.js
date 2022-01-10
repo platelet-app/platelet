@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import PropTypes from "prop-types";
+import _ from "lodash";
 
 function validateNumber(value) {
     if (typeof value === "string") {
@@ -25,7 +26,13 @@ export function TextFieldControlled(props) {
             setErrorState(!validateNumber(currentValue));
     }, [currentValue]);
 
-    const { forceUppercase, onChange, ...newProps } = props;
+    const {
+        forceUppercase,
+        onChange,
+        onPressEnter,
+        onPressEscape,
+        ...newProps
+    } = props;
     useEffect(() => setCurrentValue(props.value), [props.value]);
 
     return (
@@ -112,7 +119,7 @@ export function TextFieldUncontrolled(props) {
     if (multiline && !props.tel) {
         return (
             <TextField
-                {...props}
+                {..._.omit(props, "tel", "onPressEnter", "onPressEscape")}
                 helperText={errorState ? errorText : ""}
                 onKeyPress={(ev) => {
                     if (ev.key === "Escape") {
@@ -129,7 +136,7 @@ export function TextFieldUncontrolled(props) {
     } else {
         return (
             <TextField
-                {...props}
+                {..._.omit(props, "tel", "onPressEnter", "onPressEscape")}
                 error={errorState}
                 helperText={errorState ? errorText : ""}
                 type={props.tel ? "tel" : ""}
@@ -220,7 +227,6 @@ export function TelephoneTextFieldControlled(props) {
             InputProps={{
                 maxLength: props.maxLength,
                 readOnly: props.readOnly,
-                disableUnderline: props.readOnly,
             }}
         />
     );

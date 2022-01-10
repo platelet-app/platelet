@@ -1,3 +1,4 @@
-import fetchMock from "jest-fetch-mock";
-import "jest-canvas-mock";
-fetchMock.enableMocks();
+import "@testing-library/jest-dom/extend-expect";
+import { Crypto } from "@peculiar/webcrypto";
+
+global.crypto = new Crypto();

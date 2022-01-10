@@ -14,7 +14,9 @@ export default function GetError(props) {
                 justifyContent={"center"}
             >
                 <Grid item>
-                    <Typography variant={"h4"}>An error occurred.</Typography>
+                    <Typography variant={"h4"}>
+                        Sorry, something went wrong
+                    </Typography>
                 </Grid>
                 <Grid item>{props.children}</Grid>
             </Grid>

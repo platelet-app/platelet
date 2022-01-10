@@ -1,4 +1,4 @@
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import { Button, Grid, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import React, { useEffect, useState } from "react";

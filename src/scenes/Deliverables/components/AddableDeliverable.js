@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import { SmallCirclePlusButton } from "../../../components/Buttons";
 import { deliverableUnits } from "../../../apiConsts";
 
@@ -27,6 +25,7 @@ function AddableDeliverable(props) {
             <SmallCirclePlusButton
                 onClick={makeNewDeliverable}
                 disabled={props.isPosting}
+                aria-label={"Add deliverable"}
             />
         </DeliverableCard>
     );

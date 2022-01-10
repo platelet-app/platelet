@@ -127,7 +127,8 @@ function NavMenuSearch() {
                                 onClick={(event) => {
                                     setAnchorElDashMenu(event.currentTarget);
                                 }}
-                                size="large">
+                                size="large"
+                            >
                                 <ArrowDropDownIcon />
                             </IconButton>
                             <Menu

@@ -6,7 +6,6 @@ import VehicleList from "../scenes/VehiclesList";
 import UsersList from "../scenes/UsersList";
 import UserDetail from "../scenes/UserDetail/UserDetail";
 import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
-import { AdminControl } from "../scenes/AdminControl/AdminControl";
 import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
 import LocationDetail from "../scenes/LocationDetail/LocationDetail";
@@ -22,6 +21,7 @@ import AdminAddDeliverableType from "../scenes/AdminControl/Components/AdminAddD
 import AdminAddRiderResponsibility from "../scenes/AdminControl/Components/AdminAddRiderResponsibility";
 import { CoordinatorSetup } from '../scenes/CoordinatorSetup/CoordinatorSetup'
 
+import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 
 function MainWindowContainer(props) {
     const styles = makeStyles((theme) => ({
@@ -44,12 +44,13 @@ function MainWindowContainer(props) {
 export default function MainWindow(_props) {
     let location = useLocation();
     const dispatch = useDispatch();
+    let background = location.state && location.state.background;
 
     // whenever returning an item, set the MenuIndex to update the mobile view drawer menu
     return (
         <MainWindowContainer>
             <main>
-                <Switch location={location}>
+                <Switch location={background || location}>
                     <Route
                         exact
                         path="/"
@@ -94,14 +95,6 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("users"));
                             return <UsersList {...props} />;
-                        }}
-                    />
-                    <Route
-                        exact
-                        path="/admin"
-                        render={(props) => {
-                            dispatch(setMenuIndex("admin"));
-                            return <AdminControl {...props} />;
                         }}
                     />
                     <Route
@@ -165,7 +158,7 @@ export default function MainWindow(_props) {
                         path="/task/:task_uuid_b62"
                         render={(props) => {
                             dispatch(setMenuIndex("dashboard"));
-                            return <Dashboard {...props} />;
+                            return <TaskDialogCompact {...props} />;
                         }}
                     />
                      <Route
@@ -178,6 +171,12 @@ export default function MainWindow(_props) {
                     />
                     <Route component={NotFound} />
                 </Switch>
+                {background && (
+                    <Route
+                        path="/task/:task_uuid_b62"
+                        children={<TaskDialogCompact />}
+                    />
+                )}
             </main>
         </MainWindowContainer>
     );

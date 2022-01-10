@@ -4,16 +4,17 @@ import _ from "lodash";
 
 import { useDispatch, useSelector } from "react-redux";
 import UserProfile from "./components/UserProfile";
-import Grid from "@mui/material/Grid";
 import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
 import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { protectedFields } from "../../apiConsts";
+import { Stack, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/styles";
 
 const initialUserState = {
     id: "",
@@ -41,15 +42,19 @@ export default function UserDetail(props) {
     const [notFound, setNotFound] = useState(false);
     const [usersDisplayNames, setUsersDisplayNames] = useState([]);
     const dispatch = useDispatch();
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
     async function newUserProfile() {
+        setNotFound(false);
         if (!dataStoreReadyStatus) {
             setIsFetching(true);
         } else {
             try {
-                const user = await DataStore.query(models.User, userUUID);
+                const userResult = await DataStore.query(models.User, userUUID);
+                console.log(userResult);
                 setIsFetching(false);
-                if (user) setUser(user);
+                if (userResult) setUser(userResult);
                 else setNotFound(true);
             } catch (error) {
                 setIsFetching(false);
@@ -91,7 +96,7 @@ export default function UserDetail(props) {
             const existingUser = await DataStore.query(models.User, user.id);
             const {
                 userRiderResponsibilityId,
-                responsibility,
+                riderResponsibility,
                 contact,
                 ...rest
             } = value;
@@ -135,11 +140,24 @@ export default function UserDetail(props) {
                         }
                     )
                 );
+            } else if (userRiderResponsibilityId === null) {
+                const existingUserResponsibility = await DataStore.query(
+                    models.User,
+                    user.id
+                );
+                await DataStore.save(
+                    models.User.copyOf(
+                        existingUserResponsibility,
+                        (updated) => {
+                            updated.riderResponsibility = null;
+                        }
+                    )
+                );
             }
             setIsPosting(false);
         } catch (error) {
-            console.log("Update request failed", error);
-            dispatch(displayErrorNotification(error.message));
+            console.error("Update request failed", error);
+            dispatch(displayErrorNotification("Sorry, an error occurred"));
             setIsPosting(false);
         }
     }
@@ -149,29 +167,26 @@ export default function UserDetail(props) {
         return <NotFound>User {userUUID} could not be found.</NotFound>;
     } else {
         return (
-            <Grid container direction={"row"} spacing={4}>
-                <Grid item>
-                    <PaddedPaper width={"600px"}>
-                        <UserProfile
-                            displayNames={usersDisplayNames}
-                            user={user}
-                            onUpdate={onUpdate}
-                            isPosting={isPosting}
-                        />
-                    </PaddedPaper>
-                </Grid>
-                <Grid item>
-                    <ProfilePicture
-                        pictureURL={user.profilePictureURL}
-                        userUUID={user.id}
-                        altText={user.displayName}
-                        editable={
-                            user.id === whoami.id ||
-                            whoami.roles.includes("ADMIN")
-                        }
+            <Stack
+                alignItems={isSm ? "center" : "flex-start"}
+                direction={isSm ? "column" : "row"}
+                spacing={1}
+            >
+                <PaddedPaper maxWidth={700}>
+                    <UserProfile
+                        displayNames={usersDisplayNames}
+                        user={user}
+                        onUpdate={onUpdate}
+                        isPosting={isPosting}
                     />
-                </Grid>
-            </Grid>
+                </PaddedPaper>
+                <ProfilePicture
+                    pictureURL={user.profilePictureURL}
+                    userUUID={user.id}
+                    altText={user.displayName}
+                    editable={false}
+                />
+            </Stack>
         );
     }
 }

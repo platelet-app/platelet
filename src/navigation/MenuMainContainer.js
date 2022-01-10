@@ -4,35 +4,32 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
-import Toolbar from "@mui/material/Toolbar";
-import Grid from "@mui/material/Grid";
 import MainWindow from "./MainWindow";
-import { useDispatch } from "react-redux";
-import { Hidden } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { Box, Grid, Hidden, Stack } from "@mui/material";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
-import NavMenuSearch from "./Components/NavMenuSearch";
 import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterActions";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { DashboardDetailTabs } from "../scenes/Dashboard/components/DashboardDetailTabs";
+import MobileNavigationDrawer from "./MobileNavigationDrawer";
+import { menuIndexSelector } from "../redux/Selectors";
 
 const useStyles = makeStyles((theme) => {
-    const appBarBack =
-        theme.palette.mode === "dark"
-            ? theme.palette.background.paper
-            : theme.palette.primary.main;
     return {
         appBarComponents: {
             margin: "auto",
             width: "100%",
-            maxWidth: "1280px",
+            padding: 5,
+            color: theme.palette.text.primary,
         },
         appBar: {
             [theme.breakpoints.up("sm")]: {
                 width: "100%",
             },
-            background: appBarBack,
+            background: theme.palette.background.paper,
         },
     };
 });
@@ -40,7 +37,7 @@ const useStyles = makeStyles((theme) => {
 export function MenuMainContainer() {
     const classes = useStyles();
     const [searchMode, setSearchMode] = useState(false);
-    const navMenuSearch = searchMode ? <></> : <NavMenuSearch />;
+    const menuIndex = useSelector(menuIndexSelector);
     const lightToggleProfileMenu = searchMode ? (
         <></>
     ) : (
@@ -63,39 +60,36 @@ export function MenuMainContainer() {
                 position={isSm ? "relative" : "sticky"}
                 className={classes.appBar}
             >
-                <Toolbar className={classes.appBarComponents}>
-                    <Grid container justifyContent={"space-between"}>
-                        <Grid item>{navMenuSearch}</Grid>
-                        <Grid item>
-                            <Hidden mdUp>
-                                <Grid
-                                    container
-                                    item
-                                    alignItems={"center"}
-                                    direction={"row"}
-                                >
-                                    <Grid item>
-                                        <IconButton
-                                            onClick={toggleSearchMode}
-                                            color="inherit"
-                                            size="large"
-                                        >
-                                            {toggleIcon}
-                                        </IconButton>
-                                    </Grid>
-                                    <Grid item>
-                                        {searchMode ? (
-                                            <TaskFilterTextField />
-                                        ) : (
-                                            <></>
-                                        )}
-                                    </Grid>
-                                </Grid>
-                            </Hidden>
-                        </Grid>
-                        <Grid item>{lightToggleProfileMenu}</Grid>
-                    </Grid>
-                </Toolbar>
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    className={classes.appBarComponents}
+                >
+                    <Box sx={{ width: 140 }}>
+                        <MobileNavigationDrawer />
+                    </Box>
+                    {menuIndex === "dashboard" && (
+                        <Hidden mdDown>
+                            <Box sx={{ width: "100%", maxWidth: 1100 }}>
+                                <DashboardDetailTabs />
+                            </Box>
+                        </Hidden>
+                    )}
+                    <Hidden mdUp>
+                        <Stack alignItems={"center"} direction={"row"}>
+                            <IconButton
+                                onClick={toggleSearchMode}
+                                color="inherit"
+                                size="large"
+                            >
+                                {toggleIcon}
+                            </IconButton>
+                            {searchMode && <TaskFilterTextField />}
+                        </Stack>
+                    </Hidden>
+                    {lightToggleProfileMenu}
+                </Stack>
             </AppBar>
             <MainWindow />
         </React.Fragment>

@@ -763,6 +763,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "timeRiderHome": {
+                    "name": "timeRiderHome",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "requesterContact": {
                     "name": "requesterContact",
                     "isArray": false,
@@ -1167,6 +1174,13 @@ export const schema = {
                         "targetName": "deliverableDeliverableTypeId"
                     }
                 },
+                "taskDeliverablesId": {
+                    "name": "taskDeliverablesId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "task": {
                     "name": "task",
                     "isArray": false,
@@ -1232,13 +1246,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "taskDeliverablesId": {
-                    "name": "taskDeliverablesId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,
@@ -1366,7 +1373,9 @@ export const schema = {
                 "PICKED_UP",
                 "DROPPED_OFF",
                 "CANCELLED",
-                "REJECTED"
+                "REJECTED",
+                "ABANDONED",
+                "COMPLETED"
             ]
         },
         "Patch": {
@@ -1382,5 +1391,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "3a3448a66d6a4e5f3f6ffa643b36a55c"
+    "version": "9c20def9f6d2e418ca2f255de7914a25"
 };

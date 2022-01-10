@@ -1,87 +1,44 @@
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import UserCard from "../../../components/UserCard";
 import React from "react";
-import { useDispatch } from "react-redux";
-import {
-    removeTaskAssignedCoordinatorRequest,
-    removeTaskAssignedRiderRequest,
-} from "../../../redux/taskAssignees/TaskAssigneesActions";
-import Divider from "@mui/material/Divider";
-import makeStyles from '@mui/styles/makeStyles';
+import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-
-const useStyles = makeStyles({
-    root: {
-        minWidth: 300,
-        padding: 10,
-    },
-    spacer: {
-        height: 15,
-    },
-});
+import { Stack } from "@mui/material";
+import { userRoles } from "../../../apiConsts";
+import UserChip from "../../../components/UserChip";
 
 function TaskAssignees(props) {
-    const dispatch = useDispatch();
-    const { taskUUID } = props;
-    const classes = useStyles();
-
-    const noAssigneeMessage = props.assignees ? (
-        props.assignees.length === 0 ? (
-            <Typography>No assignee.</Typography>
-        ) : (
-            <></>
-        )
-    ) : (
-        <></>
-    );
-
-    function onRemoveUser(userUUID) {
-        if (props.rider)
-            dispatch(removeTaskAssignedRiderRequest(taskUUID, userUUID));
-        else if (props.coordinator)
-            dispatch(removeTaskAssignedCoordinatorRequest(taskUUID, userUUID));
-        if (props.onRemove) props.onRemove();
-    }
-
-    return (
-        <Grid
-            container
-            className={classes.root}
-            direction={"column"}
-            justifyContent={"center"}
-            alignItems={"flex-start"}
-        >
-            <Grid item>{noAssigneeMessage}</Grid>
-            {Object.values(props.assignees).map((user) => {
-                return (
-                    <Grid item key={user.uuid}>
-                        <UserCard
-                            compact
-                            onDelete={() => onRemoveUser(user.uuid)}
-                            userUUID={user.uuid}
-                            displayName={user.display_name}
-                            avatarURL={user.profile_picture_thumbnail_url}
+    return [userRoles.coordinator, userRoles.rider].map((role) => {
+        const assignments = Object.values(props.assignees).filter(
+            (a) => a.role === role
+        );
+        const message = assignments.length === 0 ? "No one assigned" : "";
+        const label =
+            role === userRoles.coordinator ? "Coordinators:" : "Riders:";
+        return (
+            <Stack key={role} direction="row" alignItems="center" spacing={1}>
+                <Typography>{label}</Typography>
+                <Typography>{message}</Typography>
+                {assignments.map((assignment) => {
+                    const user = assignment.assignee || null;
+                    return (
+                        <UserChip
+                            user={user}
+                            key={assignment.id}
+                            onDelete={() => props.onRemove(assignment.id)}
                         />
-                        <Divider />
-                        <div className={classes.spacer} />
-                    </Grid>
-                );
-            })}
-        </Grid>
-    );
+                    );
+                })}
+            </Stack>
+        );
+    });
 }
 
 TaskAssignees.propTypes = {
-    taskUUID: PropTypes.string.isRequired,
-    assignees: PropTypes.arrayOf(PropTypes.object),
+    assignees: PropTypes.object,
     onRemove: PropTypes.func,
-    coordinator: PropTypes.bool,
-    rider: PropTypes.bool,
 };
 
 TaskAssignees.defaultProps = {
-    assignees: [],
+    assignees: {},
     onRemove: () => {},
 };
 

@@ -18,3 +18,5 @@ export const networkStatusSelector = (state) =>
 export const dataStoreReadyStatusSelector = (state) =>
     state.awsHubDataStoreEventsReducer.ready;
 export const onChangeTaskSelector = (state) => state.onChangeTask;
+export const dashboardTabIndexSelector = (state) => state.dashboardTabIndex;
+export const menuIndexSelector = (state) => state.menuIndex;

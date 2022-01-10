@@ -7,6 +7,7 @@ import ChildIcon from "./components/deliverableIcons/ChildIcon";
 import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
 import OtherIcon from "./components/deliverableIcons/OtherIcon";
 import DocumentIcon from "./components/deliverableIcons/DocumentIcon";
+import moment from "moment";
 
 export function convertListDataToObject(list) {
     const result = {};
@@ -15,6 +16,47 @@ export function convertListDataToObject(list) {
     }
     return result;
 }
+
+export function copyTaskDataToClipboard(task) {
+    const {
+        pickUpLocation,
+        priority,
+        dropOffLocation,
+        timeOfCall,
+        deliverables,
+    } = task;
+    const data = {
+        TOC: timeOfCall ? moment(timeOfCall).format("HH:mm") : undefined,
+        FROM: pickUpLocation
+            ? `${pickUpLocation.ward || ""} - ${pickUpLocation.line1 || ""}`
+            : undefined,
+        TO: dropOffLocation
+            ? `${dropOffLocation.ward || ""} - ${dropOffLocation.line1 || ""}`
+            : undefined,
+        PRIORITY: priority ? priority.toLowerCase() : undefined,
+    };
+
+    if (deliverables) {
+        data["ITEMS"] = deliverables
+            .map((deliverable) => {
+                const { deliverableType, count } = deliverable;
+                return `${
+                    deliverableType ? deliverableType.label : ""
+                } x ${count}`;
+            })
+            .join(", ");
+    }
+
+    let result = "";
+    let first = true;
+    for (const [key, value] of Object.entries(data)) {
+        if (value) result += `${first ? "" : " "}${key}: ${value}`;
+        first = false;
+    }
+
+    return navigator.clipboard.writeText(result);
+}
+
 export function getDeliverableIconByEnum(deliverableType, size) {
     switch (deliverableType) {
         case deliverableIcons.bug:
@@ -62,9 +104,18 @@ export function determineTaskStatus(task) {
         assignedRiders &&
         assignedRiders.length > 0 &&
         !!task.timePickedUp &&
-        !!task.timeDroppedOff
+        !!task.timeDroppedOff &&
+        !!!task.timeRiderHome
     ) {
         return tasksStatus.droppedOff;
+    } else if (
+        assignedRiders &&
+        assignedRiders.length > 0 &&
+        !!task.timePickedUp &&
+        !!task.timeDroppedOff &&
+        !!task.timeRiderHome
+    ) {
+        return tasksStatus.completed;
     }
 }
 
@@ -82,6 +133,8 @@ export function taskStatusHumanReadable(status) {
             return "Rejected";
         case "CANCELLED":
             return "Cancelled";
+        case "COMPLETED":
+            return "Completed";
         default:
             return "Unknown status";
     }
@@ -96,6 +149,18 @@ export function sortByCreatedTime(items, order = "newest") {
     else
         return items.sort((a, b) => {
             return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+}
+
+export function sortByTimeOfCall(items, order = "newest") {
+    if (!items || items.length === 0) return [];
+    if (order !== "newest")
+        return items.sort((a, b) => {
+            return new Date(a.timeOfCall) - new Date(b.timeOfCall);
+        });
+    else
+        return items.sort((a, b) => {
+            return new Date(b.timeOfCall) - new Date(a.timeOfCall);
         });
 }
 

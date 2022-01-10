@@ -13,6 +13,7 @@ import { NotFound } from "http-errors";
 import { userRoles } from "../apiConsts";
 
 const fakeUser = {
+    id: "offline",
     username: "offline",
     displayName: "Offline User",
     roles: Object.values(userRoles),
@@ -23,7 +24,23 @@ const fakeUser = {
     active: 1,
 };
 
+const testUserModel = new models.User({
+    username: "whoami",
+    displayName: "Mock User",
+    roles: Object.values(userRoles),
+    name: "Someone Person",
+    dateOfBirth: null,
+    profilePictureURL: null,
+    profilePictureThumbnailURL: null,
+    active: 1,
+});
+const testUser = { ...testUserModel, id: "whoami" };
+
 function* getWhoami() {
+    if (process.env.NODE_ENV === "test") {
+        yield put(getWhoamiSuccess(testUser));
+        return;
+    }
     if (
         process.env.REACT_APP_DEMO_MODE === "true" ||
         process.env.REACT_APP_OFFLINE_ONLY === "true"
