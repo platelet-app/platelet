@@ -81,7 +81,7 @@ function AdminAddLocation() {
     }
     useEffect(verifyInput, [state]);
 
-    async function addNewVehicle() {
+    async function addNewLocation() {
         try {
             setIsPosting(true);
             const { contact, ...rest } = state;
@@ -172,7 +172,7 @@ function AdminAddLocation() {
                     <Grid item>
                         <Button
                             disabled={!inputVerified || isPosting}
-                            onClick={addNewVehicle}
+                            onClick={addNewLocation}
                         >
                             Add location
                         </Button>
