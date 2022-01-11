@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
@@ -66,8 +66,17 @@ const contactFields = {
 function LocationDetailAndSelector(props) {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
+    const [editMode, setEditMode] = useState(false);
     const [protectedLocation, setProtectedLocation] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
+    const initialSetEdit = useRef(false);
+
+    useEffect(() => {
+        if (!initialSetEdit.current) {
+            initialSetEdit.current = true;
+            setEditMode(!!!props.location);
+        }
+    }, [props.location]);
 
     function updateStateFromProps() {
         if (props.location) {
@@ -99,10 +108,11 @@ function LocationDetailAndSelector(props) {
 
     function onSelectPreset(value) {
         props.onSelectPreset(value);
+        setEditMode(false);
     }
 
     function onClickEditButton() {
-        props.onEditPreset({ ...state.address, contact: state.contact });
+        props.onEdit();
     }
     function onClickClearButton() {
         props.onClear();
@@ -152,19 +162,22 @@ function LocationDetailAndSelector(props) {
                 justifyContent={"flex-end"}
                 alignItems={"center"}
             >
-                {props.location && props.location.listed ? (
+                {!!props.location && (
                     <Tooltip title={"Edit"}>
                         <IconButton
                             className={classes.button}
+                            aria-label={"Edit"}
                             edge={"end"}
                             disabled={props.disabled}
-                            onClick={onClickEditButton}
+                            onClick={() =>
+                                setEditMode((prevState) => !prevState)
+                            }
                         >
-                            <EditIcon />
+                            <EditIcon
+                                color={editMode ? "secondary" : "inherit"}
+                            />
                         </IconButton>
                     </Tooltip>
-                ) : (
-                    <></>
                 )}
                 {props.location && !props.disableClear ? (
                     <ClearButtonWithConfirmation
@@ -197,7 +210,7 @@ function LocationDetailAndSelector(props) {
                                 >
                                     <ClickableTextField
                                         label={label}
-                                        disabled={protectedLocation}
+                                        disabled={!editMode}
                                         onFinished={(v) => {
                                             setState((prevState) => ({
                                                 ...prevState,
@@ -234,7 +247,7 @@ function LocationDetailAndSelector(props) {
                                                         key ===
                                                         "telephoneNumber"
                                                     }
-                                                    disabled={protectedLocation}
+                                                    disabled={!editMode}
                                                     onFinished={(v) => {
                                                         setState(
                                                             (prevState) => ({
@@ -287,7 +300,7 @@ LocationDetailAndSelector.propTypes = {
     onChangeContact: PropTypes.func,
     disableClear: PropTypes.bool,
     onClear: PropTypes.func,
-    onEditPreset: PropTypes.func,
+    onEdit: PropTypes.func,
     showContact: PropTypes.bool,
 };
 
@@ -300,7 +313,7 @@ LocationDetailAndSelector.defaultProps = {
     onChange: () => {},
     onChangeContact: () => {},
     onClear: () => {},
-    onEditPreset: () => {},
+    onEdit: () => {},
     showContact: false,
 };
 

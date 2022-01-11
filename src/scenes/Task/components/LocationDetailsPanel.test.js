@@ -337,6 +337,7 @@ describe("LocationDetailsPanel", () => {
         const task = new models.Task({ [locationKey]: mockLocations[0] });
         amplify.DataStore.query
             .mockResolvedValueOnce(mockLocations[0])
+            .mockResolvedValueOnce(mockLocations[0])
             .mockResolvedValueOnce(task)
             .mockResolvedValue(mockLocations);
         const fakeContact = new models.AddressAndContactDetails({
@@ -355,7 +356,12 @@ describe("LocationDetailsPanel", () => {
         amplify.DataStore.save
             .mockResolvedValueOnce(fakeContact)
             .mockResolvedValueOnce(fakeLocation)
-            .mockResolvedValueOnce(fakeTask);
+            .mockResolvedValueOnce(fakeTask)
+            .mockResolvedValueOnce({
+                ...fakeLocation,
+                listed: 0,
+                name: `Copy of ${mockLocations[0].name}`,
+            });
 
         render(
             <LocationDetailsPanel
@@ -370,8 +376,11 @@ describe("LocationDetailsPanel", () => {
             screen.getAllByText(mockLocations[0].line1)[0]
         ).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
+        userEvent.click(screen.getAllByText(mockLocations[0].line1)[1]);
+        userEvent.type(screen.getByRole("textbox"), "test");
+        userEvent.type(screen.getByRole("textbox"), "{enter}");
         await waitFor(() =>
-            expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(4)
         );
         expect(amplify.DataStore.save).toHaveBeenCalledWith(
             expect.objectContaining(_.omit(fakeContact, "id"))
@@ -385,7 +394,6 @@ describe("LocationDetailsPanel", () => {
         expect(
             screen.getByText(`Copy of ${mockLocations[0].name}`)
         ).toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
     });
 
     test.each`
@@ -411,6 +419,7 @@ describe("LocationDetailsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(mockLocations[1].ward));
         const textBox = screen.getByRole("textbox");
         expect(textBox).toBeInTheDocument();
@@ -520,6 +529,7 @@ describe("LocationDetailsPanel", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
         userEvent.click(screen.getByText("Expand to see more"));
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(fakeContactModel.emailAddress));
         const textBox = screen.getByRole("textbox");
         expect(textBox).toBeInTheDocument();

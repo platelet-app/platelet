@@ -49,7 +49,7 @@ function LocationDetailsPanel(props) {
 
     useEffect(() => getLocation(), [props.locationId, dataStoreReadyStatus]);
 
-    async function editPreset(currentState) {
+    async function editPreset() {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
@@ -63,7 +63,7 @@ function LocationDetailsPanel(props) {
                 _lastChangedAt,
                 _deleted,
                 ...rest
-            } = currentState;
+            } = state;
             const newContact = await DataStore.save(
                 new models.AddressAndContactDetails(
                     _.omit(
@@ -90,7 +90,7 @@ function LocationDetailsPanel(props) {
                     updated[props.locationKey] = newLocation;
                 })
             );
-            setState(newLocation);
+            return newLocation;
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -131,18 +131,31 @@ function LocationDetailsPanel(props) {
     }
 
     async function changeContactDetails(values) {
+        let locationToUpdate = null;
+        const existingLocation = await DataStore.query(
+            models.Location,
+            state.id
+        );
+        // check if existing location is listed or not
+        if (existingLocation.listed === 1) {
+            locationToUpdate = await editPreset();
+        }
         if (!state.contact || !state.contact.id) {
             displayErrorNotification(errorMessage);
             console.log("Tried to update a non-existent contact");
             return;
         }
+        const contactId =
+            locationToUpdate && locationToUpdate.contact
+                ? locationToUpdate.contact.id
+                : state.contact.id;
         const existingContact = await DataStore.query(
             models.AddressAndContactDetails,
-            state.contact.id
+            contactId
         );
         if (!existingContact) {
             displayErrorNotification(errorMessage);
-            console.log(`Location could not be found${state.contact.id}`);
+            console.log(`Contact could not be found`);
             return;
         }
         const contactResult = await DataStore.save(
@@ -155,10 +168,14 @@ function LocationDetailsPanel(props) {
                 }
             )
         );
-        setState((prevState) => ({
-            ...prevState,
-            contact: contactResult,
-        }));
+        if (locationToUpdate) {
+            setState({ ...locationToUpdate, contact: contactResult });
+        } else {
+            setState((prevState) => ({
+                ...prevState,
+                contact: contactResult,
+            }));
+        }
     }
 
     async function changeLocationDetails(values) {
@@ -174,20 +191,15 @@ function LocationDetailsPanel(props) {
             let locationResult;
             // if we are updating an existing location
             if (locationId) {
-                const existingLocation = await DataStore.query(
+                let existingLocation = await DataStore.query(
                     models.Location,
                     locationId
                 );
                 if (!existingLocation)
                     throw new Error("Location doesn't exist");
                 if (!!existingLocation.listed) {
-                    // can't edit a location if it's from the directory
-                    dispatch(
-                        displayWarningNotification(
-                            "You can't edit listed locations in this way."
-                        )
-                    );
-                    return;
+                    // copy the location first
+                    existingLocation = await editPreset();
                 }
                 // don't do anything if values is empty
                 if (!_.isEmpty(values)) {
@@ -280,7 +292,6 @@ function LocationDetailsPanel(props) {
                             }
                             onChange={changeLocationDetails}
                             onChangeContact={changeContactDetails}
-                            onEditPreset={editPreset}
                             onClear={clearLocation}
                             location={state}
                             displayPresets={true}
