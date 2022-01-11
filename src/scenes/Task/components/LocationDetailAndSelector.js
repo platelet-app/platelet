@@ -18,9 +18,6 @@ const useStyles = makeStyles({
     root: {
         maxWidth: "350px",
     },
-    button: {
-        height: 9,
-    },
     label: {
         maxWidth: "250px",
     },
@@ -165,9 +162,8 @@ function LocationDetailAndSelector(props) {
                 {!!props.location && (
                     <Tooltip title={"Edit"}>
                         <IconButton
-                            className={classes.button}
                             aria-label={"Edit"}
-                            edge={"end"}
+                            size={"small"}
                             disabled={props.disabled}
                             onClick={() =>
                                 setEditMode((prevState) => !prevState)

@@ -8,6 +8,7 @@ export function EditModeToggleButton(props) {
         <Tooltip title={props.tooltipEdit || "Finish"}>
             <IconButton
                 color="secondary"
+                aria-label="Finish"
                 aria-controls="simple-menu"
                 aria-haspopup="true"
                 onClick={() => props.onChange(false)}
@@ -19,6 +20,7 @@ export function EditModeToggleButton(props) {
         <Tooltip title={props.tooltipDefault || "Edit"}>
             <IconButton
                 className={props.className}
+                aria-label="Edit"
                 aria-controls="simple-menu"
                 aria-haspopup="true"
                 onClick={() => props.onChange(true)}

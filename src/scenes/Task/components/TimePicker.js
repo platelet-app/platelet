@@ -62,6 +62,7 @@ function TimePicker(props) {
             <>
                 <Stack
                     direction={"row"}
+                    spacing={1}
                     justifyContent={"space-between"}
                     alignItems={"center"}
                 >
@@ -91,12 +92,10 @@ function TimePicker(props) {
                     </Tooltip>
                     <Tooltip title={"Edit"}>
                         <IconButton
-                            className={classes.button}
                             aria-label={"Edit"}
-                            edge={"end"}
                             disabled={props.disabled}
                             onClick={toggleEditMode}
-                            size="large"
+                            size="small"
                         >
                             <EditIcon />
                         </IconButton>
@@ -106,10 +105,9 @@ function TimePicker(props) {
                             <IconButton
                                 aria-label={"Clear"}
                                 className={classes.button}
-                                edge={"end"}
                                 disabled={props.disabled}
                                 onClick={onClear}
-                                size="large"
+                                size="small"
                             >
                                 <CancelIcon />
                             </IconButton>
