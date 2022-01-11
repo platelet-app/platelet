@@ -210,6 +210,10 @@ function TaskActions(props) {
                                 {Object.entries(fields).map(([key, value]) => {
                                     return (
                                         <ToggleButton
+                                            sx={{
+                                                paddingTop: 1.5,
+                                                paddingBottom: 1.5,
+                                            }}
                                             key={key}
                                             disabled={
                                                 isFetching || checkDisabled(key)
@@ -230,17 +234,14 @@ function TaskActions(props) {
                                     );
                                 })}
                             </ToggleButtonGroup>
-                            <Stack
-                                spacing={3}
-                                sx={{ width: "100%" }}
-                                direction="column"
-                            >
+                            <Stack sx={{ width: "100%" }} direction="column">
                                 {Object.entries(fields).map(([key, value]) => {
                                     const disabled =
                                         isFetching || checkDisabled(key);
                                     return (
                                         <Stack
                                             justifyContent="space-between"
+                                            alignItems="center"
                                             direction="row"
                                         >
                                             <Typography
@@ -249,6 +250,8 @@ function TaskActions(props) {
                                                     onClickToggle(key);
                                                 }}
                                                 sx={{
+                                                    paddingTop: 1.5,
+                                                    paddingBottom: 1.5,
                                                     cursor: disabled
                                                         ? "default"
                                                         : "pointer",
