@@ -108,11 +108,9 @@ function LocationDetailAndSelector(props) {
         setEditMode(false);
     }
 
-    function onClickEditButton() {
-        props.onEdit();
-    }
     function onClickClearButton() {
         props.onClear();
+        setEditMode(true);
     }
 
     const presetName =
