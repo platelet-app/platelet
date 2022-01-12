@@ -39,6 +39,7 @@
         "react": "^17.0.2",
         "react-cropper": "^2.1.8",
         "react-dom": "^17.0.2",
+        "react-easy-crop": "^4.0.1",
         "react-helmet": "^6.1.0",
         "react-horizontal-scrolling-menu": "^2.7.0",
         "react-idle-timer": "^4.6.4",
