@@ -1,0 +1,13 @@
+{
+  "authRoleName": {
+    "Ref": "AuthRoleName"
+  },
+  "unauthRoleName": {
+    "Ref": "UnauthRoleName"
+  },
+  "indexName": "plateletPlaceIndex",
+  "dataProvider": "Esri",
+  "dataSourceIntendedUse": "SingleUse",
+  "pricingPlan": "RequestBasedUsage",
+  "isDefault": true
+}

@@ -55,7 +55,12 @@ export enum Patch {
   AIR_AMBULANCE = "AIR_AMBULANCE"
 }
 
-
+export declare class S3Object {
+  readonly bucket: string;
+  readonly key: string;
+  readonly region: string;
+  constructor(init: ModelInit<S3Object>);
+}
 
 type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
@@ -113,6 +118,8 @@ export declare class User {
   readonly riderResponsibility?: RiderResponsibility;
   readonly profilePictureURL?: string;
   readonly profilePictureThumbnailURL?: string;
+  readonly profilePicture?: S3Object;
+  readonly profilePictureThumbnail?: S3Object;
   readonly comments?: Comment[];
   readonly group?: Group;
   readonly assignments?: (TaskAssignee | null)[];

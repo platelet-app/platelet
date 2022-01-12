@@ -58,6 +58,16 @@ export const syncUsers = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -148,6 +158,16 @@ export const getUser = /* GraphQL */ `
       }
       profilePictureURL
       profilePictureThumbnailURL
+      profilePicture {
+        bucket
+        key
+        region
+      }
+      profilePictureThumbnail {
+        bucket
+        key
+        region
+      }
       comments {
         items {
           id
@@ -252,6 +272,16 @@ export const listUsers = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -480,6 +510,16 @@ export const getVehicle = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -1474,6 +1514,16 @@ export const getTask = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -2367,6 +2417,16 @@ export const getComment = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt

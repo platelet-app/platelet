@@ -102,6 +102,24 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "profilePicture": {
+                    "name": "profilePicture",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "S3Object"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "profilePictureThumbnail": {
+                    "name": "profilePictureThumbnail",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "S3Object"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "comments": {
                     "name": "comments",
                     "isArray": true,
@@ -1566,6 +1584,33 @@ export const schema = {
             ]
         }
     },
-    "nonModels": {},
-    "version": "3c692b7c46fbc3d2daf5bd095b17f493"
+    "nonModels": {
+        "S3Object": {
+            "name": "S3Object",
+            "fields": {
+                "bucket": {
+                    "name": "bucket",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "key": {
+                    "name": "key",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "region": {
+                    "name": "region",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                }
+            }
+        }
+    },
+    "version": "004403b8e087add43bd0c727deef4060"
 };

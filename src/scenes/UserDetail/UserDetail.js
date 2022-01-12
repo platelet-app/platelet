@@ -34,7 +34,6 @@ const initialUserState = {
 
 export default function UserDetail(props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
-    const whoami = useSelector(getWhoami);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
@@ -181,10 +180,12 @@ export default function UserDetail(props) {
                     />
                 </PaddedPaper>
                 <ProfilePicture
-                    pictureURL={user.profilePictureURL}
-                    userUUID={user.id}
+                    imgKey={
+                        user.profilePicture ? user.profilePicture.key : null
+                    }
+                    userId={user.id}
                     altText={user.displayName}
-                    editable={false}
+                    editable={true}
                 />
             </Stack>
         );

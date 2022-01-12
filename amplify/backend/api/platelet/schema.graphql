@@ -10,10 +10,18 @@ type User @auth(rules: [{ allow: private}]) @model {
   riderResponsibility: RiderResponsibility @connection
   profilePictureURL: String
   profilePictureThumbnailURL: String
+  profilePicture: S3Object
+  profilePictureThumbnail: S3Object
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
   group: Group @connection(name: "GroupMembers")
   assignments: [TaskAssignee] @connection(keyName: "byAssignee", fields: ["id"])
   active: Int!
+}
+
+type S3Object {
+  bucket: String!
+  key: String!
+  region: String!
 }
 
 type Group @auth(rules: [{ allow: private}]) @model {
