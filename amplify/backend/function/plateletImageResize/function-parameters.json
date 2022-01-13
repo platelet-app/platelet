@@ -1,10 +1,5 @@
 {
-  "lambdaLayers": [
-    {
-      "type": "ExternalLayer",
-      "arn": "arn:aws:lambda:eu-west-1:770693421928:layer:Klayers-python38-Pillow:15"
-    }
-  ],
+  "lambdaLayers": [],
   "environmentVariableList": [
     {
       "cloudFormationParameterName": "resizeWidth",
@@ -21,6 +16,20 @@
     {
       "cloudFormationParameterName": "thumbnailHeight",
       "environmentVariableName": "THUMBNAIL_HEIGHT"
+    },
+    {
+      "cloudFormationParameterName": "amplifyStorageBucketName",
+      "environmentVariableName": "AMPLIFY_STORAGE_BUCKET_NAME"
     }
-  ]
+  ],
+  "permissions": {
+    "storage": {
+      "plateletStorage": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  }
 }

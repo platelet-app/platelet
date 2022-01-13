@@ -24,14 +24,16 @@ def resize_image(picture_file_path, crop_dimensions=None):
     return (cropped_filename, thumbnail_filename)
 
 def handler(event, context):
-    return
+  amplify_storage_bucket_name = os.environ.get('AMPLIFY_STORAGE_BUCKET_NAME')
   for record in event['Records']:
       bucket = record['s3']['bucket']['name']
       key = unquote_plus(record['s3']['object']['key'])
       tmpkey = key.replace('/', '')
       download_path = '/tmp/{}{}'.format(uuid.uuid4(), tmpkey)
+      print('Downloading {} from bucket {} to {}'.format(key, bucket, download_path))
       s3_client.download_file(bucket, key, download_path)
       (newImage, thumbnail) = resize_image(download_path)
       base_key = key.split('.')[0]
-      s3_client.upload_file(newImage, bucket, key)
-      s3_client.upload_file(thumbnail, bucket, "{}_thumbnail.jpg".format(base_key))
+      s3_client.upload_file(newImage, amplify_storage_bucket_name, key)
+      s3_client.upload_file(thumbnail, amplify_storage_bucket_name, "{}_thumbnail.jpg".format(base_key))
+      s3_client.delete_object(Bucket=bucket, Key=key)

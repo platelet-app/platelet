@@ -48,7 +48,15 @@
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
-      "dependsOn": []
+      "dependsOn": [
+        {
+          "category": "storage",
+          "resourceName": "plateletStorage",
+          "attributes": [
+            "BucketName"
+          ]
+        }
+      ]
     }
   },
   "geo": {

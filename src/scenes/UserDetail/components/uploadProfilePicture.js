@@ -17,7 +17,7 @@ async function uploadProfilePicture(userId, selectedFile) {
 
         const bucket = aws_config.aws_user_files_s3_bucket;
         const region = aws_config.aws_user_files_s3_bucket_region;
-        const visibility = "public";
+        const visibility = "protected";
         const { identityId } = await Auth.currentCredentials();
 
         const key = `${visibility}/${identityId}/${userId}.jpg`;
@@ -41,7 +41,8 @@ async function uploadProfilePicture(userId, selectedFile) {
             const existingUser = await API.graphql(
                 graphqlOperation(getUser, { id: userId })
             );
-            await Storage.put(`${identityId}/${userId}.jpg`, selectedFile, {
+            await Storage.put(`${userId}.jpg`, selectedFile, {
+                bucket: process.env.REACT_APP_RESIZE_BUCKET_NAME,
                 contentType: mimeType,
                 level: visibility,
             });

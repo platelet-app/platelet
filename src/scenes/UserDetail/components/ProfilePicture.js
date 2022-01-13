@@ -37,8 +37,7 @@ export default function ProfilePicture(props) {
     let imgKey = null;
     if (props.imgKey) {
         const imgKeySplit = props.imgKey.split("/");
-        const [, ...imgKeyRest] = imgKeySplit;
-        console.log("eee", imgKeyRest);
+        const [, , ...imgKeyRest] = imgKeySplit;
         imgKey = imgKeyRest.join("/");
     }
 
@@ -55,7 +54,7 @@ export default function ProfilePicture(props) {
                         "--height": "300px",
                     },
                 }}
-                level="public"
+                level="protected"
                 alt={props.altText}
                 imgKey={imgKey}
             />
