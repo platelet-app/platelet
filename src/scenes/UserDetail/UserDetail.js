@@ -70,6 +70,8 @@ export default function UserDetail(props) {
         [props.location.key, dataStoreReadyStatus]
     );
 
+    console.log("asdfsadf", user.profilePicture);
+
     async function getDisplayNames() {
         try {
             const users = await DataStore.query(models.User);
@@ -179,9 +181,7 @@ export default function UserDetail(props) {
                     />
                 </PaddedPaper>
                 <ProfilePicture
-                    imgKey={
-                        user.profilePicture ? user.profilePicture.key : null
-                    }
+                    profilePicture={user.profilePicture}
                     userId={user.id}
                     altText={user.displayName}
                     editable={true}

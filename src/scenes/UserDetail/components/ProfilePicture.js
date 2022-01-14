@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { Box, CircularProgress, Paper, Stack } from "@mui/material";
+import { Box, Paper, Stack } from "@mui/material";
 import ProfilePictureCropper from "./ProfilePictureCropper";
 import uploadProfilePicture from "./uploadProfilePicture";
-import { AmplifyS3Image } from "@aws-amplify/ui-react";
+import { generateS3Link } from "../../../amplifyUtilities";
 
 export default function ProfilePicture(props) {
     const [image, setImage] = useState("");
     const [uploading, setUploading] = useState(false);
+    const [imageUrl, setImageUrl] = useState("");
 
     const onChange = (e) => {
         e.preventDefault();
@@ -34,12 +35,12 @@ export default function ProfilePicture(props) {
         setImage(null);
     };
 
-    let imgKey = null;
-    let imgVisibility = null;
-    if (props.imgKey) {
-        imgKey = props.imgKey.split("/").reverse()[0];
-        imgVisibility = props.imgKey.split("/")[0];
+    async function getProfilePicture() {
+        if (props.profilePicture && props.profilePicture.key) {
+            setImageUrl(await generateS3Link(props.profilePicture.key));
+        }
     }
+    useEffect(() => getProfilePicture(), [props.profilePicture]);
 
     const profilePicture = image ? (
         <ProfilePictureCropper
@@ -49,17 +50,7 @@ export default function ProfilePicture(props) {
         />
     ) : (
         <Box sx={{ position: "relative", width: 300, height: 300 }}>
-            <AmplifyS3Image
-                imgProps={{
-                    style: {
-                        "--width": "300px",
-                        "--height": "300px",
-                    },
-                }}
-                level={imgVisibility}
-                alt={props.altText}
-                imgKey={imgKey}
-            />
+            <img width={300} height={300} alt={props.altText} src={imageUrl} />
         </Box>
     );
 
