@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import Cropper from "react-easy-crop";
 
@@ -116,6 +116,17 @@ function ProfilePictureCropper(props) {
     return (
         <Stack>
             <Box sx={{ position: "relative", height: 300, width: 300 }}>
+                {props.isPosting && (
+                    <CircularProgress
+                        sx={{
+                            position: "absolute",
+                            top: 130,
+                            left: 130,
+                            margin: "auto",
+                            zIndex: 100,
+                        }}
+                    />
+                )}
                 <Cropper
                     image={props.image}
                     crop={crop}

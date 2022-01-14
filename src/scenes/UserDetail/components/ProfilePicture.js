@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import { Box, Paper, Stack } from "@mui/material";
+import { Box, CircularProgress, Paper, Stack } from "@mui/material";
 import ProfilePictureCropper from "./ProfilePictureCropper";
 import uploadProfilePicture from "./uploadProfilePicture";
 import { AmplifyS3Image } from "@aws-amplify/ui-react";
 
 export default function ProfilePicture(props) {
     const [image, setImage] = useState("");
+    const [uploading, setUploading] = useState(false);
 
     const onChange = (e) => {
         e.preventDefault();
@@ -24,14 +25,14 @@ export default function ProfilePicture(props) {
     };
 
     const sendPictureData = async (canvasResult) => {
-        console.log("canvasResult", canvasResult);
-        await canvasResult.toBlob(async (file) => {
-            uploadProfilePicture(props.userId, file);
-        }, "image/jpeg");
+        setUploading(true);
+        const blob = await new Promise((resolve) =>
+            canvasResult.toBlob(resolve, "image/jpeg")
+        );
+        await uploadProfilePicture(props.userId, blob);
+        setUploading(false);
         setImage(null);
     };
-
-    console.log(props.imgKey);
 
     let imgKey = null;
     let imgVisibility = null;
@@ -41,7 +42,11 @@ export default function ProfilePicture(props) {
     }
 
     const profilePicture = image ? (
-        <ProfilePictureCropper onFinish={sendPictureData} image={image} />
+        <ProfilePictureCropper
+            isPosting={uploading}
+            onFinish={sendPictureData}
+            image={image}
+        />
     ) : (
         <Box sx={{ position: "relative", width: 300, height: 300 }}>
             <AmplifyS3Image

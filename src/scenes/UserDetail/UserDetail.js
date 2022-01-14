@@ -51,7 +51,6 @@ export default function UserDetail(props) {
         } else {
             try {
                 const userResult = await DataStore.query(models.User, userUUID);
-                console.log(userResult);
                 setIsFetching(false);
                 if (userResult) setUser(userResult);
                 else setNotFound(true);
