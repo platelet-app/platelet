@@ -87,8 +87,8 @@ function RiderPicker(props) {
                                         ? option.riderResponsibility.label
                                         : ""
                                 }
-                                profilePictureURL={
-                                    option.profilePictureThumbnailURL
+                                profilePictureThumbnail={
+                                    option.profilePictureThumbnail
                                 }
                             />
                         </Box>

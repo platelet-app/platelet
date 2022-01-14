@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { encodeUUID } from "../utilities";
 import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
@@ -32,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserCard(props) {
     const classes = useStyles();
-
     const deleteButton = props.onDelete ? (
         <IconButton
             aria-label="delete"
@@ -72,7 +71,7 @@ export default function UserCard(props) {
                             size={props.compact ? 3 : 6}
                             userUUID={props.userUUID}
                             displayName={props.displayName}
-                            avatarURL={props.avatarURL}
+                            thumbnailKey={props.thumbnailKey}
                         />
                         <Stack
                             spacing={1}

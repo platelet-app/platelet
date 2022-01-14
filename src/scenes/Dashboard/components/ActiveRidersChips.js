@@ -17,6 +17,7 @@ import RiderConfirmationHomeContents from "./RiderConfirmationHomeContents";
 import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import UserChip from "../../../components/UserChip";
 
 // use for transparency on arrows sometime
 const useStyles = makeStyles((theme) => ({
@@ -204,49 +205,21 @@ function ActiveRidersChips() {
                 }
             >
                 {Object.values(activeRiders).map((rider) => {
-                    if (rider.profilePictureThumbnailURL) {
-                        return (
-                            <Box
-                                itemId={rider.id}
-                                sx={{ margin: 0.5 }}
-                                key={rider.id}
-                            >
-                                <Chip
-                                    onClick={() => {
-                                        setUpdatingRider(rider.id);
-                                        timeSet.current = new Date();
-                                    }}
-                                    avatar={
-                                        <Avatar
-                                            alt={rider.displayName}
-                                            src={
-                                                rider.profilePictureThumbnailURL
-                                            }
-                                        />
-                                    }
-                                    label={rider.displayName}
-                                />
-                            </Box>
-                        );
-                    } else {
-                        return (
-                            <Box
-                                itemId={rider.id}
-                                sx={{ margin: 0.5 }}
-                                key={rider.id}
-                            >
-                                <Chip
-                                    key={rider.id}
-                                    itemId={rider.id}
-                                    onClick={() => {
-                                        setUpdatingRider(rider.id);
-                                        timeSet.current = new Date();
-                                    }}
-                                    label={rider.name}
-                                />
-                            </Box>
-                        );
-                    }
+                    return (
+                        <Box
+                            itemId={rider.id}
+                            sx={{ margin: 0.5 }}
+                            key={rider.id}
+                        >
+                            <UserChip
+                                onClick={() => {
+                                    setUpdatingRider(rider.id);
+                                    timeSet.current = new Date();
+                                }}
+                                user={rider}
+                            />
+                        </Box>
+                    );
                 })}
             </ScrollMenu>
         </React.Fragment>

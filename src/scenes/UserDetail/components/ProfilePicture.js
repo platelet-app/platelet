@@ -33,15 +33,12 @@ export default function ProfilePicture(props) {
 
     console.log(props.imgKey);
 
-    // remove extra prefix from imgKey
     let imgKey = null;
+    let imgVisibility = null;
     if (props.imgKey) {
-        const imgKeySplit = props.imgKey.split("/");
-        const [, , ...imgKeyRest] = imgKeySplit;
-        imgKey = imgKeyRest.join("/");
+        imgKey = props.imgKey.split("/").reverse()[0];
+        imgVisibility = props.imgKey.split("/")[0];
     }
-
-    console.log(imgKey);
 
     const profilePicture = image ? (
         <ProfilePictureCropper onFinish={sendPictureData} image={image} />
@@ -54,7 +51,7 @@ export default function ProfilePicture(props) {
                         "--height": "300px",
                     },
                 }}
-                level="protected"
+                level={imgVisibility}
                 alt={props.altText}
                 imgKey={imgKey}
             />

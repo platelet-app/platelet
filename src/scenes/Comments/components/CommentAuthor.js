@@ -2,7 +2,6 @@ import React from "react";
 import UserAvatar from "../../../components/UserAvatar";
 import { Link as RouterLink } from "react-router-dom";
 import { encodeUUID } from "../../../utilities";
-import { Tooltip } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { Typography } from "@mui/material";
 import { Grid } from "@mui/material";
@@ -34,7 +33,7 @@ const CommentAuthor = React.memo((props) => {
                         size={theme.spacing(5)}
                         userUUID={props.uuid}
                         displayName={props.displayName}
-                        avatarURL={props.avatarURL}
+                        thumbnailKey={props.thumbnailKey}
                     />
                 </ThemedLink>
             </Grid>

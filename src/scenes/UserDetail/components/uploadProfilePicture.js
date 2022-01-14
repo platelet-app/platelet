@@ -3,13 +3,7 @@ import { API, graphqlOperation } from "aws-amplify";
 import { getUser } from "../../../graphql/queries";
 import aws_config from "../../../aws-exports";
 import { updateUser } from "../../../graphql/mutations";
-
-// const client = new AWSAppSyncClient({
-//     url: aws_config.aws_appsync_graphqlEndpoint,
-//     region: aws_config.aws_appsync_region,
-//     auth: aws_config.aws_appsync_authenticationType,
-//     complexObjectsCredentials: () => Auth.currentCredentials(),
-// });
+import { S3ObjectAccessLevels } from "../../../apiConsts";
 
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
@@ -17,7 +11,7 @@ async function uploadProfilePicture(userId, selectedFile) {
 
         const bucket = aws_config.aws_user_files_s3_bucket;
         const region = aws_config.aws_user_files_s3_bucket_region;
-        const visibility = "protected";
+        const visibility = S3ObjectAccessLevels.protected;
         const { identityId } = await Auth.currentCredentials();
 
         const key = `${visibility}/${identityId}/${userId}.jpg`;
@@ -28,16 +22,12 @@ async function uploadProfilePicture(userId, selectedFile) {
             region,
         };
 
+        const thumbnailFile = {
+            ...file,
+            key: `${visibility}/${identityId}/${userId}_thumbnail.jpg`,
+        };
+
         try {
-            /*const result = await client.mutate({
-                mutation: gql(updateUser),
-                variables: {
-                    input: {
-                        id: userId,
-                        profilePicture: file,
-                    },
-                },
-            });*/
             const existingUser = await API.graphql(
                 graphqlOperation(getUser, { id: userId })
             );
@@ -52,6 +42,7 @@ async function uploadProfilePicture(userId, selectedFile) {
                         id: userId,
                         _version: existingUser.data.getUser._version,
                         profilePicture: file,
+                        profilePictureThumbnail: thumbnailFile,
                     },
                 })
             );
