@@ -51,3 +51,9 @@ export const deliverableUnits = {
     item: "ITEM",
     box: "BOX",
 };
+
+export const S3ObjectAccessLevels = {
+    protected: "protected",
+    public: "public",
+    private: "private",
+};
