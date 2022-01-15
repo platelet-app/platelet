@@ -3,7 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import seedrandom from "seedrandom";
 import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
-import { Storage } from "aws-amplify";
+import { generateS3Link } from "../amplifyUtilities";
 
 const ctx = document.createElement("canvas").getContext("2d");
 
@@ -31,19 +31,16 @@ const UserAvatar = React.memo((props) => {
     const avatarFallbackColor = generateColorFromString(props.userUUID);
     const [avatarURL, setAvatarURL] = useState(null);
 
-    useEffect(() => {
+    async function getThumbnail() {
         if (props.thumbnailKey) {
-            const imgKey = props.thumbnailKey.split("/").reverse()[0];
-            const imgVisibility = props.thumbnailKey.split("/")[0];
-
-            Storage.get(imgKey, { level: imgVisibility }).then((result) => {
-                if (result) {
-                    setAvatarURL(result);
-                    console.log(result);
-                }
-            });
+            const result = await generateS3Link(props.thumbnailKey);
+            if (result) {
+                setAvatarURL(result);
+            }
         }
-    }, [props.thumbnailKey]);
+    }
+
+    useEffect(() => getThumbnail(), [props.thumbnailKey]);
 
     const useStyles = makeStyles((theme) => ({
         card: {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Storage } from "aws-amplify";
 import { Avatar, Chip } from "@mui/material";
 import PropTypes from "prop-types";
+import { generateS3Link } from "../amplifyUtilities";
 
 function UserChip(props) {
     const { profilePictureThumbnail, displayName } = props.user;
@@ -9,12 +9,8 @@ function UserChip(props) {
     async function getThumbnail() {
         if (profilePictureThumbnail && profilePictureThumbnail.key) {
             const profilePictureKey = profilePictureThumbnail.key;
-            const imgKey = profilePictureKey.split("/").reverse()[0];
-            const imgVisibility = profilePictureKey.split("/")[0];
 
-            const result = await Storage.get(imgKey, {
-                level: imgVisibility,
-            });
+            const result = await generateS3Link(profilePictureKey);
             setThumbnail(result);
         }
     }
