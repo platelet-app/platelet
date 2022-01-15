@@ -1,9 +1,8 @@
 import { Auth, Storage } from "aws-amplify";
-import { API, graphqlOperation } from "aws-amplify";
-import { getUser } from "../../../graphql/queries";
+import { DataStore } from "aws-amplify";
 import aws_config from "../../../aws-exports";
-import { updateUser } from "../../../graphql/mutations";
 import { S3ObjectAccessLevels } from "../../../apiConsts";
+import * as models from "../../../models";
 
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
@@ -28,22 +27,16 @@ async function uploadProfilePicture(userId, selectedFile) {
         };
 
         try {
-            const existingUser = await API.graphql(
-                graphqlOperation(getUser, { id: userId })
-            );
+            const existingUser = await DataStore.query(models.User, userId);
             await Storage.put(`${userId}.jpg`, selectedFile, {
                 bucket: process.env.REACT_APP_RESIZE_BUCKET_NAME,
                 contentType: mimeType,
                 level: visibility,
             });
-            await API.graphql(
-                graphqlOperation(updateUser, {
-                    input: {
-                        id: userId,
-                        _version: existingUser.data.getUser._version,
-                        profilePicture: file,
-                        profilePictureThumbnail: thumbnailFile,
-                    },
+            await DataStore.save(
+                models.User.copyOf(existingUser, (updated) => {
+                    updated.profilePicture = file;
+                    updated.profilePictureThumbnail = thumbnailFile;
                 })
             );
         } catch (err) {
