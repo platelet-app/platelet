@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { Box, Paper, Stack } from "@mui/material";
+import { Paper, Stack } from "@mui/material";
 import ProfilePictureCropper from "./ProfilePictureCropper";
 import uploadProfilePicture from "./uploadProfilePicture";
 import { generateS3Link } from "../../../amplifyUtilities";
 
 export default function ProfilePicture(props) {
-    const [image, setImage] = useState("");
+    const [image, setImage] = useState(null);
+    const [newImage, setNewImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState("");
 
@@ -30,6 +31,8 @@ export default function ProfilePicture(props) {
         const blob = await new Promise((resolve) =>
             canvasResult.toBlob(resolve, "image/jpeg")
         );
+        const newImageURL = await canvasResult.toDataURL("image/jpeg");
+        setNewImage(newImageURL);
         await uploadProfilePicture(props.userId, blob);
         setUploading(false);
         setImage(null);
@@ -49,9 +52,12 @@ export default function ProfilePicture(props) {
             image={image}
         />
     ) : (
-        <Box sx={{ position: "relative", width: 300, height: 300 }}>
-            <img width={300} height={300} alt={props.altText} src={imageUrl} />
-        </Box>
+        <img
+            width={300}
+            height={300}
+            alt={props.altText}
+            src={newImage || imageUrl}
+        />
     );
 
     const picUploadButton = image ? (
