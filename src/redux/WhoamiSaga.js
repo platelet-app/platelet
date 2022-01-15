@@ -79,6 +79,9 @@ function* getWhoami() {
                         query: queries.getUser,
                         variables: { id: loggedInUser.attributes.sub },
                     });
+                    if (!result.data.getUser) {
+                        throw new NotFound("Could not find logged in user");
+                    }
                     yield put(getWhoamiSuccess(result.data.getUser));
                 } else {
                     yield put(getWhoamiSuccess(result));
