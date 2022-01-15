@@ -44,23 +44,17 @@ function importAll(r) {
     return images;
 }
 
-let profilePictures = {};
-let profilePictureThumbnails = {};
-if (process.env.NODE_ENV !== "test") {
-    profilePictures = importAll(
-        require.context(
-            "../../assets/profilePictures",
-            false,
-            /\.(png|jpe?g|svg)$/
-        )
-    );
-    profilePictureThumbnails = importAll(
-        require.context(
-            "../../assets/profilePictureThumbnails",
-            false,
-            /\.(png|jpe?g|svg)$/
-        )
-    );
+let profilePictures = [];
+let profilePictureThumbnails = [];
+if (
+    process.env.NODE_ENV !== "test" &&
+    process.env.REACT_APP_DEMO_MODE === "true"
+) {
+    for (const i of _.range(1, 23)) {
+        profilePictures.push(`${_.padStart(i, 4, "0")}.jpg`);
+        profilePictureThumbnails.push(`${_.padStart(i, 4, "0")}_thumbnail.jpg`);
+    }
+    console.log(profilePictures);
 }
 
 function* initialiseApp() {
@@ -104,28 +98,19 @@ async function populateFakeData() {
             }
         }
     }
-    const profilePicsArray = _.shuffle(
-        Object.entries(profilePictures).map(([key, value]) => ({
-            key,
-            value: value.default,
-        }))
-    );
     const responsibilities = await DataStore.query(models.RiderResponsibility);
     const offlineUser = await DataStore.query(models.User, (u) =>
         u.username("eq", "offline")
     );
     if (offlineUser.length === 0) {
-        const profilePicture = profilePicsArray.pop();
-        let thumbnail = null;
-        let profilePicURL = null;
+        const profilePicture = profilePictures.pop();
+        let thumbnailKey = null;
+        let profilePictureKey = null;
         if (profilePicture) {
-            profilePicURL = profilePicture.value;
-            const extension = path.extname(profilePicURL);
-            const baseName = path.basename(profilePicture.key, extension);
-            const thumbnailGet =
-                profilePictureThumbnails[`${baseName}_thumbnail${extension}`];
-
-            thumbnail = thumbnailGet ? thumbnailGet.default : "";
+            const extension = path.extname(profilePicture);
+            const baseName = path.basename(profilePicture, extension);
+            thumbnailKey = `profilePictureThumbnails/${baseName}_thumbnail${extension}`;
+            profilePictureKey = `profilePictures/${baseName}${extension}`;
         }
         await DataStore.save(
             new models.User({
@@ -135,8 +120,20 @@ async function populateFakeData() {
                     _.sample(responsibilities).id || null,
                 displayName: "Demo User",
                 dateOfBirth: faker.date.past(50, new Date()).toISOString(),
-                profilePictureURL: profilePicURL,
-                profilePictureThumbnailURL: thumbnail,
+                profilePicture: {
+                    key: profilePictureKey,
+                    bucket: process.env
+                        .REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME,
+                    region: process.env
+                        .REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION,
+                },
+                profilePictureThumbnail: {
+                    key: thumbnailKey,
+                    bucket: process.env
+                        .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_NAME,
+                    region: process.env
+                        .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_REGION,
+                },
                 roles: [userRoles.rider, userRoles.coordinator, userRoles.user],
             })
         );
@@ -165,20 +162,17 @@ async function populateFakeData() {
                 roles: [userRoles.rider, userRoles.coordinator, userRoles.user],
                 active: 1,
             };
-            const profilePicture = profilePicsArray.pop();
-            let thumbnail = null;
-            let profilePicURL = null;
-            if (profilePicture) {
-                profilePicURL = profilePicture.value;
-                const extension = path.extname(profilePicURL);
-                const baseName = path.basename(profilePicture.key, extension);
-                const thumbnailGet =
-                    profilePictureThumbnails[
-                        `${baseName}_thumbnail${extension}`
-                    ];
 
-                thumbnail = thumbnailGet ? thumbnailGet.default : "";
+            const profilePicture = profilePictures.pop();
+            let thumbnailKey = null;
+            let profilePictureKey = null;
+            if (profilePicture) {
+                const extension = path.extname(profilePicture);
+                const baseName = path.basename(profilePicture, extension);
+                thumbnailKey = `profilePictureThumbnails/${baseName}_thumbnail${extension}`;
+                profilePictureKey = `profilePictures/${baseName}${extension}`;
             }
+
             let { contact, ...rest } = userToSave;
             const addressContact = await DataStore.save(
                 new models.AddressAndContactDetails(userToSave.contact)
@@ -187,8 +181,20 @@ async function populateFakeData() {
                 new models.User({
                     ...rest,
                     riderResponsibility: _.sample(responsibilities) || null,
-                    profilePictureURL: profilePicURL,
-                    profilePictureThumbnailURL: thumbnail,
+                    profilePicture: {
+                        key: profilePictureKey,
+                        bucket: process.env
+                            .REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME,
+                        region: process.env
+                            .REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION,
+                    },
+                    profilePictureThumbnail: {
+                        key: thumbnailKey,
+                        bucket: process.env
+                            .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_NAME,
+                        region: process.env
+                            .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_REGION,
+                    },
                     contact: addressContact,
                 })
             );
