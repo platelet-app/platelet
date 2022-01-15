@@ -1,6 +1,4 @@
 import React from "react";
-import rootReducer from "./redux/Reducers";
-import createSagaMiddleware from "redux-saga";
 import {
     ThemeProvider,
     StyledEngineProvider,
@@ -16,7 +14,6 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { render as rtlRender } from "@testing-library/react";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
-import rootSaga from "./redux/RootSagas";
 import store from "./redux/Store";
 import { DismissButton } from "./styles/common";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
