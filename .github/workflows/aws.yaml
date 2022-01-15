@@ -22,6 +22,8 @@ jobs:
       run: npm run build
       env:
         REACT_APP_DEMO_MODE: true
+        REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME: platelet-demo
+        REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION: eu-west-1
         REACT_APP_OFFLINE_ONLY: true
         REACT_APP_POPULATE_FAKE_DATA: true
         CI: false
