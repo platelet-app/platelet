@@ -1,8 +1,21 @@
 import { Auth, Storage } from "aws-amplify";
 import { DataStore } from "aws-amplify";
-import aws_config from "../../../aws-exports";
 import { S3ObjectAccessLevels } from "../../../apiConsts";
 import * as models from "../../../models";
+
+let aws_config = {
+    aws_user_files_s3_bucket: "",
+    aws_user_files_s3_bucket_region: "",
+};
+
+if (
+    (!process.env.REACT_APP_OFFLINE_ONLY ||
+        process.env.REACT_APP_OFFLINE_ONLY === "false") &&
+    (!process.env.REACT_APP_DEMO_MODE ||
+        process.env.REACT_APP_DEMO_MODE === "false")
+) {
+    aws_config = require("../../../aws-exports");
+}
 
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
