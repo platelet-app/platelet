@@ -110,17 +110,12 @@ export default function UserDetail(props) {
             );
             if (existingUser.contact && contact) {
                 await DataStore.save(
-                    models.AddressAndContactDetails.copyOf(
-                        existingUser.contact,
-                        (updated) => {
-                            for (const [key, newValue] of Object.entries(
-                                contact
-                            )) {
-                                if (!protectedFields.includes(key))
-                                    updated[key] = newValue;
-                            }
+                    models.User.copyOf(existingUser, (updated) => {
+                        for (const [key, newValue] of Object.entries(contact)) {
+                            if (!protectedFields.includes(key))
+                                updated.contact[key] = newValue;
                         }
-                    )
+                    })
                 );
             }
             if (userRiderResponsibilityId) {

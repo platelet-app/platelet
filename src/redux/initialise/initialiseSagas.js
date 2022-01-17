@@ -173,13 +173,9 @@ async function populateFakeData() {
                 profilePictureKey = `profilePictures/${baseName}${extension}`;
             }
 
-            let { contact, ...rest } = userToSave;
-            const addressContact = await DataStore.save(
-                new models.AddressAndContactDetails(userToSave.contact)
-            );
             await DataStore.save(
                 new models.User({
-                    ...rest,
+                    ...userToSave,
                     riderResponsibility: _.sample(responsibilities) || null,
                     profilePicture: {
                         key: profilePictureKey,
@@ -195,7 +191,6 @@ async function populateFakeData() {
                         region: process.env
                             .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_REGION,
                     },
-                    contact: addressContact,
                 })
             );
         }
@@ -230,13 +225,11 @@ async function populateFakeData() {
         if (checker.length === 0) {
             for (const value of Object.values(fakeData.locations)) {
                 const { address, ...rest } = value;
-                const contact = await DataStore.save(
-                    new models.AddressAndContactDetails({
-                        telephoneNumber: faker.phone.phoneNumber(),
-                        emailAddress: faker.internet.email(),
-                        name: faker.name.findName(),
-                    })
-                );
+                const contact = {
+                    telephoneNumber: faker.phone.phoneNumber(),
+                    emailAddress: faker.internet.email(),
+                    name: faker.name.findName(),
+                };
                 await DataStore.save(
                     new models.Location({
                         contact,
@@ -302,9 +295,7 @@ async function populateTasks() {
                 availableLocations.filter((l) => l.id !== pickUpLocation.id)
             );
             timeOfCall = generateTimes(timeOfCall, 2).timeOfCall;
-            const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails(generateRequesterContact())
-            );
+            const requesterContact = generateRequesterContact();
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
@@ -351,9 +342,7 @@ async function populateTasks() {
                 availableLocations.filter((l) => l.id !== pickUpLocation.id)
             );
             timeOfCall = generateTimes(timeOfCall, 3).timeOfCall;
-            const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails(generateRequesterContact())
-            );
+            const requesterContact = generateRequesterContact();
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
@@ -397,9 +386,7 @@ async function populateTasks() {
         let timeOfCall = null;
         for (const i in _.range(10)) {
             timeOfCall = generateTimes(timeOfCall, 3).timeOfCall;
-            const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails(generateRequesterContact())
-            );
+            const requesterContact = generateRequesterContact();
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);
             const dropOffLocation = _.sample(
@@ -454,9 +441,7 @@ async function populateTasks() {
         for (const i in _.range(5)) {
             const times = generateTimes(timeOfCall, 3);
             timeOfCall = times.timeOfCall;
-            const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails(generateRequesterContact())
-            );
+            const requesterContact = generateRequesterContact();
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);
             const dropOffLocation = _.sample(
@@ -516,9 +501,7 @@ async function populateTasks() {
         for (const i in _.range(16)) {
             const times = generateTimes(timeOfCall, 10);
             timeOfCall = times.timeOfCall;
-            const requesterContact = await DataStore.save(
-                new models.AddressAndContactDetails(generateRequesterContact())
-            );
+            const requesterContact = generateRequesterContact();
             const rider = _.sample(availableRiders);
             const pickUpLocation = _.sample(availableLocations);
             const dropOffLocation = _.sample(

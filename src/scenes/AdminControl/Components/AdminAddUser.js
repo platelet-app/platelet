@@ -83,18 +83,13 @@ function AdminAddUser() {
             //             );
             // adminCreateUser on aws cognito
 
-            const newContact = await DataStore.save(
-                new models.AddressAndContactDetails({
-                    emailAddress: state.attributes.email,
-                })
-            );
             const newUser = await DataStore.save(
                 new models.User({
                     name: state.attributes.name,
                     displayName: state.attributes.name,
                     active: 1,
                     username: state.username,
-                    contact: newContact,
+                    contact: { emailAddress: state.attributes.email },
                     roles: [
                         userRoles.user,
                         userRoles.rider,

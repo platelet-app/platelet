@@ -1,7 +1,7 @@
 type User @auth(rules: [{ allow: private}]) @model {
   id: ID!
   username: String!
-  contact: AddressAndContactDetails @connection
+  contact: AddressAndContactDetails
   displayName: String!
   name: String
   roles: [Role!]!
@@ -43,7 +43,7 @@ type Vehicle @auth(rules: [{ allow: private}]) @model @key(name: "byAssignedUser
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type AddressAndContactDetails @auth(rules: [{ allow: private}]) @model {
+type AddressAndContactDetails {
   id: ID!
   name: String
   telephoneNumber: String
@@ -76,7 +76,7 @@ type Location @auth(rules: [{ allow: private}]) @model {
   id: ID!
   name: String
   listed: Int
-  contact: AddressAndContactDetails @connection
+  contact: AddressAndContactDetails
   ward: String
   line1: String
   line2: String
@@ -108,7 +108,7 @@ type Task
   timeCancelled: AWSDateTime
   timeRejected: AWSDateTime
   timeRiderHome: AWSDateTime
-  requesterContact: AddressAndContactDetails @connection
+  requesterContact: AddressAndContactDetails
   pickUpLocationId: ID
   dropOffLocationId: ID
   pickUpLocation: Location @connection(fields: ["pickUpLocationId"])

@@ -20,9 +20,6 @@ export const getTaskUUIDs = (tasks) => {
 export async function addTask(whoamiId) {
     const date = new Date();
     const timeOfCall = date.toISOString();
-    const requesterContact = await DataStore.save(
-        new models.AddressAndContactDetails({})
-    );
     const createdBy = whoamiId
         ? await DataStore.query(models.User, whoamiId)
         : null;
@@ -30,7 +27,6 @@ export async function addTask(whoamiId) {
         new models.Task({
             status: tasksStatus.new,
             timeOfCall,
-            requesterContact,
             createdBy,
         })
     );

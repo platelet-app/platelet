@@ -84,15 +84,8 @@ function AdminAddLocation() {
     async function addNewLocation() {
         try {
             setIsPosting(true);
-            const { contact, ...rest } = state;
-            const newContact = await DataStore.save(
-                new models.AddressAndContactDetails(contact)
-            );
             const newLocation = await DataStore.save(
-                new models.Location({
-                    locationContactId: newContact.id,
-                    ...rest,
-                })
+                new models.Location(state)
             );
             setState(initialLocationState);
             setIsPosting(false);
@@ -152,7 +145,6 @@ function AdminAddLocation() {
                         return (
                             <Grid key={key} item>
                                 <TextFieldUncontrolled
-                                    value={state.contact[key]}
                                     fullWidth
                                     label={contactFields[key]}
                                     id={key}

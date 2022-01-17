@@ -58,30 +58,15 @@ function LocationDetailsPanel(props) {
                 updatedAt,
                 id,
                 name,
-                contact,
                 _version,
                 _lastChangedAt,
                 _deleted,
                 ...rest
             } = state;
-            const newContact = await DataStore.save(
-                new models.AddressAndContactDetails(
-                    _.omit(
-                        contact,
-                        "createdAt",
-                        "id",
-                        "updatedAt",
-                        "_version",
-                        "_lastChangedAt",
-                        "_deleted"
-                    )
-                )
-            );
             const newLocation = await DataStore.save(
                 new models.Location({
                     ...rest,
                     listed: 0,
-                    contact: newContact,
                     name: `Copy of ${name}`,
                 })
             );
@@ -131,51 +116,20 @@ function LocationDetailsPanel(props) {
     }
 
     async function changeContactDetails(values) {
-        let locationToUpdate = null;
-        const existingLocation = await DataStore.query(
-            models.Location,
-            state.id
-        );
+        let locationToUpdate = await DataStore.query(models.Location, state.id);
         // check if existing location is listed or not
-        if (existingLocation.listed === 1) {
+        if (locationToUpdate.listed === 1) {
             locationToUpdate = await editPreset();
         }
-        if (!state.contact || !state.contact.id) {
-            displayErrorNotification(errorMessage);
-            console.log("Tried to update a non-existent contact");
-            return;
-        }
-        const contactId =
-            locationToUpdate && locationToUpdate.contact
-                ? locationToUpdate.contact.id
-                : state.contact.id;
-        const existingContact = await DataStore.query(
-            models.AddressAndContactDetails,
-            contactId
-        );
-        if (!existingContact) {
-            displayErrorNotification(errorMessage);
-            console.log(`Contact could not be found`);
-            return;
-        }
-        const contactResult = await DataStore.save(
-            models.AddressAndContactDetails.copyOf(
-                existingContact,
-                (updated) => {
-                    for (const [key, v] of Object.entries(values)) {
-                        if (!protectedFields.includes(key)) updated[key] = v;
-                    }
+        const locationResult = await DataStore.save(
+            models.Location.copyOf(locationToUpdate, (updated) => {
+                for (const [key, v] of Object.entries(values)) {
+                    if (!protectedFields.includes(key))
+                        updated.contact[key] = v;
                 }
-            )
+            })
         );
-        if (locationToUpdate) {
-            setState({ ...locationToUpdate, contact: contactResult });
-        } else {
-            setState((prevState) => ({
-                ...prevState,
-                contact: contactResult,
-            }));
-        }
+        setState(locationResult);
     }
 
     async function changeLocationDetails(values) {
@@ -226,15 +180,9 @@ function LocationDetailsPanel(props) {
                 }
                 if (_.isEmpty(result)) return;
 
-                // create a contact model
-                const contactResult = await DataStore.save(
-                    new models.AddressAndContactDetails({})
-                );
-                // create a new location and link it to the new contact model
                 locationResult = await DataStore.save(
                     new models.Location({
                         ...values,
-                        contact: contactResult,
                         listed: 0,
                     })
                 );
@@ -295,9 +243,7 @@ function LocationDetailsPanel(props) {
                             onClear={clearLocation}
                             location={state}
                             displayPresets={true}
-                            showContact={
-                                !!(state && state.contact && state.contact.id)
-                            }
+                            showContact={!!(state && state.contact)}
                         />
                     )}
                 </Stack>

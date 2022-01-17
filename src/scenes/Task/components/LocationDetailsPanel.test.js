@@ -340,13 +340,9 @@ describe("LocationDetailsPanel", () => {
             .mockResolvedValueOnce(mockLocations[0])
             .mockResolvedValueOnce(task)
             .mockResolvedValue(mockLocations);
-        const fakeContact = new models.AddressAndContactDetails({
-            ...mockLocations[0].contact,
-        });
         const fakeLocation = new models.Location({
             ...mockLocations[0],
             listed: 0,
-            contact: fakeContact,
             name: `Copy of ${mockLocations[0].name}`,
         });
         const fakeTask = new models.Task({
@@ -354,7 +350,6 @@ describe("LocationDetailsPanel", () => {
             [locationKey]: fakeLocation,
         });
         amplify.DataStore.save
-            .mockResolvedValueOnce(fakeContact)
             .mockResolvedValueOnce(fakeLocation)
             .mockResolvedValueOnce(fakeTask)
             .mockResolvedValueOnce({
@@ -380,10 +375,7 @@ describe("LocationDetailsPanel", () => {
         userEvent.type(screen.getByRole("textbox"), "test");
         userEvent.type(screen.getByRole("textbox"), "{enter}");
         await waitFor(() =>
-            expect(amplify.DataStore.save).toHaveBeenCalledTimes(4)
-        );
-        expect(amplify.DataStore.save).toHaveBeenCalledWith(
-            expect.objectContaining(_.omit(fakeContact, "id"))
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
         );
         expect(amplify.DataStore.save).toHaveBeenCalledWith(
             expect.objectContaining(_.omit(fakeLocation, "id"))
@@ -448,17 +440,13 @@ describe("LocationDetailsPanel", () => {
                 line1: "new data",
                 listed: 0,
             });
-            const fakeContactModel = new models.AddressAndContactDetails({});
             const fakeTaskModel = new models.Task({});
             amplify.DataStore.query
                 .mockResolvedValueOnce(mockLocations)
                 .mockResolvedValue(fakeTaskModel);
-            amplify.DataStore.save
-                .mockResolvedValueOnce(fakeContactModel)
-                .mockResolvedValue({
-                    ...fakeLocationModel,
-                    contact: fakeContactModel,
-                });
+            amplify.DataStore.save.mockResolvedValue({
+                ...fakeLocationModel,
+            });
             render(
                 <LocationDetailsPanel
                     locationId={null}
@@ -472,17 +460,11 @@ describe("LocationDetailsPanel", () => {
             userEvent.type(textBox, "new data");
             userEvent.type(textBox, "{enter}");
             await waitFor(() =>
-                expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
-            );
-            expect(amplify.DataStore.save).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(fakeContactModel, "id"))
+                expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
             );
             expect(amplify.DataStore.save).toHaveBeenCalledWith(
                 expect.objectContaining({
                     ..._.omit(fakeLocationModel, "id"),
-                    contact: expect.objectContaining(
-                        _.omit(fakeContactModel, "id")
-                    ),
                 })
             );
             expect(amplify.DataStore.save).toHaveBeenCalledWith(
@@ -490,9 +472,6 @@ describe("LocationDetailsPanel", () => {
                     ..._.omit(fakeTaskModel, "id"),
                     [locationKey]: expect.objectContaining({
                         ..._.omit(fakeLocationModel, "id"),
-                        contact: expect.objectContaining(
-                            _.omit(fakeContactModel, "id")
-                        ),
                     }),
                 })
             );
@@ -504,20 +483,14 @@ describe("LocationDetailsPanel", () => {
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("edit the contact information of a location", async ({ locationKey }) => {
         const fakeInputData = "new data";
-        const fakeContactModel = new models.AddressAndContactDetails({
-            ...mockLocations[1].contact,
-        });
         const fakeModel = new models.Location({
             ...mockLocations[1],
-            contact: fakeContactModel,
             listed: 0,
         });
-        amplify.DataStore.query
-            .mockResolvedValueOnce(fakeModel)
-            .mockResolvedValue(fakeContactModel);
+        amplify.DataStore.query.mockResolvedValue(fakeModel);
         amplify.DataStore.save.mockResolvedValueOnce({
-            ...fakeContactModel,
-            email: fakeInputData,
+            ...fakeModel,
+            contact: { name: fakeInputData },
         });
         render(
             <LocationDetailsPanel
@@ -530,18 +503,21 @@ describe("LocationDetailsPanel", () => {
         );
         userEvent.click(screen.getByText("Expand to see more"));
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
-        userEvent.click(screen.getByText(fakeContactModel.emailAddress));
+        userEvent.click(screen.getByText(fakeModel.contact.name));
         const textBox = screen.getByRole("textbox");
         expect(textBox).toBeInTheDocument();
-        expect(textBox).toHaveValue(fakeContactModel.emailAddress);
+        expect(textBox).toHaveValue(fakeModel.contact.name);
         userEvent.type(textBox, " new data");
         userEvent.type(textBox, "{enter}");
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
         );
         expect(amplify.DataStore.save).toHaveBeenCalledWith({
-            ...fakeContactModel,
-            emailAddress: `${fakeContactModel.emailAddress} ${fakeInputData}`,
+            ...fakeModel,
+            contact: {
+                ...fakeModel.contact,
+                name: `${fakeModel.contact.name} ${fakeInputData}`,
+            },
         });
     });
 

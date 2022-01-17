@@ -82,22 +82,13 @@ export default function LocationDetail(props) {
                 })
             );
             if (contact) {
-                const existingContact = await DataStore.query(
-                    models.AddressAndContactDetails,
-                    contact.id
-                );
                 await DataStore.save(
-                    models.AddressAndContactDetails.copyOf(
-                        existingContact,
-                        (updated) => {
-                            for (const [key, newValue] of Object.entries(
-                                contact
-                            )) {
-                                if (!protectedFields.includes(key))
-                                    updated[key] = newValue;
-                            }
+                    models.Location.copyOf(existingLocation, (updated) => {
+                        for (const [key, newValue] of Object.entries(contact)) {
+                            if (!protectedFields.includes(key))
+                                updated.contact[key] = newValue;
                         }
-                    )
+                    })
                 );
             }
         } catch (error) {

@@ -64,7 +64,6 @@ function LocationDetailAndSelector(props) {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
     const [editMode, setEditMode] = useState(false);
-    const [protectedLocation, setProtectedLocation] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
     const initialSetEdit = useRef(false);
 
@@ -84,9 +83,6 @@ function LocationDetailAndSelector(props) {
                     address: { ...props.location },
                 };
             }
-            setProtectedLocation(
-                props.location ? props.location.protected : false
-            );
             if (props.location.contact) {
                 result = {
                     ...result,
@@ -94,10 +90,8 @@ function LocationDetailAndSelector(props) {
                 };
             }
             setState(result);
-            setProtectedLocation(!!props.location.listed);
         } else {
             setState(initialState);
-            setProtectedLocation(false);
         }
     }
 
