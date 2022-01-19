@@ -15,7 +15,12 @@ import {
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
-import { copyTaskDataToClipboard } from "../../utilities";
+import {
+    convertListDataToObject,
+    copyTaskDataToClipboard,
+    determineTaskStatus,
+} from "../../utilities";
+import { tasksStatus } from "../../apiConsts";
 
 const initialState = {
     mouseX: null,
@@ -93,13 +98,36 @@ function TaskContextMenu(props) {
         });
     };
 
+    async function setTimeValue(value, key) {
+        try {
+            const result = await DataStore.query(models.Task, task.id);
+            const assignees = (
+                await DataStore.query(models.TaskAssignee)
+            ).filter((a) => a.task.id === task.id);
+            const status = determineTaskStatus({
+                ...result,
+                [key]: value,
+                assignees: convertListDataToObject(assignees),
+            });
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated[key] = value;
+                    updated.status = status;
+                })
+            );
+        } catch (e) {
+            console.log(e);
+            dispatch(displayErrorNotification("Sorry, an error occurred."));
+        }
+    }
+
     function onSelectPickedUp(e) {
         handleClose(e);
         const payload = new Date().toISOString();
-        props.onSetTimePickedUp(payload);
+        setTimeValue(payload, "timePickedUp");
         dispatch(
             displayInfoNotification("Task marked picked up", () => {
-                props.onSetTimePickedUp(null);
+                setTimeValue(null, "timePickedUp");
             })
         );
     }
@@ -107,20 +135,30 @@ function TaskContextMenu(props) {
     function onSelectDroppedOff(e) {
         handleClose(e);
         const payload = new Date().toISOString();
-        props.onSetTimeDroppedOff(payload);
+        setTimeValue(payload, "timeDroppedOff");
         dispatch(
             displayInfoNotification("Task marked delivered", () => {
-                props.onSetTimeDroppedOff(null);
+                setTimeValue(null, "timeDroppedOff");
+            })
+        );
+    }
+    function onSelectRiderHome(e) {
+        handleClose(e);
+        const payload = new Date().toISOString();
+        setTimeValue(payload, "timeRiderHome");
+        dispatch(
+            displayInfoNotification("Task marked rider home", () => {
+                setTimeValue(null, "timeRiderHome");
             })
         );
     }
     function onSelectCancelled(e) {
         handleClose(e);
         const payload = new Date().toISOString();
-        props.onSetTimeCancelled(payload);
+        setTimeValue(payload, "timeCancelled");
         dispatch(
             displayInfoNotification("Task marked cancelled", () => {
-                props.onSetTimeCancelled(null);
+                setTimeValue(null, "timeCancelled");
             })
         );
     }
@@ -128,10 +166,10 @@ function TaskContextMenu(props) {
     function onSelectRejected(e) {
         handleClose(e);
         const payload = new Date().toISOString();
-        props.onSetTimeRejected(payload);
+        setTimeValue(payload, "timeRejected");
         dispatch(
             displayInfoNotification("Task marked rejected", () => {
-                props.onSetTimeRejected(null);
+                setTimeValue(null, "timeRejected");
             })
         );
     }
@@ -170,11 +208,7 @@ function TaskContextMenu(props) {
             >
                 <MenuItem
                     disabled={
-                        task === null ||
-                        !!task.timePickedUp ||
-                        !props.assignedRiders.length > 0 ||
-                        !!task.timeRejected ||
-                        !!task.timeCancelled
+                        task === null || task.status !== tasksStatus.active
                     }
                     onClick={onSelectPickedUp}
                 >
@@ -182,11 +216,7 @@ function TaskContextMenu(props) {
                 </MenuItem>
                 <MenuItem
                     disabled={
-                        task === null ||
-                        !!task.timeDroppedOff ||
-                        !!!task.timePickedUp ||
-                        !!task.timeRejected ||
-                        !!task.timeCancelled
+                        task === null || task.status !== tasksStatus.pickedUp
                     }
                     onClick={onSelectDroppedOff}
                 >
@@ -194,9 +224,21 @@ function TaskContextMenu(props) {
                 </MenuItem>
                 <MenuItem
                     disabled={
+                        task === null || task.status !== tasksStatus.droppedOff
+                    }
+                    onClick={onSelectRiderHome}
+                >
+                    Mark rider home
+                </MenuItem>
+                <MenuItem
+                    disabled={
                         task === null ||
-                        !!task.timeRejected ||
-                        !!task.timeCancelled
+                        [
+                            tasksStatus.cancelled,
+                            tasksStatus.rejected,
+                            tasksStatus.droppedOff,
+                            tasksStatus.completed,
+                        ].includes(task.status)
                     }
                     onClick={onSelectRejected}
                 >
@@ -205,8 +247,12 @@ function TaskContextMenu(props) {
                 <MenuItem
                     disabled={
                         task === null ||
-                        !!task.timeCancelled ||
-                        !!task.timeRejected
+                        [
+                            tasksStatus.cancelled,
+                            tasksStatus.rejected,
+                            tasksStatus.droppedOff,
+                            tasksStatus.completed,
+                        ].includes(task.status)
                     }
                     onClick={onSelectCancelled}
                 >

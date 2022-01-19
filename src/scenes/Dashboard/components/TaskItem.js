@@ -145,24 +145,6 @@ function TaskItem(props) {
 
     useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
-    async function setTimeValue(value, key) {
-        const result = await DataStore.query(models.Task, props.taskUUID);
-        const assignees = (await DataStore.query(models.TaskAssignee)).filter(
-            (a) => a.task.id === props.taskUUID
-        );
-        const status = determineTaskStatus({
-            ...result,
-            [key]: value,
-            assignees: convertListDataToObject(assignees),
-        });
-        await DataStore.save(
-            models.Task.copyOf(result, (updated) => {
-                updated[key] = value;
-                updated.status = status;
-            })
-        );
-    }
-
     const location = useLocation();
 
     const contents = visibility ? (
@@ -201,18 +183,6 @@ function TaskItem(props) {
                     <TaskContextMenu
                         disableDeleted={props.deleteDisabled}
                         disableRelay={!!props.relayNext}
-                        onSetTimePickedUp={(value) =>
-                            setTimeValue(value, "timePickedUp")
-                        }
-                        onSetTimeDroppedOff={(value) =>
-                            setTimeValue(value, "timeDroppedOff")
-                        }
-                        onSetTimeCancelled={(value) =>
-                            setTimeValue(value, "timeCancelled")
-                        }
-                        onSetTimeRejected={(value) =>
-                            setTimeValue(value, "timeRejected")
-                        }
                         assignedRiders={assignedRiders}
                         task={task}
                     />
