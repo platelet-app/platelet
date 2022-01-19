@@ -86,7 +86,8 @@ describe("ActiveRiderChips", () => {
             ).toBeInTheDocument();
         }
     });
-    test("marking a rider as home with some active tasks", async () => {
+
+    test.skip("marking a rider as home with some active tasks", async () => {
         const unsubscribe = jest.fn();
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
