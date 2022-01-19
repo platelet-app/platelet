@@ -21,6 +21,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import UserChip from "../../../components/UserChip";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { setDashboardFilteredUser } from "../../../redux/Actions";
+import moment from "moment";
 
 // use for transparency on arrows sometime
 const useStyles = makeStyles((theme) => ({
@@ -93,15 +94,25 @@ function ActiveRidersChips() {
             a.role("eq", userRoles.rider)
         );
         const activeRidersFiltered = assignments
-            .filter(
-                (assignment) =>
+            .filter((assignment) => {
+                // if the job is in completed tab then only find out riders from the last week
+                // to mimic the dashboard
+                if (
                     assignment.task &&
-                    ![
+                    [
                         tasksStatus.completed,
+                        tasksStatus.droppedOff,
                         tasksStatus.rejected,
                         tasksStatus.cancelled,
                     ].includes(assignment.task.status)
-            )
+                ) {
+                    return moment(assignment.task.createdAt).isAfter(
+                        moment().subtract(1, "week")
+                    );
+                } else {
+                    return true;
+                }
+            })
             .map((a) => a.assignee);
         return convertListDataToObject(activeRidersFiltered);
     }
