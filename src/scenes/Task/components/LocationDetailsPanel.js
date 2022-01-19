@@ -116,19 +116,45 @@ function LocationDetailsPanel(props) {
     }
 
     async function changeContactDetails(values) {
-        let locationToUpdate = await DataStore.query(models.Location, state.id);
-        // check if existing location is listed or not
-        if (locationToUpdate.listed === 1) {
-            locationToUpdate = await editPreset();
+        let locationResult = null;
+        const key = props.locationKey;
+        if (state) {
+            let locationToUpdate = await DataStore.query(
+                models.Location,
+                state.id
+            );
+            // check if existing location is listed or not
+            if (locationToUpdate.listed === 1) {
+                locationToUpdate = await editPreset();
+            }
+            locationResult = await DataStore.save(
+                models.Location.copyOf(locationToUpdate, (updated) => {
+                    for (const [key, v] of Object.entries(values)) {
+                        if (!protectedFields.includes(key))
+                            updated.contact[key] = v;
+                    }
+                })
+            );
+        } else {
+            locationResult = await DataStore.save(
+                new models.Location({
+                    contact: values,
+                    listed: 0,
+                })
+            );
+            // find the existing task
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
+            if (!existingTask) throw new Error("Task doesn't exist");
+            // link to new location
+            await DataStore.save(
+                models.Task.copyOf(existingTask, (updated) => {
+                    updated[key] = locationResult;
+                })
+            );
         }
-        const locationResult = await DataStore.save(
-            models.Location.copyOf(locationToUpdate, (updated) => {
-                for (const [key, v] of Object.entries(values)) {
-                    if (!protectedFields.includes(key))
-                        updated.contact[key] = v;
-                }
-            })
-        );
         setState(locationResult);
     }
 
@@ -243,7 +269,6 @@ function LocationDetailsPanel(props) {
                             onClear={clearLocation}
                             location={state}
                             displayPresets={true}
-                            showContact={!!(state && state.contact)}
                         />
                     )}
                 </Stack>

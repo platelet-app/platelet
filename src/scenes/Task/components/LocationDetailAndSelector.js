@@ -219,54 +219,38 @@ function LocationDetailAndSelector(props) {
                     })}
 
                     <Box className={classes.separator} />
-                    {props.showContact ? (
-                        <Box>
-                            {Object.entries(contactFields).map(
-                                ([key, label]) => {
-                                    if (!collapsed) {
-                                        return (
-                                            <LabelItemPair
-                                                key={key}
-                                                label={label}
-                                            >
-                                                <ClickableTextField
-                                                    label={label}
-                                                    tel={
-                                                        key ===
-                                                        "telephoneNumber"
-                                                    }
-                                                    disabled={!editMode}
-                                                    onFinished={(v) => {
-                                                        setState(
-                                                            (prevState) => ({
-                                                                ...prevState,
-                                                                contact: {
-                                                                    ...state.contact,
-                                                                    [key]: v,
-                                                                },
-                                                            })
-                                                        );
-                                                        props.onChangeContact({
-                                                            [key]: v,
-                                                        });
-                                                    }}
-                                                    value={state.contact[key]}
-                                                />
-                                            </LabelItemPair>
-                                        );
-                                    } else {
-                                        return (
-                                            <React.Fragment
-                                                key={key}
-                                            ></React.Fragment>
-                                        );
-                                    }
-                                }
-                            )}
-                        </Box>
-                    ) : (
-                        <></>
-                    )}
+                    <Box>
+                        {Object.entries(contactFields).map(([key, label]) => {
+                            if (!collapsed) {
+                                return (
+                                    <LabelItemPair key={key} label={label}>
+                                        <ClickableTextField
+                                            label={label}
+                                            tel={key === "telephoneNumber"}
+                                            disabled={!editMode}
+                                            onFinished={(v) => {
+                                                setState((prevState) => ({
+                                                    ...prevState,
+                                                    contact: {
+                                                        ...state.contact,
+                                                        [key]: v,
+                                                    },
+                                                }));
+                                                props.onChangeContact({
+                                                    [key]: v,
+                                                });
+                                            }}
+                                            value={state.contact[key]}
+                                        />
+                                    </LabelItemPair>
+                                );
+                            } else {
+                                return (
+                                    <React.Fragment key={key}></React.Fragment>
+                                );
+                            }
+                        })}
+                    </Box>
                 </Stack>
                 <Divider />
                 <CollapsibleToggle
@@ -302,7 +286,7 @@ LocationDetailAndSelector.defaultProps = {
     onChangeContact: () => {},
     onClear: () => {},
     onEdit: () => {},
-    showContact: false,
+    showContact: true,
 };
 
 export default LocationDetailAndSelector;
