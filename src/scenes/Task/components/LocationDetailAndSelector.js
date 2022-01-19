@@ -194,7 +194,7 @@ function LocationDetailAndSelector(props) {
                             return (
                                 <LabelItemPair
                                     key={key}
-                                    label={collapsed ? label : ""}
+                                    label={collapsed || editMode ? label : ""}
                                 >
                                     <ClickableTextField
                                         label={label}
