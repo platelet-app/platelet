@@ -8,6 +8,12 @@ export function setDarkMode(data) {
     return { type: SET_DARK_MODE, data };
 }
 
+export const SET_DASHBOARD_FILTERED_USER = "SET_DASHBOARD_FILTERED_USER";
+
+export function setDashboardFilteredUser(data) {
+    return { type: SET_DASHBOARD_FILTERED_USER, data };
+}
+
 export const SET_NEW_TASK_ADDED_VIEW = "SET_NEW_TASK_ADDED_VIEW";
 
 export function setNewTaskAddedView(data) {

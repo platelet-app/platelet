@@ -3,12 +3,13 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    dashboardFilteredUserSelector,
     dataStoreReadyStatusSelector,
     getRoleView,
 } from "../../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { convertListDataToObject } from "../../../utilities";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Chip, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 // disable horizontal scrollbar
 import "./hideActiveRiderChipsScrollBar.css";
@@ -19,6 +20,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import UserChip from "../../../components/UserChip";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import { setDashboardFilteredUser } from "../../../redux/Actions";
 
 // use for transparency on arrows sometime
 const useStyles = makeStyles((theme) => ({
@@ -76,6 +78,7 @@ function ActiveRidersChips() {
     const [activeRiders, setActiveRiders] = useState({});
     const [updatingRider, setUpdatingRider] = useState(null);
     const [errorState, setErrorState] = useState(null);
+    const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const timeSet = useRef(null);
     const tasksObserver = useRef({ unsubscribe: () => {} });
     const assignmentsObserver = useRef({ unsubscribe: () => {} });
@@ -221,6 +224,15 @@ function ActiveRidersChips() {
                     !activeRiders || _.isEmpty(activeRiders) ? null : RightArrow
                 }
             >
+                <Box sx={{ margin: 0.5 }}>
+                    <Chip
+                        label="All"
+                        onClick={() => dispatch(setDashboardFilteredUser(null))}
+                        variant={
+                            dashboardFilteredUser === null ? null : "outlined"
+                        }
+                    />
+                </Box>
                 {Object.values(activeRiders).map((rider) => {
                     return (
                         <Box
@@ -230,9 +242,24 @@ function ActiveRidersChips() {
                         >
                             <UserChip
                                 onClick={() => {
+                                    if (dashboardFilteredUser === rider.id) {
+                                        dispatch(
+                                            setDashboardFilteredUser(null)
+                                        );
+                                    } else {
+                                        dispatch(
+                                            setDashboardFilteredUser(rider.id)
+                                        );
+                                    }
+                                    return;
                                     setUpdatingRider(rider.id);
                                     timeSet.current = new Date();
                                 }}
+                                variant={
+                                    dashboardFilteredUser === rider.id
+                                        ? null
+                                        : "outlined"
+                                }
                                 user={rider}
                             />
                         </Box>
