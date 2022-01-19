@@ -1,14 +1,14 @@
 import React, { useRef, useState, useEffect } from "react";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     dataStoreReadyStatusSelector,
     getRoleView,
 } from "../../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { convertListDataToObject } from "../../../utilities";
-import { Avatar, Box, Chip, IconButton, Stack } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 // disable horizontal scrollbar
 import "./hideActiveRiderChipsScrollBar.css";
@@ -18,6 +18,7 @@ import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import UserChip from "../../../components/UserChip";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 // use for transparency on arrows sometime
 const useStyles = makeStyles((theme) => ({
@@ -74,12 +75,15 @@ function RightArrow() {
 function ActiveRidersChips() {
     const [activeRiders, setActiveRiders] = useState({});
     const [updatingRider, setUpdatingRider] = useState(null);
+    const [errorState, setErrorState] = useState(null);
     const timeSet = useRef(null);
     const tasksObserver = useRef({ unsubscribe: () => {} });
     const assignmentsObserver = useRef({ unsubscribe: () => {} });
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
     const roleView = useSelector(getRoleView);
+
+    const dispatch = useDispatch();
 
     async function calculateRidersStatus() {
         const assignments = await DataStore.query(models.TaskAssignee, (a) =>
@@ -106,56 +110,61 @@ function ActiveRidersChips() {
     );
 
     async function getActiveRiders() {
-        if (!dataStoreReadyStatus) return;
-        setActiveRiders(await calculateRidersStatus());
-        tasksObserver.current.unsubscribe();
-        tasksObserver.current = DataStore.observe(models.Task).subscribe(
-            async (observeResult) => {
-                const task = observeResult.element;
-                if (
-                    [
-                        tasksStatus.cancelled,
-                        tasksStatus.rejected,
-                        tasksStatus.completed,
-                    ].includes(task.status)
-                ) {
-                    debouncedCalculateRidersStatus();
-                }
-            }
-        );
-        animate.current = true;
-        assignmentsObserver.current.unsubscribe();
-        assignmentsObserver.current = DataStore.observe(
-            models.TaskAssignee
-        ).subscribe(async (observeResult) => {
-            const taskAssigneeData = observeResult.element;
-            if (observeResult.opType === "INSERT") {
-                const task = await DataStore.query(
-                    models.Task,
-                    taskAssigneeData.taskId
-                );
-                const user = await DataStore.query(
-                    models.User,
-                    taskAssigneeData.assigneeId
-                );
-                if (
-                    task &&
-                    taskAssigneeData.role === userRoles.rider &&
-                    ![
-                        tasksStatus.droppedOff,
-                        tasksStatus.cancelled,
-                        tasksStatus.rejected,
-                    ].includes(task.status)
-                ) {
-                    if (user) {
-                        setActiveRiders((prevState) => ({
-                            ...prevState,
-                            [user.id]: user,
-                        }));
+        try {
+            if (!dataStoreReadyStatus) return;
+            setActiveRiders(await calculateRidersStatus());
+            tasksObserver.current.unsubscribe();
+            tasksObserver.current = DataStore.observe(models.Task).subscribe(
+                async (observeResult) => {
+                    const task = observeResult.element;
+                    if (
+                        [
+                            tasksStatus.cancelled,
+                            tasksStatus.rejected,
+                            tasksStatus.completed,
+                        ].includes(task.status)
+                    ) {
+                        debouncedCalculateRidersStatus();
                     }
                 }
-            }
-        });
+            );
+            animate.current = true;
+            assignmentsObserver.current.unsubscribe();
+            assignmentsObserver.current = DataStore.observe(
+                models.TaskAssignee
+            ).subscribe(async (observeResult) => {
+                const taskAssigneeData = observeResult.element;
+                if (observeResult.opType === "INSERT") {
+                    const task = await DataStore.query(
+                        models.Task,
+                        taskAssigneeData.taskId
+                    );
+                    const user = await DataStore.query(
+                        models.User,
+                        taskAssigneeData.assigneeId
+                    );
+                    if (
+                        task &&
+                        taskAssigneeData.role === userRoles.rider &&
+                        ![
+                            tasksStatus.droppedOff,
+                            tasksStatus.cancelled,
+                            tasksStatus.rejected,
+                        ].includes(task.status)
+                    ) {
+                        if (user) {
+                            setActiveRiders((prevState) => ({
+                                ...prevState,
+                                [user.id]: user,
+                            }));
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            setErrorState(error);
+        }
     }
 
     useEffect(() => {
@@ -163,25 +172,33 @@ function ActiveRidersChips() {
     }, [dataStoreReadyStatus]);
 
     async function updateRiderHome(userId) {
-        const allRiderAssignedTasks = (
-            await DataStore.query(models.TaskAssignee, (a) =>
-                a.role("eq", userRoles.rider)
-            )
-        ).filter((a) => a.assignee && a.assignee.id === userId);
-        const tasksToUpdate = allRiderAssignedTasks
-            .map((a) => a.task)
-            .filter((t) => t.status === tasksStatus.droppedOff);
-        // for every task in the list, update the task status to completed
-        for (const task of tasksToUpdate) {
-            await DataStore.save(
-                models.Task.copyOf(task, (updated) => {
-                    updated.status = tasksStatus.completed;
-                    updated.timeRiderHome = timeSet.current.toISOString();
-                })
-            );
+        try {
+            const allRiderAssignedTasks = (
+                await DataStore.query(models.TaskAssignee, (a) =>
+                    a.role("eq", userRoles.rider)
+                )
+            ).filter((a) => a.assignee && a.assignee.id === userId);
+            const tasksToUpdate = allRiderAssignedTasks
+                .map((a) => a.task)
+                .filter((t) => t.status === tasksStatus.droppedOff);
+            // for every task in the list, update the task status to completed
+            for (const task of tasksToUpdate) {
+                await DataStore.save(
+                    models.Task.copyOf(task, (updated) => {
+                        updated.status = tasksStatus.completed;
+                        updated.timeRiderHome = timeSet.current.toISOString();
+                    })
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification("Sorry, an error occurred"));
         }
     }
 
+    if (errorState) {
+        return <Typography>Sorry, an error occurred</Typography>;
+    }
     return (
         <React.Fragment>
             <RiderConfirmationHomeContents

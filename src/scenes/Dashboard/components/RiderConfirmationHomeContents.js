@@ -9,7 +9,7 @@ import {
     Typography,
 } from "@mui/material";
 import { DateTimePicker } from "@mui/lab";
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import GetError from "../../../ErrorComponents/GetError";
