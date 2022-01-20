@@ -55,12 +55,7 @@ export default function UserProfile(props) {
     }
     useEffect(updateStateFromProps, [props.user]);
 
-    let header =
-        props.user.id === whoami.id ? (
-            <h2>My Profile.</h2>
-        ) : (
-            <h2>Profile for {state.displayName}</h2>
-        );
+    let header = <h2>{state.displayName}</h2>;
 
     let editToggle = <></>;
     if (whoami.roles) {
