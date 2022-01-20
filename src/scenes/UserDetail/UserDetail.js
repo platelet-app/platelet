@@ -13,7 +13,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { protectedFields } from "../../apiConsts";
-import { Stack, useMediaQuery } from "@mui/material";
+import { Chip, Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 
 const initialUserState = {
