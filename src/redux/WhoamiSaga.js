@@ -72,19 +72,19 @@ function* getWhoami() {
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,
-                    loggedInUser.attributes.sub
+                    (t) => t.cognitoID("eq", loggedInUser.attributes.sub)
                 );
-                if (!result) {
+                if (result && result.length === 0) {
                     result = yield call([API, API.graphql], {
                         query: queries.getUser,
-                        variables: { id: loggedInUser.attributes.sub },
+                        variables: { cognitoID: loggedInUser.attributes.sub },
                     });
                     if (!result.data.getUser) {
                         throw new NotFound("Could not find logged in user");
                     }
                     yield put(getWhoamiSuccess(result.data.getUser));
                 } else {
-                    yield put(getWhoamiSuccess(result));
+                    yield put(getWhoamiSuccess(result[0]));
                 }
             } else {
                 yield put(

@@ -56,7 +56,6 @@ export enum Patch {
 }
 
 export declare class AddressAndContactDetails {
-  readonly id: string;
   readonly name?: string;
   readonly telephoneNumber?: string;
   readonly mobileNumber?: string;
@@ -123,6 +122,7 @@ type DeliverableTypeMetaData = {
 
 export declare class User {
   readonly id: string;
+  readonly cognitoID: string;
   readonly username: string;
   readonly contact?: AddressAndContactDetails;
   readonly displayName: string;

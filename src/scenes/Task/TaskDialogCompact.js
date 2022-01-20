@@ -258,13 +258,23 @@ function TaskDialogCompact(props) {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
             if (!result) throw new Error("Task doesn't exist");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    for (const [key, value] of Object.entries(requesterValue)) {
-                        updated.requesterContact[key] = value;
-                    }
-                })
-            );
+            if (result.requesterContact === null) {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.requesterContact = requesterValue;
+                    })
+                );
+            } else {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        for (const [key, value] of Object.entries(
+                            requesterValue
+                        )) {
+                            updated.requesterContact[key] = value;
+                        }
+                    })
+                );
+            }
             taskRef.current = {
                 ...taskRef.current,
                 requesterContact: {

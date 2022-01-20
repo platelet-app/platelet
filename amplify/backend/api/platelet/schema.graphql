@@ -1,5 +1,6 @@
 type User @auth(rules: [{ allow: private}]) @model {
   id: ID!
+  cognitoID: ID!
   username: String!
   contact: AddressAndContactDetails
   displayName: String!
@@ -44,7 +45,6 @@ type Vehicle @auth(rules: [{ allow: private}]) @model @key(name: "byAssignedUser
 }
 
 type AddressAndContactDetails {
-  id: ID!
   name: String
   telephoneNumber: String
   mobileNumber: String

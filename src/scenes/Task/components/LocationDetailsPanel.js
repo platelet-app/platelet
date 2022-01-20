@@ -118,6 +118,7 @@ function LocationDetailsPanel(props) {
     async function changeContactDetails(values) {
         let locationResult = null;
         const key = props.locationKey;
+        const filtered = _.omit(values, ...protectedFields);
         if (state) {
             let locationToUpdate = await DataStore.query(
                 models.Location,
@@ -127,14 +128,21 @@ function LocationDetailsPanel(props) {
             if (locationToUpdate.listed === 1) {
                 locationToUpdate = await editPreset();
             }
-            locationResult = await DataStore.save(
-                models.Location.copyOf(locationToUpdate, (updated) => {
-                    for (const [key, v] of Object.entries(values)) {
-                        if (!protectedFields.includes(key))
+            if (locationToUpdate.contact === null) {
+                locationResult = await DataStore.save(
+                    models.Location.copyOf(locationToUpdate, (updated) => {
+                        updated.contact = filtered;
+                    })
+                );
+            } else {
+                locationResult = await DataStore.save(
+                    models.Location.copyOf(locationToUpdate, (updated) => {
+                        for (const [key, v] of Object.entries(filtered)) {
                             updated.contact[key] = v;
-                    }
-                })
-            );
+                        }
+                    })
+                );
+            }
         } else {
             locationResult = await DataStore.save(
                 new models.Location({

@@ -30,20 +30,6 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "plateletCognitoPostConfirmation": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": [
-        {
-          "category": "api",
-          "resourceName": "platelet",
-          "attributes": [
-            "GraphQLAPIIdOutput"
-          ]
-        }
-      ]
-    },
     "plateletImageResize": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -75,6 +61,13 @@
       "service": "S3",
       "providerPlugin": "awscloudformation",
       "dependsOn": []
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "service": "amplifyhosting",
+      "providerPlugin": "awscloudformation",
+      "type": "manual"
     }
   }
 }
