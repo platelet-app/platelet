@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import { Stack } from "@mui/material";
@@ -19,6 +18,17 @@ const initialDeliverablesSortedState = {
     defaults: [],
 };
 
+_.mixin({
+    memoizeDebounce: function (func, wait = 0, options = {}) {
+        var mem = _.memoize(function () {
+            return _.debounce(func, wait, options);
+        }, options.resolver);
+        return function () {
+            mem.apply(this, arguments).apply(this, arguments);
+        };
+    },
+});
+
 function DeliverableGridSelect(props) {
     const [deliverablesSorted, setDeliverablesSorted] = useState(
         initialDeliverablesSortedState
@@ -29,6 +39,9 @@ function DeliverableGridSelect(props) {
     const [availableDeliverables, setAvailableDeliverables] = useState({});
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
+    const debounceProcess = useRef(
+        _.memoizeDebounce((id, count) => props.onChange({ id, count }), 1000)
+    );
 
     function convertExistingDeliverablesToState() {
         const result = {};
@@ -131,7 +144,8 @@ function DeliverableGridSelect(props) {
         }
         props.onChange({ id: deliverableId, unit });
     }
-    const onChangeCount = (deliverableId, count) => {
+
+    function onChangeCount(deliverableId, count) {
         const existing = state[deliverableId];
         if (existing) {
             setState((prevState) => ({
@@ -139,8 +153,9 @@ function DeliverableGridSelect(props) {
                 [deliverableId]: { ...prevState[deliverableId], count },
             }));
         }
-        props.onChange({ id: deliverableId, count });
-    };
+        debounceProcess.current(deliverableId, count);
+        //props.onChange({ id: deliverableId, count });
+    }
 
     function onDelete(deliverableId) {
         setState((prevState) => _.omit(prevState, deliverableId));

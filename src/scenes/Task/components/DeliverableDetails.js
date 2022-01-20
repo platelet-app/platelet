@@ -39,6 +39,7 @@ function DeliverableDetails(props) {
             const deliverables = (
                 await DataStore.query(models.Deliverable)
             ).filter((d) => d.task && d.task.id === props.taskId);
+            console.log("deliverables", deliverables);
             setState(convertListDataToObject(deliverables));
 
             if (deliverables) {
@@ -86,6 +87,7 @@ function DeliverableDetails(props) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
         // TODO: this needs a debouncer
+        console.log("updateDeliverable", value);
         try {
             const existing = Object.values(state).find(
                 (d) => d.deliverableType.id === value.id
@@ -138,6 +140,7 @@ function DeliverableDetails(props) {
                 }));
             }
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
