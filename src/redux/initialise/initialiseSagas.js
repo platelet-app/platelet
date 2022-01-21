@@ -100,7 +100,7 @@ async function populateFakeData() {
     }
     const responsibilities = await DataStore.query(models.RiderResponsibility);
     const offlineUser = await DataStore.query(models.User, (u) =>
-        u.username("eq", "offline")
+        u.name("eq", "offline")
     );
     if (offlineUser.length === 0) {
         const profilePicture = profilePictures.pop();
@@ -114,8 +114,7 @@ async function populateFakeData() {
         }
         await DataStore.save(
             new models.User({
-                name: "Demo User",
-                username: "offline",
+                name: "offline",
                 userRiderResponsibilityId:
                     _.sample(responsibilities).id || null,
                 displayName: "Demo User",
@@ -143,7 +142,6 @@ async function populateFakeData() {
         for (const i in _.range(10)) {
             const generatedName = faker.name.findName();
             let userToSave = {
-                username: faker.internet.userName(),
                 name: generatedName,
                 displayName: generatedName,
                 dateOfBirth: faker.date.past(50, new Date()).toISOString(),
@@ -248,7 +246,7 @@ async function randomComment(task) {
 
     if (Math.floor(Math.random() * 10000) % 4 === 0) {
         const author = await DataStore.query(models.User, (u) =>
-            u.username("eq", "offline")
+            u.name("eq", "offline")
         );
         if (author[0]) {
             await DataStore.save(
@@ -272,7 +270,7 @@ function generateRequesterContact() {
 
 async function populateTasks() {
     const whoamiFind = await DataStore.query(models.User, (u) =>
-        u.username("eq", "offline")
+        u.name("eq", "offline")
     );
     const availableDeliverables = await DataStore.query(models.DeliverableType);
     const availableRiders = (await DataStore.query(models.User)).filter(

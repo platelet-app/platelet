@@ -14,10 +14,9 @@ import { userRoles } from "../apiConsts";
 
 const fakeUser = {
     id: "offline",
-    username: "offline",
+    name: "offline",
     displayName: "Offline User",
     roles: Object.values(userRoles),
-    name: "Offline User",
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
@@ -25,10 +24,9 @@ const fakeUser = {
 };
 
 const testUserModel = new models.User({
-    username: "whoami",
+    name: "whoami",
     displayName: "Mock User",
     roles: Object.values(userRoles),
-    name: "Someone Person",
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
@@ -48,7 +46,7 @@ function* getWhoami() {
         const existingUser = yield call(
             [DataStore, DataStore.query],
             models.User,
-            (u) => u.username("eq", "offline")
+            (u) => u.name("eq", "offline")
         );
         if (existingUser.length === 0) {
             let userResult = fakeUser;
