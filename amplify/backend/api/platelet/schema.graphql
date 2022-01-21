@@ -1,7 +1,6 @@
 type User @auth(rules: [{ allow: private}]) @model {
   id: ID!
   cognitoID: ID!
-  username: String!
   contact: AddressAndContactDetails
   displayName: String!
   name: String
