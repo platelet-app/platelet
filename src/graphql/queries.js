@@ -17,7 +17,6 @@ export const syncUsers = /* GraphQL */ `
       items {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -98,7 +97,6 @@ export const getUser = /* GraphQL */ `
     getUser(id: $id) {
       id
       cognitoID
-      username
       contact {
         name
         telephoneNumber
@@ -221,7 +219,6 @@ export const listUsers = /* GraphQL */ `
       items {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -339,7 +336,6 @@ export const getGroup = /* GraphQL */ `
         items {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -414,7 +410,6 @@ export const syncVehicles = /* GraphQL */ `
         assignedUser {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -456,7 +451,6 @@ export const getVehicle = /* GraphQL */ `
       assignedUser {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -568,7 +562,6 @@ export const listVehicles = /* GraphQL */ `
         assignedUser {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -683,7 +676,6 @@ export const getDeliverable = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -1162,7 +1154,6 @@ export const syncTasks = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -1324,7 +1315,6 @@ export const getTask = /* GraphQL */ `
       createdBy {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -1562,7 +1552,6 @@ export const getTask = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -1717,7 +1706,6 @@ export const getTask = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -1917,7 +1905,6 @@ export const listTasks = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -2111,7 +2098,6 @@ export const syncTaskAssignees = /* GraphQL */ `
         assignee {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -2156,7 +2142,6 @@ export const syncComments = /* GraphQL */ `
         author {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -2191,7 +2176,6 @@ export const getComment = /* GraphQL */ `
       author {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -2285,7 +2269,6 @@ export const listComments = /* GraphQL */ `
         author {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -2468,7 +2451,6 @@ export const tasksByStatus = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles

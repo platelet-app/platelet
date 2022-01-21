@@ -9,7 +9,6 @@ export const createUser = /* GraphQL */ `
     createUser(input: $input, condition: $condition) {
       id
       cognitoID
-      username
       contact {
         name
         telephoneNumber
@@ -130,7 +129,6 @@ export const updateUser = /* GraphQL */ `
     updateUser(input: $input, condition: $condition) {
       id
       cognitoID
-      username
       contact {
         name
         telephoneNumber
@@ -251,7 +249,6 @@ export const deleteUser = /* GraphQL */ `
     deleteUser(input: $input, condition: $condition) {
       id
       cognitoID
-      username
       contact {
         name
         telephoneNumber
@@ -377,7 +374,6 @@ export const createGroup = /* GraphQL */ `
         items {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -415,7 +411,6 @@ export const updateGroup = /* GraphQL */ `
         items {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -453,7 +448,6 @@ export const deleteGroup = /* GraphQL */ `
         items {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -494,7 +488,6 @@ export const createVehicle = /* GraphQL */ `
       assignedUser {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -604,7 +597,6 @@ export const updateVehicle = /* GraphQL */ `
       assignedUser {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -714,7 +706,6 @@ export const deleteVehicle = /* GraphQL */ `
       assignedUser {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -833,7 +824,6 @@ export const createDeliverable = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -1033,7 +1023,6 @@ export const updateDeliverable = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -1233,7 +1222,6 @@ export const deleteDeliverable = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -1731,7 +1719,6 @@ export const createTask = /* GraphQL */ `
       createdBy {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -1969,7 +1956,6 @@ export const createTask = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -2124,7 +2110,6 @@ export const createTask = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -2322,7 +2307,6 @@ export const updateTask = /* GraphQL */ `
       createdBy {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -2560,7 +2544,6 @@ export const updateTask = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -2715,7 +2698,6 @@ export const updateTask = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -2913,7 +2895,6 @@ export const deleteTask = /* GraphQL */ `
       createdBy {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -3151,7 +3132,6 @@ export const deleteTask = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -3306,7 +3286,6 @@ export const deleteTask = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -3509,7 +3488,6 @@ export const createTaskAssignee = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -3661,7 +3639,6 @@ export const createTaskAssignee = /* GraphQL */ `
       assignee {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -3756,7 +3733,6 @@ export const updateTaskAssignee = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -3908,7 +3884,6 @@ export const updateTaskAssignee = /* GraphQL */ `
       assignee {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -4003,7 +3978,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
         createdBy {
           id
           cognitoID
-          username
           displayName
           name
           roles
@@ -4155,7 +4129,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
       assignee {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -4246,7 +4219,6 @@ export const createComment = /* GraphQL */ `
       author {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -4338,7 +4310,6 @@ export const updateComment = /* GraphQL */ `
       author {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber
@@ -4430,7 +4401,6 @@ export const deleteComment = /* GraphQL */ `
       author {
         id
         cognitoID
-        username
         contact {
           name
           telephoneNumber

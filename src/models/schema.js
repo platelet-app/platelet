@@ -17,13 +17,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "username": {
-                    "name": "username",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
                 "contact": {
                     "name": "contact",
                     "isArray": false,
@@ -1560,5 +1553,5 @@ export const schema = {
             }
         }
     },
-    "version": "0bcb045e06275628cfb2a002b682a168"
+    "version": "1b1e71d750b8352e7e49d4d98a55e83b"
 };

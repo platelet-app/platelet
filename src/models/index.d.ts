@@ -123,7 +123,6 @@ type DeliverableTypeMetaData = {
 export declare class User {
   readonly id: string;
   readonly cognitoID: string;
-  readonly username: string;
   readonly contact?: AddressAndContactDetails;
   readonly displayName: string;
   readonly name?: string;
