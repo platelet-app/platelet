@@ -106,6 +106,21 @@
             },
             "AMPLIFY_STORAGE_BUCKET_NAME": {
               "Ref": "amplifyStorageBucketName"
+            },
+            "resizeWidth": {
+              "Ref": "resizeWidth"
+            },
+            "resizeHeight": {
+              "Ref": "resizeHeight"
+            },
+            "thumbnailWidth": {
+              "Ref": "thumbnailWidth"
+            },
+            "thumbnailHeight": {
+              "Ref": "thumbnailHeight"
+            },
+            "amplifyStorageBucketName": {
+              "Ref": "amplifyStorageBucketName"
             }
           }
         },
