@@ -20,6 +20,7 @@ import { encodeUUID } from "../../../utilities";
 import { userRoles } from "../../../apiConsts";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles({
     root: {
@@ -102,6 +103,7 @@ function AdminAddUser() {
                 new models.User({
                     name: state.name,
                     displayName: state.name,
+                    cognitoID: uuidv4(),
                     active: 1,
                     contact: { emailAddress: state.email },
                     roles: [...rolesState, userRoles.user],

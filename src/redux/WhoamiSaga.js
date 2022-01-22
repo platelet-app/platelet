@@ -14,10 +14,9 @@ import { userRoles } from "../apiConsts";
 
 const fakeUser = {
     id: "offline",
-    username: "offline",
+    name: "offline",
     displayName: "Offline User",
     roles: Object.values(userRoles),
-    name: "Offline User",
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
@@ -25,10 +24,9 @@ const fakeUser = {
 };
 
 const testUserModel = new models.User({
-    username: "whoami",
+    name: "whoami",
     displayName: "Mock User",
     roles: Object.values(userRoles),
-    name: "Someone Person",
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
@@ -48,7 +46,7 @@ function* getWhoami() {
         const existingUser = yield call(
             [DataStore, DataStore.query],
             models.User,
-            (u) => u.username("eq", "offline")
+            (u) => u.name("eq", "offline")
         );
         if (existingUser.length === 0) {
             let userResult = fakeUser;
@@ -72,19 +70,19 @@ function* getWhoami() {
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,
-                    loggedInUser.attributes.sub
+                    (t) => t.cognitoID("eq", loggedInUser.attributes.sub)
                 );
-                if (!result) {
+                if (result && result.length === 0) {
                     result = yield call([API, API.graphql], {
                         query: queries.getUser,
-                        variables: { id: loggedInUser.attributes.sub },
+                        variables: { cognitoID: loggedInUser.attributes.sub },
                     });
                     if (!result.data.getUser) {
                         throw new NotFound("Could not find logged in user");
                     }
                     yield put(getWhoamiSuccess(result.data.getUser));
                 } else {
-                    yield put(getWhoamiSuccess(result));
+                    yield put(getWhoamiSuccess(result[0]));
                 }
             } else {
                 yield put(

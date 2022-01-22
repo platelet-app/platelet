@@ -90,7 +90,7 @@ function DeliverableDetails(props) {
         console.log("updateDeliverable", value);
         try {
             const existing = Object.values(state).find(
-                (d) => d.deliverableType.id === value.id
+                (d) => d.deliverableType && d.deliverableType.id === value.id
             );
             if (existing) {
                 const existingDeliverable = await DataStore.query(
@@ -114,11 +114,6 @@ function DeliverableDetails(props) {
                     }));
                 }
             } else {
-                const existingTask = await DataStore.query(
-                    models.Task,
-                    props.taskId
-                );
-                if (!existingTask) throw new Error("Task does not exist");
                 const { id, ...rest } = value;
                 const deliverableType = await DataStore.query(
                     models.DeliverableType,
@@ -126,6 +121,11 @@ function DeliverableDetails(props) {
                 );
                 if (!deliverableType)
                     throw new Error("Deliverable type does not exist");
+                const existingTask = await DataStore.query(
+                    models.Task,
+                    props.taskId
+                );
+                if (!existingTask) throw new Error("Task does not exist");
                 const newDeliverable = await DataStore.save(
                     new models.Deliverable({
                         task: existingTask,
@@ -184,6 +184,7 @@ function DeliverableDetails(props) {
                     }
                     return (
                         <Stack
+                            key={deliverable.id}
                             direction={"row"}
                             justifyContent={"space-between"}
                         >

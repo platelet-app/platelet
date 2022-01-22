@@ -16,9 +16,8 @@ export const syncUsers = /* GraphQL */ `
     ) {
       items {
         id
-        username
+        cognitoID
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -33,11 +32,6 @@ export const syncUsers = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -102,9 +96,8 @@ export const getUser = /* GraphQL */ `
   query GetUser($id: ID!) {
     getUser(id: $id) {
       id
-      username
+      cognitoID
       contact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -119,11 +112,6 @@ export const getUser = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       displayName
       name
@@ -230,9 +218,8 @@ export const listUsers = /* GraphQL */ `
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        username
+        cognitoID
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -247,11 +234,6 @@ export const listUsers = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -353,7 +335,7 @@ export const getGroup = /* GraphQL */ `
       users {
         items {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -427,7 +409,7 @@ export const syncVehicles = /* GraphQL */ `
         dateOfRegistration
         assignedUser {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -468,9 +450,8 @@ export const getVehicle = /* GraphQL */ `
       dateOfRegistration
       assignedUser {
         id
-        username
+        cognitoID
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -485,11 +466,6 @@ export const getVehicle = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -585,7 +561,7 @@ export const listVehicles = /* GraphQL */ `
         dateOfRegistration
         assignedUser {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -603,110 +579,6 @@ export const listVehicles = /* GraphQL */ `
           nextToken
           startedAt
         }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const syncAddressAndContactDetails = /* GraphQL */ `
-  query SyncAddressAndContactDetails(
-    $filter: ModelAddressAndContactDetailsFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncAddressAndContactDetails(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const getAddressAndContactDetails = /* GraphQL */ `
-  query GetAddressAndContactDetails($id: ID!) {
-    getAddressAndContactDetails(id: $id) {
-      id
-      name
-      telephoneNumber
-      mobileNumber
-      emailAddress
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      what3words
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listAddressAndContactDetails = /* GraphQL */ `
-  query ListAddressAndContactDetails(
-    $filter: ModelAddressAndContactDetailsFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listAddressAndContactDetails(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
         _version
         _deleted
         _lastChangedAt
@@ -803,7 +675,7 @@ export const getDeliverable = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -824,7 +696,6 @@ export const getDeliverable = /* GraphQL */ `
         timeRejected
         timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -839,11 +710,6 @@ export const getDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -1060,7 +926,6 @@ export const syncLocations = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1075,11 +940,6 @@ export const syncLocations = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -1121,7 +981,6 @@ export const getLocation = /* GraphQL */ `
       name
       listed
       contact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -1136,11 +995,6 @@ export const getLocation = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       ward
       line1
@@ -1233,7 +1087,6 @@ export const listLocations = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1248,11 +1101,6 @@ export const listLocations = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -1305,7 +1153,7 @@ export const syncTasks = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -1326,7 +1174,6 @@ export const syncTasks = /* GraphQL */ `
         timeRejected
         timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1341,11 +1188,6 @@ export const syncTasks = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -1472,9 +1314,8 @@ export const getTask = /* GraphQL */ `
       name
       createdBy {
         id
-        username
+        cognitoID
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1489,11 +1330,6 @@ export const getTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -1556,7 +1392,6 @@ export const getTask = /* GraphQL */ `
       timeRejected
       timeRiderHome
       requesterContact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -1571,11 +1406,6 @@ export const getTask = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       pickUpLocationId
       dropOffLocationId
@@ -1584,7 +1414,6 @@ export const getTask = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1599,11 +1428,6 @@ export const getTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -1638,7 +1462,6 @@ export const getTask = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1653,11 +1476,6 @@ export const getTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -1733,7 +1551,7 @@ export const getTask = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -1754,7 +1572,6 @@ export const getTask = /* GraphQL */ `
         timeRejected
         timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1769,11 +1586,6 @@ export const getTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -1893,7 +1705,7 @@ export const getTask = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -1914,7 +1726,6 @@ export const getTask = /* GraphQL */ `
         timeRejected
         timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1929,11 +1740,6 @@ export const getTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -2098,7 +1904,7 @@ export const listTasks = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -2119,7 +1925,6 @@ export const listTasks = /* GraphQL */ `
         timeRejected
         timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2134,11 +1939,6 @@ export const listTasks = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -2297,7 +2097,7 @@ export const syncTaskAssignees = /* GraphQL */ `
         }
         assignee {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -2341,7 +2141,7 @@ export const syncComments = /* GraphQL */ `
         body
         author {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -2375,9 +2175,8 @@ export const getComment = /* GraphQL */ `
       body
       author {
         id
-        username
+        cognitoID
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2392,11 +2191,6 @@ export const getComment = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -2474,7 +2268,7 @@ export const listComments = /* GraphQL */ `
         body
         author {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -2656,7 +2450,7 @@ export const tasksByStatus = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoID
           displayName
           name
           roles
@@ -2677,7 +2471,6 @@ export const tasksByStatus = /* GraphQL */ `
         timeRejected
         timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2692,11 +2485,6 @@ export const tasksByStatus = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId

@@ -25,6 +25,7 @@ def resize_image(picture_file_path, crop_dimensions=None):
 
 def handler(event, context):
   amplify_storage_bucket_name = os.environ.get('AMPLIFY_STORAGE_BUCKET_NAME')
+  print(os.environ)
   for record in event['Records']:
       bucket = record['s3']['bucket']['name']
       key = unquote_plus(record['s3']['object']['key'])

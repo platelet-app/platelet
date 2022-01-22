@@ -10,10 +10,10 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "username": {
-                    "name": "username",
+                "cognitoID": {
+                    "name": "cognitoID",
                     "isArray": false,
-                    "type": "String",
+                    "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -1426,13 +1426,6 @@ export const schema = {
         "AddressAndContactDetails": {
             "name": "AddressAndContactDetails",
             "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
                 "name": {
                     "name": "name",
                     "isArray": false,
@@ -1560,5 +1553,5 @@ export const schema = {
             }
         }
     },
-    "version": "b932fa6a5d20190a317e34ba42073d62"
+    "version": "1b1e71d750b8352e7e49d4d98a55e83b"
 };

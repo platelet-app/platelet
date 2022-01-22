@@ -25,7 +25,7 @@ function AddableDeliverable(props) {
             <SmallCirclePlusButton
                 onClick={makeNewDeliverable}
                 disabled={props.isPosting}
-                aria-label={"Add deliverable"}
+                aria-label={`Add ${props.deliverableType.label}`}
             />
         </DeliverableCard>
     );

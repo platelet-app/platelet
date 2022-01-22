@@ -23,6 +23,8 @@ import {
 } from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
+import { DataStore } from "aws-amplify";
+import * as models from "./models";
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -37,6 +39,9 @@ if (
 }
 Logger.LOG_LEVEL = "ERROR";
 window.amplifyLogger = Logger;
+
+window.DataStore = DataStore;
+window.models = models;
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
