@@ -217,6 +217,88 @@ describe("DeliverableDetails", () => {
         expect(screen.queryByRole("button", { name: "delete" })).toBeNull();
     });
 
+    test.only("quickly increment multiple items", async () => {
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([mockDeliverables[0], mockDeliverables[1]])
+            .mockResolvedValueOnce(mockData)
+            .mockResolvedValueOnce(mockDeliverables[0])
+            .mockResolvedValueOnce(mockDeliverables[1])
+            .mockResolvedValueOnce(mockDeliverables[0])
+            .mockResolvedValueOnce(mockDeliverables[1])
+            .mockResolvedValueOnce(mockDeliverables[0])
+            .mockResolvedValueOnce(mockDeliverables[1])
+            .mockResolvedValueOnce(mockDeliverables[0])
+            .mockResolvedValueOnce(mockDeliverables[1])
+            .mockResolvedValueOnce(mockDeliverables[0])
+            .mockResolvedValueOnce(mockDeliverables[1]);
+
+        amplify.DataStore.save
+            .mockResolvedValueOnce({
+                ...mockDeliverables[0],
+                count: mockDeliverables[0].count + 5,
+            })
+            .mockResolvedValueOnce({
+                ...mockDeliverables[1],
+                count: mockDeliverables[1].count + 5,
+            });
+
+        render(<DeliverableDetails taskId={fakeTask.id} />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+        });
+        const increments = screen.getAllByRole("button", {
+            name: "increment",
+        });
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        userEvent.click(increments[0]);
+        userEvent.click(increments[1]);
+        await waitFor(() => {
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(2);
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.save).toHaveBeenCalledWith({
+                ...mockDeliverables[0],
+                count: mockDeliverables[0].count + 10,
+            });
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.save).toHaveBeenCalledWith({
+                ...mockDeliverables[1],
+                count: mockDeliverables[1].count + 10,
+            });
+        });
+        expect(
+            screen.getByText(mockDeliverables[0].count + 10)
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(mockDeliverables[1].count + 10)
+        ).toBeInTheDocument();
+    });
+
     test("change the unit", async () => {
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
