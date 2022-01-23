@@ -23,6 +23,7 @@ function DeliverableDetails(props) {
     const cardClasses = dialogCardStyles();
     const [collapsed, setCollapsed] = useState(true);
     const [state, setState] = useState({});
+    const [isPosting, setIsPosting] = useState(false);
     const deliverablesObserver = useRef({ unsubscribe: () => {} });
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
@@ -86,6 +87,7 @@ function DeliverableDetails(props) {
     async function updateDeliverable(value) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
+        setIsPosting(true);
         try {
             const existing = Object.values(state).find(
                 (d) => d.deliverableType && d.deliverableType.id === value.id
@@ -137,9 +139,11 @@ function DeliverableDetails(props) {
                     [newDeliverable.id]: newDeliverable,
                 }));
             }
+            setIsPosting(false);
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
+            setIsPosting(false);
         }
     }
     // if this isn't a ref then state is old while using debounce
@@ -148,6 +152,7 @@ function DeliverableDetails(props) {
     async function deleteDeliverable(deliverableTypeId) {
         // receive DeliverableTypeId only from selector component
         // check if one of this DeliverableType has already been saved so we can delete it
+        setIsPosting(true);
         const existing = Object.values(state).find(
             (d) => d.deliverableType.id === deliverableTypeId
         );
@@ -162,7 +167,9 @@ function DeliverableDetails(props) {
                 // remove it from the tracking reference
                 setState((prevState) => _.omit(prevState, existing.id));
             }
+            setIsPosting(false);
         } catch (error) {
+            setIsPosting(false);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -203,6 +210,7 @@ function DeliverableDetails(props) {
     ) : (
         <DeliverableGridSelect
             deliverables={Object.values(state)}
+            disabled={isPosting}
             taskUUID={props.taskId}
             onChange={(value) => {
                 //this has to be inline or else state is old}

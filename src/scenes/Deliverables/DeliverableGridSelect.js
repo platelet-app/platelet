@@ -182,6 +182,7 @@ function DeliverableGridSelect(props) {
                             return (
                                 <EditableDeliverable
                                     key={deliverable.id}
+                                    disabled={props.disabled}
                                     onChangeCount={onChangeCount}
                                     onChangeUnit={onChangeUnit}
                                     onDelete={onDelete}
@@ -203,6 +204,7 @@ function DeliverableGridSelect(props) {
                         } else {
                             return (
                                 <AddableDeliverable
+                                    disabled={props.disabled}
                                     key={deliverableType.id}
                                     onAdd={onAddNewDeliverable}
                                     deliverableType={deliverableType}

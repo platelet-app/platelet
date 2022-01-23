@@ -63,7 +63,7 @@ function EditableDeliverable(props) {
                     </Tooltip>
                     <IncreaseDecreaseCounter
                         value={deliverable.count || 0}
-                        disabled={props.isDeleting}
+                        disabled={props.isPosting}
                         onChange={(count) =>
                             handleChange.current(deliverable.id, count)
                         }
@@ -79,15 +79,13 @@ function EditableDeliverable(props) {
 EditableDeliverable.propTypes = {
     deliverable: PropTypes.object,
     onChangeCount: PropTypes.func,
-    isDeleting: PropTypes.bool,
-    isPosting: PropTypes.bool,
+    disabled: PropTypes.bool,
     onDelete: PropTypes.func,
 };
 
 EditableDeliverable.defaultProps = {
     onChangeCount: () => {},
-    isDeleting: false,
-    isPosting: false,
+    disabled: false,
     deliverable: { id: "", label: "None", deliverableType: { icon: "" } },
     onDelete: () => {},
 };
