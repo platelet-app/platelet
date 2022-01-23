@@ -28,6 +28,7 @@ function DeliverableDetails(props) {
     const [errorState, setErrorState] = useState(false);
     const dispatch = useDispatch();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const updateDeliverableRef = useRef(null);
     const errorMessage = "Sorry, an error occurred";
 
     async function getDeliverables() {
@@ -36,7 +37,6 @@ function DeliverableDetails(props) {
             return;
         }
         try {
-            debugger;
             const deliverables = (
                 await DataStore.query(models.Deliverable)
             ).filter((d) => d.task && d.task.id === props.taskId);
@@ -86,7 +86,6 @@ function DeliverableDetails(props) {
     async function updateDeliverable(value) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
-        // TODO: this needs a debouncer
         try {
             const existing = Object.values(state).find(
                 (d) => d.deliverableType && d.deliverableType.id === value.id
@@ -143,6 +142,8 @@ function DeliverableDetails(props) {
             dispatch(displayErrorNotification(errorMessage));
         }
     }
+    // if this isn't a ref then state is old while using debounce
+    updateDeliverableRef.current = updateDeliverable;
 
     async function deleteDeliverable(deliverableTypeId) {
         // receive DeliverableTypeId only from selector component
@@ -203,7 +204,10 @@ function DeliverableDetails(props) {
         <DeliverableGridSelect
             deliverables={Object.values(state)}
             taskUUID={props.taskId}
-            onChange={updateDeliverable}
+            onChange={(value) => {
+                //this has to be inline or else state is old}
+                updateDeliverableRef.current(value);
+            }}
             onDelete={deleteDeliverable}
         />
     );

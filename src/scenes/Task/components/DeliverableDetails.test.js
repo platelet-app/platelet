@@ -217,32 +217,23 @@ describe("DeliverableDetails", () => {
         expect(screen.queryByRole("button", { name: "delete" })).toBeNull();
     });
 
-    test.only("quickly increment multiple items", async () => {
+    test("add then increment an item multiple times", async () => {
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
         amplify.DataStore.query
-            .mockResolvedValueOnce([mockDeliverables[0], mockDeliverables[1]])
+            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(mockData)
+            .mockResolvedValueOnce(mockData[0])
+            .mockResolvedValueOnce(fakeTask)
             .mockResolvedValueOnce(mockDeliverables[0])
-            .mockResolvedValueOnce(mockDeliverables[1])
-            .mockResolvedValueOnce(mockDeliverables[0])
-            .mockResolvedValueOnce(mockDeliverables[1])
-            .mockResolvedValueOnce(mockDeliverables[0])
-            .mockResolvedValueOnce(mockDeliverables[1])
-            .mockResolvedValueOnce(mockDeliverables[0])
-            .mockResolvedValueOnce(mockDeliverables[1])
-            .mockResolvedValueOnce(mockDeliverables[0])
-            .mockResolvedValueOnce(mockDeliverables[1]);
+            .mockResolvedValueOnce(fakeTask);
 
         amplify.DataStore.save
+            .mockResolvedValueOnce(mockDeliverables[0])
             .mockResolvedValueOnce({
                 ...mockDeliverables[0],
-                count: mockDeliverables[0].count + 5,
-            })
-            .mockResolvedValueOnce({
-                ...mockDeliverables[1],
-                count: mockDeliverables[1].count + 5,
+                count: mockDeliverables[0].count + 1,
             });
 
         render(<DeliverableDetails taskId={fakeTask.id} />);
@@ -253,49 +244,43 @@ describe("DeliverableDetails", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
         });
+        userEvent.click(
+            screen.getByRole("button", { name: `Add ${mockData[0].label}` })
+        );
+        await waitFor(() => {
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                1,
+                expect.objectContaining(
+                    _.omit(
+                        new models.Deliverable({
+                            deliverableType: mockData[0],
+                            task: fakeTask,
+                            count: 1,
+                            orderInGrid: 0,
+                            label: mockData[0].label,
+                            unit: mockData[0].defaultUnit,
+                        }),
+                        "id"
+                    )
+                )
+            );
+        });
         const increments = screen.getAllByRole("button", {
             name: "increment",
         });
         userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
         userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
         userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
         userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
         userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
-        userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
-        userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
-        userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
-        userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
-        userEvent.click(increments[0]);
-        userEvent.click(increments[1]);
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenCalledTimes(2);
-        });
-        await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenCalledWith({
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(2, {
                 ...mockDeliverables[0],
-                count: mockDeliverables[0].count + 10,
-            });
-        });
-        await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenCalledWith({
-                ...mockDeliverables[1],
-                count: mockDeliverables[1].count + 10,
+                count: mockDeliverables[0].count + 5,
             });
         });
         expect(
-            screen.getByText(mockDeliverables[0].count + 10)
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(mockDeliverables[1].count + 10)
+            screen.getByText(mockDeliverables[0].count + 5)
         ).toBeInTheDocument();
     });
 
