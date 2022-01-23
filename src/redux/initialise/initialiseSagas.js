@@ -48,7 +48,7 @@ let profilePictures = [];
 let profilePictureThumbnails = [];
 if (
     process.env.NODE_ENV !== "test" &&
-    process.env.REACT_APP_DEMO_MODE === "true"
+    process.env.REACT_APP_POPULATE_FAKE_DATA === "true"
 ) {
     for (const i of _.range(1, 23)) {
         profilePictures.push(`${_.padStart(i, 4, "0")}.jpg`);
