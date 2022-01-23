@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+ web:
+  build:
+   context: .
+  ports:
+  - 3000:3000
+  volumes:
+  - ./src:/src
+  environment:
+  - REACT_APP_OFFLINE_ONLY=true
+  - REACT_APP_POPULATE_FAKE_DATA=true
+  - REACT_APP_DEMO_MODE=false
+  - REACT_APP_RESIZE_BUCKET_NAME=platelet-resize-bucket
+  - REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME=platelet-demo-profilepics
+  - REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION=eu-west-1
