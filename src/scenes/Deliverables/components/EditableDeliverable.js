@@ -33,6 +33,7 @@ function EditableDeliverable(props) {
     ) : (
         <></>
     );
+
     function handleCloseUnit() {
         setShowUnit((prevState) => !prevState);
     }
@@ -63,7 +64,7 @@ function EditableDeliverable(props) {
                     </Tooltip>
                     <IncreaseDecreaseCounter
                         value={deliverable.count || 0}
-                        disabled={props.isPosting}
+                        disabled={props.disabled}
                         onChange={(count) =>
                             handleChange.current(deliverable.id, count)
                         }

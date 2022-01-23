@@ -87,7 +87,6 @@ function DeliverableDetails(props) {
     async function updateDeliverable(value) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
-        setIsPosting(true);
         try {
             const existing = Object.values(state).find(
                 (d) => d.deliverableType && d.deliverableType.id === value.id
@@ -114,6 +113,7 @@ function DeliverableDetails(props) {
                     }));
                 }
             } else {
+                setIsPosting(true);
                 const { id, ...rest } = value;
                 const deliverableType = await DataStore.query(
                     models.DeliverableType,
