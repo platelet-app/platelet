@@ -2,6 +2,7 @@ export const protectedFields = [
     "id",
     "_version",
     "_lastChangedAt",
+    "_deleted",
     "updatedAt",
     "createdAt",
 ];
