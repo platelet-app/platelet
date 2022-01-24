@@ -104,13 +104,47 @@ function LocationDetailsPanel(props) {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated[props.locationKey] = null;
-                })
+            const currentLocation = await DataStore.query(
+                models.Location,
+                result[props.locationKey].id
             );
+            if (currentLocation.listed === 1) {
+                // this is to trigger the observer on the dashboard and clear the card
+                const dummyLocation = await DataStore.save(
+                    new models.Location({})
+                );
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated[props.locationKey] = dummyLocation;
+                    })
+                );
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated[props.locationKey] = null;
+                    })
+                );
+                await DataStore.delete(dummyLocation);
+            } else {
+                // clear the fields for an unlisted location before deleting it
+                await DataStore.save(
+                    models.Location.copyOf(currentLocation, (updated) => {
+                        for (const field of Object.keys(
+                            _.omit(currentLocation, ...protectedFields)
+                        )) {
+                            updated[field] = null;
+                        }
+                    })
+                );
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated[props.locationKey] = null;
+                    })
+                );
+                await DataStore.delete(currentLocation);
+            }
             setState(null);
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
