@@ -15,3 +15,4 @@ services:
   - REACT_APP_RESIZE_BUCKET_NAME=platelet-resize-bucket
   - REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME=platelet-demo-profilepics
   - REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION=eu-west-1
+  - SKIP_PREFLIGHT_CHECK=true
