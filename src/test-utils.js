@@ -111,17 +111,12 @@ function TestApp(props) {
 
     React.useEffect(showNotification, [incomingNotification]);
     return (
-        <BrowserRouter>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <ReactNotification />
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        {props.children}
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </LocalizationProvider>
-        </BrowserRouter>
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                {props.children}
+            </ThemeProvider>
+        </StyledEngineProvider>
     );
 }
 
