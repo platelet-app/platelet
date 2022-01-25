@@ -4,8 +4,10 @@ import { S3ObjectAccessLevels } from "../../../apiConsts";
 import * as models from "../../../models";
 
 let aws_config = {
-    aws_user_files_s3_bucket: "",
-    aws_user_files_s3_bucket_region: "",
+    default: {
+        aws_user_files_s3_bucket: "",
+        aws_user_files_s3_bucket_region: "",
+    },
 };
 
 if (
@@ -20,9 +22,14 @@ if (
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
         const { type: mimeType } = selectedFile;
+        debugger;
 
-        const bucket = aws_config.aws_user_files_s3_bucket;
-        const region = aws_config.aws_user_files_s3_bucket_region;
+        const bucket = aws_config.default
+            ? aws_config.default.aws_user_files_s3_bucket
+            : null;
+        const region = aws_config.default
+            ? aws_config.default.aws_user_files_s3_bucket_region
+            : null;
         const visibility = S3ObjectAccessLevels.protected;
         const { identityId } = await Auth.currentCredentials();
 
@@ -38,6 +45,7 @@ async function uploadProfilePicture(userId, selectedFile) {
             ...file,
             key: `${visibility}/${identityId}/${userId}_thumbnail.jpg`,
         };
+        console.log("thumbnailFile", thumbnailFile, file);
 
         try {
             const existingUser = await DataStore.query(models.User, userId);
