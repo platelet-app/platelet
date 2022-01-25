@@ -35,7 +35,6 @@ const testUserModel = new models.User({
 const testUser = { ...testUserModel, id: "whoami" };
 
 function* getWhoami() {
-    debugger;
     if (process.env.NODE_ENV === "test") {
         yield put(getWhoamiSuccess(testUser));
         return;
