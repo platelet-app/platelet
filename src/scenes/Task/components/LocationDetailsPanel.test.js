@@ -427,14 +427,18 @@ describe("LocationDetailsPanel", () => {
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("copy a preset and enable editing", async ({ locationKey }) => {
-        const task = new models.Task({ [locationKey]: mockLocations[0] });
+        const fakeListedLocation = new models.Location({
+            ...mockLocations[0],
+            listed: 1,
+        });
+        const task = new models.Task({ [locationKey]: fakeListedLocation });
         amplify.DataStore.query
-            .mockResolvedValueOnce(mockLocations[0])
-            .mockResolvedValueOnce(mockLocations[0])
+            .mockResolvedValueOnce(fakeListedLocation)
+            .mockResolvedValueOnce(fakeListedLocation)
             .mockResolvedValueOnce(task)
             .mockResolvedValue(mockLocations);
         const fakeLocation = new models.Location({
-            ...mockLocations[0],
+            ...fakeListedLocation,
             listed: 0,
             name: `Copy of ${mockLocations[0].name}`,
         });
@@ -468,12 +472,17 @@ describe("LocationDetailsPanel", () => {
         userEvent.type(screen.getByRole("textbox"), "test");
         userEvent.type(screen.getByRole("textbox"), "{enter}");
         await waitFor(() =>
-            expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
         );
-        expect(amplify.DataStore.save).toHaveBeenCalledWith(
-            expect.objectContaining(_.omit(fakeLocation, "id"))
+        expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+                ..._.omit(fakeLocation, "id"),
+                line1: `${fakeLocation.line1}test`,
+            })
         );
-        expect(amplify.DataStore.save).toHaveBeenCalledWith(
+        expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+            2,
             expect.objectContaining(_.omit(fakeTask, "id"))
         );
         expect(

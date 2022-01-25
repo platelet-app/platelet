@@ -49,7 +49,7 @@ function LocationDetailsPanel(props) {
 
     useEffect(() => getLocation(), [props.locationId, dataStoreReadyStatus]);
 
-    async function editPreset() {
+    async function editPreset(additionalValues) {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
@@ -63,9 +63,13 @@ function LocationDetailsPanel(props) {
                 _deleted,
                 ...rest
             } = state;
+            const newValues = {
+                ...rest,
+                ..._.omit(additionalValues, ...protectedFields),
+            };
             const newLocation = await DataStore.save(
                 new models.Location({
-                    ...rest,
+                    ...newValues,
                     listed: 0,
                     name: `Copy of ${name}`,
                 })
@@ -219,21 +223,27 @@ function LocationDetailsPanel(props) {
                 );
                 if (!existingLocation)
                     throw new Error("Location doesn't exist");
-                if (!!existingLocation.listed) {
-                    // copy the location first
-                    existingLocation = await editPreset();
-                }
                 // don't do anything if values is empty
                 if (!_.isEmpty(values)) {
-                    // update the location and get the updated version back to locationResult
-                    locationResult = await DataStore.save(
-                        models.Location.copyOf(existingLocation, (updated) => {
-                            for (const [key, v] of Object.entries(values)) {
-                                if (!protectedFields.includes(key))
-                                    updated[key] = v;
-                            }
-                        })
-                    );
+                    if (!!existingLocation.listed) {
+                        // copy the location first with the new values
+                        locationResult = await editPreset(values);
+                    } else {
+                        // update the location and get the updated version back to locationResult
+                        locationResult = await DataStore.save(
+                            models.Location.copyOf(
+                                existingLocation,
+                                (updated) => {
+                                    for (const [key, v] of Object.entries(
+                                        values
+                                    )) {
+                                        if (!protectedFields.includes(key))
+                                            updated[key] = v;
+                                    }
+                                }
+                            )
+                        );
+                    }
                 }
             } else {
                 // if no location exists yet
@@ -267,9 +277,7 @@ function LocationDetailsPanel(props) {
                     })
                 );
             }
-            setState((prevState) => {
-                return { ...prevState, ...locationResult };
-            });
+            setState(locationResult);
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
