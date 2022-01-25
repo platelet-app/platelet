@@ -5,8 +5,8 @@ import { screen, waitFor } from "@testing-library/react";
 import { tasksStatus } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import userEvent from "@testing-library/user-event";
-import mediaQuery from "css-mediaquery";
 import * as amplify from "aws-amplify";
+import { createMatchMedia } from "../../../test-utils";
 
 jest.mock("aws-amplify");
 
@@ -21,16 +21,6 @@ jest.mock("../../../utilities", () => {
             }),
     };
 });
-
-function createMatchMedia(width) {
-    return (query) => ({
-        matches: mediaQuery.match(query, {
-            width,
-        }),
-        addListener: () => {},
-        removeListener: () => {},
-    });
-}
 
 describe("StatusBar", () => {
     beforeAll(() => {
