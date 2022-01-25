@@ -20,6 +20,9 @@ describe("TasksGridColumn", () => {
     beforeAll(() => {
         window.matchMedia = createMatchMedia(window.innerWidth);
     });
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
     it("renders without crashing", async () => {
         amplify.DataStore.query.mockResolvedValueOnce([]).mockResolvedValue([]);
         amplify.DataStore.observe.mockReturnValue({
@@ -113,9 +116,10 @@ describe("TasksGridColumn", () => {
         for (const card of highCards) {
             expect(card).not.toBeVisible();
         }
+        userEvent.click(screen.getByRole("button", { name: "Clear Search" }));
     });
 
-    it.only("filters by selected rider chip", async () => {
+    it("filters by selected rider chip", async () => {
         let mockTasks = _.range(0, 10).map(
             (i) =>
                 new models.Task({

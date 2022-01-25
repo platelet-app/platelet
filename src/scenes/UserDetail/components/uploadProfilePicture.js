@@ -22,7 +22,6 @@ if (
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
         const { type: mimeType } = selectedFile;
-        debugger;
 
         const bucket = aws_config.default
             ? aws_config.default.aws_user_files_s3_bucket
@@ -45,7 +44,6 @@ async function uploadProfilePicture(userId, selectedFile) {
             ...file,
             key: `${visibility}/${identityId}/${userId}_thumbnail.jpg`,
         };
-        console.log("thumbnailFile", thumbnailFile, file);
 
         try {
             const existingUser = await DataStore.query(models.User, userId);
