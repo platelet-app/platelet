@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Divider, Skeleton, Stack, Typography } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import clsx from "clsx";
