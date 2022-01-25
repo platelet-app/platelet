@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
-import { priorities, tasksStatus } from "../../../apiConsts";
+import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models";
 import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
@@ -12,6 +12,7 @@ import { createMatchMedia } from "../../../test-utils";
 import userEvent from "@testing-library/user-event";
 import * as dashboardUtils from "../utilities/functions";
 import { convertListDataToObject } from "../../../utilities";
+import ActiveRidersChips from "./ActiveRidersChips";
 
 jest.mock("aws-amplify");
 
@@ -63,6 +64,7 @@ describe("TasksGridColumn", () => {
             );
         }
     });
+
     it("filters tasks with the search textbox", async () => {
         const filterTaskSpy = jest.spyOn(dashboardUtils, "filterTasks");
         const mockTasks = _.range(0, 10).map(
@@ -83,8 +85,8 @@ describe("TasksGridColumn", () => {
             <>
                 <DashboardDetailTabs />
                 <TasksGridColumn
-                    title={tasksStatus.active}
-                    taskKey={[tasksStatus.active]}
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
                 />
             </>
         );
@@ -103,7 +105,6 @@ describe("TasksGridColumn", () => {
                 searchTerm
             );
         });
-        const links = screen.getAllByRole("link");
         const mediumCards = screen.getAllByText("MEDIUM");
         const highCards = screen.getAllByText("HIGH");
         for (const card of mediumCards) {
@@ -111,6 +112,79 @@ describe("TasksGridColumn", () => {
         }
         for (const card of highCards) {
             expect(card).not.toBeVisible();
+        }
+    });
+
+    it.only("filters by selected rider chip", async () => {
+        let mockTasks = _.range(0, 10).map(
+            (i) =>
+                new models.Task({
+                    status: tasksStatus.new,
+                    priority: i < 5 ? priorities.medium : priorities.high,
+                })
+        );
+
+        mockTasks = mockTasks.map((t) => ({
+            ...t,
+            createdAt: new Date().toISOString(),
+        }));
+
+        const fakeUser1 = new models.User({
+            id: "fakeId",
+            displayName: "Another Individual",
+        });
+        const fakeUser2 = new models.User({
+            id: "fakeId",
+            displayName: "Someone Person",
+        });
+        const mockAssignments = _.range(0, 10).map(
+            (i) =>
+                new models.TaskAssignee({
+                    task: mockTasks[i],
+                    assignee: i % 2 === 0 ? fakeUser1 : fakeUser2,
+                    role: userRoles.rider,
+                })
+        );
+
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValue([]);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(
+            <>
+                <ActiveRidersChips />
+                <TasksGridColumn
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
+                />
+            </>
+        );
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(13);
+        });
+        mockAllIsIntersecting(true);
+        screen.getByText("NEW");
+        jest.clearAllMocks();
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValue([]);
+        expect(screen.queryAllByText("AI")).toHaveLength(5);
+        expect(screen.queryAllByText("SP")).toHaveLength(5);
+        userEvent.click(screen.getByText(fakeUser1.displayName));
+        await waitFor(async () => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(8);
+        });
+        mockAllIsIntersecting(true);
+        const firstFakeUser = screen.getAllByText("AI");
+        expect(screen.queryAllByText("SP")).toHaveLength(0);
+        for (const card of firstFakeUser) {
+            expect(card).toBeVisible();
         }
     });
 });
