@@ -10,8 +10,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "cognitoID": {
-                    "name": "cognitoID",
+                "cognitoId": {
+                    "name": "cognitoId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
@@ -187,6 +187,16 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byCognitoId",
+                        "fields": [
+                            "cognitoId"
+                        ],
+                        "queryField": "getUserByCognitoId"
+                    }
                 },
                 {
                     "type": "auth",
@@ -1553,5 +1563,5 @@ export const schema = {
             }
         }
     },
-    "version": "1b1e71d750b8352e7e49d4d98a55e83b"
+    "version": "0117b9f9b3b8cd4ec0bbc5695254462e"
 };

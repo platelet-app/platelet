@@ -16,7 +16,7 @@ export const syncUsers = /* GraphQL */ `
     ) {
       items {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -96,7 +96,7 @@ export const getUser = /* GraphQL */ `
   query GetUser($id: ID!) {
     getUser(id: $id) {
       id
-      cognitoID
+      cognitoId
       contact {
         name
         telephoneNumber
@@ -218,7 +218,7 @@ export const listUsers = /* GraphQL */ `
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -335,7 +335,7 @@ export const getGroup = /* GraphQL */ `
       users {
         items {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -409,7 +409,7 @@ export const syncVehicles = /* GraphQL */ `
         dateOfRegistration
         assignedUser {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -450,7 +450,7 @@ export const getVehicle = /* GraphQL */ `
       dateOfRegistration
       assignedUser {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -561,7 +561,7 @@ export const listVehicles = /* GraphQL */ `
         dateOfRegistration
         assignedUser {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -675,7 +675,7 @@ export const getDeliverable = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -1153,7 +1153,7 @@ export const syncTasks = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -1314,7 +1314,7 @@ export const getTask = /* GraphQL */ `
       name
       createdBy {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -1551,7 +1551,7 @@ export const getTask = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -1705,7 +1705,7 @@ export const getTask = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -1904,7 +1904,7 @@ export const listTasks = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -2097,7 +2097,7 @@ export const syncTaskAssignees = /* GraphQL */ `
         }
         assignee {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -2141,7 +2141,7 @@ export const syncComments = /* GraphQL */ `
         body
         author {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -2175,7 +2175,7 @@ export const getComment = /* GraphQL */ `
       body
       author {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -2268,7 +2268,7 @@ export const listComments = /* GraphQL */ `
         body
         author {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -2430,6 +2430,99 @@ export const listRiderResponsibilities = /* GraphQL */ `
     }
   }
 `;
+export const getUserByCognitoId = /* GraphQL */ `
+  query GetUserByCognitoId(
+    $cognitoId: ID
+    $sortDirection: ModelSortDirection
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    getUserByCognitoId(
+      cognitoId: $cognitoId
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        cognitoId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+          startedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        group {
+          id
+          taskGroupId
+          name
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        active
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const tasksByStatus = /* GraphQL */ `
   query TasksByStatus(
     $status: TaskStatus
@@ -2450,7 +2543,7 @@ export const tasksByStatus = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles

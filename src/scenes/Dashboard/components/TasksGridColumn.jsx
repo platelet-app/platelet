@@ -121,6 +121,7 @@ function TasksGridColumn(props) {
         if (!dataStoreReadyStatus) {
             return;
         } else {
+            debugger;
             const isCompletedTab =
                 _.intersection(
                     [

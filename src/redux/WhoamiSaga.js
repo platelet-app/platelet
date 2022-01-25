@@ -35,6 +35,7 @@ const testUserModel = new models.User({
 const testUser = { ...testUserModel, id: "whoami" };
 
 function* getWhoami() {
+    debugger;
     if (process.env.NODE_ENV === "test") {
         yield put(getWhoamiSuccess(testUser));
         return;
@@ -70,17 +71,28 @@ function* getWhoami() {
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,
-                    (t) => t.cognitoID("eq", loggedInUser.attributes.sub)
+                    (t) => t.cognitoId("eq", loggedInUser.attributes.sub)
                 );
                 if (result && result.length === 0) {
                     result = yield call([API, API.graphql], {
-                        query: queries.getUser,
-                        variables: { cognitoID: loggedInUser.attributes.sub },
+                        query: queries.getUserByCognitoId,
+                        variables: { cognitoId: loggedInUser.attributes.sub },
                     });
-                    if (!result.data.getUser) {
+                    if (
+                        result &&
+                        result.data &&
+                        result.data.getUserByCognitoId &&
+                        result.data.getUserByCognitoId.items &&
+                        result.data.getUserByCognitoId.items.length > 0
+                    ) {
+                        yield put(
+                            getWhoamiSuccess(
+                                result.data.getUserByCognitoId.items[0]
+                            )
+                        );
+                    } else {
                         throw new NotFound("Could not find logged in user");
                     }
-                    yield put(getWhoamiSuccess(result.data.getUser));
                 } else {
                     yield put(getWhoamiSuccess(result[0]));
                 }

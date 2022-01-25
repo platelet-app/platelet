@@ -103,7 +103,7 @@ function AdminAddUser() {
                 new models.User({
                     name: state.name,
                     displayName: state.name,
-                    cognitoID: uuidv4(),
+                    cognitoId: uuidv4(),
                     active: 1,
                     contact: { emailAddress: state.email },
                     roles: [...rolesState, userRoles.user],

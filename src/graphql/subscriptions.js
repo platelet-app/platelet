@@ -5,7 +5,7 @@ export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser {
     onCreateUser {
       id
-      cognitoID
+      cognitoId
       contact {
         name
         telephoneNumber
@@ -122,7 +122,7 @@ export const onUpdateUser = /* GraphQL */ `
   subscription OnUpdateUser {
     onUpdateUser {
       id
-      cognitoID
+      cognitoId
       contact {
         name
         telephoneNumber
@@ -239,7 +239,7 @@ export const onDeleteUser = /* GraphQL */ `
   subscription OnDeleteUser {
     onDeleteUser {
       id
-      cognitoID
+      cognitoId
       contact {
         name
         telephoneNumber
@@ -361,7 +361,7 @@ export const onCreateGroup = /* GraphQL */ `
       users {
         items {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -395,7 +395,7 @@ export const onUpdateGroup = /* GraphQL */ `
       users {
         items {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -429,7 +429,7 @@ export const onDeleteGroup = /* GraphQL */ `
       users {
         items {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -466,7 +466,7 @@ export const onCreateVehicle = /* GraphQL */ `
       dateOfRegistration
       assignedUser {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -572,7 +572,7 @@ export const onUpdateVehicle = /* GraphQL */ `
       dateOfRegistration
       assignedUser {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -678,7 +678,7 @@ export const onDeleteVehicle = /* GraphQL */ `
       dateOfRegistration
       assignedUser {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -793,7 +793,7 @@ export const onCreateDeliverable = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -989,7 +989,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -1185,7 +1185,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -1670,7 +1670,7 @@ export const onCreateTask = /* GraphQL */ `
       name
       createdBy {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -1907,7 +1907,7 @@ export const onCreateTask = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -2061,7 +2061,7 @@ export const onCreateTask = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -2255,7 +2255,7 @@ export const onUpdateTask = /* GraphQL */ `
       name
       createdBy {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -2492,7 +2492,7 @@ export const onUpdateTask = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -2646,7 +2646,7 @@ export const onUpdateTask = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -2840,7 +2840,7 @@ export const onDeleteTask = /* GraphQL */ `
       name
       createdBy {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -3077,7 +3077,7 @@ export const onDeleteTask = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -3231,7 +3231,7 @@ export const onDeleteTask = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -3430,7 +3430,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -3581,7 +3581,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -3672,7 +3672,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -3823,7 +3823,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -3914,7 +3914,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
         name
         createdBy {
           id
-          cognitoID
+          cognitoId
           displayName
           name
           roles
@@ -4065,7 +4065,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -4152,7 +4152,7 @@ export const onCreateComment = /* GraphQL */ `
       body
       author {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -4240,7 +4240,7 @@ export const onUpdateComment = /* GraphQL */ `
       body
       author {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber
@@ -4328,7 +4328,7 @@ export const onDeleteComment = /* GraphQL */ `
       body
       author {
         id
-        cognitoID
+        cognitoId
         contact {
           name
           telephoneNumber

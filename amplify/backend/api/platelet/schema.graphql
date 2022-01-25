@@ -1,6 +1,8 @@
-type User @auth(rules: [{ allow: private}]) @model {
+type User @auth(rules: [{ allow: private}]) @model
+@key(name: "byCognitoId", fields: ["cognitoId"], queryField: "getUserByCognitoId")
+{
   id: ID!
-  cognitoID: ID!
+  cognitoId: ID!
   contact: AddressAndContactDetails
   displayName: String!
   name: String
