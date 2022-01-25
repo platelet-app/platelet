@@ -8,6 +8,7 @@ import { CssBaseline } from "@mui/material";
 import { SnackbarProvider, withSnackbar } from "notistack";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
+import mediaQuery from "css-mediaquery";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -36,6 +37,15 @@ const theme = createTheme({
     },
 });
 
+export function createMatchMedia(width) {
+    return (query) => ({
+        matches: mediaQuery.match(query, {
+            width,
+        }),
+        addListener: () => {},
+        removeListener: () => {},
+    });
+}
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
