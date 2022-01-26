@@ -47,16 +47,28 @@ function AdminAddRiderResponsibility() {
     async function addRiderResponsibilityToStore() {
         try {
             setIsPosting(true);
+            const checker = await DataStore.query(
+                models.RiderResponsibility,
+                (r) => r.label("eq", state.label)
+            );
+            if (checker && checker.length > 0) {
+                setIsPosting(false);
+                dispatch(
+                    displayErrorNotification(
+                        "This rider responsibility already exists"
+                    )
+                );
+                return;
+            }
+
             await DataStore.save(new models.RiderResponsibility({ ...state }));
             setState(initialRiderResponsibilityState);
             setIsPosting(false);
-            dispatch(
-                displayInfoNotification("Rider responsibility type added")
-            );
+            dispatch(displayInfoNotification("Rider responsibility added"));
         } catch (error) {
             console.log("error adding rider responsibility:", error);
             setIsPosting(false);
-            dispatch(displayErrorNotification(error.message));
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
     }
 
