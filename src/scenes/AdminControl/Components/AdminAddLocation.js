@@ -1,5 +1,5 @@
 import { DataStore } from "aws-amplify";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Stack, TextField, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -63,7 +63,6 @@ const fields = {
 const contactFields = {
     name: "Contact name",
     emailAddress: "Contact email",
-    telephoneNumber: "Contact telephone",
 };
 
 function AdminAddLocation() {
@@ -99,7 +98,7 @@ function AdminAddLocation() {
         } catch (error) {
             console.log("error adding location:", error);
             setIsPosting(false);
-            dispatch(displayErrorNotification(error.message));
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
         }
     }
 
@@ -110,66 +109,75 @@ function AdminAddLocation() {
     } else {
         return (
             <PaddedPaper>
-                <Grid
-                    container
+                <Stack
                     className={classes.root}
                     direction={"column"}
                     justifyContent={"flex-start"}
                     alignItems={"top"}
                     spacing={3}
                 >
-                    <Grid item>
-                        <Typography variant={"h5"}>
-                            Add a new location
-                        </Typography>
-                    </Grid>
+                    <Typography variant={"h5"}>Add a new location</Typography>
                     {Object.keys(fields).map((key) => {
                         return (
-                            <Grid key={key} item>
-                                <TextFieldUncontrolled
-                                    value={state[key]}
-                                    fullWidth
-                                    label={fields[key]}
-                                    id={key}
-                                    onChange={(e) => {
-                                        setState((prevState) => ({
-                                            ...prevState,
-                                            [key]: e.target.value,
-                                        }));
-                                    }}
-                                />
-                            </Grid>
+                            <TextField
+                                key={key}
+                                value={state[key]}
+                                fullWidth
+                                label={fields[key]}
+                                id={key}
+                                onChange={(e) => {
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        [key]: e.target.value,
+                                    }));
+                                }}
+                            />
                         );
                     })}
                     {Object.keys(contactFields).map((key) => {
                         return (
-                            <Grid key={key} item>
-                                <TextFieldUncontrolled
-                                    fullWidth
-                                    label={contactFields[key]}
-                                    id={key}
-                                    onChange={(e) => {
-                                        setState((prevState) => ({
-                                            ...prevState,
-                                            contact: {
-                                                ...state.contact,
-                                                [key]: e.target.value,
-                                            },
-                                        }));
-                                    }}
-                                />
-                            </Grid>
+                            <TextField
+                                key={key}
+                                fullWidth
+                                label={contactFields[key]}
+                                id={key}
+                                onChange={(e) => {
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        contact: {
+                                            ...state.contact,
+                                            [key]: e.target.value,
+                                        },
+                                    }));
+                                }}
+                            />
                         );
                     })}
-                    <Grid item>
-                        <Button
-                            disabled={!inputVerified || isPosting}
-                            onClick={addNewLocation}
-                        >
-                            Add location
-                        </Button>
-                    </Grid>
-                </Grid>
+                    <TextFieldUncontrolled
+                        key={"telephoneNumber"}
+                        fullWidth
+                        value={state.contact.telephoneNumber}
+                        label="Telephone number"
+                        id={"telephoneNumber"}
+                        tel
+                        onChange={(e) => {
+                            setState((prevState) => ({
+                                ...prevState,
+                                contact: {
+                                    ...state.contact,
+                                    telephoneNumber: e.target.value,
+                                },
+                            }));
+                        }}
+                    />
+
+                    <Button
+                        disabled={!inputVerified || isPosting}
+                        onClick={addNewLocation}
+                    >
+                        Add location
+                    </Button>
+                </Stack>
             </PaddedPaper>
         );
     }
