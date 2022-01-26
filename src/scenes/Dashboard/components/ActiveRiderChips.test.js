@@ -50,7 +50,7 @@ describe("ActiveRiderChips", () => {
         });
         amplify.DataStore.query.mockResolvedValue(fakeAssignments);
         render(<ActiveRidersChips />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
     });
@@ -62,7 +62,7 @@ describe("ActiveRiderChips", () => {
         });
         amplify.DataStore.query.mockResolvedValue(fakeAssignments);
         render(<ActiveRidersChips />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         for (const assign of fakeAssignments) {
@@ -79,7 +79,7 @@ describe("ActiveRiderChips", () => {
         });
         amplify.DataStore.query.mockResolvedValue(fakeAssignments);
         render(<ActiveRidersChips />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const allChip = screen.getByRole("button", {
@@ -128,7 +128,7 @@ describe("ActiveRiderChips", () => {
                 oldAssignment,
             ]);
             render(<ActiveRidersChips />);
-            await waitFor(async () => {
+            await waitFor(() => {
                 expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
             });
             for (const assign of fakeAssignments) {
@@ -167,17 +167,17 @@ describe("ActiveRiderChips", () => {
             })
         );
         render(<ActiveRidersChips />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         userEvent.click(screen.getByText(fakeSingleUser.displayName));
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
         });
         expect(screen.getByText(/6 delivered/)).toBeInTheDocument();
         expect(screen.getByText(/4 tasks still active/)).toBeInTheDocument();
         userEvent.click(screen.getByText("OK"));
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(6);
         });
         for (const assign of fakeAssignmentsOneRider.filter(
@@ -189,7 +189,7 @@ describe("ActiveRiderChips", () => {
                 timeRiderHome: expect.any(String),
             });
         }
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(4);
         });
         // they should still be displayed as active

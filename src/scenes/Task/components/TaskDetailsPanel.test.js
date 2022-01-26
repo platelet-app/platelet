@@ -1,6 +1,6 @@
 import React from "react";
 import { screen, waitFor } from "@testing-library/react";
-import { generateTimes, render } from "../../../test-utils";
+import { render } from "../../../test-utils";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models";
@@ -26,7 +26,6 @@ function createMatchMedia(width) {
 }
 
 describe("TaskDetailsPanel", () => {
-    const isoDate = "2021-11-29T23:24:58.987Z";
     beforeAll(() => {
         window.matchMedia = createMatchMedia(window.innerWidth);
     });
@@ -37,7 +36,7 @@ describe("TaskDetailsPanel", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskDetailsPanel taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
     });
@@ -57,7 +56,7 @@ describe("TaskDetailsPanel", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskDetailsPanel taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         expect(screen.getByText("North")).toBeInTheDocument();
@@ -91,7 +90,7 @@ describe("TaskDetailsPanel", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskDetailsPanel taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const editButton = screen.getByRole("button", { name: "Edit" });
@@ -108,7 +107,7 @@ describe("TaskDetailsPanel", () => {
          */
         const saveButton = screen.getByLabelText("Finish");
         userEvent.click(saveButton);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 [timeKey]: time,
@@ -125,7 +124,7 @@ describe("TaskDetailsPanel", () => {
             subscribe: () => ({ unsubscribe }),
         });
         const component = render(<TaskDetailsPanel taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         expect(unsubscribe).toHaveBeenCalledTimes(0);

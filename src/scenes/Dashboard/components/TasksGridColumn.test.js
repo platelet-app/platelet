@@ -29,7 +29,7 @@ describe("TasksGridColumn", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
         });
     });
@@ -54,7 +54,7 @@ describe("TasksGridColumn", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TasksGridColumn title={taskStatus} taskKey={[taskStatus]} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
         });
         mockAllIsIntersecting(true);
@@ -93,13 +93,13 @@ describe("TasksGridColumn", () => {
                 />
             </>
         );
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
         });
         mockAllIsIntersecting(true);
         const searchTerm = "medium";
         userEvent.type(screen.getByRole("textbox"), searchTerm);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(filterTaskSpy).toHaveBeenCalledTimes(3);
             expect(filterTaskSpy).toHaveBeenCalledWith(
                 convertListDataToObject(
@@ -167,7 +167,7 @@ describe("TasksGridColumn", () => {
                 />
             </>
         );
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(13);
         });
         mockAllIsIntersecting(true);
@@ -181,7 +181,7 @@ describe("TasksGridColumn", () => {
         expect(screen.queryAllByText("AI")).toHaveLength(5);
         expect(screen.queryAllByText("SP")).toHaveLength(5);
         userEvent.click(screen.getByText(fakeUser1.displayName));
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(8);
         });
         mockAllIsIntersecting(true);

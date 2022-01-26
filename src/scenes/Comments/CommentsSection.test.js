@@ -92,7 +92,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
     });
@@ -104,7 +104,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         for (const comment of mockPublicComments) {
@@ -124,7 +124,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         for (const comment of mockPrivateComments) {
@@ -148,7 +148,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         for (const comment of mockPrivateCommentsForMe) {
@@ -182,7 +182,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const commentTextBox = screen.getByRole("textbox");
@@ -191,7 +191,7 @@ describe("CommentsSection", () => {
         const postButton = screen.getByRole("button", { name: "Post" });
         expect(postButton).toBeEnabled();
         userEvent.click(postButton);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1);
         });
         expect(commentTextBox).toHaveValue("");
@@ -218,7 +218,7 @@ describe("CommentsSection", () => {
         });
         amplify.Auth.currentAuthenticatedUser.mockReturnValue(mockWhoami);
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         expect(
