@@ -4,7 +4,7 @@ import FormControl from "@mui/material/FormControl";
 import RadioGroup from "@mui/material/RadioGroup";
 import Radio from "@mui/material/Radio";
 import PropTypes from "prop-types";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import Typography from "@mui/material/Typography";
 import { priorities } from "../../../apiConsts";
 
@@ -52,7 +52,7 @@ function PrioritySelect(props) {
 }
 
 PrioritySelect.propTypes = {
-    priority: PropTypes.number,
+    priority: PropTypes.string,
     onSelect: PropTypes.func,
 };
 

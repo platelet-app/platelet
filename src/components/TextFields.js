@@ -31,6 +31,8 @@ export function TextFieldControlled(props) {
         onChange,
         onPressEnter,
         onPressEscape,
+        toUpperCase,
+        tel,
         ...newProps
     } = props;
     useEffect(() => setCurrentValue(props.value), [props.value]);

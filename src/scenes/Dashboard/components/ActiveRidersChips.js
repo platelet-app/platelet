@@ -14,7 +14,6 @@ import { makeStyles } from "@mui/styles";
 // disable horizontal scrollbar
 import "./hideActiveRiderChipsScrollBar.css";
 import _ from "lodash";
-import RiderConfirmationHomeContents from "./RiderConfirmationHomeContents";
 import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -215,17 +214,6 @@ function ActiveRidersChips() {
     }
     return (
         <React.Fragment>
-            <RiderConfirmationHomeContents
-                onChangeTimeHome={(time) => (timeSet.current = time)}
-                userId={updatingRider}
-                onClose={() => setUpdatingRider(null)}
-                onSelect={() => {
-                    if (timeSet.current) {
-                        console.log("updating rider home", updatingRider);
-                        updateRiderHome(updatingRider);
-                    }
-                }}
-            />
             <ScrollMenu
                 alignItems="center"
                 LeftArrow={
