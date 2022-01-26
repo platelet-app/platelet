@@ -29,7 +29,7 @@ async function uploadProfilePicture(userId, selectedFile) {
         const region = aws_config.default
             ? aws_config.default.aws_user_files_s3_bucket_region
             : null;
-        const visibility = S3ObjectAccessLevels.protected;
+        const visibility = S3ObjectAccessLevels.public;
         const { identityId } = await Auth.currentCredentials();
 
         const key = `${visibility}/${identityId}/${userId}.jpg`;
