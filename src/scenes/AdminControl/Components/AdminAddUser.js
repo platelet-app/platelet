@@ -44,7 +44,7 @@ const fields = {
 
 function AdminAddUser() {
     const [state, setState] = useState(initialState);
-    //TODO: eventually want to make signup only with email address unless chosen otherwise
+    //TODO: eventually want to make signup only with email address
     const whoami = useSelector(getWhoami);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
@@ -207,63 +207,63 @@ function AdminAddUser() {
                             orientation="vertical"
                             aria-label="task actions"
                         >
-                            {Object.values(
-                                _.omit(userRoles, "user", "admin")
-                            ).map((value) => {
-                                return (
-                                    <ToggleButton
-                                        sx={{
-                                            paddingTop: 1.5,
-                                            paddingBottom: 1.5,
-                                        }}
-                                        key={value}
-                                        disabled={false}
-                                        aria-disabled={false}
-                                        aria-label={value}
-                                        value={value}
-                                        onClick={() => onClickToggle(value)}
-                                    >
-                                        {rolesState.includes(value) ? (
-                                            <CheckBoxIcon />
-                                        ) : (
-                                            <CheckBoxOutlineBlankIcon />
-                                        )}
-                                    </ToggleButton>
-                                );
-                            })}
-                        </ToggleButtonGroup>
-                        <Stack sx={{ width: "100%" }} direction="column">
-                            {Object.values(
-                                _.omit(userRoles, "user", "admin")
-                            ).map((value) => {
-                                const disabled = false;
-                                return (
-                                    <Stack
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                        direction="row"
-                                    >
-                                        <Typography
-                                            onClick={() => {
-                                                if (disabled) return;
-                                                onClickToggle(value);
-                                            }}
+                            {Object.values(_.omit(userRoles, "user")).map(
+                                (value) => {
+                                    return (
+                                        <ToggleButton
                                             sx={{
                                                 paddingTop: 1.5,
                                                 paddingBottom: 1.5,
-                                                cursor: disabled
-                                                    ? "default"
-                                                    : "pointer",
-                                                color: disabled
-                                                    ? "gray"
-                                                    : "text.primary",
                                             }}
+                                            key={value}
+                                            disabled={false}
+                                            aria-disabled={false}
+                                            aria-label={value}
+                                            value={value}
+                                            onClick={() => onClickToggle(value)}
                                         >
-                                            {value}
-                                        </Typography>
-                                    </Stack>
-                                );
-                            })}
+                                            {rolesState.includes(value) ? (
+                                                <CheckBoxIcon />
+                                            ) : (
+                                                <CheckBoxOutlineBlankIcon />
+                                            )}
+                                        </ToggleButton>
+                                    );
+                                }
+                            )}
+                        </ToggleButtonGroup>
+                        <Stack sx={{ width: "100%" }} direction="column">
+                            {Object.values(_.omit(userRoles, "user")).map(
+                                (value) => {
+                                    const disabled = false;
+                                    return (
+                                        <Stack
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            direction="row"
+                                        >
+                                            <Typography
+                                                onClick={() => {
+                                                    if (disabled) return;
+                                                    onClickToggle(value);
+                                                }}
+                                                sx={{
+                                                    paddingTop: 1.5,
+                                                    paddingBottom: 1.5,
+                                                    cursor: disabled
+                                                        ? "default"
+                                                        : "pointer",
+                                                    color: disabled
+                                                        ? "gray"
+                                                        : "text.primary",
+                                                }}
+                                            >
+                                                {value}
+                                            </Typography>
+                                        </Stack>
+                                    );
+                                }
+                            )}
                         </Stack>
                     </Stack>
 
