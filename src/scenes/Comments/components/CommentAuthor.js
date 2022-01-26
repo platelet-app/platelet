@@ -3,10 +3,10 @@ import UserAvatar from "../../../components/UserAvatar";
 import { Link as RouterLink } from "react-router-dom";
 import { encodeUUID } from "../../../utilities";
 import makeStyles from "@mui/styles/makeStyles";
+import PropTypes from "prop-types";
 import { Typography } from "@mui/material";
 import { Grid } from "@mui/material";
 import { ThemedLink } from "../../../styles/common";
-import { useTheme } from "@mui/material";
 
 const useStyles = makeStyles({
     link: {
@@ -19,7 +19,6 @@ const useStyles = makeStyles({
 });
 
 const CommentAuthor = React.memo((props) => {
-    const theme = useTheme();
     const classes = useStyles();
     return (
         <Grid container alignItems={"center"} spacing={1} direction={"row"}>
@@ -30,7 +29,7 @@ const CommentAuthor = React.memo((props) => {
                     to={"/user/" + encodeUUID(props.uuid)}
                 >
                     <UserAvatar
-                        size={theme.spacing(5)}
+                        size={5}
                         userUUID={props.uuid}
                         displayName={props.displayName}
                         thumbnailKey={props.thumbnailKey}
@@ -49,5 +48,16 @@ const CommentAuthor = React.memo((props) => {
         </Grid>
     );
 });
+
+CommentAuthor.propTypes = {
+    userUUID: PropTypes.string.isRequired,
+    displayName: PropTypes.string,
+    thumbnailKey: PropTypes.string,
+};
+
+CommentAuthor.defaultProps = {
+    displayName: "Unknown User",
+    thumbnailKey: "",
+};
 
 export default CommentAuthor;
