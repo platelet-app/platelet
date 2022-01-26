@@ -7,11 +7,13 @@ import AdminAddDeliverableType from "./Components/AdminAddDeliverableType";
 import AdminAddRiderResponsibility from "./Components/AdminAddRiderResponsibility";
 import { Stack } from "@mui/material";
 import { RiderResponsibilityChips } from "./RiderResponsibilityChips";
+import { DeliverableTypeChips } from "./DeliverableTypeChips";
 
-export function AdminControl(props) {
+export function AdminControl() {
     return (
         <Stack spacing={2}>
             <AdminAddDeliverableType />
+            <DeliverableTypeChips />
             <AdminAddRiderResponsibility />
             <RiderResponsibilityChips />
             <AdminAddUser />
