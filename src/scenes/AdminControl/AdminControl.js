@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import * as io from "socket.io-client";
+import React from "react";
 
-import Button from "@mui/material/Button";
-import { PaddedPaper } from "../../styles/common";
-import { getLogin } from "../../utilities";
-import { createLoadingSelector } from "../../redux/LoadingSelectors";
-import { ServerSettings } from "./Components/ServerSettings";
-import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
+import AdminAddUser from "./Components/AdminAddUser";
+import AdminAddVehicle from "./Components/AdminAddVehicle";
+import AdminAddLocation from "./Components/AdminAddLocation";
+import AdminAddDeliverableType from "./Components/AdminAddDeliverableType";
+import AdminAddRiderResponsibility from "./Components/AdminAddRiderResponsibility";
+import { Stack } from "@mui/material";
+import { RiderResponsibilityChips } from "./RiderResponsibilityChips";
 
 export function AdminControl(props) {
-    const isFetching = useSelector((state) => loadingSelector(state));
     return (
-        <PaddedPaper>
-            {isFetching ? (
-                <FormSkeleton />
-            ) : (
-                <ServerSettings serverSettings={serverSettings} />
-            )}
-        </PaddedPaper>
+        <Stack spacing={2}>
+            <AdminAddDeliverableType />
+            <AdminAddRiderResponsibility />
+            <RiderResponsibilityChips />
+            <AdminAddUser />
+            <AdminAddVehicle />
+            <AdminAddLocation />
+        </Stack>
     );
 }
