@@ -14,6 +14,9 @@ import moment from "moment";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const useStyles = makeStyles({
+    button: {
+        height: 9,
+    },
     label: {
         color: "gray",
     },
@@ -59,6 +62,7 @@ function TimePicker(props) {
             <>
                 <Stack
                     direction={"row"}
+                    spacing={1}
                     justifyContent={"space-between"}
                     alignItems={"center"}
                 >
@@ -91,6 +95,7 @@ function TimePicker(props) {
                             aria-label={"Edit"}
                             disabled={props.disabled}
                             onClick={toggleEditMode}
+                            size="small"
                         >
                             <EditIcon />
                         </IconButton>
@@ -99,8 +104,10 @@ function TimePicker(props) {
                         <Tooltip title={"Clear"}>
                             <IconButton
                                 aria-label={"Clear"}
+                                className={classes.button}
                                 disabled={props.disabled}
                                 onClick={onClear}
+                                size="small"
                             >
                                 <CancelIcon />
                             </IconButton>
@@ -109,10 +116,8 @@ function TimePicker(props) {
                 </Stack>
                 <ConfirmationDialog
                     onClose={() => setEditMode(false)}
-                    onSelect={(result) => {
-                        if (result) {
-                            props.onChange(state);
-                        }
+                    onConfirmation={() => {
+                        props.onChange(state);
                     }}
                     open={editMode}
                 >

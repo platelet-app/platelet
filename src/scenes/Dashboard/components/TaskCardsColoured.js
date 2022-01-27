@@ -136,7 +136,11 @@ const TaskCard = React.memo((props) => {
                                     size={3}
                                     userUUID={u.id}
                                     displayName={u.displayName}
-                                    avatarURL={u.profilePictureThumbnailURL}
+                                    thumbnailKey={
+                                        u.profilePictureThumbnail
+                                            ? u.profilePictureThumbnail.key
+                                            : null
+                                    }
                                 />
                             ))}
                         </AvatarGroup>

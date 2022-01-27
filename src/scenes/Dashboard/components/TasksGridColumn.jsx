@@ -6,12 +6,13 @@ import { useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Divider, Skeleton, Stack, Typography } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
 import {
+    dashboardFilteredUserSelector,
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
@@ -82,6 +83,7 @@ function TasksGridColumn(props) {
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
@@ -113,13 +115,13 @@ function TasksGridColumn(props) {
         setFilteredTasksIds(searchResult);
     }
     useEffect(doSearch, [dashboardFilter, state]);
-    console.log(moment().subtract(1, "week").toISOString());
 
     async function getTasks() {
         setIsFetching(true);
         if (!dataStoreReadyStatus) {
             return;
         } else {
+            debugger;
             const isCompletedTab =
                 _.intersection(
                     [
@@ -134,89 +136,66 @@ function TasksGridColumn(props) {
                     models.TaskAssignee
                 );
                 let tasksResult = [];
-                if (roleView === "ALL") {
-                    if (isCompletedTab) {
-                        tasksResult = await DataStore.query(
-                            models.Task,
-
-                            (task) =>
-                                task.or((task) =>
-                                    task
-                                        // TODO: not ideal since it sometimes is one index but works for now
-                                        .status("eq", props.taskKey[0])
-                                        .status("eq", props.taskKey[1])
-                                ),
-
-                            {
-                                sort: (s) => s.createdAt("desc"),
-                                limit: 200,
-                            }
-                        );
-                        // filter tasksResult to only return tasks that were created in the last week
-                        tasksResult = tasksResult.filter((task) =>
-                            moment(task.createdAt).isAfter(
-                                moment().subtract(1, "week")
-                            )
-                        );
-                    } else {
-                        tasksResult = await DataStore.query(
-                            models.Task,
-                            (task) =>
-                                task.or((task) =>
-                                    task
-                                        .status("eq", props.taskKey[0])
-                                        .status("eq", props.taskKey[1])
-                                ),
-                            {
-                                sort: (s) => s.createdAt("desc"),
-                            }
-                        );
-                    }
-                } else {
+                let taskIds = null;
+                if (
+                    [userRoles.coordinator, userRoles.rider].includes(roleView)
+                ) {
                     const assignments = (
                         await DataStore.query(models.TaskAssignee, (a) =>
                             a.role("eq", roleView)
                         )
                     ).filter((a) => a.assignee.id === whoami.id);
 
-                    // once DataStore implements lazy loading, get the tasks for assignments instead
-                    const taskIds = assignments.map((a) => a.task.id);
-                    let tasks;
-                    if (isCompletedTab) {
-                        tasks = await DataStore.query(
-                            models.Task,
-                            (task) =>
-                                task.or((task) =>
-                                    task
-                                        .status("eq", props.taskKey[0])
-                                        .status("eq", props.taskKey[1])
-                                ),
-                            {
-                                sort: (s) => s.createdAt("desc"),
-                                limit: 200,
-                            }
-                        );
-                        // filter tasksResult to only return tasks that were created in the last week
-                        tasks = tasks.filter((task) =>
-                            moment(task.createdAt).isAfter(
-                                moment().subtract(1, "week")
-                            )
-                        );
+                    // once DataStore implements lazy loading, get the tasks from assignments instead
+                    taskIds = assignments.map((a) => a.task.id);
+                }
+                if (dashboardFilteredUser) {
+                    const usersTaskIds = (
+                        await DataStore.query(models.TaskAssignee, (a) =>
+                            a.role("eq", userRoles.rider)
+                        )
+                    )
+                        .filter(
+                            (a) =>
+                                a.task &&
+                                props.taskKey.includes(a.task.status) &&
+                                a.assignee &&
+                                dashboardFilteredUser === a.assignee.id
+                        )
+                        .map((a) => a.task && a.task.id);
+                    if (taskIds !== null) {
+                        taskIds = _.intersection(taskIds, usersTaskIds);
                     } else {
-                        tasks = await DataStore.query(
-                            models.Task,
-                            (task) =>
-                                task.or((task) =>
-                                    task
-                                        .status("eq", props.taskKey[0])
-                                        .status("eq", props.taskKey[1])
-                                ),
-                            {
-                                sort: (s) => s.createdAt("desc"),
-                            }
-                        );
+                        taskIds = usersTaskIds;
                     }
-                    tasksResult = tasks.filter((t) => taskIds.includes(t.id));
+                }
+                tasksResult = await DataStore.query(
+                    models.Task,
+                    (task) =>
+                        task.or((task) =>
+                            task
+                                // TODO: not ideal since it sometimes is one index but works for now
+                                .status("eq", props.taskKey[0])
+                                .status("eq", props.taskKey[1])
+                        ),
+
+                    {
+                        sort: (s) => s.createdAt("desc"),
+                        limit: isCompletedTab ? 200 : 0,
+                    }
+                );
+                if (taskIds !== null) {
+                    tasksResult = tasksResult.filter((t) =>
+                        taskIds.includes(t.id)
+                    );
+                }
+                if (isCompletedTab) {
+                    // filter tasksResult to only return tasks that were created in the last week
+                    tasksResult = tasksResult.filter((task) =>
+                        moment(task.createdAt).isAfter(
+                            moment().subtract(1, "week")
+                        )
+                    );
                 }
                 setState(
                     addAssigneesAndConvertToObject(tasksResult, allAssignments)
@@ -296,7 +275,12 @@ function TasksGridColumn(props) {
     useEffect(
         () => getTasks(),
         // JSON.stringify prevents component remount from an array prop
-        [dataStoreReadyStatus, roleView, JSON.stringify(props.taskKey)]
+        [
+            dataStoreReadyStatus,
+            dashboardFilteredUser,
+            roleView,
+            JSON.stringify(props.taskKey),
+        ]
     );
     useEffect(() => {
         return () => {

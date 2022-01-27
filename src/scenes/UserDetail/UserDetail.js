@@ -13,7 +13,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { protectedFields } from "../../apiConsts";
-import { Stack, useMediaQuery } from "@mui/material";
+import { Chip, Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 
 const initialUserState = {
@@ -34,7 +34,6 @@ const initialUserState = {
 
 export default function UserDetail(props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
-    const whoami = useSelector(getWhoami);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
@@ -52,7 +51,6 @@ export default function UserDetail(props) {
         } else {
             try {
                 const userResult = await DataStore.query(models.User, userUUID);
-                console.log(userResult);
                 setIsFetching(false);
                 if (userResult) setUser(userResult);
                 else setNotFound(true);
@@ -71,6 +69,8 @@ export default function UserDetail(props) {
         () => newUserProfile(),
         [props.location.key, dataStoreReadyStatus]
     );
+
+    console.log("asdfsadf", user.profilePicture);
 
     async function getDisplayNames() {
         try {
@@ -110,17 +110,12 @@ export default function UserDetail(props) {
             );
             if (existingUser.contact && contact) {
                 await DataStore.save(
-                    models.AddressAndContactDetails.copyOf(
-                        existingUser.contact,
-                        (updated) => {
-                            for (const [key, newValue] of Object.entries(
-                                contact
-                            )) {
-                                if (!protectedFields.includes(key))
-                                    updated[key] = newValue;
-                            }
+                    models.User.copyOf(existingUser, (updated) => {
+                        for (const [key, newValue] of Object.entries(contact)) {
+                            if (!protectedFields.includes(key))
+                                updated.contact[key] = newValue;
                         }
-                    )
+                    })
                 );
             }
             if (userRiderResponsibilityId) {
@@ -181,10 +176,10 @@ export default function UserDetail(props) {
                     />
                 </PaddedPaper>
                 <ProfilePicture
-                    pictureURL={user.profilePictureURL}
-                    userUUID={user.id}
+                    profilePicture={user.profilePicture}
+                    userId={user.id}
                     altText={user.displayName}
-                    editable={false}
+                    editable={true}
                 />
             </Stack>
         );

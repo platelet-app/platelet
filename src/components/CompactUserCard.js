@@ -27,7 +27,11 @@ function CompactUserCard(props) {
                             userUUID={props.userUUID}
                             displayName={props.displayName}
                             size={3}
-                            avatarURL={props.profilePictureURL}
+                            thumbnailKey={
+                                props.profilePictureThumbnail
+                                    ? props.profilePictureThumbnail.key
+                                    : null
+                            }
                         />
                     </Grid>
                     <Grid item>
@@ -52,7 +56,7 @@ function CompactUserCard(props) {
 CompactUserCard.propTypes = {
     userUUID: PropTypes.string,
     displayName: PropTypes.string,
-    profilePictureURL: PropTypes.string,
+    profilePictureThumbnail: PropTypes.object,
     responsibility: PropTypes.string,
     vehicleName: PropTypes.string,
 };

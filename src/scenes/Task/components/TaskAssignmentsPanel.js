@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
+import {
+    Divider,
+    Grid,
+    Paper,
+    Skeleton,
+    Stack,
+    Typography,
+} from "@mui/material";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import { tasksStatus, userRoles } from "../../../apiConsts";
@@ -269,23 +276,25 @@ function TaskAssignmentsPanel(props) {
                         justifyContent={"space-between"}
                     >
                         {collapsed && (
-                            <Stack spacing={1} direction={"row"}>
+                            <Grid container spacing={1} direction={"row"}>
                                 {Object.values(state)
                                     .sort(sortByUserRole)
                                     .map((assignment) => {
                                         if (assignment && assignment.assignee) {
                                             const user = assignment.assignee;
                                             return (
-                                                <UserChip
-                                                    key={user.id}
-                                                    user={user}
-                                                />
+                                                <Grid item>
+                                                    <UserChip
+                                                        key={user.id}
+                                                        user={user}
+                                                    />
+                                                </Grid>
                                             );
                                         } else {
                                             return <></>;
                                         }
                                     })}
-                            </Stack>
+                            </Grid>
                         )}
                     </Stack>
                     {assigneeSelector}

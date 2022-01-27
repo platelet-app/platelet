@@ -21,14 +21,16 @@ function ConfirmationDialog(props) {
             <DialogContent>{props.children}</DialogContent>
             <DialogActions>
                 <Stack
-                    direction="row-reverse"
+                    direction="row"
                     sx={{ width: "100%" }}
                     justifyContent="space-between"
                 >
-                    {!props.hideCancel && (
+                    {props.hideCancel ? (
+                        <div></div>
+                    ) : (
                         <Button
                             onClick={() => {
-                                props.onSelect(false);
+                                props.onCancel();
                                 props.onClose();
                             }}
                             autoFocus
@@ -39,7 +41,7 @@ function ConfirmationDialog(props) {
                     {!props.hideOk && (
                         <Button
                             onClick={() => {
-                                props.onSelect(true);
+                                props.onConfirmation();
                                 props.onClose();
                             }}
                             autoFocus
@@ -55,7 +57,8 @@ function ConfirmationDialog(props) {
 
 ConfirmationDialog.propTypes = {
     open: PropTypes.bool,
-    onSelect: PropTypes.func,
+    onConfirmation: PropTypes.func,
+    onCancel: PropTypes.func,
     onClose: PropTypes.func,
     dialogTitle: PropTypes.string,
     hideCancel: PropTypes.bool,
@@ -65,7 +68,8 @@ ConfirmationDialog.propTypes = {
 ConfirmationDialog.defaultProps = {
     open: false,
     dialogTitle: "",
-    onSelect: () => {},
+    onConfirmation: () => {},
+    onCancel: () => {},
     onClose: () => {},
     hideCancel: false,
     hideOk: false,

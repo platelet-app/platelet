@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../../App.css";
 import AddIcon from "@mui/icons-material/Add";
 import Paper from "@mui/material/Paper";
-import { setRoleView } from "../../redux/Actions";
+import { setDashboardFilteredUser, setRoleView } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,6 +15,7 @@ import {
     saveDashboardRoleMode,
 } from "../../utilities";
 import {
+    dashboardFilteredUserSelector,
     dashboardTabIndexSelector,
     dataStoreReadyStatusSelector,
     getRoleView,
@@ -30,32 +31,37 @@ import ActiveRidersChips from "./components/ActiveRidersChips";
 function AddClearFab() {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
+    const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const history = useHistory();
-    const addClearFab = !dashboardFilter ? (
-        <Fab
-            sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
-            variant="contained"
-            disabled={!dataStoreReadyStatus}
-            color="primary"
-            onClick={async () => {
-                const newTask = await addTask(whoami ? whoami.id : null);
-                history.push(`/task/${encodeUUID(newTask.id)}`);
-            }}
-        >
-            <AddIcon />
-        </Fab>
-    ) : (
-        <Fab
-            sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
-            color="primary"
-            variant="extended"
-            onClick={() => dispatch(clearDashboardFilter())}
-        >
-            Clear Search
-        </Fab>
-    );
+    const addClearFab =
+        !dashboardFilter && !dashboardFilteredUser ? (
+            <Fab
+                sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
+                variant="contained"
+                disabled={!dataStoreReadyStatus}
+                color="primary"
+                onClick={async () => {
+                    const newTask = await addTask(whoami ? whoami.id : null);
+                    history.push(`/task/${encodeUUID(newTask.id)}`);
+                }}
+            >
+                <AddIcon />
+            </Fab>
+        ) : (
+            <Fab
+                sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
+                color="primary"
+                variant="extended"
+                onClick={() => {
+                    dispatch(clearDashboardFilter());
+                    dispatch(setDashboardFilteredUser(null));
+                }}
+            >
+                Clear Search
+            </Fab>
+        );
     return addClearFab;
 }
 
@@ -80,6 +86,7 @@ function Dashboard() {
                 saveDashboardRoleMode(userRoles.coordinator);
             } else if (whoami.roles.includes(userRoles.rider)) {
                 dispatch(setRoleView(userRoles.rider));
+                dispatch(setDashboardFilteredUser(null));
                 saveDashboardRoleMode(userRoles.rider);
             }
         }

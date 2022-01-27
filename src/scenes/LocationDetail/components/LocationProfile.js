@@ -7,6 +7,7 @@ import { getWhoami } from "../../../redux/Selectors";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import { userRoles } from "../../../apiConsts";
+import { TextFieldUncontrolled } from "../../../components/TextFields";
 
 const fields = {
     ward: "Ward",
@@ -151,25 +152,49 @@ function LocationProfile(props) {
             <Box sx={{ width: "100%" }}>
                 {Object.keys(state.contact ? contactFields : []).map((key) => {
                     if (editMode) {
-                        return (
-                            <TextField
-                                key={key}
-                                value={state.contact[key]}
-                                variant={"standard"}
-                                fullWidth
-                                label={contactFields[key]}
-                                id={key}
-                                onChange={(e) => {
-                                    setState({
-                                        ...state,
-                                        contact: {
-                                            ...state.contact,
-                                            [key]: e.target.value,
-                                        },
-                                    });
-                                }}
-                            />
-                        );
+                        if (key === "telephoneNumber") {
+                            return (
+                                <TextFieldUncontrolled
+                                    key={key}
+                                    value={state.contact[key]}
+                                    variant={"standard"}
+                                    fullWidth
+                                    tel
+                                    label={contactFields[key]}
+                                    id={key}
+                                    onChange={(e) => {
+                                        setState({
+                                            ...state,
+                                            contact: {
+                                                ...state.contact,
+                                                [key]: e.target.value,
+                                            },
+                                        });
+                                    }}
+                                />
+                            );
+                        } else {
+                            return (
+                                <TextField
+                                    key={key}
+                                    value={state.contact[key]}
+                                    variant={"standard"}
+                                    fullWidth
+                                    tel={key === "telephoneNumber"}
+                                    label={contactFields[key]}
+                                    id={key}
+                                    onChange={(e) => {
+                                        setState({
+                                            ...state,
+                                            contact: {
+                                                ...state.contact,
+                                                [key]: e.target.value,
+                                            },
+                                        });
+                                    }}
+                                />
+                            );
+                        }
                     } else {
                         return (
                             <Stack

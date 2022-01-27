@@ -45,7 +45,11 @@ const CommentCard = React.memo((props) => {
                 <CommentAuthor
                     uuid={props.author.id}
                     displayName={props.author.displayName}
-                    avatarURL={props.author.profilePictureThumbnailURL}
+                    thumbnailKey={
+                        props.author && props.author.profilePictureThumbnail
+                            ? props.author.profilePictureThumbnail.key
+                            : null
+                    }
                 />
             </Grid>
             <Grid item>

@@ -39,7 +39,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
     });
@@ -59,7 +59,7 @@ describe("TaskActions", () => {
             screen.getByRole("button", { name: "Cancelled" })
         ).toBeDisabled();
         expect(screen.getByRole("button", { name: "Rejected" })).toBeDisabled();
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
     });
@@ -79,7 +79,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Picked up" });
@@ -95,7 +95,7 @@ describe("TaskActions", () => {
             name: "Delivered",
         });
         expect(buttonDroppedOff).toBeEnabled();
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: isoDate,
@@ -110,7 +110,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Delivered" });
@@ -139,7 +139,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Delivered" });
@@ -152,7 +152,7 @@ describe("TaskActions", () => {
         // expect the mock function to have been called with a Date object
         // expect button to be toggled
         expect(button).toHaveAttribute("aria-pressed", "true");
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeDroppedOff: isoDate,
@@ -185,7 +185,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Rider home" });
@@ -198,7 +198,7 @@ describe("TaskActions", () => {
         // expect the mock function to have been called with a Date object
         // expect button to be toggled
         expect(button).toHaveAttribute("aria-pressed", "true");
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRiderHome: isoDate,
@@ -216,7 +216,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Rider home" });
@@ -238,7 +238,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Cancelled" });
@@ -247,7 +247,7 @@ describe("TaskActions", () => {
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeCancelled: isoDate,
@@ -281,7 +281,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Rejected" });
@@ -290,7 +290,7 @@ describe("TaskActions", () => {
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRejected: isoDate,
@@ -322,7 +322,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         expect(screen.getByRole("button", { name: "Rejected" })).toBeDisabled();
@@ -340,7 +340,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={"test"} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         expect(
@@ -359,7 +359,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Picked up" });
@@ -371,7 +371,7 @@ describe("TaskActions", () => {
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: null,
@@ -400,7 +400,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Delivered" });
@@ -413,7 +413,7 @@ describe("TaskActions", () => {
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
         // expect the mock function to have been called with null
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeDroppedOff: null,
@@ -435,7 +435,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Cancelled" });
@@ -448,7 +448,7 @@ describe("TaskActions", () => {
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
         // expect the mock function to have been called with null
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeCancelled: null,
@@ -470,7 +470,7 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Rejected" });
@@ -481,7 +481,7 @@ describe("TaskActions", () => {
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
         // expect the mock function to have been called with null
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRejected: null,
@@ -500,12 +500,12 @@ describe("TaskActions", () => {
             subscribe: () => ({ unsubscribe }),
         });
         const component = render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         expect(unsubscribe).toHaveBeenCalledTimes(0);
         component.unmount();
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(unsubscribe).toHaveBeenCalledTimes(1);
         });
     });
@@ -526,10 +526,10 @@ describe("TaskActions", () => {
             }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.observe).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Delivered" });
@@ -549,10 +549,10 @@ describe("TaskActions", () => {
             }),
         });
         render(<TaskActions taskId={mockTask.id} />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.observe).toHaveBeenCalledTimes(1);
         });
         const buttons = screen.getAllByRole("button");

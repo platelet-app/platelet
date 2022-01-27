@@ -9,7 +9,7 @@ import _ from "lodash";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import RiderResponsibilitySelect from "./RiderResponsibilitySelect";
 import { userRoles } from "../../../apiConsts";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Chip, Stack, Typography } from "@mui/material";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 
@@ -55,12 +55,7 @@ export default function UserProfile(props) {
     }
     useEffect(updateStateFromProps, [props.user]);
 
-    let header =
-        props.user.id === whoami.id ? (
-            <h2>My Profile.</h2>
-        ) : (
-            <h2>Profile for {state.displayName}</h2>
-        );
+    let header = <h2>{state.displayName}</h2>;
 
     let editToggle = <></>;
     if (whoami.roles) {
@@ -125,34 +120,40 @@ export default function UserProfile(props) {
         props.user.roles &&
         props.user.roles.includes(userRoles.rider) ? (
             editMode ? (
-                <RiderResponsibilitySelect
-                    onSelect={async (value) => {
-                        const riderResponsibility = await DataStore.query(
-                            models.RiderResponsibility,
-                            value
-                        );
-                        toChange.current = {
-                            ...toChange.current,
-                            riderResponsibility,
-                            userRiderResponsibilityId: value,
-                        };
-                        setState((prevState) => ({
-                            ...prevState,
-                            userRiderResponsibilityId: value,
-                            riderResponsibility,
-                        }));
-                    }}
-                    value={state.userRiderResponsibilityId}
-                />
+                <>
+                    <RiderResponsibilitySelect
+                        onSelect={async (value) => {
+                            const riderResponsibility = await DataStore.query(
+                                models.RiderResponsibility,
+                                value
+                            );
+                            toChange.current = {
+                                ...toChange.current,
+                                riderResponsibility,
+                                userRiderResponsibilityId: value,
+                            };
+                            setState((prevState) => ({
+                                ...prevState,
+                                userRiderResponsibilityId: value,
+                                riderResponsibility,
+                            }));
+                        }}
+                        value={state.userRiderResponsibilityId}
+                    />
+                    <Divider />
+                </>
             ) : (
-                <Stack direction={"row"} justifyContent={"space-between"}>
-                    <Typography>Responsibility</Typography>
-                    <Typography>
-                        {state.riderResponsibility
-                            ? state.riderResponsibility.label
-                            : "No responsibility"}
-                    </Typography>
-                </Stack>
+                <>
+                    <Stack direction={"row"} justifyContent={"space-between"}>
+                        <Typography>Responsibility</Typography>
+                        <Typography>
+                            {state.riderResponsibility
+                                ? state.riderResponsibility.label
+                                : "No responsibility"}
+                        </Typography>
+                    </Stack>
+                    <Divider />
+                </>
             )
         ) : (
             <></>
@@ -302,6 +303,13 @@ export default function UserProfile(props) {
             </Stack>
             <Divider />
             {responsibility}
+
+            <Stack direction="row" spacing={1}>
+                {props.user.roles &&
+                    props.user.roles.map((role) => (
+                        <Chip key={role} label={role} />
+                    ))}
+            </Stack>
             {saveButtons}
         </Stack>
     );

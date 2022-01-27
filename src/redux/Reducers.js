@@ -139,6 +139,15 @@ function dashboardTabIndex(state = 0, action) {
     }
 }
 
+function dashboardFilteredUser(state = null, action) {
+    switch (action.type) {
+        case "SET_DASHBOARD_FILTERED_USER":
+            return action.data;
+        default:
+            return state;
+    }
+}
+
 function idleStatus(state = false, action) {
     switch (action.type) {
         case SET_IDLE_STATUS:
@@ -272,6 +281,7 @@ const appReducer = combineReducers({
     idleStatus,
     darkMode,
     dashboardTabIndex,
+    dashboardFilteredUser,
     awsHubDataStoreEventsReducer,
 });
 

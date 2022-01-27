@@ -102,7 +102,11 @@ export default function UsersList(props) {
                                 key={user.id}
                                 displayName={user.displayName}
                                 userUUID={user.id}
-                                avatarURL={user.profilePictureThumbnailURL}
+                                thumbnailKey={
+                                    user.profilePictureThumbnail
+                                        ? user.profilePictureThumbnail.key
+                                        : null
+                                }
                             />
                         ))}
                     </Stack>

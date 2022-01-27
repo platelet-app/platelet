@@ -9,7 +9,7 @@ import {
     Typography,
 } from "@mui/material";
 import { DateTimePicker } from "@mui/lab";
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import GetError from "../../../ErrorComponents/GetError";
@@ -89,8 +89,8 @@ function RiderConfirmationHomeContents({
         <ConfirmationDialog
             onClose={onClose}
             hideCancel={state.droppedOff === 0}
-            onSelect={(result) => {
-                onSelect(result);
+            onConfirmation={() => {
+                if (state.droppedOff > 0) onSelect();
             }}
             open={!!userId}
         >

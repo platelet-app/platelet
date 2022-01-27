@@ -49,7 +49,7 @@ function LocationDetailsPanel(props) {
 
     useEffect(() => getLocation(), [props.locationId, dataStoreReadyStatus]);
 
-    async function editPreset(currentState) {
+    async function editPreset(additionalValues) {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
@@ -58,30 +58,19 @@ function LocationDetailsPanel(props) {
                 updatedAt,
                 id,
                 name,
-                contact,
                 _version,
                 _lastChangedAt,
                 _deleted,
                 ...rest
-            } = currentState;
-            const newContact = await DataStore.save(
-                new models.AddressAndContactDetails(
-                    _.omit(
-                        contact,
-                        "createdAt",
-                        "id",
-                        "updatedAt",
-                        "_version",
-                        "_lastChangedAt",
-                        "_deleted"
-                    )
-                )
-            );
+            } = state;
+            const newValues = {
+                ...rest,
+                ..._.omit(additionalValues, ...protectedFields),
+            };
             const newLocation = await DataStore.save(
                 new models.Location({
-                    ...rest,
+                    ...newValues,
                     listed: 0,
-                    contact: newContact,
                     name: `Copy of ${name}`,
                 })
             );
@@ -90,7 +79,7 @@ function LocationDetailsPanel(props) {
                     updated[props.locationKey] = newLocation;
                 })
             );
-            setState(newLocation);
+            return newLocation;
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -119,46 +108,100 @@ function LocationDetailsPanel(props) {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated[props.locationKey] = null;
-                })
+            const currentLocation = await DataStore.query(
+                models.Location,
+                result[props.locationKey].id
             );
+            if (currentLocation.listed === 1) {
+                // this is to trigger the observer on the dashboard and clear the card
+                const dummyLocation = await DataStore.save(
+                    new models.Location({})
+                );
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated[props.locationKey] = dummyLocation;
+                    })
+                );
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated[props.locationKey] = null;
+                    })
+                );
+                await DataStore.delete(dummyLocation);
+            } else {
+                // clear the fields for an unlisted location before deleting it
+                await DataStore.save(
+                    models.Location.copyOf(currentLocation, (updated) => {
+                        for (const field of Object.keys(
+                            _.omit(currentLocation, ...protectedFields)
+                        )) {
+                            updated[field] = null;
+                        }
+                    })
+                );
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated[props.locationKey] = null;
+                    })
+                );
+                await DataStore.delete(currentLocation);
+            }
             setState(null);
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function changeContactDetails(values) {
-        if (!state.contact || !state.contact.id) {
-            displayErrorNotification(errorMessage);
-            console.log("Tried to update a non-existent contact");
-            return;
+        let locationResult = null;
+        const key = props.locationKey;
+        const filtered = _.omit(values, ...protectedFields);
+        if (state) {
+            let locationToUpdate = await DataStore.query(
+                models.Location,
+                state.id
+            );
+            // check if existing location is listed or not
+            if (locationToUpdate.listed === 1) {
+                locationToUpdate = await editPreset();
+            }
+            if (locationToUpdate.contact === null) {
+                locationResult = await DataStore.save(
+                    models.Location.copyOf(locationToUpdate, (updated) => {
+                        updated.contact = filtered;
+                    })
+                );
+            } else {
+                locationResult = await DataStore.save(
+                    models.Location.copyOf(locationToUpdate, (updated) => {
+                        for (const [key, v] of Object.entries(filtered)) {
+                            updated.contact[key] = v;
+                        }
+                    })
+                );
+            }
+        } else {
+            locationResult = await DataStore.save(
+                new models.Location({
+                    contact: values,
+                    listed: 0,
+                })
+            );
+            // find the existing task
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
+            if (!existingTask) throw new Error("Task doesn't exist");
+            // link to new location
+            await DataStore.save(
+                models.Task.copyOf(existingTask, (updated) => {
+                    updated[key] = locationResult;
+                })
+            );
         }
-        const existingContact = await DataStore.query(
-            models.AddressAndContactDetails,
-            state.contact.id
-        );
-        if (!existingContact) {
-            displayErrorNotification(errorMessage);
-            console.log(`Location could not be found${state.contact.id}`);
-            return;
-        }
-        const contactResult = await DataStore.save(
-            models.AddressAndContactDetails.copyOf(
-                existingContact,
-                (updated) => {
-                    for (const [key, v] of Object.entries(values)) {
-                        if (!protectedFields.includes(key)) updated[key] = v;
-                    }
-                }
-            )
-        );
-        setState((prevState) => ({
-            ...prevState,
-            contact: contactResult,
-        }));
+        setState(locationResult);
     }
 
     async function changeLocationDetails(values) {
@@ -174,32 +217,33 @@ function LocationDetailsPanel(props) {
             let locationResult;
             // if we are updating an existing location
             if (locationId) {
-                const existingLocation = await DataStore.query(
+                let existingLocation = await DataStore.query(
                     models.Location,
                     locationId
                 );
                 if (!existingLocation)
                     throw new Error("Location doesn't exist");
-                if (!!existingLocation.listed) {
-                    // can't edit a location if it's from the directory
-                    dispatch(
-                        displayWarningNotification(
-                            "You can't edit listed locations in this way."
-                        )
-                    );
-                    return;
-                }
                 // don't do anything if values is empty
                 if (!_.isEmpty(values)) {
-                    // update the location and get the updated version back to locationResult
-                    locationResult = await DataStore.save(
-                        models.Location.copyOf(existingLocation, (updated) => {
-                            for (const [key, v] of Object.entries(values)) {
-                                if (!protectedFields.includes(key))
-                                    updated[key] = v;
-                            }
-                        })
-                    );
+                    if (!!existingLocation.listed) {
+                        // copy the location first with the new values
+                        locationResult = await editPreset(values);
+                    } else {
+                        // update the location and get the updated version back to locationResult
+                        locationResult = await DataStore.save(
+                            models.Location.copyOf(
+                                existingLocation,
+                                (updated) => {
+                                    for (const [key, v] of Object.entries(
+                                        values
+                                    )) {
+                                        if (!protectedFields.includes(key))
+                                            updated[key] = v;
+                                    }
+                                }
+                            )
+                        );
+                    }
                 }
             } else {
                 // if no location exists yet
@@ -214,15 +258,9 @@ function LocationDetailsPanel(props) {
                 }
                 if (_.isEmpty(result)) return;
 
-                // create a contact model
-                const contactResult = await DataStore.save(
-                    new models.AddressAndContactDetails({})
-                );
-                // create a new location and link it to the new contact model
                 locationResult = await DataStore.save(
                     new models.Location({
                         ...values,
-                        contact: contactResult,
                         listed: 0,
                     })
                 );
@@ -239,9 +277,7 @@ function LocationDetailsPanel(props) {
                     })
                 );
             }
-            setState((prevState) => {
-                return { ...prevState, ...locationResult };
-            });
+            setState(locationResult);
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -280,13 +316,9 @@ function LocationDetailsPanel(props) {
                             }
                             onChange={changeLocationDetails}
                             onChangeContact={changeContactDetails}
-                            onEditPreset={editPreset}
                             onClear={clearLocation}
                             location={state}
                             displayPresets={true}
-                            showContact={
-                                !!(state && state.contact && state.contact.id)
-                            }
                         />
                     )}
                 </Stack>

@@ -2,6 +2,7 @@ export const protectedFields = [
     "id",
     "_version",
     "_lastChangedAt",
+    "_deleted",
     "updatedAt",
     "createdAt",
 ];
@@ -50,4 +51,10 @@ export const deliverableUnits = {
     gram: "GRAM",
     item: "ITEM",
     box: "BOX",
+};
+
+export const S3ObjectAccessLevels = {
+    protected: "protected",
+    public: "public",
+    private: "private",
 };

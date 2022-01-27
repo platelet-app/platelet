@@ -56,7 +56,11 @@ function LightToggleProfileMenu() {
                     }}
                     userUUID={whoami.id}
                     displayName={whoami.displayName}
-                    avatarURL={whoami.profilePictureThumbnailURL}
+                    thumbnailKey={
+                        whoami.profilePictureThumbnail
+                            ? whoami.profilePictureThumbnail.key
+                            : null
+                    }
                 />
 
                 <Menu
@@ -81,8 +85,8 @@ function LightToggleProfileMenu() {
                         onClick={() => {
                             setAnchorElProfileMenu(null);
                             //dispatch(logoutUser());
-                            history.push("/");
                             Auth.signOut();
+                            setTimeout(() => window.location.reload(), 600);
                         }}
                     >
                         Logout

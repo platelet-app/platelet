@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
 import { Stack } from "@mui/material";
@@ -131,7 +130,8 @@ function DeliverableGridSelect(props) {
         }
         props.onChange({ id: deliverableId, unit });
     }
-    const onChangeCount = (deliverableId, count) => {
+
+    function onChangeCount(deliverableId, count) {
         const existing = state[deliverableId];
         if (existing) {
             setState((prevState) => ({
@@ -140,7 +140,7 @@ function DeliverableGridSelect(props) {
             }));
         }
         props.onChange({ id: deliverableId, count });
-    };
+    }
 
     function onDelete(deliverableId) {
         setState((prevState) => _.omit(prevState, deliverableId));
@@ -182,6 +182,7 @@ function DeliverableGridSelect(props) {
                             return (
                                 <EditableDeliverable
                                     key={deliverable.id}
+                                    disabled={props.disabled}
                                     onChangeCount={onChangeCount}
                                     onChangeUnit={onChangeUnit}
                                     onDelete={onDelete}
@@ -203,6 +204,7 @@ function DeliverableGridSelect(props) {
                         } else {
                             return (
                                 <AddableDeliverable
+                                    disabled={props.disabled}
                                     key={deliverableType.id}
                                     onAdd={onAddNewDeliverable}
                                     deliverableType={deliverableType}

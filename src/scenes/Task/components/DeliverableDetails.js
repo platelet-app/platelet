@@ -23,11 +23,13 @@ function DeliverableDetails(props) {
     const cardClasses = dialogCardStyles();
     const [collapsed, setCollapsed] = useState(true);
     const [state, setState] = useState({});
+    const [isPosting, setIsPosting] = useState(false);
     const deliverablesObserver = useRef({ unsubscribe: () => {} });
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const dispatch = useDispatch();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const updateDeliverableRef = useRef(null);
     const errorMessage = "Sorry, an error occurred";
 
     async function getDeliverables() {
@@ -85,10 +87,9 @@ function DeliverableDetails(props) {
     async function updateDeliverable(value) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
-        // TODO: this needs a debouncer
         try {
             const existing = Object.values(state).find(
-                (d) => d.deliverableType.id === value.id
+                (d) => d.deliverableType && d.deliverableType.id === value.id
             );
             if (existing) {
                 const existingDeliverable = await DataStore.query(
@@ -112,11 +113,7 @@ function DeliverableDetails(props) {
                     }));
                 }
             } else {
-                const existingTask = await DataStore.query(
-                    models.Task,
-                    props.taskId
-                );
-                if (!existingTask) throw new Error("Task does not exist");
+                setIsPosting(true);
                 const { id, ...rest } = value;
                 const deliverableType = await DataStore.query(
                     models.DeliverableType,
@@ -124,6 +121,11 @@ function DeliverableDetails(props) {
                 );
                 if (!deliverableType)
                     throw new Error("Deliverable type does not exist");
+                const existingTask = await DataStore.query(
+                    models.Task,
+                    props.taskId
+                );
+                if (!existingTask) throw new Error("Task does not exist");
                 const newDeliverable = await DataStore.save(
                     new models.Deliverable({
                         task: existingTask,
@@ -137,14 +139,20 @@ function DeliverableDetails(props) {
                     [newDeliverable.id]: newDeliverable,
                 }));
             }
+            setIsPosting(false);
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
+            setIsPosting(false);
         }
     }
+    // if this isn't a ref then state is old while using debounce
+    updateDeliverableRef.current = updateDeliverable;
 
     async function deleteDeliverable(deliverableTypeId) {
         // receive DeliverableTypeId only from selector component
         // check if one of this DeliverableType has already been saved so we can delete it
+        setIsPosting(true);
         const existing = Object.values(state).find(
             (d) => d.deliverableType.id === deliverableTypeId
         );
@@ -159,7 +167,9 @@ function DeliverableDetails(props) {
                 // remove it from the tracking reference
                 setState((prevState) => _.omit(prevState, existing.id));
             }
+            setIsPosting(false);
         } catch (error) {
+            setIsPosting(false);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -181,6 +191,7 @@ function DeliverableDetails(props) {
                     }
                     return (
                         <Stack
+                            key={deliverable.id}
                             direction={"row"}
                             justifyContent={"space-between"}
                         >
@@ -199,8 +210,12 @@ function DeliverableDetails(props) {
     ) : (
         <DeliverableGridSelect
             deliverables={Object.values(state)}
+            disabled={isPosting}
             taskUUID={props.taskId}
-            onChange={updateDeliverable}
+            onChange={(value) => {
+                //this has to be inline or else state is old}
+                updateDeliverableRef.current(value);
+            }}
             onDelete={deleteDeliverable}
         />
     );

@@ -55,13 +55,32 @@ export enum Patch {
   AIR_AMBULANCE = "AIR_AMBULANCE"
 }
 
-
-
-type UserMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
+export declare class AddressAndContactDetails {
+  readonly name?: string;
+  readonly telephoneNumber?: string;
+  readonly mobileNumber?: string;
+  readonly emailAddress?: string;
+  readonly ward?: string;
+  readonly line1?: string;
+  readonly line2?: string;
+  readonly line3?: string;
+  readonly town?: string;
+  readonly county?: string;
+  readonly state?: string;
+  readonly country?: string;
+  readonly postcode?: string;
+  readonly what3words?: string;
+  constructor(init: ModelInit<AddressAndContactDetails>);
 }
 
-type AddressAndContactDetailsMetaData = {
+export declare class S3Object {
+  readonly bucket: string;
+  readonly key: string;
+  readonly region: string;
+  constructor(init: ModelInit<S3Object>);
+}
+
+type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
@@ -103,7 +122,7 @@ type DeliverableTypeMetaData = {
 
 export declare class User {
   readonly id: string;
-  readonly username: string;
+  readonly cognitoId: string;
   readonly contact?: AddressAndContactDetails;
   readonly displayName: string;
   readonly name?: string;
@@ -113,6 +132,8 @@ export declare class User {
   readonly riderResponsibility?: RiderResponsibility;
   readonly profilePictureURL?: string;
   readonly profilePictureThumbnailURL?: string;
+  readonly profilePicture?: S3Object;
+  readonly profilePictureThumbnail?: S3Object;
   readonly comments?: Comment[];
   readonly group?: Group;
   readonly assignments?: (TaskAssignee | null)[];
@@ -121,28 +142,6 @@ export declare class User {
   readonly updatedAt?: string;
   constructor(init: ModelInit<User, UserMetaData>);
   static copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
-}
-
-export declare class AddressAndContactDetails {
-  readonly id: string;
-  readonly name?: string;
-  readonly telephoneNumber?: string;
-  readonly mobileNumber?: string;
-  readonly emailAddress?: string;
-  readonly ward?: string;
-  readonly line1?: string;
-  readonly line2?: string;
-  readonly line3?: string;
-  readonly town?: string;
-  readonly county?: string;
-  readonly state?: string;
-  readonly country?: string;
-  readonly postcode?: string;
-  readonly what3words?: string;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
-  constructor(init: ModelInit<AddressAndContactDetails, AddressAndContactDetailsMetaData>);
-  static copyOf(source: AddressAndContactDetails, mutator: (draft: MutableModel<AddressAndContactDetails, AddressAndContactDetailsMetaData>) => MutableModel<AddressAndContactDetails, AddressAndContactDetailsMetaData> | void): AddressAndContactDetails;
 }
 
 export declare class Vehicle {

@@ -21,6 +21,7 @@ import AdminAddDeliverableType from "../scenes/AdminControl/Components/AdminAddD
 import AdminAddRiderResponsibility from "../scenes/AdminControl/Components/AdminAddRiderResponsibility";
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { CoordinatorSetup } from "../scenes/CoordinatorSetup/CoordinatorSetup";
+import { AdminControl } from "../scenes/AdminControl/AdminControl";
 
 function MainWindowContainer(props) {
     const styles = makeStyles((theme) => ({
@@ -94,6 +95,14 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("users"));
                             return <UsersList {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/admin"
+                        render={(props) => {
+                            dispatch(setMenuIndex("admin"));
+                            return <AdminControl {...props} />;
                         }}
                     />
                     <Route

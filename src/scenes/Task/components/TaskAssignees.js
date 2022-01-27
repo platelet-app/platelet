@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import { Stack } from "@mui/material";
+import { Divider, Grid, Stack } from "@mui/material";
 import { userRoles } from "../../../apiConsts";
 import UserChip from "../../../components/UserChip";
 
@@ -14,20 +14,37 @@ function TaskAssignees(props) {
         const label =
             role === userRoles.coordinator ? "Coordinators:" : "Riders:";
         return (
-            <Stack key={role} direction="row" alignItems="center" spacing={1}>
-                <Typography>{label}</Typography>
-                <Typography>{message}</Typography>
-                {assignments.map((assignment) => {
-                    const user = assignment.assignee || null;
-                    return (
-                        <UserChip
-                            user={user}
-                            key={assignment.id}
-                            onDelete={() => props.onRemove(assignment.id)}
-                        />
-                    );
-                })}
-            </Stack>
+            <>
+                <Grid
+                    container
+                    key={role}
+                    direction="row"
+                    alignItems="center"
+                    spacing={1}
+                >
+                    <Grid item>
+                        <Typography>{label}</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Typography>{message}</Typography>
+                    </Grid>
+                    {assignments.map((assignment) => {
+                        const user = assignment.assignee || null;
+                        return (
+                            <Grid item>
+                                <UserChip
+                                    user={user}
+                                    key={assignment.id}
+                                    onDelete={() =>
+                                        props.onRemove(assignment.id)
+                                    }
+                                />
+                            </Grid>
+                        );
+                    })}
+                </Grid>
+                <Divider />
+            </>
         );
     });
 }

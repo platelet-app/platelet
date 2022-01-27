@@ -2,7 +2,6 @@ import React from "react";
 import "../App.css";
 import Card from "@mui/material/Card";
 import { styled } from "@mui/styles";
-import Container from "@mui/material/Container";
 
 import makeStyles from "@mui/styles/makeStyles";
 import withTheme from "@mui/styles/withTheme";
@@ -13,11 +12,8 @@ import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 
 export const showHide = makeStyles({
-    // not using display none because it lags horribly on mobile chrome for some reason
     hide: {
-        position: "absolute!important",
-        top: "-9999px!important",
-        left: "-9999px!important",
+        display: "none",
     },
     show: {},
 });

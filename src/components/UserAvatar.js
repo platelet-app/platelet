@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import seedrandom from "seedrandom";
 import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
+import { generateS3Link } from "../amplifyUtilities";
 
 const ctx = document.createElement("canvas").getContext("2d");
 
@@ -28,6 +29,18 @@ const UserAvatar = React.memo((props) => {
         accumulator + currentValue[0];
     const initials = nameArray.reduce(reducer, "").slice(0, 2);
     const avatarFallbackColor = generateColorFromString(props.userUUID);
+    const [avatarURL, setAvatarURL] = useState(null);
+
+    async function getThumbnail() {
+        if (props.thumbnailKey) {
+            const result = await generateS3Link(props.thumbnailKey);
+            if (result) {
+                setAvatarURL(result);
+            }
+        }
+    }
+
+    useEffect(() => getThumbnail(), [props.thumbnailKey]);
 
     const useStyles = makeStyles((theme) => ({
         card: {
@@ -44,7 +57,7 @@ const UserAvatar = React.memo((props) => {
         <Avatar
             onClick={props.onClick}
             alt={props.displayName}
-            src={props.avatarURL}
+            src={avatarURL}
             className={classes.card}
         >
             {initials}
@@ -54,7 +67,7 @@ const UserAvatar = React.memo((props) => {
 
 UserAvatar.propTypes = {
     displayName: PropTypes.string,
-    avatarURL: PropTypes.string,
+    thumbnailKey: PropTypes.string,
     userUUID: PropTypes.string,
     size: PropTypes.number,
     onClick: PropTypes.func,
@@ -62,7 +75,7 @@ UserAvatar.propTypes = {
 
 UserAvatar.defaultProps = {
     displayName: "",
-    avatarURL: "",
+    thumbnailKey: null,
     userUUID: "",
     size: undefined,
     onClick: undefined,

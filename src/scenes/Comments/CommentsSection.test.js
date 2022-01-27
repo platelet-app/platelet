@@ -7,10 +7,11 @@ import { commentVisibility } from "../../apiConsts";
 import userEvent from "@testing-library/user-event";
 import _ from "lodash";
 import * as models from "../../models";
+import { v4 as uuidv4 } from "uuid";
 
 jest.mock("aws-amplify");
 
-const mockComments = [
+const mockCommentsnope = [
     {
         id: 1,
         body: "This is a comment",
@@ -57,52 +58,107 @@ const mockComments = [
     },
 ];
 
+const fakeUsers = _.range(0, 3).map((i) => {
+    return new models.User({
+        displayName: `User ${i}`,
+    });
+});
+
+const mockPublicComments = _.range(0, 3).map((i) => {
+    return new models.Comment({
+        body: uuidv4(),
+        visibility: commentVisibility.everyone,
+        author: new models.User({
+            displayName: `User ${i}`,
+        }),
+    });
+});
+
+const mockPrivateComments = _.range(0, 3).map((i) => {
+    return new models.Comment({
+        body: uuidv4(),
+        visibility: commentVisibility.me,
+        author: new models.User({
+            displayName: `User ${i}`,
+        }),
+    });
+});
+
 describe("CommentsSection", () => {
     it("should render correctly", async () => {
         amplify.DataStore.query.mockResolvedValue([]);
-        const mockWhoami = {
-            id: "whoami",
-            displayName: "Mock User",
-        };
         const unsubscribe = jest.fn();
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
     });
 
     it("should render with comments", async () => {
-        amplify.DataStore.query.mockResolvedValue(mockComments);
+        amplify.DataStore.query.mockResolvedValue(mockPublicComments);
         const unsubscribe = jest.fn();
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
-        expect(screen.getByText("This is a comment")).toBeInTheDocument();
-        expect(screen.getAllByText("Mock User")).toHaveLength(3);
-        expect(screen.getByText("aww yeee")).toBeInTheDocument();
-        expect(screen.getByText("Someone Person")).toBeInTheDocument();
-        expect(screen.getByText("private comment for me")).toBeInTheDocument();
+        for (const comment of mockPublicComments) {
+            expect(screen.getByText(comment.body)).toBeInTheDocument();
+        }
+        for (const comment of mockPublicComments) {
+            expect(
+                screen.getByText(comment.author.displayName)
+            ).toBeInTheDocument();
+        }
     });
 
     it("should hide the private comment when the whoami id doesn't match", async () => {
-        amplify.DataStore.query.mockResolvedValue(mockComments);
+        amplify.DataStore.query.mockResolvedValue(mockPrivateComments);
         const unsubscribe = jest.fn();
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
-        expect(screen.queryByText("private comment")).not.toBeInTheDocument();
-        expect(screen.queryByText("Private Person")).not.toBeInTheDocument();
+        for (const comment of mockPrivateComments) {
+            expect(screen.queryByText(comment.body)).toBeNull();
+        }
+    });
+
+    it("should show the private comment when the whoami id matches", async () => {
+        const mockPrivateCommentsForMe = mockPrivateComments.map((comment) => {
+            return {
+                ...comment,
+                author: {
+                    ...comment.author,
+                    id: "whoami",
+                },
+            };
+        });
+        amplify.DataStore.query.mockResolvedValue(mockPrivateCommentsForMe);
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        render(<CommentsSection parentId="test" />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        for (const comment of mockPrivateCommentsForMe) {
+            expect(screen.getByText(comment.body)).toBeInTheDocument();
+        }
+        for (const comment of mockPrivateCommentsForMe) {
+            expect(
+                screen.getByText(comment.author.displayName)
+            ).toBeInTheDocument();
+        }
     });
 
     it("posts a new comment", async () => {
@@ -126,7 +182,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
         const commentTextBox = screen.getByRole("textbox");
@@ -135,7 +191,7 @@ describe("CommentsSection", () => {
         const postButton = screen.getByRole("button", { name: "Post" });
         expect(postButton).toBeEnabled();
         userEvent.click(postButton);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1);
         });
         expect(commentTextBox).toHaveValue("");
@@ -145,9 +201,14 @@ describe("CommentsSection", () => {
     });
 
     it("deletes a comment", async () => {
-        const mockComment = new models.Comment({
-            ..._.omit(mockComments[0], "id", "createdAt"),
-        });
+        const mockWhoami = {
+            id: "whoami",
+            displayName: "Mock User",
+        };
+        const mockComment = {
+            ...mockPublicComments[0],
+            author: mockWhoami,
+        };
         amplify.DataStore.query
             .mockResolvedValueOnce([mockComment])
             .mockResolvedValue(mockComment);
@@ -155,24 +216,22 @@ describe("CommentsSection", () => {
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
-        const mockWhoami = {
-            id: "whoami",
-            displayName: "Mock User",
-        };
         amplify.Auth.currentAuthenticatedUser.mockReturnValue(mockWhoami);
         render(<CommentsSection parentId="test" />);
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
-        expect(screen.getAllByText("Mock User")).toHaveLength(2);
-        const body = screen.getByText("This is a comment");
+        expect(
+            screen.getAllByText(mockComment.author.displayName)
+        ).toHaveLength(2);
+        const body = screen.getByText(mockComment.body);
         userEvent.hover(body);
         const contextMenu = await screen.findByTestId("comment-menu");
         userEvent.click(contextMenu);
         const deleteButton = await screen.findByText("Delete");
         userEvent.click(deleteButton);
         await new Promise((resolve) => setTimeout(resolve, 4000));
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(amplify.DataStore.delete).toHaveBeenNthCalledWith(
                 1,
                 mockComment

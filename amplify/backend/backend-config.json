@@ -30,19 +30,44 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "plateletCognitoPostConfirmation": {
+    "plateletImageResize": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
       "dependsOn": [
         {
-          "category": "api",
-          "resourceName": "platelet",
+          "category": "storage",
+          "resourceName": "plateletStorage",
           "attributes": [
-            "GraphQLAPIIdOutput"
+            "BucketName"
           ]
         }
       ]
+    }
+  },
+  "geo": {
+    "plateletPlaceIndex": {
+      "isDefault": true,
+      "providerPlugin": "awscloudformation",
+      "service": "PlaceIndex",
+      "dataProvider": "Esri",
+      "dataSourceIntendedUse": "SingleUse",
+      "pricingPlan": "RequestBasedUsage",
+      "accessType": "AuthorizedUsers"
+    }
+  },
+  "storage": {
+    "plateletStorage": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "service": "amplifyhosting",
+      "providerPlugin": "awscloudformation",
+      "type": "manual"
     }
   }
 }

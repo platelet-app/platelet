@@ -1,15 +1,23 @@
 import React from "react";
-import { Stack, IconButton, Typography } from "@mui/material";
+import { Stack, IconButton, Typography, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ClickableTextField from "../../../components/ClickableTextField";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PropTypes from "prop-types";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+    inset: {
+        marginLeft: 20,
+    },
+});
 
 function RequesterContact(props) {
     const [editMode, setEditMode] = React.useState(false);
     function onChange(value) {
         props.onChange(value);
     }
+    const classes = useStyles();
     return (
         <Stack>
             <Stack
@@ -17,38 +25,45 @@ function RequesterContact(props) {
                 alignItems="center"
                 justifyContent="space-between"
             >
-                <Typography>Requester contact:</Typography>
-                <IconButton
-                    onClick={() => setEditMode((prevState) => !prevState)}
-                >
-                    <EditIcon color={editMode ? "secondary" : "inherit"} />
-                </IconButton>
+                <Typography>Requester contact</Typography>
+                <Tooltip title={editMode ? "Finish" : "Edit"}>
+                    <IconButton
+                        onClick={() => setEditMode((prevState) => !prevState)}
+                        size={"small"}
+                    >
+                        <EditIcon color={editMode ? "secondary" : "inherit"} />
+                    </IconButton>
+                </Tooltip>
             </Stack>
-            <LabelItemPair label={"Name"}>
-                <ClickableTextField
-                    disabled={!editMode}
-                    onFinished={(value) =>
-                        onChange({
-                            name: value,
-                        })
-                    }
-                    label={"Name"}
-                    value={props.name}
-                />
-            </LabelItemPair>
-            <LabelItemPair label={"Telephone"}>
-                <ClickableTextField
-                    tel
-                    disabled={!editMode}
-                    onFinished={(value) =>
-                        onChange({
-                            telephoneNumber: value,
-                        })
-                    }
-                    value={props.telephoneNumber}
-                    label={"Telephone"}
-                />
-            </LabelItemPair>
+            <div className={classes.inset}>
+                <LabelItemPair label={"Name"}>
+                    <ClickableTextField
+                        disabled={!editMode}
+                        onFinished={(value) =>
+                            onChange({
+                                name: value,
+                            })
+                        }
+                        label={"Name"}
+                        value={props.name}
+                    />
+                </LabelItemPair>
+            </div>
+            <div className={classes.inset}>
+                <LabelItemPair label={"Telephone"}>
+                    <ClickableTextField
+                        tel
+                        disabled={!editMode}
+                        onFinished={(value) =>
+                            onChange({
+                                telephoneNumber: value,
+                            })
+                        }
+                        value={props.telephoneNumber}
+                        label={"Telephone"}
+                    />
+                </LabelItemPair>
+            </div>
         </Stack>
     );
 }

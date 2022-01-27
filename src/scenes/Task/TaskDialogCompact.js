@@ -201,6 +201,7 @@ function TaskDialogCompact(props) {
                 timeOfCall: value,
             }));
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -236,6 +237,7 @@ function TaskDialogCompact(props) {
                 [key]: value,
             }));
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -250,6 +252,7 @@ function TaskDialogCompact(props) {
                 })
             );
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -258,20 +261,23 @@ function TaskDialogCompact(props) {
         try {
             const result = await DataStore.query(models.Task, taskUUID);
             if (!result) throw new Error("Task doesn't exist");
-            if (!result.requesterContact)
-                throw new Error("Task doesn't have a requester contact");
-            await DataStore.save(
-                models.AddressAndContactDetails.copyOf(
-                    result.requesterContact,
-                    (updated) => {
+            if (!result.requesterContact) {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.requesterContact = requesterValue;
+                    })
+                );
+            } else {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
                         for (const [key, value] of Object.entries(
                             requesterValue
                         )) {
-                            updated[key] = value;
+                            updated.requesterContact[key] = value;
                         }
-                    }
-                )
-            );
+                    })
+                );
+            }
             taskRef.current = {
                 ...taskRef.current,
                 requesterContact: {
@@ -280,6 +286,7 @@ function TaskDialogCompact(props) {
                 },
             };
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }

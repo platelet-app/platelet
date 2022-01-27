@@ -22,6 +22,8 @@ function IncreaseDecreaseCounter(props) {
     }));
     const classes = useStyles();
 
+    //console.log(props.disabled);
+
     return (
         <Grid
             container

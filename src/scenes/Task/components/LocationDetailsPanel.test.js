@@ -6,6 +6,7 @@ import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models/index";
 import _ from "lodash";
+import { protectedFields } from "../../../apiConsts";
 
 jest.mock("aws-amplify");
 
@@ -288,16 +289,18 @@ describe("LocationDetailsPanel", () => {
     test.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
-    `("clear the location", async ({ locationKey }) => {
+    `("clear a listed location", async ({ locationKey }) => {
         const task = new models.Task({ [locationKey]: mockLocations[0] });
         amplify.DataStore.query
             .mockResolvedValueOnce(mockLocations[0])
             .mockResolvedValueOnce(task)
-            .mockResolvedValue(mockLocations);
-        amplify.DataStore.save.mockResolvedValueOnce({
-            ...task,
-            [locationKey]: null,
-        });
+            .mockResolvedValue(mockLocations[0]);
+        const dummyLocation = new models.Location({});
+        amplify.DataStore.save
+            .mockResolvedValueOnce(dummyLocation)
+            .mockResolvedValueOnce({ ...task, [locationKey]: dummyLocation })
+            .mockResolvedValueOnce({ ...task, [locationKey]: null });
+        amplify.DataStore.delete.mockResolvedValueOnce(dummyLocation);
         render(
             <LocationDetailsPanel
                 locationId={mockLocations[0].id}
@@ -318,8 +321,19 @@ describe("LocationDetailsPanel", () => {
         ).toBeInTheDocument();
         userEvent.click(okButton);
         await waitFor(() =>
-            expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
         );
+        await waitFor(() =>
+            expect(amplify.DataStore.delete).toHaveBeenCalledTimes(1)
+        );
+        expect(amplify.DataStore.delete).toHaveBeenCalledWith(dummyLocation);
+        expect(amplify.DataStore.save).toHaveBeenCalledWith(
+            expect.objectContaining(_.omit(dummyLocation, "id"))
+        );
+        expect(amplify.DataStore.save).toHaveBeenCalledWith({
+            ...task,
+            [locationKey]: dummyLocation,
+        });
         expect(amplify.DataStore.save).toHaveBeenCalledWith({
             ...task,
             [locationKey]: null,
@@ -333,19 +347,99 @@ describe("LocationDetailsPanel", () => {
     test.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
-    `("copy a preset and enable editing", async ({ locationKey }) => {
+    `("clear a custom location", async ({ locationKey }) => {
         const task = new models.Task({ [locationKey]: mockLocations[0] });
+        const unlistedLocation = new models.Location({
+            name: "Custom location",
+            line1: "Custom line 1",
+            line2: "Custom line 2",
+            town: "Custom town",
+            county: "Custom county",
+            country: "Custom country",
+            postcode: "Custom postcode",
+            contact: {
+                name: "Custom contact name",
+                telephoneNumber: "Custom telephone number",
+                emailAddress: "Custom email address",
+            },
+            listed: 0,
+        });
         amplify.DataStore.query
-            .mockResolvedValueOnce(mockLocations[0])
+            .mockResolvedValueOnce(unlistedLocation)
+            .mockResolvedValueOnce(task)
+            .mockResolvedValue(unlistedLocation);
+
+        let clearedLocation = {};
+        for (const field of Object.keys(
+            _.omit(unlistedLocation, ...protectedFields)
+        )) {
+            clearedLocation[field] = null;
+        }
+        clearedLocation = { ...unlistedLocation, ...clearedLocation };
+        amplify.DataStore.save
+            .mockResolvedValueOnce(clearedLocation)
+            .mockResolvedValueOnce({ ...task, [locationKey]: null });
+        amplify.DataStore.delete.mockResolvedValueOnce(clearedLocation);
+        render(
+            <LocationDetailsPanel
+                locationId={mockLocations[0].id}
+                locationKey={locationKey}
+            />
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+        );
+        expect(
+            screen.getAllByText(unlistedLocation.line1)[0]
+        ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Clear" }));
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: "Cancel" })
+        ).toBeInTheDocument();
+        userEvent.click(okButton);
+        await waitFor(() =>
+            expect(amplify.DataStore.delete).toHaveBeenNthCalledWith(
+                1,
+                unlistedLocation
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                1,
+                clearedLocation
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(2, {
+                ...task,
+                [locationKey]: null,
+            })
+        );
+        expect(screen.queryByText(mockLocations[0].line1)).toBeNull();
+        expect(screen.getByRole("textbox")).toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
+        expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
+    });
+
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `("copy a preset and enable editing", async ({ locationKey }) => {
+        const fakeListedLocation = new models.Location({
+            ...mockLocations[0],
+            listed: 1,
+        });
+        const task = new models.Task({ [locationKey]: fakeListedLocation });
+        amplify.DataStore.query
+            .mockResolvedValueOnce(fakeListedLocation)
+            .mockResolvedValueOnce(fakeListedLocation)
             .mockResolvedValueOnce(task)
             .mockResolvedValue(mockLocations);
-        const fakeContact = new models.AddressAndContactDetails({
-            ...mockLocations[0].contact,
-        });
         const fakeLocation = new models.Location({
-            ...mockLocations[0],
+            ...fakeListedLocation,
             listed: 0,
-            contact: fakeContact,
             name: `Copy of ${mockLocations[0].name}`,
         });
         const fakeTask = new models.Task({
@@ -353,9 +447,13 @@ describe("LocationDetailsPanel", () => {
             [locationKey]: fakeLocation,
         });
         amplify.DataStore.save
-            .mockResolvedValueOnce(fakeContact)
             .mockResolvedValueOnce(fakeLocation)
-            .mockResolvedValueOnce(fakeTask);
+            .mockResolvedValueOnce(fakeTask)
+            .mockResolvedValueOnce({
+                ...fakeLocation,
+                listed: 0,
+                name: `Copy of ${mockLocations[0].name}`,
+            });
 
         render(
             <LocationDetailsPanel
@@ -370,22 +468,26 @@ describe("LocationDetailsPanel", () => {
             screen.getAllByText(mockLocations[0].line1)[0]
         ).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
+        userEvent.click(screen.getAllByText(mockLocations[0].line1)[1]);
+        userEvent.type(screen.getByRole("textbox"), "test");
+        userEvent.type(screen.getByRole("textbox"), "{enter}");
         await waitFor(() =>
-            expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
         );
-        expect(amplify.DataStore.save).toHaveBeenCalledWith(
-            expect.objectContaining(_.omit(fakeContact, "id"))
+        expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+                ..._.omit(fakeLocation, "id"),
+                line1: `${fakeLocation.line1}test`,
+            })
         );
-        expect(amplify.DataStore.save).toHaveBeenCalledWith(
-            expect.objectContaining(_.omit(fakeLocation, "id"))
-        );
-        expect(amplify.DataStore.save).toHaveBeenCalledWith(
+        expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+            2,
             expect.objectContaining(_.omit(fakeTask, "id"))
         );
         expect(
             screen.getByText(`Copy of ${mockLocations[0].name}`)
         ).toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
     });
 
     test.each`
@@ -411,6 +513,7 @@ describe("LocationDetailsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(mockLocations[1].ward));
         const textBox = screen.getByRole("textbox");
         expect(textBox).toBeInTheDocument();
@@ -439,17 +542,13 @@ describe("LocationDetailsPanel", () => {
                 line1: "new data",
                 listed: 0,
             });
-            const fakeContactModel = new models.AddressAndContactDetails({});
             const fakeTaskModel = new models.Task({});
             amplify.DataStore.query
                 .mockResolvedValueOnce(mockLocations)
                 .mockResolvedValue(fakeTaskModel);
-            amplify.DataStore.save
-                .mockResolvedValueOnce(fakeContactModel)
-                .mockResolvedValue({
-                    ...fakeLocationModel,
-                    contact: fakeContactModel,
-                });
+            amplify.DataStore.save.mockResolvedValue({
+                ...fakeLocationModel,
+            });
             render(
                 <LocationDetailsPanel
                     locationId={null}
@@ -463,17 +562,11 @@ describe("LocationDetailsPanel", () => {
             userEvent.type(textBox, "new data");
             userEvent.type(textBox, "{enter}");
             await waitFor(() =>
-                expect(amplify.DataStore.save).toHaveBeenCalledTimes(3)
-            );
-            expect(amplify.DataStore.save).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(fakeContactModel, "id"))
+                expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
             );
             expect(amplify.DataStore.save).toHaveBeenCalledWith(
                 expect.objectContaining({
                     ..._.omit(fakeLocationModel, "id"),
-                    contact: expect.objectContaining(
-                        _.omit(fakeContactModel, "id")
-                    ),
                 })
             );
             expect(amplify.DataStore.save).toHaveBeenCalledWith(
@@ -481,9 +574,6 @@ describe("LocationDetailsPanel", () => {
                     ..._.omit(fakeTaskModel, "id"),
                     [locationKey]: expect.objectContaining({
                         ..._.omit(fakeLocationModel, "id"),
-                        contact: expect.objectContaining(
-                            _.omit(fakeContactModel, "id")
-                        ),
                     }),
                 })
             );
@@ -495,20 +585,14 @@ describe("LocationDetailsPanel", () => {
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("edit the contact information of a location", async ({ locationKey }) => {
         const fakeInputData = "new data";
-        const fakeContactModel = new models.AddressAndContactDetails({
-            ...mockLocations[1].contact,
-        });
         const fakeModel = new models.Location({
             ...mockLocations[1],
-            contact: fakeContactModel,
             listed: 0,
         });
-        amplify.DataStore.query
-            .mockResolvedValueOnce(fakeModel)
-            .mockResolvedValue(fakeContactModel);
+        amplify.DataStore.query.mockResolvedValue(fakeModel);
         amplify.DataStore.save.mockResolvedValueOnce({
-            ...fakeContactModel,
-            email: fakeInputData,
+            ...fakeModel,
+            contact: { name: fakeInputData },
         });
         render(
             <LocationDetailsPanel
@@ -520,18 +604,22 @@ describe("LocationDetailsPanel", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
         userEvent.click(screen.getByText("Expand to see more"));
-        userEvent.click(screen.getByText(fakeContactModel.emailAddress));
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
+        userEvent.click(screen.getByText(fakeModel.contact.name));
         const textBox = screen.getByRole("textbox");
         expect(textBox).toBeInTheDocument();
-        expect(textBox).toHaveValue(fakeContactModel.emailAddress);
+        expect(textBox).toHaveValue(fakeModel.contact.name);
         userEvent.type(textBox, " new data");
         userEvent.type(textBox, "{enter}");
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
         );
         expect(amplify.DataStore.save).toHaveBeenCalledWith({
-            ...fakeContactModel,
-            emailAddress: `${fakeContactModel.emailAddress} ${fakeInputData}`,
+            ...fakeModel,
+            contact: {
+                ...fakeModel.contact,
+                name: `${fakeModel.contact.name} ${fakeInputData}`,
+            },
         });
     });
 

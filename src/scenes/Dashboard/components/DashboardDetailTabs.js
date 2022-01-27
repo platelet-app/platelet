@@ -11,13 +11,18 @@ import MenuItem from "@mui/material/MenuItem";
 import { saveDashboardRoleMode } from "../../../utilities";
 import Typography from "@mui/material/Typography";
 import { showHide } from "../../../styles/common";
-import { setDashboardTabIndex, setRoleView } from "../../../redux/Actions";
+import {
+    setDashboardFilteredUser,
+    setDashboardTabIndex,
+    setRoleView,
+} from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import { Button, Hidden, Stack } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
 import {
+    dashboardFilteredUserSelector,
     dashboardTabIndexSelector,
     dataStoreReadyStatusSelector,
     getWhoami,
@@ -63,6 +68,7 @@ export function DashboardDetailTabs(props) {
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const roleView = useSelector((state) => state.roleView);
     const { show, hide } = showHide();
+    const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
 
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const theme = useTheme();
@@ -97,30 +103,34 @@ export function DashboardDetailTabs(props) {
         </Box>
     );
 
-    const addClearButton = !dashboardFilter ? (
-        <Button
-            variant="contained"
-            color="primary"
-            id="create-task-button"
-            disabled={
-                !dataStoreReadyStatus ||
-                (roleView && roleView === userRoles.rider)
-            }
-            onClick={() => addTask(whoami ? whoami.id : null)}
-        >
-            Create New
-        </Button>
-    ) : (
-        <Button
-            variant="contained"
-            color="primary"
-            id="clear-search-button"
-            disabled={props.disableAddButton}
-            onClick={() => dispatch(clearDashboardFilter())}
-        >
-            Clear Search
-        </Button>
-    );
+    const addClearButton =
+        !dashboardFilter && !dashboardFilteredUser ? (
+            <Button
+                variant="contained"
+                color="primary"
+                id="create-task-button"
+                disabled={
+                    !dataStoreReadyStatus ||
+                    (roleView && roleView === userRoles.rider)
+                }
+                onClick={() => addTask(whoami ? whoami.id : null)}
+            >
+                Create New
+            </Button>
+        ) : (
+            <Button
+                variant="contained"
+                color="primary"
+                id="clear-search-button"
+                disabled={props.disableAddButton}
+                onClick={() => {
+                    dispatch(clearDashboardFilter());
+                    dispatch(setDashboardFilteredUser(null));
+                }}
+            >
+                Clear Search
+            </Button>
+        );
     return (
         <Stack
             sx={{
@@ -222,6 +232,7 @@ export function DashboardDetailTabs(props) {
                             setAnchorElRoleMenu(null);
                             if (roleView !== userRoles.rider) {
                                 dispatch(setRoleView(userRoles.rider));
+                                dispatch(setDashboardFilteredUser(null));
                                 saveDashboardRoleMode(userRoles.rider);
                             }
                         }}

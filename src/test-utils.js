@@ -1,6 +1,4 @@
 import React from "react";
-import rootReducer from "./redux/Reducers";
-import createSagaMiddleware from "redux-saga";
 import {
     ThemeProvider,
     StyledEngineProvider,
@@ -10,13 +8,13 @@ import { CssBaseline } from "@mui/material";
 import { SnackbarProvider, withSnackbar } from "notistack";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
+import mediaQuery from "css-mediaquery";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { render as rtlRender } from "@testing-library/react";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
-import rootSaga from "./redux/RootSagas";
 import store from "./redux/Store";
 import { DismissButton } from "./styles/common";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
@@ -39,6 +37,15 @@ const theme = createTheme({
     },
 });
 
+export function createMatchMedia(width) {
+    return (query) => ({
+        matches: mediaQuery.match(query, {
+            width,
+        }),
+        addListener: () => {},
+        removeListener: () => {},
+    });
+}
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -104,17 +111,12 @@ function TestApp(props) {
 
     React.useEffect(showNotification, [incomingNotification]);
     return (
-        <BrowserRouter>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <ReactNotification />
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        {props.children}
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </LocalizationProvider>
-        </BrowserRouter>
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                {props.children}
+            </ThemeProvider>
+        </StyledEngineProvider>
     );
 }
 
