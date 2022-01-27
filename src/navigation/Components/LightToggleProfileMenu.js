@@ -85,8 +85,8 @@ function LightToggleProfileMenu() {
                         onClick={() => {
                             setAnchorElProfileMenu(null);
                             //dispatch(logoutUser());
-                            history.push("/");
                             Auth.signOut();
+                            setTimeout(() => window.location.reload(), 600);
                         }}
                     >
                         Logout
