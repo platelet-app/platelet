@@ -2,10 +2,10 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
-import ItemSelector from "./components/ItemSelector";
 import PrioritySelect from "../../scenes/Task/components/PrioritySelect";
 
 import { Styles } from "./styles";
+import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
 
 export const Step2 = ({ values, onChange, onSelect, taskUUID }) => {
     const classes = Styles();
@@ -13,10 +13,7 @@ export const Step2 = ({ values, onChange, onSelect, taskUUID }) => {
         <Scrollbars autoHide autoHeight autoHeightMin={450} autoHeightMax={350}>
             <div className={classes.columnWrapper}>
                 <div classes={classes.block}>
-                    <Typography variant="h6" gutterBottom>
-                        {"Select number of items and priority"}
-                    </Typography>
-                    <ItemSelector taskUUID={taskUUID} />
+                    <DeliverableGridSelect />
 
                     <div>
                         <PrioritySelect />
