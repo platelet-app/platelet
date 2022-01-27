@@ -43,7 +43,9 @@ const TaskStatus = {
   "PICKED_UP": "PICKED_UP",
   "DROPPED_OFF": "DROPPED_OFF",
   "CANCELLED": "CANCELLED",
-  "REJECTED": "REJECTED"
+  "REJECTED": "REJECTED",
+  "ABANDONED": "ABANDONED",
+  "COMPLETED": "COMPLETED"
 };
 
 const Patch = {
@@ -55,11 +57,10 @@ const Patch = {
   "AIR_AMBULANCE": "AIR_AMBULANCE"
 };
 
-const { User, AddressAndContactDetails, Vehicle, Comment, RiderResponsibility, Group, TaskAssignee, Task, Location, Deliverable, DeliverableType } = initSchema(schema);
+const { User, Vehicle, Comment, RiderResponsibility, Group, TaskAssignee, Task, Location, Deliverable, DeliverableType, AddressAndContactDetails, S3Object } = initSchema(schema);
 
 export {
   User,
-  AddressAndContactDetails,
   Vehicle,
   Comment,
   RiderResponsibility,
@@ -75,5 +76,7 @@ export {
   DeliverableTypeIcon,
   DeliverableUnit,
   TaskStatus,
-  Patch
+  Patch,
+  AddressAndContactDetails,
+  S3Object
 };

@@ -1,8 +1,9 @@
 import React from "react";
-import { Drawer, Hidden, useTheme } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import { Divider, Drawer, Hidden, Stack, useTheme } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { useState } from "react";
 import CommentsSection from "../../Comments/CommentsSection";
+import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,47 +41,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CommentsSideBar(props) {
-    const { window } = props;
     const classes = useStyles(props);
-    const theme = useTheme();
-    const [mobileOpen, setMobileOpen] = React.useState(false);
-
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
-    const [open, setOpen] = useState(true);
-    const container =
-        window !== undefined ? () => window().document.body : undefined;
-
-    const toggleDrawer = (event) => {
-        if (
-            event &&
-            event.type === "keydown" &&
-            (event.key === "Tab" || event.key === "Shift")
-        ) {
-            return;
-        }
-        setOpen(!open);
-    };
-
-    return <>
-        <Hidden smUp implementation="css">
-            <Drawer
-                container={container}
-                variant="temporary"
-                anchor={"right"}
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                classes={{
-                    paper: classes.drawerPaper,
-                }}
-                ModalProps={{
-                    keepMounted: true, // Better open performance on mobile.
-                }}
-            >
-                commentsMob
-            </Drawer>
-        </Hidden>
+    return (
         <Hidden smDown implementation="css">
             <Drawer
                 classes={{
@@ -90,8 +52,12 @@ export default function CommentsSideBar(props) {
                 variant="permanent"
                 open
             >
-                <CommentsSection parentUUID={props.parentUUID} />
+                <Stack direction={"column"} spacing={2}>
+                    <TaskAssignmentsPanel taskId={props.taskId} />
+                    <Divider />
+                    <CommentsSection parentId={props.parentUUID} />
+                </Stack>
             </Drawer>
         </Hidden>
-    </>;
+    );
 }

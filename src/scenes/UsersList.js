@@ -1,23 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserCard from "../components/UserCard";
-import Grid from "@mui/material/Grid";
-import * as queries from "../graphql/queries";
-import API from "@aws-amplify/api";
-import { TextFieldControlled } from "../components/TextFields";
-import { AddCircleButton } from "../components/Buttons";
-import { addUserRequest } from "../redux/users/UsersActions";
-import UserContextMenu from "../components/ContextMenus/UserContextMenu";
 import { contextDots, PaddedPaper } from "../styles/common";
-import { createPostingSelector } from "../redux/LoadingSelectors";
 import { sortByCreatedTime } from "../utilities";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
-import { Button } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
 import { Link } from "react-router-dom";
-import { DataStore, Hub } from "aws-amplify";
+import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
+import { userRoles } from "../apiConsts";
 
 function filterUsers(users, search) {
     if (!search) {
@@ -50,7 +43,6 @@ function filterUsers(users, search) {
 }
 
 export default function UsersList(props) {
-    const contextClass = contextDots();
     const [users, setUsers] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
@@ -79,7 +71,7 @@ export default function UsersList(props) {
 
     useEffect(() => getUsers(), [dataStoreReadyStatus]);
 
-    const addButton = whoami.roles.includes("ADMIN") ? (
+    const addButton = whoami.roles.includes(userRoles.admin) ? (
         <Button component={Link} to={`/admin/add-user`}>
             Add user
         </Button>
@@ -91,67 +83,35 @@ export default function UsersList(props) {
         return <CardsGridSkeleton />;
     } else {
         return (
-            <Grid
-                container
+            <Stack
                 direction={"column"}
                 spacing={3}
                 alignItems={"flex-start"}
                 justifyContent={"center"}
             >
-                <Grid item>{addButton}</Grid>
-                <Grid item>
-                    <PaddedPaper width={"800px"}>
-                        <Grid
-                            container
-                            spacing={1}
-                            direction={"column"}
-                            justifyContent={"center"}
-                            alignItems={"flex-start"}
-                        >
-                            <Grid item>
-                                <TextFieldControlled
-                                    label={"Search users"}
-                                    //onChange={(e) => setFilteredUsers(filterUsers(users, e.target.value))}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <Grid container spacing={2}>
-                                    {sortByCreatedTime(users).map((user) => (
-                                        <Grid key={user.id} item>
-                                            <div
-                                                style={{
-                                                    cursor: "context-menu",
-                                                    position: "relative",
-                                                }}
-                                            >
-                                                <UserCard
-                                                    key={user.id}
-                                                    displayName={
-                                                        user.displayName
-                                                    }
-                                                    userUUID={user.id}
-                                                    avatarURL={
-                                                        user.profilePictureThumbnailURL
-                                                    }
-                                                />
-                                                <div
-                                                    className={
-                                                        contextClass.root
-                                                    }
-                                                >
-                                                    <UserContextMenu
-                                                        user={user}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </Grid>
-                                    ))}
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </PaddedPaper>
-                </Grid>
-            </Grid>
+                {addButton}
+                <PaddedPaper maxWidth={"800px"}>
+                    <Stack
+                        spacing={1}
+                        direction={"column"}
+                        justifyContent={"center"}
+                        alignItems={"flex-start"}
+                    >
+                        {sortByCreatedTime(users).map((user) => (
+                            <UserCard
+                                key={user.id}
+                                displayName={user.displayName}
+                                userUUID={user.id}
+                                thumbnailKey={
+                                    user.profilePictureThumbnail
+                                        ? user.profilePictureThumbnail.key
+                                        : null
+                                }
+                            />
+                        ))}
+                    </Stack>
+                </PaddedPaper>
+            </Stack>
         );
     }
 }

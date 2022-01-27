@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "serviceName": "AppSync",
+    "defaultAuthType": {
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authplatelet61a0ac07"
+    },
+    "conflictResolution": {
+      "defaultResolutionStrategy": {
+        "type": "AUTOMERGE"
+      }
+    },
+    "apiName": "platelet",
+    "gqlSchemaPath": "/home/theo/Documents/development/bloodbike-react/amplify/backend/api/platelet/schema.graphql"
+  }
+}

@@ -1,41 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import _ from "lodash";
 import Grid from "@mui/material/Grid";
-import TaskItem from "./TaskItem";
-import { useDispatch, useSelector } from "react-redux";
-import { addTaskRelayRequest } from "../../../redux/tasks/TasksActions";
-import Tooltip from "@mui/material/Tooltip";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { filterTasks } from "../utilities/functions";
 import PropTypes from "prop-types";
-import { showHide } from "../../../styles/common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
-import clsx from "clsx";
-import { CoordinatorSetup } from '../../CoordinatorSetup/CoordinatorSetup'
+import { GuidedSetup } from "../../GuidedSetup/GuidedSetup";
 import TasksGridColumn from "./TasksGridColumn";
-import columns from "./tasksGridColumns";
+import { tasksStatus, userRoles } from "../../../apiConsts";
+import { getRoleView } from "../../../redux/Selectors";
+import { useSelector } from "react-redux";
 
 const getColumnTitle = (key) => {
-    switch (key) {
-        case "tasksNew":
-            return "New".toUpperCase();
-        case "tasksActive":
-            return "Active".toUpperCase();
-        case "tasksPickedUp":
-            return "Picked Up".toUpperCase();
-        case "tasksDroppedOff":
-            return "Delivered".toUpperCase();
-        case "tasksRejected":
-            return "Rejected".toUpperCase();
-        case "tasksCancelled":
-            return "Cancelled".toUpperCase();
-        case "tasksRejectedCancelled":
-            return "Rejected/Cancelled".toUpperCase();
-        default:
-            return "";
-    }
+    if (key.includes(tasksStatus.new)) return "New".toUpperCase();
+    else if (key.includes(tasksStatus.active)) return "Active".toUpperCase();
+    else if (key.includes(tasksStatus.pickedUp))
+        return "Picked Up".toUpperCase();
+    else if (key.includes(tasksStatus.droppedOff))
+        return "Delivered".toUpperCase();
+    else if (key.includes(tasksStatus.rejected))
+        return "Rejected".toUpperCase();
+    else if (key.includes(tasksStatus.cancelled))
+        return "Cancelled".toUpperCase();
+    else return "";
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -65,127 +52,22 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const taskGroupStyles = makeStyles({
-    hoverDiv: {
-        width: "100%",
-        height: "35px",
-        "& .hidden-button": {
-            display: "none",
-        },
-        "&:hover .hidden-button": {
-            display: "inline",
-        },
-    },
-    root: {
-        width: "100%",
-    },
-});
-
-const TaskGroup = (props) => {
-    const classes = taskGroupStyles();
-    const { show, hide } = showHide();
-    const taskArr = Object.values(props.group).map((value) => value);
-    const roleView = useSelector((state) => state.roleView);
-
-    //taskArr.sort((a, b) => a.orderInRelay - b.orderInRelay);
-    return taskArr.length === 0 ? (
-        <></>
-    ) : (
-        taskArr.map((task, i, arr) => {
-            return (
-                <div
-                    className={clsx(
-                        classes.taskItem,
-                        props.showTasks === null ||
-                            props.showTasks.includes(task.id)
-                            ? show
-                            : hide
-                    )}
-                    key={task.id}
-                >
-                    <Grid
-                        container
-                        className={classes.root}
-                        alignItems={"center"}
-                        justifyContent={"center"}
-                    >
-                        <Grid item className={classes.root}>
-                            <TaskItem
-                                animate={props.animate}
-                                timeOfCall={task.timeOfCall}
-                                assignedCoordinatorsDisplayString={
-                                    task.assignedCoordinatorsDisplayString
-                                }
-                                assignedRidersDisplayString={
-                                    task.assignedRidersDisplayString
-                                }
-                                timePickedUp={task.timePickedUp}
-                                assignedRiders={[]}
-                                assignedCoordinators={[]}
-                                timeDroppedOff={task.timeDroppedOff}
-                                timeRejected={task.timeRejected}
-                                timeCancelled={task.timeCancelled}
-                                relayNext={task.relayNext}
-                                taskUUID={task.id}
-                                parentID={1}
-                                view={props.modalView}
-                                deleteDisabled={props.deleteDisabled}
-                            />
-                            <Grid
-                                container
-                                alignItems={"center"}
-                                justifyContent={"center"}
-                            >
-                                <Grid
-                                    className={
-                                        !!task.relayNext &&
-                                        props.showTasks === null &&
-                                        !props.hideRelayIcons &&
-                                        roleView !== "rider"
-                                            ? show
-                                            : hide
-                                    }
-                                    item
-                                >
-                                    <Tooltip title="Relay">
-                                        <ArrowDownwardIcon
-                                            style={{ height: "35px" }}
-                                        />
-                                    </Tooltip>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </div>
-            );
-        })
-    );
-};
-
-TaskGroup.propTypes = {
-    showTasks: PropTypes.arrayOf(PropTypes.string),
-};
-
 function TasksGrid(props) {
     const classes = useStyles();
-    const [filteredTasksUUIDs, setFilteredTasksUUIDs] = useState(null);
-
-    const dispatch = useDispatch();
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
-    const { show, hide } = showHide();
+    const [showGuidedSetup, setShowGuidedSetup] = useState(false);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
+    const isMd = useMediaQuery(theme.breakpoints.down("lg"));
+    const roleView = useSelector(getRoleView);
 
-    const addRelay = React.useCallback((data) => {
-        dispatch(addTaskRelayRequest(data));
-    }, []);
-
-    function doSearch() {
-        const result = filterTasks(props.tasks, dashboardFilter);
-        setFilteredTasksUUIDs(result);
+    let justifyContent = "space-evenly";
+    if (isSm) {
+        justifyContent = "center";
+    } else if (roleView && roleView === userRoles.rider) {
+        justifyContent = "flex-start";
+    } else if (isMd) {
+        justifyContent = "flex-start";
     }
-
-    useEffect(doSearch, [dashboardFilter, props.tasks]);
 
     return (
         <>
@@ -193,38 +75,40 @@ function TasksGrid(props) {
                 container
                 spacing={2}
                 direction={"row"}
-                justifyContent={isSm ? "center" : "flex-start"}
+                justifyContent={justifyContent}
                 alignItems={"stretch"}
             >
-                {Object.keys(columns).map((taskKey) => {
-                    const title = getColumnTitle(taskKey);
-                    return (
-                        <Grid
-                            item
-                            key={taskKey}
-                            className={clsx([
-                                props.excludeColumnList &&
-                                props.excludeColumnList.includes(taskKey)
-                                    ? hide
-                                    : show,
-                                classes.column,
-                            ])}
-                        >
-                            <TasksGridColumn
-                                title={title}
-                                classes={classes}
-                                onAddTaskClick={props.onAddTaskClick}
-                                onAddRelayClick={addRelay}
-                                deleteDisabled
-                                taskKey={taskKey}
-                                tasks={props.tasks[taskKey]}
-                                showTasks={filteredTasksUUIDs}
-                                key={title}
-                            />
-                        </Grid>
-                    );
-                })}
+                {[
+                    [tasksStatus.new],
+                    [tasksStatus.active],
+                    [tasksStatus.pickedUp],
+                    [tasksStatus.droppedOff, tasksStatus.completed],
+                    [tasksStatus.cancelled],
+                    [tasksStatus.rejected],
+                ]
+                    .filter(
+                        (column) =>
+                            _.intersection(props.excludeColumnList, column)
+                                .length === 0
+                    )
+                    .map((taskKey) => {
+                        const title = getColumnTitle(taskKey);
+                        return (
+                            <Grid item key={title} className={classes.column}>
+                                <TasksGridColumn
+                                    title={title}
+                                    onAddTaskClick={props.onAddTaskClick}
+                                    taskKey={taskKey}
+                                    showTasks={props.showTaskIds}
+                                />
+                            </Grid>
+                        );
+                    })}
             </Grid>
+            <GuidedSetup
+                show={showGuidedSetup}
+                onClose={() => setShowGuidedSetup(false)}
+            />
         </>
     );
 }

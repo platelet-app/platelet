@@ -1,0 +1,13 @@
+{
+  "resourceName": "plateletStorage",
+  "policyUUID": "233be779",
+  "bucketName": "platelet26fb7449fb884a3eb4c5fd7539c78dd3",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "groupAccess": {}
+}

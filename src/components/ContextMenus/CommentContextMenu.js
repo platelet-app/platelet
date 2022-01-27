@@ -59,7 +59,8 @@ export default function CommentContextMenu(props) {
     return (
         <div className={props.className}>
             <IconButton
-                aria-label="more"
+                aria-label="comment-menu"
+                data-testid="comment-menu"
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}

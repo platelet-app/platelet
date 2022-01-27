@@ -56,6 +56,7 @@ function TaskFilterTextField(props) {
     return (
         <div className={props.className}>
             <TextFieldControlled
+                id="tasks-filter-input"
                 variant={"standard"}
                 value={dashboardFilterValue}
                 onChange={onChangeFilterText}

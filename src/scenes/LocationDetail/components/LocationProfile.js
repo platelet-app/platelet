@@ -1,15 +1,15 @@
-import { Divider, Grid, Typography } from "@mui/material";
+import { Box, Divider, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { getWhoami } from "../../../redux/Selectors";
 import _ from "lodash";
 import PropTypes from "prop-types";
+import { userRoles } from "../../../apiConsts";
+import { TextFieldUncontrolled } from "../../../components/TextFields";
 
 const fields = {
-    name: "Name",
     ward: "Ward",
     line1: "Line 1",
     line2: "Line 2",
@@ -73,7 +73,7 @@ function LocationProfile(props) {
 
     let editToggle = <></>;
     if (whoami.roles) {
-        if (whoami.roles.includes("ADMIN")) {
+        if (whoami.roles.includes(userRoles.admin)) {
             editToggle = (
                 <EditModeToggleButton
                     tooltipDefault={"Edit this location"}
@@ -87,90 +87,131 @@ function LocationProfile(props) {
         }
     }
 
-    const header = (
-        <Typography variant={"h4"}>Directory location: {state.name}</Typography>
-    );
-
-    const divider = editMode ? (
-        <></>
+    const header = editMode ? (
+        <TextField
+            value={state.name}
+            variant={"standard"}
+            fullWidth
+            id={"edit-name"}
+            onChange={(e) => {
+                setState({
+                    ...state,
+                    name: e.target.value,
+                });
+            }}
+        />
     ) : (
-        <div style={{ width: "80%" }}>
-            <Grid item>
-                <Divider />
-            </Grid>
-        </div>
+        <Typography variant={"h5"}>{state.name}</Typography>
     );
 
-    return <>
-        <Grid
-            container
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"top"}
-            spacing={3}
-        >
-            <Grid item>{header}</Grid>
-            <Grid item>{editToggle}</Grid>
-        </Grid>
-        <Grid
-            container
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"flex-start"}
-            spacing={1}
-        >
-            {Object.keys(fields).map((key) => {
-                return (
-                    <Grid key={key} style={{ width: "50%" }} item>
-                        <TextFieldUncontrolled
-                            value={state[key]}
-                            InputProps={{
-                                readOnly: !editMode,
-                                disableUnderline: !editMode,
-                            }}
-                            fullWidth
-                            label={fields[key]}
-                            id={key}
-                            onChange={(e) => {
-                                setState({
-                                    ...state,
-                                    [key]: e.target.value,
-                                });
-                            }}
-                        />
-                        {divider}
-                    </Grid>
-                );
-            })}
-            {Object.keys(state.contact ? contactFields : []).map((key) => {
-                return (
-                    <Grid key={key} style={{ width: "50%" }} item>
-                        <TextFieldUncontrolled
-                            value={state.contact[key]}
-                            InputProps={{
-                                readOnly: !editMode,
-                                disableUnderline: !editMode,
-                            }}
-                            fullWidth
-                            label={contactFields[key]}
-                            id={key}
-                            onChange={(e) => {
-                                setState({
-                                    ...state,
-                                    contact: {
-                                        ...state.contact,
+    return (
+        <Stack direction={"column"} spacing={3}>
+            <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"top"}
+                spacing={3}
+            >
+                {header}
+                {editToggle}
+            </Stack>
+            <Divider />
+            <Box sx={{ width: "100%" }}>
+                {Object.keys(fields).map((key) => {
+                    if (editMode) {
+                        return (
+                            <TextField
+                                key={key}
+                                value={state[key]}
+                                variant={"standard"}
+                                fullWidth
+                                label={fields[key]}
+                                id={key}
+                                onChange={(e) => {
+                                    setState({
+                                        ...state,
                                         [key]: e.target.value,
-                                    },
-                                });
-                            }}
-                        />
-                        {divider}
-                    </Grid>
-                );
-            })}
-        </Grid>
-        {saveButtons}
-    </>;
+                                    });
+                                }}
+                            />
+                        );
+                    } else {
+                        return (
+                            <Stack
+                                direction={"row"}
+                                justifyContent={"space-between"}
+                                key={key}
+                            >
+                                <Typography>{state[key]}</Typography>
+                            </Stack>
+                        );
+                    }
+                })}
+            </Box>
+            <Divider />
+            <Box sx={{ width: "100%" }}>
+                {Object.keys(state.contact ? contactFields : []).map((key) => {
+                    if (editMode) {
+                        if (key === "telephoneNumber") {
+                            return (
+                                <TextFieldUncontrolled
+                                    key={key}
+                                    value={state.contact[key]}
+                                    variant={"standard"}
+                                    fullWidth
+                                    tel
+                                    label={contactFields[key]}
+                                    id={key}
+                                    onChange={(e) => {
+                                        setState({
+                                            ...state,
+                                            contact: {
+                                                ...state.contact,
+                                                [key]: e.target.value,
+                                            },
+                                        });
+                                    }}
+                                />
+                            );
+                        } else {
+                            return (
+                                <TextField
+                                    key={key}
+                                    value={state.contact[key]}
+                                    variant={"standard"}
+                                    fullWidth
+                                    tel={key === "telephoneNumber"}
+                                    label={contactFields[key]}
+                                    id={key}
+                                    onChange={(e) => {
+                                        setState({
+                                            ...state,
+                                            contact: {
+                                                ...state.contact,
+                                                [key]: e.target.value,
+                                            },
+                                        });
+                                    }}
+                                />
+                            );
+                        }
+                    } else {
+                        return (
+                            <Stack
+                                direction={"row"}
+                                justifyContent={"space-between"}
+                                key={key}
+                            >
+                                <Typography>{contactFields[key]}</Typography>
+                                <Typography>{state.contact[key]}</Typography>
+                            </Stack>
+                        );
+                    }
+                })}
+            </Box>
+            {saveButtons}
+        </Stack>
+    );
 }
 
 LocationProfile.propTypes = {

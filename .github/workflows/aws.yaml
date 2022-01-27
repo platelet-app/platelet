@@ -1,7 +1,6 @@
 name: Demo build
 
 on:
-  pull_request:
   push:
     branches:
       - master
@@ -10,25 +9,27 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [12.x]
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: NPM Install
-      run: |
-        npm install
+    - name: Install dependencies
+      run: npm ci
     - name: Production Build
-      run: |
-        npm run build
+      run: npm run build
       env:
         REACT_APP_DEMO_MODE: true
+        REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME: platelet-demo-profilepics
+        REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION: eu-west-1
         REACT_APP_OFFLINE_ONLY: true
         REACT_APP_POPULATE_FAKE_DATA: true
         CI: false
         GENERATE_SOURCEMAP: false
+    - name: NPM test
+      run: npm run test
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:

@@ -10,10 +10,10 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "username": {
-                    "name": "username",
+                "cognitoId": {
+                    "name": "cognitoId",
                     "isArray": false,
-                    "type": "String",
+                    "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -21,14 +21,10 @@ export const schema = {
                     "name": "contact",
                     "isArray": false,
                     "type": {
-                        "model": "AddressAndContactDetails"
+                        "nonModel": "AddressAndContactDetails"
                     },
                     "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "userContactId"
-                    }
+                    "attributes": []
                 },
                 "displayName": {
                     "name": "displayName",
@@ -99,6 +95,24 @@ export const schema = {
                     "name": "profilePictureThumbnailURL",
                     "isArray": false,
                     "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "profilePicture": {
+                    "name": "profilePicture",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "S3Object"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "profilePictureThumbnail": {
+                    "name": "profilePictureThumbnail",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "S3Object"
+                    },
                     "isRequired": false,
                     "attributes": []
                 },
@@ -173,140 +187,32 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
-                }
-            ]
-        },
-        "AddressAndContactDetails": {
-            "name": "AddressAndContactDetails",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
                 },
-                "name": {
-                    "name": "name",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "telephoneNumber": {
-                    "name": "telephoneNumber",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "mobileNumber": {
-                    "name": "mobileNumber",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "emailAddress": {
-                    "name": "emailAddress",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "ward": {
-                    "name": "ward",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "line1": {
-                    "name": "line1",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "line2": {
-                    "name": "line2",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "line3": {
-                    "name": "line3",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "town": {
-                    "name": "town",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "county": {
-                    "name": "county",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "state": {
-                    "name": "state",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "country": {
-                    "name": "country",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "postcode": {
-                    "name": "postcode",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "what3words": {
-                    "name": "what3words",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "AddressAndContactDetails",
-            "attributes": [
                 {
-                    "type": "model",
-                    "properties": {}
+                    "type": "key",
+                    "properties": {
+                        "name": "byCognitoId",
+                        "fields": [
+                            "cognitoId"
+                        ],
+                        "queryField": "getUserByCognitoId"
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -414,6 +320,22 @@ export const schema = {
                             "assignedUserID"
                         ]
                     }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -431,14 +353,14 @@ export const schema = {
                     "name": "parentId",
                     "isArray": false,
                     "type": "ID",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "body": {
                     "name": "body",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "author": {
@@ -447,7 +369,7 @@ export const schema = {
                     "type": {
                         "model": "User"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -495,6 +417,22 @@ export const schema = {
                             "parentId"
                         ]
                     }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -538,6 +476,22 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -602,6 +556,22 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -695,6 +665,22 @@ export const schema = {
                             "taskId"
                         ]
                     }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -763,18 +749,21 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "timeRiderHome": {
+                    "name": "timeRiderHome",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "requesterContact": {
                     "name": "requesterContact",
                     "isArray": false,
                     "type": {
-                        "model": "AddressAndContactDetails"
+                        "nonModel": "AddressAndContactDetails"
                     },
                     "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "taskRequesterContactId"
-                    }
+                    "attributes": []
                 },
                 "pickUpLocation": {
                     "name": "pickUpLocation",
@@ -966,6 +955,22 @@ export const schema = {
                             "dropOffLocationId"
                         ]
                     }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -997,14 +1002,10 @@ export const schema = {
                     "name": "contact",
                     "isArray": false,
                     "type": {
-                        "model": "AddressAndContactDetails"
+                        "nonModel": "AddressAndContactDetails"
                     },
                     "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "locationContactId"
-                    }
+                    "attributes": []
                 },
                 "ward": {
                     "name": "ward",
@@ -1141,6 +1142,22 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -1166,6 +1183,13 @@ export const schema = {
                         "connectionType": "BELONGS_TO",
                         "targetName": "deliverableDeliverableTypeId"
                     }
+                },
+                "taskDeliverablesId": {
+                    "name": "taskDeliverablesId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "task": {
                     "name": "task",
@@ -1232,13 +1256,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "taskDeliverablesId": {
-                    "name": "taskDeliverablesId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,
@@ -1247,6 +1264,22 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -1308,6 +1341,22 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         }
@@ -1366,7 +1415,9 @@ export const schema = {
                 "PICKED_UP",
                 "DROPPED_OFF",
                 "CANCELLED",
-                "REJECTED"
+                "REJECTED",
+                "ABANDONED",
+                "COMPLETED"
             ]
         },
         "Patch": {
@@ -1381,6 +1432,136 @@ export const schema = {
             ]
         }
     },
-    "nonModels": {},
-    "version": "3a3448a66d6a4e5f3f6ffa643b36a55c"
+    "nonModels": {
+        "AddressAndContactDetails": {
+            "name": "AddressAndContactDetails",
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "telephoneNumber": {
+                    "name": "telephoneNumber",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "mobileNumber": {
+                    "name": "mobileNumber",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "emailAddress": {
+                    "name": "emailAddress",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "ward": {
+                    "name": "ward",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line1": {
+                    "name": "line1",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line2": {
+                    "name": "line2",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line3": {
+                    "name": "line3",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "town": {
+                    "name": "town",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "county": {
+                    "name": "county",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "state": {
+                    "name": "state",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "country": {
+                    "name": "country",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "postcode": {
+                    "name": "postcode",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "what3words": {
+                    "name": "what3words",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
+        "S3Object": {
+            "name": "S3Object",
+            "fields": {
+                "bucket": {
+                    "name": "bucket",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "key": {
+                    "name": "key",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "region": {
+                    "name": "region",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                }
+            }
+        }
+    },
+    "version": "0117b9f9b3b8cd4ec0bbc5695254462e"
 };

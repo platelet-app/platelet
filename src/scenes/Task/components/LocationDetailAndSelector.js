@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
@@ -9,18 +9,14 @@ import Divider from "@mui/material/Divider";
 import { Box, Stack, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import { showHide, ThemedLink } from "../../../styles/common";
+import { ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Link from "@mui/material/Link";
+import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
 const useStyles = makeStyles({
     root: {
         maxWidth: "350px",
-    },
-    button: {
-        height: 9,
     },
     label: {
         maxWidth: "250px",
@@ -67,9 +63,16 @@ const contactFields = {
 function LocationDetailAndSelector(props) {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
-    const [protectedLocation, setProtectedLocation] = useState(false);
-    const { show, hide } = showHide();
+    const [editMode, setEditMode] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
+    const initialSetEdit = useRef(false);
+
+    useEffect(() => {
+        if (!initialSetEdit.current) {
+            initialSetEdit.current = true;
+            setEditMode(!!!props.location);
+        }
+    }, [props.location]);
 
     function updateStateFromProps() {
         if (props.location) {
@@ -80,9 +83,6 @@ function LocationDetailAndSelector(props) {
                     address: { ...props.location },
                 };
             }
-            setProtectedLocation(
-                props.location ? props.location.protected : false
-            );
             if (props.location.contact) {
                 result = {
                     ...result,
@@ -90,10 +90,8 @@ function LocationDetailAndSelector(props) {
                 };
             }
             setState(result);
-            setProtectedLocation(!!props.location.listed);
         } else {
             setState(initialState);
-            setProtectedLocation(false);
         }
     }
 
@@ -101,13 +99,12 @@ function LocationDetailAndSelector(props) {
 
     function onSelectPreset(value) {
         props.onSelectPreset(value);
+        setEditMode(false);
     }
 
-    function onClickEditButton() {
-        props.onEditPreset({ ...state.address, contact: state.contact });
-    }
     function onClickClearButton() {
         props.onClear();
+        setEditMode(true);
     }
 
     const presetName =
@@ -145,10 +142,7 @@ function LocationDetailAndSelector(props) {
             direction={"row"}
         >
             {!props.location ? (
-                <FavouriteLocationsSelect
-                    label={props.label}
-                    onSelect={onSelectPreset}
-                />
+                <FavouriteLocationsSelect onSelect={onSelectPreset} />
             ) : (
                 locationTitle
             )}
@@ -157,34 +151,31 @@ function LocationDetailAndSelector(props) {
                 justifyContent={"flex-end"}
                 alignItems={"center"}
             >
-                <Box
-                    className={
-                        props.location && props.location.listed ? show : hide
-                    }
-                >
+                {!!props.location && (
                     <Tooltip title={"Edit"}>
                         <IconButton
-                            className={classes.button}
-                            edge={"end"}
+                            aria-label={"Edit"}
+                            size={"small"}
                             disabled={props.disabled}
-                            onClick={onClickEditButton}
-                            size="large"
+                            onClick={() =>
+                                setEditMode((prevState) => !prevState)
+                            }
                         >
-                            <EditIcon />
+                            <EditIcon
+                                color={editMode ? "secondary" : "inherit"}
+                            />
                         </IconButton>
                     </Tooltip>
-                </Box>
-                <Box
-                    className={
-                        props.location && !props.disableClear ? show : hide
-                    }
-                >
+                )}
+                {props.location && !props.disableClear ? (
                     <ClearButtonWithConfirmation
                         label={props.label}
                         disabled={props.disabled}
                         onClear={onClickClearButton}
                     />
-                </Box>
+                ) : (
+                    <></>
+                )}
             </Stack>
         </Stack>
     ) : (
@@ -201,10 +192,13 @@ function LocationDetailAndSelector(props) {
                     {Object.entries(addressFields).map(([key, label]) => {
                         if (collapsedShowFields.includes(key) || !collapsed) {
                             return (
-                                <LabelItemPair label={collapsed ? label : ""}>
+                                <LabelItemPair
+                                    key={key}
+                                    label={collapsed || editMode ? label : ""}
+                                >
                                     <ClickableTextField
                                         label={label}
-                                        disabled={protectedLocation}
+                                        disabled={!editMode}
                                         onFinished={(v) => {
                                             setState((prevState) => ({
                                                 ...prevState,
@@ -220,19 +214,20 @@ function LocationDetailAndSelector(props) {
                                 </LabelItemPair>
                             );
                         } else {
-                            return <></>;
+                            return <React.Fragment key={key}></React.Fragment>;
                         }
                     })}
 
                     <Box className={classes.separator} />
-                    <Box className={props.showContact ? show : hide}>
+                    <Box>
                         {Object.entries(contactFields).map(([key, label]) => {
                             if (!collapsed) {
                                 return (
-                                    <LabelItemPair label={label}>
+                                    <LabelItemPair key={key} label={label}>
                                         <ClickableTextField
                                             label={label}
-                                            disabled={protectedLocation}
+                                            tel={key === "telephoneNumber"}
+                                            disabled={!editMode}
                                             onFinished={(v) => {
                                                 setState((prevState) => ({
                                                     ...prevState,
@@ -241,8 +236,8 @@ function LocationDetailAndSelector(props) {
                                                         [key]: v,
                                                     },
                                                 }));
-                                                props.onChange({
-                                                    contact: { [key]: v },
+                                                props.onChangeContact({
+                                                    [key]: v,
                                                 });
                                             }}
                                             value={state.contact[key]}
@@ -250,34 +245,18 @@ function LocationDetailAndSelector(props) {
                                     </LabelItemPair>
                                 );
                             } else {
-                                return <></>;
+                                return (
+                                    <React.Fragment key={key}></React.Fragment>
+                                );
                             }
                         })}
                     </Box>
                 </Stack>
                 <Divider />
-                <Stack
-                    alignItems={"center"}
-                    justifyContent={"flex-start"}
-                    direction={"row"}
-                >
-                    <IconButton
-                        onClick={() => setCollapsed((prevState) => !prevState)}
-                        size="large"
-                    >
-                        <ExpandMoreIcon />
-                    </IconButton>
-                    <Link
-                        href="#"
-                        onClick={(e) => {
-                            setCollapsed((prevState) => !prevState);
-                            e.preventDefault();
-                        }}
-                        color="inherit"
-                    >
-                        {collapsed ? "Expand to see more" : "Show less"}
-                    </Link>
-                </Stack>
+                <CollapsibleToggle
+                    onClick={() => setCollapsed((prevState) => !prevState)}
+                    value={collapsed}
+                />
             </Stack>
         </Box>
     );
@@ -290,9 +269,10 @@ LocationDetailAndSelector.propTypes = {
     className: PropTypes.string,
     displayPresets: PropTypes.bool,
     onChange: PropTypes.func,
+    onChangeContact: PropTypes.func,
     disableClear: PropTypes.bool,
     onClear: PropTypes.func,
-    onEditPreset: PropTypes.func,
+    onEdit: PropTypes.func,
     showContact: PropTypes.bool,
 };
 
@@ -303,9 +283,10 @@ LocationDetailAndSelector.defaultProps = {
     location: null,
     onSelectPreset: () => {},
     onChange: () => {},
+    onChangeContact: () => {},
     onClear: () => {},
-    onEditPreset: () => {},
-    showContact: false,
+    onEdit: () => {},
+    showContact: true,
 };
 
 export default LocationDetailAndSelector;

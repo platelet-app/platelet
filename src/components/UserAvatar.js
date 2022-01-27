@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import seedrandom from "seedrandom";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
+import PropTypes from "prop-types";
+import { generateS3Link } from "../amplifyUtilities";
 
 const ctx = document.createElement("canvas").getContext("2d");
 
@@ -19,26 +21,6 @@ const generateColorFromString = (str) =>
         )}, 50%, 50%)`
     );
 
-function stringToColor(string) {
-    let hash = 0;
-    let i;
-
-    /* eslint-disable no-bitwise */
-    for (i = 0; i < string.length; i += 1) {
-        hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    let color = "#";
-
-    for (i = 0; i < 3; i += 1) {
-        const value = (hash >> (i * 8)) & 0xff;
-        color += `00${value.toString(16)}`.substr(-2);
-    }
-    /* eslint-enable no-bitwise */
-
-    return color;
-}
-
 const UserAvatar = React.memo((props) => {
     const nameArray = props.displayName
         ? props.displayName.split(" ")
@@ -47,6 +29,18 @@ const UserAvatar = React.memo((props) => {
         accumulator + currentValue[0];
     const initials = nameArray.reduce(reducer, "").slice(0, 2);
     const avatarFallbackColor = generateColorFromString(props.userUUID);
+    const [avatarURL, setAvatarURL] = useState(null);
+
+    async function getThumbnail() {
+        if (props.thumbnailKey) {
+            const result = await generateS3Link(props.thumbnailKey);
+            if (result) {
+                setAvatarURL(result);
+            }
+        }
+    }
+
+    useEffect(() => getThumbnail(), [props.thumbnailKey]);
 
     const useStyles = makeStyles((theme) => ({
         card: {
@@ -54,19 +48,37 @@ const UserAvatar = React.memo((props) => {
             backgroundColor: avatarFallbackColor,
             width: props.size ? theme.spacing(props.size) : theme.spacing(6),
             height: props.size ? theme.spacing(props.size) : theme.spacing(6),
+            cursor: props.onClick ? "pointer" : "default",
         },
     }));
 
     const classes = useStyles();
     return (
         <Avatar
+            onClick={props.onClick}
             alt={props.displayName}
-            src={props.avatarURL}
+            src={avatarURL}
             className={classes.card}
         >
             {initials}
         </Avatar>
     );
 });
+
+UserAvatar.propTypes = {
+    displayName: PropTypes.string,
+    thumbnailKey: PropTypes.string,
+    userUUID: PropTypes.string,
+    size: PropTypes.number,
+    onClick: PropTypes.func,
+};
+
+UserAvatar.defaultProps = {
+    displayName: "",
+    thumbnailKey: null,
+    userUUID: "",
+    size: undefined,
+    onClick: undefined,
+};
 
 export default UserAvatar;

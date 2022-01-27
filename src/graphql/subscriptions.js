@@ -5,9 +5,8 @@ export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser {
     onCreateUser {
       id
-      username
+      cognitoId
       contact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -22,11 +21,6 @@ export const onCreateUser = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       displayName
       name
@@ -61,6 +55,16 @@ export const onCreateUser = /* GraphQL */ `
       }
       profilePictureURL
       profilePictureThumbnailURL
+      profilePicture {
+        bucket
+        key
+        region
+      }
+      profilePictureThumbnail {
+        bucket
+        key
+        region
+      }
       comments {
         items {
           id
@@ -118,9 +122,8 @@ export const onUpdateUser = /* GraphQL */ `
   subscription OnUpdateUser {
     onUpdateUser {
       id
-      username
+      cognitoId
       contact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -135,11 +138,6 @@ export const onUpdateUser = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       displayName
       name
@@ -174,6 +172,16 @@ export const onUpdateUser = /* GraphQL */ `
       }
       profilePictureURL
       profilePictureThumbnailURL
+      profilePicture {
+        bucket
+        key
+        region
+      }
+      profilePictureThumbnail {
+        bucket
+        key
+        region
+      }
       comments {
         items {
           id
@@ -231,9 +239,8 @@ export const onDeleteUser = /* GraphQL */ `
   subscription OnDeleteUser {
     onDeleteUser {
       id
-      username
+      cognitoId
       contact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -248,11 +255,6 @@ export const onDeleteUser = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       displayName
       name
@@ -287,6 +289,16 @@ export const onDeleteUser = /* GraphQL */ `
       }
       profilePictureURL
       profilePictureThumbnailURL
+      profilePicture {
+        bucket
+        key
+        region
+      }
+      profilePictureThumbnail {
+        bucket
+        key
+        region
+      }
       comments {
         items {
           id
@@ -349,7 +361,7 @@ export const onCreateGroup = /* GraphQL */ `
       users {
         items {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -383,7 +395,7 @@ export const onUpdateGroup = /* GraphQL */ `
       users {
         items {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -417,7 +429,7 @@ export const onDeleteGroup = /* GraphQL */ `
       users {
         items {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -454,9 +466,8 @@ export const onCreateVehicle = /* GraphQL */ `
       dateOfRegistration
       assignedUser {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -471,11 +482,6 @@ export const onCreateVehicle = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -496,6 +502,16 @@ export const onCreateVehicle = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -556,9 +572,8 @@ export const onUpdateVehicle = /* GraphQL */ `
       dateOfRegistration
       assignedUser {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -573,11 +588,6 @@ export const onUpdateVehicle = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -598,6 +608,16 @@ export const onUpdateVehicle = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -658,9 +678,8 @@ export const onDeleteVehicle = /* GraphQL */ `
       dateOfRegistration
       assignedUser {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -675,11 +694,6 @@ export const onDeleteVehicle = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -700,6 +714,16 @@ export const onDeleteVehicle = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -748,84 +772,6 @@ export const onDeleteVehicle = /* GraphQL */ `
     }
   }
 `;
-export const onCreateAddressAndContactDetails = /* GraphQL */ `
-  subscription OnCreateAddressAndContactDetails {
-    onCreateAddressAndContactDetails {
-      id
-      name
-      telephoneNumber
-      mobileNumber
-      emailAddress
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      what3words
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateAddressAndContactDetails = /* GraphQL */ `
-  subscription OnUpdateAddressAndContactDetails {
-    onUpdateAddressAndContactDetails {
-      id
-      name
-      telephoneNumber
-      mobileNumber
-      emailAddress
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      what3words
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteAddressAndContactDetails = /* GraphQL */ `
-  subscription OnDeleteAddressAndContactDetails {
-    onDeleteAddressAndContactDetails {
-      id
-      name
-      telephoneNumber
-      mobileNumber
-      emailAddress
-      ward
-      line1
-      line2
-      line3
-      town
-      county
-      state
-      country
-      postcode
-      what3words
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
 export const onCreateDeliverable = /* GraphQL */ `
   subscription OnCreateDeliverable {
     onCreateDeliverable {
@@ -842,6 +788,160 @@ export const onCreateDeliverable = /* GraphQL */ `
         updatedAt
       }
       taskDeliverablesId
+      task {
+        id
+        name
+        createdBy {
+          id
+          cognitoId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        timeRiderHome
+        requesterContact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       count
       unit
       orderInGrid
@@ -884,6 +984,160 @@ export const onUpdateDeliverable = /* GraphQL */ `
         updatedAt
       }
       taskDeliverablesId
+      task {
+        id
+        name
+        createdBy {
+          id
+          cognitoId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        timeRiderHome
+        requesterContact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       count
       unit
       orderInGrid
@@ -926,6 +1180,160 @@ export const onDeleteDeliverable = /* GraphQL */ `
         updatedAt
       }
       taskDeliverablesId
+      task {
+        id
+        name
+        createdBy {
+          id
+          cognitoId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        timeOfCall
+        timePickedUp
+        timeDroppedOff
+        timeCancelled
+        timeRejected
+        timeRiderHome
+        requesterContact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        pickUpLocationId
+        dropOffLocationId
+        pickUpLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        dropOffLocation {
+          id
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        riderResponsibility {
+          id
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        relayPrevious {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        relayNext {
+          id
+          name
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        group {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
       count
       unit
       orderInGrid
@@ -959,7 +1367,6 @@ export const onCreateLocation = /* GraphQL */ `
       name
       listed
       contact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -974,11 +1381,6 @@ export const onCreateLocation = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       ward
       line1
@@ -999,6 +1401,7 @@ export const onCreateLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1021,6 +1424,7 @@ export const onCreateLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1064,7 +1468,6 @@ export const onUpdateLocation = /* GraphQL */ `
       name
       listed
       contact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -1079,11 +1482,6 @@ export const onUpdateLocation = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       ward
       line1
@@ -1104,6 +1502,7 @@ export const onUpdateLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1126,6 +1525,7 @@ export const onUpdateLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1169,7 +1569,6 @@ export const onDeleteLocation = /* GraphQL */ `
       name
       listed
       contact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -1184,11 +1583,6 @@ export const onDeleteLocation = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       ward
       line1
@@ -1209,6 +1603,7 @@ export const onDeleteLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1231,6 +1626,7 @@ export const onDeleteLocation = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1274,9 +1670,8 @@ export const onCreateTask = /* GraphQL */ `
       name
       createdBy {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1291,11 +1686,6 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -1316,6 +1706,16 @@ export const onCreateTask = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -1346,8 +1746,8 @@ export const onCreateTask = /* GraphQL */ `
       timeDroppedOff
       timeCancelled
       timeRejected
+      timeRiderHome
       requesterContact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -1362,11 +1762,6 @@ export const onCreateTask = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       pickUpLocationId
       dropOffLocationId
@@ -1375,7 +1770,6 @@ export const onCreateTask = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1390,11 +1784,6 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -1429,7 +1818,6 @@ export const onCreateTask = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1444,11 +1832,6 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -1524,7 +1907,7 @@ export const onCreateTask = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -1543,8 +1926,8 @@ export const onCreateTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1559,11 +1942,6 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -1633,6 +2011,7 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1651,6 +2030,7 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1681,7 +2061,7 @@ export const onCreateTask = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -1700,8 +2080,8 @@ export const onCreateTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1716,11 +2096,6 @@ export const onCreateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -1790,6 +2165,7 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1808,6 +2184,7 @@ export const onCreateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -1878,9 +2255,8 @@ export const onUpdateTask = /* GraphQL */ `
       name
       createdBy {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1895,11 +2271,6 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -1920,6 +2291,16 @@ export const onUpdateTask = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -1950,8 +2331,8 @@ export const onUpdateTask = /* GraphQL */ `
       timeDroppedOff
       timeCancelled
       timeRejected
+      timeRiderHome
       requesterContact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -1966,11 +2347,6 @@ export const onUpdateTask = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       pickUpLocationId
       dropOffLocationId
@@ -1979,7 +2355,6 @@ export const onUpdateTask = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -1994,11 +2369,6 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -2033,7 +2403,6 @@ export const onUpdateTask = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2048,11 +2417,6 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -2128,7 +2492,7 @@ export const onUpdateTask = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -2147,8 +2511,8 @@ export const onUpdateTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2163,11 +2527,6 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -2237,6 +2596,7 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2255,6 +2615,7 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2285,7 +2646,7 @@ export const onUpdateTask = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -2304,8 +2665,8 @@ export const onUpdateTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2320,11 +2681,6 @@ export const onUpdateTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -2394,6 +2750,7 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2412,6 +2769,7 @@ export const onUpdateTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2482,9 +2840,8 @@ export const onDeleteTask = /* GraphQL */ `
       name
       createdBy {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2499,11 +2856,6 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -2524,6 +2876,16 @@ export const onDeleteTask = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -2554,8 +2916,8 @@ export const onDeleteTask = /* GraphQL */ `
       timeDroppedOff
       timeCancelled
       timeRejected
+      timeRiderHome
       requesterContact {
-        id
         name
         telephoneNumber
         mobileNumber
@@ -2570,11 +2932,6 @@ export const onDeleteTask = /* GraphQL */ `
         country
         postcode
         what3words
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
       }
       pickUpLocationId
       dropOffLocationId
@@ -2583,7 +2940,6 @@ export const onDeleteTask = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2598,11 +2954,6 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -2637,7 +2988,6 @@ export const onDeleteTask = /* GraphQL */ `
         name
         listed
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2652,11 +3002,6 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         ward
         line1
@@ -2732,7 +3077,7 @@ export const onDeleteTask = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -2751,8 +3096,8 @@ export const onDeleteTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2767,11 +3112,6 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -2841,6 +3181,7 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2859,6 +3200,7 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -2889,7 +3231,7 @@ export const onDeleteTask = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -2908,8 +3250,8 @@ export const onDeleteTask = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -2924,11 +3266,6 @@ export const onDeleteTask = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -2998,6 +3335,7 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3016,6 +3354,7 @@ export const onDeleteTask = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3091,7 +3430,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -3110,8 +3449,8 @@ export const onCreateTaskAssignee = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3126,11 +3465,6 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -3200,6 +3534,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3218,6 +3553,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3245,9 +3581,8 @@ export const onCreateTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3262,11 +3597,6 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -3287,6 +3617,16 @@ export const onCreateTaskAssignee = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -3332,7 +3672,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -3351,8 +3691,8 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3367,11 +3707,6 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -3441,6 +3776,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3459,6 +3795,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3486,9 +3823,8 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3503,11 +3839,6 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -3528,6 +3859,16 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -3573,7 +3914,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
         name
         createdBy {
           id
-          username
+          cognitoId
           displayName
           name
           roles
@@ -3592,8 +3933,8 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
         timeDroppedOff
         timeCancelled
         timeRejected
+        timeRiderHome
         requesterContact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3608,11 +3949,6 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         pickUpLocationId
         dropOffLocationId
@@ -3682,6 +4018,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3700,6 +4037,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           timeDroppedOff
           timeCancelled
           timeRejected
+          timeRiderHome
           pickUpLocationId
           dropOffLocationId
           priority
@@ -3727,9 +4065,8 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3744,11 +4081,6 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -3769,6 +4101,16 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -3810,9 +4152,8 @@ export const onCreateComment = /* GraphQL */ `
       body
       author {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3827,11 +4168,6 @@ export const onCreateComment = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -3852,6 +4188,16 @@ export const onCreateComment = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -3894,9 +4240,8 @@ export const onUpdateComment = /* GraphQL */ `
       body
       author {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3911,11 +4256,6 @@ export const onUpdateComment = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -3936,6 +4276,16 @@ export const onUpdateComment = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt
@@ -3978,9 +4328,8 @@ export const onDeleteComment = /* GraphQL */ `
       body
       author {
         id
-        username
+        cognitoId
         contact {
-          id
           name
           telephoneNumber
           mobileNumber
@@ -3995,11 +4344,6 @@ export const onDeleteComment = /* GraphQL */ `
           country
           postcode
           what3words
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         displayName
         name
@@ -4020,6 +4364,16 @@ export const onDeleteComment = /* GraphQL */ `
         }
         profilePictureURL
         profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
         comments {
           nextToken
           startedAt

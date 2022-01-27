@@ -3,22 +3,12 @@ import CommentsSection from "../Comments/CommentsSection";
 import { decodeUUID } from "../../utilities";
 import { PaddedPaper } from "../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
-import { getLocationRequest } from "../../redux/locations/LocationsActions";
-import {
-    createLoadingSelector,
-    createNotFoundSelector,
-} from "../../redux/LoadingSelectors";
 import NotFound from "../../ErrorComponents/NotFound";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
-import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import { Divider, Grid, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
-import { TextFieldUncontrolled } from "../../components/TextFields";
-import { EditModeToggleButton } from "../../components/EditModeToggleButton";
-import SaveCancelButtons from "../../components/SaveCancelButtons";
 import LocationProfile from "./components/LocationProfile";
 import { protectedFields } from "../../apiConsts";
 
@@ -44,7 +34,6 @@ export default function LocationDetail(props) {
     const [location, setLocation] = useState(initialLocationState);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
-    const [isPosting, setIsPosting] = useState(false);
 
     async function newLocationProfile() {
         if (!dataStoreReadyStatus) {
@@ -93,29 +82,18 @@ export default function LocationDetail(props) {
                 })
             );
             if (contact) {
-                const existingContact = await DataStore.query(
-                    models.AddressAndContactDetails,
-                    contact.id
-                );
                 await DataStore.save(
-                    models.AddressAndContactDetails.copyOf(
-                        existingContact,
-                        (updated) => {
-                            for (const [key, newValue] of Object.entries(
-                                contact
-                            )) {
-                                if (!protectedFields.includes(key))
-                                    updated[key] = newValue;
-                            }
+                    models.Location.copyOf(existingLocation, (updated) => {
+                        for (const [key, newValue] of Object.entries(contact)) {
+                            if (!protectedFields.includes(key))
+                                updated.contact[key] = newValue;
                         }
-                    )
+                    })
                 );
             }
-            setIsPosting(false);
         } catch (error) {
             console.log("Update request failed", error);
             dispatch(displayErrorNotification(error.message));
-            setIsPosting(false);
         }
     }
 
@@ -126,10 +104,10 @@ export default function LocationDetail(props) {
     } else {
         return (
             <React.Fragment>
-                <PaddedPaper>
+                <PaddedPaper maxWidth={700}>
                     <LocationProfile onUpdate={onUpdate} location={location} />
                 </PaddedPaper>
-                <CommentsSection parentUUID={locationUUID} />
+                <CommentsSection parentId={locationUUID} />
             </React.Fragment>
         );
     }

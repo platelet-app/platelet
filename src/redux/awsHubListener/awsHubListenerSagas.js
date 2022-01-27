@@ -14,8 +14,12 @@ function listener() {
         };
     });
 }
+
 function* initialiseDataStoreListener(action) {
-    if (process.env.REACT_APP_DEMO_MODE === "true") {
+    if (
+        process.env.NODE_ENV === "test" ||
+        process.env.REACT_APP_DEMO_MODE === "true"
+    ) {
         yield put(actions.setNetworkStatus(true));
         yield put(actions.setReadyStatus(true));
         return;

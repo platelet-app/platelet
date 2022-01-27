@@ -1,17 +1,10 @@
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
-import { styled } from "@mui/material/styles";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";
 import UnitSelector from "../../../components/UnitSelector";
-import { showHide } from "../../../styles/common";
-import {
-    ClickAwayListener,
-    Grid,
-    IconButton,
-    Stack,
-    Tooltip,
-} from "@mui/material";
+import _ from "lodash";
+import { IconButton, Stack, Tooltip } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import ArchitectureIcon from "@mui/icons-material/Architecture";
 
@@ -40,9 +33,18 @@ function EditableDeliverable(props) {
     ) : (
         <></>
     );
+
     function handleCloseUnit() {
         setShowUnit((prevState) => !prevState);
     }
+
+    const handleChange = useRef(
+        _.debounce((deliverableId, count) => {
+            props.onChangeCount(deliverableId, count);
+        }, 500),
+        []
+    );
+
     return (
         <DeliverableCard
             compact
@@ -62,9 +64,9 @@ function EditableDeliverable(props) {
                     </Tooltip>
                     <IncreaseDecreaseCounter
                         value={deliverable.count || 0}
-                        disabled={props.isDeleting}
+                        disabled={props.disabled}
                         onChange={(count) =>
-                            props.onChangeCount(deliverable.id, count)
+                            handleChange.current(deliverable.id, count)
                         }
                         onDelete={() => props.onDelete(deliverable.id)}
                     />
@@ -78,15 +80,13 @@ function EditableDeliverable(props) {
 EditableDeliverable.propTypes = {
     deliverable: PropTypes.object,
     onChangeCount: PropTypes.func,
-    isDeleting: PropTypes.bool,
-    isPosting: PropTypes.bool,
+    disabled: PropTypes.bool,
     onDelete: PropTypes.func,
 };
 
 EditableDeliverable.defaultProps = {
     onChangeCount: () => {},
-    isDeleting: false,
-    isPosting: false,
+    disabled: false,
     deliverable: { id: "", label: "None", deliverableType: { icon: "" } },
     onDelete: () => {},
 };

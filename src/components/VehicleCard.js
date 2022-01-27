@@ -1,29 +1,14 @@
-import {StyledSharpCard} from "../styles/common";
-import CardContent from "@mui/material/CardContent";
-import Grid from "@mui/material/Grid";
-import CardItem from "./CardItem";
 import React from "react";
+import { styled } from "@mui/styles";
+import { Box } from "@mui/material";
+
+const VehicleBox = styled(Box)({
+    backgroundColor: "rgba(180, 180, 180, 0.1)",
+    padding: "0.5rem",
+    width: "100%",
+    maxWidth: 500,
+});
 
 export default function VehicleCard(props) {
-    return (
-        <div>
-            <div key={props.vehicle.uuid}>
-                <StyledSharpCard style={{height: "170px"}}>
-                    <CardContent>
-                        <Grid container spacing={1} direction={"column"}>
-                            <CardItem label={"Name"}>{props.vehicle.name ? props.vehicle.name : ""}</CardItem>
-                            <CardItem
-                                label={"Manufacturer"}>{props.vehicle.manufacturer ? props.vehicle.manufacturer : ""}</CardItem>
-                            <CardItem
-                                label={"Registration"}>{props.vehicle.registration_number ? props.vehicle.registration_number : ""}</CardItem>
-                            <CardItem
-                                label={"Assignee"}>{props.vehicle.assigned_user ? props.vehicle.assigned_user.display_name : ""}</CardItem>
-                        </Grid>
-                    </CardContent>
-                </StyledSharpCard>
-            </div>
-        </div>
-    )
+    return <VehicleBox>{props.vehicle.name}</VehicleBox>;
 }
-
-

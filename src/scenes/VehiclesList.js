@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
-import { contextDots, PaddedPaper } from "../styles/common";
+import { PaddedPaper, ThemedLink } from "../styles/common";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import { Link } from "react-router-dom";
 import { encodeUUID, sortByCreatedTime } from "../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import CardsGridSkeleton from "../SharedLoadingSkeletons/CardsGridSkeleton";
-import VehicleContextMenu from "../components/ContextMenus/VehicleContextMenu";
 import VehicleCard from "../components/VehicleCard";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
+import { Stack } from "@mui/material";
 
 function VehicleList() {
-    const contextClass = contextDots();
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
@@ -52,73 +50,35 @@ function VehicleList() {
         return <CardsGridSkeleton />;
     } else {
         return (
-            <Grid
-                container
+            <Stack
                 spacing={2}
                 direction={"column"}
                 justifyContent={"flex-start"}
                 alignItems={"flex-start"}
             >
-                <Grid item>{addButton}</Grid>
-                <Grid item>
-                    <PaddedPaper width={"800px"}>
-                        <Grid
-                            container
-                            spacing={1}
-                            direction={"row"}
-                            justifyContent={"flex-start"}
-                            alignItems={"center"}
-                        >
-                            <Grid item>
-                                <Grid
-                                    container
-                                    spacing={3}
-                                    direction={"row"}
-                                    justifyContent={"flex-start"}
-                                    alignItems={"center"}
-                                >
-                                    {sortByCreatedTime(
-                                        Object.values(vehicles),
-                                        "newest"
-                                    ).map((vehicle) => (
-                                        <Grid item key={vehicle.id}>
-                                            <div
-                                                style={{
-                                                    cursor: "context-menu",
-                                                    position: "relative",
-                                                }}
-                                            >
-                                                <Link
-                                                    to={
-                                                        "/vehicle/" +
-                                                        encodeUUID(vehicle.id)
-                                                    }
-                                                    style={{
-                                                        textDecoration: "none",
-                                                    }}
-                                                >
-                                                    <VehicleCard
-                                                        vehicle={vehicle}
-                                                    />
-                                                </Link>
-                                                <div
-                                                    className={
-                                                        contextClass.root
-                                                    }
-                                                >
-                                                    <VehicleContextMenu
-                                                        vehicleUUID={vehicle.id}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </Grid>
-                                    ))}
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </PaddedPaper>
-                </Grid>
-            </Grid>
+                {addButton}
+                <PaddedPaper width={"800px"}>
+                    <Stack
+                        spacing={1}
+                        direction={"column"}
+                        justifyContent={"flex-start"}
+                    >
+                        {sortByCreatedTime(
+                            Object.values(vehicles),
+                            "newest"
+                        ).map((vehicle) => (
+                            <ThemedLink
+                                to={"/vehicle/" + encodeUUID(vehicle.id)}
+                                style={{
+                                    textDecoration: "none",
+                                }}
+                            >
+                                <VehicleCard vehicle={vehicle} />
+                            </ThemedLink>
+                        ))}
+                    </Stack>
+                </PaddedPaper>
+            </Stack>
         );
     }
 }

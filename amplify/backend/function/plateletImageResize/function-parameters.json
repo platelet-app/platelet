@@ -1,0 +1,55 @@
+{
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "resizeWidth",
+      "environmentVariableName": "RESIZE_WIDTH"
+    },
+    {
+      "cloudFormationParameterName": "resizeHeight",
+      "environmentVariableName": "RESIZE_HEIGHT"
+    },
+    {
+      "cloudFormationParameterName": "thumbnailWidth",
+      "environmentVariableName": "THUMBNAIL_WIDTH"
+    },
+    {
+      "cloudFormationParameterName": "thumbnailHeight",
+      "environmentVariableName": "THUMBNAIL_HEIGHT"
+    },
+    {
+      "cloudFormationParameterName": "amplifyStorageBucketName",
+      "environmentVariableName": "AMPLIFY_STORAGE_BUCKET_NAME"
+    },
+    {
+      "cloudFormationParameterName": "resizeWidth",
+      "environmentVariableName": "resizeWidth"
+    },
+    {
+      "cloudFormationParameterName": "resizeHeight",
+      "environmentVariableName": "resizeHeight"
+    },
+    {
+      "cloudFormationParameterName": "thumbnailWidth",
+      "environmentVariableName": "thumbnailWidth"
+    },
+    {
+      "cloudFormationParameterName": "thumbnailHeight",
+      "environmentVariableName": "thumbnailHeight"
+    },
+    {
+      "cloudFormationParameterName": "amplifyStorageBucketName",
+      "environmentVariableName": "amplifyStorageBucketName"
+    }
+  ],
+  "permissions": {
+    "storage": {
+      "plateletStorage": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  }
+}

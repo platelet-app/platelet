@@ -1,7 +1,9 @@
-type User @model {
+type User @auth(rules: [{ allow: private}]) @model
+@key(name: "byCognitoId", fields: ["cognitoId"], queryField: "getUserByCognitoId")
+{
   id: ID!
-  username: String!
-  contact: AddressAndContactDetails @connection
+  cognitoId: ID!
+  contact: AddressAndContactDetails
   displayName: String!
   name: String
   roles: [Role!]!
@@ -10,20 +12,28 @@ type User @model {
   riderResponsibility: RiderResponsibility @connection
   profilePictureURL: String
   profilePictureThumbnailURL: String
+  profilePicture: S3Object
+  profilePictureThumbnail: S3Object
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
   group: Group @connection(name: "GroupMembers")
   assignments: [TaskAssignee] @connection(keyName: "byAssignee", fields: ["id"])
   active: Int!
 }
 
-type Group @model {
+type S3Object {
+  bucket: String!
+  key: String!
+  region: String!
+}
+
+type Group @auth(rules: [{ allow: private}]) @model {
   id: ID!
   taskGroupId: ID
   name: String
   users: [User] @connection(name: "GroupMembers")
 }
 
-type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
+type Vehicle @auth(rules: [{ allow: private}]) @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   id: ID!
   assignedUserID: ID
   name: String!
@@ -35,8 +45,7 @@ type Vehicle @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type AddressAndContactDetails @model {
-  id: ID!
+type AddressAndContactDetails {
   name: String
   telephoneNumber: String
   mobileNumber: String
@@ -53,9 +62,10 @@ type AddressAndContactDetails @model {
   what3words: String
 }
 
-type Deliverable @model {
+type Deliverable @auth(rules: [{ allow: private}]) @model {
   id: ID!
   deliverableType: DeliverableType! @connection
+  taskDeliverablesId: ID
   task: Task @connection
   count: Int
   unit: DeliverableUnit
@@ -63,11 +73,11 @@ type Deliverable @model {
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type Location @model {
+type Location @auth(rules: [{ allow: private}]) @model {
   id: ID!
   name: String
   listed: Int
-  contact: AddressAndContactDetails @connection
+  contact: AddressAndContactDetails
   ward: String
   line1: String
   line2: String
@@ -85,6 +95,7 @@ type Location @model {
 
 type Task
   @model
+  @auth(rules: [{ allow: private}])
   @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
   @key(name: "byPickUpLocation", fields: ["pickUpLocationId",])
   @key(name: "byDropOffLocation", fields: ["dropOffLocationId",])
@@ -97,7 +108,8 @@ type Task
   timeDroppedOff: AWSDateTime
   timeCancelled: AWSDateTime
   timeRejected: AWSDateTime
-  requesterContact: AddressAndContactDetails @connection
+  timeRiderHome: AWSDateTime
+  requesterContact: AddressAndContactDetails
   pickUpLocationId: ID
   dropOffLocationId: ID
   pickUpLocation: Location @connection(fields: ["pickUpLocationId"])
@@ -115,6 +127,7 @@ type Task
 
 type TaskAssignee
 @model(queries: null)
+@auth(rules: [{ allow: private}])
 @key(name: "byTask", fields: ["taskId", "assigneeId"])
 @key(name: "byAssignee", fields: ["assigneeId", "taskId"])
 {
@@ -126,15 +139,15 @@ type TaskAssignee
   assignee: User! @connection(fields: ["assigneeId"])
 }
 
-type Comment @model @key(name: "byParent", fields: ["parentId"]) {
+type Comment @auth(rules: [{ allow: private}]) @model @key(name: "byParent", fields: ["parentId"]) {
   id: ID!
-  parentId: ID!
-  body: String!
-  author: User! @connection
+  parentId: ID
+  body: String
+  author: User @connection
   visibility: CommentVisibility
 }
 
-type DeliverableType @model {
+type DeliverableType @auth(rules: [{ allow: private}]) @model {
   id: ID!
   label: String!
   icon: DeliverableTypeIcon
@@ -149,7 +162,7 @@ enum DeliverableTypeIcon {
   OTHER
 }
 
-type RiderResponsibility @model {
+type RiderResponsibility @auth(rules: [{ allow: private}]) @model {
   id: ID!
   label: String!
 }
@@ -162,6 +175,8 @@ enum TaskStatus {
   DROPPED_OFF
   CANCELLED
   REJECTED
+  ABANDONED
+  COMPLETED
 }
 
 enum Priority {

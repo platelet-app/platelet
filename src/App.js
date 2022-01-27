@@ -10,7 +10,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
-import Amplify, { Logger, Auth } from "aws-amplify";
+import Amplify, { Logger } from "aws-amplify";
 import { SnackbarProvider, withSnackbar } from "notistack";
 import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
@@ -23,6 +23,8 @@ import {
 } from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
+import { DataStore } from "aws-amplify";
+import * as models from "./models";
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -33,14 +35,16 @@ if (
     const config = require("../src/aws-exports");
     Amplify.configure({
         ...config.default,
-        ssr: true,
     });
 }
 Logger.LOG_LEVEL = "ERROR";
+window.amplifyLogger = Logger;
+
+//window.DataStore = DataStore;
+//window.models = models;
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
-    const serverSettings = useSelector((state) => state.serverSettings);
     const error = useSelector((state) => state.error);
     const dispatch = useDispatch();
 
@@ -133,10 +137,10 @@ function AppContents(props) {
 
     function checkServerSettings() {
         Moment.globalMoment = moment;
-        Moment.globalLocale = serverSettings.locale.code;
+        Moment.globalLocale = "en-GB";
     }
 
-    useEffect(checkServerSettings, [serverSettings]);
+    useEffect(checkServerSettings, []);
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
@@ -157,7 +161,8 @@ const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
     ACTIVE: "cornflowerblue",
     PICKED_UP: "orange",
-    DROPPED_OFF: "lightgreen",
+    DROPPED_OFF: "darkgreen",
+    COMPLETED: "lightgreen",
     CANCELLED: "blue",
     REJECTED: "grey",
 };

@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Auth } from "aws-amplify";
-import { Grid, Button, TextField, Typography } from "@mui/material";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Button, TextField, Typography, Stack } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
-import {
-    TextFieldUncontrolled,
-    TextFieldControlled,
-} from "../../../components/TextFields";
+import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper, showHide } from "../../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
+import _ from "lodash";
 import {
     displayErrorNotification,
     displayInfoNotification,
@@ -19,10 +17,13 @@ import { getWhoami } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 import { encodeUUID } from "../../../utilities";
+import { userRoles } from "../../../apiConsts";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import { v4 as uuidv4 } from "uuid";
 
 const useStyles = makeStyles({
     root: {
-        width: "100%",
         maxWidth: 460,
     },
     message: {
@@ -30,33 +31,44 @@ const useStyles = makeStyles({
     },
 });
 const initialState = {
-    username: "",
+    name: "",
+    email: "",
     password: "",
     passwordCheck: "",
-    attributes: { name: "", email: "" },
+};
+
+const fields = {
+    name: "Name",
+    email: "Email",
 };
 
 function AdminAddUser() {
     const [state, setState] = useState(initialState);
-    //TODO: eventually want to make signup only with email address unless chosen otherwise
+    //TODO: eventually want to make signup only with email address
     const whoami = useSelector(getWhoami);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
-    const [usernameMode, setUsernameMode] = useState(true);
     const [passwordVerified, setPasswordVerified] = useState(true);
     const [inputVerified, setInputVerified] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [message, setMessage] = useState("");
     const dispatch = useDispatch();
     const classes = useStyles();
+    const [rolesState, setRolesState] = useState([]);
+
+    function onClickToggle(key) {
+        setRolesState((prevState) => {
+            if (prevState.includes(key))
+                return prevState.filter((v) => v !== key);
+            else return [...prevState, key];
+        });
+    }
 
     function verifyInput() {
         setInputVerified(
-            state.username &&
-                state.password &&
-                state.attributes.name &&
-                state.attributes.email &&
-                passwordVerified
+            //state.password &&
+            state.name && state.email
+            //passwordVerified
         );
     }
     useEffect(verifyInput, [state, passwordVerified]);
@@ -72,42 +84,38 @@ function AdminAddUser() {
     async function signUp() {
         try {
             setIsPosting(true);
-            if (
-                !process.env.REACT_APP_OFFLINE_ONLY ||
-                process.env.REACT_APP_OFFLINE_ONLY === "false"
-            ) {
-                const { userSub } = await Auth.signUp({
-                    ...state,
-                });
-                dispatch(
-                    displayInfoNotification(
-                        "User registered and will be available after they confirm their account"
-                    )
-                );
-            } else {
-                // Only add the user to DataStore if we're working offline, otherwise get it from amplify once user is confirmed
-                const newContact = await DataStore.save(
-                    new models.AddressAndContactDetails({
-                        emailAddress: state.attributes.email,
-                    })
-                );
-                const newUser = await DataStore.save(
-                    new models.User({
-                        name: state.attributes.name,
-                        displayName: state.attributes.name,
-                        active: 1,
-                        username: state.username,
-                        contact: newContact,
-                    })
-                );
-                dispatch(
-                    displayInfoNotification(
-                        "User added",
-                        undefined,
-                        `/user/${encodeUUID(newUser.id)}`
-                    )
-                );
+            //  const { userSub } = await Auth.signUp({
+            //      ...state,
+            //  });
+            //             dispatch(
+            //                 displayInfoNotification(
+            //                     "User registered and will be available after they confirm their account"
+            //                 )
+            //             );
+            // adminCreateUser on aws cognito
+            //
+            const userCheck = await DataStore.query(models.User);
+            if (userCheck.map((u) => u.displayName).includes(state.name)) {
+                throw new Error("That name is taken");
             }
+
+            const newUser = await DataStore.save(
+                new models.User({
+                    name: state.name,
+                    displayName: state.name,
+                    cognitoId: uuidv4(),
+                    active: 1,
+                    contact: { emailAddress: state.email },
+                    roles: [...rolesState, userRoles.user],
+                })
+            );
+            dispatch(
+                displayInfoNotification(
+                    "User added",
+                    undefined,
+                    `/user/${encodeUUID(newUser.id)}`
+                )
+            );
             setState(initialState);
             setIsPosting(false);
         } catch (error) {
@@ -116,7 +124,6 @@ function AdminAddUser() {
             dispatch(displayErrorNotification(error.message));
         }
     }
-    const { show, hide } = showHide();
     if (whoamiFetching) {
         return <FormSkeleton />;
     } else if (!whoami.roles.includes("ADMIN")) {
@@ -124,124 +131,150 @@ function AdminAddUser() {
     } else {
         return (
             <PaddedPaper>
-                <Grid
-                    container
+                <Stack
                     className={classes.root}
                     direction={"column"}
                     justifyContent={"flex-start"}
                     alignItems={"top"}
                     spacing={3}
                 >
-                    <Grid item>
-                        <Typography variant={"h5"}>Add a new user</Typography>
-                    </Grid>
-                    <Grid item>
+                    <Typography variant={"h5"}>Add a new user</Typography>
+                    {Object.entries(fields).map(([key, value]) => (
                         <TextFieldUncontrolled
-                            className={usernameMode ? show : hide}
-                            value={state.username}
-                            fullWidth
-                            label={"Username"}
-                            id={"username"}
-                            onChange={(e) => {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    username: e.target.value,
-                                }));
-                            }}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            fullWidth
-                            label={"Email address"}
-                            id={"email"}
+                            key={key}
+                            label={value}
+                            value={state[key]}
                             onChange={(e) =>
                                 setState((prevState) => ({
                                     ...prevState,
-                                    username: usernameMode
-                                        ? prevState.username
-                                        : e.target.value,
-                                    attributes: {
-                                        ...prevState.attributes,
-                                        email: e.target.value,
-                                    },
+                                    [key]: e.target.value,
                                 }))
                             }
-                            value={state.attributes.email}
                         />
-                    </Grid>
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            fullWidth
-                            label={"Name"}
-                            id={"name"}
-                            onChange={(e) =>
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    attributes: {
-                                        ...prevState.attributes,
-                                        name: e.target.value,
-                                    },
-                                }))
-                            }
-                            value={state.attributes.name}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextFieldUncontrolled
-                            value={state.password}
-                            inputProps={{
-                                type: "password",
-                            }}
-                            fullWidth
-                            label={"Password"}
-                            id={"password"}
-                            autoComplete="new-password"
-                            onChange={(e) => {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    password: e.target.value,
-                                }));
-                            }}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            margin="dense"
-                            id={"password-confirm"}
-                            error={!passwordVerified}
-                            helperText={
-                                !passwordVerified
-                                    ? "Passwords do not match"
-                                    : ""
-                            }
-                            label={"Password confirm"}
-                            value={state.passwordCheck}
-                            inputProps={{
-                                type: "password",
-                            }}
-                            fullWidth
-                            autoComplete="new-password"
-                            onChange={(e) => {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    passwordCheck: e.target.value,
-                                }));
-                            }}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            disabled={!inputVerified || isPosting}
-                            onClick={signUp}
+                    ))}
+                    {false && ( // no password fields for now
+                        <>
+                            <TextField
+                                value={state.password}
+                                inputProps={{
+                                    type: "password",
+                                }}
+                                fullWidth
+                                label={"Password"}
+                                id={"password"}
+                                autoComplete="new-password"
+                                onChange={(e) => {
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        password: e.target.value,
+                                    }));
+                                }}
+                            />
+                            <TextField
+                                margin="dense"
+                                id={"password-confirm"}
+                                error={!passwordVerified}
+                                helperText={
+                                    !passwordVerified
+                                        ? "Passwords do not match"
+                                        : ""
+                                }
+                                label={"Password confirm"}
+                                value={state.passwordCheck}
+                                inputProps={{
+                                    type: "password",
+                                }}
+                                fullWidth
+                                autoComplete="new-password"
+                                onChange={(e) => {
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        passwordCheck: e.target.value,
+                                    }));
+                                }}
+                            />
+                        </>
+                    )}
+
+                    <Stack
+                        justifyContent="flex-start"
+                        alignItems="center"
+                        spacing={2}
+                        direction="row"
+                    >
+                        <ToggleButtonGroup
+                            value={rolesState}
+                            orientation="vertical"
+                            aria-label="task actions"
                         >
-                            Add user
-                        </Button>
-                    </Grid>
-                    <Grid className={classes.message} item>
-                        <Typography>{message}</Typography>
-                    </Grid>
-                </Grid>
+                            {Object.values(_.omit(userRoles, "user")).map(
+                                (value) => {
+                                    return (
+                                        <ToggleButton
+                                            sx={{
+                                                paddingTop: 1.5,
+                                                paddingBottom: 1.5,
+                                            }}
+                                            key={value}
+                                            disabled={false}
+                                            aria-disabled={false}
+                                            aria-label={value}
+                                            value={value}
+                                            onClick={() => onClickToggle(value)}
+                                        >
+                                            {rolesState.includes(value) ? (
+                                                <CheckBoxIcon />
+                                            ) : (
+                                                <CheckBoxOutlineBlankIcon />
+                                            )}
+                                        </ToggleButton>
+                                    );
+                                }
+                            )}
+                        </ToggleButtonGroup>
+                        <Stack sx={{ width: "100%" }} direction="column">
+                            {Object.values(_.omit(userRoles, "user")).map(
+                                (value) => {
+                                    const disabled = false;
+                                    return (
+                                        <Stack
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            direction="row"
+                                        >
+                                            <Typography
+                                                onClick={() => {
+                                                    if (disabled) return;
+                                                    onClickToggle(value);
+                                                }}
+                                                sx={{
+                                                    paddingTop: 1.5,
+                                                    paddingBottom: 1.5,
+                                                    cursor: disabled
+                                                        ? "default"
+                                                        : "pointer",
+                                                    color: disabled
+                                                        ? "gray"
+                                                        : "text.primary",
+                                                }}
+                                            >
+                                                {value}
+                                            </Typography>
+                                        </Stack>
+                                    );
+                                }
+                            )}
+                        </Stack>
+                    </Stack>
+
+                    <Button
+                        disabled={!inputVerified || isPosting}
+                        onClick={signUp}
+                    >
+                        Add user
+                    </Button>
+                    <Typography>{message}</Typography>
+                </Stack>
             </PaddedPaper>
         );
     }

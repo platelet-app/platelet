@@ -13,17 +13,32 @@ import { NotFound } from "http-errors";
 import { userRoles } from "../apiConsts";
 
 const fakeUser = {
-    username: "offline",
+    id: "offline",
+    name: "offline",
     displayName: "Offline User",
     roles: Object.values(userRoles),
-    name: "Offline User",
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
     active: 1,
 };
 
+const testUserModel = new models.User({
+    name: "whoami",
+    displayName: "Mock User",
+    roles: Object.values(userRoles),
+    dateOfBirth: null,
+    profilePictureURL: null,
+    profilePictureThumbnailURL: null,
+    active: 1,
+});
+const testUser = { ...testUserModel, id: "whoami" };
+
 function* getWhoami() {
+    if (process.env.NODE_ENV === "test") {
+        yield put(getWhoamiSuccess(testUser));
+        return;
+    }
     if (
         process.env.REACT_APP_DEMO_MODE === "true" ||
         process.env.REACT_APP_OFFLINE_ONLY === "true"
@@ -31,7 +46,7 @@ function* getWhoami() {
         const existingUser = yield call(
             [DataStore, DataStore.query],
             models.User,
-            (u) => u.username("eq", "offline")
+            (u) => u.name("eq", "offline")
         );
         if (existingUser.length === 0) {
             let userResult = fakeUser;
@@ -55,16 +70,30 @@ function* getWhoami() {
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,
-                    loggedInUser.attributes.sub
+                    (t) => t.cognitoId("eq", loggedInUser.attributes.sub)
                 );
-                if (!result) {
+                if (result && result.length === 0) {
                     result = yield call([API, API.graphql], {
-                        query: queries.getUser,
-                        variables: { id: loggedInUser.attributes.sub },
+                        query: queries.getUserByCognitoId,
+                        variables: { cognitoId: loggedInUser.attributes.sub },
                     });
-                    yield put(getWhoamiSuccess(result.data.getUser));
+                    if (
+                        result &&
+                        result.data &&
+                        result.data.getUserByCognitoId &&
+                        result.data.getUserByCognitoId.items &&
+                        result.data.getUserByCognitoId.items.length > 0
+                    ) {
+                        yield put(
+                            getWhoamiSuccess(
+                                result.data.getUserByCognitoId.items[0]
+                            )
+                        );
+                    } else {
+                        throw new NotFound("Could not find logged in user");
+                    }
                 } else {
-                    yield put(getWhoamiSuccess(result));
+                    yield put(getWhoamiSuccess(result[0]));
                 }
             } else {
                 yield put(

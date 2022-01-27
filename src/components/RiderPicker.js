@@ -14,28 +14,29 @@ const filterOptions = (options, { inputValue }) => {
 };
 
 function RiderPicker(props) {
-    const [availableUsers, setAvailableRiders] = useState([]);
+    const [availableUsers, setAvailableUsers] = useState([]);
     const [filteredRiderSuggestions, setFilteredRiderSuggestions] = useState(
         []
     );
+    const [reset, setReset] = useState(false);
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
+        // toggle reset so that the key changes and the rider select re-renders
+        setReset((prevState) => !prevState);
     };
 
     async function getRiders() {
-        const riders = (await DataStore.query(models.User)).filter(
-            (u) =>
-                u.roles.includes(userRoles.rider) &&
-                !props.exclude.includes(u.id)
-        );
-        setAvailableRiders(riders);
+        const users = await DataStore.query(models.User);
+        setAvailableUsers(users);
     }
-
     useEffect(() => getRiders(), []);
 
     useEffect(() => {
         const filteredSuggestions = availableUsers.filter(
-            (u) => !props.exclude.includes(u.id)
+            (u) =>
+                u.roles &&
+                u.roles.includes(userRoles.rider) &&
+                !props.exclude.includes(u.id)
         );
         // const vehicleUsers = filteredSuggestions.filter(
         //     (user) => user.assigned_vehicles.length !== 0
@@ -52,6 +53,7 @@ function RiderPicker(props) {
             <Autocomplete
                 disablePortal
                 fullWidth
+                key={reset}
                 filterOptions={filterOptions}
                 id="combo-box-riders"
                 options={filteredRiderSuggestions}
@@ -85,10 +87,9 @@ function RiderPicker(props) {
                                         ? option.riderResponsibility.label
                                         : ""
                                 }
-                                profilePictureURL={
-                                    option.profilePictureThumbnailURL
+                                profilePictureThumbnail={
+                                    option.profilePictureThumbnail
                                 }
-                                vehicleName={"no"}
                             />
                         </Box>
                     );
