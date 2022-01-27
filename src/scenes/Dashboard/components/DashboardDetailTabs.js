@@ -14,6 +14,7 @@ import { showHide } from "../../../styles/common";
 import {
     setDashboardFilteredUser,
     setDashboardTabIndex,
+    setGuidedSetupOpen,
     setRoleView,
 } from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
@@ -113,7 +114,7 @@ export function DashboardDetailTabs(props) {
                     !dataStoreReadyStatus ||
                     (roleView && roleView === userRoles.rider)
                 }
-                onClick={() => addTask(whoami ? whoami.id : null)}
+                onClick={() => dispatch(setGuidedSetupOpen(true))}
             >
                 Create New
             </Button>

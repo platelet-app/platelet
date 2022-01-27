@@ -5,10 +5,7 @@ import Paper from "@mui/material/Paper";
 import { setDashboardFilteredUser, setRoleView } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    DashboardDetailTabs,
-    TabPanel,
-} from "./components/DashboardDetailTabs";
+import { DashboardDetailTabs } from "./components/DashboardDetailTabs";
 import {
     encodeUUID,
     getDashboardRoleMode,
@@ -20,6 +17,7 @@ import {
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
+    guidedSetupOpenSelector,
 } from "../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
@@ -27,6 +25,7 @@ import { Fab, Hidden } from "@mui/material";
 import { addTask } from "./utilities";
 import { useHistory } from "react-router";
 import ActiveRidersChips from "./components/ActiveRidersChips";
+import GuidedSetupDrawer from "./components/GuidedSetupDrawer";
 
 function AddClearFab() {
     const dispatch = useDispatch();
@@ -131,6 +130,7 @@ function Dashboard() {
                     <AddClearFab />
                 )}
             </Hidden>
+            <GuidedSetupDrawer />
         </>
     );
 }

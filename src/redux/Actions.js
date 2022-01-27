@@ -8,6 +8,12 @@ export function setDarkMode(data) {
     return { type: SET_DARK_MODE, data };
 }
 
+export const SET_GUIDED_SETUP_OPEN = "SET_GUIDED_SETUP_OPEN";
+
+export function setGuidedSetupOpen(data) {
+    return { type: SET_GUIDED_SETUP_OPEN, data };
+}
+
 export const SET_DASHBOARD_FILTERED_USER = "SET_DASHBOARD_FILTERED_USER";
 
 export function setDashboardFilteredUser(data) {

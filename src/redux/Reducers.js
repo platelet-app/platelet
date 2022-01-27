@@ -93,6 +93,15 @@ function mobileView(state = false, action) {
     }
 }
 
+function guidedSetupOpen(state = false, action) {
+    switch (action.type) {
+        case "SET_GUIDED_SETUP_OPEN":
+            return action.data;
+        default:
+            return state;
+    }
+}
+
 const whoamiInitialState = {
     user: {
         uuid: null,
@@ -270,6 +279,7 @@ const appReducer = combineReducers({
     apiControl,
     authStatus,
     viewMode,
+    guidedSetupOpen,
     roleView,
     newTaskAddedView,
     mobileView,

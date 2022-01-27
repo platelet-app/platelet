@@ -20,5 +20,6 @@ export const dataStoreReadyStatusSelector = (state) =>
 export const onChangeTaskSelector = (state) => state.onChangeTask;
 export const dashboardTabIndexSelector = (state) => state.dashboardTabIndex;
 export const menuIndexSelector = (state) => state.menuIndex;
+export const guidedSetupOpenSelector = (state) => state.guidedSetupOpen;
 export const dashboardFilteredUserSelector = (state) =>
     state.dashboardFilteredUser;
