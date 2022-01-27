@@ -149,9 +149,6 @@ export const GuidedSetup = ({ show, onClose }) => {
     const [task, setTask] = useState(emptyTask);
     const [value, setValue] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
-    const roleView = useSelector((state) => state.roleView);
-    const whoami = useSelector((state) => state.whoami.user);
-    const dispatch = useDispatch();
 
     useEffect(() => {
         if (show) {
@@ -166,58 +163,40 @@ export const GuidedSetup = ({ show, onClose }) => {
     };
 
     const handleCallerContactChange = (value) => {
-        const result = {
-            ...formValues,
-            caller: { ...formValues.caller, ...value },
-        };
-        setFormValues(result);
+        setFormValues((prevState) => ({
+            ...prevState,
+            caller: { ...prevState.caller, ...value },
+        }));
     };
 
     const handleSenderContactChange = (value) => {
-        const result = {
-            ...formValues,
-            sender: { ...formValues.sender, ...value },
-        };
-        setFormValues(result);
+        setFormValues((prevState) => ({
+            ...prevState,
+            sender: { ...prevState.sender, ...value },
+        }));
     };
 
     const handleReceiverContactChange = (value) => {
-        const result = {
-            ...formValues,
-            receiver: { ...formValues.receiver, ...value },
-        };
-        setFormValues(result);
+        setFormValues((prevState) => ({
+            ...prevState,
+            receiver: { ...prevState.receiver, ...value },
+        }));
     };
 
     const onPickUpTimeSaved = (pickUpTime) => {
-        const result = { ...formValues, pickUpTime };
-
-        setFormValues(result);
+        setFormValues((prevState) => ({ ...prevState, pickUpTime }));
     };
 
     const onDropOffTimeSaved = (dropOffTime) => {
-        const result = { ...formValues, dropOffTime };
-
-        setFormValues(result);
+        setFormValues((prevState) => ({ ...prevState, dropOffTime }));
     };
 
     const onPickUpLocationSaved = (pickUpLocation) => {
-        const result = { ...formValues, pickUpLocation };
-        const locationUUID = pickUpLocation.uuid;
-
-        setFormValues(result);
-
-        if (locationUUID) {
-        }
+        setFormValues((prevState) => ({ ...prevState, pickUpLocation }));
     };
 
-    const onDropoffLocationSaved = (dropOffLocation) => {
-        const result = { ...formValues, dropOffLocation };
-        const locationUUID = dropOffLocation.uuid;
-
-        setFormValues(result);
-        if (locationUUID) {
-        }
+    const onDropOffLocationSaved = (dropOffLocation) => {
+        setFormValues((prevState) => ({ ...prevState, dropOffLocation }));
     };
 
     let emptyDeliverable = {
@@ -257,7 +236,7 @@ export const GuidedSetup = ({ show, onClose }) => {
                     <Tabs
                         value={value}
                         onChange={handleChange}
-                        aria-label="coordianator setup tab"
+                        aria-label="coordinator setup tab"
                         className={classes.tabs}
                         classes={{
                             indicator: classes.indicator,
@@ -320,8 +299,8 @@ export const GuidedSetup = ({ show, onClose }) => {
                     <Step3
                         values={formValues}
                         onChange={handleReceiverContactChange}
-                        onSelectDropoffLocation={onDropoffLocationSaved}
-                        onSelectDropoffTime={onDropOffTimeSaved}
+                        onSelectDropOffLocation={onDropOffLocationSaved}
+                        onSelectDropOffTime={onDropOffTimeSaved}
                         onSelectPickupLocation={onPickUpLocationSaved}
                         onSelectPickupTime={onPickUpTimeSaved}
                     />

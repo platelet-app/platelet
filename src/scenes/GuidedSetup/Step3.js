@@ -14,8 +14,8 @@ import { Styles } from "./styles";
 
 export const Step3 = ({
     values,
-    onSelectDropoffLocation,
-    onSelectDropoffTime,
+    onSelectDropOffLocation,
+    onSelectDropOffTime,
     onSelectPickupLocation,
     onSelectPickupTime,
 }) => {
@@ -84,7 +84,7 @@ export const Step3 = ({
 
                         {showDropOffDropdown ? (
                             <LocationDropdownSelector
-                                onSelectLocation={onSelectDropoffLocation}
+                                onSelectLocation={onSelectDropOffLocation}
                                 location={values.dropOffLocation}
                                 label="Location"
                             />
@@ -96,7 +96,7 @@ export const Step3 = ({
                             <DateTimePicker
                                 label={"Time and date"}
                                 value={values.dropOffTime}
-                                onChange={(value) => onSelectDropoffTime(value)}
+                                onChange={(value) => onSelectDropOffTime(value)}
                                 renderInput={(params) => (
                                     <TextField {...params} />
                                 )}
