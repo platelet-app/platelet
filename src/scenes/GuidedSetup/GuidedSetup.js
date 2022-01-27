@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useDispatch, useSelector } from "react-redux";
 import makeStyles from "@mui/styles/makeStyles";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
@@ -58,12 +57,13 @@ const guidedSetupStyles = makeStyles((theme) => ({
     },
     appBar: {
         boxShadow: "none",
+        backgroundColor: theme.palette.background.paper,
     },
     tabs: {
         "& .MuiTabs-flexContainer": {
             justifyContent: "space-around",
         },
-        backgroundColor: "white",
+        //backgroundColor: "white",
     },
     tabButton: {
         "& .MuiTab-wrapper": {
@@ -74,17 +74,17 @@ const guidedSetupStyles = makeStyles((theme) => ({
         justifyItems: "center",
         alignItems: "self-start",
         gridTemplateRows: "45px 1fr",
-        color: "black",
+        color: theme.palette.mode === "dark" ? "white" : "black",
         minWidth: "80px",
         borderBottom: "solid rgba(0, 0, 0, 0.55) 5px",
     },
     indicator: {
-        backgroundColor: "black",
         height: "5px",
     },
     btnIcon: {
         fontSize: "2rem",
         marginBottom: "10px",
+        color: theme.palette.mode === "dark" ? "white" : "black",
     },
     tabContent: {
         flexGrow: 1,
@@ -290,8 +290,7 @@ export const GuidedSetup = ({ show, onClose }) => {
                 <TabPanel value={value} index={1}>
                     <Step2
                         values={formValues}
-                        // onSelect={onPickUpLocationSaved}
-                        taskUUID={task.uuid}
+                        taskUUID={task.id}
                         onChange={handleDeliverablesChange}
                     />
                 </TabPanel>
