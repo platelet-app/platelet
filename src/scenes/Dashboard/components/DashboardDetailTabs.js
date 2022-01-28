@@ -27,6 +27,7 @@ import {
     dashboardTabIndexSelector,
     dataStoreReadyStatusSelector,
     getWhoami,
+    guidedSetupOpenSelector,
 } from "../../../redux/Selectors";
 import { userRoles } from "../../../apiConsts";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
@@ -69,6 +70,7 @@ export function DashboardDetailTabs(props) {
     const roleView = useSelector((state) => state.roleView);
     const { show, hide } = showHide();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
+    const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
 
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const theme = useTheme();
@@ -110,6 +112,7 @@ export function DashboardDetailTabs(props) {
                 color="primary"
                 id="create-task-button"
                 disabled={
+                    guidedSetupOpen ||
                     !dataStoreReadyStatus ||
                     (roleView && roleView === userRoles.rider)
                 }
