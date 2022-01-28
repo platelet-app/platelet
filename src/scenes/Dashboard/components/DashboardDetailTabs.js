@@ -30,7 +30,6 @@ import {
 } from "../../../redux/Selectors";
 import { userRoles } from "../../../apiConsts";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
-import { addTask } from "../utilities";
 
 export function TabPanel(props) {
     const { children, index, ...other } = props;

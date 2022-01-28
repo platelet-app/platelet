@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import AppBar from "@mui/material/AppBar";
@@ -8,14 +7,14 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { v4 as uuidv4 } from "uuid";
-
+import { useDispatch } from "react-redux";
+import { setGuidedSetupOpen } from "../../redux/Actions";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 import PersonIcon from "@mui/icons-material/Person";
-
-import { encodeUUID } from "../../utilities";
 
 import { Step1, Step2, Step3, Step4, Step5 } from "./index";
 import { Stack } from "@mui/material";
+import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -96,7 +95,7 @@ const guidedSetupStyles = makeStyles((theme) => ({
 }));
 
 const defaultValues = {
-    caller: {
+    requesterContact: {
         name: "",
         telephoneNumber: "",
         email: "",
@@ -126,11 +125,13 @@ const defaultValues = {
 };
 
 export const GuidedSetup = ({ show, onClose }) => {
-    const history = useHistory();
-
     const classes = guidedSetupStyles();
     const [value, setValue] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
+    const timeOfCall = useRef(new Date().toISOString());
+    const dispatch = useDispatch();
+    const [discardConfirmationOpen, setDiscardConfirmationOpen] =
+        useState(false);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -139,7 +140,7 @@ export const GuidedSetup = ({ show, onClose }) => {
     const handleCallerContactChange = (value) => {
         setFormValues((prevState) => ({
             ...prevState,
-            caller: { ...prevState.caller, ...value },
+            requesterContact: { ...prevState.requesterContact, ...value },
         }));
     };
 
@@ -162,6 +163,17 @@ export const GuidedSetup = ({ show, onClose }) => {
             ...prevState,
             receiver: { ...prevState.receiver, ...value },
         }));
+    };
+
+    const handleSave = () => {
+        saveNewTaskToDataStore({
+            ...formValues,
+            timeOfCall: timeOfCall.current,
+        });
+    };
+
+    const handleDiscard = () => {
+        setDiscardConfirmationOpen(true);
     };
 
     const onPickUpTimeSaved = (pickUpTime) => {
@@ -283,11 +295,26 @@ export const GuidedSetup = ({ show, onClose }) => {
                 justifyContent="space-between"
                 direction="row"
             >
-                <Button autoFocus>Discard</Button>
-                <Button variant="contained" autoFocus>
+                <Button onClick={handleDiscard} autoFocus>
+                    Discard
+                </Button>
+                <Button onClick={handleSave} variant="contained" autoFocus>
                     Save to dashboard
                 </Button>
             </Stack>
+            <ConfirmationDialog
+                open={discardConfirmationOpen}
+                dialogTitle={"Are you sure?"}
+                onClose={() => setDiscardConfirmationOpen(false)}
+                onConfirmation={() => {
+                    setFormValues(defaultValues);
+                    dispatch(setGuidedSetupOpen(false));
+                }}
+            >
+                <Typography>
+                    This will clear all the data you have entered.
+                </Typography>
+            </ConfirmationDialog>
         </div>
     );
 };

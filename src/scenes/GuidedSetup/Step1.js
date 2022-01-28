@@ -9,7 +9,10 @@ export const Step1 = ({ values, onChangeContact, onChangePriority }) => {
             <Typography variant="h6">
                 What are their contact details?
             </Typography>
-            <ContactForm values={values["caller"]} onChange={onChangeContact} />
+            <ContactForm
+                values={values.requesterContact}
+                onChange={onChangeContact}
+            />
             <Typography variant="h6">What's the priority?</Typography>
             <PrioritySelect
                 priority={values.priority}
