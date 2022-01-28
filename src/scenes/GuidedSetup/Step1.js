@@ -1,13 +1,20 @@
-import React from 'react';
-import { ContactForm } from '../../components/ContactForm'
+import { Stack, Typography } from "@mui/material";
+import React from "react";
+import { ContactForm } from "../../components/ContactForm";
+import PrioritySelect from "../Task/components/PrioritySelect";
 
-import { Styles } from './styles'
-
-export const Step1 = ({ values, onChange }) => {
-  const classes = Styles()
+export const Step1 = ({ values, onChangeContact, onChangePriority }) => {
     return (
-        <div className={classes.wrapper}>
-            <ContactForm values={values['caller']} onChange={onChange} />
-        </div>
-    )
-}
+        <Stack spacing={1}>
+            <Typography variant="h6">
+                What are their contact details?
+            </Typography>
+            <ContactForm values={values["caller"]} onChange={onChangeContact} />
+            <Typography variant="h6">What's the priority?</Typography>
+            <PrioritySelect
+                priority={values.priority}
+                onSelect={onChangePriority}
+            />
+        </Stack>
+    );
+};

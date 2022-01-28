@@ -15,6 +15,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import { encodeUUID } from "../../utilities";
 
 import { Step1, Step2, Step3, Step4, Step5 } from "./index";
+import { Stack } from "@mui/material";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -80,6 +81,7 @@ const guidedSetupStyles = makeStyles((theme) => ({
     },
     indicator: {
         height: "5px",
+        width: "100%",
     },
     btnIcon: {
         fontSize: "2rem",
@@ -88,20 +90,15 @@ const guidedSetupStyles = makeStyles((theme) => ({
     },
     tabContent: {
         flexGrow: 1,
+        maxHeight: 600,
         backgroundColor: theme.palette.background.paper,
-    },
-    btn: {
-        alignSelf: "end",
-        height: "50px",
-        width: "220px",
-        border: "1px solid #1976d2",
     },
 }));
 
 const defaultValues = {
     caller: {
         name: "",
-        phone: "",
+        telephoneNumber: "",
         email: "",
     },
     pickUpLocation: null,
@@ -128,35 +125,12 @@ const defaultValues = {
     },
 };
 
-const emptyTask = {
-    uuid: "",
-    requester_contact: {
-        name: "",
-        telephone_number: "",
-    },
-    assigned_riders: [],
-    assigned_coordinators: [],
-    time_picked_up: null,
-    time_dropped_off: null,
-    time_rejected: null,
-    time_cancelled: null,
-};
-
 export const GuidedSetup = ({ show, onClose }) => {
     const history = useHistory();
 
     const classes = guidedSetupStyles();
-    const [task, setTask] = useState(emptyTask);
     const [value, setValue] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
-
-    useEffect(() => {
-        if (show) {
-            const uuid = uuidv4();
-            const newTask = { ...emptyTask, uuid };
-            setTask(newTask);
-        }
-    }, [show]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -166,6 +140,13 @@ export const GuidedSetup = ({ show, onClose }) => {
         setFormValues((prevState) => ({
             ...prevState,
             caller: { ...prevState.caller, ...value },
+        }));
+    };
+
+    const handlePriorityChange = (value) => {
+        setFormValues((prevState) => ({
+            ...prevState,
+            priority: value,
         }));
     };
 
@@ -199,14 +180,8 @@ export const GuidedSetup = ({ show, onClose }) => {
         setFormValues((prevState) => ({ ...prevState, dropOffLocation }));
     };
 
-    let emptyDeliverable = {
-        task_uuid: task.uuid,
-        uuid: uuidv4(),
-    };
-
     const onAddNewDeliverable = (deliverable) => {
         let newDeliverable = {
-            ...emptyDeliverable,
             count: 1,
             type_id: deliverable.id,
             type: deliverable.label,
@@ -219,9 +194,6 @@ export const GuidedSetup = ({ show, onClose }) => {
             onAddNewDeliverable(deliverable);
         }
     };
-
-    const onShowTaskOverview = () =>
-        history.push(`/task/${encodeUUID(task.uuid)}`);
 
     const onCloseForm = () => {
         onClose();
@@ -244,37 +216,29 @@ export const GuidedSetup = ({ show, onClose }) => {
                     >
                         <Tab
                             icon={<PersonIcon className={classes.btnIcon} />}
-                            label="Caller"
+                            label={
+                                <div>
+                                    Caller /<br /> Priority
+                                </div>
+                            }
                             {...a11yProps(0)}
                             className={classes.tabButton}
                         />
                         <Tab
                             icon={<PersonIcon className={classes.btnIcon} />}
-                            label={
-                                <div>
-                                    {`Items &`} <br /> {`Priority`}
-                                </div>
-                            }
+                            label={"Items"}
                             {...a11yProps(1)}
                             className={classes.tabButton}
                         />
                         <Tab
                             icon={<PersonIcon className={classes.btnIcon} />}
-                            label={
-                                <div>
-                                    Pick-up <br /> Drop-off
-                                </div>
-                            }
+                            label={"Pick-up"}
                             {...a11yProps(2)}
                             className={classes.tabButton}
                         />
                         <Tab
                             icon={<PersonIcon className={classes.btnIcon} />}
-                            label={
-                                <div>
-                                    Assign <br /> Rider/Van
-                                </div>
-                            }
+                            label={"Deliver"}
                             {...a11yProps(3)}
                             className={classes.tabButton}
                         />
@@ -284,13 +248,13 @@ export const GuidedSetup = ({ show, onClose }) => {
                 <TabPanel value={value} index={0}>
                     <Step1
                         values={formValues}
-                        onChange={handleCallerContactChange}
+                        onChangeContact={handleCallerContactChange}
+                        onChangePriority={handlePriorityChange}
                     />
                 </TabPanel>
                 <TabPanel value={value} index={1}>
                     <Step2
                         values={formValues}
-                        taskUUID={task.id}
                         onChange={handleDeliverablesChange}
                     />
                 </TabPanel>
@@ -310,19 +274,20 @@ export const GuidedSetup = ({ show, onClose }) => {
                 <TabPanel value={value} index={4}>
                     <Step5
                         values={formValues}
-                        taskUUID={task.uuid}
                         onChange={handleDeliverablesChange}
                     />
                 </TabPanel>
             </div>
-            <Button
-                className={classes.btn}
-                autoFocus
-                onClick={onShowTaskOverview}
-                color="primary"
+            <Stack
+                sx={{ margin: 1 }}
+                justifyContent="space-between"
+                direction="row"
             >
-                Skip to detailed overview
-            </Button>
+                <Button autoFocus>Discard</Button>
+                <Button variant="contained" autoFocus>
+                    Save to dashboard
+                </Button>
+            </Stack>
         </div>
     );
 };

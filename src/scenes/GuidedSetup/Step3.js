@@ -14,22 +14,19 @@ import { Styles } from "./styles";
 
 export const Step3 = ({
     values,
-    onSelectDropOffLocation,
-    onSelectDropOffTime,
     onSelectPickupLocation,
     onSelectPickupTime,
 }) => {
     const classes = Styles();
 
     const [showPickUpDropdown, setShowPickUpDropdown] = useState(true);
-    const [showDropOffDropdown, setShowDropOffDropdown] = useState(true);
 
     return (
         <Scrollbars autoHide autoHeight autoHeightMin={450} autoHeightMax={350}>
             <div className={classes.columnWrapper}>
                 <div className={classes.block}>
                     <Typography variant="h6" gutterBottom>
-                        {"Pick-up"}
+                        Where from?
                     </Typography>
                     <div className={classes.flexWrapper}>
                         <Button
@@ -58,45 +55,6 @@ export const Step3 = ({
                                 label={"Time and date"}
                                 value={values.pickUpTime}
                                 onChange={(value) => onSelectPickupTime(value)}
-                                renderInput={(params) => (
-                                    <TextField {...params} />
-                                )}
-                            />
-                        </LocalizationProvider>
-                    </div>
-                </div>
-
-                <div className={classes.block}>
-                    <Typography variant="h6" gutterBottom>
-                        {"Drop-off"}
-                    </Typography>
-                    <div className={classes.flexWrapper}>
-                        <Button
-                            style={{ marginBottom: "20px" }}
-                            onClick={() =>
-                                setShowDropOffDropdown((state) => !state)
-                            }
-                        >
-                            {showDropOffDropdown
-                                ? "Enter address manually"
-                                : "Look up from the list"}
-                        </Button>
-
-                        {showDropOffDropdown ? (
-                            <LocationDropdownSelector
-                                onSelectLocation={onSelectDropOffLocation}
-                                location={values.dropOffLocation}
-                                label="Location"
-                            />
-                        ) : (
-                            <ManualAddress />
-                        )}
-
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DateTimePicker
-                                label={"Time and date"}
-                                value={values.dropOffTime}
-                                onChange={(value) => onSelectDropOffTime(value)}
                                 renderInput={(params) => (
                                     <TextField {...params} />
                                 )}
