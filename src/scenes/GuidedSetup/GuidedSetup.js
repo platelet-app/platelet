@@ -165,11 +165,13 @@ export const GuidedSetup = ({ show, onClose }) => {
         }));
     };
 
-    const handleSave = () => {
-        saveNewTaskToDataStore({
+    const handleSave = async () => {
+        await saveNewTaskToDataStore({
             ...formValues,
             timeOfCall: timeOfCall.current,
         });
+        dispatch(setGuidedSetupOpen(false));
+        setFormValues(defaultValues);
     };
 
     const handleDiscard = () => {
