@@ -7,10 +7,10 @@ import DateTimePicker from "@mui/lab/DateTimePicker";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import TextField from "@mui/material/TextField";
 
-import { LocationDropdownSelector } from "./components/LocationDropdownSelector";
 import { ManualAddress } from "./components/ManualAddress";
 
 import { Styles } from "./styles";
+import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
 
 export const Step3 = ({
     values,
@@ -20,6 +20,10 @@ export const Step3 = ({
     const classes = Styles();
 
     const [showPickUpDropdown, setShowPickUpDropdown] = useState(true);
+
+    const handleSelectLocation = (location) => {
+        onSelectPickupLocation(location);
+    };
 
     return (
         <Scrollbars autoHide autoHeight autoHeightMin={450} autoHeightMax={350}>
@@ -41,10 +45,8 @@ export const Step3 = ({
                         </Button>
 
                         {showPickUpDropdown ? (
-                            <LocationDropdownSelector
-                                onSelectLocation={onSelectPickupLocation}
-                                location={values.pickUpLocation}
-                                label="Location"
+                            <FavouriteLocationsSelect
+                                onSelect={handleSelectLocation}
                             />
                         ) : (
                             <ManualAddress />

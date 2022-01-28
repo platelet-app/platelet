@@ -7,14 +7,17 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setGuidedSetupOpen } from "../../redux/Actions";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import PersonIcon from "@mui/icons-material/Person";
-
+import DirectionsIcon from "@mui/icons-material/Directions";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ArchiveIcon from "@mui/icons-material/Archive";
 import { Step1, Step2, Step3, Step4, Step5 } from "./index";
 import { Stack } from "@mui/material";
 import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
+import { getWhoami } from "../../redux/Selectors";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -132,6 +135,7 @@ export const GuidedSetup = ({ show, onClose }) => {
     const dispatch = useDispatch();
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
+    const whoami = useSelector(getWhoami);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -166,10 +170,13 @@ export const GuidedSetup = ({ show, onClose }) => {
     };
 
     const handleSave = async () => {
-        await saveNewTaskToDataStore({
-            ...formValues,
-            timeOfCall: timeOfCall.current,
-        });
+        await saveNewTaskToDataStore(
+            {
+                ...formValues,
+                timeOfCall: timeOfCall.current,
+            },
+            whoami.id
+        );
         dispatch(setGuidedSetupOpen(false));
         setFormValues(defaultValues);
     };
@@ -239,19 +246,23 @@ export const GuidedSetup = ({ show, onClose }) => {
                             className={classes.tabButton}
                         />
                         <Tab
-                            icon={<PersonIcon className={classes.btnIcon} />}
+                            icon={<ArchiveIcon className={classes.btnIcon} />}
                             label={"Items"}
                             {...a11yProps(1)}
                             className={classes.tabButton}
                         />
                         <Tab
-                            icon={<PersonIcon className={classes.btnIcon} />}
+                            icon={
+                                <LocationOnIcon className={classes.btnIcon} />
+                            }
                             label={"Pick-up"}
                             {...a11yProps(2)}
                             className={classes.tabButton}
                         />
                         <Tab
-                            icon={<PersonIcon className={classes.btnIcon} />}
+                            icon={
+                                <DirectionsIcon className={classes.btnIcon} />
+                            }
                             label={"Deliver"}
                             {...a11yProps(3)}
                             className={classes.tabButton}
@@ -276,14 +287,17 @@ export const GuidedSetup = ({ show, onClose }) => {
                     <Step3
                         values={formValues}
                         onChange={handleReceiverContactChange}
-                        onSelectDropOffLocation={onDropOffLocationSaved}
-                        onSelectDropOffTime={onDropOffTimeSaved}
                         onSelectPickupLocation={onPickUpLocationSaved}
                         onSelectPickupTime={onPickUpTimeSaved}
                     />
                 </TabPanel>
                 <TabPanel value={value} index={3}>
-                    <Step4 values={formValues} onChange={() => {}} />
+                    <Step4
+                        onSelectDropOffLocation={onDropOffLocationSaved}
+                        onSelectDropOffTime={onDropOffTimeSaved}
+                        values={formValues}
+                        onChange={() => {}}
+                    />
                 </TabPanel>
                 <TabPanel value={value} index={4}>
                     <Step5
@@ -314,7 +328,7 @@ export const GuidedSetup = ({ show, onClose }) => {
                 }}
             >
                 <Typography>
-                    This will clear all the data you have entered.
+                    This will clear any data you have entered.
                 </Typography>
             </ConfirmationDialog>
         </div>

@@ -5,6 +5,7 @@ import { Button, TextField } from "@mui/material";
 import { ManualAddress } from "./components/ManualAddress";
 import { LocationDropdownSelector } from "./components/LocationDropdownSelector";
 import DateTimePicker from "@mui/lab/DateTimePicker";
+import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
 
 export const Step4 = ({
     onSelectDropOffLocation,
@@ -13,6 +14,9 @@ export const Step4 = ({
 }) => {
     const classes = Styles();
     const [showDropOffDropdown, setShowDropOffDropdown] = useState(true);
+    const handleSelectLocation = (location) => {
+        onSelectDropOffLocation(location);
+    };
 
     return (
         <div className={classes.block}>
@@ -30,11 +34,7 @@ export const Step4 = ({
                 </Button>
 
                 {showDropOffDropdown ? (
-                    <LocationDropdownSelector
-                        onSelectLocation={onSelectDropOffLocation}
-                        location={values.dropOffLocation}
-                        label="Location"
-                    />
+                    <FavouriteLocationsSelect onSelect={handleSelectLocation} />
                 ) : (
                     <ManualAddress />
                 )}
