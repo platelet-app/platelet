@@ -10,6 +10,8 @@ Platelet is the only open source and cloud backed dispatch software for couriers
 
 [Homepage](https://platelet.app)
 
+[Discord](https://discord.gg/tWhCM98ckB)
+
 Some of Platelet's goals are:
 
 - Provide a robust service for recording assignment details, synchronized across all devices
