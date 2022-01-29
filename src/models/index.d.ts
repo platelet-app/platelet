@@ -274,6 +274,7 @@ export declare class DeliverableType {
   readonly label: string;
   readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
   readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;
+  readonly tags?: (string | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);

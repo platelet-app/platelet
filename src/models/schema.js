@@ -1318,6 +1318,14 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "tags": {
+                    "name": "tags",
+                    "isArray": true,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1563,5 +1571,5 @@ export const schema = {
             }
         }
     },
-    "version": "0117b9f9b3b8cd4ec0bbc5695254462e"
+    "version": "fb1ef5ee865dadb0d4d917c406a54337"
 };
