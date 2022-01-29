@@ -38,10 +38,7 @@ function DeliverableGridSelect(props) {
     const [isFetching, setIsFetching] = useState(false);
 
     async function calculateTags() {
-        const existingDeliverableTypes = await DataStore.query(
-            models.DeliverableType
-        );
-        const existingTags = existingDeliverableTypes.map(
+        const existingTags = Object.values(availableDeliverables).map(
             (deliverableType) => deliverableType.tags
         );
         const suggestions = existingTags.reduce(tagsReducer, []);
@@ -49,10 +46,8 @@ function DeliverableGridSelect(props) {
     }
 
     useEffect(() => {
-        if (dataStoreReadyStatus) {
-            calculateTags();
-        }
-    }, [dataStoreReadyStatus]);
+        calculateTags();
+    }, [availableDeliverables]);
 
     function convertExistingDeliverablesToState() {
         const result = {};
@@ -214,7 +209,11 @@ function DeliverableGridSelect(props) {
                 justifyContent={"flex-start"}
                 direction={"column"}
             >
-                <Stack spacing={1} direction={"column"}>
+                <Stack
+                    sx={{ marginBottom: 1 }}
+                    spacing={1}
+                    direction={"column"}
+                >
                     <Grid container spacing={1} direction="row">
                         <Grid key={"all"} item>
                             <Chip
