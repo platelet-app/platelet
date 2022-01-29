@@ -12,6 +12,7 @@ import EditableDeliverable from "./components/EditableDeliverable";
 import AddableDeliverable from "./components/AddableDeliverable";
 import _ from "lodash";
 import GetError from "../../ErrorComponents/GetError";
+import DeliverableTags from "./DeliverableTags";
 
 const initialDeliverablesSortedState = {
     deliverables: [],
@@ -38,16 +39,17 @@ function DeliverableGridSelect(props) {
     const [isFetching, setIsFetching] = useState(false);
 
     async function calculateTags() {
-        const existingTags = Object.values(availableDeliverables).map(
+        const existingTags = Object.values(deliverablesSorted.defaults).map(
             (deliverableType) => deliverableType.tags
         );
         const suggestions = existingTags.reduce(tagsReducer, []);
+        if (!suggestions.includes(currentTag)) setCurrentTag(null);
         setTags(suggestions);
     }
 
     useEffect(() => {
         calculateTags();
-    }, [availableDeliverables]);
+    }, [deliverablesSorted.defaults]);
 
     function convertExistingDeliverablesToState() {
         const result = {};
@@ -203,70 +205,37 @@ function DeliverableGridSelect(props) {
                 spacing={
                     deliverablesSorted.deliverables.length > 0 &&
                     deliverablesSorted.defaults.length > 0
-                        ? 5
-                        : 0
+                        ? 3
+                        : 1
                 }
                 justifyContent={"flex-start"}
                 direction={"column"}
             >
-                <Stack
-                    sx={{ marginBottom: 1 }}
-                    spacing={1}
-                    direction={"column"}
-                >
-                    <Grid container spacing={1} direction="row">
-                        <Grid key={"all"} item>
-                            <Chip
-                                label={"All"}
-                                onClick={() => {
-                                    setCurrentTag(null);
-                                }}
-                                variant={currentTag ? "outlined" : "filled"}
-                            />
-                        </Grid>
-                        {tags.map((tag) => (
-                            <Grid key={tag} item>
-                                <Chip
-                                    label={tag}
-                                    onClick={() => {
-                                        if (tag === currentTag) {
-                                            setCurrentTag(null);
-                                        } else {
-                                            setCurrentTag(tag);
-                                        }
-                                    }}
-                                    variant={
-                                        currentTag === tag
-                                            ? "filled"
-                                            : "outlined"
-                                    }
-                                />
-                            </Grid>
-                        ))}
-                    </Grid>
+                <DeliverableTags
+                    onSelect={(value) => setCurrentTag(value)}
+                    tags={tags}
+                    value={currentTag}
+                />
+                <Stack spacing={1} direction={"column"}>
                     {deliverablesSorted.deliverables.map((deliverable) => {
-                        if (suggestedDeliverables.includes(deliverable.id)) {
-                            count++;
-                            if (!currentTag && count > 5 && truncated) {
-                                return (
-                                    <React.Fragment
-                                        key={deliverable.id}
-                                    ></React.Fragment>
-                                );
-                            } else {
-                                return (
-                                    <EditableDeliverable
-                                        key={deliverable.id}
-                                        disabled={props.disabled}
-                                        onChangeCount={onChangeCount}
-                                        onChangeUnit={onChangeUnit}
-                                        onDelete={onDelete}
-                                        deliverable={deliverable}
-                                    />
-                                );
-                            }
+                        count++;
+                        if (!currentTag && count > 5 && truncated) {
+                            return (
+                                <React.Fragment
+                                    key={deliverable.id}
+                                ></React.Fragment>
+                            );
                         } else {
-                            return <></>;
+                            return (
+                                <EditableDeliverable
+                                    key={deliverable.id}
+                                    disabled={props.disabled}
+                                    onChangeCount={onChangeCount}
+                                    onChangeUnit={onChangeUnit}
+                                    onDelete={onDelete}
+                                    deliverable={deliverable}
+                                />
+                            );
                         }
                     })}
                 </Stack>
@@ -276,7 +245,7 @@ function DeliverableGridSelect(props) {
                             suggestedDeliverables.includes(deliverableType.id)
                         ) {
                             count++;
-                            if (count > 5 && truncated) {
+                            if (!currentTag && count > 5 && truncated) {
                                 return (
                                     <React.Fragment
                                         key={deliverableType.id}
@@ -293,7 +262,11 @@ function DeliverableGridSelect(props) {
                                 );
                             }
                         } else {
-                            return <></>;
+                            return (
+                                <React.Fragment
+                                    key={deliverableType.id}
+                                ></React.Fragment>
+                            );
                         }
                     })}
                 </Stack>
