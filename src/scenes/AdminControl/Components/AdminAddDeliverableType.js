@@ -1,6 +1,6 @@
 import { Button, Grid, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
 import * as models from "../../../models/index";
@@ -17,11 +17,13 @@ import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 import { deliverableIcons, deliverableUnits } from "../../../apiConsts";
 import DeliverableIconPicker from "./DeliverableIconPicker";
 import UnitSelector from "../../../components/UnitSelector";
+import DeliverableTypeTagger from "./DeliverableTypeTagger";
 
 const initialDeliverableTypeState = {
     label: "",
     icon: deliverableIcons.other,
     defaultUnit: deliverableUnits.none,
+    tags: [],
 };
 
 const useStyles = makeStyles({
@@ -51,7 +53,7 @@ function AdminAddDeliverableType() {
     async function addDeliverableTypeToStore() {
         try {
             setIsPosting(true);
-            await DataStore.save(new models.DeliverableType({ ...state }));
+            await DataStore.save(new models.DeliverableType(state));
             setState(initialDeliverableTypeState);
             setIsPosting(false);
             dispatch(displayInfoNotification("Deliverable type added"));
@@ -61,6 +63,22 @@ function AdminAddDeliverableType() {
             dispatch(displayErrorNotification(error.message));
         }
     }
+    const deleteTag = (tag) => {
+        setState((prevState) => ({
+            ...prevState,
+            tags: prevState.filter((t) => t !== tag),
+        }));
+    };
+
+    const addTag = (value) => {
+        if (state.tags.includes(value.toLowerCase())) {
+            return;
+        }
+        setState((prevState) => ({
+            ...prevState,
+            tags: [...prevState.tags, value.toLowerCase()],
+        }));
+    };
 
     function verifyInput() {
         setInputVerified(!!state.label);
@@ -127,6 +145,13 @@ function AdminAddDeliverableType() {
                                     defaultUnit: e.target.value,
                                 }))
                             }
+                        />
+                    </Grid>
+                    <Grid item>
+                        <DeliverableTypeTagger
+                            onAdd={addTag}
+                            onDelete={deleteTag}
+                            value={state.tags}
                         />
                     </Grid>
                     <Grid item>
