@@ -12,6 +12,7 @@ export default function DeliverableTypeTagger(props) {
     const [inputValue, setInputValue] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const deliverableObserver = useRef({ unsubscribe: () => {} });
+    const allSuggestions = useRef([]);
 
     async function calculateSuggestions() {
         const existingDeliverableTypes = await DataStore.query(
@@ -20,14 +21,15 @@ export default function DeliverableTypeTagger(props) {
         const existingTags = existingDeliverableTypes.map(
             (deliverableType) => deliverableType.tags
         );
-        const suggestion = existingTags.reduce(tagsReducer, []);
-        setSuggestions(suggestion);
+        const suggestions = existingTags.reduce(tagsReducer, []);
+        setSuggestions(suggestions);
+        allSuggestions.current = suggestions;
     }
 
     function observeChanges() {
         deliverableObserver.current = DataStore.observe(
             models.DeliverableType
-        ).subscribe((data) => {
+        ).subscribe(() => {
             calculateSuggestions();
         });
         return () => deliverableObserver.current.unsubscribe();
@@ -36,8 +38,8 @@ export default function DeliverableTypeTagger(props) {
     useEffect(() => calculateSuggestions(), []);
     useEffect(observeChanges, []);
     useEffect(() => {
-        setSuggestions((prevState) =>
-            prevState.filter((s) => !props.value.includes(s))
+        setSuggestions(
+            allSuggestions.current.filter((s) => !props.value.includes(s))
         );
     }, [props.value]);
 
@@ -50,14 +52,13 @@ export default function DeliverableTypeTagger(props) {
         <Grid container alignItems="center" spacing={1} direction="row">
             {props.value.map((tag) => (
                 <Grid key={tag} item>
-                    <Chip onDelete={props.onDelete} label={tag} />
+                    <Chip onDelete={() => props.onDelete(tag)} label={tag} />
                 </Grid>
             ))}
             <Grid sx={{ width: "100%", maxWidth: 250 }} item>
                 <Autocomplete
                     freeSolo
                     onChange={(event, newValue) => {
-                        debugger;
                         handleAddition(newValue);
                     }}
                     inputValue={inputValue}

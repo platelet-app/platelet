@@ -66,7 +66,7 @@ function AdminAddDeliverableType() {
     const deleteTag = (tag) => {
         setState((prevState) => ({
             ...prevState,
-            tags: prevState.filter((t) => t !== tag),
+            tags: prevState.tags.filter((t) => t !== tag),
         }));
     };
 
@@ -148,6 +148,15 @@ function AdminAddDeliverableType() {
                         />
                     </Grid>
                     <Grid item>
+                        <Typography
+                            sx={{
+                                color: "gray",
+                                fontStyle: "italic",
+                                marginBottom: 1,
+                            }}
+                        >
+                            Add tags to make finding this item easier:
+                        </Typography>
                         <DeliverableTypeTagger
                             onAdd={addTag}
                             onDelete={deleteTag}
