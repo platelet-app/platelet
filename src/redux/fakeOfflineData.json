@@ -238,26 +238,61 @@
     "deliverables": [
         {
             "label": "Sample",
+            "tags": ["sample"],
             "icon": "BUG",
             "defaultUnit": "ITEM"
         },
         {
             "label": "Covid sample",
+            "tags": ["sample"],
+            "icon": "BUG",
+            "defaultUnit": "ITEM"
+        },
+        {
+            "label": "MRSA sample",
+            "tags": ["sample"],
             "icon": "BUG",
             "defaultUnit": "ITEM"
         },
         {
             "label": "Document",
+            "tags": ["document"],
             "icon": "DOCUMENT",
             "defaultUnit": "ITEM"
         },
         {
             "label": "Milk",
+            "tags": ["maternity"],
             "icon": "CHILD",
             "defaultUnit": "LITRE"
         },
         {
+            "label": "Anti-D",
+            "tags": ["maternity"],
+            "icon": "CHILD",
+            "defaultUnit": "LITRE"
+        },
+        {
+            "label": "Bloods",
+            "tags": ["blood"],
+            "icon": "OTHER",
+            "defaultUnit": "LITRE"
+        },
+        {
+            "label": "Platelets",
+            "tags": ["blood"],
+            "icon": "OTHER",
+            "defaultUnit": "LITRE"
+        },
+        {
+            "label": "Bloods",
+            "tags": ["blood"],
+            "icon": "OTHER",
+            "defaultUnit": "LITRE"
+        },
+        {
             "label": "Equipment",
+            "tags": ["equipment"],
             "icon": "EQUIPMENT",
             "defaultUnit": "ITEM"
         },

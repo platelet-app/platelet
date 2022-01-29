@@ -152,6 +152,7 @@ type DeliverableType @auth(rules: [{ allow: private}]) @model {
   label: String!
   icon: DeliverableTypeIcon
   defaultUnit: DeliverableUnit
+  tags: [String]
 }
 
 enum DeliverableTypeIcon {
