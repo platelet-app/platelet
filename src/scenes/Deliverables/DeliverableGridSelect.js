@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import { Stack } from "@mui/material";
+import { Chip, Grid, Stack } from "@mui/material";
 import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
@@ -18,16 +18,41 @@ const initialDeliverablesSortedState = {
     defaults: [],
 };
 
+const tagsReducer = (previousValue, currentValue = []) => {
+    const filtered = currentValue.filter((t) => !previousValue.includes(t));
+    return [...previousValue, ...filtered];
+};
+
 function DeliverableGridSelect(props) {
     const [deliverablesSorted, setDeliverablesSorted] = useState(
         initialDeliverablesSortedState
     );
     const [state, setState] = useState({});
+    const [tags, setTags] = useState([]);
+    const [currentTag, setCurrentTag] = useState(null);
     const [errorState, setErrorState] = useState(null);
     const [truncated, setTruncated] = useState(true);
     const [availableDeliverables, setAvailableDeliverables] = useState({});
+    const [suggestedDeliverables, setSuggestedDeliverables] = useState([]);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
+
+    async function calculateTags() {
+        const existingDeliverableTypes = await DataStore.query(
+            models.DeliverableType
+        );
+        const existingTags = existingDeliverableTypes.map(
+            (deliverableType) => deliverableType.tags
+        );
+        const suggestions = existingTags.reduce(tagsReducer, []);
+        setTags(suggestions);
+    }
+
+    useEffect(() => {
+        if (dataStoreReadyStatus) {
+            calculateTags();
+        }
+    }, [dataStoreReadyStatus]);
 
     function convertExistingDeliverablesToState() {
         const result = {};
@@ -94,6 +119,26 @@ function DeliverableGridSelect(props) {
     }
 
     useEffect(() => getAvailableDeliverables(), []);
+
+    function tagFilterAvailableDeliverables() {
+        let result = [];
+        if (currentTag) {
+            console.log(currentTag);
+            for (const i of Object.values(availableDeliverables)) {
+                if (i && i.tags && i.tags.includes(currentTag)) {
+                    result.push(i.id);
+                }
+            }
+            console.log(result);
+        } else {
+            result = Object.values(availableDeliverables).map((d) => d.id);
+        }
+        setSuggestedDeliverables(result);
+    }
+    useEffect(tagFilterAvailableDeliverables, [
+        currentTag,
+        availableDeliverables,
+    ]);
 
     function onAddNewDeliverable(deliverable) {
         let orderInGrid = 0;
@@ -170,46 +215,86 @@ function DeliverableGridSelect(props) {
                 direction={"column"}
             >
                 <Stack spacing={1} direction={"column"}>
-                    {deliverablesSorted.deliverables.map((deliverable) => {
-                        count++;
-                        if (count > 5 && truncated) {
-                            return (
-                                <React.Fragment
-                                    key={deliverable.id}
-                                ></React.Fragment>
-                            );
-                        } else {
-                            return (
-                                <EditableDeliverable
-                                    key={deliverable.id}
-                                    disabled={props.disabled}
-                                    onChangeCount={onChangeCount}
-                                    onChangeUnit={onChangeUnit}
-                                    onDelete={onDelete}
-                                    deliverable={deliverable}
+                    <Grid container spacing={1} direction="row">
+                        <Grid key={"all"} item>
+                            <Chip
+                                label={"All"}
+                                onClick={() => {
+                                    setCurrentTag(null);
+                                }}
+                                variant={currentTag ? "outlined" : "filled"}
+                            />
+                        </Grid>
+                        {tags.map((tag) => (
+                            <Grid key={tag} item>
+                                <Chip
+                                    label={tag}
+                                    onClick={() => {
+                                        if (tag === currentTag) {
+                                            setCurrentTag(null);
+                                        } else {
+                                            setCurrentTag(tag);
+                                        }
+                                    }}
+                                    variant={
+                                        currentTag === tag
+                                            ? "filled"
+                                            : "outlined"
+                                    }
                                 />
-                            );
+                            </Grid>
+                        ))}
+                    </Grid>
+                    {deliverablesSorted.deliverables.map((deliverable) => {
+                        if (suggestedDeliverables.includes(deliverable.id)) {
+                            count++;
+                            if (!currentTag && count > 5 && truncated) {
+                                return (
+                                    <React.Fragment
+                                        key={deliverable.id}
+                                    ></React.Fragment>
+                                );
+                            } else {
+                                return (
+                                    <EditableDeliverable
+                                        key={deliverable.id}
+                                        disabled={props.disabled}
+                                        onChangeCount={onChangeCount}
+                                        onChangeUnit={onChangeUnit}
+                                        onDelete={onDelete}
+                                        deliverable={deliverable}
+                                    />
+                                );
+                            }
+                        } else {
+                            return <></>;
                         }
                     })}
                 </Stack>
                 <Stack spacing={1} direction={"column"}>
                     {deliverablesSorted.defaults.map((deliverableType) => {
-                        count++;
-                        if (count > 5 && truncated) {
-                            return (
-                                <React.Fragment
-                                    key={deliverableType.id}
-                                ></React.Fragment>
-                            );
+                        if (
+                            suggestedDeliverables.includes(deliverableType.id)
+                        ) {
+                            count++;
+                            if (count > 5 && truncated) {
+                                return (
+                                    <React.Fragment
+                                        key={deliverableType.id}
+                                    ></React.Fragment>
+                                );
+                            } else {
+                                return (
+                                    <AddableDeliverable
+                                        disabled={props.disabled}
+                                        key={deliverableType.id}
+                                        onAdd={onAddNewDeliverable}
+                                        deliverableType={deliverableType}
+                                    />
+                                );
+                            }
                         } else {
-                            return (
-                                <AddableDeliverable
-                                    disabled={props.disabled}
-                                    key={deliverableType.id}
-                                    onAdd={onAddNewDeliverable}
-                                    deliverableType={deliverableType}
-                                />
-                            );
+                            return <></>;
                         }
                     })}
                 </Stack>
@@ -221,7 +306,7 @@ function DeliverableGridSelect(props) {
                     }}
                     color="inherit"
                 >
-                    {truncated ? "More..." : "Less..."}
+                    {!currentTag && (truncated ? "More..." : "Less...")}
                 </Link>
             </Stack>
         );
