@@ -1,3 +1,11 @@
+## Docker
+
+You can run this using docker:
+
+`docker-compose up`
+
+or alternatively follow the setup instructions below.
+
 ## Setup
 
 There is minimal setup required for running this project. On Ubuntu, install the package `npm`
