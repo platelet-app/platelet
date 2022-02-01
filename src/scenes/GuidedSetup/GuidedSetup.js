@@ -11,18 +11,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { setGuidedSetupOpen } from "../../redux/Actions";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import PersonIcon from "@mui/icons-material/Person";
-import DirectionsIcon from "@mui/icons-material/Directions";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ArchiveIcon from "@mui/icons-material/Archive";
+import NotesIcon from "@mui/icons-material/Notes";
 import {
     CallerDetails,
     DeliverableDetails,
     PickUpAndDeliverDetails,
     Notes,
 } from "./index";
-import { Stack } from "@mui/material";
+import { Paper, Stack } from "@mui/material";
 import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
 import { getWhoami } from "../../redux/Selectors";
+import { commentVisibility } from "../../apiConsts";
+import { showHide } from "../../styles/common";
+import { useTheme } from "@mui/styles";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -90,6 +93,11 @@ const guidedSetupStyles = makeStyles((theme) => ({
         height: "5px",
         width: "100%",
     },
+    btnWrapper: {
+        alignSelf: "end",
+        display: "flex",
+        flexDirection: "column",
+    },
     btnIcon: {
         fontSize: "2rem",
         marginBottom: "10px",
@@ -97,53 +105,38 @@ const guidedSetupStyles = makeStyles((theme) => ({
     },
     tabContent: {
         flexGrow: 1,
-        maxHeight: 600,
-        backgroundColor: theme.palette.background.paper,
     },
 }));
 
 const defaultValues = {
     requesterContact: {
-        name: "",
-        telephoneNumber: "",
-        email: "",
+        name: null,
+        telephoneNumber: null,
+        email: null,
     },
     pickUpLocation: null,
-    pickUpTime: "",
-    sender: {
-        name: "",
-        phone: "",
-        email: "",
-    },
-    receiver: {
-        name: "",
-        phone: "",
-        email: "",
-    },
+    pickUpTime: null,
+    comment: { visibility: commentVisibility.everyone, body: "" },
     dropOffLocation: null,
-    dropOffTime: "",
-    priority: "",
-    items: {
-        sample: 0,
-        covidSample: 0,
-        milk: 0,
-        documents: 0,
-        equipment: 0,
-    },
+    dropOffTime: null,
+    priority: null,
+    items: {},
 };
 
-export const GuidedSetup = ({ show, onClose }) => {
+export const GuidedSetup = ({ onClose }) => {
     const classes = guidedSetupStyles();
-    const [value, setValue] = React.useState(0);
+    const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
     const timeOfCall = useRef(new Date().toISOString());
     const dispatch = useDispatch();
+    const { show, hide } = showHide();
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
     const whoami = useSelector(getWhoami);
+    const theme = useTheme();
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        setTabIndex(newValue);
     };
 
     const handleCallerContactChange = (value) => {
@@ -182,20 +175,25 @@ export const GuidedSetup = ({ show, onClose }) => {
             },
             whoami.id
         );
-        dispatch(setGuidedSetupOpen(false));
-        setFormValues(defaultValues);
+        onCloseForm();
     };
 
     const handleDiscard = () => {
         setDiscardConfirmationOpen(true);
     };
 
-    const onPickUpTimeSaved = (pickUpTime) => {
-        setFormValues((prevState) => ({ ...prevState, pickUpTime }));
+    const handleCommentVisibilityChange = (value) => {
+        setFormValues((prevState) => ({
+            ...prevState,
+            comment: { ...prevState.comment, visibility: value },
+        }));
     };
 
-    const onDropOffTimeSaved = (dropOffTime) => {
-        setFormValues((prevState) => ({ ...prevState, dropOffTime }));
+    const handleCommentChange = (value) => {
+        setFormValues((prevState) => ({
+            ...prevState,
+            comment: { ...prevState.comment, body: value },
+        }));
     };
 
     const onPickUpLocationSaved = (pickUpLocation) => {
@@ -206,33 +204,44 @@ export const GuidedSetup = ({ show, onClose }) => {
         setFormValues((prevState) => ({ ...prevState, dropOffLocation }));
     };
 
-    const onAddNewDeliverable = (deliverable) => {
-        let newDeliverable = {
-            count: 1,
-            type_id: deliverable.id,
-            type: deliverable.label,
-        };
-    };
-
-    const handleDeliverablesChange = (deliverable, count) => {
-        if (deliverable.uuid) {
-        } else if (deliverable.id) {
-            onAddNewDeliverable(deliverable);
+    const handleDeliverablesChange = (value) => {
+        if (!value || !value.id) {
+            return;
+        }
+        if (formValues.items[value.id]) {
+            setFormValues((prevState) => ({
+                ...prevState,
+                items: {
+                    ...prevState.items,
+                    [value.id]: {
+                        ...prevState.items[value.id],
+                        ...value,
+                    },
+                },
+            }));
+        } else {
+            setFormValues((prevState) => ({
+                ...prevState,
+                items: {
+                    ...prevState.items,
+                    [value.id]: value,
+                },
+            }));
         }
     };
 
     const onCloseForm = () => {
-        onClose();
         setFormValues(defaultValues);
-        setValue(0);
+        setTabIndex(0);
+        dispatch(setGuidedSetupOpen(false));
     };
 
     return (
-        <div className={classes.wrapper} open={show} onClose={onCloseForm}>
+        <Paper className={classes.wrapper}>
             <div className={classes.tabContent}>
                 <AppBar position="static" className={classes.appBar}>
                     <Tabs
-                        value={value}
+                        value={tabIndex}
                         onChange={handleChange}
                         aria-label="coordinator setup tab"
                         className={classes.tabs}
@@ -269,9 +278,7 @@ export const GuidedSetup = ({ show, onClose }) => {
                             className={classes.tabButton}
                         />
                         <Tab
-                            icon={
-                                <DirectionsIcon className={classes.btnIcon} />
-                            }
+                            icon={<NotesIcon className={classes.btnIcon} />}
                             label={"Notes"}
                             {...a11yProps(3)}
                             className={classes.tabButton}
@@ -279,35 +286,37 @@ export const GuidedSetup = ({ show, onClose }) => {
                         {/* <Tab label="Step 5" {...a11yProps(4)} className={classes.tabButton} /> */}
                     </Tabs>
                 </AppBar>
-                <TabPanel value={value} index={0}>
-                    <CallerDetails
-                        values={formValues}
-                        onChangeContact={handleCallerContactChange}
-                        onChangePriority={handlePriorityChange}
-                    />
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    <DeliverableDetails
-                        values={formValues}
-                        onChange={handleDeliverablesChange}
-                    />
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                    <PickUpAndDeliverDetails
-                        values={formValues}
-                        onChange={handleReceiverContactChange}
-                        onSelectPickupLocation={onPickUpLocationSaved}
-                        onSelectPickupTime={onPickUpTimeSaved}
-                    />
-                </TabPanel>
-                <TabPanel value={value} index={3}>
-                    <Notes
-                        onSelectDropOffLocation={onDropOffLocationSaved}
-                        onSelectDropOffTime={onDropOffTimeSaved}
-                        values={formValues}
-                        onChange={() => {}}
-                    />
-                </TabPanel>
+                <Box sx={{ padding: 1 }}>
+                    <Box className={tabIndex === 0 ? show : hide}>
+                        <CallerDetails
+                            values={formValues}
+                            onChangeContact={handleCallerContactChange}
+                            onChangePriority={handlePriorityChange}
+                        />
+                    </Box>
+                    <Box className={tabIndex === 1 ? show : hide}>
+                        <DeliverableDetails
+                            values={formValues.items}
+                            onChange={handleDeliverablesChange}
+                        />
+                    </Box>
+                    <Box className={tabIndex === 2 ? show : hide}>
+                        <PickUpAndDeliverDetails
+                            values={formValues}
+                            onChange={handleReceiverContactChange}
+                            onSelectPickupLocation={onPickUpLocationSaved}
+                        />
+                    </Box>
+                    <Box className={tabIndex === 3 ? show : hide}>
+                        <Notes
+                            values={formValues.comment}
+                            handleVisibilityChange={
+                                handleCommentVisibilityChange
+                            }
+                            onChange={handleCommentChange}
+                        />
+                    </Box>
+                </Box>
             </div>
             <Stack
                 sx={{ margin: 1 }}
@@ -325,16 +334,13 @@ export const GuidedSetup = ({ show, onClose }) => {
                 open={discardConfirmationOpen}
                 dialogTitle={"Are you sure?"}
                 onClose={() => setDiscardConfirmationOpen(false)}
-                onConfirmation={() => {
-                    setFormValues(defaultValues);
-                    dispatch(setGuidedSetupOpen(false));
-                }}
+                onConfirmation={onCloseForm}
             >
                 <Typography>
                     This will clear any data you have entered.
                 </Typography>
             </ConfirmationDialog>
-        </div>
+        </Paper>
     );
 };
 

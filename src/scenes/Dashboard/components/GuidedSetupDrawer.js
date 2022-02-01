@@ -75,7 +75,6 @@ export default function GuidedSetupDrawer() {
 
     return (
         <Box sx={{ display: "flex" }}>
-            <CssBaseline />
             <Drawer
                 sx={{
                     width: drawerWidth,
@@ -89,21 +88,8 @@ export default function GuidedSetupDrawer() {
                 anchor="right"
                 open={guidedSetupOpen}
             >
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === "ltr" ? (
-                            <ChevronLeftIcon />
-                        ) : (
-                            <ChevronRightIcon />
-                        )}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
                 <GuidedSetup />
             </Drawer>
-            <Main open={guidedSetupOpen}>
-                <DrawerHeader />
-            </Main>
         </Box>
     );
 }

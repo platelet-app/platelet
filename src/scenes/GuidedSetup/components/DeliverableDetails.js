@@ -1,18 +1,13 @@
 import React from "react";
-import { Scrollbars } from "react-custom-scrollbars-2";
 
-import { Styles } from "../styles";
 import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
+import { Stack, Typography } from "@mui/material";
 
-export const DeliverableDetails = ({ values, onChange, onSelect, taskUUID }) => {
-    const classes = Styles();
+export const DeliverableDetails = ({ onChange }) => {
     return (
-        <Scrollbars autoHide autoHeight autoHeightMin={450} autoHeightMax={350}>
-            <div className={classes.columnWrapper}>
-                <div classes={classes.block}>
-                    <DeliverableGridSelect />
-                </div>
-            </div>
-        </Scrollbars>
+        <Stack>
+            <Typography variant="h6">What is being delivered?</Typography>
+            <DeliverableGridSelect onChange={onChange} />
+        </Stack>
     );
 };

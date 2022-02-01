@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import { Chip, Grid, Stack } from "@mui/material";
+import { Chip, Grid, Stack, Typography } from "@mui/material";
 import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
@@ -13,6 +13,7 @@ import AddableDeliverable from "./components/AddableDeliverable";
 import _ from "lodash";
 import GetError from "../../ErrorComponents/GetError";
 import DeliverableTags from "./DeliverableTags";
+import { makeStyles } from "@mui/styles";
 
 const initialDeliverablesSortedState = {
     deliverables: [],
@@ -23,6 +24,16 @@ const tagsReducer = (previousValue, currentValue = []) => {
     const filtered = currentValue.filter((t) => !previousValue.includes(t));
     return [...previousValue, ...filtered];
 };
+
+const useStyles = makeStyles((theme) => ({
+    hint: {
+        fontStyle: "italic",
+        color: "gray",
+        "&:hover": {
+            color: theme.palette.text.primary,
+        },
+    },
+}));
 
 function DeliverableGridSelect(props) {
     const [deliverablesSorted, setDeliverablesSorted] = useState(
@@ -37,6 +48,7 @@ function DeliverableGridSelect(props) {
     const [suggestedDeliverables, setSuggestedDeliverables] = useState([]);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
+    const classes = useStyles();
 
     async function calculateTags() {
         const existingTags = Object.values(deliverablesSorted.defaults).map(
@@ -115,7 +127,7 @@ function DeliverableGridSelect(props) {
         }
     }
 
-    useEffect(() => getAvailableDeliverables(), []);
+    useEffect(() => getAvailableDeliverables(), [dataStoreReadyStatus]);
 
     function tagFilterAvailableDeliverables() {
         let result = [];
@@ -209,6 +221,9 @@ function DeliverableGridSelect(props) {
                 justifyContent={"flex-start"}
                 direction={"column"}
             >
+                <Typography className={classes.hint}>
+                    Select a tag to find an item quickly
+                </Typography>
                 <DeliverableTags
                     onSelect={(value) => setCurrentTag(value)}
                     tags={tags}
