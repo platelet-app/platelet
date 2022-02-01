@@ -1,40 +1,28 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import { userRoles } from "../apiConsts";
 import PropTypes from "prop-types";
+import { Chip, Stack } from "@mui/material";
 
 function UserRoleSelect(props) {
-    const handleChange = (event) => {
-        props.onSelect(event.target.value);
+    const handleChange = (value) => {
+        props.onSelect(value);
     };
 
     return (
-        <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
-                <InputLabel id="select-user-roles-label">Role</InputLabel>
-                <Select
-                    labelId="select-user-roles-label"
-                    id="select-user-roles"
-                    value={props.value}
-                    label="Role"
-                    onChange={handleChange}
-                >
-                    {Object.entries(userRoles)
-                        .filter(
-                            ([key, value]) => !props.exclude.includes(value)
-                        )
-                        .map(([key, value]) => (
-                            <MenuItem key={key} value={value}>
-                                {key.toUpperCase()}
-                            </MenuItem>
-                        ))}
-                </Select>
-            </FormControl>
-        </Box>
+        <Stack spacing={1} direction="row">
+            {Object.values(userRoles)
+                .filter((value) => !props.exclude.includes(value))
+                .reverse()
+                .map((value) => (
+                    <Chip
+                        onClick={() => handleChange(value)}
+                        label={value}
+                        color={props.value === value ? "primary" : "default"}
+                        key={value}
+                        variant={props.value === value ? "default" : "outlined"}
+                    />
+                ))}
+        </Stack>
     );
 }
 

@@ -68,11 +68,6 @@ function TaskAssignmentsPanel(props) {
         if (value) addAssignee(value, role);
     }
 
-    function clearEditMode() {
-        setCollapsed(true);
-        setRole(userRoles.rider);
-    }
-
     async function getAssignees() {
         setIsFetching(true);
         if (!dataStoreReadyStatus) return;
@@ -217,7 +212,7 @@ function TaskAssignmentsPanel(props) {
                     }}
                     assignees={state}
                 />
-                <Typography>Assign a user:</Typography>
+                <Typography>Assign a user</Typography>
                 <UserRoleSelect
                     value={role}
                     onSelect={(value) => setRole(value)}

@@ -239,10 +239,6 @@ describe("TaskAssignmentsPanel", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
         expect(screen.getByText("RIDER")).toBeInTheDocument();
-        const selectMenuButton = screen.getByRole("button", {
-            name: "Role RIDER",
-        });
-        userEvent.click(selectMenuButton);
         const roleOption = screen.getByText("COORDINATOR");
         userEvent.click(roleOption);
         await waitFor(() =>
