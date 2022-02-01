@@ -132,7 +132,7 @@ function TaskItem(props) {
         ).subscribe(async (observedResult) => {
             if (
                 observedResult.opType === "INSERT" ||
-                observedResult.opType === "UPDATE"
+                observedResult.opType === "DELETE"
             ) {
                 const commentCount = await getCommentCount();
                 setCommentCount(commentCount);
