@@ -193,14 +193,79 @@ describe("CommentsSection", () => {
         userEvent.click(contextMenu);
         const deleteButton = await screen.findByText("Delete");
         userEvent.click(deleteButton);
-        await new Promise((resolve) => setTimeout(resolve, 4000));
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Comment,
+                mockComment.id
+            );
+        });
+        userEvent.click(screen.getByText("OK"));
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Comment,
+                mockComment.id
+            );
+        });
         await waitFor(() => {
             expect(amplify.DataStore.delete).toHaveBeenNthCalledWith(
                 1,
                 mockComment
             );
         });
+        await waitFor(() => {
+            expect(screen.queryByText(mockComment.body)).toBeNull();
+        });
         expect(await screen.findByText("Comment deleted")).toBeInTheDocument();
+    });
+
+    it("cancel deleting a comment", async () => {
+        const mockWhoami = {
+            id: "whoami",
+            displayName: "Mock User",
+        };
+        const mockComment = {
+            ...mockPublicComments[0],
+            author: mockWhoami,
+        };
+        amplify.DataStore.query
+            .mockResolvedValueOnce([mockComment])
+            .mockResolvedValue(mockComment);
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        amplify.Auth.currentAuthenticatedUser.mockReturnValue(mockWhoami);
+        render(<CommentsSection parentId="test" />, {
+            preloadedState: { whoami: { user: testUser } },
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            screen.getAllByText(mockComment.author.displayName)
+        ).toHaveLength(2);
+        const body = screen.getByText(mockComment.body);
+        userEvent.hover(body);
+        const contextMenu = await screen.findByTestId("comment-menu");
+        userEvent.click(contextMenu);
+        const deleteButton = await screen.findByText("Delete");
+        userEvent.click(deleteButton);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Comment,
+                mockComment.id
+            );
+        });
+        userEvent.click(screen.getByText("Cancel"));
+        await waitFor(() => {
+            expect(amplify.DataStore.delete).toHaveBeenCalledTimes(0);
+        });
+        await waitFor(() => {
+            expect(screen.queryByText(mockComment.body)).toBeInTheDocument();
+        });
     });
     // still broken yet
     it("edits a comment", async () => {

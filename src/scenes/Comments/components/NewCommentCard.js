@@ -139,7 +139,7 @@ function NewCommentCard(props) {
                 <Grid item className={classes.gridItem}>
                     <Grid
                         container
-                        direction={"row"}
+                        direction={"row-reverse"}
                         justifyContent={"space-between"}
                     >
                         <Grid item>
