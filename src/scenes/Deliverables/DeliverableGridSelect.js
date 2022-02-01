@@ -120,13 +120,11 @@ function DeliverableGridSelect(props) {
     function tagFilterAvailableDeliverables() {
         let result = [];
         if (currentTag) {
-            console.log(currentTag);
             for (const i of Object.values(availableDeliverables)) {
                 if (i && i.tags && i.tags.includes(currentTag)) {
                     result.push(i.id);
                 }
             }
-            console.log(result);
         } else {
             result = Object.values(availableDeliverables).map((d) => d.id);
         }
