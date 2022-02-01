@@ -16,7 +16,6 @@ import {
     SET_DARK_MODE,
 } from "./Actions";
 import { dashboardFilter } from "./dashboardFilter/DashboardFilterReducers";
-import { apiControl, authStatus } from "./login/LoginReducers";
 import { notification } from "./notifications/NotificationsReducers";
 import { getDarkModePreference } from "./redux_utilities";
 import { awsHubDataStoreEventsReducer } from "./awsHubListener/awsHubListenerReducers";
@@ -104,24 +103,16 @@ function guidedSetupOpen(state = false, action) {
 
 const whoamiInitialState = {
     user: {
-        uuid: null,
-        username: null,
+        id: null,
         address: null,
-        password: null,
-        password_reset_on_login: false,
         name: null,
         email: null,
-        dob: null,
-        patch: null,
+        dateOfBirth: null,
+        riderResponsibility: null,
         roles: [],
-        comments: null,
-        links: null,
-        display_name: null,
-        assigned_vehicles: null,
-        patch_id: null,
-        contact_number: null,
-        time_created: null,
-        time_modified: null,
+        displayName: null,
+        createdAt: null,
+        modifiedAt: null,
     },
     error: null,
 };
@@ -276,8 +267,6 @@ const appReducer = combineReducers({
     notFoundReducer,
     errorReducer,
     error,
-    apiControl,
-    authStatus,
     viewMode,
     guidedSetupOpen,
     roleView,
@@ -285,7 +274,6 @@ const appReducer = combineReducers({
     mobileView,
     menuIndex,
     commentsObjectUUID,
-    taskContextMenuSnack,
     notification,
     dashboardFilter,
     idleStatus,

@@ -16,6 +16,30 @@ import ActiveRidersChips from "./ActiveRidersChips";
 
 jest.mock("aws-amplify");
 
+function addAssigneesAndConvertToObject(tasks, allAssignees) {
+    const finalResult = {};
+    for (const t of tasks) {
+        const assignmentsFiltered = allAssignees.filter(
+            (a) => a.task.id === t.id
+        );
+        const assignees = convertListDataToObject(assignmentsFiltered);
+        finalResult[t.id] = { ...t, assignees };
+    }
+
+    return finalResult;
+}
+const testUserModel = new models.User({
+    name: "whoami",
+    displayName: "Mock User",
+    roles: Object.values(userRoles),
+    dateOfBirth: null,
+    profilePictureURL: null,
+    profilePictureThumbnailURL: null,
+    active: 1,
+});
+
+export const testUser = { ...testUserModel, id: "whoami" };
+
 describe("TasksGridColumn", () => {
     beforeAll(() => {
         window.matchMedia = createMatchMedia(window.innerWidth);
@@ -91,7 +115,12 @@ describe("TasksGridColumn", () => {
                     title={tasksStatus.new}
                     taskKey={[tasksStatus.new]}
                 />
-            </>
+            </>,
+            {
+                preloadedState: {
+                    whoami: { user: testUser },
+                },
+            }
         );
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
@@ -101,13 +130,14 @@ describe("TasksGridColumn", () => {
         userEvent.type(screen.getByRole("textbox"), searchTerm);
         await waitFor(() => {
             expect(filterTaskSpy).toHaveBeenCalledTimes(3);
-            expect(filterTaskSpy).toHaveBeenCalledWith(
-                convertListDataToObject(
-                    mockTasks.map((t) => ({ ...t, assignees: {} }))
-                ),
-                searchTerm
-            );
         });
+        expect(filterTaskSpy).toHaveBeenNthCalledWith(
+            3,
+            convertListDataToObject(
+                mockTasks.map((t) => ({ ...t, assignees: {} }))
+            ),
+            searchTerm
+        );
         const mediumCards = screen.getAllByText("MEDIUM");
         const highCards = screen.getAllByText("HIGH");
         for (const card of mediumCards) {
@@ -190,5 +220,108 @@ describe("TasksGridColumn", () => {
         for (const card of firstFakeUser) {
             expect(card).toBeVisible();
         }
+    });
+    it.skip("filters by selected rider chip and search term", async () => {
+        const filterTaskSpy = jest.spyOn(dashboardUtils, "filterTasks");
+        let mockTasks = _.range(0, 10).map(
+            (i) =>
+                new models.Task({
+                    status: tasksStatus.new,
+                    priority: i < 5 ? priorities.medium : priorities.high,
+                })
+        );
+
+        mockTasks = mockTasks.map((t) => ({
+            ...t,
+            createdAt: new Date().toISOString(),
+        }));
+
+        const fakeUser1 = new models.User({
+            id: "fakeId",
+            displayName: "Another Individual",
+        });
+        const fakeUser2 = new models.User({
+            id: "fakeId",
+            displayName: "Someone Person",
+        });
+        const mockAssignments = _.range(0, 10).map(
+            (i) =>
+                new models.TaskAssignee({
+                    task: mockTasks[i],
+                    assignee: i % 2 === 0 ? fakeUser1 : fakeUser2,
+                    role: userRoles.rider,
+                })
+        );
+
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValue([]);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(
+            <>
+                <DashboardDetailTabs />
+                <ActiveRidersChips />
+                <TasksGridColumn
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
+                />
+            </>,
+            {
+                preloadedState: {
+                    whoami: { user: testUser },
+                },
+            }
+        );
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(13);
+        });
+        mockAllIsIntersecting(true);
+        jest.clearAllMocks();
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValue([]);
+        expect(screen.queryAllByText("AI")).toHaveLength(5);
+        expect(screen.queryAllByText("SP")).toHaveLength(5);
+        userEvent.click(screen.getByText(fakeUser1.displayName));
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(8);
+        });
+
+        mockAllIsIntersecting(true);
+        const firstFakeUser = screen.getAllByText("AI");
+        expect(screen.queryAllByText("SP")).toHaveLength(0);
+        for (const card of firstFakeUser) {
+            expect(card).toBeVisible();
+        }
+        const searchTerm = "medium";
+        userEvent.type(screen.getByRole("textbox"), searchTerm);
+        await waitFor(() => {
+            expect(filterTaskSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(filterTaskSpy).toHaveBeenNthCalledWith(
+            3,
+            addAssigneesAndConvertToObject(
+                mockAssignments.map((a) => ({
+                    ...a.task,
+                })),
+                mockAssignments
+            ),
+            searchTerm
+        );
+        const mediumCards = screen.getAllByText("MEDIUM");
+        const highCards = screen.getAllByText("HIGH");
+        for (const card of mediumCards) {
+            expect(card).toBeVisible();
+        }
+        for (const card of highCards) {
+            expect(card).not.toBeVisible();
+        }
+        userEvent.click(screen.getByRole("button", { name: "Clear Search" }));
     });
 });

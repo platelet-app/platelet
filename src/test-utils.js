@@ -1,4 +1,6 @@
 import React from "react";
+import createSagaMiddleware from "redux-saga";
+import * as models from "./models";
 import {
     ThemeProvider,
     StyledEngineProvider,
@@ -16,8 +18,24 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { render as rtlRender } from "@testing-library/react";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import store from "./redux/Store";
+import rootSaga from "./redux/RootSagas";
 import { DismissButton } from "./styles/common";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
+import { configureStore } from "@reduxjs/toolkit";
+import rootReducer from "./redux/Reducers";
+import { userRoles } from "./apiConsts";
+
+const testUserModel = new models.User({
+    name: "whoami",
+    displayName: "Mock User",
+    roles: Object.values(userRoles),
+    dateOfBirth: null,
+    profilePictureURL: null,
+    profilePictureThumbnailURL: null,
+    active: 1,
+});
+
+export const testUser = { ...testUserModel, id: "whoami" };
 
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
@@ -81,6 +99,7 @@ const sagaOptions = {
 function TestApp(props) {
     const dispatch = useDispatch();
     function initialise() {
+        return;
         dispatch(initialiseApp());
     }
     React.useEffect(initialise, []);
@@ -122,7 +141,28 @@ function TestApp(props) {
 
 const AppSnacked = withSnackbar(TestApp);
 
-function render(ui, { preloadedState, ...renderOptions } = {}) {
+const sagaMiddleWare = createSagaMiddleware(sagaOptions);
+
+function render(
+    ui,
+    {
+        preloadedState,
+        store = configureStore({
+            reducer: rootReducer,
+            middleware: [sagaMiddleWare],
+            preloadedState: {
+                ...preloadedState,
+
+                awsHubDataStoreEventsReducer: {
+                    networkStatus: true,
+                    ready: true,
+                },
+            },
+        }),
+        ...renderOptions
+    } = {}
+) {
+    sagaMiddleWare.run(rootSaga);
     function Wrapper(props) {
         return (
             <Provider store={store}>

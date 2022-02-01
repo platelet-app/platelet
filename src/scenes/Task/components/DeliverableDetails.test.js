@@ -15,29 +15,35 @@ const mockData = [
         label: "Sample",
         icon: "BUG",
         defaultUnit: "ITEM",
+        tags: ["sample"],
     }),
     new models.DeliverableType({
         label: "Covid sample",
         icon: "BUG",
         defaultUnit: "ITEM",
+        tags: ["sample"],
     }),
     new models.DeliverableType({
         label: "Document",
         icon: "DOCUMENT",
+        tags: ["other"],
         defaultUnit: "ITEM",
     }),
     new models.DeliverableType({
         label: "Milk",
         icon: "CHILD",
+        tags: ["other"],
         defaultUnit: "LITRE",
     }),
     new models.DeliverableType({
         label: "Equipment",
         icon: "EQUIPMENT",
+        tags: ["tag1", "tag2"],
         defaultUnit: "ITEM",
     }),
     new models.DeliverableType({
         label: "Other",
+        tags: ["tag2", "tag3"],
         icon: "OTHER",
     }),
 ];
@@ -282,6 +288,71 @@ describe("DeliverableDetails", () => {
         expect(
             screen.getByText(mockDeliverables[0].count + 5)
         ).toBeInTheDocument();
+    });
+
+    test("filter the available deliverables by tags", async () => {
+        const tagsReducer = (previousValue, currentValue = []) => {
+            const filtered = currentValue.filter(
+                (t) => !previousValue.includes(t)
+            );
+            return [...previousValue, ...filtered];
+        };
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValue(mockData);
+        const existingTags = Object.values(mockData).map(
+            (deliverableType) => deliverableType.tags
+        );
+        const tagsUnique = existingTags.reduce(tagsReducer, []);
+        render(<DeliverableDetails taskId={fakeTask.id} />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.Deliverable
+            );
+        });
+
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.DeliverableType,
+                amplify.Predicates.ALL,
+                expect.objectContaining({})
+            );
+        });
+        userEvent.click(screen.getByText("More..."));
+        for (const tag of tagsUnique) {
+            expect(screen.getByText(tag)).toBeInTheDocument();
+        }
+        for (const deliverableType of mockData) {
+            expect(screen.getByText(deliverableType.label)).toBeInTheDocument();
+        }
+        userEvent.click(screen.getByText("sample"));
+        for (const deliverableType of mockData.filter((deliverableType) =>
+            deliverableType.tags.includes("sample")
+        )) {
+            expect(screen.getByText(deliverableType.label)).toBeInTheDocument();
+        }
+        for (const deliverableType of mockData.filter(
+            (deliverableType) => !deliverableType.tags.includes("sample")
+        )) {
+            expect(screen.queryByText(deliverableType.label)).toBeNull();
+        }
+        userEvent.click(screen.getByText("tag2"));
+        for (const deliverableType of mockData.filter((deliverableType) =>
+            deliverableType.tags.includes("tag2")
+        )) {
+            expect(screen.getByText(deliverableType.label)).toBeInTheDocument();
+        }
+        for (const deliverableType of mockData.filter(
+            (deliverableType) => !deliverableType.tags.includes("tag2")
+        )) {
+            expect(screen.queryByText(deliverableType.label)).toBeNull();
+        }
     });
 
     test("change the unit", async () => {
