@@ -1,10 +1,10 @@
 import React from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
-import { Styles } from "./styles";
-import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
+import { Styles } from "../styles";
+import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
 
-export const Step2 = ({ values, onChange, onSelect, taskUUID }) => {
+export const DeliverableDetails = ({ values, onChange, onSelect, taskUUID }) => {
     const classes = Styles();
     return (
         <Scrollbars autoHide autoHeight autoHeightMin={450} autoHeightMax={350}>

@@ -1,9 +1,9 @@
 import { Stack, Typography } from "@mui/material";
 import React from "react";
-import { ContactForm } from "../../components/ContactForm";
-import PrioritySelect from "../Task/components/PrioritySelect";
+import { ContactForm } from "../../../components/ContactForm";
+import PrioritySelect from "../../Task/components/PrioritySelect";
 
-export const Step1 = ({ values, onChangeContact, onChangePriority }) => {
+export const CallerDetails = ({ values, onChangeContact, onChangePriority }) => {
     return (
         <Stack spacing={1}>
             <Typography variant="h6">

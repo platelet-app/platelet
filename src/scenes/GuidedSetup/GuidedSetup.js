@@ -14,7 +14,12 @@ import PersonIcon from "@mui/icons-material/Person";
 import DirectionsIcon from "@mui/icons-material/Directions";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ArchiveIcon from "@mui/icons-material/Archive";
-import { Step1, Step2, Step3, Step4, Step5 } from "./index";
+import {
+    CallerDetails,
+    DeliverableDetails,
+    PickUpAndDeliverDetails,
+    Notes,
+} from "./index";
 import { Stack } from "@mui/material";
 import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
 import { getWhoami } from "../../redux/Selectors";
@@ -255,7 +260,11 @@ export const GuidedSetup = ({ show, onClose }) => {
                             icon={
                                 <LocationOnIcon className={classes.btnIcon} />
                             }
-                            label={"Pick-up"}
+                            label={
+                                <div>
+                                    Pick-up /<br /> Delivery
+                                </div>
+                            }
                             {...a11yProps(2)}
                             className={classes.tabButton}
                         />
@@ -263,7 +272,7 @@ export const GuidedSetup = ({ show, onClose }) => {
                             icon={
                                 <DirectionsIcon className={classes.btnIcon} />
                             }
-                            label={"Deliver"}
+                            label={"Notes"}
                             {...a11yProps(3)}
                             className={classes.tabButton}
                         />
@@ -271,20 +280,20 @@ export const GuidedSetup = ({ show, onClose }) => {
                     </Tabs>
                 </AppBar>
                 <TabPanel value={value} index={0}>
-                    <Step1
+                    <CallerDetails
                         values={formValues}
                         onChangeContact={handleCallerContactChange}
                         onChangePriority={handlePriorityChange}
                     />
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <Step2
+                    <DeliverableDetails
                         values={formValues}
                         onChange={handleDeliverablesChange}
                     />
                 </TabPanel>
                 <TabPanel value={value} index={2}>
-                    <Step3
+                    <PickUpAndDeliverDetails
                         values={formValues}
                         onChange={handleReceiverContactChange}
                         onSelectPickupLocation={onPickUpLocationSaved}
@@ -292,17 +301,11 @@ export const GuidedSetup = ({ show, onClose }) => {
                     />
                 </TabPanel>
                 <TabPanel value={value} index={3}>
-                    <Step4
+                    <Notes
                         onSelectDropOffLocation={onDropOffLocationSaved}
                         onSelectDropOffTime={onDropOffTimeSaved}
                         values={formValues}
                         onChange={() => {}}
-                    />
-                </TabPanel>
-                <TabPanel value={value} index={4}>
-                    <Step5
-                        values={formValues}
-                        onChange={handleDeliverablesChange}
                     />
                 </TabPanel>
             </div>

@@ -7,12 +7,12 @@ import DateTimePicker from "@mui/lab/DateTimePicker";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import TextField from "@mui/material/TextField";
 
-import { ManualAddress } from "./components/ManualAddress";
+import { ManualAddress } from "./ManualAddress";
 
-import { Styles } from "./styles";
-import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
+import { Styles } from "../styles";
+import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 
-export const Step3 = ({
+export const PickUpAndDeliverDetails = ({
     values,
     onSelectPickupLocation,
     onSelectPickupTime,

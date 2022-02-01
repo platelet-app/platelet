@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
-import { Styles } from "./styles";
+import { Styles } from "../styles";
 import { Button, TextField } from "@mui/material";
-import { ManualAddress } from "./components/ManualAddress";
-import { LocationDropdownSelector } from "./components/LocationDropdownSelector";
+import { ManualAddress } from "./ManualAddress";
+import { LocationDropdownSelector } from "./LocationDropdownSelector";
 import DateTimePicker from "@mui/lab/DateTimePicker";
-import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
+import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 
-export const Step4 = ({
+export const Notes = ({
     onSelectDropOffLocation,
     onSelectDropOffTime,
     values,
