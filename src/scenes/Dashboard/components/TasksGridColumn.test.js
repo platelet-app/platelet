@@ -16,6 +16,18 @@ import ActiveRidersChips from "./ActiveRidersChips";
 
 jest.mock("aws-amplify");
 
+const testUserModel = new models.User({
+    name: "whoami",
+    displayName: "Mock User",
+    roles: Object.values(userRoles),
+    dateOfBirth: null,
+    profilePictureURL: null,
+    profilePictureThumbnailURL: null,
+    active: 1,
+});
+
+export const testUser = { ...testUserModel, id: "whoami" };
+
 describe("TasksGridColumn", () => {
     beforeAll(() => {
         window.matchMedia = createMatchMedia(window.innerWidth);
@@ -91,7 +103,12 @@ describe("TasksGridColumn", () => {
                     title={tasksStatus.new}
                     taskKey={[tasksStatus.new]}
                 />
-            </>
+            </>,
+            {
+                preloadedState: {
+                    whoami: { user: testUser },
+                },
+            }
         );
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
@@ -101,13 +118,14 @@ describe("TasksGridColumn", () => {
         userEvent.type(screen.getByRole("textbox"), searchTerm);
         await waitFor(() => {
             expect(filterTaskSpy).toHaveBeenCalledTimes(3);
-            expect(filterTaskSpy).toHaveBeenCalledWith(
-                convertListDataToObject(
-                    mockTasks.map((t) => ({ ...t, assignees: {} }))
-                ),
-                searchTerm
-            );
         });
+        expect(filterTaskSpy).toHaveBeenNthCalledWith(
+            3,
+            convertListDataToObject(
+                mockTasks.map((t) => ({ ...t, assignees: {} }))
+            ),
+            searchTerm
+        );
         const mediumCards = screen.getAllByText("MEDIUM");
         const highCards = screen.getAllByText("HIGH");
         for (const card of mediumCards) {

@@ -24,6 +24,8 @@ function CommentsSection(props) {
         unsubscribe: () => {},
     });
 
+    console.log(whoami);
+
     function removeCommentFromState(commentId) {
         if (commentId) {
             setComments((prevState) => _.omit(prevState, commentId));
