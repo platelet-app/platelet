@@ -51,7 +51,7 @@ UserChip.propTypes = {
 UserChip.defaultProps = {
     onClick: () => {},
     onDelete: null,
-    variant: null,
+    variant: "default",
     color: "default",
 };
 
