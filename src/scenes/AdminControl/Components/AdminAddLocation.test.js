@@ -54,7 +54,7 @@ describe("AdminAddLocation", () => {
         render(<AdminAddLocation />);
     });
 
-    test.only("adding a location", async () => {
+    test("adding a location", async () => {
         amplify.DataStore.save.mockResolvedValue(savedData);
         render(<AdminAddLocation />, { preloadedState });
         for (const value of Object.values(fields)) {
@@ -79,5 +79,36 @@ describe("AdminAddLocation", () => {
             "href",
             `/location/${encodeUUID(savedData.id)}`
         );
+    });
+
+    it("should not let you see the page if you are not an admin", async () => {
+        render(<AdminAddLocation />, {
+            preloadedState: {
+                whoami: {
+                    error: null,
+                    user: {
+                        id: "user-id",
+                        roles: [userRoles.user],
+                    },
+                },
+                loadingReducer: {
+                    GET_WHOAMI: false,
+                },
+            },
+        });
+        expect(
+            screen.getByText("You don't have permission to view this page.")
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole("button", { name: "Add location" })
+        ).toBeNull();
+    });
+
+    test("Add location button should be disabled if the name is not set", async () => {
+        render(<AdminAddLocation />, { preloadedState });
+        userEvent.type(screen.getByRole("textbox", { name: "Name" }), "");
+        expect(
+            screen.getByRole("button", { name: "Add location" })
+        ).toBeDisabled();
     });
 });
