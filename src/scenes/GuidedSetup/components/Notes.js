@@ -1,19 +1,7 @@
 import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Styles } from "../styles";
-import {
-    Button,
-    Chip,
-    FormControl,
-    MenuItem,
-    Select,
-    Stack,
-    TextField,
-} from "@mui/material";
-import { ManualAddress } from "./ManualAddress";
-import { LocationDropdownSelector } from "./LocationDropdownSelector";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
+import { Chip, Stack, TextField } from "@mui/material";
 import { commentVisibility } from "../../../apiConsts";
 
 function VisibilityMenu(props) {
@@ -49,8 +37,9 @@ function VisibilityMenu(props) {
     );
 }
 
-export const Notes = ({ values, onChange, handleVisibilityChange }) => {
+export const Notes = ({ onChange, handleVisibilityChange }) => {
     const classes = Styles();
+    const [visibility, setVisibility] = useState(commentVisibility.everyone);
 
     return (
         <div className={classes.block}>
@@ -58,15 +47,17 @@ export const Notes = ({ values, onChange, handleVisibilityChange }) => {
                 {"Who should the notes be visible to?"}
             </Typography>
             <VisibilityMenu
-                value={values.visibility}
-                onChange={handleVisibilityChange}
+                value={visibility}
+                onChange={(value) => {
+                    setVisibility(value);
+                    handleVisibilityChange(value);
+                }}
             />
             <TextField
                 id="notes"
                 label="Notes"
                 fullWidth
                 multiline
-                value={values.body}
                 onChange={(e) => onChange(e.target.value)}
                 className={classes.textField}
                 margin="normal"

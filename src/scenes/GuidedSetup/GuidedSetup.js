@@ -25,7 +25,6 @@ import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
 import { getWhoami } from "../../redux/Selectors";
 import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
-import { useTheme } from "@mui/styles";
 import _ from "lodash";
 
 const TabPanel = (props) => {
@@ -112,24 +111,28 @@ const guidedSetupStyles = makeStyles((theme) => ({
 }));
 
 const defaultValues = {
-    requesterContact: {
-        name: "",
-        telephoneNumber: "",
-        email: "",
-    },
     pickUpLocation: null,
     pickUpTime: null,
-    comment: { visibility: commentVisibility.everyone, body: "" },
     dropOffLocation: null,
     dropOffTime: null,
     priority: null,
-    items: {},
 };
 
 export const GuidedSetup = ({ onClose }) => {
     const classes = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
+    const [reset, setReset] = useState(false);
+    const deliverables = useRef({});
+    const requesterContact = useRef({
+        name: "",
+        telephoneNumber: "",
+        email: "",
+    });
+    const comment = useRef({
+        visibility: commentVisibility.everyone,
+        body: "",
+    });
     const timeOfCall = useRef(new Date().toISOString());
     const dispatch = useDispatch();
     const { show, hide } = showHide();
@@ -142,10 +145,7 @@ export const GuidedSetup = ({ onClose }) => {
     };
 
     const handleCallerContactChange = (value) => {
-        setFormValues((prevState) => ({
-            ...prevState,
-            requesterContact: { ...prevState.requesterContact, ...value },
-        }));
+        requesterContact.current = { ...requesterContact.current, ...value };
     };
 
     const handlePriorityChange = (value) => {
@@ -173,6 +173,9 @@ export const GuidedSetup = ({ onClose }) => {
         await saveNewTaskToDataStore(
             {
                 ...formValues,
+                deliverables: deliverables.current,
+                requesterContact: requesterContact.current,
+                comment: comment.current,
                 timeOfCall: timeOfCall.current,
             },
             whoami.id
@@ -186,21 +189,14 @@ export const GuidedSetup = ({ onClose }) => {
         } else {
             setDiscardConfirmationOpen(true);
         }
-        //setDiscardConfirmationOpen(true);
     };
 
     const handleCommentVisibilityChange = (value) => {
-        setFormValues((prevState) => ({
-            ...prevState,
-            comment: { ...prevState.comment, visibility: value },
-        }));
+        comment.current = { ...comment.current, visibility: value };
     };
 
     const handleCommentChange = (value) => {
-        setFormValues((prevState) => ({
-            ...prevState,
-            comment: { ...prevState.comment, body: value },
-        }));
+        comment.current = { ...comment.current, body: value };
     };
 
     const onPickUpLocationSaved = (pickUpLocation) => {
@@ -215,25 +211,19 @@ export const GuidedSetup = ({ onClose }) => {
         if (!value || !value.id) {
             return;
         }
-        if (formValues.items[value.id]) {
-            setFormValues((prevState) => ({
-                ...prevState,
-                items: {
-                    ...prevState.items,
-                    [value.id]: {
-                        ...prevState.items[value.id],
-                        ...value,
-                    },
+        if (deliverables.current[value.id]) {
+            deliverables.current = {
+                ...deliverables.current,
+                [value.id]: {
+                    ...deliverables.current[value.id],
+                    ...value,
                 },
-            }));
+            };
         } else {
-            setFormValues((prevState) => ({
-                ...prevState,
-                items: {
-                    ...prevState.items,
-                    [value.id]: value,
-                },
-            }));
+            deliverables.current = {
+                ...deliverables.current,
+                [value.id]: value,
+            };
         }
     };
 
@@ -241,10 +231,12 @@ export const GuidedSetup = ({ onClose }) => {
         setFormValues(defaultValues);
         setTabIndex(0);
         dispatch(setGuidedSetupOpen(false));
+        // force rerender so that all the tabs are reset
+        setReset((prevState) => !prevState);
     };
 
     return (
-        <Paper className={classes.wrapper}>
+        <Paper key={reset} className={classes.wrapper}>
             <div className={classes.tabContent}>
                 <AppBar position="static" className={classes.appBar}>
                     <Tabs
@@ -303,7 +295,6 @@ export const GuidedSetup = ({ onClose }) => {
                     </Box>
                     <Box className={tabIndex === 1 ? show : hide}>
                         <DeliverableDetails
-                            values={formValues.items}
                             onChange={handleDeliverablesChange}
                         />
                     </Box>
@@ -312,11 +303,11 @@ export const GuidedSetup = ({ onClose }) => {
                             values={formValues}
                             onChange={handleReceiverContactChange}
                             onSelectPickupLocation={onPickUpLocationSaved}
+                            onSelectDropOffLocation={onDropOffLocationSaved}
                         />
                     </Box>
                     <Box className={tabIndex === 3 ? show : hide}>
                         <Notes
-                            values={formValues.comment}
                             handleVisibilityChange={
                                 handleCommentVisibilityChange
                             }
