@@ -52,7 +52,7 @@ UserChip.defaultProps = {
     onClick: () => {},
     onDelete: null,
     variant: null,
-    color: null,
+    color: "default",
 };
 
 export default UserChip;
