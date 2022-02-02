@@ -227,6 +227,13 @@ export const GuidedSetup = ({ onClose }) => {
         }
     };
 
+    const handleDeliverablesDelete = (value) => {
+        if (!value) {
+            return;
+        }
+        deliverables.current = _.omit(deliverables.current, value);
+    };
+
     const onCloseForm = () => {
         setFormValues(defaultValues);
         setTabIndex(0);
@@ -296,6 +303,7 @@ export const GuidedSetup = ({ onClose }) => {
                     <Box className={tabIndex === 1 ? show : hide}>
                         <DeliverableDetails
                             onChange={handleDeliverablesChange}
+                            onDelete={handleDeliverablesDelete}
                         />
                     </Box>
                     <Box className={tabIndex === 2 ? show : hide}>
