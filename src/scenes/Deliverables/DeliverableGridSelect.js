@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import { Chip, Grid, Stack, Typography } from "@mui/material";
+import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
@@ -28,6 +28,7 @@ const tagsReducer = (previousValue, currentValue = []) => {
 const useStyles = makeStyles((theme) => ({
     hint: {
         fontStyle: "italic",
+        fontSize: 15,
         color: "gray",
         "&:hover": {
             color: theme.palette.text.primary,
@@ -211,16 +212,7 @@ function DeliverableGridSelect(props) {
     } else {
         let count = 0;
         return (
-            <Stack
-                spacing={
-                    deliverablesSorted.deliverables.length > 0 &&
-                    deliverablesSorted.defaults.length > 0
-                        ? 3
-                        : 1
-                }
-                justifyContent={"flex-start"}
-                direction={"column"}
-            >
+            <Box>
                 <Typography className={classes.hint}>
                     Select a tag to find an item quickly
                 </Typography>
@@ -229,71 +221,85 @@ function DeliverableGridSelect(props) {
                     tags={tags}
                     value={currentTag}
                 />
-                <Stack spacing={1} direction={"column"}>
-                    {deliverablesSorted.deliverables.map((deliverable) => {
-                        count++;
-                        if (!currentTag && count > 5 && truncated) {
-                            return (
-                                <React.Fragment
-                                    key={deliverable.id}
-                                ></React.Fragment>
-                            );
-                        } else {
-                            return (
-                                <EditableDeliverable
-                                    key={deliverable.id}
-                                    disabled={props.disabled}
-                                    onChangeCount={onChangeCount}
-                                    onChangeUnit={onChangeUnit}
-                                    onDelete={onDelete}
-                                    deliverable={deliverable}
-                                />
-                            );
-                        }
-                    })}
-                </Stack>
-                <Stack spacing={1} direction={"column"}>
-                    {deliverablesSorted.defaults.map((deliverableType) => {
-                        if (
-                            suggestedDeliverables.includes(deliverableType.id)
-                        ) {
+                <Box sx={{ marginBottom: 1 }} />
+                <Stack
+                    spacing={
+                        deliverablesSorted.deliverables.length > 0 &&
+                        deliverablesSorted.defaults.length > 0
+                            ? 3
+                            : 1
+                    }
+                    justifyContent={"flex-start"}
+                    direction={"column"}
+                >
+                    <Stack spacing={1} direction={"column"}>
+                        {deliverablesSorted.deliverables.map((deliverable) => {
                             count++;
                             if (!currentTag && count > 5 && truncated) {
+                                return (
+                                    <React.Fragment
+                                        key={deliverable.id}
+                                    ></React.Fragment>
+                                );
+                            } else {
+                                return (
+                                    <EditableDeliverable
+                                        key={deliverable.id}
+                                        disabled={props.disabled}
+                                        onChangeCount={onChangeCount}
+                                        onChangeUnit={onChangeUnit}
+                                        onDelete={onDelete}
+                                        deliverable={deliverable}
+                                    />
+                                );
+                            }
+                        })}
+                    </Stack>
+                    <Stack spacing={1} direction={"column"}>
+                        {deliverablesSorted.defaults.map((deliverableType) => {
+                            if (
+                                suggestedDeliverables.includes(
+                                    deliverableType.id
+                                )
+                            ) {
+                                count++;
+                                if (!currentTag && count > 5 && truncated) {
+                                    return (
+                                        <React.Fragment
+                                            key={deliverableType.id}
+                                        ></React.Fragment>
+                                    );
+                                } else {
+                                    return (
+                                        <AddableDeliverable
+                                            disabled={props.disabled}
+                                            key={deliverableType.id}
+                                            onAdd={onAddNewDeliverable}
+                                            deliverableType={deliverableType}
+                                        />
+                                    );
+                                }
+                            } else {
                                 return (
                                     <React.Fragment
                                         key={deliverableType.id}
                                     ></React.Fragment>
                                 );
-                            } else {
-                                return (
-                                    <AddableDeliverable
-                                        disabled={props.disabled}
-                                        key={deliverableType.id}
-                                        onAdd={onAddNewDeliverable}
-                                        deliverableType={deliverableType}
-                                    />
-                                );
                             }
-                        } else {
-                            return (
-                                <React.Fragment
-                                    key={deliverableType.id}
-                                ></React.Fragment>
-                            );
-                        }
-                    })}
+                        })}
+                    </Stack>
+                    <Link
+                        href="#"
+                        onClick={(e) => {
+                            setTruncated((prevState) => !prevState);
+                            e.preventDefault();
+                        }}
+                        color="inherit"
+                    >
+                        {!currentTag && (truncated ? "More..." : "Less...")}
+                    </Link>
                 </Stack>
-                <Link
-                    href="#"
-                    onClick={(e) => {
-                        setTruncated((prevState) => !prevState);
-                        e.preventDefault();
-                    }}
-                    color="inherit"
-                >
-                    {!currentTag && (truncated ? "More..." : "Less...")}
-                </Link>
-            </Stack>
+            </Box>
         );
     }
 }

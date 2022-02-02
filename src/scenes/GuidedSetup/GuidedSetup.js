@@ -26,6 +26,7 @@ import { getWhoami } from "../../redux/Selectors";
 import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
 import { useTheme } from "@mui/styles";
+import _ from "lodash";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -104,16 +105,17 @@ const guidedSetupStyles = makeStyles((theme) => ({
         color: theme.palette.mode === "dark" ? "white" : "black",
     },
     tabContent: {
-        maxHeight: 1000,
+        maxHeight: 1100,
         flexGrow: 1,
+        overflowY: "auto",
     },
 }));
 
 const defaultValues = {
     requesterContact: {
-        name: null,
-        telephoneNumber: null,
-        email: null,
+        name: "",
+        telephoneNumber: "",
+        email: "",
     },
     pickUpLocation: null,
     pickUpTime: null,
@@ -134,7 +136,6 @@ export const GuidedSetup = ({ onClose }) => {
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
     const whoami = useSelector(getWhoami);
-    const theme = useTheme();
 
     const handleChange = (event, newValue) => {
         setTabIndex(newValue);
@@ -180,7 +181,12 @@ export const GuidedSetup = ({ onClose }) => {
     };
 
     const handleDiscard = () => {
-        setDiscardConfirmationOpen(true);
+        if (_.isEqual(formValues, defaultValues)) {
+            onCloseForm();
+        } else {
+            setDiscardConfirmationOpen(true);
+        }
+        //setDiscardConfirmationOpen(true);
     };
 
     const handleCommentVisibilityChange = (value) => {
