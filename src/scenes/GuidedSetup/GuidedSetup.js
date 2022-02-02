@@ -104,6 +104,7 @@ const guidedSetupStyles = makeStyles((theme) => ({
         color: theme.palette.mode === "dark" ? "white" : "black",
     },
     tabContent: {
+        maxHeight: 1000,
         flexGrow: 1,
     },
 }));
@@ -318,17 +319,45 @@ export const GuidedSetup = ({ onClose }) => {
                     </Box>
                 </Box>
             </div>
-            <Stack
-                sx={{ margin: 1 }}
-                justifyContent="space-between"
-                direction="row"
-            >
-                <Button onClick={handleDiscard} autoFocus>
-                    Discard
-                </Button>
-                <Button onClick={handleSave} variant="contained" autoFocus>
-                    Save to dashboard
-                </Button>
+            <Stack direction="column">
+                <Stack
+                    sx={{ margin: 1 }}
+                    justifyContent="space-between"
+                    direction="row"
+                >
+                    {tabIndex !== 0 ? (
+                        <Button
+                            onClick={() =>
+                                setTabIndex((prevState) => prevState - 1)
+                            }
+                        >
+                            Previous
+                        </Button>
+                    ) : (
+                        <div></div>
+                    )}
+                    {tabIndex !== 3 ? (
+                        <Button
+                            onClick={() =>
+                                setTabIndex((prevState) => prevState + 1)
+                            }
+                        >
+                            Next
+                        </Button>
+                    ) : (
+                        <div></div>
+                    )}
+                </Stack>
+                <Stack
+                    sx={{ margin: 1 }}
+                    justifyContent="space-between"
+                    direction="row"
+                >
+                    <Button onClick={handleDiscard}>Discard</Button>
+                    <Button onClick={handleSave} variant="contained" autoFocus>
+                        Save to dashboard
+                    </Button>
+                </Stack>
             </Stack>
             <ConfirmationDialog
                 open={discardConfirmationOpen}
