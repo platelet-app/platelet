@@ -21,6 +21,7 @@ function UserChip(props) {
             <Chip
                 onClick={props.onClick}
                 variant={props.variant}
+                color={props.color}
                 onDelete={props.onDelete}
                 avatar={<Avatar alt={displayName} src={thumbnail} />}
                 label={displayName}
@@ -31,6 +32,7 @@ function UserChip(props) {
             <Chip
                 onDelete={props.onDelete}
                 variant={props.variant}
+                color={props.color}
                 onClick={props.onClick}
                 label={displayName}
             />
@@ -43,12 +45,14 @@ UserChip.propTypes = {
     onClick: PropTypes.func,
     onDelete: PropTypes.func,
     variant: PropTypes.string,
+    color: PropTypes.string,
 };
 
 UserChip.defaultProps = {
     onClick: () => {},
     onDelete: null,
     variant: null,
+    color: null,
 };
 
 export default UserChip;

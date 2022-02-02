@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import DeliverablesSkeleton from "./components/DeliverablesSkeleton";
-import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
