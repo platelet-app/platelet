@@ -145,7 +145,7 @@ describe("GuidedSetup", () => {
         );
     });
 
-    test.only("clicking the discard when nothing has been entered", async () => {
+    test("clicking the discard button when nothing has been entered", async () => {
         amplify.DataStore.query.mockResolvedValue([]);
         render(<GuidedSetup />, { preloadedState });
         await waitFor(() =>
@@ -153,5 +153,78 @@ describe("GuidedSetup", () => {
         );
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
         expect(screen.queryByText(/Are you sure/)).toBeNull();
+    });
+
+    test("clicking the discard button when contact data has been entered", async () => {
+        amplify.DataStore.query.mockResolvedValue([]);
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
+        );
+        const textBox = screen.getByRole("textbox", { name: "Name" });
+        userEvent.type(textBox, "Someone Person");
+        userEvent.click(screen.getByRole("button", { name: "Discard" }));
+        expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        expect(screen.queryByText(/Are you sure/)).toBeNull();
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+        );
+    });
+
+    test("clicking the discard button when item data has been entered", async () => {
+        amplify.DataStore.query.mockResolvedValue([
+            new models.DeliverableType({ label: "Fake Item" }),
+        ]);
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
+        );
+        userEvent.click(screen.getByText(/ITEMS/));
+        userEvent.click(screen.getByRole("button", { name: "Add Fake Item" }));
+        userEvent.click(screen.getByRole("button", { name: "Discard" }));
+        expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        expect(screen.queryByText(/Are you sure/)).toBeNull();
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+        );
+    });
+    test("clicking the discard button when location data has been entered", async () => {
+        amplify.DataStore.query.mockResolvedValue([]);
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
+        );
+        userEvent.click(screen.getByText(/PICK-UP/));
+        userEvent.click(screen.getAllByText("Ward")[1]);
+        const textBox = screen.getByRole("textbox", { name: "" });
+        userEvent.type(textBox, "data");
+        userEvent.type(textBox, "{enter}");
+        userEvent.click(screen.getByRole("button", { name: "Discard" }));
+        expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        expect(screen.queryByText(/Are you sure/)).toBeNull();
+        await waitFor(() =>
+            // location search not rendered so 5 calls
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(5)
+        );
+    });
+    test("clicking the discard button when note data has been entered", async () => {
+        amplify.DataStore.query.mockResolvedValue([]);
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
+        );
+        userEvent.click(screen.getByText(/NOTES/));
+        const textBox = screen.getByRole("textbox", { name: "Notes" });
+        userEvent.type(textBox, "data");
+        userEvent.click(screen.getByRole("button", { name: "Discard" }));
+        expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        expect(screen.queryByText(/Are you sure/)).toBeNull();
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+        );
     });
 });

@@ -207,7 +207,6 @@ export const GuidedSetup = () => {
     };
 
     const handleSaveLocationFromPreset = (key, location) => {
-        console.log(key, location);
         setFormValues((prevState) => ({ ...prevState, [key]: location }));
     };
 
