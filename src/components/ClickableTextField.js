@@ -100,7 +100,12 @@ function ClickableTextField(props) {
             noWrap
             aria-labelledby={label}
             onClick={toggleEditMode}
-            className={clsx(classes.label, classes.text)}
+            className={clsx(
+                classes.hoverHighlight,
+                classes.label,
+                classes.enabled,
+                classes.text
+            )}
             align={"right"}
         >
             {label}
