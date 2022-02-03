@@ -53,7 +53,7 @@ FavouriteLocationsSelect.propTypes = {
 };
 FavouriteLocationsSelect.defaultProps = {
     onSelect: () => {},
-    label: "Directory locations",
+    label: "Search locations",
 };
 
 export default FavouriteLocationsSelect;
