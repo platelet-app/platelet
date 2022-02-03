@@ -214,8 +214,37 @@ export const GuidedSetup = () => {
         setFormValues((prevState) => ({ ...prevState, [key]: location }));
     };
 
+    const handleLocationChangeContact = (key, values) => {
+        setFormValues((prevState) => {
+            if (prevState[key] && prevState[key].listed === 1) {
+                const { id, ...rest } = prevState[key];
+                return {
+                    ...prevState,
+                    [key]: {
+                        ...rest,
+                        contact: { ...rest.contact, ...values },
+                        name: rest && rest.name ? `Copy of ${rest.name}` : "",
+                        listed: 0,
+                    },
+                };
+            } else if (prevState[key]) {
+                return {
+                    ...prevState,
+                    [key]: {
+                        ...prevState[key],
+                        contact: { ...prevState[key].contact, ...values },
+                    },
+                };
+            } else {
+                return {
+                    ...prevState,
+                    [key]: { contact: values, listed: 0 },
+                };
+            }
+        });
+    };
+
     const handleLocationChangeAddress = (key, values) => {
-        debugger;
         setFormValues((prevState) => {
             if (prevState[key] && prevState[key].listed === 1) {
                 const { id, ...rest } = prevState[key];
@@ -380,18 +409,36 @@ export const GuidedSetup = () => {
                                     value
                                 )
                             }
-                            onChangePickUpLocation={(values) =>
-                                handleLocationChangeAddress(
-                                    "pickUpLocation",
-                                    values
-                                )
-                            }
-                            onChangeDropOffLocation={(values) =>
-                                handleLocationChangeAddress(
-                                    "dropOffLocation",
-                                    values
-                                )
-                            }
+                            onChangePickUpLocation={(values) => {
+                                const { contact, ...rest } = values;
+                                if (!_.isEmpty(rest)) {
+                                    handleLocationChangeAddress(
+                                        "pickUpLocation",
+                                        rest
+                                    );
+                                }
+                                if (!_.isEmpty(contact)) {
+                                    handleLocationChangeContact(
+                                        "pickUpLocation",
+                                        contact
+                                    );
+                                }
+                            }}
+                            onChangeDropOffLocation={(values) => {
+                                const { contact, ...rest } = values;
+                                if (!_.isEmpty(rest)) {
+                                    handleLocationChangeAddress(
+                                        "dropOffLocation",
+                                        rest
+                                    );
+                                }
+                                if (!_.isEmpty(contact)) {
+                                    handleLocationChangeContact(
+                                        "dropOffLocation",
+                                        contact
+                                    );
+                                }
+                            }}
                         />
                     </Box>
                     <Box className={tabIndex === 3 ? show : hide}>

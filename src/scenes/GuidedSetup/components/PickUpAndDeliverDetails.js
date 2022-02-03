@@ -16,6 +16,9 @@ export const PickUpAndDeliverDetails = ({
             <LocationDetailAndSelector
                 onSelectPreset={onSelectPickUpLocation}
                 onChange={onChangePickUpLocation}
+                onChangeContact={(values) =>
+                    onChangePickUpLocation({ contact: values })
+                }
                 location={values.pickUpLocation}
                 noLink
             />
@@ -24,6 +27,9 @@ export const PickUpAndDeliverDetails = ({
             <LocationDetailAndSelector
                 onSelectPreset={onSelectDropOffLocation}
                 onChange={onChangeDropOffLocation}
+                onChangeContact={(values) =>
+                    onChangeDropOffLocation({ contact: values })
+                }
                 location={values.dropOffLocation}
                 noLink
             />
