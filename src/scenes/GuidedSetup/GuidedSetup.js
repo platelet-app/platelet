@@ -112,16 +112,13 @@ const guidedSetupStyles = makeStyles((theme) => ({
 
 const defaultValues = {
     pickUpLocation: null,
-    pickUpTime: null,
     dropOffLocation: null,
-    dropOffTime: null,
     priority: null,
 };
 
 const defaultContact = {
     name: "",
     telephoneNumber: "",
-    email: "",
 };
 
 const defaultComment = {
@@ -300,6 +297,8 @@ export const GuidedSetup = () => {
 
     const onCloseForm = () => {
         dispatch(setGuidedSetupOpen(false));
+        // force rerender so that all the tabs are reset
+        setReset((prevState) => !prevState);
     };
 
     useEffect(() => {
@@ -307,18 +306,9 @@ export const GuidedSetup = () => {
             setFormValues(defaultValues);
             deliverables.current = {};
             timeOfCall.current = new Date().toISOString();
-            requesterContact.current = {
-                name: "",
-                telephoneNumber: "",
-                email: "",
-            };
-            comment.current = {
-                visibility: commentVisibility.everyone,
-                body: "",
-            };
+            requesterContact.current = defaultContact;
+            comment.current = defaultComment;
             setTabIndex(0);
-            // force rerender so that all the tabs are reset
-            setReset((prevState) => !prevState);
         }
     }, [guidedSetupOpen]);
 
@@ -339,7 +329,7 @@ export const GuidedSetup = () => {
                             icon={<PersonIcon className={classes.btnIcon} />}
                             label={
                                 <div>
-                                    Caller /<br /> Priority
+                                    CALLER /<br /> PRIORITY
                                 </div>
                             }
                             {...a11yProps(0)}
@@ -347,7 +337,7 @@ export const GuidedSetup = () => {
                         />
                         <Tab
                             icon={<ArchiveIcon className={classes.btnIcon} />}
-                            label={"Items"}
+                            label={"ITEMS"}
                             {...a11yProps(1)}
                             className={classes.tabButton}
                         />
@@ -357,7 +347,7 @@ export const GuidedSetup = () => {
                             }
                             label={
                                 <div>
-                                    Pick-up /<br /> Delivery
+                                    PICK-UP /<br /> DELIVERY
                                 </div>
                             }
                             {...a11yProps(2)}
@@ -365,7 +355,7 @@ export const GuidedSetup = () => {
                         />
                         <Tab
                             icon={<NotesIcon className={classes.btnIcon} />}
-                            label={"Notes"}
+                            label={"NOTES"}
                             {...a11yProps(3)}
                             className={classes.tabButton}
                         />

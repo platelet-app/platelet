@@ -25,7 +25,7 @@ export const CallerDetails = ({
                     onChangeContact(value);
                 }}
             />
-            <Typography variant="h6">What's the priority?</Typography>
+            <Typography variant="h6">What is the priority?</Typography>
             <PrioritySelect
                 priority={values.priority}
                 onSelect={onChangePriority}
