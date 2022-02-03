@@ -153,6 +153,9 @@ describe("GuidedSetup", () => {
         );
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
         expect(screen.queryByText(/Are you sure/)).toBeNull();
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+        );
     });
 
     test("clicking the discard button when contact data has been entered", async () => {

@@ -4,10 +4,7 @@ import PropTypes from "prop-types";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    displayErrorNotification,
-    displayWarningNotification,
-} from "../../../redux/notifications/NotificationsActions";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
@@ -166,7 +163,7 @@ function LocationDetailsPanel(props) {
             if (locationToUpdate.listed === 1) {
                 locationToUpdate = await editPreset();
             }
-            if (locationToUpdate.contact === null) {
+            if (!locationToUpdate.contact) {
                 locationResult = await DataStore.save(
                     models.Location.copyOf(locationToUpdate, (updated) => {
                         updated.contact = filtered;
