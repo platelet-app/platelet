@@ -9,13 +9,17 @@ export const PickUpAndDeliverDetails = ({
     onSelectDropOffLocation,
     onChangePickUpLocation,
     onChangeDropOffLocation,
+    onClearPickUpLocation,
+    onClearDropOffLocation,
 }) => {
     return (
         <Stack spacing={1}>
             <Typography variant="h6">Where from?</Typography>
             <LocationDetailAndSelector
                 onSelectPreset={onSelectPickUpLocation}
+                label="pick up"
                 onChange={onChangePickUpLocation}
+                onClear={onClearPickUpLocation}
                 onChangeContact={(values) =>
                     onChangePickUpLocation({ contact: values })
                 }
@@ -26,7 +30,9 @@ export const PickUpAndDeliverDetails = ({
             <Typography variant="h6">Where to?</Typography>
             <LocationDetailAndSelector
                 onSelectPreset={onSelectDropOffLocation}
+                label="drop off"
                 onChange={onChangeDropOffLocation}
+                onClear={onClearDropOffLocation}
                 onChangeContact={(values) =>
                     onChangeDropOffLocation({ contact: values })
                 }

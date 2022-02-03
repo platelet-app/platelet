@@ -271,13 +271,6 @@ export const GuidedSetup = () => {
         });
     };
 
-    const handleDropOffLocationChange = (value) => {
-        setFormValues((prevState) => ({
-            ...prevState,
-            dropOffLocation: { ...prevState.dropOffLocation, ...value },
-        }));
-    };
-
     const handleDeliverablesChange = (value) => {
         if (!value || !value.id) {
             return;
@@ -408,6 +401,18 @@ export const GuidedSetup = () => {
                                     "dropOffLocation",
                                     value
                                 )
+                            }
+                            onClearDropOffLocation={() =>
+                                setFormValues((prevState) => ({
+                                    ...prevState,
+                                    dropOffLocation: null,
+                                }))
+                            }
+                            onClearPickUpLocation={() =>
+                                setFormValues((prevState) => ({
+                                    ...prevState,
+                                    pickUpLocation: null,
+                                }))
                             }
                             onChangePickUpLocation={(values) => {
                                 const { contact, ...rest } = values;
