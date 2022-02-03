@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import AppBar from "@mui/material/AppBar";
@@ -22,7 +22,7 @@ import {
 } from "./index";
 import { Paper, Stack } from "@mui/material";
 import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
-import { getWhoami } from "../../redux/Selectors";
+import { getWhoami, guidedSetupOpenSelector } from "../../redux/Selectors";
 import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
 import _ from "lodash";
@@ -118,21 +118,26 @@ const defaultValues = {
     priority: null,
 };
 
-export const GuidedSetup = ({ onClose }) => {
+const defaultContact = {
+    name: "",
+    telephoneNumber: "",
+    email: "",
+};
+
+const defaultComment = {
+    body: "",
+    visibility: commentVisibility.everyone,
+};
+
+export const GuidedSetup = () => {
     const classes = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
     const [reset, setReset] = useState(false);
+    const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
     const deliverables = useRef({});
-    const requesterContact = useRef({
-        name: "",
-        telephoneNumber: "",
-        email: "",
-    });
-    const comment = useRef({
-        visibility: commentVisibility.everyone,
-        body: "",
-    });
+    const requesterContact = useRef(defaultContact);
+    const comment = useRef(defaultComment);
     const timeOfCall = useRef(new Date().toISOString());
     const dispatch = useDispatch();
     const { show, hide } = showHide();
@@ -184,10 +189,15 @@ export const GuidedSetup = ({ onClose }) => {
     };
 
     const handleDiscard = () => {
-        if (_.isEqual(formValues, defaultValues)) {
-            onCloseForm();
-        } else {
+        if (
+            !_.isEqual(formValues, defaultValues) ||
+            !_.isEqual(requesterContact.current, defaultContact) ||
+            !_.isEqual(comment.current.body, defaultComment.body) ||
+            !_.isEmpty(deliverables.current)
+        ) {
             setDiscardConfirmationOpen(true);
+        } else {
+            onCloseForm();
         }
     };
 
@@ -199,12 +209,44 @@ export const GuidedSetup = ({ onClose }) => {
         comment.current = { ...comment.current, body: value };
     };
 
-    const onPickUpLocationSaved = (pickUpLocation) => {
-        setFormValues((prevState) => ({ ...prevState, pickUpLocation }));
+    const handleSaveLocationFromPreset = (key, location) => {
+        console.log(key, location);
+        setFormValues((prevState) => ({ ...prevState, [key]: location }));
     };
 
-    const onDropOffLocationSaved = (dropOffLocation) => {
-        setFormValues((prevState) => ({ ...prevState, dropOffLocation }));
+    const handleLocationChangeAddress = (key, values) => {
+        debugger;
+        setFormValues((prevState) => {
+            if (prevState[key] && prevState[key].listed === 1) {
+                const { id, ...rest } = prevState[key];
+                return {
+                    ...prevState,
+                    [key]: {
+                        ...rest,
+                        ...values,
+                        name: rest && rest.name ? `Copy of ${rest.name}` : "",
+                        listed: 0,
+                    },
+                };
+            } else if (prevState[key]) {
+                return {
+                    ...prevState,
+                    [key]: { ...prevState[key], ...values },
+                };
+            } else {
+                return {
+                    ...prevState,
+                    [key]: { ...values, listed: 0 },
+                };
+            }
+        });
+    };
+
+    const handleDropOffLocationChange = (value) => {
+        setFormValues((prevState) => ({
+            ...prevState,
+            dropOffLocation: { ...prevState.dropOffLocation, ...value },
+        }));
     };
 
     const handleDeliverablesChange = (value) => {
@@ -235,12 +277,28 @@ export const GuidedSetup = ({ onClose }) => {
     };
 
     const onCloseForm = () => {
-        setFormValues(defaultValues);
-        setTabIndex(0);
         dispatch(setGuidedSetupOpen(false));
-        // force rerender so that all the tabs are reset
-        setReset((prevState) => !prevState);
     };
+
+    useEffect(() => {
+        if (guidedSetupOpen) {
+            setFormValues(defaultValues);
+            deliverables.current = {};
+            timeOfCall.current = new Date().toISOString();
+            requesterContact.current = {
+                name: "",
+                telephoneNumber: "",
+                email: "",
+            };
+            comment.current = {
+                visibility: commentVisibility.everyone,
+                body: "",
+            };
+            setTabIndex(0);
+            // force rerender so that all the tabs are reset
+            setReset((prevState) => !prevState);
+        }
+    }, [guidedSetupOpen]);
 
     return (
         <Paper key={reset} className={classes.wrapper}>
@@ -310,8 +368,30 @@ export const GuidedSetup = ({ onClose }) => {
                         <PickUpAndDeliverDetails
                             values={formValues}
                             onChange={handleReceiverContactChange}
-                            onSelectPickupLocation={onPickUpLocationSaved}
-                            onSelectDropOffLocation={onDropOffLocationSaved}
+                            onSelectPickUpLocation={(value) =>
+                                handleSaveLocationFromPreset(
+                                    "pickUpLocation",
+                                    value
+                                )
+                            }
+                            onSelectDropOffLocation={(value) =>
+                                handleSaveLocationFromPreset(
+                                    "dropOffLocation",
+                                    value
+                                )
+                            }
+                            onChangePickUpLocation={(values) =>
+                                handleLocationChangeAddress(
+                                    "pickUpLocation",
+                                    values
+                                )
+                            }
+                            onChangeDropOffLocation={(values) =>
+                                handleLocationChangeAddress(
+                                    "dropOffLocation",
+                                    values
+                                )
+                            }
                         />
                     </Box>
                     <Box className={tabIndex === 3 ? show : hide}>

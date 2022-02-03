@@ -14,17 +14,23 @@ import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
-const useStyles = makeStyles({
-    root: {
-        maxWidth: "350px",
-    },
+const useStyles = makeStyles((theme) => ({
+    root: {},
     label: {
         maxWidth: "250px",
     },
     separator: {
         height: 10,
     },
-});
+    hint: {
+        fontStyle: "italic",
+        fontSize: 15,
+        color: "gray",
+        "&:hover": {
+            color: theme.palette.text.primary,
+        },
+    },
+}));
 
 const initialState = {
     address: {
@@ -115,7 +121,7 @@ function LocationDetailAndSelector(props) {
             : "";
 
     let locationTitle = <></>;
-    if (props.location && !!props.location.listed) {
+    if (props.location && !props.noLink && !!props.location.listed) {
         locationTitle = (
             <ThemedLink to={locationLink}>
                 <Typography noWrap className={classes.label}>
@@ -123,7 +129,7 @@ function LocationDetailAndSelector(props) {
                 </Typography>
             </ThemedLink>
         );
-    } else if (props.location && !!!props.location.listed) {
+    } else if (props.location && (props.noLink || !!!props.location.listed)) {
         locationTitle = (
             <Typography noWrap className={classes.label}>
                 {presetName}
@@ -187,6 +193,11 @@ function LocationDetailAndSelector(props) {
     return (
         <Box className={classes.root}>
             <Stack spacing={1} className={props.className} direction={"column"}>
+                {!!!props.location && (
+                    <Typography className={classes.hint}>
+                        Search the directory or click a field to enter manually
+                    </Typography>
+                )}
                 {presetSelect}
                 <Stack direction={"column"}>
                     {Object.entries(addressFields).map(([key, label]) => {
@@ -274,6 +285,7 @@ LocationDetailAndSelector.propTypes = {
     onClear: PropTypes.func,
     onEdit: PropTypes.func,
     showContact: PropTypes.bool,
+    noLink: PropTypes.bool,
 };
 
 LocationDetailAndSelector.defaultProps = {
@@ -287,6 +299,7 @@ LocationDetailAndSelector.defaultProps = {
     onClear: () => {},
     onEdit: () => {},
     showContact: true,
+    noLink: false,
 };
 
 export default LocationDetailAndSelector;
