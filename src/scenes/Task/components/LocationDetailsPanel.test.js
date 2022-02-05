@@ -623,6 +623,281 @@ describe("LocationDetailsPanel", () => {
         });
     });
 
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `(
+        "add contact information to an empty location",
+        async ({ locationKey }) => {
+            const fakeInputData = "new data";
+            const fakeModel = new models.Location({
+                listed: 0,
+            });
+            const fakeTask = new models.Task({});
+            amplify.DataStore.query
+                .mockResolvedValue([])
+                .mockResolvedValue(fakeTask);
+            amplify.DataStore.save
+                .mockResolvedValueOnce({
+                    ...fakeModel,
+                    contact: { name: fakeInputData },
+                })
+                .mockResolvedValue({
+                    ...fakeTask,
+                    [locationKey]: {
+                        ...fakeModel,
+                        ward: "ward data",
+                    },
+                });
+            render(
+                <LocationDetailsPanel
+                    locationId={null}
+                    locationKey={locationKey}
+                />
+            );
+            await waitFor(() =>
+                expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            );
+            userEvent.click(screen.getByText("Expand to see more"));
+            userEvent.click(screen.getByText("Name"));
+            const textBox = screen.getAllByRole("textbox")[1];
+            userEvent.type(textBox, "new data");
+            userEvent.type(textBox, "{enter}");
+            await waitFor(() =>
+                expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining(
+                        _.omit(
+                            {
+                                ...fakeModel,
+                                contact: { name: fakeInputData },
+                            },
+                            "id"
+                        )
+                    )
+                )
+            );
+            await waitFor(() =>
+                expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                    2,
+                    expect.objectContaining(
+                        _.omit(
+                            {
+                                ...fakeTask,
+                                [locationKey]: {
+                                    ...fakeModel,
+                                    contact: { name: fakeInputData },
+                                },
+                            },
+                            "id"
+                        )
+                    )
+                )
+            );
+        }
+    );
+
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `(
+        "add address information then contact information to an empty location",
+        async ({ locationKey }) => {
+            const fakeInputData = "new data";
+            const fakeTask = new models.Task({});
+            const fakeModel = new models.Location({
+                listed: 0,
+            });
+            amplify.DataStore.query
+                .mockResolvedValueOnce([])
+                .mockResolvedValue(fakeTask)
+                .mockResolvedValue(fakeModel);
+            amplify.DataStore.save
+                .mockResolvedValueOnce({
+                    ...fakeModel,
+                    ward: "ward data",
+                })
+                .mockResolvedValue({
+                    ...fakeTask,
+                    [locationKey]: {
+                        ...fakeModel,
+                        ward: "ward data",
+                    },
+                })
+                .mockResolvedValue({
+                    ...fakeModel,
+                    contact: { name: fakeInputData },
+                });
+            render(
+                <LocationDetailsPanel
+                    locationId={null}
+                    locationKey={locationKey}
+                />
+            );
+            await waitFor(() =>
+                expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            );
+            userEvent.click(screen.getByText("Expand to see more"));
+            userEvent.click(screen.getByText("Ward"));
+            const textBox = screen.getAllByRole("textbox")[1];
+            userEvent.type(textBox, "ward data");
+            userEvent.type(textBox, "{enter}");
+            await waitFor(() =>
+                expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining(
+                        _.omit(
+                            {
+                                ...fakeModel,
+                                ward: "ward data",
+                            },
+                            "id"
+                        )
+                    )
+                )
+            );
+            await waitFor(() =>
+                expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                    2,
+                    expect.objectContaining(
+                        _.omit(
+                            {
+                                ...fakeTask,
+                                [locationKey]: {
+                                    ...fakeModel,
+                                    ward: "ward data",
+                                },
+                            },
+                            "id"
+                        )
+                    )
+                )
+            );
+            userEvent.click(screen.getByText("Name"));
+            const textBox2 = screen.getByRole("textbox");
+            userEvent.type(textBox2, fakeInputData);
+            userEvent.type(textBox2, "{enter}");
+            await waitFor(() =>
+                expect(amplify.DataStore.save).toHaveBeenNthCalledWith(3, {
+                    ...fakeModel,
+                    contact: {
+                        ...fakeModel.contact,
+                        name: `${fakeInputData}`,
+                    },
+                })
+            );
+        }
+    );
+
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `(
+        "add contact information then address information to an empty location",
+        async ({ locationKey }) => {
+            const fakeInputData = "new data";
+            const fakeTask = new models.Task({});
+            const fakeModel = new models.Location({
+                listed: 0,
+            });
+            const fakeModel2 = new models.Location({
+                listed: 0,
+                contact: { name: fakeInputData },
+            });
+            amplify.DataStore.query
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce(fakeTask)
+                .mockResolvedValueOnce(fakeModel2)
+                .mockResolvedValueOnce(fakeTask)
+                .mockResolvedValue({
+                    ...fakeModel,
+                    contact: { name: fakeInputData },
+                });
+            amplify.DataStore.save
+                .mockResolvedValueOnce({
+                    ...fakeModel,
+                    contact: { name: fakeInputData },
+                })
+                .mockResolvedValueOnce({
+                    ...fakeTask,
+                    [locationKey]: {
+                        ...fakeModel,
+                        contact: { name: fakeInputData },
+                    },
+                })
+                .mockResolvedValue({
+                    ...fakeModel,
+                    contact: { name: fakeInputData },
+                    ward: "ward data",
+                });
+            render(
+                <LocationDetailsPanel
+                    locationId={null}
+                    locationKey={locationKey}
+                />
+            );
+            await waitFor(() =>
+                expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            );
+            userEvent.click(screen.getByText("Expand to see more"));
+            userEvent.click(screen.getByText("Name"));
+            const textBox2 = screen.getAllByRole("textbox")[1];
+            userEvent.type(textBox2, fakeInputData);
+            userEvent.type(textBox2, "{enter}");
+            await waitFor(() =>
+                expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining(
+                        _.omit(
+                            {
+                                ...fakeModel,
+                                contact: {
+                                    ...fakeModel.contact,
+                                    name: `${fakeInputData}`,
+                                },
+                            },
+                            "id"
+                        )
+                    )
+                )
+            );
+            await waitFor(() =>
+                expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                    2,
+                    expect.objectContaining({
+                        ...fakeTask,
+                        [locationKey]: {
+                            ...fakeModel,
+                            contact: {
+                                ...fakeModel.contact,
+                                name: `${fakeInputData}`,
+                            },
+                        },
+                    })
+                )
+            );
+            userEvent.click(screen.getByText("Ward"));
+            const textBox = screen.getByRole("textbox");
+            userEvent.type(textBox, "ward data");
+            userEvent.type(textBox, "{enter}");
+            await waitFor(() =>
+                expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                    3,
+                    expect.objectContaining(
+                        _.omit(
+                            {
+                                ...fakeModel,
+                                contact: { name: fakeInputData },
+                                ward: "ward data",
+                            },
+                            "id"
+                        )
+                    )
+                )
+            );
+        }
+    );
+
     test("error on location get", async () => {
         const fakeError = new Error("fake error");
         amplify.DataStore.query.mockRejectedValue(fakeError);
