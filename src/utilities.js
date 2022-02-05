@@ -28,10 +28,14 @@ export function copyTaskDataToClipboard(task) {
     const data = {
         TOC: timeOfCall ? moment(timeOfCall).format("HH:mm") : undefined,
         FROM: pickUpLocation
-            ? `${pickUpLocation.ward || ""} - ${pickUpLocation.line1 || ""}`
+            ? `${pickUpLocation.ward || ""} - ${pickUpLocation.line1 || ""}, ${
+                  pickUpLocation.postcode || ""
+              }`
             : undefined,
         TO: dropOffLocation
-            ? `${dropOffLocation.ward || ""} - ${dropOffLocation.line1 || ""}`
+            ? `${dropOffLocation.ward || ""} - ${
+                  dropOffLocation.line1 || ""
+              }, ${dropOffLocation.postcode || ""}`
             : undefined,
         PRIORITY: priority ? priority.toLowerCase() : undefined,
     };
