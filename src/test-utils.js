@@ -17,7 +17,6 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { render as rtlRender } from "@testing-library/react";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
-import store from "./redux/Store";
 import rootSaga from "./redux/RootSagas";
 import { DismissButton } from "./styles/common";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";

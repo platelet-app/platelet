@@ -4,10 +4,7 @@ import PropTypes from "prop-types";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    displayErrorNotification,
-    displayWarningNotification,
-} from "../../../redux/notifications/NotificationsActions";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
 import _ from "lodash";

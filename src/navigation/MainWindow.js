@@ -10,7 +10,7 @@ import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
 import LocationDetail from "../scenes/LocationDetail/LocationDetail";
 import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
 import makeStyles from "@mui/styles/makeStyles";
 import Container from "@mui/material/Container";
@@ -21,10 +21,15 @@ import AdminAddDeliverableType from "../scenes/AdminControl/Components/AdminAddD
 import AdminAddRiderResponsibility from "../scenes/AdminControl/Components/AdminAddRiderResponsibility";
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { AdminControl } from "../scenes/AdminControl/AdminControl";
+import { guidedSetupOpenSelector, menuIndexSelector } from "../redux/Selectors";
 
 function MainWindowContainer(props) {
+    const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
+    const navIndex = useSelector(menuIndexSelector);
     const styles = makeStyles((theme) => ({
         root: {
+            marginRight:
+                guidedSetupOpen && navIndex === "dashboard" ? "400px" : "auto",
             paddingTop: 10,
             paddingBottom: 10,
             [theme.breakpoints.down("md")]: {

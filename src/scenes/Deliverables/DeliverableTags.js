@@ -18,6 +18,7 @@ export default function DeliverableTags(props) {
                 <Grid key={tag} item>
                     <Chip
                         label={tag}
+                        color={props.value === tag ? "primary" : "default"}
                         onClick={() => {
                             if (tag === props.value) {
                                 props.onSelect(null);

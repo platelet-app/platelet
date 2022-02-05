@@ -250,10 +250,12 @@ function ActiveRidersChips() {
                                             setDashboardFilteredUser(rider.id)
                                         );
                                     }
-                                    return;
-                                    setUpdatingRider(rider.id);
-                                    timeSet.current = new Date();
                                 }}
+                                color={
+                                    dashboardFilteredUser === rider.id
+                                        ? "primary"
+                                        : "default"
+                                }
                                 variant={
                                     dashboardFilteredUser === rider.id
                                         ? null

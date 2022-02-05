@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useDispatch, useSelector } from "react-redux";
 import makeStyles from "@mui/styles/makeStyles";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
@@ -9,13 +7,25 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { v4 as uuidv4 } from "uuid";
-
-import { encodeUUID } from "../../utilities";
-
-import { CustomizedDialogs } from "../../components/CustomizedDialogs";
-import { Step1, Step2, Step3, Step4, Step5 } from "./index";
-import { getWhoami } from "../../redux/Selectors";
+import { useDispatch, useSelector } from "react-redux";
+import { setGuidedSetupOpen } from "../../redux/Actions";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
+import PersonIcon from "@mui/icons-material/Person";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import NotesIcon from "@mui/icons-material/Notes";
+import {
+    CallerDetails,
+    DeliverableDetails,
+    PickUpAndDeliverDetails,
+    Notes,
+} from "./index";
+import { Paper, Stack } from "@mui/material";
+import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
+import { getWhoami, guidedSetupOpenSelector } from "../../redux/Selectors";
+import { commentVisibility } from "../../apiConsts";
+import { showHide } from "../../styles/common";
+import _ from "lodash";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -51,237 +61,441 @@ const a11yProps = (index) => {
 };
 
 const guidedSetupStyles = makeStyles((theme) => ({
-    tabContent: {
-        flexGrow: 1,
+    wrapper: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+    },
+    appBar: {
+        boxShadow: "none",
         backgroundColor: theme.palette.background.paper,
     },
+    tabs: {
+        "& .MuiTabs-flexContainer": {
+            justifyContent: "space-around",
+        },
+        //backgroundColor: "white",
+    },
+    tabButton: {
+        "& .MuiTab-wrapper": {
+            justifyContent: "flex-start",
+            height: "100%",
+        },
+        display: "grid",
+        justifyItems: "center",
+        alignItems: "self-start",
+        gridTemplateRows: "45px 1fr",
+        color: theme.palette.mode === "dark" ? "white" : "black",
+        minWidth: "80px",
+        borderBottom: "solid rgba(0, 0, 0, 0.55) 5px",
+    },
+    indicator: {
+        height: "5px",
+        width: "100%",
+    },
     btnWrapper: {
+        alignSelf: "end",
         display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
+        flexDirection: "column",
+    },
+    btnIcon: {
+        fontSize: "2rem",
+        marginBottom: "10px",
+        color: theme.palette.mode === "dark" ? "white" : "black",
+    },
+    tabContent: {
+        maxHeight: 1100,
+        flexGrow: 1,
+        overflowY: "auto",
     },
 }));
 
 const defaultValues = {
-    caller: {
-        name: "",
-        phone: "",
-        email: "",
-    },
     pickUpLocation: null,
-    sender: {
-        name: "",
-        phone: "",
-        email: "",
-    },
-    receiver: {
-        name: "",
-        phone: "",
-        email: "",
-    },
     dropOffLocation: null,
-    priority: "",
-    items: {
-        sample: 0,
-        covidSample: 0,
-        milk: 0,
-        documents: 0,
-        equipment: 0,
-    },
+    priority: null,
 };
 
-const emptyTask = {
-    uuid: "",
-    requester_contact: {
-        name: "",
-        telephone_number: "",
-    },
-    assigned_riders: [],
-    assigned_coordinators: [],
-    time_picked_up: null,
-    time_dropped_off: null,
-    time_rejected: null,
-    time_cancelled: null,
+const defaultContact = {
+    name: "",
+    telephoneNumber: "",
 };
 
-export const GuidedSetup = ({ show, onClose }) => {
-    const history = useHistory();
+const defaultComment = {
+    body: "",
+    visibility: commentVisibility.everyone,
+};
 
+export const GuidedSetup = () => {
     const classes = guidedSetupStyles();
-    const [task, setTask] = useState(emptyTask);
-    const [value, setValue] = React.useState(0);
+    const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
-
-    useEffect(() => {
-        if (show) {
-            const uuid = uuidv4();
-            const newTask = { ...emptyTask, uuid };
-            setTask(newTask);
-        }
-    }, [show]);
+    const [reset, setReset] = useState(false);
+    const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
+    const deliverables = useRef({});
+    const requesterContact = useRef(defaultContact);
+    const comment = useRef(defaultComment);
+    const timeOfCall = useRef(new Date().toISOString());
+    const dispatch = useDispatch();
+    const { show, hide } = showHide();
+    const [discardConfirmationOpen, setDiscardConfirmationOpen] =
+        useState(false);
+    const whoami = useSelector(getWhoami);
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        setTabIndex(newValue);
     };
 
     const handleCallerContactChange = (value) => {
-        const result = {
-            ...formValues,
-            caller: { ...formValues.caller, ...value },
-        };
-        setFormValues(result);
+        requesterContact.current = { ...requesterContact.current, ...value };
+    };
+
+    const handlePriorityChange = (value) => {
+        setFormValues((prevState) => ({
+            ...prevState,
+            priority: value,
+        }));
     };
 
     const handleSenderContactChange = (value) => {
-        const result = {
-            ...formValues,
-            sender: { ...formValues.sender, ...value },
-        };
-        setFormValues(result);
+        setFormValues((prevState) => ({
+            ...prevState,
+            sender: { ...prevState.sender, ...value },
+        }));
     };
 
     const handleReceiverContactChange = (value) => {
-        const result = {
-            ...formValues,
-            receiver: { ...formValues.receiver, ...value },
-        };
-        setFormValues(result);
+        setFormValues((prevState) => ({
+            ...prevState,
+            receiver: { ...prevState.receiver, ...value },
+        }));
     };
 
-    const onPickUpLocationSaved = (pickUpLocation) => {
-        const result = { ...formValues, pickUpLocation };
-        const locationUUID = pickUpLocation.uuid;
-
-        setFormValues(result);
+    const handleSave = async () => {
+        await saveNewTaskToDataStore(
+            {
+                ...formValues,
+                deliverables: deliverables.current,
+                requesterContact: requesterContact.current,
+                comment: comment.current,
+                timeOfCall: timeOfCall.current,
+            },
+            whoami && whoami.id
+        );
+        onCloseForm();
     };
 
-    const onSelectDropoffFromSaved = (dropOffLocation) => {
-        const result = { ...formValues, dropOffLocation };
-        const locationUUID = dropOffLocation.uuid;
-
-        setFormValues(result);
-    };
-
-    let emptyDeliverable = {
-        task_uuid: task.uuid,
-        uuid: uuidv4(),
-    };
-
-    const onAddNewDeliverable = (deliverable) => {
-        let newDeliverable = {
-            ...emptyDeliverable,
-            count: 1,
-            type_id: deliverable.id,
-            type: deliverable.label,
-        };
-    };
-
-    const handleDeliverablesChange = (deliverable, count) => {
-        if (deliverable.uuid) {
-        } else if (deliverable.id) {
-            onAddNewDeliverable(deliverable);
+    const handleDiscard = () => {
+        if (
+            !_.isEqual(formValues, defaultValues) ||
+            !_.isEqual(requesterContact.current, defaultContact) ||
+            !_.isEqual(comment.current.body, defaultComment.body) ||
+            !_.isEmpty(deliverables.current)
+        ) {
+            setDiscardConfirmationOpen(true);
+        } else {
+            onCloseForm();
         }
     };
 
-    const onShowTaskOverview = () =>
-        history.push(`/task/${encodeUUID(task.uuid)}`);
-
-    const onCloseForm = () => {
-        onClose();
-        setFormValues(defaultValues);
-        setValue(0);
+    const handleCommentVisibilityChange = (value) => {
+        comment.current = { ...comment.current, visibility: value };
     };
 
+    const handleCommentChange = (value) => {
+        comment.current = { ...comment.current, body: value };
+    };
+
+    const handleSaveLocationFromPreset = (key, location) => {
+        setFormValues((prevState) => ({ ...prevState, [key]: location }));
+    };
+
+    const handleLocationChangeContact = (key, values) => {
+        setFormValues((prevState) => {
+            if (prevState[key] && prevState[key].listed === 1) {
+                const { id, ...rest } = prevState[key];
+                return {
+                    ...prevState,
+                    [key]: {
+                        ...rest,
+                        contact: { ...rest.contact, ...values },
+                        name: rest && rest.name ? `Copy of ${rest.name}` : "",
+                        listed: 0,
+                    },
+                };
+            } else if (prevState[key]) {
+                return {
+                    ...prevState,
+                    [key]: {
+                        ...prevState[key],
+                        contact: { ...prevState[key].contact, ...values },
+                    },
+                };
+            } else {
+                return {
+                    ...prevState,
+                    [key]: { contact: values, listed: 0 },
+                };
+            }
+        });
+    };
+
+    const handleLocationChangeAddress = (key, values) => {
+        setFormValues((prevState) => {
+            if (prevState[key] && prevState[key].listed === 1) {
+                const { id, ...rest } = prevState[key];
+                return {
+                    ...prevState,
+                    [key]: {
+                        ...rest,
+                        ...values,
+                        name: rest && rest.name ? `Copy of ${rest.name}` : "",
+                        listed: 0,
+                    },
+                };
+            } else if (prevState[key]) {
+                return {
+                    ...prevState,
+                    [key]: { ...prevState[key], ...values },
+                };
+            } else {
+                return {
+                    ...prevState,
+                    [key]: { ...values, listed: 0 },
+                };
+            }
+        });
+    };
+
+    const handleDeliverablesChange = (value) => {
+        if (!value || !value.id) {
+            return;
+        }
+        if (deliverables.current[value.id]) {
+            deliverables.current = {
+                ...deliverables.current,
+                [value.id]: {
+                    ...deliverables.current[value.id],
+                    ...value,
+                },
+            };
+        } else {
+            deliverables.current = {
+                ...deliverables.current,
+                [value.id]: value,
+            };
+        }
+    };
+
+    const handleDeliverablesDelete = (value) => {
+        if (!value) {
+            return;
+        }
+        deliverables.current = _.omit(deliverables.current, value);
+    };
+
+    const onCloseForm = () => {
+        dispatch(setGuidedSetupOpen(false));
+        // force rerender so that all the tabs are reset
+        setReset((prevState) => !prevState);
+    };
+
+    useEffect(() => {
+        if (guidedSetupOpen) {
+            setFormValues(defaultValues);
+            deliverables.current = {};
+            timeOfCall.current = new Date().toISOString();
+            requesterContact.current = defaultContact;
+            comment.current = defaultComment;
+            setTabIndex(0);
+        }
+    }, [guidedSetupOpen]);
+
     return (
-        <>
-            <CustomizedDialogs open={show} onClose={onCloseForm}>
-                <div className={classes.tabContent}>
-                    <AppBar position="static">
-                        <Tabs
-                            value={value}
-                            onChange={handleChange}
-                            aria-label="simple tabs example"
-                        >
-                            <Tab label="Step 1" {...a11yProps(0)} />
-                            <Tab label="Step 2" {...a11yProps(1)} />
-                            <Tab label="Step 3" {...a11yProps(2)} />
-                            <Tab label="Step 4" {...a11yProps(3)} />
-                            <Tab label="Step 5" {...a11yProps(4)} />
-                        </Tabs>
-                    </AppBar>
-                    <TabPanel value={value} index={0}>
-                        <Step1
-                            values={formValues}
-                            onChange={handleCallerContactChange}
+        <Paper key={reset} className={classes.wrapper}>
+            <div className={classes.tabContent}>
+                <AppBar position="static" className={classes.appBar}>
+                    <Tabs
+                        value={tabIndex}
+                        onChange={handleChange}
+                        aria-label="coordinator setup tab"
+                        className={classes.tabs}
+                        classes={{
+                            indicator: classes.indicator,
+                        }}
+                    >
+                        <Tab
+                            icon={<PersonIcon className={classes.btnIcon} />}
+                            label={
+                                <div>
+                                    CALLER /<br /> PRIORITY
+                                </div>
+                            }
+                            {...a11yProps(0)}
+                            className={classes.tabButton}
                         />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <Step2
-                            values={formValues}
-                            onChange={handleSenderContactChange}
-                            onSelect={onPickUpLocationSaved}
+                        <Tab
+                            icon={<ArchiveIcon className={classes.btnIcon} />}
+                            label={"ITEMS"}
+                            {...a11yProps(1)}
+                            className={classes.tabButton}
                         />
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
-                        <Step3
+                        <Tab
+                            icon={
+                                <LocationOnIcon className={classes.btnIcon} />
+                            }
+                            label={
+                                <div>
+                                    PICK-UP /<br /> DELIVERY
+                                </div>
+                            }
+                            {...a11yProps(2)}
+                            className={classes.tabButton}
+                        />
+                        <Tab
+                            icon={<NotesIcon className={classes.btnIcon} />}
+                            label={"NOTES"}
+                            {...a11yProps(3)}
+                            className={classes.tabButton}
+                        />
+                        {/* <Tab label="Step 5" {...a11yProps(4)} className={classes.tabButton} /> */}
+                    </Tabs>
+                </AppBar>
+                <Box sx={{ padding: 1 }}>
+                    <Box className={tabIndex === 0 ? show : hide}>
+                        <CallerDetails
+                            values={formValues}
+                            onChangeContact={handleCallerContactChange}
+                            onChangePriority={handlePriorityChange}
+                        />
+                    </Box>
+                    <Box className={tabIndex === 1 ? show : hide}>
+                        <DeliverableDetails
+                            onChange={handleDeliverablesChange}
+                            onDelete={handleDeliverablesDelete}
+                        />
+                    </Box>
+                    <Box className={tabIndex === 2 ? show : hide}>
+                        <PickUpAndDeliverDetails
                             values={formValues}
                             onChange={handleReceiverContactChange}
-                            onSelect={onSelectDropoffFromSaved}
+                            onSelectPickUpLocation={(value) =>
+                                handleSaveLocationFromPreset(
+                                    "pickUpLocation",
+                                    value
+                                )
+                            }
+                            onSelectDropOffLocation={(value) =>
+                                handleSaveLocationFromPreset(
+                                    "dropOffLocation",
+                                    value
+                                )
+                            }
+                            onClearDropOffLocation={() =>
+                                setFormValues((prevState) => ({
+                                    ...prevState,
+                                    dropOffLocation: null,
+                                }))
+                            }
+                            onClearPickUpLocation={() =>
+                                setFormValues((prevState) => ({
+                                    ...prevState,
+                                    pickUpLocation: null,
+                                }))
+                            }
+                            onChangePickUpLocation={(values) => {
+                                const { contact, ...rest } = values;
+                                if (!_.isEmpty(rest)) {
+                                    handleLocationChangeAddress(
+                                        "pickUpLocation",
+                                        rest
+                                    );
+                                }
+                                if (!_.isEmpty(contact)) {
+                                    handleLocationChangeContact(
+                                        "pickUpLocation",
+                                        contact
+                                    );
+                                }
+                            }}
+                            onChangeDropOffLocation={(values) => {
+                                const { contact, ...rest } = values;
+                                if (!_.isEmpty(rest)) {
+                                    handleLocationChangeAddress(
+                                        "dropOffLocation",
+                                        rest
+                                    );
+                                }
+                                if (!_.isEmpty(contact)) {
+                                    handleLocationChangeContact(
+                                        "dropOffLocation",
+                                        contact
+                                    );
+                                }
+                            }}
                         />
-                    </TabPanel>
-                    <TabPanel value={value} index={3}>
-                        <Step4 values={formValues} onChange={() => {}} />
-                    </TabPanel>
-                    <TabPanel value={value} index={4}>
-                        <Step5
-                            values={formValues}
-                            taskUUID={task.uuid}
-                            onChange={handleDeliverablesChange}
+                    </Box>
+                    <Box className={tabIndex === 3 ? show : hide}>
+                        <Notes
+                            handleVisibilityChange={
+                                handleCommentVisibilityChange
+                            }
+                            onChange={handleCommentChange}
                         />
-                    </TabPanel>
-                </div>
-                <div className={classes.btnWrapper}>
-                    <Button
-                        autoFocus
-                        onClick={onShowTaskOverview}
-                        color="primary"
-                    >
-                        Skip to overview
+                    </Box>
+                </Box>
+            </div>
+            <Stack direction="column">
+                <Stack
+                    sx={{ margin: 1 }}
+                    justifyContent="space-between"
+                    direction="row"
+                >
+                    {tabIndex !== 0 ? (
+                        <Button
+                            onClick={() =>
+                                setTabIndex((prevState) => prevState - 1)
+                            }
+                        >
+                            Previous
+                        </Button>
+                    ) : (
+                        <div></div>
+                    )}
+                    {tabIndex !== 3 ? (
+                        <Button
+                            onClick={() =>
+                                setTabIndex((prevState) => prevState + 1)
+                            }
+                        >
+                            Next
+                        </Button>
+                    ) : (
+                        <div></div>
+                    )}
+                </Stack>
+                <Stack
+                    sx={{ margin: 1 }}
+                    justifyContent="space-between"
+                    direction="row"
+                >
+                    <Button onClick={handleDiscard}>Discard</Button>
+                    <Button onClick={handleSave} variant="contained" autoFocus>
+                        Save to dashboard
                     </Button>
-                    <div>
-                        {value > 0 && (
-                            <Button
-                                autoFocus
-                                onClick={() => setValue((value) => value - 1)}
-                                color="primary"
-                            >
-                                Previous
-                            </Button>
-                        )}
-                        {value < 4 ? (
-                            <Button
-                                autoFocus
-                                onClick={() => setValue((value) => value + 1)}
-                                color="primary"
-                            >
-                                Next
-                            </Button>
-                        ) : (
-                            <Button
-                                autoFocus
-                                onClick={() => {
-                                    onShowTaskOverview();
-                                    onCloseForm();
-                                }}
-                                color="primary"
-                            >
-                                Finish
-                            </Button>
-                        )}
-                    </div>
-                </div>
-            </CustomizedDialogs>
-        </>
+                </Stack>
+            </Stack>
+            <ConfirmationDialog
+                open={discardConfirmationOpen}
+                dialogTitle={"Are you sure?"}
+                onClose={() => setDiscardConfirmationOpen(false)}
+                onConfirmation={onCloseForm}
+            >
+                <Typography>
+                    This will clear any data you have entered.
+                </Typography>
+            </ConfirmationDialog>
+        </Paper>
     );
 };
 

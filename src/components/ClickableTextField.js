@@ -98,9 +98,14 @@ function ClickableTextField(props) {
     ) : (
         <Typography
             noWrap
-            aria-labelledby={label}
+            aria-label={label}
             onClick={toggleEditMode}
-            className={clsx(classes.label, classes.text)}
+            className={clsx(
+                classes.hoverHighlight,
+                classes.label,
+                classes.enabled,
+                classes.text
+            )}
             align={"right"}
         >
             {label}
@@ -112,7 +117,7 @@ function ClickableTextField(props) {
             <TextFieldUncontrolled
                 margin="dense"
                 variant="standard"
-                aria-labelledby={label}
+                aria-label={label}
                 className={clsx(classes.label, classes.text)}
                 tel={props.tel}
                 onPressEnter={(ev) => {

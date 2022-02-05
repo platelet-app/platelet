@@ -14,6 +14,7 @@ import { showHide } from "../../../styles/common";
 import {
     setDashboardFilteredUser,
     setDashboardTabIndex,
+    setGuidedSetupOpen,
     setRoleView,
 } from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
@@ -26,10 +27,10 @@ import {
     dashboardTabIndexSelector,
     dataStoreReadyStatusSelector,
     getWhoami,
+    guidedSetupOpenSelector,
 } from "../../../redux/Selectors";
 import { userRoles } from "../../../apiConsts";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
-import { addTask } from "../utilities";
 
 export function TabPanel(props) {
     const { children, index, ...other } = props;
@@ -69,6 +70,7 @@ export function DashboardDetailTabs(props) {
     const roleView = useSelector((state) => state.roleView);
     const { show, hide } = showHide();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
+    const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
 
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const theme = useTheme();
@@ -110,10 +112,11 @@ export function DashboardDetailTabs(props) {
                 color="primary"
                 id="create-task-button"
                 disabled={
+                    guidedSetupOpen ||
                     !dataStoreReadyStatus ||
                     (roleView && roleView === userRoles.rider)
                 }
-                onClick={() => addTask(whoami ? whoami.id : null)}
+                onClick={() => dispatch(setGuidedSetupOpen(true))}
             >
                 Create New
             </Button>

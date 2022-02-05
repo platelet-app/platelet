@@ -5,6 +5,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { matchSorter } from "match-sorter";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
+import { useSelector } from "react-redux";
+import { dataStoreReadyStatusSelector } from "../redux/Selectors";
 
 const filterOptions = (options, { inputValue }) => {
     return matchSorter(options, inputValue, { keys: ["name"] });
@@ -12,18 +14,20 @@ const filterOptions = (options, { inputValue }) => {
 
 function FavouriteLocationsSelect(props) {
     const [availableLocations, setAvailableLocations] = useState([]);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
     };
 
     async function getLocations() {
+        if (!dataStoreReadyStatus) return;
         const locations = await DataStore.query(models.Location, (l) =>
             l.listed("eq", 1)
         );
         setAvailableLocations(locations);
     }
 
-    useEffect(() => getLocations(), []);
+    useEffect(() => getLocations(), [dataStoreReadyStatus]);
 
     return (
         <Autocomplete
@@ -53,7 +57,7 @@ FavouriteLocationsSelect.propTypes = {
 };
 FavouriteLocationsSelect.defaultProps = {
     onSelect: () => {},
-    label: "Directory locations",
+    label: "Search locations",
 };
 
 export default FavouriteLocationsSelect;

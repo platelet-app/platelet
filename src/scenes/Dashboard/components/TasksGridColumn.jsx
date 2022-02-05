@@ -212,15 +212,39 @@ function TasksGridColumn(props) {
                         if (props.taskKey.includes(replaceTask.status)) {
                             const assignees = (
                                 await DataStore.query(models.TaskAssignee)
-                            ).filter((a) => a.task.id === replaceTask.id);
+                            ).filter(
+                                (a) => a.task && a.task.id === replaceTask.id
+                            );
                             addTaskToState({ ...replaceTask, assignees });
                         } else {
                             removeTaskFromState(replaceTask);
                         }
                     } else {
                         const task = newTask.element;
+                        const assignees = (
+                            await DataStore.query(models.TaskAssignee)
+                        ).filter((a) => a.task && a.task.id === task.id);
+                        let pickUpLocation = null;
+                        let dropOffLocation = null;
+                        if (task.pickUpLocationId) {
+                            pickUpLocation = await DataStore.query(
+                                models.Location,
+                                task.pickUpLocationId
+                            );
+                        }
+                        if (task.dropOffLocationId) {
+                            dropOffLocation = await DataStore.query(
+                                models.Location,
+                                task.dropOffLocationId
+                            );
+                        }
                         if (props.taskKey.includes(task.status))
-                            addTaskToState(task);
+                            addTaskToState({
+                                ...task,
+                                pickUpLocation,
+                                dropOffLocation,
+                                assignees,
+                            });
                     }
                 });
                 locationsSubscription.current.unsubscribe();

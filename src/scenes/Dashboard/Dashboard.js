@@ -2,18 +2,15 @@ import React, { useEffect, useState } from "react";
 import "../../App.css";
 import AddIcon from "@mui/icons-material/Add";
 import Paper from "@mui/material/Paper";
-import { setDashboardFilteredUser, setRoleView } from "../../redux/Actions";
+import {
+    setDashboardFilteredUser,
+    setGuidedSetupOpen,
+    setRoleView,
+} from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    DashboardDetailTabs,
-    TabPanel,
-} from "./components/DashboardDetailTabs";
-import {
-    encodeUUID,
-    getDashboardRoleMode,
-    saveDashboardRoleMode,
-} from "../../utilities";
+import { DashboardDetailTabs } from "./components/DashboardDetailTabs";
+import { getDashboardRoleMode, saveDashboardRoleMode } from "../../utilities";
 import {
     dashboardFilteredUserSelector,
     dashboardTabIndexSelector,
@@ -24,17 +21,14 @@ import {
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
 import { Fab, Hidden } from "@mui/material";
-import { addTask } from "./utilities";
-import { useHistory } from "react-router";
 import ActiveRidersChips from "./components/ActiveRidersChips";
+import GuidedSetupDrawer from "./components/GuidedSetupDrawer";
 
 function AddClearFab() {
     const dispatch = useDispatch();
-    const whoami = useSelector(getWhoami);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    const history = useHistory();
     const addClearFab =
         !dashboardFilter && !dashboardFilteredUser ? (
             <Fab
@@ -43,8 +37,7 @@ function AddClearFab() {
                 disabled={!dataStoreReadyStatus}
                 color="primary"
                 onClick={async () => {
-                    const newTask = await addTask(whoami ? whoami.id : null);
-                    history.push(`/task/${encodeUUID(newTask.id)}`);
+                    dispatch(setGuidedSetupOpen(true));
                 }}
             >
                 <AddIcon />
@@ -131,6 +124,7 @@ function Dashboard() {
                     <AddClearFab />
                 )}
             </Hidden>
+            <GuidedSetupDrawer />
         </>
     );
 }

@@ -92,6 +92,15 @@ function mobileView(state = false, action) {
     }
 }
 
+function guidedSetupOpen(state = false, action) {
+    switch (action.type) {
+        case "SET_GUIDED_SETUP_OPEN":
+            return action.data;
+        default:
+            return state;
+    }
+}
+
 const whoamiInitialState = {
     user: {
         id: null,
@@ -259,6 +268,7 @@ const appReducer = combineReducers({
     errorReducer,
     error,
     viewMode,
+    guidedSetupOpen,
     roleView,
     newTaskAddedView,
     mobileView,
