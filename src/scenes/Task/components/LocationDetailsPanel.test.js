@@ -710,7 +710,7 @@ describe("LocationDetailsPanel", () => {
             });
             amplify.DataStore.query
                 .mockResolvedValueOnce([])
-                .mockResolvedValue(fakeTask)
+                .mockResolvedValueOnce(fakeTask)
                 .mockResolvedValue(fakeModel);
             amplify.DataStore.save
                 .mockResolvedValueOnce({

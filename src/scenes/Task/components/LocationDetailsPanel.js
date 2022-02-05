@@ -154,6 +154,7 @@ function LocationDetailsPanel(props) {
     }
 
     async function changeContactDetails(values) {
+        debugger;
         let locationResult = null;
         const key = props.locationKey;
         const filtered = _.omit(values, ...protectedFields);
@@ -166,7 +167,7 @@ function LocationDetailsPanel(props) {
             if (locationToUpdate.listed === 1) {
                 locationToUpdate = await editPreset();
             }
-            if (locationToUpdate.contact === null) {
+            if (!locationToUpdate.contact) {
                 locationResult = await DataStore.save(
                     models.Location.copyOf(locationToUpdate, (updated) => {
                         updated.contact = filtered;
