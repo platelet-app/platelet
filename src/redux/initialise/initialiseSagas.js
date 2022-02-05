@@ -139,7 +139,7 @@ async function populateFakeData() {
     }
     const checker = await DataStore.query(models.User);
     if (checker.length < 2) {
-        for (const i in _.range(10)) {
+        for (const i in _.range(5)) {
             const generatedName = faker.name.findName();
             let userToSave = {
                 name: generatedName,

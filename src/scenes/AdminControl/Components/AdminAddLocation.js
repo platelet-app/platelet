@@ -117,13 +117,14 @@ function AdminAddLocation() {
                     spacing={3}
                 >
                     <Typography variant={"h5"}>Add a new location</Typography>
-                    {Object.keys(fields).map((key) => {
+                    {Object.entries(fields).map(([key, value]) => {
                         return (
                             <TextField
                                 key={key}
                                 value={state[key]}
+                                aria-label={value}
                                 fullWidth
-                                label={fields[key]}
+                                label={value}
                                 id={key}
                                 onChange={(e) => {
                                     setState((prevState) => ({
@@ -134,13 +135,14 @@ function AdminAddLocation() {
                             />
                         );
                     })}
-                    {Object.keys(contactFields).map((key) => {
+                    {Object.entries(contactFields).map(([key, value]) => {
                         return (
                             <TextField
-                                key={key}
+                                key={`contact-${key}`}
                                 fullWidth
-                                label={contactFields[key]}
-                                id={key}
+                                aria-label={`contact-${value}`}
+                                label={value}
+                                id={`contact-${key}`}
                                 onChange={(e) => {
                                     setState((prevState) => ({
                                         ...prevState,
@@ -158,7 +160,8 @@ function AdminAddLocation() {
                         fullWidth
                         value={state.contact.telephoneNumber}
                         label="Telephone number"
-                        id={"telephoneNumber"}
+                        aria-label="contact telephone number"
+                        id={"contact-telephoneNumber"}
                         tel
                         onChange={(e) => {
                             setState((prevState) => ({
