@@ -6,12 +6,17 @@ import * as amplify from "aws-amplify";
 import * as models from "../../models";
 import userEvent from "@testing-library/user-event";
 import _ from "lodash";
-import { tasksStatus } from "../../apiConsts";
+import { tasksStatus, userRoles } from "../../apiConsts";
 
 jest.mock("aws-amplify");
 
+const whoami = new models.User({
+    displayName: "test user",
+});
+
 const preloadedState = {
     guidedSetupOpen: true,
+    whoami: { user: whoami },
 };
 
 describe("GuidedSetup", () => {
@@ -100,8 +105,64 @@ describe("GuidedSetup", () => {
         expect(screen.getByText("What is the priority?")).toBeVisible();
     });
 
+    it("assigns the logged in user as a coordinator", async () => {
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: null,
+            priority: null,
+            status: tasksStatus.new,
+            requesterContact: {
+                name: "",
+                telephoneNumber: "",
+            },
+        });
+
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: whoami,
+            role: userRoles.coordinator,
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce(whoami)
+            .mockResolvedValue([]);
+        amplify.DataStore.save
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValue(mockAssignment);
+        render(<GuidedSetup />, { preloadedState });
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                4,
+                models.User,
+                whoami.id
+            );
+        });
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                1,
+                expect.objectContaining({
+                    ..._.omit(mockTask, "id"),
+                    timeOfCall: expect.any(String),
+                })
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                2,
+                expect.objectContaining({
+                    ..._.omit(mockAssignment, "id"),
+                })
+            )
+        );
+    });
+
     test("setting the contact details", async () => {
-        const mockData = new models.Task({
+        const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
             priority: null,
@@ -112,22 +173,35 @@ describe("GuidedSetup", () => {
             },
         });
 
-        amplify.DataStore.query.mockResolvedValue([]);
-        amplify.DataStore.save.mockResolvedValue(mockData);
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: whoami,
+            role: userRoles.coordinator,
+        });
+
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce(whoami)
+            .mockResolvedValue([]);
+        amplify.DataStore.save
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValue(mockAssignment);
         render(<GuidedSetup />, { preloadedState });
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         userEvent.type(
             screen.getByRole("textbox", { name: "Name" }),
-            mockData.requesterContact.name
+            mockTask.requesterContact.name
         );
         userEvent.type(
             screen.getByRole("textbox", { name: "Telephone" }),
-            mockData.requesterContact.telephoneNumber
+            mockTask.requesterContact.telephoneNumber
         );
         expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue(
-            mockData.requesterContact.name
+            mockTask.requesterContact.name
         );
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
@@ -136,24 +210,110 @@ describe("GuidedSetup", () => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
                 1,
                 expect.objectContaining({
-                    ..._.omit(mockData, "id"),
+                    ..._.omit(mockTask, "id"),
                     timeOfCall: expect.any(String),
                 })
             )
         );
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                2,
+                expect.objectContaining({
+                    ..._.omit(mockAssignment, "id"),
+                })
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(7)
         );
     });
 
-    test("adding item data", async () => {
-        const mockData = new models.Task({
+    test("adding a comment", async () => {
+        const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
             priority: null,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
         });
+        const mockComment = new models.Comment({
+            body: "This is a comment",
+            author: whoami,
+            parentId: mockTask.id,
+        });
+
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: whoami,
+            role: userRoles.coordinator,
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce(whoami)
+            .mockResolvedValue([]);
+        amplify.DataStore.save
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValue(mockAssignment)
+            .mockResolvedValue(mockComment);
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
+        );
+        userEvent.click(screen.getByText("NOTES"));
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Notes" }),
+            mockComment.body
+        );
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                1,
+                expect.objectContaining({
+                    ..._.omit(mockTask, "id"),
+                    timeOfCall: expect.any(String),
+                })
+            )
+        );
+
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                2,
+                expect.objectContaining({
+                    ..._.omit(mockAssignment, "id"),
+                })
+            )
+        );
+
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                3,
+                expect.objectContaining({
+                    ..._.omit(mockComment, "id"),
+                })
+            )
+        );
+    });
+
+    test("adding item data", async () => {
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: null,
+            priority: null,
+            status: tasksStatus.new,
+            requesterContact: { name: "", telephoneNumber: "" },
+        });
+
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: whoami,
+            role: userRoles.coordinator,
+        });
+
         const mockDeliverableType = new models.DeliverableType({
             label: "some item",
         });
@@ -162,24 +322,27 @@ describe("GuidedSetup", () => {
         });
         const mockDeliverable = new models.Deliverable({
             deliverableType: mockDeliverableType,
-            task: mockData,
+            task: mockTask,
             count: 3,
         });
         const mockDeliverable2 = new models.Deliverable({
             deliverableType: mockDeliverableType2,
-            task: mockData,
+            task: mockTask,
             count: 1,
         });
         amplify.DataStore.query
             .mockResolvedValueOnce([mockDeliverableType, mockDeliverableType2])
             .mockResolvedValueOnce([])
             .mockResolvedValueOnce([])
+            .mockResolvedValueOnce(whoami)
             .mockResolvedValueOnce(mockDeliverableType)
-            .mockResolvedValue(mockDeliverableType2);
+            .mockResolvedValueOnce(mockDeliverableType2)
+            .mockResolvedValue([]);
         amplify.DataStore.save
-            .mockResolvedValueOnce(mockData)
+            .mockResolvedValueOnce(mockTask)
             .mockResolvedValueOnce(mockDeliverable)
-            .mockResolvedValue(mockDeliverable2);
+            .mockResolvedValueOnce(mockDeliverable2)
+            .mockResolvedValue(mockAssignment);
         render(<GuidedSetup />, { preloadedState });
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
@@ -200,7 +363,7 @@ describe("GuidedSetup", () => {
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
                 1,
                 expect.objectContaining({
-                    ..._.omit(mockData, "id"),
+                    ..._.omit(mockTask, "id"),
                     timeOfCall: expect.any(String),
                 })
             )
@@ -208,6 +371,13 @@ describe("GuidedSetup", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 4,
+                models.User,
+                whoami.id
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                5,
                 models.DeliverableType,
                 mockDeliverableType.id
             )
@@ -220,7 +390,7 @@ describe("GuidedSetup", () => {
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                5,
+                6,
                 models.DeliverableType,
                 mockDeliverableType2.id
             )
@@ -232,7 +402,13 @@ describe("GuidedSetup", () => {
             )
         );
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(8)
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                4,
+                expect.objectContaining(_.omit(mockAssignment, "id"))
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(9)
         );
     });
 

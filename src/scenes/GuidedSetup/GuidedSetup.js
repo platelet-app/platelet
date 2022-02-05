@@ -180,7 +180,7 @@ export const GuidedSetup = () => {
                 comment: comment.current,
                 timeOfCall: timeOfCall.current,
             },
-            whoami.id
+            whoami && whoami.id
         );
         onCloseForm();
     };
