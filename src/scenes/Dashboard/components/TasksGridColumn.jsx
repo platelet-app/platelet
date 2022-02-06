@@ -209,6 +209,13 @@ function TasksGridColumn(props) {
                             models.Task,
                             newTask.element.id
                         );
+                        if (
+                            replaceTask.status === tasksStatus.new &&
+                            props.taskKey.includes(tasksStatus.new) &&
+                            dashboardFilteredUser
+                        ) {
+                            return;
+                        }
                         if (props.taskKey.includes(replaceTask.status)) {
                             const assignees = (
                                 await DataStore.query(models.TaskAssignee)

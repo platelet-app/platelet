@@ -101,11 +101,12 @@ function ActiveRidersChips() {
     const whoami = useSelector(getWhoami);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const timeSet = useRef(null);
-    const tasksObserver = useRef({ unsubscribe: () => {} });
     const assignmentsObserver = useRef({ unsubscribe: () => {} });
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
     const roleView = useSelector(getRoleView);
+    const dashboardFilteredUserRef = useRef(null);
+    dashboardFilteredUserRef.current = dashboardFilteredUser;
 
     const dispatch = useDispatch();
 
@@ -135,15 +136,23 @@ function ActiveRidersChips() {
                 (a) => a.task && a.task.id
             );
             // find which tasks assigned to me are assigned to the rider
-            const assignedToMeTasks = riderAssignments.filter(
+            const assignedToMeRiders = riderAssignments.filter(
                 (a) =>
                     a.assignee &&
                     a.task &&
                     myAssignedTasksIds.includes(a.task.id)
             );
-            activeRidersResult = assignedToMeTasks
+            activeRidersResult = assignedToMeRiders
                 .filter(olderThanOneWeek)
                 .map((a) => a.assignee);
+        }
+        if (
+            dashboardFilteredUserRef.current &&
+            !activeRidersResult
+                .map((u) => u.id)
+                .includes(dashboardFilteredUserRef.current)
+        ) {
+            dispatch(setDashboardFilteredUser(null));
         }
         return convertListDataToObject(activeRidersResult);
     }
@@ -158,52 +167,13 @@ function ActiveRidersChips() {
         try {
             if (!dataStoreReadyStatus) return;
             setActiveRiders(await calculateRidersStatus());
-            tasksObserver.current.unsubscribe();
-            tasksObserver.current = DataStore.observe(models.Task).subscribe(
-                async (observeResult) => {
-                    const task = observeResult.element;
-                    if (
-                        [
-                            tasksStatus.cancelled,
-                            tasksStatus.rejected,
-                            tasksStatus.completed,
-                        ].includes(task.status)
-                    ) {
-                        debouncedCalculateRidersStatus();
-                    }
-                }
-            );
             animate.current = true;
             assignmentsObserver.current.unsubscribe();
             assignmentsObserver.current = DataStore.observe(
                 models.TaskAssignee
             ).subscribe(async (observeResult) => {
-                const taskAssigneeData = observeResult.element;
-                if (observeResult.opType === "INSERT") {
-                    const task = await DataStore.query(
-                        models.Task,
-                        taskAssigneeData.taskId
-                    );
-                    const user = await DataStore.query(
-                        models.User,
-                        taskAssigneeData.assigneeId
-                    );
-                    if (
-                        task &&
-                        taskAssigneeData.role === userRoles.rider &&
-                        ![
-                            tasksStatus.droppedOff,
-                            tasksStatus.cancelled,
-                            tasksStatus.rejected,
-                        ].includes(task.status)
-                    ) {
-                        if (user) {
-                            setActiveRiders((prevState) => ({
-                                ...prevState,
-                                [user.id]: user,
-                            }));
-                        }
-                    }
+                if (["INSERT", "DELETE"].includes(observeResult.opType)) {
+                    debouncedCalculateRidersStatus();
                 }
             });
         } catch (error) {
@@ -260,7 +230,9 @@ function ActiveRidersChips() {
                         label="All"
                         onClick={() => dispatch(setDashboardFilteredUser(null))}
                         variant={
-                            dashboardFilteredUser === null ? null : "outlined"
+                            dashboardFilteredUser === null
+                                ? "default"
+                                : "outlined"
                         }
                     />
                 </Box>
@@ -290,7 +262,7 @@ function ActiveRidersChips() {
                                 }
                                 variant={
                                     dashboardFilteredUser === rider.id
-                                        ? null
+                                        ? "default"
                                         : "outlined"
                                 }
                                 user={rider}
