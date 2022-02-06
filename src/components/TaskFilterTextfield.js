@@ -58,6 +58,7 @@ function TaskFilterTextField(props) {
             <TextFieldControlled
                 id="tasks-filter-input"
                 variant={"standard"}
+                placeholder={"Filter tasks"}
                 value={dashboardFilterValue}
                 onChange={onChangeFilterText}
                 onPressEscape={() => dispatch(clearDashboardFilter())}
