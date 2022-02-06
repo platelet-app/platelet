@@ -476,8 +476,7 @@ describe("GuidedSetup", () => {
         userEvent.click(screen.getByRole("button", { name: "OK" }));
         expect(screen.queryByText(/Are you sure/)).toBeNull();
         await waitFor(() =>
-            // location search not rendered so 5 calls
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(5)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
         );
     });
     test("clicking the discard button when note data has been entered", async () => {

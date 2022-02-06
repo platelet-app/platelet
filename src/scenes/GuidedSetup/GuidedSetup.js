@@ -307,18 +307,18 @@ export const GuidedSetup = () => {
 
     const onCloseForm = () => {
         dispatch(setGuidedSetupOpen(false));
+        setFormValues(defaultValues);
+        deliverables.current = {};
+        requesterContact.current = defaultContact;
+        comment.current = defaultComment;
         // force rerender so that all the tabs are reset
         setReset((prevState) => !prevState);
+        setTabIndex(0);
     };
 
     useEffect(() => {
         if (guidedSetupOpen) {
-            setFormValues(defaultValues);
-            deliverables.current = {};
             timeOfCall.current = new Date().toISOString();
-            requesterContact.current = defaultContact;
-            comment.current = defaultComment;
-            setTabIndex(0);
         }
     }, [guidedSetupOpen]);
 
