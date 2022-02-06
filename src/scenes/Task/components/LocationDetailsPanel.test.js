@@ -209,7 +209,6 @@ describe("LocationDetailsPanel", () => {
             id: "66642db5-746a-4fb1-8397-db46b634fadb",
             contact: {
                 telephoneNumber: "01234567890",
-                emailAddress: "fake@email.com",
                 name: "Someone Person",
                 id: "9b346c7d-e579-460b-8106-1866cf139f3c",
             },
@@ -237,9 +236,6 @@ describe("LocationDetailsPanel", () => {
         expect(screen.getByText(mockLocation.contact.name)).toBeInTheDocument();
         expect(
             screen.getByText(mockLocation.contact.telephoneNumber)
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(mockLocation.contact.emailAddress)
         ).toBeInTheDocument();
     });
 

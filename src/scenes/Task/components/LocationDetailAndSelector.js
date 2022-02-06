@@ -61,9 +61,8 @@ const addressFields = {
 };
 
 const contactFields = {
-    telephoneNumber: "Tel",
-    emailAddress: "Email",
     name: "Name",
+    telephoneNumber: "Telephone",
 };
 
 function LocationDetailAndSelector(props) {
