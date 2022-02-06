@@ -12,6 +12,7 @@ export default function CommentsSideBar(props) {
                     flexShrink: 0,
                     "& .MuiDrawer-paper": {
                         width: props.width,
+                        right: 20,
                         boxSizing: "border-box",
                         background: theme.palette.background.default,
                         padding: 1,

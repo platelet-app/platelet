@@ -60,10 +60,10 @@ const DialogWrapper = (props) => {
             }}
             className={classes.root}
             disableEscapeKeyDown
-            fullScreen={true}
+            fullScreen
             maxWidth={"md"}
-            fullWidth={true}
-            open={true}
+            fullWidth
+            open
             onClose={handleClose}
             PaperProps={{
                 className: classes.paper,
