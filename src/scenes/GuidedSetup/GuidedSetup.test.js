@@ -497,4 +497,53 @@ describe("GuidedSetup", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
         );
     });
+
+    it("disables save and discard buttons when posting", async () => {
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: null,
+            priority: null,
+            status: tasksStatus.new,
+            requesterContact: {
+                name: "",
+                telephoneNumber: "",
+            },
+        });
+
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: whoami,
+            role: userRoles.coordinator,
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce(whoami)
+            .mockResolvedValue([]);
+        amplify.DataStore.save
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValue(mockAssignment);
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
+        );
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        expect(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        ).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Discard" })).toBeDisabled();
+        await waitFor(() =>
+            expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
+        );
+        expect(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        ).toBeEnabled();
+        expect(screen.getByRole("button", { name: "Discard" })).toBeEnabled();
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(7)
+        );
+    });
 });

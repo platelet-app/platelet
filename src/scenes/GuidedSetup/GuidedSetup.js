@@ -26,6 +26,7 @@ import { getWhoami, guidedSetupOpenSelector } from "../../redux/Selectors";
 import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
 import _ from "lodash";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -130,6 +131,7 @@ export const GuidedSetup = () => {
     const classes = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
+    const [isPosting, setIsPosting] = useState(false);
     const [reset, setReset] = useState(false);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
     const deliverables = useRef({});
@@ -172,16 +174,25 @@ export const GuidedSetup = () => {
     };
 
     const handleSave = async () => {
-        await saveNewTaskToDataStore(
-            {
-                ...formValues,
-                deliverables: deliverables.current,
-                requesterContact: requesterContact.current,
-                comment: comment.current,
-                timeOfCall: timeOfCall.current,
-            },
-            whoami && whoami.id
-        );
+        setIsPosting(true);
+        try {
+            await saveNewTaskToDataStore(
+                {
+                    ...formValues,
+                    deliverables: deliverables.current,
+                    requesterContact: requesterContact.current,
+                    comment: comment.current,
+                    timeOfCall: timeOfCall.current,
+                },
+                whoami && whoami.id
+            );
+        } catch (e) {
+            console.error(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setIsPosting(false);
+            return;
+        }
+        setIsPosting(false);
         onCloseForm();
     };
 
@@ -479,8 +490,15 @@ export const GuidedSetup = () => {
                     justifyContent="space-between"
                     direction="row"
                 >
-                    <Button onClick={handleDiscard}>Discard</Button>
-                    <Button onClick={handleSave} variant="contained" autoFocus>
+                    <Button onClick={handleDiscard} disabled={isPosting}>
+                        Discard
+                    </Button>
+                    <Button
+                        onClick={handleSave}
+                        disabled={isPosting}
+                        variant="contained"
+                        autoFocus
+                    >
                         Save to dashboard
                     </Button>
                 </Stack>
