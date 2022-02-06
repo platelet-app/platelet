@@ -105,7 +105,7 @@ const guidedSetupStyles = makeStyles((theme) => ({
         color: theme.palette.mode === "dark" ? "white" : "black",
     },
     tabContent: {
-        maxHeight: 1100,
+        maxHeight: 1010,
         flexGrow: 1,
         overflowY: "auto",
     },
@@ -456,9 +456,9 @@ export const GuidedSetup = () => {
                     </Box>
                 </Box>
             </div>
-            <Stack direction="column">
+            <Stack spacing={2} direction="column">
                 <Stack
-                    sx={{ margin: 1 }}
+                    sx={{ padding: 1 }}
                     justifyContent="space-between"
                     direction="row"
                 >
@@ -486,7 +486,7 @@ export const GuidedSetup = () => {
                     )}
                 </Stack>
                 <Stack
-                    sx={{ margin: 1 }}
+                    sx={{ padding: 1 }}
                     justifyContent="space-between"
                     direction="row"
                 >
