@@ -6,6 +6,7 @@ import {
     dashboardFilteredUserSelector,
     dataStoreReadyStatusSelector,
     getRoleView,
+    getWhoami,
 } from "../../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { convertListDataToObject } from "../../../utilities";
@@ -74,10 +75,30 @@ function RightArrow() {
     );
 }
 
+const olderThanOneWeek = (assignment) => {
+    // if the job is in completed tab then only find out riders from the last week
+    // to mimic the dashboard
+    if (
+        assignment.task &&
+        [
+            tasksStatus.completed,
+            tasksStatus.droppedOff,
+            tasksStatus.rejected,
+            tasksStatus.cancelled,
+        ].includes(assignment.task.status)
+    ) {
+        return moment(assignment.task.createdAt).isAfter(
+            moment().subtract(1, "week")
+        );
+    } else {
+        return true;
+    }
+};
+
 function ActiveRidersChips() {
     const [activeRiders, setActiveRiders] = useState({});
-    const [updatingRider, setUpdatingRider] = useState(null);
     const [errorState, setErrorState] = useState(null);
+    const whoami = useSelector(getWhoami);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const timeSet = useRef(null);
     const tasksObserver = useRef({ unsubscribe: () => {} });
@@ -89,34 +110,45 @@ function ActiveRidersChips() {
     const dispatch = useDispatch();
 
     async function calculateRidersStatus() {
-        const assignments = await DataStore.query(models.TaskAssignee, (a) =>
-            a.role("eq", userRoles.rider)
-        );
-        const activeRidersFiltered = assignments
-            .filter((assignment) => {
-                // if the job is in completed tab then only find out riders from the last week
-                // to mimic the dashboard
-                if (
-                    assignment.task &&
-                    [
-                        tasksStatus.completed,
-                        tasksStatus.droppedOff,
-                        tasksStatus.rejected,
-                        tasksStatus.cancelled,
-                    ].includes(assignment.task.status)
-                ) {
-                    return moment(assignment.task.createdAt).isAfter(
-                        moment().subtract(1, "week")
-                    );
-                } else {
-                    return true;
-                }
-            })
-            .map((a) => a.assignee);
-        return convertListDataToObject(activeRidersFiltered);
+        let activeRidersResult = [];
+        if (roleView === "ALL") {
+            const assignments = await DataStore.query(
+                models.TaskAssignee,
+                (a) => a.role("eq", userRoles.rider)
+            );
+            activeRidersResult = assignments
+                .filter(olderThanOneWeek)
+                .map((a) => a.assignee);
+        } else if (roleView === userRoles.coordinator && whoami) {
+            const riderAssignments = await DataStore.query(
+                models.TaskAssignee,
+                (a) => a.role("eq", userRoles.rider)
+            );
+            const coordAssignments = await DataStore.query(
+                models.TaskAssignee,
+                (a) => a.role("eq", userRoles.coordinator)
+            );
+            const myAssignments = coordAssignments.filter(
+                (a) => a.assignee && a.assignee.id === whoami.id
+            );
+            const myAssignedTasksIds = myAssignments.map(
+                (a) => a.task && a.task.id
+            );
+            // find which tasks assigned to me are assigned to the rider
+            const assignedToMeTasks = riderAssignments.filter(
+                (a) =>
+                    a.assignee &&
+                    a.task &&
+                    myAssignedTasksIds.includes(a.task.id)
+            );
+            activeRidersResult = assignedToMeTasks
+                .filter(olderThanOneWeek)
+                .map((a) => a.assignee);
+        }
+        return convertListDataToObject(activeRidersResult);
     }
 
-    // debounce the call because multiple tasks are being updated at once
+    // debounce the call in case multiple tasks are being updated at once
     const debouncedCalculateRidersStatus = _.debounce(
         async () => setActiveRiders(await calculateRidersStatus()),
         1000
@@ -182,7 +214,7 @@ function ActiveRidersChips() {
 
     useEffect(() => {
         getActiveRiders();
-    }, [dataStoreReadyStatus]);
+    }, [dataStoreReadyStatus, roleView]);
 
     async function updateRiderHome(userId) {
         try {

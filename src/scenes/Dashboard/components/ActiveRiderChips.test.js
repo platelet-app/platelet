@@ -42,6 +42,40 @@ const fakeAssignmentsOneRider = _.range(0, 10).map(
         })
 );
 
+const fakeCoord1 = new models.User({ displayName: "First Coordinator" });
+const fakeCoord2 = new models.User({ displayName: "Second Coordinator" });
+
+const fakeAssignmentsFirstCoord = _.range(0, 5).map(
+    (i) =>
+        new models.TaskAssignee({
+            task: new models.Task({
+                status: tasksStatus.active,
+            }),
+            assignee: fakeCoord1,
+            role: userRoles.coordinator,
+        })
+);
+const fakeAssignmentsSecondCoord = _.range(0, 5).map(
+    (i) =>
+        new models.TaskAssignee({
+            task: new models.Task({
+                status: tasksStatus.active,
+            }),
+            assignee: fakeCoord2,
+            role: userRoles.coordinator,
+        })
+);
+const fakeAssignmentsRiders = [
+    ...fakeAssignmentsFirstCoord,
+    ...fakeAssignmentsSecondCoord,
+].map((assignment) => ({
+    task: assignment.task,
+    assignee: new models.User({
+        displayName: faker.name.findName(),
+    }),
+    role: userRoles.rider,
+}));
+
 describe("ActiveRiderChips", () => {
     it("renders", async () => {
         const unsubscribe = jest.fn();
@@ -149,6 +183,62 @@ describe("ActiveRiderChips", () => {
             }
         }
     );
+
+    it("displays no riders when in rider mode", async () => {
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        const preloadedState = {
+            roleView: userRoles.rider,
+            whoami: { user: fakeSingleUser },
+        };
+        render(<ActiveRidersChips />, { preloadedState });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(0);
+        });
+        // get all the text elements
+        const textElements = screen.getAllByRole("button");
+        expect(textElements).toHaveLength(1);
+        expect(textElements[0]).toHaveTextContent("All");
+    });
+
+    it("displays the correct riders when in coordinator view", async () => {
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([...fakeAssignmentsRiders])
+            .mockResolvedValue([
+                ...fakeAssignmentsSecondCoord,
+                ...fakeAssignmentsFirstCoord,
+            ]);
+        const preloadedState = {
+            roleView: userRoles.coordinator,
+            whoami: { user: fakeCoord1 },
+        };
+        render(<ActiveRidersChips />, { preloadedState });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+        });
+        for (const assign of fakeAssignmentsRiders.filter((a) =>
+            fakeAssignmentsFirstCoord
+                .map((a2) => a2.task.id)
+                .includes(a.task.id)
+        )) {
+            expect(
+                screen.getByText(assign.assignee.displayName)
+            ).toBeInTheDocument();
+        }
+        for (const assign of fakeAssignmentsRiders.filter((a) =>
+            fakeAssignmentsSecondCoord
+                .map((a2) => a2.task.id)
+                .includes(a.task.id)
+        )) {
+            expect(screen.queryByText(assign.assignee.displayName)).toBeNull();
+        }
+    });
 
     // left here from when chips were for marking riders home but could be useful later
     test.skip("marking a rider as home with some active tasks", async () => {
