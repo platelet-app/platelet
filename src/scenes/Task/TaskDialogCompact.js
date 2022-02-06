@@ -68,7 +68,7 @@ const DialogWrapper = (props) => {
             PaperProps={{
                 className: classes.paper,
             }}
-            aria-labelledby="task-dialog"
+            aria-label="task-dialog"
         >
             {props.children}
         </Dialog>
