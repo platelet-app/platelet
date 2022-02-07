@@ -4,6 +4,9 @@ import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 
 const tagsReducer = (previousValue, currentValue = []) => {
+    if (!currentValue) {
+        return previousValue;
+    }
     const filtered = currentValue.filter((t) => !previousValue.includes(t));
     return [...previousValue, ...filtered];
 };
