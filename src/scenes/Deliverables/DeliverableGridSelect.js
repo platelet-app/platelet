@@ -21,6 +21,9 @@ const initialDeliverablesSortedState = {
 };
 
 const tagsReducer = (previousValue, currentValue = []) => {
+    if (!currentValue) {
+        return previousValue;
+    }
     const filtered = currentValue.filter((t) => !previousValue.includes(t));
     return [...previousValue, ...filtered];
 };
