@@ -124,7 +124,7 @@ function TasksGridColumn(props) {
             const isCompletedTab =
                 _.intersection(
                     [
-                        tasksStatus.droppedOff,
+                        tasksStatus.completed,
                         tasksStatus.cancelled,
                         tasksStatus.rejected,
                     ],

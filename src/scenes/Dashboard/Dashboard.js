@@ -105,12 +105,13 @@ function Dashboard() {
                                   tasksStatus.new,
                                   tasksStatus.active,
                                   tasksStatus.pickedUp,
+                                  tasksStatus.droppedOff,
                               ]
                             : [
                                   roleView === userRoles.rider
                                       ? tasksStatus.new
                                       : "",
-                                  tasksStatus.droppedOff,
+                                  tasksStatus.completed,
                                   tasksStatus.cancelled,
                                   tasksStatus.rejected,
                               ]

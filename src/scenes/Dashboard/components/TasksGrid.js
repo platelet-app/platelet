@@ -11,6 +11,14 @@ import { getRoleView } from "../../../redux/Selectors";
 import { useSelector } from "react-redux";
 
 const getColumnTitle = (key) => {
+    if (key.includes(tasksStatus.droppedOff))
+        key = [
+            ...key.filter((status) => status !== tasksStatus.droppedOff),
+            "DELIVERED",
+        ];
+
+    return key.join(" / ").replace(/_/g, " ");
+
     if (key.includes(tasksStatus.new)) return "New".toUpperCase();
     else if (key.includes(tasksStatus.active)) return "Active".toUpperCase();
     else if (key.includes(tasksStatus.pickedUp))
@@ -79,8 +87,8 @@ function TasksGrid(props) {
                 {[
                     [tasksStatus.new],
                     [tasksStatus.active],
-                    [tasksStatus.pickedUp],
-                    [tasksStatus.droppedOff, tasksStatus.completed],
+                    [tasksStatus.pickedUp, tasksStatus.droppedOff],
+                    [tasksStatus.completed],
                     [tasksStatus.cancelled],
                     [tasksStatus.rejected],
                 ]
