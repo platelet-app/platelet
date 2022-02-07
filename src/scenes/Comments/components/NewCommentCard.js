@@ -124,7 +124,11 @@ function NewCommentCard(props) {
                 <Grid item className={classes.newCommentTextField}>
                     <TextFieldUncontrolled
                         className={classes.newCommentTextField}
-                        placeholder="Write a comment..."
+                        placeholder={
+                            state.visibility === commentVisibility.me
+                                ? "Write a private note..."
+                                : "Write a comment..."
+                        }
                         id={"new-comment-field"}
                         multiline
                         disabled={isPosting}
@@ -185,7 +189,7 @@ NewCommentCard.defaultProps = {
     author: {
         displayName: "",
         id: "",
-        profilePictureThumbnailURL: "",
+        profilePictureThumbnail: { bucket: "", key: "", region: "" },
     },
     parentUUID: "",
 };
