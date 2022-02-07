@@ -124,6 +124,7 @@ function NewCommentCard(props) {
                 <Grid item className={classes.newCommentTextField}>
                     <TextFieldUncontrolled
                         className={classes.newCommentTextField}
+                        placeholder="Write a comment..."
                         id={"new-comment-field"}
                         multiline
                         disabled={isPosting}
