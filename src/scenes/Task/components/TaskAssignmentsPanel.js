@@ -190,6 +190,7 @@ function TaskAssignmentsPanel(props) {
             );
             setState((prevState) => _.omit(prevState, assignmentId));
         } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
