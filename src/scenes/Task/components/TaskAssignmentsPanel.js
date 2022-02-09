@@ -27,7 +27,10 @@ import {
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
 import _ from "lodash";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    tenantIdSelector,
+} from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import UserChip from "../../../components/UserChip";
 
@@ -55,6 +58,7 @@ const sortByUserRole = (a, b) => {
 function TaskAssignmentsPanel(props) {
     const [collapsed, setCollapsed] = useState(true);
     const [role, setRole] = useState(userRoles.rider);
+    const tenantId = useSelector(tenantIdSelector);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
@@ -100,6 +104,7 @@ function TaskAssignmentsPanel(props) {
                     assignee,
                     task,
                     role,
+                    tenantId,
                 })
             );
             let riderResponsibility;

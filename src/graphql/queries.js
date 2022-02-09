@@ -44,6 +44,7 @@ export const syncUsers = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -130,6 +131,7 @@ export const getUser = /* GraphQL */ `
       }
       riderResponsibility {
         id
+        tenantId
         label
         _version
         _deleted
@@ -152,6 +154,7 @@ export const getUser = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -226,6 +229,7 @@ export const listUsers = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -424,6 +428,7 @@ export const getVehicle = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -461,6 +466,7 @@ export const getVehicle = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -547,6 +553,7 @@ export const syncDeliverables = /* GraphQL */ `
         tenantId
         deliverableType {
           id
+          tenantId
           label
           icon
           defaultUnit
@@ -602,6 +609,7 @@ export const getDeliverable = /* GraphQL */ `
       tenantId
       deliverableType {
         id
+        tenantId
         label
         icon
         defaultUnit
@@ -701,6 +709,7 @@ export const getDeliverable = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -776,6 +785,7 @@ export const getDeliverable = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -808,6 +818,7 @@ export const listDeliverables = /* GraphQL */ `
         tenantId
         deliverableType {
           id
+          tenantId
           label
           icon
           defaultUnit
@@ -1005,6 +1016,7 @@ export const getLocation = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -1187,6 +1199,7 @@ export const syncTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -1296,6 +1309,7 @@ export const getTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -1454,6 +1468,7 @@ export const getTask = /* GraphQL */ `
       }
       riderResponsibility {
         id
+        tenantId
         label
         _version
         _deleted
@@ -1583,6 +1598,7 @@ export const getTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -1740,6 +1756,7 @@ export const getTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -1826,6 +1843,7 @@ export const getTask = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -1942,6 +1960,7 @@ export const listTasks = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2097,6 +2116,7 @@ export const syncComments = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         parentId
         body
         author {
@@ -2132,6 +2152,7 @@ export const getComment = /* GraphQL */ `
   query GetComment($id: ID!) {
     getComment(id: $id) {
       id
+      tenantId
       parentId
       body
       author {
@@ -2164,6 +2185,7 @@ export const getComment = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2216,6 +2238,7 @@ export const listComments = /* GraphQL */ `
     listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        tenantId
         parentId
         body
         author {
@@ -2262,6 +2285,7 @@ export const syncDeliverableTypes = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         label
         icon
         defaultUnit
@@ -2281,6 +2305,7 @@ export const getDeliverableType = /* GraphQL */ `
   query GetDeliverableType($id: ID!) {
     getDeliverableType(id: $id) {
       id
+      tenantId
       label
       icon
       defaultUnit
@@ -2306,6 +2331,7 @@ export const listDeliverableTypes = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         label
         icon
         defaultUnit
@@ -2336,6 +2362,7 @@ export const syncRiderResponsibilities = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         label
         _version
         _deleted
@@ -2352,6 +2379,7 @@ export const getRiderResponsibility = /* GraphQL */ `
   query GetRiderResponsibility($id: ID!) {
     getRiderResponsibility(id: $id) {
       id
+      tenantId
       label
       _version
       _deleted
@@ -2374,6 +2402,7 @@ export const listRiderResponsibilities = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         label
         _version
         _deleted
@@ -2431,6 +2460,7 @@ export const getUserByCognitoId = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2573,6 +2603,7 @@ export const tasksByStatus = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted

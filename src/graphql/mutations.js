@@ -51,6 +51,7 @@ export const createUser = /* GraphQL */ `
       }
       riderResponsibility {
         id
+        tenantId
         label
         _version
         _deleted
@@ -73,6 +74,7 @@ export const createUser = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -160,6 +162,7 @@ export const updateUser = /* GraphQL */ `
       }
       riderResponsibility {
         id
+        tenantId
         label
         _version
         _deleted
@@ -182,6 +185,7 @@ export const updateUser = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -269,6 +273,7 @@ export const deleteUser = /* GraphQL */ `
       }
       riderResponsibility {
         id
+        tenantId
         label
         _version
         _deleted
@@ -291,6 +296,7 @@ export const deleteUser = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -423,6 +429,7 @@ export const createVehicle = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -460,6 +467,7 @@ export const createVehicle = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -524,6 +532,7 @@ export const updateVehicle = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -561,6 +570,7 @@ export const updateVehicle = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -625,6 +635,7 @@ export const deleteVehicle = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -662,6 +673,7 @@ export const deleteVehicle = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -692,6 +704,7 @@ export const createDeliverable = /* GraphQL */ `
       tenantId
       deliverableType {
         id
+        tenantId
         label
         icon
         defaultUnit
@@ -791,6 +804,7 @@ export const createDeliverable = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -866,6 +880,7 @@ export const createDeliverable = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -896,6 +911,7 @@ export const updateDeliverable = /* GraphQL */ `
       tenantId
       deliverableType {
         id
+        tenantId
         label
         icon
         defaultUnit
@@ -995,6 +1011,7 @@ export const updateDeliverable = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -1070,6 +1087,7 @@ export const updateDeliverable = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -1100,6 +1118,7 @@ export const deleteDeliverable = /* GraphQL */ `
       tenantId
       deliverableType {
         id
+        tenantId
         label
         icon
         defaultUnit
@@ -1199,6 +1218,7 @@ export const deleteDeliverable = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -1274,6 +1294,7 @@ export const deleteDeliverable = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -1379,6 +1400,7 @@ export const createLocation = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -1484,6 +1506,7 @@ export const updateLocation = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -1589,6 +1612,7 @@ export const deleteLocation = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -1647,6 +1671,7 @@ export const createTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -1805,6 +1830,7 @@ export const createTask = /* GraphQL */ `
       }
       riderResponsibility {
         id
+        tenantId
         label
         _version
         _deleted
@@ -1934,6 +1960,7 @@ export const createTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2091,6 +2118,7 @@ export const createTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2177,6 +2205,7 @@ export const createTask = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -2236,6 +2265,7 @@ export const updateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2394,6 +2424,7 @@ export const updateTask = /* GraphQL */ `
       }
       riderResponsibility {
         id
+        tenantId
         label
         _version
         _deleted
@@ -2523,6 +2554,7 @@ export const updateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2680,6 +2712,7 @@ export const updateTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2766,6 +2799,7 @@ export const updateTask = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -2825,6 +2859,7 @@ export const deleteTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -2983,6 +3018,7 @@ export const deleteTask = /* GraphQL */ `
       }
       riderResponsibility {
         id
+        tenantId
         label
         _version
         _deleted
@@ -3112,6 +3148,7 @@ export const deleteTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -3269,6 +3306,7 @@ export const deleteTask = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -3355,6 +3393,7 @@ export const deleteTask = /* GraphQL */ `
       comments {
         items {
           id
+          tenantId
           parentId
           body
           visibility
@@ -3475,6 +3514,7 @@ export const createTaskAssignee = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -3574,6 +3614,7 @@ export const createTaskAssignee = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -3715,6 +3756,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -3814,6 +3856,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -3955,6 +3998,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -4054,6 +4098,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -4103,6 +4148,7 @@ export const createComment = /* GraphQL */ `
   ) {
     createComment(input: $input, condition: $condition) {
       id
+      tenantId
       parentId
       body
       author {
@@ -4135,6 +4181,7 @@ export const createComment = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -4185,6 +4232,7 @@ export const updateComment = /* GraphQL */ `
   ) {
     updateComment(input: $input, condition: $condition) {
       id
+      tenantId
       parentId
       body
       author {
@@ -4217,6 +4265,7 @@ export const updateComment = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -4267,6 +4316,7 @@ export const deleteComment = /* GraphQL */ `
   ) {
     deleteComment(input: $input, condition: $condition) {
       id
+      tenantId
       parentId
       body
       author {
@@ -4299,6 +4349,7 @@ export const deleteComment = /* GraphQL */ `
         }
         riderResponsibility {
           id
+          tenantId
           label
           _version
           _deleted
@@ -4349,6 +4400,7 @@ export const createDeliverableType = /* GraphQL */ `
   ) {
     createDeliverableType(input: $input, condition: $condition) {
       id
+      tenantId
       label
       icon
       defaultUnit
@@ -4368,6 +4420,7 @@ export const updateDeliverableType = /* GraphQL */ `
   ) {
     updateDeliverableType(input: $input, condition: $condition) {
       id
+      tenantId
       label
       icon
       defaultUnit
@@ -4387,6 +4440,7 @@ export const deleteDeliverableType = /* GraphQL */ `
   ) {
     deleteDeliverableType(input: $input, condition: $condition) {
       id
+      tenantId
       label
       icon
       defaultUnit
@@ -4406,6 +4460,7 @@ export const createRiderResponsibility = /* GraphQL */ `
   ) {
     createRiderResponsibility(input: $input, condition: $condition) {
       id
+      tenantId
       label
       _version
       _deleted
@@ -4422,6 +4477,7 @@ export const updateRiderResponsibility = /* GraphQL */ `
   ) {
     updateRiderResponsibility(input: $input, condition: $condition) {
       id
+      tenantId
       label
       _version
       _deleted
@@ -4438,6 +4494,7 @@ export const deleteRiderResponsibility = /* GraphQL */ `
   ) {
     deleteRiderResponsibility(input: $input, condition: $condition) {
       id
+      tenantId
       label
       _version
       _deleted

@@ -350,6 +350,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "parentId": {
                     "name": "parentId",
                     "isArray": false,
@@ -442,6 +449,13 @@ export const schema = {
             "fields": {
                 "id": {
                     "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
@@ -1235,6 +1249,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "label": {
                     "name": "label",
                     "isArray": false,
@@ -1579,5 +1600,5 @@ export const schema = {
             }
         }
     },
-    "version": "a3c28c3c8f03149b02c6638565a27384"
+    "version": "60aca43e9d9162a2009a1de2015038b1"
 };

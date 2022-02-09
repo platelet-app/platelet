@@ -10,7 +10,7 @@ import {
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch, useSelector } from "react-redux";
-import { getWhoami } from "../../../redux/Selectors";
+import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
@@ -36,6 +36,7 @@ const fields = {
 
 function AdminAddRiderResponsibility() {
     const [state, setState] = useState(initialRiderResponsibilityState);
+    const tenantId = useSelector(tenantIdSelector);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
     const [isPosting, setIsPosting] = useState(false);
@@ -61,7 +62,9 @@ function AdminAddRiderResponsibility() {
                 return;
             }
 
-            await DataStore.save(new models.RiderResponsibility({ ...state }));
+            await DataStore.save(
+                new models.RiderResponsibility({ ...state, tenantId })
+            );
             setState(initialRiderResponsibilityState);
             setIsPosting(false);
             dispatch(displayInfoNotification("Rider responsibility added"));

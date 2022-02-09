@@ -9,7 +9,10 @@ import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
 import PropTypes from "prop-types";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    tenantIdSelector,
+} from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
@@ -39,6 +42,7 @@ function VisibilityMenu(props) {
 function NewCommentCard(props) {
     const [state, setState] = useState(initialCommentState);
     const [isPosting, setIsPosting] = useState(false);
+    const tenantId = useSelector(tenantIdSelector);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
 
@@ -56,6 +60,7 @@ function NewCommentCard(props) {
                     ...state,
                     parentId: props.parentUUID,
                     author: commentAuthor,
+                    tenantId,
                 })
             );
             setState((prevState) => ({ ...prevState, body: "" }));

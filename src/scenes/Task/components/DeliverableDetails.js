@@ -11,7 +11,10 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import { makeStyles } from "@mui/styles";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    tenantIdSelector,
+} from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import { deliverableUnits } from "../../../apiConsts";
 
@@ -23,6 +26,7 @@ function DeliverableDetails(props) {
     const cardClasses = dialogCardStyles();
     const [collapsed, setCollapsed] = useState(true);
     const [state, setState] = useState({});
+    const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
     const deliverablesObserver = useRef({ unsubscribe: () => {} });
     const [isFetching, setIsFetching] = useState(true);
@@ -130,6 +134,7 @@ function DeliverableDetails(props) {
                     new models.Deliverable({
                         task: existingTask,
                         deliverableType,
+                        tenantId,
                         ...rest,
                     })
                 );

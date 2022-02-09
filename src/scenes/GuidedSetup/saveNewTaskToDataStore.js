@@ -4,9 +4,13 @@ import * as models from "../../models";
 
 export async function saveNewTaskToDataStore(
     data,
+    tenantId,
     author = null,
     rider = null
 ) {
+    if (!tenantId) {
+        throw new Error("TenantId is required");
+    }
     let { pickUpLocation, dropOffLocation, deliverables, comment, ...rest } =
         data;
     let existingAuthor = null;
@@ -15,12 +19,12 @@ export async function saveNewTaskToDataStore(
     }
     if (pickUpLocation && !pickUpLocation.id) {
         pickUpLocation = await DataStore.save(
-            new models.Location({ ...pickUpLocation, listed: 0 })
+            new models.Location({ ...pickUpLocation, listed: 0, tenantId })
         );
     }
     if (dropOffLocation && !dropOffLocation.id) {
         dropOffLocation = await DataStore.save(
-            new models.Location({ ...dropOffLocation, listed: 0 })
+            new models.Location({ ...dropOffLocation, listed: 0, tenantId })
         );
     }
     const newTask = await DataStore.save(
@@ -29,6 +33,7 @@ export async function saveNewTaskToDataStore(
             pickUpLocation,
             dropOffLocation,
             status: tasksStatus.new,
+            tenantId,
         })
     );
 
@@ -44,6 +49,7 @@ export async function saveNewTaskToDataStore(
                     count: deliverable.count,
                     unit: deliverable.unit || null,
                     task: newTask,
+                    tenantId,
                 })
             );
         }
@@ -55,6 +61,7 @@ export async function saveNewTaskToDataStore(
                 task: newTask,
                 assignee: existingAuthor,
                 role: userRoles.coordinator,
+                tenantId,
             })
         );
     }
@@ -65,6 +72,7 @@ export async function saveNewTaskToDataStore(
                 ...comment,
                 parentId: newTask.id,
                 author: existingAuthor,
+                tenantId,
             })
         );
     }

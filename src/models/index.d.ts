@@ -162,6 +162,7 @@ export declare class Vehicle {
 
 export declare class Comment {
   readonly id: string;
+  readonly tenantId: string;
   readonly parentId?: string;
   readonly body?: string;
   readonly author?: User;
@@ -174,6 +175,7 @@ export declare class Comment {
 
 export declare class RiderResponsibility {
   readonly id: string;
+  readonly tenantId: string;
   readonly label: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
@@ -264,6 +266,7 @@ export declare class Deliverable {
 
 export declare class DeliverableType {
   readonly id: string;
+  readonly tenantId: string;
   readonly label: string;
   readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
   readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;

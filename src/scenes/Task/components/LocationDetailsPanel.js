@@ -9,12 +9,16 @@ import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    tenantIdSelector,
+} from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
     const dispatch = useDispatch();
+    const tenantId = useSelector(tenantIdSelector);
     const [state, setState] = useState(null);
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
@@ -69,6 +73,7 @@ function LocationDetailsPanel(props) {
                     ...newValues,
                     listed: 0,
                     name: `Copy of ${name}`,
+                    tenantId,
                 })
             );
             await DataStore.save(
@@ -112,7 +117,7 @@ function LocationDetailsPanel(props) {
             if (currentLocation.listed === 1) {
                 // this is to trigger the observer on the dashboard and clear the card
                 const dummyLocation = await DataStore.save(
-                    new models.Location({})
+                    new models.Location({ tenantId })
                 );
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
@@ -184,6 +189,7 @@ function LocationDetailsPanel(props) {
                 new models.Location({
                     contact: values,
                     listed: 0,
+                    tenantId,
                 })
             );
             // find the existing task
@@ -260,6 +266,7 @@ function LocationDetailsPanel(props) {
                     new models.Location({
                         ...values,
                         listed: 0,
+                        tenantId,
                     })
                 );
                 // find the existing task

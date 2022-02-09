@@ -17,7 +17,10 @@ export const getTaskUUIDs = (tasks) => {
     return result;
 };
 
-export async function addTask(whoamiId) {
+export async function addTask(whoamiId, tenantId) {
+    if (!whoamiId || !tenantId) {
+        throw new Error("Missing required parameters");
+    }
     const date = new Date();
     const timeOfCall = date.toISOString();
     const createdBy = whoamiId
@@ -28,6 +31,7 @@ export async function addTask(whoamiId) {
             status: tasksStatus.new,
             timeOfCall,
             createdBy,
+            tenantId,
         })
     );
     await DataStore.save(
@@ -35,6 +39,7 @@ export async function addTask(whoamiId) {
             task: newTask,
             assignee: createdBy,
             role: userRoles.coordinator,
+            tenantId,
         })
     );
     return newTask;

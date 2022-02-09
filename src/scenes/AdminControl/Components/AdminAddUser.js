@@ -13,7 +13,7 @@ import {
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
 import Forbidden from "../../../ErrorComponents/Forbidden";
-import { getWhoami } from "../../../redux/Selectors";
+import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 import { encodeUUID } from "../../../utilities";
@@ -46,6 +46,7 @@ function AdminAddUser() {
     const [state, setState] = useState(initialState);
     //TODO: eventually want to make signup only with email address
     const whoami = useSelector(getWhoami);
+    const tenantId = useSelector(tenantIdSelector);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
     const [passwordVerified, setPasswordVerified] = useState(true);
@@ -107,6 +108,7 @@ function AdminAddUser() {
                     active: 1,
                     contact: { emailAddress: state.email },
                     roles: [...rolesState, userRoles.user],
+                    tenantId,
                 })
             );
             dispatch(

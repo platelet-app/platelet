@@ -8,6 +8,12 @@ export function setDarkMode(data) {
     return { type: SET_DARK_MODE, data };
 }
 
+export const SET_TENANT_ID = "SET_TENANT_ID";
+
+export function setTenantId(data) {
+    return { type: SET_TENANT_ID, data };
+}
+
 export const SET_GUIDED_SETUP_OPEN = "SET_GUIDED_SETUP_OPEN";
 
 export function setGuidedSetupOpen(data) {
