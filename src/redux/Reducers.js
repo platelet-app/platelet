@@ -270,6 +270,7 @@ export function error(state = null, action) {
 
 const appReducer = combineReducers({
     whoami,
+    tenantId,
     loadingReducer,
     postingReducer,
     deletingReducer,
