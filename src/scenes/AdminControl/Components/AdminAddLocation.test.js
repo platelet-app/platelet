@@ -38,6 +38,7 @@ const preloadedState = {
             roles: [userRoles.admin, userRoles.user],
         },
     },
+    tenantId: "tenant-id",
     loadingReducer: {
         GET_WHOAMI: false,
     },
@@ -47,6 +48,7 @@ const savedData = new models.Location({
     ...fields,
     contact: { ...contactFields, telephoneNumber: "01234567890" },
     listed: 1,
+    tenantId: "tenant-id",
 });
 
 describe("AdminAddLocation", () => {
@@ -94,6 +96,7 @@ describe("AdminAddLocation", () => {
                 loadingReducer: {
                     GET_WHOAMI: false,
                 },
+                tenantId: "tenant-id",
             },
         });
         expect(
