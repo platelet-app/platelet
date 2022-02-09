@@ -186,6 +186,13 @@ function ActiveRidersChips() {
         getActiveRiders();
     }, [dataStoreReadyStatus, roleView]);
 
+    useEffect(
+        () => () => {
+            assignmentsObserver.current.unsubscribe();
+        },
+        []
+    );
+
     async function updateRiderHome(userId) {
         try {
             const allRiderAssignedTasks = (

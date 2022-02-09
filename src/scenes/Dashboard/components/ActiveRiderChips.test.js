@@ -240,6 +240,20 @@ describe("ActiveRiderChips", () => {
         }
     });
 
+    test.only("the observer unsubscribes on unmount", async () => {
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        const { unmount } = render(<ActiveRidersChips />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        unmount();
+        expect(unsubscribe).toHaveBeenCalledTimes(1);
+    });
+
     // left here from when chips were for marking riders home but could be useful later
     test.skip("marking a rider as home with some active tasks", async () => {
         const unsubscribe = jest.fn();
