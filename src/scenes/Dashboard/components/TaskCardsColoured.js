@@ -213,11 +213,7 @@ const TaskCard = React.memo((props) => {
         </CardContent>
     );
 
-    return (
-        <StyledCard PaperProps={{ elevation: 1 }} className={className}>
-            {cardInnerContent}
-        </StyledCard>
-    );
+    return <StyledCard className={className}>{cardInnerContent}</StyledCard>;
 });
 
 TaskCard.propTypes = {

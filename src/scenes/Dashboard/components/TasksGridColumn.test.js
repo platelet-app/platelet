@@ -13,6 +13,7 @@ import userEvent from "@testing-library/user-event";
 import * as dashboardUtils from "../utilities/functions";
 import { convertListDataToObject } from "../../../utilities";
 import ActiveRidersChips from "./ActiveRidersChips";
+import moment from "moment";
 
 jest.mock("aws-amplify");
 
@@ -221,6 +222,359 @@ describe("TasksGridColumn", () => {
             expect(card).toBeVisible();
         }
     });
+
+    test("the observer shows new jobs when using the ALL role view", async () => {
+        const preloadedState = { roleView: "ALL" };
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            tenantId: "tenant-id",
+            status: tasksStatus.new,
+            timeOfCall,
+        });
+        const mockWhoami = new models.User({
+            roles: [userRoles.coordinator],
+        });
+        const mockObservedResult = {
+            opType: "INSERT",
+            element: mockTask,
+        };
+        const mockObservedResult2 = {
+            element: new models.TaskAssignee({
+                tenantId: "tenant-id",
+                task: mockTask,
+                assignee: mockWhoami,
+                role: userRoles.coordinator,
+            }),
+            opType: "INSERT",
+        };
+        amplify.DataStore.query.mockResolvedValue([]);
+        amplify.DataStore.observe
+            .mockReturnValueOnce({
+                subscribe: jest.fn().mockImplementation((callback) => {
+                    callback(mockObservedResult);
+                    return { unsubscribe: jest.fn() };
+                }),
+            })
+            .mockReturnValueOnce({
+                subscribe: () => ({ unsubscribe: () => {} }),
+            })
+            .mockReturnValueOnce({
+                subscribe: jest.fn().mockImplementation((callback) => {
+                    callback(mockObservedResult2);
+                    return { unsubscribe: jest.fn() };
+                }),
+            })
+            .mockReturnValue({
+                subscribe: () => ({ unsubscribe: () => {} }),
+            });
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
+        });
+        expect(screen.queryAllByRole("link")).toHaveLength(0);
+        await waitFor(() => {
+            expect(amplify.DataStore.observe).toHaveBeenCalledTimes(4);
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(4);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(5);
+        });
+        expect(screen.queryAllByRole("link")).toHaveLength(1);
+        expect(
+            screen.getByText(moment(timeOfCall).calendar())
+        ).toBeInTheDocument();
+    });
+
+    test.each`
+        roleView
+        ${userRoles.coordinator} | ${userRoles.rider}
+    `(
+        "the observer shows new jobs when using the RIDER or COORDINATOR role view",
+        async ({ roleView }) => {
+            const mockWhoami = new models.User({
+                roles: [roleView],
+            });
+            const timeOfCall = new Date().toISOString();
+            const mockTask = new models.Task({
+                status: tasksStatus.new,
+                timeOfCall,
+            });
+            const preloadedState = {
+                roleView,
+                whoami: { user: mockWhoami },
+            };
+            const mockObservedResult = {
+                element: new models.TaskAssignee({
+                    tenantId: "tenant-id",
+                    task: mockTask,
+                    assignee: mockWhoami,
+                    role: roleView,
+                }),
+                opType: "INSERT",
+            };
+            const mockObservedResultIgnored = {
+                element: mockTask,
+                opType: "INSERT",
+            };
+            const unsubscribe = jest.fn();
+            amplify.DataStore.query
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce(mockTask)
+                .mockResolvedValue([]);
+            amplify.DataStore.observe
+                .mockReturnValueOnce({
+                    subscribe: jest.fn().mockImplementation((callback) => {
+                        callback(mockObservedResultIgnored);
+                        return { unsubscribe };
+                    }),
+                })
+                .mockReturnValueOnce({
+                    subscribe: () => ({ unsubscribe }),
+                })
+                .mockReturnValue({
+                    subscribe: jest.fn().mockImplementation((callback) => {
+                        callback(mockObservedResult);
+                        return { unsubscribe };
+                    }),
+                });
+            render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+                preloadedState,
+            });
+            expect(screen.queryAllByRole("link")).toHaveLength(0);
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    1,
+                    models.Task
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    2,
+                    models.Location
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    3,
+                    models.TaskAssignee
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    4,
+                    models.Comment,
+                    expect.any(Function)
+                );
+            });
+            mockAllIsIntersecting(true);
+            expect(screen.queryAllByRole("link")).toHaveLength(1);
+            expect(
+                screen.getByText(moment(timeOfCall).calendar())
+            ).toBeInTheDocument();
+        }
+    );
+
+    test.each`
+        roleView
+        ${userRoles.coordinator} | ${userRoles.rider}
+    `(
+        "don't show tasks not assigned to us when using the RIDER or COORDINATOR role view",
+        async ({ roleView }) => {
+            const mockWhoami = new models.User({
+                roles: [roleView],
+            });
+            const timeOfCall = new Date().toISOString();
+            const mockTask = new models.Task({
+                status: tasksStatus.new,
+                timeOfCall,
+            });
+            const preloadedState = {
+                roleView,
+                whoami: { user: mockWhoami },
+            };
+            const mockObservedResult = {
+                element: new models.TaskAssignee({
+                    tenantId: "tenant-id",
+                    task: mockTask,
+                    assignee: new models.User({}),
+                    role: roleView,
+                }),
+                opType: "INSERT",
+            };
+            const mockObservedResultIgnored = {
+                element: mockTask,
+                opType: "INSERT",
+            };
+            const unsubscribe = jest.fn();
+            amplify.DataStore.query
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce(mockTask)
+                .mockResolvedValue([]);
+            amplify.DataStore.observe
+                .mockReturnValueOnce({
+                    subscribe: jest.fn().mockImplementation((callback) => {
+                        callback(mockObservedResultIgnored);
+                        return { unsubscribe };
+                    }),
+                })
+                .mockReturnValueOnce({
+                    subscribe: () => ({ unsubscribe }),
+                })
+                .mockReturnValue({
+                    subscribe: jest.fn().mockImplementation((callback) => {
+                        callback(mockObservedResult);
+                        return { unsubscribe };
+                    }),
+                });
+            render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+                preloadedState,
+            });
+            expect(screen.queryAllByRole("link")).toHaveLength(0);
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    1,
+                    models.Task
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    2,
+                    models.Location
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    3,
+                    models.TaskAssignee
+                );
+            });
+            mockAllIsIntersecting(true);
+            expect(screen.queryAllByRole("link")).toHaveLength(0);
+            expect(
+                screen.queryByText(moment(timeOfCall).calendar())
+            ).toBeNull();
+        }
+    );
+
+    test.each`
+        roleView
+        ${userRoles.coordinator} | ${userRoles.rider}
+    `(
+        "don't show tasks assigned to us but not matching the role view",
+        async ({ roleView }) => {
+            const mockWhoami = new models.User({
+                roles: [userRoles.rider, userRoles.coordinator],
+            });
+            const timeOfCall = new Date().toISOString();
+            const mockTask = new models.Task({
+                status: tasksStatus.new,
+                timeOfCall,
+            });
+            const preloadedState = {
+                roleView,
+                whoami: { user: mockWhoami },
+            };
+            const mockObservedResult = {
+                element: new models.TaskAssignee({
+                    tenantId: "tenant-id",
+                    task: mockTask,
+                    assignee: new models.User({}),
+                    role:
+                        roleView === userRoles.coordinator
+                            ? userRoles.rider
+                            : userRoles.coordinator,
+                }),
+                opType: "INSERT",
+            };
+            const mockObservedResultIgnored = {
+                element: mockTask,
+                opType: "INSERT",
+            };
+            const unsubscribe = jest.fn();
+            amplify.DataStore.query
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce(mockTask)
+                .mockResolvedValue([]);
+            amplify.DataStore.observe
+                .mockReturnValueOnce({
+                    subscribe: jest.fn().mockImplementation((callback) => {
+                        callback(mockObservedResultIgnored);
+                        return { unsubscribe };
+                    }),
+                })
+                .mockReturnValueOnce({
+                    subscribe: () => ({ unsubscribe }),
+                })
+                .mockReturnValue({
+                    subscribe: jest.fn().mockImplementation((callback) => {
+                        callback(mockObservedResult);
+                        return { unsubscribe };
+                    }),
+                });
+            render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+                preloadedState,
+            });
+            expect(screen.queryAllByRole("link")).toHaveLength(0);
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    1,
+                    models.Task
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    2,
+                    models.Location
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
+                    3,
+                    models.TaskAssignee
+                );
+            });
+            mockAllIsIntersecting(true);
+            expect(screen.queryAllByRole("link")).toHaveLength(0);
+            expect(
+                screen.queryByText(moment(timeOfCall).calendar())
+            ).toBeNull();
+        }
+    );
+
+    test("observers are unsubscribed on unmount", async () => {
+        const preloadedState = { roleView: "ALL" };
+        const unsubscribe = jest.fn();
+        amplify.DataStore.query.mockResolvedValue([]);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        const component = render(
+            <TasksGridColumn taskKey={[tasksStatus.new]} />,
+            { preloadedState }
+        );
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+        });
+        await waitFor(() => {
+            expect(unsubscribe).toHaveBeenCalledTimes(0);
+        });
+        component.unmount();
+        await waitFor(() => {
+            expect(unsubscribe).toHaveBeenCalledTimes(3);
+        });
+    });
+
     it.skip("filters by selected rider chip and search term", async () => {
         const filterTaskSpy = jest.spyOn(dashboardUtils, "filterTasks");
         let mockTasks = _.range(0, 10).map(

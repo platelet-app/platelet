@@ -85,10 +85,14 @@ function TasksGridColumn(props) {
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
+    const roleViewRef = useRef(roleView);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
     const locationsSubscription = useRef({
+        unsubscribe: () => {},
+    });
+    const taskAssigneesObserver = useRef({
         unsubscribe: () => {},
     });
 
@@ -199,7 +203,6 @@ function TasksGridColumn(props) {
                 setState(
                     addAssigneesAndConvertToObject(tasksResult, allAssignments)
                 );
-                //TODO this needs an observer for assignees
                 tasksSubscription.current.unsubscribe();
                 tasksSubscription.current = DataStore.observe(
                     models.Task
@@ -227,6 +230,8 @@ function TasksGridColumn(props) {
                             removeTaskFromState(replaceTask);
                         }
                     } else {
+                        // if roleView is rider or coordinator, let the assignments observer deal with it
+                        if (roleViewRef.current !== "ALL") return;
                         const task = newTask.element;
                         const assignees = (
                             await DataStore.query(models.TaskAssignee)
@@ -293,6 +298,37 @@ function TasksGridColumn(props) {
                         }
                     }
                 });
+                taskAssigneesObserver.current.unsubscribe();
+                taskAssigneesObserver.current = DataStore.observe(
+                    models.TaskAssignee
+                ).subscribe(async (taskAssignee) => {
+                    try {
+                        if (taskAssignee.opType === "INSERT") {
+                            const element = taskAssignee.element;
+                            // if roleView is ALL let the task observer deal with it
+                            if (roleViewRef.current === "ALL") return;
+                            if (
+                                element.assignee &&
+                                element.assignee.id === whoami.id &&
+                                element.role === roleViewRef.current
+                            ) {
+                                if (!element.task) return;
+                                const task = await DataStore.query(
+                                    models.Task,
+                                    element.task.id
+                                );
+                                const assignees = (
+                                    await DataStore.query(models.TaskAssignee)
+                                ).filter(
+                                    (a) => a.task && a.task.id === task.id
+                                );
+                                addTaskToState({ ...task, assignees });
+                            }
+                        }
+                    } catch (e) {
+                        console.log(e);
+                    }
+                });
                 setIsFetching(false);
             } catch (error) {
                 setErrorState(true);
@@ -316,6 +352,7 @@ function TasksGridColumn(props) {
         return () => {
             tasksSubscription.current.unsubscribe();
             locationsSubscription.current.unsubscribe();
+            taskAssigneesObserver.current.unsubscribe();
         };
     }, []);
 
