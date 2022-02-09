@@ -170,9 +170,6 @@ const TaskCard = React.memo((props) => {
                     </Stack>
                     {props.riderResponsibility && (
                         <Stack spacing={1} direction="row" alignItems="center">
-                            <Typography className={classes.typography}>
-                                Responsibility:
-                            </Typography>
                             <Typography
                                 sx={{
                                     fontStyle: props.riderResponsibility
