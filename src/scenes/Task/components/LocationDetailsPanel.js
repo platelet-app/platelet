@@ -18,7 +18,8 @@ import GetError from "../../../ErrorComponents/GetError";
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
     const dispatch = useDispatch();
-    const tenantId = useSelector(tenantIdSelector);
+    // I have no idea why the imported selector is undefined here
+    const tenantId = useSelector((state) => state.tenantId);
     const [state, setState] = useState(null);
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
