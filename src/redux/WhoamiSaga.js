@@ -6,7 +6,7 @@ import {
     REFRESH_WHOAMI_REQUEST,
 } from "./Actions";
 import API from "@aws-amplify/api";
-import { Auth, DataStore } from "aws-amplify";
+import { Auth, DataStore, syncExpression } from "aws-amplify";
 import * as models from "../models/index";
 import * as queries from "../graphql/queries";
 import { NotFound } from "http-errors";
@@ -67,6 +67,20 @@ function* getWhoami() {
             ]);
             let result;
             if (loggedInUser) {
+                if (
+                    !loggedInUser.attributes ||
+                    !loggedInUser.attributes.tenantId
+                ) {
+                    yield put(getWhoamiFailure("No tenantId"));
+                    return;
+                }
+                yield call([DataStore, DataStore.configure], {
+                    syncExpressions: Object.values(models).map((model) =>
+                        syncExpression(model, (m) =>
+                            m.tenantId("eq", loggedInUser.attributes.tenantId)
+                        )
+                    ),
+                });
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,
