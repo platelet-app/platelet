@@ -17,6 +17,7 @@ export const syncUsers = /* GraphQL */ `
       items {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -66,16 +67,6 @@ export const syncUsers = /* GraphQL */ `
           nextToken
           startedAt
         }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -97,6 +88,7 @@ export const getUser = /* GraphQL */ `
     getUser(id: $id) {
       id
       cognitoId
+      tenantId
       contact {
         name
         telephoneNumber
@@ -120,6 +112,7 @@ export const getUser = /* GraphQL */ `
       vehicles {
         items {
           id
+          tenantId
           assignedUserID
           name
           manufacturer
@@ -171,23 +164,10 @@ export const getUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      group {
-        id
-        taskGroupId
-        name
-        users {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       assignments {
         items {
           id
+          tenantId
           taskId
           assigneeId
           role
@@ -219,6 +199,7 @@ export const listUsers = /* GraphQL */ `
       items {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -267,16 +248,6 @@ export const listUsers = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -311,10 +282,6 @@ export const syncGroups = /* GraphQL */ `
         id
         taskGroupId
         name
-        users {
-          nextToken
-          startedAt
-        }
         _version
         _deleted
         _lastChangedAt
@@ -332,26 +299,6 @@ export const getGroup = /* GraphQL */ `
       id
       taskGroupId
       name
-      users {
-        items {
-          id
-          cognitoId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
       _version
       _deleted
       _lastChangedAt
@@ -371,10 +318,6 @@ export const listGroups = /* GraphQL */ `
         id
         taskGroupId
         name
-        users {
-          nextToken
-          startedAt
-        }
         _version
         _deleted
         _lastChangedAt
@@ -401,6 +344,7 @@ export const syncVehicles = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         assignedUserID
         name
         manufacturer
@@ -410,6 +354,7 @@ export const syncVehicles = /* GraphQL */ `
         assignedUser {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -442,6 +387,7 @@ export const getVehicle = /* GraphQL */ `
   query GetVehicle($id: ID!) {
     getVehicle(id: $id) {
       id
+      tenantId
       assignedUserID
       name
       manufacturer
@@ -451,6 +397,7 @@ export const getVehicle = /* GraphQL */ `
       assignedUser {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -499,16 +446,6 @@ export const getVehicle = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -553,6 +490,7 @@ export const listVehicles = /* GraphQL */ `
     listVehicles(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        tenantId
         assignedUserID
         name
         manufacturer
@@ -562,6 +500,7 @@ export const listVehicles = /* GraphQL */ `
         assignedUser {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -605,6 +544,7 @@ export const syncDeliverables = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         deliverableType {
           id
           label
@@ -620,7 +560,7 @@ export const syncDeliverables = /* GraphQL */ `
         taskDeliverablesId
         task {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -659,6 +599,7 @@ export const getDeliverable = /* GraphQL */ `
   query GetDeliverable($id: ID!) {
     getDeliverable(id: $id) {
       id
+      tenantId
       deliverableType {
         id
         label
@@ -674,10 +615,11 @@ export const getDeliverable = /* GraphQL */ `
       taskDeliverablesId
       task {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -717,6 +659,7 @@ export const getDeliverable = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -737,6 +680,7 @@ export const getDeliverable = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -775,7 +719,7 @@ export const getDeliverable = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -794,7 +738,7 @@ export const getDeliverable = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -861,6 +805,7 @@ export const listDeliverables = /* GraphQL */ `
     listDeliverables(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        tenantId
         deliverableType {
           id
           label
@@ -876,7 +821,7 @@ export const listDeliverables = /* GraphQL */ `
         taskDeliverablesId
         task {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -926,6 +871,7 @@ export const syncLocations = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         name
         listed
         contact {
@@ -981,6 +927,7 @@ export const getLocation = /* GraphQL */ `
   query GetLocation($id: ID!) {
     getLocation(id: $id) {
       id
+      tenantId
       name
       listed
       contact {
@@ -1012,7 +959,7 @@ export const getLocation = /* GraphQL */ `
       tasksAsPickUp {
         items {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1035,7 +982,7 @@ export const getLocation = /* GraphQL */ `
       tasksAsDropOff {
         items {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1087,6 +1034,7 @@ export const listLocations = /* GraphQL */ `
     listLocations(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        tenantId
         name
         listed
         contact {
@@ -1153,10 +1101,11 @@ export const syncTasks = /* GraphQL */ `
     ) {
       items {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -1196,6 +1145,7 @@ export const syncTasks = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1216,6 +1166,7 @@ export const syncTasks = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1254,7 +1205,7 @@ export const syncTasks = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1273,7 +1224,7 @@ export const syncTasks = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1314,10 +1265,11 @@ export const getTask = /* GraphQL */ `
   query GetTask($id: ID!) {
     getTask(id: $id) {
       id
-      name
+      tenantId
       createdBy {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -1367,16 +1319,6 @@ export const getTask = /* GraphQL */ `
           nextToken
           startedAt
         }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -1414,6 +1356,7 @@ export const getTask = /* GraphQL */ `
       dropOffLocationId
       pickUpLocation {
         id
+        tenantId
         name
         listed
         contact {
@@ -1462,6 +1405,7 @@ export const getTask = /* GraphQL */ `
       }
       dropOffLocation {
         id
+        tenantId
         name
         listed
         contact {
@@ -1520,6 +1464,7 @@ export const getTask = /* GraphQL */ `
       assignees {
         items {
           id
+          tenantId
           taskId
           assigneeId
           role
@@ -1536,6 +1481,7 @@ export const getTask = /* GraphQL */ `
       deliverables {
         items {
           id
+          tenantId
           taskDeliverablesId
           count
           unit
@@ -1551,10 +1497,11 @@ export const getTask = /* GraphQL */ `
       }
       relayPrevious {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -1594,6 +1541,7 @@ export const getTask = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1614,6 +1562,7 @@ export const getTask = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1652,7 +1601,7 @@ export const getTask = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1671,7 +1620,7 @@ export const getTask = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1705,10 +1654,11 @@ export const getTask = /* GraphQL */ `
       }
       relayNext {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -1748,6 +1698,7 @@ export const getTask = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1768,6 +1719,7 @@ export const getTask = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1806,7 +1758,7 @@ export const getTask = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1825,7 +1777,7 @@ export const getTask = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1904,10 +1856,11 @@ export const listTasks = /* GraphQL */ `
     listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -1947,6 +1900,7 @@ export const listTasks = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1967,6 +1921,7 @@ export const listTasks = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2005,7 +1960,7 @@ export const listTasks = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2024,7 +1979,7 @@ export const listTasks = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2076,12 +2031,13 @@ export const syncTaskAssignees = /* GraphQL */ `
     ) {
       items {
         id
+        tenantId
         taskId
         assigneeId
         role
         task {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2101,6 +2057,7 @@ export const syncTaskAssignees = /* GraphQL */ `
         assignee {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -2145,6 +2102,7 @@ export const syncComments = /* GraphQL */ `
         author {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -2179,6 +2137,7 @@ export const getComment = /* GraphQL */ `
       author {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -2228,16 +2187,6 @@ export const getComment = /* GraphQL */ `
           nextToken
           startedAt
         }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -2272,6 +2221,7 @@ export const listComments = /* GraphQL */ `
         author {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -2454,6 +2404,7 @@ export const getUserByCognitoId = /* GraphQL */ `
       items {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -2503,16 +2454,6 @@ export const getUserByCognitoId = /* GraphQL */ `
           nextToken
           startedAt
         }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -2546,10 +2487,11 @@ export const tasksByStatus = /* GraphQL */ `
     ) {
       items {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -2589,6 +2531,7 @@ export const tasksByStatus = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2609,6 +2552,7 @@ export const tasksByStatus = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2647,7 +2591,7 @@ export const tasksByStatus = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2666,7 +2610,7 @@ export const tasksByStatus = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff

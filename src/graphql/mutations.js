@@ -9,6 +9,7 @@ export const createUser = /* GraphQL */ `
     createUser(input: $input, condition: $condition) {
       id
       cognitoId
+      tenantId
       contact {
         name
         telephoneNumber
@@ -32,6 +33,7 @@ export const createUser = /* GraphQL */ `
       vehicles {
         items {
           id
+          tenantId
           assignedUserID
           name
           manufacturer
@@ -83,23 +85,10 @@ export const createUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      group {
-        id
-        taskGroupId
-        name
-        users {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       assignments {
         items {
           id
+          tenantId
           taskId
           assigneeId
           role
@@ -129,6 +118,7 @@ export const updateUser = /* GraphQL */ `
     updateUser(input: $input, condition: $condition) {
       id
       cognitoId
+      tenantId
       contact {
         name
         telephoneNumber
@@ -152,6 +142,7 @@ export const updateUser = /* GraphQL */ `
       vehicles {
         items {
           id
+          tenantId
           assignedUserID
           name
           manufacturer
@@ -203,23 +194,10 @@ export const updateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      group {
-        id
-        taskGroupId
-        name
-        users {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       assignments {
         items {
           id
+          tenantId
           taskId
           assigneeId
           role
@@ -249,6 +227,7 @@ export const deleteUser = /* GraphQL */ `
     deleteUser(input: $input, condition: $condition) {
       id
       cognitoId
+      tenantId
       contact {
         name
         telephoneNumber
@@ -272,6 +251,7 @@ export const deleteUser = /* GraphQL */ `
       vehicles {
         items {
           id
+          tenantId
           assignedUserID
           name
           manufacturer
@@ -323,23 +303,10 @@ export const deleteUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      group {
-        id
-        taskGroupId
-        name
-        users {
-          nextToken
-          startedAt
-        }
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       assignments {
         items {
           id
+          tenantId
           taskId
           assigneeId
           role
@@ -370,26 +337,6 @@ export const createGroup = /* GraphQL */ `
       id
       taskGroupId
       name
-      users {
-        items {
-          id
-          cognitoId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
       _version
       _deleted
       _lastChangedAt
@@ -407,26 +354,6 @@ export const updateGroup = /* GraphQL */ `
       id
       taskGroupId
       name
-      users {
-        items {
-          id
-          cognitoId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
       _version
       _deleted
       _lastChangedAt
@@ -444,26 +371,6 @@ export const deleteGroup = /* GraphQL */ `
       id
       taskGroupId
       name
-      users {
-        items {
-          id
-          cognitoId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
       _version
       _deleted
       _lastChangedAt
@@ -479,6 +386,7 @@ export const createVehicle = /* GraphQL */ `
   ) {
     createVehicle(input: $input, condition: $condition) {
       id
+      tenantId
       assignedUserID
       name
       manufacturer
@@ -488,6 +396,7 @@ export const createVehicle = /* GraphQL */ `
       assignedUser {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -536,16 +445,6 @@ export const createVehicle = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -588,6 +487,7 @@ export const updateVehicle = /* GraphQL */ `
   ) {
     updateVehicle(input: $input, condition: $condition) {
       id
+      tenantId
       assignedUserID
       name
       manufacturer
@@ -597,6 +497,7 @@ export const updateVehicle = /* GraphQL */ `
       assignedUser {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -645,16 +546,6 @@ export const updateVehicle = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -697,6 +588,7 @@ export const deleteVehicle = /* GraphQL */ `
   ) {
     deleteVehicle(input: $input, condition: $condition) {
       id
+      tenantId
       assignedUserID
       name
       manufacturer
@@ -706,6 +598,7 @@ export const deleteVehicle = /* GraphQL */ `
       assignedUser {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -755,16 +648,6 @@ export const deleteVehicle = /* GraphQL */ `
           nextToken
           startedAt
         }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -806,6 +689,7 @@ export const createDeliverable = /* GraphQL */ `
   ) {
     createDeliverable(input: $input, condition: $condition) {
       id
+      tenantId
       deliverableType {
         id
         label
@@ -821,10 +705,11 @@ export const createDeliverable = /* GraphQL */ `
       taskDeliverablesId
       task {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -864,6 +749,7 @@ export const createDeliverable = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -884,6 +770,7 @@ export const createDeliverable = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -922,7 +809,7 @@ export const createDeliverable = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -941,7 +828,7 @@ export const createDeliverable = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1006,6 +893,7 @@ export const updateDeliverable = /* GraphQL */ `
   ) {
     updateDeliverable(input: $input, condition: $condition) {
       id
+      tenantId
       deliverableType {
         id
         label
@@ -1021,10 +909,11 @@ export const updateDeliverable = /* GraphQL */ `
       taskDeliverablesId
       task {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -1064,6 +953,7 @@ export const updateDeliverable = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1084,6 +974,7 @@ export const updateDeliverable = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1122,7 +1013,7 @@ export const updateDeliverable = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1141,7 +1032,7 @@ export const updateDeliverable = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1206,6 +1097,7 @@ export const deleteDeliverable = /* GraphQL */ `
   ) {
     deleteDeliverable(input: $input, condition: $condition) {
       id
+      tenantId
       deliverableType {
         id
         label
@@ -1221,10 +1113,11 @@ export const deleteDeliverable = /* GraphQL */ `
       taskDeliverablesId
       task {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -1264,6 +1157,7 @@ export const deleteDeliverable = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1284,6 +1178,7 @@ export const deleteDeliverable = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -1322,7 +1217,7 @@ export const deleteDeliverable = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1341,7 +1236,7 @@ export const deleteDeliverable = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1406,6 +1301,7 @@ export const createLocation = /* GraphQL */ `
   ) {
     createLocation(input: $input, condition: $condition) {
       id
+      tenantId
       name
       listed
       contact {
@@ -1437,7 +1333,7 @@ export const createLocation = /* GraphQL */ `
       tasksAsPickUp {
         items {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1460,7 +1356,7 @@ export const createLocation = /* GraphQL */ `
       tasksAsDropOff {
         items {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1510,6 +1406,7 @@ export const updateLocation = /* GraphQL */ `
   ) {
     updateLocation(input: $input, condition: $condition) {
       id
+      tenantId
       name
       listed
       contact {
@@ -1541,7 +1438,7 @@ export const updateLocation = /* GraphQL */ `
       tasksAsPickUp {
         items {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1564,7 +1461,7 @@ export const updateLocation = /* GraphQL */ `
       tasksAsDropOff {
         items {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1614,6 +1511,7 @@ export const deleteLocation = /* GraphQL */ `
   ) {
     deleteLocation(input: $input, condition: $condition) {
       id
+      tenantId
       name
       listed
       contact {
@@ -1645,7 +1543,7 @@ export const deleteLocation = /* GraphQL */ `
       tasksAsPickUp {
         items {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1668,7 +1566,7 @@ export const deleteLocation = /* GraphQL */ `
       tasksAsDropOff {
         items {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1718,10 +1616,11 @@ export const createTask = /* GraphQL */ `
   ) {
     createTask(input: $input, condition: $condition) {
       id
-      name
+      tenantId
       createdBy {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -1771,16 +1670,6 @@ export const createTask = /* GraphQL */ `
           nextToken
           startedAt
         }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -1818,6 +1707,7 @@ export const createTask = /* GraphQL */ `
       dropOffLocationId
       pickUpLocation {
         id
+        tenantId
         name
         listed
         contact {
@@ -1866,6 +1756,7 @@ export const createTask = /* GraphQL */ `
       }
       dropOffLocation {
         id
+        tenantId
         name
         listed
         contact {
@@ -1924,6 +1815,7 @@ export const createTask = /* GraphQL */ `
       assignees {
         items {
           id
+          tenantId
           taskId
           assigneeId
           role
@@ -1940,6 +1832,7 @@ export const createTask = /* GraphQL */ `
       deliverables {
         items {
           id
+          tenantId
           taskDeliverablesId
           count
           unit
@@ -1955,10 +1848,11 @@ export const createTask = /* GraphQL */ `
       }
       relayPrevious {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -1998,6 +1892,7 @@ export const createTask = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2018,6 +1913,7 @@ export const createTask = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2056,7 +1952,7 @@ export const createTask = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2075,7 +1971,7 @@ export const createTask = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2109,10 +2005,11 @@ export const createTask = /* GraphQL */ `
       }
       relayNext {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -2152,6 +2049,7 @@ export const createTask = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2172,6 +2070,7 @@ export const createTask = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2210,7 +2109,7 @@ export const createTask = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2229,7 +2128,7 @@ export const createTask = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2306,10 +2205,11 @@ export const updateTask = /* GraphQL */ `
   ) {
     updateTask(input: $input, condition: $condition) {
       id
-      name
+      tenantId
       createdBy {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -2359,16 +2259,6 @@ export const updateTask = /* GraphQL */ `
           nextToken
           startedAt
         }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -2406,6 +2296,7 @@ export const updateTask = /* GraphQL */ `
       dropOffLocationId
       pickUpLocation {
         id
+        tenantId
         name
         listed
         contact {
@@ -2454,6 +2345,7 @@ export const updateTask = /* GraphQL */ `
       }
       dropOffLocation {
         id
+        tenantId
         name
         listed
         contact {
@@ -2512,6 +2404,7 @@ export const updateTask = /* GraphQL */ `
       assignees {
         items {
           id
+          tenantId
           taskId
           assigneeId
           role
@@ -2528,6 +2421,7 @@ export const updateTask = /* GraphQL */ `
       deliverables {
         items {
           id
+          tenantId
           taskDeliverablesId
           count
           unit
@@ -2543,10 +2437,11 @@ export const updateTask = /* GraphQL */ `
       }
       relayPrevious {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -2586,6 +2481,7 @@ export const updateTask = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2606,6 +2502,7 @@ export const updateTask = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2644,7 +2541,7 @@ export const updateTask = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2663,7 +2560,7 @@ export const updateTask = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2697,10 +2594,11 @@ export const updateTask = /* GraphQL */ `
       }
       relayNext {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -2740,6 +2638,7 @@ export const updateTask = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2760,6 +2659,7 @@ export const updateTask = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -2798,7 +2698,7 @@ export const updateTask = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2817,7 +2717,7 @@ export const updateTask = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2894,10 +2794,11 @@ export const deleteTask = /* GraphQL */ `
   ) {
     deleteTask(input: $input, condition: $condition) {
       id
-      name
+      tenantId
       createdBy {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -2947,16 +2848,6 @@ export const deleteTask = /* GraphQL */ `
           nextToken
           startedAt
         }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -2994,6 +2885,7 @@ export const deleteTask = /* GraphQL */ `
       dropOffLocationId
       pickUpLocation {
         id
+        tenantId
         name
         listed
         contact {
@@ -3042,6 +2934,7 @@ export const deleteTask = /* GraphQL */ `
       }
       dropOffLocation {
         id
+        tenantId
         name
         listed
         contact {
@@ -3100,6 +2993,7 @@ export const deleteTask = /* GraphQL */ `
       assignees {
         items {
           id
+          tenantId
           taskId
           assigneeId
           role
@@ -3116,6 +3010,7 @@ export const deleteTask = /* GraphQL */ `
       deliverables {
         items {
           id
+          tenantId
           taskDeliverablesId
           count
           unit
@@ -3131,10 +3026,11 @@ export const deleteTask = /* GraphQL */ `
       }
       relayPrevious {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -3174,6 +3070,7 @@ export const deleteTask = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -3194,6 +3091,7 @@ export const deleteTask = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -3232,7 +3130,7 @@ export const deleteTask = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3251,7 +3149,7 @@ export const deleteTask = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3285,10 +3183,11 @@ export const deleteTask = /* GraphQL */ `
       }
       relayNext {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -3328,6 +3227,7 @@ export const deleteTask = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -3348,6 +3248,7 @@ export const deleteTask = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -3386,7 +3287,7 @@ export const deleteTask = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3405,7 +3306,7 @@ export const deleteTask = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3482,15 +3383,17 @@ export const createTaskAssignee = /* GraphQL */ `
   ) {
     createTaskAssignee(input: $input, condition: $condition) {
       id
+      tenantId
       taskId
       assigneeId
       role
       task {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -3530,6 +3433,7 @@ export const createTaskAssignee = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -3550,6 +3454,7 @@ export const createTaskAssignee = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -3588,7 +3493,7 @@ export const createTaskAssignee = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3607,7 +3512,7 @@ export const createTaskAssignee = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3642,6 +3547,7 @@ export const createTaskAssignee = /* GraphQL */ `
       assignee {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -3690,16 +3596,6 @@ export const createTaskAssignee = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -3727,15 +3623,17 @@ export const updateTaskAssignee = /* GraphQL */ `
   ) {
     updateTaskAssignee(input: $input, condition: $condition) {
       id
+      tenantId
       taskId
       assigneeId
       role
       task {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -3775,6 +3673,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -3795,6 +3694,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -3833,7 +3733,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3852,7 +3752,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3887,6 +3787,7 @@ export const updateTaskAssignee = /* GraphQL */ `
       assignee {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -3935,16 +3836,6 @@ export const updateTaskAssignee = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -3972,15 +3863,17 @@ export const deleteTaskAssignee = /* GraphQL */ `
   ) {
     deleteTaskAssignee(input: $input, condition: $condition) {
       id
+      tenantId
       taskId
       assigneeId
       role
       task {
         id
-        name
+        tenantId
         createdBy {
           id
           cognitoId
+          tenantId
           displayName
           name
           roles
@@ -4020,6 +3913,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         dropOffLocationId
         pickUpLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -4040,6 +3934,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         }
         dropOffLocation {
           id
+          tenantId
           name
           listed
           ward
@@ -4078,7 +3973,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         }
         relayPrevious {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -4097,7 +3992,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         }
         relayNext {
           id
-          name
+          tenantId
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -4132,6 +4027,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
       assignee {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -4180,16 +4076,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -4222,6 +4108,7 @@ export const createComment = /* GraphQL */ `
       author {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -4270,16 +4157,6 @@ export const createComment = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -4313,6 +4190,7 @@ export const updateComment = /* GraphQL */ `
       author {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -4361,16 +4239,6 @@ export const updateComment = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
@@ -4404,6 +4272,7 @@ export const deleteComment = /* GraphQL */ `
       author {
         id
         cognitoId
+        tenantId
         contact {
           name
           telephoneNumber
@@ -4452,16 +4321,6 @@ export const deleteComment = /* GraphQL */ `
         comments {
           nextToken
           startedAt
-        }
-        group {
-          id
-          taskGroupId
-          name
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
         }
         assignments {
           nextToken
