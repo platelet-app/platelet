@@ -241,8 +241,8 @@ describe("TasksGridColumn", () => {
         const mockObservedResult2 = {
             element: new models.TaskAssignee({
                 tenantId: "tenant-id",
-                task: mockTask,
-                assignee: mockWhoami,
+                taskId: mockTask.id,
+                assigneeId: mockWhoami.id,
                 role: userRoles.coordinator,
             }),
             opType: "INSERT",
@@ -311,8 +311,8 @@ describe("TasksGridColumn", () => {
             const mockObservedResult = {
                 element: new models.TaskAssignee({
                     tenantId: "tenant-id",
-                    task: mockTask,
-                    assignee: mockWhoami,
+                    taskId: mockTask.id,
+                    assigneeId: mockWhoami.id,
                     role: roleView,
                 }),
                 opType: "INSERT",
@@ -366,6 +366,7 @@ describe("TasksGridColumn", () => {
                     models.TaskAssignee
                 );
             });
+            mockAllIsIntersecting(true);
             await waitFor(() => {
                 expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
                     4,
@@ -373,7 +374,6 @@ describe("TasksGridColumn", () => {
                     expect.any(Function)
                 );
             });
-            mockAllIsIntersecting(true);
             expect(screen.queryAllByRole("link")).toHaveLength(1);
             expect(
                 screen.getByText(moment(timeOfCall).calendar())
@@ -399,11 +399,13 @@ describe("TasksGridColumn", () => {
                 roleView,
                 whoami: { user: mockWhoami },
             };
+            const mockAssignee = new models.User({});
             const mockObservedResult = {
                 element: new models.TaskAssignee({
                     tenantId: "tenant-id",
                     task: mockTask,
-                    assignee: new models.User({}),
+                    taskId: mockTask.id,
+                    assigneeId: mockAssignee.id,
                     role: roleView,
                 }),
                 opType: "INSERT",
@@ -483,11 +485,12 @@ describe("TasksGridColumn", () => {
                 roleView,
                 whoami: { user: mockWhoami },
             };
+            const mockAssignee = new models.User({});
             const mockObservedResult = {
                 element: new models.TaskAssignee({
                     tenantId: "tenant-id",
-                    task: mockTask,
-                    assignee: new models.User({}),
+                    taskId: mockTask.id,
+                    assigneeId: mockAssignee.id,
                     role:
                         roleView === userRoles.coordinator
                             ? userRoles.rider

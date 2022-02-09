@@ -302,25 +302,26 @@ function TasksGridColumn(props) {
                 taskAssigneesObserver.current = DataStore.observe(
                     models.TaskAssignee
                 ).subscribe(async (taskAssignee) => {
+                    debugger;
                     try {
                         if (taskAssignee.opType === "INSERT") {
                             const element = taskAssignee.element;
                             // if roleView is ALL let the task observer deal with it
                             if (roleViewRef.current === "ALL") return;
                             if (
-                                element.assignee &&
-                                element.assignee.id === whoami.id &&
+                                element.assigneeId === whoami.id &&
                                 element.role === roleViewRef.current
                             ) {
-                                if (!element.task) return;
+                                if (!element.taskId) return;
                                 const task = await DataStore.query(
                                     models.Task,
-                                    element.task.id
+                                    element.taskId
                                 );
                                 const assignees = (
                                     await DataStore.query(models.TaskAssignee)
                                 ).filter(
-                                    (a) => a.task && a.task.id === task.id
+                                    (a) =>
+                                        a.task && a.task.id === element.taskId
                                 );
                                 addTaskToState({ ...task, assignees });
                             }
