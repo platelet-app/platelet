@@ -1,4 +1,59 @@
 import _ from "lodash";
+import { DataStore } from "aws-amplify";
+import { tasksStatus, userRoles } from "../../../apiConsts";
+import * as models from "../../../models";
+import moment from "moment";
+import { convertListDataToObject } from "../../../utilities";
+
+export const isCompletedTab = (keys) =>
+    _.intersection(
+        [tasksStatus.completed, tasksStatus.cancelled, tasksStatus.rejected],
+        keys
+    ).length > 0;
+
+export const filterTasksToOneWeek = (task) =>
+    moment(task.createdAt).isAfter(moment().subtract(1, "week"));
+
+export function addAssigneesAndConvertToObject(tasks, allAssignees) {
+    const finalResult = {};
+    for (const t of tasks) {
+        const assignmentsFiltered = allAssignees.filter(
+            (a) => a.task.id === t.id
+        );
+        const assignees = convertListDataToObject(assignmentsFiltered);
+        finalResult[t.id] = { ...t, assignees };
+    }
+
+    return finalResult;
+}
+export async function filterTasksByFilteredUser(tasks, userId, taskStatuses) {
+    let taskIds = null;
+    if (userId) {
+        const usersTaskIds = (
+            await DataStore.query(models.TaskAssignee, (a) =>
+                a.role("eq", userRoles.rider)
+            )
+        )
+            .filter(
+                (a) =>
+                    a.task &&
+                    taskStatuses.includes(a.task.status) &&
+                    a.assignee &&
+                    userId === a.assignee.id
+            )
+            .map((a) => a.task && a.task.id);
+        if (taskIds !== null) {
+            taskIds = _.intersection(taskIds, usersTaskIds);
+        } else {
+            taskIds = usersTaskIds;
+        }
+    }
+    if (taskIds !== null) {
+        return tasks.filter((t) => taskIds.includes(t.id));
+    } else {
+        return tasks;
+    }
+}
 
 export function filterTasks(tasks, search) {
     if (!search || !tasks || tasks.length === 0) {

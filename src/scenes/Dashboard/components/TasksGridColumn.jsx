@@ -17,14 +17,17 @@ import {
     getRoleView,
     getWhoami,
 } from "../../../redux/Selectors";
-import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
+import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
 import { tasksStatus, userRoles } from "../../../apiConsts";
-import moment from "moment";
 import Box from "@mui/material/Box";
 import DateStampDivider from "./TimeStampDivider";
+import getTasksAll from "../utilities/getTasksAll";
+import getAllTasksByUser from "../utilities/getAllTasksByUser";
+import getAllMyTasks from "../utilities/getAllMyTasks";
+import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -58,19 +61,6 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
     },
 }));
-
-function addAssigneesAndConvertToObject(tasks, allAssignees) {
-    const finalResult = {};
-    for (const t of tasks) {
-        const assignmentsFiltered = allAssignees.filter(
-            (a) => a.task.id === t.id
-        );
-        const assignees = convertListDataToObject(assignmentsFiltered);
-        finalResult[t.id] = { ...t, assignees };
-    }
-
-    return finalResult;
-}
 
 function TasksGridColumn(props) {
     const classes = useStyles();
@@ -125,84 +115,32 @@ function TasksGridColumn(props) {
         if (!dataStoreReadyStatus) {
             return;
         } else {
-            const isCompletedTab =
-                _.intersection(
-                    [
-                        tasksStatus.completed,
-                        tasksStatus.cancelled,
-                        tasksStatus.rejected,
-                    ],
-                    props.taskKey
-                ).length > 0;
             try {
-                const allAssignments = await DataStore.query(
-                    models.TaskAssignee
-                );
-                let tasksResult = [];
-                let taskIds = null;
-                if (
-                    [userRoles.coordinator, userRoles.rider].includes(roleView)
-                ) {
-                    const assignments = (
-                        await DataStore.query(models.TaskAssignee, (a) =>
-                            a.role("eq", roleView)
+                if (roleView === "ALL" && !dashboardFilteredUser) {
+                    setState(await getTasksAll(props.taskKey));
+                } else if (roleView === "ALL" && dashboardFilteredUser) {
+                    setState(
+                        await getAllTasksByUser(
+                            props.taskKey,
+                            dashboardFilteredUser,
+                            userRoles.rider
                         )
-                    ).filter((a) => a.assignee.id === whoami.id);
-
-                    // once DataStore implements lazy loading, get the tasks from assignments instead
-                    taskIds = assignments.map((a) => a.task.id);
-                }
-                if (dashboardFilteredUser) {
-                    const usersTaskIds = (
-                        await DataStore.query(models.TaskAssignee, (a) =>
-                            a.role("eq", userRoles.rider)
-                        )
-                    )
-                        .filter(
-                            (a) =>
-                                a.task &&
-                                props.taskKey.includes(a.task.status) &&
-                                a.assignee &&
-                                dashboardFilteredUser === a.assignee.id
-                        )
-                        .map((a) => a.task && a.task.id);
-                    if (taskIds !== null) {
-                        taskIds = _.intersection(taskIds, usersTaskIds);
-                    } else {
-                        taskIds = usersTaskIds;
-                    }
-                }
-                tasksResult = await DataStore.query(
-                    models.Task,
-                    (task) =>
-                        task.or((task) =>
-                            task
-                                // TODO: not ideal since it sometimes is one index but works for now
-                                .status("eq", props.taskKey[0])
-                                .status("eq", props.taskKey[1])
-                        ),
-
-                    {
-                        sort: (s) => s.createdAt("desc"),
-                        limit: isCompletedTab ? 200 : 0,
-                    }
-                );
-                if (taskIds !== null) {
-                    tasksResult = tasksResult.filter((t) =>
-                        taskIds.includes(t.id)
                     );
-                }
-                if (isCompletedTab) {
-                    // filter tasksResult to only return tasks that were created in the last week
-                    tasksResult = tasksResult.filter((task) =>
-                        moment(task.createdAt).isAfter(
-                            moment().subtract(1, "week")
+                } else if (roleView !== "ALL" && !dashboardFilteredUser) {
+                    setState(
+                        await getAllMyTasks(props.taskKey, whoami.id, roleView)
+                    );
+                } else if (roleView !== "ALL" && dashboardFilteredUser) {
+                    setState(
+                        await getAllMyTasksWithUser(
+                            props.taskKey,
+                            whoami.id,
+                            roleView,
+                            dashboardFilteredUser
                         )
                     );
                 }
-                setState(
-                    addAssigneesAndConvertToObject(tasksResult, allAssignments)
-                );
+
                 tasksSubscription.current.unsubscribe();
                 tasksSubscription.current = DataStore.observe(
                     models.Task
@@ -225,6 +163,15 @@ function TasksGridColumn(props) {
                             ).filter(
                                 (a) => a.task && a.task.id === replaceTask.id
                             );
+                            if (roleView !== "ALL") {
+                                const filteredAssignees = assignees.filter(
+                                    (a) =>
+                                        a.role === roleView &&
+                                        a.assignee &&
+                                        a.assignee.id === whoami.id
+                                );
+                                if (filteredAssignees.length === 0) return;
+                            }
                             addTaskToState({ ...replaceTask, assignees });
                         } else {
                             removeTaskFromState(replaceTask);
@@ -302,7 +249,6 @@ function TasksGridColumn(props) {
                 taskAssigneesObserver.current = DataStore.observe(
                     models.TaskAssignee
                 ).subscribe(async (taskAssignee) => {
-                    debugger;
                     try {
                         if (taskAssignee.opType === "INSERT") {
                             const element = taskAssignee.element;

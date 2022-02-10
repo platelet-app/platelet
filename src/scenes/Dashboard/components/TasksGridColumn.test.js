@@ -60,38 +60,120 @@ describe("TasksGridColumn", () => {
     });
 
     it.each`
-        taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}
-    `("renders the tasks for each status", async ({ taskStatus }) => {
-        const mockTasks = _.range(0, 10).map(
+        roleView
+        ${userRoles.rider} | ${userRoles.coordinator}
+    `("renders the tasks in different role views", async ({ roleView }) => {
+        let mockTasks = _.range(0, 10).map(
             (i) =>
                 new models.Task({
-                    status: taskStatus,
-                    priority: priorities.medium,
+                    status: tasksStatus.new,
+                    priority: i % 2 === 0 ? priorities.medium : priorities.high,
                 })
         );
+
+        mockTasks = mockTasks.map((t) => ({
+            ...t,
+            createdAt: new Date().toISOString(),
+        }));
+
+        const fakeUser = new models.User({
+            displayName: "Someone Person",
+        });
+        const mockAssignments = _.range(0, 10).map(
+            (i) =>
+                new models.TaskAssignee({
+                    task: mockTasks[i],
+                    assignee: i % 2 === 0 ? testUser : fakeUser,
+                    role: roleView,
+                })
+        );
+        const preloadedState = { whoami: { user: testUser }, roleView };
+
         amplify.DataStore.query
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockAssignments)
             .mockResolvedValue([]);
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe: () => {} }),
         });
-        render(<TasksGridColumn title={taskStatus} taskKey={[taskStatus]} />);
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.TaskAssignee,
+                expect.any(Function)
+            );
         });
         mockAllIsIntersecting(true);
-        expect(screen.getByText(taskStatus)).toBeInTheDocument();
-        const links = screen.getAllByRole("link");
-        expect(links).toHaveLength(10);
-        for (const link of links) {
-            expect(link.firstChild.className).toMatch(
-                new RegExp(`makeStyles-${taskStatus}`)
-            );
-        }
+        expect(screen.getAllByText(priorities.medium)).toHaveLength(5);
+        expect(screen.queryAllByText(priorities.high)).toHaveLength(0);
     });
+
+    it.each`
+        taskStatus
+        ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${tasksStatus.active}    | ${tasksStatus.pickedUp}
+    `(
+        "renders the tasks in ALL view for each status",
+        async ({ taskStatus }) => {
+            const mockTasks = _.range(0, 10).map(
+                (i) =>
+                    new models.Task({
+                        status: taskStatus,
+                        priority: priorities.medium,
+                    })
+            );
+            amplify.DataStore.query
+                .mockResolvedValueOnce([])
+                .mockResolvedValueOnce(mockTasks)
+                .mockResolvedValue([]);
+            amplify.DataStore.observe.mockReturnValue({
+                subscribe: () => ({ unsubscribe: () => {} }),
+            });
+            render(
+                <TasksGridColumn title={taskStatus} taskKey={[taskStatus]} />
+            );
+            await waitFor(() => {
+                expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                    1,
+                    models.TaskAssignee
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                    2,
+                    models.Task,
+                    expect.any(Function),
+                    {
+                        limit: dashboardUtils.isCompletedTab([taskStatus])
+                            ? 200
+                            : 0,
+                        sort: expect.any(Function),
+                    }
+                );
+            });
+            await waitFor(() => {
+                expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
+            });
+            mockAllIsIntersecting(true);
+            expect(screen.getByText(taskStatus)).toBeInTheDocument();
+            const links = screen.getAllByRole("link");
+            expect(links).toHaveLength(10);
+            for (const link of links) {
+                expect(link.firstChild.className).toMatch(
+                    new RegExp(`makeStyles-${taskStatus}`)
+                );
+            }
+        }
+    );
 
     it("filters tasks with the search textbox", async () => {
         const filterTaskSpy = jest.spyOn(dashboardUtils, "filterTasks");
@@ -199,6 +281,27 @@ describe("TasksGridColumn", () => {
             </>
         );
         await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
+                models.Task,
+                expect.any(Function),
+                { limit: 0, sort: expect.any(Function) }
+            );
+        });
+        await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(13);
         });
         mockAllIsIntersecting(true);
@@ -206,14 +309,25 @@ describe("TasksGridColumn", () => {
         jest.clearAllMocks();
         amplify.DataStore.query
             .mockResolvedValueOnce(mockAssignments)
-            .mockResolvedValueOnce(mockAssignments)
-            .mockResolvedValueOnce(mockTasks)
             .mockResolvedValue([]);
         expect(screen.queryAllByText("AI")).toHaveLength(5);
         expect(screen.queryAllByText("SP")).toHaveLength(5);
         userEvent.click(screen.getByText(fakeUser1.displayName));
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(8);
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Comment,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6);
         });
         mockAllIsIntersecting(true);
         const firstFakeUser = screen.getAllByText("AI");
@@ -367,13 +481,7 @@ describe("TasksGridColumn", () => {
                 );
             });
             mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
-                    4,
-                    models.Comment,
-                    expect.any(Function)
-                );
-            });
+            return;
             expect(screen.queryAllByRole("link")).toHaveLength(1);
             expect(
                 screen.getByText(moment(timeOfCall).calendar())
@@ -385,7 +493,7 @@ describe("TasksGridColumn", () => {
         roleView
         ${userRoles.coordinator} | ${userRoles.rider}
     `(
-        "don't show tasks not assigned to us when using the RIDER or COORDINATOR role view",
+        "observer don't show tasks not assigned to us when using the RIDER or COORDINATOR role view",
         async ({ roleView }) => {
             const mockWhoami = new models.User({
                 roles: [roleView],
@@ -471,7 +579,7 @@ describe("TasksGridColumn", () => {
         roleView
         ${userRoles.coordinator} | ${userRoles.rider}
     `(
-        "don't show tasks assigned to us but not matching the role view",
+        "observer don't show tasks assigned to us but not matching the role view",
         async ({ roleView }) => {
             const mockWhoami = new models.User({
                 roles: [userRoles.rider, userRoles.coordinator],

@@ -151,7 +151,6 @@ function LocationDetailsPanel(props) {
     }
 
     async function changeContactDetails(values) {
-        debugger;
         let locationResult = null;
         const key = props.locationKey;
         const filtered = _.omit(values, ...protectedFields);
