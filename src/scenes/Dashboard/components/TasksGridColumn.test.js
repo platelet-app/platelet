@@ -108,7 +108,9 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
-                models.Task
+                models.Task,
+                expect.any(Function),
+                { limit: 0, sort: expect.any(Function) }
             );
         });
         mockAllIsIntersecting(true);
@@ -248,6 +250,144 @@ describe("TasksGridColumn", () => {
         userEvent.click(screen.getByRole("button", { name: "Clear Search" }));
     });
 
+    it("filters by selected rider chip on coord view", async () => {
+        const preloadedState = {
+            roleView: userRoles.coordinator,
+            whoami: { user: { ...testUser } },
+        };
+        let mockTasks = _.range(0, 10).map(
+            (i) =>
+                new models.Task({
+                    status: tasksStatus.new,
+                    priority: i < 5 ? priorities.medium : priorities.high,
+                })
+        );
+
+        mockTasks = mockTasks.map((t) => ({
+            ...t,
+            createdAt: new Date().toISOString(),
+        }));
+
+        const fakeUser1 = new models.User({
+            id: "fakeId",
+            displayName: "Another Individual",
+        });
+        const fakeUser2 = new models.User({
+            id: "fakeId",
+            displayName: "Someone Person",
+        });
+        const mockAssignments = _.range(0, 10).map(
+            (i) =>
+                new models.TaskAssignee({
+                    task: mockTasks[i],
+                    assignee: i % 2 === 0 ? fakeUser1 : fakeUser2,
+                    role: userRoles.rider,
+                })
+        );
+        const mockAssignmentsMe = _.range(0, 10).map(
+            (i) =>
+                new models.TaskAssignee({
+                    task: mockTasks[i],
+                    assignee: testUser,
+                    role: userRoles.coordinator,
+                })
+        );
+        const allAssignments = [...mockAssignments, ...mockAssignmentsMe];
+
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(allAssignments)
+            .mockResolvedValueOnce(mockAssignmentsMe)
+            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValue([]);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(
+            <>
+                <ActiveRidersChips />
+                <TasksGridColumn
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
+                models.TaskAssignee,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                4,
+                models.Task,
+                expect.any(Function),
+                {
+                    limit: 0,
+                    sort: expect.any(Function),
+                }
+            );
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(14);
+        });
+        jest.clearAllMocks();
+        amplify.DataStore.query
+            .mockResolvedValueOnce(allAssignments)
+            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValue([]);
+        expect(screen.queryAllByText("AI")).toHaveLength(5);
+        expect(screen.queryAllByText("SP")).toHaveLength(5);
+        userEvent.click(screen.getByText(fakeUser1.displayName));
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Task
+            );
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
+                models.Comment,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(7);
+        });
+        const firstFakeUser = screen.getAllByText("AI");
+        expect(screen.queryAllByText("SP")).toHaveLength(0);
+        for (const card of firstFakeUser) {
+            expect(card).toBeVisible();
+        }
+    });
+
     it("filters by selected rider chip", async () => {
         let mockTasks = _.range(0, 10).map(
             (i) =>
@@ -325,6 +465,7 @@ describe("TasksGridColumn", () => {
         jest.clearAllMocks();
         amplify.DataStore.query
             .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockTasks)
             .mockResolvedValue([]);
         expect(screen.queryAllByText("AI")).toHaveLength(5);
         expect(screen.queryAllByText("SP")).toHaveLength(5);
@@ -335,16 +476,24 @@ describe("TasksGridColumn", () => {
                 models.TaskAssignee
             );
         });
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
+                models.Task,
+                expect.any(Function),
+                { limit: 0, sort: expect.any(Function) }
+            );
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
                 models.Comment,
                 expect.any(Function)
             );
         });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6);
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(7);
         });
         const firstFakeUser = screen.getAllByText("AI");
         expect(screen.queryAllByText("SP")).toHaveLength(0);

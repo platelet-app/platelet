@@ -13,8 +13,8 @@ export default async function getAllMyTasksWithUser(
     roleView,
     filteredUser
 ) {
-    const allTasks = await DataStore.query(models.Task);
     const allAssignments = await DataStore.query(models.TaskAssignee);
+    const allTasks = await DataStore.query(models.Task);
     const myAssignments = allAssignments.filter(
         (a) => a.role === roleView && a.assignee && a.assignee.id === userId
     );

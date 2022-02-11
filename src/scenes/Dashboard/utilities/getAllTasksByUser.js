@@ -12,9 +12,23 @@ export default async function getAllTasksByUser(
     userId,
     role = userRoles.rider
 ) {
-    const allAssignees = await DataStore.query(models.TaskAssignee);
+    const allAssignments = await DataStore.query(models.TaskAssignee);
+    const allTasks = await DataStore.query(
+        models.Task,
+        (task) =>
+            task.or((task) =>
+                task
+                    // TODO: not ideal since it sometimes is one index but works for now
+                    .status("eq", keys[0])
+                    .status("eq", keys[1])
+            ),
 
-    const riderAssigneesFiltered = allAssignees
+        {
+            sort: (s) => s.createdAt("desc"),
+            limit: isCompletedTab(keys) ? 200 : 0,
+        }
+    );
+    const riderAssigneesFiltered = allAssignments
         .filter(
             (a) =>
                 a.role === role &&
@@ -24,12 +38,15 @@ export default async function getAllTasksByUser(
                 userId === a.assignee.id
         )
         .map((a) => a.task && a.task);
+
+    const riderTaskIds = riderAssigneesFiltered.map((t) => t.id);
+    const riderTasks = allTasks.filter((t) => riderTaskIds.includes(t.id));
     if (isCompletedTab(keys)) {
         // filter tasksResult to only return tasks that were created in the last week
         return addAssigneesAndConvertToObject(
-            riderAssigneesFiltered.filter(filterTasksToOneWeek),
-            allAssignees
+            riderTasks.filter(filterTasksToOneWeek),
+            allAssignments
         );
     }
-    return addAssigneesAndConvertToObject(riderAssigneesFiltered, allAssignees);
+    return addAssigneesAndConvertToObject(riderTasks, allAssignments);
 }
