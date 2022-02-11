@@ -779,6 +779,56 @@ describe("TasksGridColumn", () => {
         });
     });
 
+    it.each`
+        roleView
+        ${userRoles.rider} | ${userRoles.coordinator} | ${"ALL"}
+    `("shows the location details on each task", async ({ roleView }) => {
+        const mockLocation = new models.Location({
+            line1: "first line1",
+            ward: "first ward",
+        });
+        const mockLocation2 = new models.Location({
+            line1: "second line1",
+            ward: "second ward",
+        });
+        const mockTasks = _.range(0, 10).map(
+            (i) =>
+                new models.Task({
+                    status: tasksStatus.new,
+                    priority: priorities.medium,
+                    pickUpLocation: mockLocation,
+                    dropOffLocation: mockLocation2,
+                })
+        );
+        const mockAssignments = _.range(0, 10).map(
+            (i) =>
+                new models.TaskAssignee({
+                    task: mockTasks[i],
+                    assignee: testUser,
+                    role: roleView,
+                })
+        );
+        const preloadedState = { whoami: { user: testUser }, roleView };
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValue([]);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe: () => {} }),
+        });
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+        });
+        mockAllIsIntersecting(true);
+        expect(screen.getAllByText(mockLocation.ward)).toHaveLength(10);
+        expect(screen.getAllByText(mockLocation.line1)).toHaveLength(10);
+        expect(screen.getAllByText(mockLocation2.ward)).toHaveLength(10);
+        expect(screen.getAllByText(mockLocation2.line1)).toHaveLength(10);
+    });
+
     it.skip("filters by selected rider chip and search term", async () => {
         const filterTaskSpy = jest.spyOn(dashboardUtils, "filterTasks");
         let mockTasks = _.range(0, 10).map(
