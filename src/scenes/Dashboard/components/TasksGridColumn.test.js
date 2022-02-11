@@ -160,10 +160,10 @@ describe("TasksGridColumn", () => {
                     }
                 );
             });
+            mockAllIsIntersecting(true);
             await waitFor(() => {
                 expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
             });
-            mockAllIsIntersecting(true);
             expect(screen.getByText(taskStatus)).toBeInTheDocument();
             const links = screen.getAllByRole("link");
             expect(links).toHaveLength(10);
@@ -206,9 +206,26 @@ describe("TasksGridColumn", () => {
             }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Task,
+                expect.any(Function),
+                {
+                    limit: 0,
+                    sort: expect.any(Function),
+                }
+            );
         });
         mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(12);
+        });
         const searchTerm = "medium";
         userEvent.type(screen.getByRole("textbox"), searchTerm);
         await waitFor(() => {
@@ -301,10 +318,10 @@ describe("TasksGridColumn", () => {
                 { limit: 0, sort: expect.any(Function) }
             );
         });
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(13);
         });
-        mockAllIsIntersecting(true);
         screen.getByText("NEW");
         jest.clearAllMocks();
         amplify.DataStore.query
@@ -319,6 +336,7 @@ describe("TasksGridColumn", () => {
                 models.TaskAssignee
             );
         });
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
@@ -329,7 +347,6 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(6);
         });
-        mockAllIsIntersecting(true);
         const firstFakeUser = screen.getAllByText("AI");
         expect(screen.queryAllByText("SP")).toHaveLength(0);
         for (const card of firstFakeUser) {
@@ -385,18 +402,33 @@ describe("TasksGridColumn", () => {
             preloadedState,
         });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Task,
+                expect.any(Function),
+                { limit: 0, sort: expect.any(Function) }
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
+                models.TaskAssignee
+            );
         });
         expect(screen.queryAllByRole("link")).toHaveLength(0);
-        await waitFor(() => {
-            expect(amplify.DataStore.observe).toHaveBeenCalledTimes(4);
-        });
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(4);
-        });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(5);
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                4,
+                models.Comment,
+                expect.any(Function)
+            );
         });
         expect(screen.queryAllByRole("link")).toHaveLength(1);
         expect(
@@ -404,7 +436,7 @@ describe("TasksGridColumn", () => {
         ).toBeInTheDocument();
     });
 
-    test.only("the observer doesn't show jobs that don't match the keys", async () => {
+    test("the observer doesn't show jobs that don't match the keys", async () => {
         const preloadedState = { roleView: "ALL" };
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
@@ -803,10 +835,10 @@ describe("TasksGridColumn", () => {
                 },
             }
         );
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(13);
         });
-        mockAllIsIntersecting(true);
         jest.clearAllMocks();
         amplify.DataStore.query
             .mockResolvedValueOnce(mockAssignments)
@@ -816,11 +848,11 @@ describe("TasksGridColumn", () => {
         expect(screen.queryAllByText("AI")).toHaveLength(5);
         expect(screen.queryAllByText("SP")).toHaveLength(5);
         userEvent.click(screen.getByText(fakeUser1.displayName));
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(8);
         });
 
-        mockAllIsIntersecting(true);
         const firstFakeUser = screen.getAllByText("AI");
         expect(screen.queryAllByText("SP")).toHaveLength(0);
         for (const card of firstFakeUser) {

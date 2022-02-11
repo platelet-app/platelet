@@ -123,7 +123,7 @@ function TaskItem(props) {
     }
 
     async function calculateCommentCount() {
-        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+        if (!visibility || !dataStoreReadyStatus || !props.task) return;
         const commentCount = await getCommentCount();
         setCommentCount(commentCount);
         commentObserver.current.unsubscribe();
