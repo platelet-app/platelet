@@ -13,6 +13,7 @@ export default async function getAllMyTasksWithUser(
     roleView,
     filteredUser
 ) {
+    const allTasks = await DataStore.query(models.Task);
     const allAssignments = await DataStore.query(models.TaskAssignee);
     const myAssignments = allAssignments.filter(
         (a) => a.role === roleView && a.assignee && a.assignee.id === userId
@@ -21,14 +22,17 @@ export default async function getAllMyTasksWithUser(
         (a) =>
             a.role === userRoles.rider &&
             a.assignee &&
-            a.assignee.id !== filteredUser
+            a.assignee.id === filteredUser
     );
     const intersectingTasks = myAssignments.filter((a) =>
         theirAssignments.some((b) => b.task.id === a.task.id)
     );
-    const filteredTasks = intersectingTasks
-        .map((a) => a.task && a.task)
-        .filter((t) => keys.includes(t.status));
+    const intersectingTasksIds = intersectingTasks.map(
+        (a) => a.task && a.task.id
+    );
+    const filteredTasks = allTasks.filter(
+        (t) => keys.includes(t.status) && intersectingTasksIds.includes(t.id)
+    );
     if (isCompletedTab(keys)) {
         // filter tasksResult to only return tasks that were created in the last week
         return addAssigneesAndConvertToObject(

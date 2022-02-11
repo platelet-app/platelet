@@ -91,7 +91,7 @@ describe("TasksGridColumn", () => {
 
         amplify.DataStore.query
             .mockResolvedValueOnce(mockAssignments)
-            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(mockTasks)
             .mockResolvedValue([]);
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe: () => {} }),
@@ -108,8 +108,7 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
-                models.TaskAssignee,
-                expect.any(Function)
+                models.Task
             );
         });
         mockAllIsIntersecting(true);
