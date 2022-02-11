@@ -60,6 +60,7 @@ function* getWhoami() {
         } else {
             yield put(getWhoamiSuccess(existingUser[0]));
         }
+        yield put(setTenantId("offline"));
     } else {
         try {
             const loggedInUser = yield call([
