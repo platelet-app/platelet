@@ -404,6 +404,68 @@ describe("TasksGridColumn", () => {
         ).toBeInTheDocument();
     });
 
+    test.only("the observer doesn't show jobs that don't match the keys", async () => {
+        const preloadedState = { roleView: "ALL" };
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            tenantId: "tenant-id",
+            status: tasksStatus.active,
+            timeOfCall,
+        });
+        const mockWhoami = new models.User({
+            roles: [userRoles.coordinator],
+        });
+        const mockObservedResult = {
+            opType: "INSERT",
+            element: mockTask,
+        };
+        const mockObservedResult2 = {
+            element: new models.TaskAssignee({
+                tenantId: "tenant-id",
+                taskId: mockTask.id,
+                assigneeId: mockWhoami.id,
+                role: userRoles.coordinator,
+            }),
+            opType: "INSERT",
+        };
+        amplify.DataStore.query.mockResolvedValue([]);
+        amplify.DataStore.observe
+            .mockReturnValueOnce({
+                subscribe: jest.fn().mockImplementation((callback) => {
+                    callback(mockObservedResult);
+                    return { unsubscribe: jest.fn() };
+                }),
+            })
+            .mockReturnValueOnce({
+                subscribe: () => ({ unsubscribe: () => {} }),
+            })
+            .mockReturnValueOnce({
+                subscribe: jest.fn().mockImplementation((callback) => {
+                    callback(mockObservedResult2);
+                    return { unsubscribe: jest.fn() };
+                }),
+            })
+            .mockReturnValue({
+                subscribe: () => ({ unsubscribe: () => {} }),
+            });
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
+        });
+        expect(screen.queryAllByRole("link")).toHaveLength(0);
+        await waitFor(() => {
+            expect(amplify.DataStore.observe).toHaveBeenCalledTimes(3);
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
+        });
+        mockAllIsIntersecting(true);
+        expect(screen.queryAllByRole("link")).toHaveLength(0);
+        expect(screen.queryByText(moment(timeOfCall).calendar())).toBeNull();
+    });
+
     test.each`
         roleView
         ${userRoles.coordinator} | ${userRoles.rider}
