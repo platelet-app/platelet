@@ -10,45 +10,55 @@ import * as models from "../../../models";
 
 jest.mock("aws-amplify");
 
+const preloadedState = { tenantId: "tenant-id" };
+
 const mockData = [
     new models.DeliverableType({
         label: "Sample",
         icon: "BUG",
         defaultUnit: "ITEM",
         tags: ["sample"],
+        tenantId: "tenant-id",
     }),
     new models.DeliverableType({
         label: "Covid sample",
         icon: "BUG",
         defaultUnit: "ITEM",
         tags: ["sample"],
+        tenantId: "tenant-id",
     }),
     new models.DeliverableType({
         label: "Document",
         icon: "DOCUMENT",
         tags: ["other"],
         defaultUnit: "ITEM",
+        tenantId: "tenant-id",
     }),
     new models.DeliverableType({
         label: "Milk",
         icon: "CHILD",
         tags: ["other"],
         defaultUnit: "LITRE",
+        tenantId: "tenant-id",
     }),
     new models.DeliverableType({
         label: "Equipment",
         icon: "EQUIPMENT",
         tags: ["tag1", "tag2"],
         defaultUnit: "ITEM",
+        tenantId: "tenant-id",
     }),
     new models.DeliverableType({
         label: "Other",
         tags: ["tag2", "tag3"],
         icon: "OTHER",
+        tenantId: "tenant-id",
     }),
 ];
 
-const fakeTask = new models.Task({});
+const fakeTask = new models.Task({
+    tenantId: "tenant-id",
+});
 const mockDeliverables = _.range(0, 10).map((i) => {
     return new models.Deliverable({
         deliverableType: _.sample(mockData),
@@ -56,6 +66,7 @@ const mockDeliverables = _.range(0, 10).map((i) => {
         orderInGrid: i,
         task: fakeTask,
         unit: i === 0 ? deliverableUnits.item : _.sample(deliverableUnits),
+        tenantId: "tenant-id",
     });
 });
 
@@ -67,7 +78,7 @@ describe("DeliverableDetails", () => {
             subscribe: () => ({ unsubscribe }),
         });
         amplify.DataStore.query.mockResolvedValue(mockData);
-        render(<DeliverableDetails />);
+        render(<DeliverableDetails />, { preloadedState });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
@@ -80,7 +91,7 @@ describe("DeliverableDetails", () => {
         amplify.DataStore.query
             .mockResolvedValueOnce([])
             .mockResolvedValue(mockData);
-        render(<DeliverableDetails />);
+        render(<DeliverableDetails />, { preloadedState });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
@@ -113,7 +124,7 @@ describe("DeliverableDetails", () => {
         amplify.DataStore.save.mockResolvedValueOnce(
             new models.Deliverable({ deliverableType: mockData[0], count: 1 })
         );
-        render(<DeliverableDetails taskId="test" />);
+        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
@@ -165,7 +176,7 @@ describe("DeliverableDetails", () => {
                 count: 1,
             });
 
-        render(<DeliverableDetails taskId={fakeTask.id} />);
+        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
@@ -208,7 +219,7 @@ describe("DeliverableDetails", () => {
             .mockResolvedValueOnce(mockData)
             .mockResolvedValue(mockDeliverables[0]);
         amplify.DataStore.delete.mockResolvedValueOnce({});
-        render(<DeliverableDetails taskId={fakeTask.id} />);
+        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
@@ -242,7 +253,7 @@ describe("DeliverableDetails", () => {
                 count: mockDeliverables[0].count + 1,
             });
 
-        render(<DeliverableDetails taskId={fakeTask.id} />);
+        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
         });
@@ -307,7 +318,7 @@ describe("DeliverableDetails", () => {
             (deliverableType) => deliverableType.tags
         );
         const tagsUnique = existingTags.reduce(tagsReducer, []);
-        render(<DeliverableDetails taskId={fakeTask.id} />);
+        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
@@ -367,7 +378,7 @@ describe("DeliverableDetails", () => {
             ...mockDeliverables[0],
             unit: deliverableUnits.none,
         });
-        render(<DeliverableDetails taskId={fakeTask.id} />);
+        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);

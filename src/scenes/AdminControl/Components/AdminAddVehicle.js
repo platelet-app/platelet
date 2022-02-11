@@ -12,7 +12,7 @@ import {
 } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch, useSelector } from "react-redux";
 import { encodeUUID } from "../../../utilities";
-import { getWhoami } from "../../../redux/Selectors";
+import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
@@ -42,6 +42,7 @@ function AdminAddVehicle() {
     const [state, setState] = useState(initialVehicleState);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
+    const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
     const [inputVerified, setInputVerified] = useState(false);
     const dispatch = useDispatch();
@@ -66,7 +67,9 @@ function AdminAddVehicle() {
                 result.dateOfManufacture =
                     state.dateOfManufacture.toISOString();
             }
-            const newVehicle = await DataStore.save(new models.Vehicle(result));
+            const newVehicle = await DataStore.save(
+                new models.Vehicle({ ...result, tenantId })
+            );
             setState(initialVehicleState);
             setIsPosting(false);
             dispatch(

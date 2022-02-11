@@ -56,6 +56,15 @@ function viewMode(state = null, action) {
     }
 }
 
+function tenantId(state = null, action) {
+    switch (action.type) {
+        case "SET_TENANT_ID":
+            return action.data;
+        default:
+            return state;
+    }
+}
+
 function roleView(state = "ALL", action) {
     switch (action.type) {
         case SET_ROLE_VIEW:
@@ -261,6 +270,7 @@ export function error(state = null, action) {
 
 const appReducer = combineReducers({
     whoami,
+    tenantId,
     loadingReducer,
     postingReducer,
     deletingReducer,

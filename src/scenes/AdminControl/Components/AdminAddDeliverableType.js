@@ -10,7 +10,7 @@ import {
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch, useSelector } from "react-redux";
-import { getWhoami } from "../../../redux/Selectors";
+import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
@@ -42,6 +42,7 @@ const fields = {
 
 function AdminAddDeliverableType() {
     const [state, setState] = useState(initialDeliverableTypeState);
+    const tenantId = useSelector(tenantIdSelector);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
     const [isPosting, setIsPosting] = useState(false);
@@ -53,7 +54,9 @@ function AdminAddDeliverableType() {
     async function addDeliverableTypeToStore() {
         try {
             setIsPosting(true);
-            await DataStore.save(new models.DeliverableType(state));
+            await DataStore.save(
+                new models.DeliverableType({ ...state, tenantId })
+            );
             setState(initialDeliverableTypeState);
             setIsPosting(false);
             dispatch(displayInfoNotification("Deliverable type added"));

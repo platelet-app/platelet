@@ -3,6 +3,7 @@ type User @auth(rules: [{ allow: private}]) @model
 {
   id: ID!
   cognitoId: ID!
+  tenantId: ID!
   contact: AddressAndContactDetails
   displayName: String!
   name: String
@@ -15,7 +16,6 @@ type User @auth(rules: [{ allow: private}]) @model
   profilePicture: S3Object
   profilePictureThumbnail: S3Object
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
-  group: Group @connection(name: "GroupMembers")
   assignments: [TaskAssignee] @connection(keyName: "byAssignee", fields: ["id"])
   active: Int!
 }
@@ -35,6 +35,7 @@ type Group @auth(rules: [{ allow: private}]) @model {
 
 type Vehicle @auth(rules: [{ allow: private}]) @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
   id: ID!
+  tenantId: ID!
   assignedUserID: ID
   name: String!
   manufacturer: String
@@ -64,6 +65,7 @@ type AddressAndContactDetails {
 
 type Deliverable @auth(rules: [{ allow: private}]) @model {
   id: ID!
+  tenantId: ID!
   deliverableType: DeliverableType! @connection
   taskDeliverablesId: ID
   task: Task @connection
@@ -75,6 +77,7 @@ type Deliverable @auth(rules: [{ allow: private}]) @model {
 
 type Location @auth(rules: [{ allow: private}]) @model {
   id: ID!
+  tenantId: ID!
   name: String
   listed: Int
   contact: AddressAndContactDetails
@@ -101,7 +104,7 @@ type Task
   @key(name: "byDropOffLocation", fields: ["dropOffLocationId",])
   {
   id: ID!
-  name: String
+  tenantId: ID!
   createdBy: User @connection
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
@@ -132,6 +135,7 @@ type TaskAssignee
 @key(name: "byAssignee", fields: ["assigneeId", "taskId"])
 {
   id: ID!
+  tenantId: ID!
   taskId: ID!
   assigneeId: ID!
   role: Role!

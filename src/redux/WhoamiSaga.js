@@ -4,10 +4,11 @@ import {
     getWhoamiFailure,
     getWhoamiSuccess,
     REFRESH_WHOAMI_REQUEST,
+    setTenantId,
 } from "./Actions";
 import API from "@aws-amplify/api";
-import { Auth, DataStore } from "aws-amplify";
-import * as models from "../models/index";
+import { Auth, DataStore, syncExpression } from "aws-amplify";
+import * as models from "../models";
 import * as queries from "../graphql/queries";
 import { NotFound } from "http-errors";
 import { userRoles } from "../apiConsts";
@@ -59,6 +60,7 @@ function* getWhoami() {
         } else {
             yield put(getWhoamiSuccess(existingUser[0]));
         }
+        yield put(setTenantId("offline"));
     } else {
         try {
             const loggedInUser = yield call([
@@ -67,6 +69,51 @@ function* getWhoami() {
             ]);
             let result;
             if (loggedInUser) {
+                debugger;
+                if (
+                    !loggedInUser.attributes ||
+                    !loggedInUser.attributes["custom:tenantId"]
+                ) {
+                    yield put(getWhoamiFailure("No tenantId"));
+                    return;
+                }
+
+                const tenantId = loggedInUser.attributes["custom:tenantId"];
+                const modelsToSync = [];
+                for (const model of Object.values(models)) {
+                    if (
+                        [
+                            "Task",
+                            "User",
+                            "TaskAssignee",
+                            "RiderResponsibility",
+                            "Comment",
+                            "Location",
+                            "Vehicle",
+                            "Deliverable",
+                            "DeliverableType",
+                        ].includes(model.name)
+                    ) {
+                        modelsToSync.push(model);
+                    }
+                }
+
+                // DataStore.configure({
+                //     syncExpressions: [
+                //         syncExpression(models.Task, () => {
+                //             return (c) => c.tenantId("eq", tenantId);
+                //         }),
+                //         syncExpression(models.User, () => {
+                //             return (c) => c.tenantId("eq", tenantId);
+                //         }),
+                //     ],
+                // });
+
+                yield call([DataStore, DataStore.configure], {
+                    syncExpressions: modelsToSync.map((model) =>
+                        syncExpression(model, (m) => m.tenantId("eq", tenantId))
+                    ),
+                });
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,
@@ -95,6 +142,7 @@ function* getWhoami() {
                 } else {
                     yield put(getWhoamiSuccess(result[0]));
                 }
+                yield put(setTenantId(tenantId));
             } else {
                 yield put(
                     getWhoamiFailure(

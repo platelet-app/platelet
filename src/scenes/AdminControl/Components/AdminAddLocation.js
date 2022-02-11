@@ -12,7 +12,7 @@ import { PaddedPaper } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import * as models from "../../../models/index";
 import Forbidden from "../../../ErrorComponents/Forbidden";
-import { getWhoami } from "../../../redux/Selectors";
+import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 
@@ -68,6 +68,7 @@ const contactFields = {
 function AdminAddLocation() {
     const [state, setState] = useState(initialLocationState);
     const whoami = useSelector(getWhoami);
+    const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
@@ -84,7 +85,7 @@ function AdminAddLocation() {
         try {
             setIsPosting(true);
             const newLocation = await DataStore.save(
-                new models.Location(state)
+                new models.Location({ ...state, tenantId })
             );
             setState(initialLocationState);
             setIsPosting(false);

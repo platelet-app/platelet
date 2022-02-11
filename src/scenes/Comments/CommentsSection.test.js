@@ -27,6 +27,8 @@ const mockPublicComments = _.range(0, 3).map((i) => {
     });
 });
 
+const preloadedState = { tenantId: "tenant-id", whoami: { user: testUser } };
+
 const mockPrivateComments = _.range(0, 3).map((i) => {
     return new models.Comment({
         body: uuidv4(),
@@ -57,7 +59,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />, {
-            preloadedState: { whoami: { user: testUser } },
+            preloadedState,
         });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -79,7 +81,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />, {
-            preloadedState: { whoami: { user: testUser } },
+            preloadedState,
         });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -105,7 +107,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />, {
-            preloadedState: { whoami: { user: testUser } },
+            preloadedState,
         });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -141,7 +143,7 @@ describe("CommentsSection", () => {
             subscribe: () => ({ unsubscribe }),
         });
         render(<CommentsSection parentId="test" />, {
-            preloadedState: { whoami: { user: testUser } },
+            preloadedState,
         });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -179,7 +181,7 @@ describe("CommentsSection", () => {
         });
         amplify.Auth.currentAuthenticatedUser.mockReturnValue(mockWhoami);
         render(<CommentsSection parentId="test" />, {
-            preloadedState: { whoami: { user: testUser } },
+            preloadedState,
         });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
@@ -238,7 +240,7 @@ describe("CommentsSection", () => {
         });
         amplify.Auth.currentAuthenticatedUser.mockReturnValue(mockWhoami);
         render(<CommentsSection parentId="test" />, {
-            preloadedState: { whoami: { user: testUser } },
+            preloadedState,
         });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);

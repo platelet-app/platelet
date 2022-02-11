@@ -12,11 +12,13 @@ jest.mock("aws-amplify");
 
 const whoami = new models.User({
     displayName: "test user",
+    tenantId: "test-tenant",
 });
 
 const preloadedState = {
     guidedSetupOpen: true,
     whoami: { user: whoami },
+    tenantId: "test-tenant",
 };
 
 describe("GuidedSetup", () => {
@@ -115,6 +117,7 @@ describe("GuidedSetup", () => {
                 name: "",
                 telephoneNumber: "",
             },
+            tenantId: "test-tenant",
         });
 
         const mockAssignment = new models.TaskAssignee({
@@ -171,12 +174,14 @@ describe("GuidedSetup", () => {
                 name: "Someone Person",
                 telephoneNumber: "01234567890",
             },
+            tenantId: "test-tenant",
         });
 
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: whoami,
             role: userRoles.coordinator,
+            tenantId: "test-tenant",
         });
 
         amplify.DataStore.query
@@ -235,17 +240,20 @@ describe("GuidedSetup", () => {
             priority: null,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
+            tenantId: "test-tenant",
         });
         const mockComment = new models.Comment({
             body: "This is a comment",
             author: whoami,
             parentId: mockTask.id,
+            tenantId: "test-tenant",
         });
 
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: whoami,
             role: userRoles.coordinator,
+            tenantId: "test-tenant",
         });
         amplify.DataStore.query
             .mockResolvedValueOnce([])
@@ -306,29 +314,35 @@ describe("GuidedSetup", () => {
             priority: null,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
+            tenantId: "test-tenant",
         });
 
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: whoami,
             role: userRoles.coordinator,
+            tenantId: "test-tenant",
         });
 
         const mockDeliverableType = new models.DeliverableType({
             label: "some item",
+            tenantId: "test-tenant",
         });
         const mockDeliverableType2 = new models.DeliverableType({
             label: "another thing",
+            tenantId: "test-tenant",
         });
         const mockDeliverable = new models.Deliverable({
             deliverableType: mockDeliverableType,
             task: mockTask,
             count: 3,
+            tenantId: "test-tenant",
         });
         const mockDeliverable2 = new models.Deliverable({
             deliverableType: mockDeliverableType2,
             task: mockTask,
             count: 1,
+            tenantId: "test-tenant",
         });
         amplify.DataStore.query
             .mockResolvedValueOnce([mockDeliverableType, mockDeliverableType2])
@@ -444,7 +458,10 @@ describe("GuidedSetup", () => {
 
     test("clicking the discard button when item data has been entered", async () => {
         amplify.DataStore.query.mockResolvedValue([
-            new models.DeliverableType({ label: "Fake Item" }),
+            new models.DeliverableType({
+                label: "Fake Item",
+                tenantId: "test-tenant",
+            }),
         ]);
         render(<GuidedSetup />, { preloadedState });
         await waitFor(() =>
@@ -507,12 +524,14 @@ describe("GuidedSetup", () => {
                 name: "",
                 telephoneNumber: "",
             },
+            tenantId: "test-tenant",
         });
 
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: whoami,
             role: userRoles.coordinator,
+            tenantId: "test-tenant",
         });
         amplify.DataStore.query
             .mockResolvedValueOnce([])

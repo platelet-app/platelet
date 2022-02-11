@@ -6,6 +6,7 @@ export const getTasksCancelledSelector = (state) =>
     state.tasks.tasks["tasksCancelled"];
 export const getTasksInitialisedStatus = (state) => state.tasks.fetched;
 export const getWhoami = (state) => state.whoami.user;
+export const tenantIdSelector = (state) => state.tenantId;
 export const getRoleView = (state) => state.roleView;
 export const getUsersSelector = (state) => state.users.users;
 export const getActiveTaskSelector = (state) => state.task.task;

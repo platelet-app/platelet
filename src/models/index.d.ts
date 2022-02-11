@@ -96,10 +96,6 @@ type RiderResponsibilityMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type GroupMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
 type TaskAssigneeMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -120,9 +116,14 @@ type DeliverableTypeMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
+type GroupMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 export declare class User {
   readonly id: string;
   readonly cognitoId: string;
+  readonly tenantId: string;
   readonly contact?: AddressAndContactDetails;
   readonly displayName: string;
   readonly name?: string;
@@ -135,7 +136,6 @@ export declare class User {
   readonly profilePicture?: S3Object;
   readonly profilePictureThumbnail?: S3Object;
   readonly comments?: Comment[];
-  readonly group?: Group;
   readonly assignments?: (TaskAssignee | null)[];
   readonly active: number;
   readonly createdAt?: string;
@@ -146,6 +146,7 @@ export declare class User {
 
 export declare class Vehicle {
   readonly id: string;
+  readonly tenantId: string;
   readonly name: string;
   readonly manufacturer?: string;
   readonly model?: string;
@@ -161,6 +162,7 @@ export declare class Vehicle {
 
 export declare class Comment {
   readonly id: string;
+  readonly tenantId: string;
   readonly parentId?: string;
   readonly body?: string;
   readonly author?: User;
@@ -173,6 +175,7 @@ export declare class Comment {
 
 export declare class RiderResponsibility {
   readonly id: string;
+  readonly tenantId: string;
   readonly label: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
@@ -180,19 +183,9 @@ export declare class RiderResponsibility {
   static copyOf(source: RiderResponsibility, mutator: (draft: MutableModel<RiderResponsibility, RiderResponsibilityMetaData>) => MutableModel<RiderResponsibility, RiderResponsibilityMetaData> | void): RiderResponsibility;
 }
 
-export declare class Group {
-  readonly id: string;
-  readonly taskGroupId?: string;
-  readonly name?: string;
-  readonly users?: (User | null)[];
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
-  constructor(init: ModelInit<Group, GroupMetaData>);
-  static copyOf(source: Group, mutator: (draft: MutableModel<Group, GroupMetaData>) => MutableModel<Group, GroupMetaData> | void): Group;
-}
-
 export declare class TaskAssignee {
   readonly id: string;
+  readonly tenantId: string;
   readonly role: Role | keyof typeof Role;
   readonly task: Task;
   readonly assignee: User;
@@ -204,7 +197,7 @@ export declare class TaskAssignee {
 
 export declare class Task {
   readonly id: string;
-  readonly name?: string;
+  readonly tenantId: string;
   readonly createdBy?: User;
   readonly timeOfCall?: string;
   readonly timePickedUp?: string;
@@ -232,6 +225,7 @@ export declare class Task {
 
 export declare class Location {
   readonly id: string;
+  readonly tenantId: string;
   readonly name?: string;
   readonly listed?: number;
   readonly contact?: AddressAndContactDetails;
@@ -256,6 +250,7 @@ export declare class Location {
 
 export declare class Deliverable {
   readonly id: string;
+  readonly tenantId: string;
   readonly deliverableType: DeliverableType;
   readonly taskDeliverablesId?: string;
   readonly task?: Task;
@@ -271,6 +266,7 @@ export declare class Deliverable {
 
 export declare class DeliverableType {
   readonly id: string;
+  readonly tenantId: string;
   readonly label: string;
   readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
   readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;
@@ -279,4 +275,14 @@ export declare class DeliverableType {
   readonly updatedAt?: string;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);
   static copyOf(source: DeliverableType, mutator: (draft: MutableModel<DeliverableType, DeliverableTypeMetaData>) => MutableModel<DeliverableType, DeliverableTypeMetaData> | void): DeliverableType;
+}
+
+export declare class Group {
+  readonly id: string;
+  readonly taskGroupId?: string;
+  readonly name?: string;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  constructor(init: ModelInit<Group, GroupMetaData>);
+  static copyOf(source: Group, mutator: (draft: MutableModel<Group, GroupMetaData>) => MutableModel<Group, GroupMetaData> | void): Group;
 }

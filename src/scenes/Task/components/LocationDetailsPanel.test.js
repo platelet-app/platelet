@@ -15,6 +15,13 @@ jest.mock("../../../redux/Selectors", () => ({
 }));
 const errorMessage = "Sorry, something went wrong";
 
+const preloadedState = {
+    tenantId: "tenant-id",
+    whoami: {
+        user: new models.User({ tenantId: "tenant-id", displayName: "test" }),
+    },
+};
+
 const mockLocations = [
     {
         name: "Bristol Royal Infirmary",
@@ -27,6 +34,7 @@ const mockLocations = [
         postcode: "BS2 8HW",
         what3words: "some.what.words",
         id: "9d27b9a1-e6b7-451d-9a2e-3a8a31579216",
+        tenantId: "tenant-id",
         contact: {
             telephoneNumber: "01234567890",
             emailAddress: "fake@email.com",
@@ -46,6 +54,7 @@ const mockLocations = [
         postcode: "BS2 8HW",
         what3words: "some.what.words",
         id: "66642db5-746a-4fb1-8397-db46b634fadb",
+        tenantId: "tenant-id",
         contact: {
             telephoneNumber: "01234567890",
             emailAddress: "fake@email.com",
@@ -65,6 +74,7 @@ const mockLocations = [
         postcode: "BS10 5NB",
         what3words: "some.what.words",
         id: "38c39ae4-caad-4991-9a2a-66f93c8dd9a5",
+        tenantId: "tenant-id",
         contact: {
             telephoneNumber: "01234567890",
             emailAddress: "fake@email.com",
@@ -84,6 +94,7 @@ const mockLocations = [
         postcode: "BS10 5NB",
         what3words: "some.what.words",
         id: "db3e3054-61a3-45f5-82c5-15961264f58d",
+        tenantId: "tenant-id",
         contact: {
             telephoneNumber: "01234567890",
             emailAddress: "fake@email.com",
@@ -103,6 +114,7 @@ const mockLocations = [
         postcode: "BS4 5BJ",
         what3words: "some.what.words",
         id: "3a1af74d-8ede-4539-a7f0-9313b24d4f1f",
+        tenantId: "tenant-id",
         contact: {
             telephoneNumber: "01234567890",
             emailAddress: "fake@email.com",
@@ -122,6 +134,7 @@ const mockLocations = [
         postcode: "BS4 5BJ",
         what3words: "some.what.words",
         id: "d33d03d9-ed71-4947-8dff-8a76469c5790",
+        tenantId: "tenant-id",
         contact: {
             telephoneNumber: "01234567890",
             emailAddress: "fake@email.com",
@@ -141,6 +154,7 @@ const mockLocations = [
         postcode: "SN3 6BB",
         what3words: "some.what.words",
         id: "645d242f-7835-4392-81e5-ab6cd4fb442d",
+        tenantId: "tenant-id",
         contact: {
             telephoneNumber: "01234567890",
             emailAddress: "fake@email.com",
@@ -153,7 +167,7 @@ const mockLocations = [
 describe("LocationDetailsPanel", () => {
     it("renders without crashing", async () => {
         amplify.DataStore.query.mockResolvedValue([]);
-        render(<LocationDetailsPanel />);
+        render(<LocationDetailsPanel />, { preloadedState });
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
@@ -163,7 +177,9 @@ describe("LocationDetailsPanel", () => {
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("renders the correct title", async ({ locationKey }) => {
         amplify.DataStore.query.mockResolvedValue([]);
-        render(<LocationDetailsPanel locationKey={locationKey} />);
+        render(<LocationDetailsPanel locationKey={locationKey} />, {
+            preloadedState,
+        });
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
@@ -181,7 +197,8 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 locationId={mockLocation.id}
                 locationKey={"pickUpLocation"}
-            />
+            />,
+            { preloadedState }
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -207,6 +224,7 @@ describe("LocationDetailsPanel", () => {
             postcode: "BS2 8HW",
             what3words: "some.what.words",
             id: "66642db5-746a-4fb1-8397-db46b634fadb",
+            tenantId: "tenant-id",
             contact: {
                 telephoneNumber: "01234567890",
                 name: "Someone Person",
@@ -218,8 +236,10 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 locationId={mockLocation.id}
                 locationKey={"pickUpLocation"}
-            />
+            />,
+            { preloadedState }
         );
+
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
@@ -251,7 +271,10 @@ describe("LocationDetailsPanel", () => {
             ...task,
             [locationKey]: mockLocations[6],
         });
-        render(<LocationDetailsPanel locationKey={locationKey} />);
+        render(<LocationDetailsPanel locationKey={locationKey} />, {
+            preloadedState,
+        });
+
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
@@ -301,7 +324,8 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 locationId={mockLocations[0].id}
                 locationKey={locationKey}
-            />
+            />,
+            { preloadedState }
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -380,7 +404,8 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 locationId={mockLocations[0].id}
                 locationKey={locationKey}
-            />
+            />,
+            { preloadedState }
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -455,7 +480,8 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 locationId={mockLocations[0].id}
                 locationKey={locationKey}
-            />
+            />,
+            { preloadedState }
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -504,7 +530,8 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 locationId={fakeModel.id}
                 locationKey={locationKey}
-            />
+            />,
+            { preloadedState }
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -549,7 +576,8 @@ describe("LocationDetailsPanel", () => {
                 <LocationDetailsPanel
                     locationId={null}
                     locationKey={locationKey}
-                />
+                />,
+                { preloadedState }
             );
             screen.getByText("Line one").click();
             const textBox = screen.getByRole("textbox", { name: "" });
@@ -628,8 +656,11 @@ describe("LocationDetailsPanel", () => {
             const fakeInputData = "new data";
             const fakeModel = new models.Location({
                 listed: 0,
+                tenantId: "tenant-id",
             });
-            const fakeTask = new models.Task({});
+            const fakeTask = new models.Task({
+                tenantId: "tenant-id",
+            });
             amplify.DataStore.query
                 .mockResolvedValue([])
                 .mockResolvedValue(fakeTask);
@@ -649,7 +680,8 @@ describe("LocationDetailsPanel", () => {
                 <LocationDetailsPanel
                     locationId={null}
                     locationKey={locationKey}
-                />
+                />,
+                { preloadedState }
             );
             await waitFor(() =>
                 expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -700,9 +732,12 @@ describe("LocationDetailsPanel", () => {
         "add address information then contact information to an empty location",
         async ({ locationKey }) => {
             const fakeInputData = "new data";
-            const fakeTask = new models.Task({});
+            const fakeTask = new models.Task({
+                tenantId: "tenant-id",
+            });
             const fakeModel = new models.Location({
                 listed: 0,
+                tenantId: "tenant-id",
             });
             amplify.DataStore.query
                 .mockResolvedValueOnce([])
@@ -728,7 +763,8 @@ describe("LocationDetailsPanel", () => {
                 <LocationDetailsPanel
                     locationId={null}
                     locationKey={locationKey}
-                />
+                />,
+                { preloadedState }
             );
             await waitFor(() =>
                 expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -792,13 +828,17 @@ describe("LocationDetailsPanel", () => {
         "add contact information then address information to an empty location",
         async ({ locationKey }) => {
             const fakeInputData = "new data";
-            const fakeTask = new models.Task({});
+            const fakeTask = new models.Task({
+                tenantId: "tenant-id",
+            });
             const fakeModel = new models.Location({
                 listed: 0,
+                tenantId: "tenant-id",
             });
             const fakeModel2 = new models.Location({
                 listed: 0,
                 contact: { name: fakeInputData },
+                tenantId: "tenant-id",
             });
             amplify.DataStore.query
                 .mockResolvedValueOnce([])
@@ -830,7 +870,8 @@ describe("LocationDetailsPanel", () => {
                 <LocationDetailsPanel
                     locationId={null}
                     locationKey={locationKey}
-                />
+                />,
+                { preloadedState }
             );
             await waitFor(() =>
                 expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -901,7 +942,8 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 locationId={"fakeId"}
                 locationKey={"pickUpLocation"}
-            />
+            />,
+            { preloadedState }
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)

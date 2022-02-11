@@ -22,7 +22,11 @@ import {
 } from "./index";
 import { Paper, Stack } from "@mui/material";
 import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
-import { getWhoami, guidedSetupOpenSelector } from "../../redux/Selectors";
+import {
+    getWhoami,
+    guidedSetupOpenSelector,
+    tenantIdSelector,
+} from "../../redux/Selectors";
 import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
 import _ from "lodash";
@@ -131,6 +135,7 @@ export const GuidedSetup = () => {
     const classes = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
+    const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
     const [reset, setReset] = useState(false);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
@@ -184,6 +189,7 @@ export const GuidedSetup = () => {
                     comment: comment.current,
                     timeOfCall: timeOfCall.current,
                 },
+                tenantId,
                 whoami && whoami.id
             );
         } catch (e) {
