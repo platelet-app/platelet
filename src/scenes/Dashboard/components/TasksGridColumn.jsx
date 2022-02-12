@@ -111,7 +111,6 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        setIsFetching(true);
         if (!dataStoreReadyStatus) {
             return;
         } else {
@@ -141,141 +140,7 @@ function TasksGridColumn(props) {
                     );
                 }
 
-                tasksSubscription.current.unsubscribe();
-                tasksSubscription.current = DataStore.observe(
-                    models.Task
-                ).subscribe(async (newTask) => {
-                    if (newTask.opType === "UPDATE") {
-                        const replaceTask = await DataStore.query(
-                            models.Task,
-                            newTask.element.id
-                        );
-                        if (
-                            replaceTask.status === tasksStatus.new &&
-                            props.taskKey.includes(tasksStatus.new) &&
-                            dashboardFilteredUser
-                        ) {
-                            return;
-                        }
-                        if (props.taskKey.includes(replaceTask.status)) {
-                            const assignees = (
-                                await DataStore.query(models.TaskAssignee)
-                            ).filter(
-                                (a) => a.task && a.task.id === replaceTask.id
-                            );
-                            if (roleView !== "ALL") {
-                                const filteredAssignees = assignees.filter(
-                                    (a) =>
-                                        a.role === roleView &&
-                                        a.assignee &&
-                                        a.assignee.id === whoami.id
-                                );
-                                if (filteredAssignees.length === 0) return;
-                            }
-                            addTaskToState({ ...replaceTask, assignees });
-                        } else {
-                            removeTaskFromState(replaceTask);
-                        }
-                    } else {
-                        // if roleView is rider or coordinator, let the assignments observer deal with it
-                        if (roleViewRef.current !== "ALL") return;
-                        const task = newTask.element;
-                        const assignees = (
-                            await DataStore.query(models.TaskAssignee)
-                        ).filter((a) => a.task && a.task.id === task.id);
-                        let pickUpLocation = null;
-                        let dropOffLocation = null;
-                        if (task.pickUpLocationId) {
-                            pickUpLocation = await DataStore.query(
-                                models.Location,
-                                task.pickUpLocationId
-                            );
-                        }
-                        if (task.dropOffLocationId) {
-                            dropOffLocation = await DataStore.query(
-                                models.Location,
-                                task.dropOffLocationId
-                            );
-                        }
-                        if (props.taskKey.includes(task.status))
-                            addTaskToState({
-                                ...task,
-                                pickUpLocation,
-                                dropOffLocation,
-                                assignees,
-                            });
-                    }
-                });
-                locationsSubscription.current.unsubscribe();
-                locationsSubscription.current = DataStore.observe(
-                    models.Location
-                ).subscribe(async (location) => {
-                    if (location.opType === "UPDATE") {
-                        for (const task of Object.values(stateRef.current)) {
-                            if (
-                                task.pickUpLocation &&
-                                task.pickUpLocation.id === location.element.id
-                            ) {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    [task.id]: {
-                                        ...prevState[task.id],
-                                        pickUpLocation: {
-                                            ...task.pickUpLocation,
-                                            ...location.element,
-                                        },
-                                    },
-                                }));
-                            }
-                            if (
-                                task.dropOffLocation &&
-                                task.dropOffLocation.id === location.element.id
-                            ) {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    [task.id]: {
-                                        ...prevState[task.id],
-                                        dropOffLocation: {
-                                            ...task.dropOffLocation,
-                                            ...location.element,
-                                        },
-                                    },
-                                }));
-                            }
-                        }
-                    }
-                });
-                taskAssigneesObserver.current.unsubscribe();
-                taskAssigneesObserver.current = DataStore.observe(
-                    models.TaskAssignee
-                ).subscribe(async (taskAssignee) => {
-                    try {
-                        if (taskAssignee.opType === "INSERT") {
-                            const element = taskAssignee.element;
-                            // if roleView is ALL let the task observer deal with it
-                            if (roleViewRef.current === "ALL") return;
-                            if (
-                                element.assigneeId === whoami.id &&
-                                element.role === roleViewRef.current
-                            ) {
-                                if (!element.taskId) return;
-                                const task = await DataStore.query(
-                                    models.Task,
-                                    element.taskId
-                                );
-                                const assignees = (
-                                    await DataStore.query(models.TaskAssignee)
-                                ).filter(
-                                    (a) =>
-                                        a.task && a.task.id === element.taskId
-                                );
-                                addTaskToState({ ...task, assignees });
-                            }
-                        }
-                    } catch (e) {
-                        console.log(e);
-                    }
-                });
+                animate.current = false;
                 setIsFetching(false);
             } catch (error) {
                 setErrorState(true);
@@ -286,7 +151,10 @@ function TasksGridColumn(props) {
     }
 
     useEffect(
-        () => getTasks(),
+        () => {
+            setIsFetching(true);
+            getTasks();
+        },
         // JSON.stringify prevents component remount from an array prop
         [
             dataStoreReadyStatus,
@@ -295,6 +163,112 @@ function TasksGridColumn(props) {
             JSON.stringify(props.taskKey),
         ]
     );
+
+    function setUpObservers() {
+        if (!dataStoreReadyStatus) return;
+        tasksSubscription.current.unsubscribe();
+        tasksSubscription.current = DataStore.observe(models.Task).subscribe(
+            (newTask) => {
+                if (newTask.opType === "UPDATE") {
+                    if (
+                        newTask.element.status &&
+                        props.taskKey.includes(newTask.element.status)
+                    ) {
+                        animate.current = true;
+                        getTasks();
+                        return;
+                    } else if (
+                        newTask.element.status &&
+                        !props.taskKey.includes(newTask.element.status)
+                    ) {
+                        removeTaskFromState(newTask.element);
+                        return;
+                    } else if (newTask.element.id in stateRef.current) {
+                        DataStore.query(models.Task, newTask.element.id).then(
+                            (result) => {
+                                addTaskToState(result);
+                            }
+                        );
+                    }
+                } else {
+                    // if roleView is rider or coordinator, let the assignments observer deal with it
+                    if (roleViewRef.current !== "ALL") return;
+                    getTasks();
+                }
+            }
+        );
+        locationsSubscription.current.unsubscribe();
+        locationsSubscription.current = DataStore.observe(
+            models.Location
+        ).subscribe(async (location) => {
+            if (location.opType === "UPDATE") {
+                for (const task of Object.values(stateRef.current)) {
+                    if (
+                        task.pickUpLocation &&
+                        task.pickUpLocation.id === location.element.id
+                    ) {
+                        setState((prevState) => ({
+                            ...prevState,
+                            [task.id]: {
+                                ...prevState[task.id],
+                                pickUpLocation: {
+                                    ...task.pickUpLocation,
+                                    ...location.element,
+                                },
+                            },
+                        }));
+                    }
+                    if (
+                        task.dropOffLocation &&
+                        task.dropOffLocation.id === location.element.id
+                    ) {
+                        setState((prevState) => ({
+                            ...prevState,
+                            [task.id]: {
+                                ...prevState[task.id],
+                                dropOffLocation: {
+                                    ...task.dropOffLocation,
+                                    ...location.element,
+                                },
+                            },
+                        }));
+                    }
+                }
+            }
+        });
+        taskAssigneesObserver.current.unsubscribe();
+        taskAssigneesObserver.current = DataStore.observe(
+            models.TaskAssignee
+        ).subscribe((taskAssignee) => {
+            try {
+                if (taskAssignee.opType === "INSERT") {
+                    const element = taskAssignee.element;
+                    // if roleView is ALL let the task observer deal with it
+                    if (roleView === "ALL") return;
+                    if (
+                        element.assigneeId === whoami.id &&
+                        element.role === roleView
+                    ) {
+                        if (!element.taskId) return;
+                        animate.current = true;
+                        getTasks();
+                    }
+                } else if (taskAssignee.opType === "DELETE") {
+                    const element = taskAssignee.element;
+                    // if roleView is ALL let the task observer deal with it
+                    if (roleView === "ALL") return;
+                    removeTaskFromState(element.task);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    }
+
+    useEffect(() => {
+        setUpObservers();
+    }, [dataStoreReadyStatus, roleView]);
+
     useEffect(() => {
         return () => {
             tasksSubscription.current.unsubscribe();

@@ -526,7 +526,12 @@ describe("TasksGridColumn", () => {
             }),
             opType: "INSERT",
         };
-        amplify.DataStore.query.mockResolvedValue([]);
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockReturnValueOnce([])
+            .mockReturnValueOnce([])
+            .mockReturnValueOnce([mockTask])
+            .mockReturnValue([]);
         amplify.DataStore.observe
             .mockReturnValueOnce({
                 subscribe: jest.fn().mockImplementation((callback) => {
@@ -558,6 +563,12 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
                 models.Task,
                 expect.any(Function),
                 { limit: 0, sort: expect.any(Function) }
@@ -565,15 +576,17 @@ describe("TasksGridColumn", () => {
         });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                3,
-                models.TaskAssignee
+                4,
+                models.Task,
+                expect.any(Function),
+                { limit: 0, sort: expect.any(Function) }
             );
         });
         expect(screen.queryAllByRole("link")).toHaveLength(0);
         mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                4,
+                5,
                 models.Comment,
                 expect.any(Function)
             );
@@ -609,6 +622,7 @@ describe("TasksGridColumn", () => {
             opType: "INSERT",
         };
         amplify.DataStore.query.mockResolvedValue([]);
+
         amplify.DataStore.observe
             .mockReturnValueOnce({
                 subscribe: jest.fn().mockImplementation((callback) => {
@@ -632,14 +646,39 @@ describe("TasksGridColumn", () => {
             preloadedState,
         });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.TaskAssignee
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
+                models.Task,
+                expect.any(Function),
+                { limit: 0, sort: expect.any(Function) }
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                4,
+                models.Task,
+                expect.any(Function),
+                { limit: 0, sort: expect.any(Function) }
+            );
         });
         expect(screen.queryAllByRole("link")).toHaveLength(0);
         await waitFor(() => {
             expect(amplify.DataStore.observe).toHaveBeenCalledTimes(3);
         });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(4);
         });
         mockAllIsIntersecting(true);
         expect(screen.queryAllByRole("link")).toHaveLength(0);
