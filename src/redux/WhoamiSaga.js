@@ -69,7 +69,6 @@ function* getWhoami() {
             ]);
             let result;
             if (loggedInUser) {
-                debugger;
                 if (
                     !loggedInUser.attributes ||
                     !loggedInUser.attributes["custom:tenantId"]
