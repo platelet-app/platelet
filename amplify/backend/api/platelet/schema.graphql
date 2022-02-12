@@ -30,7 +30,6 @@ type Group @auth(rules: [{ allow: private}]) @model {
   id: ID!
   taskGroupId: ID
   name: String
-  users: [User] @connection(name: "GroupMembers")
 }
 
 type Vehicle @auth(rules: [{ allow: private}]) @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
