@@ -145,6 +145,7 @@ type TaskAssignee
 type Comment @auth(rules: [{ allow: private}]) @model @key(name: "byParent", fields: ["parentId"]) {
   id: ID!
   parentId: ID
+  tenantId: ID!
   body: String
   author: User @connection
   visibility: CommentVisibility
@@ -153,6 +154,7 @@ type Comment @auth(rules: [{ allow: private}]) @model @key(name: "byParent", fie
 type DeliverableType @auth(rules: [{ allow: private}]) @model {
   id: ID!
   label: String!
+  tenantId: ID!
   icon: DeliverableTypeIcon
   defaultUnit: DeliverableUnit
   tags: [String]
@@ -168,6 +170,7 @@ enum DeliverableTypeIcon {
 
 type RiderResponsibility @auth(rules: [{ allow: private}]) @model {
   id: ID!
+  tenantId: ID!
   label: String!
 }
 

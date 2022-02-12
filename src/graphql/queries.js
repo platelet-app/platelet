@@ -154,8 +154,8 @@ export const getUser = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -466,8 +466,8 @@ export const getVehicle = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -553,8 +553,8 @@ export const syncDeliverables = /* GraphQL */ `
         tenantId
         deliverableType {
           id
-          tenantId
           label
+          tenantId
           icon
           defaultUnit
           tags
@@ -609,8 +609,8 @@ export const getDeliverable = /* GraphQL */ `
       tenantId
       deliverableType {
         id
-        tenantId
         label
+        tenantId
         icon
         defaultUnit
         tags
@@ -785,8 +785,8 @@ export const getDeliverable = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -818,8 +818,8 @@ export const listDeliverables = /* GraphQL */ `
         tenantId
         deliverableType {
           id
-          tenantId
           label
+          tenantId
           icon
           defaultUnit
           tags
@@ -1016,8 +1016,8 @@ export const getLocation = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -1843,8 +1843,8 @@ export const getTask = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -2116,8 +2116,8 @@ export const syncComments = /* GraphQL */ `
     ) {
       items {
         id
-        tenantId
         parentId
+        tenantId
         body
         author {
           id
@@ -2152,8 +2152,8 @@ export const getComment = /* GraphQL */ `
   query GetComment($id: ID!) {
     getComment(id: $id) {
       id
-      tenantId
       parentId
+      tenantId
       body
       author {
         id
@@ -2238,8 +2238,8 @@ export const listComments = /* GraphQL */ `
     listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        tenantId
         parentId
+        tenantId
         body
         author {
           id
@@ -2285,8 +2285,8 @@ export const syncDeliverableTypes = /* GraphQL */ `
     ) {
       items {
         id
-        tenantId
         label
+        tenantId
         icon
         defaultUnit
         tags
@@ -2305,8 +2305,8 @@ export const getDeliverableType = /* GraphQL */ `
   query GetDeliverableType($id: ID!) {
     getDeliverableType(id: $id) {
       id
-      tenantId
       label
+      tenantId
       icon
       defaultUnit
       tags
@@ -2331,8 +2331,8 @@ export const listDeliverableTypes = /* GraphQL */ `
     ) {
       items {
         id
-        tenantId
         label
+        tenantId
         icon
         defaultUnit
         tags

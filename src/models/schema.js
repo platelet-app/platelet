@@ -350,18 +350,18 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "tenantId": {
-                    "name": "tenantId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
                 "parentId": {
                     "name": "parentId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": false,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
                     "attributes": []
                 },
                 "body": {
@@ -1249,17 +1249,17 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "tenantId": {
-                    "name": "tenantId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
                 "label": {
                     "name": "label",
                     "isArray": false,
                     "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 },

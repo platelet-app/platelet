@@ -71,8 +71,8 @@ export const onCreateUser = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -179,8 +179,8 @@ export const onUpdateUser = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -287,8 +287,8 @@ export const onDeleteUser = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -446,8 +446,8 @@ export const onCreateVehicle = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -546,8 +546,8 @@ export const onUpdateVehicle = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -646,8 +646,8 @@ export const onDeleteVehicle = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -674,8 +674,8 @@ export const onCreateDeliverable = /* GraphQL */ `
       tenantId
       deliverableType {
         id
-        tenantId
         label
+        tenantId
         icon
         defaultUnit
         tags
@@ -850,8 +850,8 @@ export const onCreateDeliverable = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -878,8 +878,8 @@ export const onUpdateDeliverable = /* GraphQL */ `
       tenantId
       deliverableType {
         id
-        tenantId
         label
+        tenantId
         icon
         defaultUnit
         tags
@@ -1054,8 +1054,8 @@ export const onUpdateDeliverable = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -1082,8 +1082,8 @@ export const onDeleteDeliverable = /* GraphQL */ `
       tenantId
       deliverableType {
         id
-        tenantId
         label
+        tenantId
         icon
         defaultUnit
         tags
@@ -1258,8 +1258,8 @@ export const onDeleteDeliverable = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -1361,8 +1361,8 @@ export const onCreateLocation = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -1464,8 +1464,8 @@ export const onUpdateLocation = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -1567,8 +1567,8 @@ export const onDeleteLocation = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -2157,8 +2157,8 @@ export const onCreateTask = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -2748,8 +2748,8 @@ export const onUpdateTask = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -3339,8 +3339,8 @@ export const onDeleteTask = /* GraphQL */ `
       comments {
         items {
           id
-          tenantId
           parentId
+          tenantId
           body
           visibility
           _version
@@ -4082,8 +4082,8 @@ export const onCreateComment = /* GraphQL */ `
   subscription OnCreateComment {
     onCreateComment {
       id
-      tenantId
       parentId
+      tenantId
       body
       author {
         id
@@ -4163,8 +4163,8 @@ export const onUpdateComment = /* GraphQL */ `
   subscription OnUpdateComment {
     onUpdateComment {
       id
-      tenantId
       parentId
+      tenantId
       body
       author {
         id
@@ -4244,8 +4244,8 @@ export const onDeleteComment = /* GraphQL */ `
   subscription OnDeleteComment {
     onDeleteComment {
       id
-      tenantId
       parentId
+      tenantId
       body
       author {
         id
@@ -4325,8 +4325,8 @@ export const onCreateDeliverableType = /* GraphQL */ `
   subscription OnCreateDeliverableType {
     onCreateDeliverableType {
       id
-      tenantId
       label
+      tenantId
       icon
       defaultUnit
       tags
@@ -4342,8 +4342,8 @@ export const onUpdateDeliverableType = /* GraphQL */ `
   subscription OnUpdateDeliverableType {
     onUpdateDeliverableType {
       id
-      tenantId
       label
+      tenantId
       icon
       defaultUnit
       tags
@@ -4359,8 +4359,8 @@ export const onDeleteDeliverableType = /* GraphQL */ `
   subscription OnDeleteDeliverableType {
     onDeleteDeliverableType {
       id
-      tenantId
       label
+      tenantId
       icon
       defaultUnit
       tags
