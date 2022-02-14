@@ -24,8 +24,6 @@ const preloadedState = {
     tenantId: "tenant-id",
 };
 
-jest.mock("aws-amplify");
-
 describe("AdminAddDeliverableType", () => {
     it("renders without crashing", async () => {
         amplify.DataStore.query.mockResolvedValue([]);

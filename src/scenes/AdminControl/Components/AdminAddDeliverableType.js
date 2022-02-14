@@ -1,7 +1,6 @@
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, TextField, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import React, { useEffect, useRef, useState } from "react";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
+import React, { useEffect, useState } from "react";
 import { PaddedPaper } from "../../../styles/common";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
@@ -111,8 +110,8 @@ function AdminAddDeliverableType() {
 
                     {Object.keys(fields).map((key) => {
                         return (
-                            <Grid key={key} style={{ width: "50%" }} item>
-                                <TextFieldUncontrolled
+                            <Grid key={key} item>
+                                <TextField
                                     value={state[key]}
                                     fullWidth
                                     label={fields[key]}
