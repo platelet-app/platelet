@@ -1,5 +1,5 @@
 import { Grid, IconButton } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import React from "react";
 import { deliverableIcons } from "../../../apiConsts";
 import { getDeliverableIconByEnum } from "../../../utilities";
@@ -27,7 +27,8 @@ function DeliverableIconPicker(props) {
                         <IconButton
                             disabled={props.value === icon}
                             onClick={() => props.onChange(icon)}
-                            size="large">
+                            size="large"
+                        >
                             {getDeliverableIconByEnum(icon, 6)}
                         </IconButton>
                     </Grid>

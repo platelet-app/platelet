@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Autocomplete, Chip, Grid, TextField } from "@mui/material";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
+import GetError from "../../../ErrorComponents/GetError";
 
 const tagsReducer = (previousValue, currentValue = []) => {
     if (!currentValue) {
@@ -13,20 +14,26 @@ const tagsReducer = (previousValue, currentValue = []) => {
 
 export default function DeliverableTypeTagger(props) {
     const [inputValue, setInputValue] = useState("");
+    const [errorState, setErrorState] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
     const deliverableObserver = useRef({ unsubscribe: () => {} });
     const allSuggestions = useRef([]);
 
     async function calculateSuggestions() {
-        const existingDeliverableTypes = await DataStore.query(
-            models.DeliverableType
-        );
-        const existingTags = existingDeliverableTypes.map(
-            (deliverableType) => deliverableType.tags
-        );
-        const suggestions = existingTags.reduce(tagsReducer, []);
-        setSuggestions(suggestions);
-        allSuggestions.current = suggestions;
+        try {
+            const existingDeliverableTypes = await DataStore.query(
+                models.DeliverableType
+            );
+            const existingTags = existingDeliverableTypes.map(
+                (deliverableType) => deliverableType.tags
+            );
+            const suggestions = existingTags.reduce(tagsReducer, []);
+            setSuggestions(suggestions);
+            allSuggestions.current = suggestions;
+        } catch (e) {
+            console.log(e);
+            setErrorState(e);
+        }
     }
 
     function observeChanges() {
@@ -51,62 +58,70 @@ export default function DeliverableTypeTagger(props) {
         setInputValue("");
     };
 
-    return (
-        <Grid container alignItems="center" spacing={1} direction="row">
-            {props.value.map((tag) => (
-                <Grid key={tag} item>
-                    <Chip onDelete={() => props.onDelete(tag)} label={tag} />
-                </Grid>
-            ))}
-            <Grid sx={{ width: "100%", maxWidth: 250 }} item>
-                <Autocomplete
-                    freeSolo
-                    onChange={(event, newValue) => {
-                        handleAddition(newValue);
-                    }}
-                    inputValue={inputValue}
-                    onInputChange={(e) => {
-                        if (!e) {
-                            setInputValue("");
-                        } else if (
-                            e &&
-                            e.target.value[e.target.value.length - 1] !== ","
-                        )
-                            setInputValue(e.target.value);
-                    }}
-                    id="deliverable-type-tags"
-                    disableClearable
-                    fullWidth
-                    options={suggestions}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            InputProps={{
-                                ...params.InputProps,
-                                type: "search",
-                            }}
-                            fullWidth
-                            size="small"
-                            onKeyUp={(ev) => {
-                                switch (ev.key) {
-                                    case ",": {
-                                        handleAddition(inputValue);
-                                        ev.preventDefault();
-                                        break;
-                                    }
-                                    case "Escape": {
-                                        setInputValue("");
-                                        ev.preventDefault();
-                                        break;
-                                    }
-                                    default:
-                                        break;
-                                }
-                            }}
+    if (errorState) {
+        return <GetError />;
+    } else {
+        return (
+            <Grid container alignItems="center" spacing={1} direction="row">
+                {props.value.map((tag) => (
+                    <Grid key={tag} item>
+                        <Chip
+                            onDelete={() => props.onDelete(tag)}
+                            label={tag}
                         />
-                    )}
-                />
+                    </Grid>
+                ))}
+                <Grid sx={{ width: "100%", maxWidth: 250 }} item>
+                    <Autocomplete
+                        freeSolo
+                        onChange={(event, newValue) => {
+                            handleAddition(newValue);
+                        }}
+                        inputValue={inputValue}
+                        onInputChange={(e) => {
+                            if (!e) {
+                                setInputValue("");
+                            } else if (
+                                e &&
+                                e.target.value[e.target.value.length - 1] !==
+                                    ","
+                            )
+                                setInputValue(e.target.value);
+                        }}
+                        id="deliverable-type-tags"
+                        disableClearable
+                        fullWidth
+                        options={suggestions}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    type: "search",
+                                }}
+                                fullWidth
+                                size="small"
+                                onKeyUp={(ev) => {
+                                    switch (ev.key) {
+                                        case ",": {
+                                            handleAddition(inputValue);
+                                            ev.preventDefault();
+                                            break;
+                                        }
+                                        case "Escape": {
+                                            setInputValue("");
+                                            ev.preventDefault();
+                                            break;
+                                        }
+                                        default:
+                                            break;
+                                    }
+                                }}
+                            />
+                        )}
+                    />
+                </Grid>
             </Grid>
-        </Grid>
-    );
+        );
+    }
 }
