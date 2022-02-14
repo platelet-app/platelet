@@ -269,6 +269,147 @@ describe("CommentsSection", () => {
             expect(screen.queryByText(mockComment.body)).toBeInTheDocument();
         });
     });
+
+    test("observing a new comment", async () => {
+        const mockAuthor = new models.User({
+            displayName: "Mock User",
+        });
+        const mockTask = new models.Task({});
+        const mockComment = new models.Comment({
+            body: "This is a comment",
+            commentAuthorId: mockAuthor.id,
+            visibility: commentVisibility.everyone,
+        });
+        const mockObservedResult = {
+            element: mockComment,
+            opType: "INSERT",
+        };
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValue([mockComment]);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: jest.fn().mockImplementation((callback) => {
+                callback(mockObservedResult);
+                return { unsubscribe: jest.fn() };
+            }),
+        });
+        render(<CommentsSection parentId={mockTask.id} />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.Comment,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Comment,
+                expect.any(Function)
+            );
+        });
+        expect(screen.getByText(mockComment.body)).toBeInTheDocument();
+    });
+
+    test("observing editing a comment", async () => {
+        const mockAuthor = new models.User({
+            displayName: "Mock User",
+        });
+        const mockTask = new models.Task({});
+        const mockComment = new models.Comment({
+            body: "This is a comment",
+            commentAuthorId: mockAuthor.id,
+            visibility: commentVisibility.everyone,
+        });
+        const mockObservedResult = {
+            element: { ...mockComment, body: "something else" },
+            opType: "UPDATE",
+        };
+        amplify.DataStore.query
+            .mockResolvedValueOnce([mockComment])
+            .mockResolvedValue([mockObservedResult.element]);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: jest.fn().mockImplementation((callback) => {
+                callback(mockObservedResult);
+                return { unsubscribe: jest.fn() };
+            }),
+        });
+        render(<CommentsSection parentId={mockTask.id} />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.Comment,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Comment,
+                expect.any(Function)
+            );
+        });
+        expect(
+            screen.getByText(mockObservedResult.element.body)
+        ).toBeInTheDocument();
+    });
+
+    test("observing deleting a comment", async () => {
+        const mockAuthor = new models.User({
+            displayName: "Mock User",
+        });
+        const mockTask = new models.Task({});
+        const mockComment = new models.Comment({
+            body: "This is a comment",
+            commentAuthorId: mockAuthor.id,
+            visibility: commentVisibility.everyone,
+        });
+        const mockObservedResult = {
+            element: { id: mockComment.id },
+            opType: "DELETE",
+        };
+        amplify.DataStore.query
+            .mockResolvedValueOnce([mockComment])
+            .mockResolvedValue([]);
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: jest.fn().mockImplementation((callback) => {
+                callback(mockObservedResult);
+                return { unsubscribe: jest.fn() };
+            }),
+        });
+        render(<CommentsSection parentId={mockTask.id} />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.Comment,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.Comment,
+                expect.any(Function)
+            );
+        });
+        expect(screen.queryByText(mockComment.body)).toBeNull();
+    });
+
+    it("unsubscribes on unmount", async () => {
+        amplify.DataStore.query.mockResolvedValue([]);
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        const component = render(<CommentsSection />);
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        expect(unsubscribe).toHaveBeenCalledTimes(0);
+        component.unmount();
+        expect(unsubscribe).toHaveBeenCalledTimes(1);
+    });
+
     // still broken yet
     it("edits a comment", async () => {
         return;

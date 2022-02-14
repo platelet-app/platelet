@@ -70,29 +70,6 @@ function CommentsSection(props) {
                 const commentsObject = convertListDataToObject(commentsResult);
                 setComments(commentsObject);
                 setIsFetching(false);
-                commentsSubscription.current.unsubscribe();
-                commentsSubscription.current = DataStore.observe(
-                    models.Comment,
-                    (c) => c.parentId("eq", props.parentId)
-                ).subscribe(async (newComment) => {
-                    const comment = newComment.element;
-                    if (newComment.opType === "DELETE") {
-                        removeCommentFromState(comment.id);
-                        return;
-                    }
-                    if (
-                        !comment.author ||
-                        !comment.author.id ||
-                        (comment.author.id !== whoami.id &&
-                            comment.visibility === commentVisibility.me)
-                    ) {
-                        return;
-                    } else if (
-                        ["UPDATE", "INSERT"].includes(newComment.opType)
-                    ) {
-                        addCommentToState(comment);
-                    }
-                });
             } catch (error) {
                 setIsFetching(false);
                 setErrorState(error);
@@ -101,8 +78,15 @@ function CommentsSection(props) {
         }
     }
     useEffect(() => getComments(), [props.parentId, dataStoreReadyStatus]);
+    const getCommentsRef = useRef(getComments);
 
     useEffect(() => {
+        commentsSubscription.current.unsubscribe();
+        commentsSubscription.current = DataStore.observe(models.Comment, (c) =>
+            c.parentId("eq", props.parentId)
+        ).subscribe(async () => {
+            getCommentsRef.current();
+        });
         return () => {
             if (commentsSubscription.current)
                 commentsSubscription.current.unsubscribe();
@@ -112,15 +96,7 @@ function CommentsSection(props) {
     if (isFetching) {
         return <CommentsSkeleton />;
     } else if (errorState) {
-        return (
-            <GetError>
-                <Typography>
-                    {errorState && errorState.message
-                        ? errorState.message
-                        : "Unknown"}
-                </Typography>
-            </GetError>
-        );
+        return <GetError />;
     } else {
         return (
             <CommentsMain
