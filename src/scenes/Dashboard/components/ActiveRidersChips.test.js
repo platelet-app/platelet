@@ -240,7 +240,7 @@ describe("ActiveRiderChips", () => {
         }
     });
 
-    test.only("the observer unsubscribes on unmount", async () => {
+    test("the observer unsubscribes on unmount", async () => {
         const unsubscribe = jest.fn();
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
