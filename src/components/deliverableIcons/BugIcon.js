@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import { red } from "@mui/material/colors";
 import PropTypes from "prop-types";
@@ -21,7 +21,11 @@ const useStyles = makeStyles((theme) => ({
 function BugIcon({ size }) {
     const classes = useStyles(size);
     return (
-        <Avatar variant={"rounded"} className={classes.root}>
+        <Avatar
+            aria-label="Bug icon"
+            variant={"rounded"}
+            className={classes.root}
+        >
             <BugReportIcon className={classes.icon} />
         </Avatar>
     );
