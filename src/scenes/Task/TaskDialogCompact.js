@@ -22,8 +22,8 @@ import { useHistory, useLocation, useParams } from "react-router";
 import TaskAssignmentsPanel from "./components/TaskAssignmentsPanel";
 import PropTypes from "prop-types";
 
-const drawerWidth = 480;
-const drawerWidthMd = 380;
+const drawerWidth = 420;
+const drawerWidthMd = 320;
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -56,6 +56,8 @@ const DialogWrapper = (props) => {
     return (
         <Dialog
             onKeyUp={(e) => {
+                // could enable this to close the dialog on escape
+                return;
                 if (e.key === "Escape") handleClose(e);
             }}
             className={classes.root}

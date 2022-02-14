@@ -62,7 +62,8 @@ function CoordinatorPicker(props) {
                 renderInput={(params) => (
                     <TextField
                         {...params}
-                        label={props.label || "Select"}
+                        label={props.label}
+                        size={"small"}
                         variant="outlined"
                         margin="none"
                     />
@@ -87,7 +88,7 @@ function CoordinatorPicker(props) {
 
 CoordinatorPicker.defaultProps = {
     onSelect: () => {},
-    label: "Select",
+    label: "Search...",
     exclude: [],
     className: "",
 };

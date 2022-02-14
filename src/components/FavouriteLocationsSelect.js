@@ -41,7 +41,7 @@ function FavouriteLocationsSelect(props) {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label={props.label || "Select"}
+                    label={props.label}
                     variant="outlined"
                     margin="none"
                 />
@@ -57,7 +57,7 @@ FavouriteLocationsSelect.propTypes = {
 };
 FavouriteLocationsSelect.defaultProps = {
     onSelect: () => {},
-    label: "Search locations",
+    label: "Search...",
 };
 
 export default FavouriteLocationsSelect;

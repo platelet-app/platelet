@@ -141,7 +141,11 @@ function StatusBar(props) {
                     Status: {statusHumanReadable}
                 </Typography>
                 <Tooltip title={"Copy to clipboard"}>
-                    <IconButton size={"small"} onClick={copyToClipboard}>
+                    <IconButton
+                        sx={{ marginRight: 2 }}
+                        size={"small"}
+                        onClick={copyToClipboard}
+                    >
                         <AssignmentIcon />
                     </IconButton>
                 </Tooltip>
