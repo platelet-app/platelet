@@ -219,7 +219,7 @@ function ActiveRidersChips() {
     }
 
     if (errorState) {
-        return <Typography>Sorry, an error occurred</Typography>;
+        return <Typography>Sorry, something went wrong.</Typography>;
     }
     return (
         <React.Fragment>
