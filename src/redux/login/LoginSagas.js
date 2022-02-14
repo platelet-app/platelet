@@ -1,26 +1,36 @@
-import {call, put, select, takeLatest} from 'redux-saga/effects'
+import { call, put, select, takeLatest } from "redux-saga/effects";
 import {
     loginUserSuccess,
     loginUserFailure,
     LOGOUT,
-    logoutUserSuccess,
-    refreshUserTokenFailure, refreshUserTokenSuccess, loginUserActions, refreshUserTokenActions
-} from "./LoginActions"
+    refreshUserTokenFailure,
+    refreshUserTokenSuccess,
+    loginUserActions,
+    refreshUserTokenActions,
+} from "./LoginActions";
 
-import {getApiControl} from "../Selectors";
-import {deleteLogin, saveLogin} from "../../utilities";
-import {displayWarningNotification} from "../notifications/NotificationsActions";
-
+import { getApiControl } from "../Selectors";
+import { saveLogin } from "../../utilities";
+import { displayWarningNotification } from "../notifications/NotificationsActions";
+import { Auth, DataStore } from "aws-amplify";
 
 function* login(action) {
     const api = yield select(getApiControl);
     try {
-        const result = yield call([api, api.login], action.username, action.password);
+        const result = yield call(
+            [api, api.login],
+            action.username,
+            action.password
+        );
         yield call(saveLogin, result.access_token);
-        yield put(loginUserSuccess(result.access_token))
+        yield put(loginUserSuccess(result.access_token));
     } catch (error) {
         if (error.status_code === 401) {
-            yield put(displayWarningNotification("Login failed, please check your details."))
+            yield put(
+                displayWarningNotification(
+                    "Login failed, please check your details."
+                )
+            );
             yield put(loginUserFailure(error));
         } else {
             yield put(loginUserFailure(error));
@@ -29,16 +39,18 @@ function* login(action) {
 }
 
 export function* watchLogin() {
-    yield takeLatest(loginUserActions.request, login)
+    yield takeLatest(loginUserActions.request, login);
 }
 
 function* logout() {
-    yield call(deleteLogin);
-    yield put(logoutUserSuccess());
+    yield call([DataStore, DataStore.stop]);
+    yield call([DataStore, DataStore.clear]);
+    yield call([Auth, Auth.signOut]);
+    yield call([window, window.location.reload.bind(window.location)]);
 }
 
 export function* watchLogout() {
-    yield takeLatest(LOGOUT, logout)
+    yield takeLatest(LOGOUT, logout);
 }
 
 function* refreshToken(action) {
@@ -46,12 +58,12 @@ function* refreshToken(action) {
         const api = yield select(getApiControl);
         const result = yield call([api, api.refreshToken]);
         yield call(saveLogin, result.access_token);
-        yield put(refreshUserTokenSuccess(result.access_token))
+        yield put(refreshUserTokenSuccess(result.access_token));
     } catch (error) {
-        yield put(refreshUserTokenFailure(error))
+        yield put(refreshUserTokenFailure(error));
     }
 }
 
 export function* watchRefreshToken() {
-    yield takeLatest(refreshUserTokenActions.request, refreshToken)
+    yield takeLatest(refreshUserTokenActions.request, refreshToken);
 }

@@ -14,6 +14,7 @@ import { getWhoami } from "../../redux/Selectors";
 import { Auth } from "aws-amplify";
 import SignalWifiOff from "@mui/icons-material/SignalWifiOff";
 import { networkStatusSelector } from "../../redux/Selectors";
+import { logoutUser } from "../../redux/login/LoginActions";
 
 function LightToggleProfileMenu() {
     const whoami = useSelector(getWhoami);
@@ -84,9 +85,7 @@ function LightToggleProfileMenu() {
                     <MenuItem
                         onClick={() => {
                             setAnchorElProfileMenu(null);
-                            //dispatch(logoutUser());
-                            Auth.signOut();
-                            setTimeout(() => window.location.reload(), 600);
+                            dispatch(logoutUser());
                         }}
                     >
                         Logout
