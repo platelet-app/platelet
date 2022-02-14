@@ -212,7 +212,7 @@ describe("RecentlyAssignedUsers", () => {
             screen.getByText(fakeAssignmentsCoordinator[0].assignee.displayName)
         );
         expect(onChange).toHaveBeenCalledWith(
-            fakeAssignmentsCoordinator[0].assignee.id
+            fakeAssignmentsCoordinator[0].assignee
         );
     });
 
@@ -226,7 +226,7 @@ describe("RecentlyAssignedUsers", () => {
         render(
             <RecentlyAssignedUsers
                 onChange={onChange}
-                value={fakeAssignments[0].assignee.id}
+                value={fakeAssignments[0].assignee}
                 role={userRoles.rider}
             />,
             {
@@ -252,7 +252,7 @@ describe("RecentlyAssignedUsers", () => {
         render(
             <RecentlyAssignedUsers
                 onChange={onChange}
-                value={fakeAssignments[0].assignee.id}
+                value={fakeAssignments[0].assignee}
                 role={userRoles.rider}
             />,
             {
@@ -266,6 +266,37 @@ describe("RecentlyAssignedUsers", () => {
             screen.getByText(fakeAssignments[0].assignee.displayName)
         );
         expect(onChange).toHaveBeenCalledWith(null);
+    });
+
+    it("excludes users", async () => {
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        render(
+            <RecentlyAssignedUsers
+                exclude={[fakeAssignments[0].assignee.id]}
+                value={null}
+                role={userRoles.rider}
+            />,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        for (const assign of fakeAssignments.filter(
+            (a) => a.assignee.id !== fakeAssignments[0].assignee.id
+        )) {
+            expect(
+                screen.getByText(assign.assignee.displayName)
+            ).toBeInTheDocument();
+        }
+        expect(
+            screen.queryByText(fakeAssignments[0].assignee.displayName)
+        ).toBeNull();
     });
 
     test("coordinator roleview shows only intersecting assignments", async () => {
@@ -303,5 +334,33 @@ describe("RecentlyAssignedUsers", () => {
         )) {
             expect(screen.queryByText(assign.assignee.displayName)).toBeNull();
         }
+    });
+    test("exclude users while in coordinator roleview", async () => {
+        amplify.DataStore.query
+            .mockResolvedValueOnce([...fakeAssignmentsRiders])
+            .mockResolvedValue([
+                ...fakeAssignmentsSecondCoord,
+                ...fakeAssignmentsFirstCoord,
+            ]);
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        const preloadedState = {
+            roleView: userRoles.coordinator,
+            whoami: { user: fakeCoord1 },
+        };
+        render(
+            <RecentlyAssignedUsers
+                exclude={[fakeAssignmentsRiders[0].assignee.id]}
+            />,
+            { preloadedState }
+        );
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+        });
+        expect(
+            screen.queryByText(fakeAssignmentsRiders[0].assignee.displayName)
+        ).toBeNull();
     });
 });

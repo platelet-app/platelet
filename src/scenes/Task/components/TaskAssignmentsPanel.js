@@ -33,6 +33,7 @@ import {
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import UserChip from "../../../components/UserChip";
+import RecentlyAssignedUsers from "../../../components/RecentlyAssignedUsers";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -68,6 +69,7 @@ function TaskAssignmentsPanel(props) {
     const errorMessage = "Sorry, something went wrong";
 
     function onSelect(value) {
+        console.log("onSelect", value);
         updating.current = true;
         if (value) addAssignee(value, role);
     }
@@ -208,57 +210,6 @@ function TaskAssignmentsPanel(props) {
         else setCollapsed(true);
     }, [state]);
 
-    const assigneeSelector =
-        !collapsed && !isFetching ? (
-            <>
-                <TaskAssignees
-                    onRemove={(v) => {
-                        updating.current = true;
-                        deleteAssignment(v);
-                    }}
-                    assignees={state}
-                />
-                <Typography>Assign a user</Typography>
-                <UserRoleSelect
-                    value={role}
-                    onSelect={(value) => setRole(value)}
-                    exclude={Object.values(userRoles).filter(
-                        (value) =>
-                            ![userRoles.rider, userRoles.coordinator].includes(
-                                value
-                            )
-                    )}
-                />
-                {role === userRoles.rider ? (
-                    <RiderPicker
-                        onSelect={onSelect}
-                        exclude={Object.values(state)
-                            .filter(
-                                (a) =>
-                                    a &&
-                                    a.assignee &&
-                                    a.role === userRoles.rider
-                            )
-                            .map((a) => a.assignee.id)}
-                    />
-                ) : (
-                    <CoordinatorPicker
-                        onSelect={onSelect}
-                        exclude={Object.values(state)
-                            .filter(
-                                (a) =>
-                                    a &&
-                                    a.assignee &&
-                                    a.role === userRoles.coordinator
-                            )
-                            .map((a) => a.assignee.id)}
-                    />
-                )}
-            </>
-        ) : (
-            <></>
-        );
-
     if (errorState) {
         return <GetError />;
     } else if (isFetching) {
@@ -284,7 +235,7 @@ function TaskAssignmentsPanel(props) {
                                         if (assignment && assignment.assignee) {
                                             const user = assignment.assignee;
                                             return (
-                                                <Grid item>
+                                                <Grid key={user.id} item>
                                                     <UserChip
                                                         key={user.id}
                                                         user={user}
@@ -298,7 +249,67 @@ function TaskAssignmentsPanel(props) {
                             </Grid>
                         )}
                     </Stack>
-                    {assigneeSelector}
+                    {!collapsed && !isFetching ? (
+                        <>
+                            <TaskAssignees
+                                onRemove={(v) => {
+                                    updating.current = true;
+                                    deleteAssignment(v);
+                                }}
+                                assignees={state}
+                            />
+                            <Typography>Assign a user</Typography>
+                            <UserRoleSelect
+                                value={role}
+                                onSelect={(value) => setRole(value)}
+                                exclude={Object.values(userRoles).filter(
+                                    (value) =>
+                                        ![
+                                            userRoles.rider,
+                                            userRoles.coordinator,
+                                        ].includes(value)
+                                )}
+                            />
+                            <RecentlyAssignedUsers
+                                onChange={onSelect}
+                                role={role}
+                                limit={5}
+                                exclude={Object.values(state)
+                                    .filter(
+                                        (a) =>
+                                            a && a.assignee && a.role === role
+                                    )
+                                    .map((a) => a.assignee.id)}
+                            />
+                            {role === userRoles.rider ? (
+                                <RiderPicker
+                                    onSelect={onSelect}
+                                    exclude={Object.values(state)
+                                        .filter(
+                                            (a) =>
+                                                a &&
+                                                a.assignee &&
+                                                a.role === userRoles.rider
+                                        )
+                                        .map((a) => a.assignee.id)}
+                                />
+                            ) : (
+                                <CoordinatorPicker
+                                    onSelect={onSelect}
+                                    exclude={Object.values(state)
+                                        .filter(
+                                            (a) =>
+                                                a &&
+                                                a.assignee &&
+                                                a.role === userRoles.coordinator
+                                        )
+                                        .map((a) => a.assignee.id)}
+                                />
+                            )}
+                        </>
+                    ) : (
+                        <></>
+                    )}
                     <Divider />
                     {isFetching ? (
                         <></>

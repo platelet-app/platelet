@@ -9,7 +9,7 @@ import {
 } from "../redux/Selectors";
 import { tasksStatus, userRoles } from "../apiConsts";
 import { convertListDataToObject } from "../utilities";
-import { Box, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import _ from "lodash";
 import UserChip from "./UserChip";
 import moment from "moment";
@@ -39,10 +39,11 @@ function RecentlyAssignedUsers(props) {
     const [activeRiders, setActiveRiders] = useState({});
     const [errorState, setErrorState] = useState(null);
     const whoami = useSelector(getWhoami);
-    const assignmentsObserver = useRef({ unsubscribe: () => {} });
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
     const roleView = useSelector(getRoleView);
+
+    const selectedId = props.value && props.value.id;
 
     async function calculateRidersStatus() {
         let activeRidersResult = [];
@@ -53,6 +54,9 @@ function RecentlyAssignedUsers(props) {
                 { limit: 100, sort: (s) => s.createdAt("desc") }
             );
             activeRidersResult = assignments.map((a) => a.assignee);
+            activeRidersResult = activeRidersResult.filter(
+                (user) => !props.exclude.includes(user.id)
+            );
         } else if (roleView === userRoles.coordinator && whoami) {
             const theirAssignments = await DataStore.query(
                 models.TaskAssignee,
@@ -83,12 +87,9 @@ function RecentlyAssignedUsers(props) {
                     myAssignedTasksIds.includes(a.task.id)
             );
             activeRidersResult = assignedToMeUsers.map((a) => a.assignee);
-        }
-        if (
-            props.value &&
-            !activeRidersResult.map((u) => u.id).includes(props.value)
-        ) {
-            props.onChange(null);
+            activeRidersResult = activeRidersResult.filter(
+                (user) => !props.exclude.includes(user.id)
+            );
         }
         // remove duplicates and truncate to limit
         activeRidersResult = _.uniqBy(activeRidersResult, (u) => u.id);
@@ -98,25 +99,11 @@ function RecentlyAssignedUsers(props) {
         return convertListDataToObject(activeRidersResult);
     }
 
-    // debounce the call in case multiple tasks are being updated at once
-    const debouncedCalculateRidersStatus = _.debounce(
-        async () => setActiveRiders(await calculateRidersStatus()),
-        1000
-    );
-
     async function getActiveRiders() {
         try {
             if (!dataStoreReadyStatus) return;
             setActiveRiders(await calculateRidersStatus());
             animate.current = true;
-            assignmentsObserver.current.unsubscribe();
-            assignmentsObserver.current = DataStore.observe(
-                models.TaskAssignee
-            ).subscribe(async (observeResult) => {
-                if (["INSERT", "DELETE"].includes(observeResult.opType)) {
-                    debouncedCalculateRidersStatus();
-                }
-            });
         } catch (error) {
             console.log(error);
             setErrorState(error);
@@ -125,38 +112,35 @@ function RecentlyAssignedUsers(props) {
 
     useEffect(() => {
         getActiveRiders();
-    }, [dataStoreReadyStatus, roleView]);
-
-    useEffect(
-        () => () => {
-            assignmentsObserver.current.unsubscribe();
-        },
-        []
-    );
+    }, [dataStoreReadyStatus, roleView, props.role, props.exclude]);
 
     if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;
     } else {
         return (
-            <Grid container spacing={1} direction="row">
+            <Grid container direction="row">
                 {Object.values(activeRiders).map((rider) => {
                     return (
-                        <Grid item sx={{ margin: 0.5 }} key={rider.id}>
+                        <Grid
+                            item
+                            sx={{ marginRight: 0.5, marginBottom: 0.5 }}
+                            key={rider.id}
+                        >
                             <UserChip
                                 onClick={() => {
-                                    if (props.value === rider.id) {
+                                    if (selectedId === rider.id) {
                                         props.onChange(null);
                                     } else {
-                                        props.onChange(rider.id);
+                                        props.onChange(rider);
                                     }
                                 }}
                                 color={
-                                    props.value === rider.id
+                                    selectedId === rider.id
                                         ? "primary"
                                         : "default"
                                 }
                                 variant={
-                                    props.value === rider.id
+                                    selectedId === rider.id
                                         ? "default"
                                         : "outlined"
                                 }
@@ -165,7 +149,6 @@ function RecentlyAssignedUsers(props) {
                         </Grid>
                     );
                 })}
-                ;
             </Grid>
         );
     }
@@ -173,9 +156,10 @@ function RecentlyAssignedUsers(props) {
 
 RecentlyAssignedUsers.propTypes = {
     role: PropTypes.string,
-    value: PropTypes.string,
+    value: PropTypes.object,
     onChange: PropTypes.func,
     limit: PropTypes.number,
+    exclude: PropTypes.array,
 };
 
 RecentlyAssignedUsers.defaultProps = {
@@ -183,6 +167,7 @@ RecentlyAssignedUsers.defaultProps = {
     value: null,
     onChange: () => {},
     limit: 10,
+    exclude: [],
 };
 
 export default RecentlyAssignedUsers;
