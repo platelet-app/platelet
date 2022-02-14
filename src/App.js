@@ -10,7 +10,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
-import Amplify, { Logger, syncExpression } from "aws-amplify";
+import Amplify, { Logger } from "aws-amplify";
 import { SnackbarProvider, withSnackbar } from "notistack";
 import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
@@ -25,7 +25,7 @@ import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
 import { DataStore } from "aws-amplify";
 import * as models from "./models";
-import { getWhoami, tenantIdSelector } from "./redux/Selectors";
+import { getWhoami } from "./redux/Selectors";
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -41,8 +41,8 @@ if (
 Logger.LOG_LEVEL = "ERROR";
 window.amplifyLogger = Logger;
 
-window.DataStore = DataStore;
-window.models = models;
+// window.DataStore = DataStore;
+// window.models = models;
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
