@@ -109,14 +109,7 @@ function TaskAssignmentsPanel(props) {
                     tenantId,
                 })
             );
-            let riderResponsibility;
             if (role === userRoles.rider) {
-                if (user.userRiderResponsibilityId) {
-                    riderResponsibility = await DataStore.query(
-                        models.RiderResponsibility,
-                        user.userRiderResponsibilityId
-                    );
-                }
                 const status = determineTaskStatus({
                     ...task,
                     assignees: [result],
@@ -124,8 +117,9 @@ function TaskAssignmentsPanel(props) {
                 await DataStore.save(
                     models.Task.copyOf(task, (updated) => {
                         updated.status = status;
-                        if (riderResponsibility)
-                            updated.riderResponsibility = riderResponsibility;
+                        if (assignee.riderResponsibility)
+                            updated.riderResponsibility =
+                                assignee.riderResponsibility;
                     })
                 );
                 if (
