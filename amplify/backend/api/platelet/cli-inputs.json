@@ -12,6 +12,11 @@
       }
     },
     "apiName": "platelet",
-    "gqlSchemaPath": "/home/theo/Documents/development/bloodbike-react/amplify/backend/api/platelet/schema.graphql"
+    "gqlSchemaPath": "/home/theo/Documents/development/bloodbike-react/amplify/backend/api/platelet/schema.graphql",
+    "additionalAuthTypes": [
+      {
+        "mode": "AWS_IAM"
+      }
+    ]
   }
 }

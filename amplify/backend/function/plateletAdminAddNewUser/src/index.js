@@ -10,7 +10,7 @@ require("isomorphic-fetch");
 const aws = require("aws-sdk");
 const gql = require("graphql-tag");
 const AWS = require("aws-sdk/global");
-//const AUTH_TYPE = require("aws-appsync").AUTH_TYPE;
+const AUTH_TYPE = require("aws-appsync").AUTH_TYPE;
 const AWSAppSyncClient = require("aws-appsync").default;
 const uuid = require("uuid");
 
@@ -49,7 +49,6 @@ const createUser = gql`
 `;
 
 async function inviteNewUserToTeam(newUser, tenantId) {
-    return;
     const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
     const CognitoIdentityServiceProvider = aws.CognitoIdentityServiceProvider;
     const cognitoClient = new CognitoIdentityServiceProvider({
@@ -81,17 +80,17 @@ async function inviteNewUserToTeam(newUser, tenantId) {
         );
     }
     const newUsername = cognitoResp.User.Username;
-    //  const config = {
-    //      url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
-    //      region: process.env.REGION,
-    //      auth: {
-    //          type: AUTH_TYPE.AWS_IAM,
-    //          credentials: AWS.config.credentials,
-    //      },
-    //      disableOffline: true,
-    //  };
+    const config = {
+        url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
+        region: process.env.REGION,
+        auth: {
+            type: AUTH_TYPE.AWS_IAM,
+            credentials: AWS.config.credentials,
+        },
+        disableOffline: true,
+    };
 
-    //  const appSyncClient = new AWSAppSyncClient(config);
+    const appSyncClient = new AWSAppSyncClient(config);
     // const listUsers = gql`
     //     query ListUsers {
     //         listUsers(filter: { tenantId: { eq: ${tenantId} } }) {
@@ -122,26 +121,36 @@ async function inviteNewUserToTeam(newUser, tenantId) {
     //     throw new Error(`missing username attribute for newly created user`);
     // }
     // console.log(newUser);
-    // const createUserInput = {
-    //     tenantId: tenantId,
-    //     name: newUser.name,
-    //     displayName: newUser.name,
-    //     roles:
-    //         newUser.roles && newUser.roles.includes("USER")
-    //             ? newUser.roles
-    //             : ["USER"],
-    //     contact: { email: newUser.email },
-    // };
+    const subFind = cognitoResp.User.Attributes.find(
+        (attr) => attr.Name === "sub"
+    );
+    if (!subFind) {
+        throw new Error(`missing sub attribute for newly created user`);
+    }
+    const cognitoId = subFind.Value;
+    if (!cognitoId) {
+        throw new Error(`missing cognitoId attribute for newly created user`);
+    }
+    const createUserInput = {
+        tenantId: tenantId,
+        active: 1,
+        cognitoId,
+        name: newUser.name,
+        displayName: newUser.name,
+        roles:
+            newUser.roles && newUser.roles.includes("USER")
+                ? newUser.roles
+                : ["USER"],
+        contact: { emailAddress: newUser.email },
+    };
 
-    // await appSyncClient.mutate({
-    //     mutation: createUser,
-    //     variables: { input: createUserInput },
-    // });
+    await appSyncClient.mutate({
+        mutation: createUser,
+        variables: { input: createUserInput },
+    });
 }
 
 exports.handler = async (event) => {
-    // TODO implement
-    console.log(event);
     const tenantId = event.arguments.tenantId;
     const user = {
         name: event.arguments.name,

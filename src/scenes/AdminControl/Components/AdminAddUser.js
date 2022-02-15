@@ -92,7 +92,7 @@ function AdminAddUser() {
                 graphqlOperation(mutations.registerUser, {
                     name: state.name,
                     email: state.email,
-                    roles: rolesState,
+                    roles: [...rolesState, userRoles.user],
                     tenantId,
                 })
             );

@@ -11,117 +11,6 @@ export const registerUser = /* GraphQL */ `
     registerUser(name: $name, email: $email, tenantId: $tenantId, roles: $roles)
   }
 `;
-export const createUser = /* GraphQL */ `
-  mutation CreateUser(
-    $input: CreateUserInput!
-    $condition: ModelUserConditionInput
-  ) {
-    createUser(input: $input, condition: $condition) {
-      id
-      cognitoId
-      tenantId
-      contact {
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-      }
-      displayName
-      name
-      roles
-      dateOfBirth
-      vehicles {
-        items {
-          id
-          tenantId
-          assignedUserID
-          name
-          manufacturer
-          model
-          dateOfManufacture
-          dateOfRegistration
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      riderResponsibility {
-        id
-        tenantId
-        label
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
-      profilePictureURL
-      profilePictureThumbnailURL
-      profilePicture {
-        bucket
-        key
-        region
-      }
-      profilePictureThumbnail {
-        bucket
-        key
-        region
-      }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      assignments {
-        items {
-          id
-          tenantId
-          taskId
-          assigneeId
-          role
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      active
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
-    }
-  }
-`;
 export const updateUser = /* GraphQL */ `
   mutation UpdateUser(
     $input: UpdateUserInput!
@@ -409,6 +298,27 @@ export const createVehicle = /* GraphQL */ `
       model
       dateOfManufacture
       dateOfRegistration
+      comments {
+        items {
+          id
+          parentId
+          tenantId
+          body
+          visibility
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       assignedUser {
         id
         cognitoId
@@ -474,27 +384,6 @@ export const createVehicle = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -512,6 +401,27 @@ export const updateVehicle = /* GraphQL */ `
       model
       dateOfManufacture
       dateOfRegistration
+      comments {
+        items {
+          id
+          parentId
+          tenantId
+          body
+          visibility
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       assignedUser {
         id
         cognitoId
@@ -577,27 +487,6 @@ export const updateVehicle = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -615,6 +504,27 @@ export const deleteVehicle = /* GraphQL */ `
       model
       dateOfManufacture
       dateOfRegistration
+      comments {
+        items {
+          id
+          parentId
+          tenantId
+          body
+          visibility
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       assignedUser {
         id
         cognitoId
@@ -680,27 +590,6 @@ export const deleteVehicle = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        nextToken
-        startedAt
-      }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -729,23 +618,6 @@ export const createDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -883,6 +755,23 @@ export const createDeliverable = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       count
       unit
@@ -936,23 +825,6 @@ export const updateDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -1090,6 +962,23 @@ export const updateDeliverable = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       count
       unit
@@ -1143,23 +1032,6 @@ export const deleteDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -1297,6 +1169,23 @@ export const deleteDeliverable = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       count
       unit
@@ -1651,71 +1540,6 @@ export const createTask = /* GraphQL */ `
     createTask(input: $input, condition: $condition) {
       id
       tenantId
-      createdBy {
-        id
-        cognitoId
-        tenantId
-        contact {
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          tenantId
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
-          bucket
-          key
-          region
-        }
-        comments {
-          nextToken
-          startedAt
-        }
-        assignments {
-          nextToken
-          startedAt
-        }
-        active
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       timeOfCall
       timePickedUp
       timeDroppedOff
@@ -1885,23 +1709,6 @@ export const createTask = /* GraphQL */ `
       relayPrevious {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -2039,27 +1846,27 @@ export const createTask = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       relayNext {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -2197,6 +2004,23 @@ export const createTask = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       group {
         items {
@@ -2234,6 +2058,71 @@ export const createTask = /* GraphQL */ `
       _lastChangedAt
       createdAt
       updatedAt
+      createdBy {
+        id
+        cognitoId
+        tenantId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+          startedAt
+        }
+        riderResponsibility {
+          id
+          tenantId
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        active
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
     }
   }
 `;
@@ -2245,71 +2134,6 @@ export const updateTask = /* GraphQL */ `
     updateTask(input: $input, condition: $condition) {
       id
       tenantId
-      createdBy {
-        id
-        cognitoId
-        tenantId
-        contact {
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          tenantId
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
-          bucket
-          key
-          region
-        }
-        comments {
-          nextToken
-          startedAt
-        }
-        assignments {
-          nextToken
-          startedAt
-        }
-        active
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       timeOfCall
       timePickedUp
       timeDroppedOff
@@ -2479,23 +2303,6 @@ export const updateTask = /* GraphQL */ `
       relayPrevious {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -2633,27 +2440,27 @@ export const updateTask = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       relayNext {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -2791,6 +2598,23 @@ export const updateTask = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       group {
         items {
@@ -2828,6 +2652,71 @@ export const updateTask = /* GraphQL */ `
       _lastChangedAt
       createdAt
       updatedAt
+      createdBy {
+        id
+        cognitoId
+        tenantId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+          startedAt
+        }
+        riderResponsibility {
+          id
+          tenantId
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        active
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
     }
   }
 `;
@@ -2839,71 +2728,6 @@ export const deleteTask = /* GraphQL */ `
     deleteTask(input: $input, condition: $condition) {
       id
       tenantId
-      createdBy {
-        id
-        cognitoId
-        tenantId
-        contact {
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-        }
-        displayName
-        name
-        roles
-        dateOfBirth
-        vehicles {
-          nextToken
-          startedAt
-        }
-        riderResponsibility {
-          id
-          tenantId
-          label
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        profilePictureURL
-        profilePictureThumbnailURL
-        profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
-          bucket
-          key
-          region
-        }
-        comments {
-          nextToken
-          startedAt
-        }
-        assignments {
-          nextToken
-          startedAt
-        }
-        active
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-      }
       timeOfCall
       timePickedUp
       timeDroppedOff
@@ -3073,23 +2897,6 @@ export const deleteTask = /* GraphQL */ `
       relayPrevious {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -3227,27 +3034,27 @@ export const deleteTask = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       relayNext {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -3385,6 +3192,23 @@ export const deleteTask = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
       group {
         items {
@@ -3422,6 +3246,71 @@ export const deleteTask = /* GraphQL */ `
       _lastChangedAt
       createdAt
       updatedAt
+      createdBy {
+        id
+        cognitoId
+        tenantId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        vehicles {
+          nextToken
+          startedAt
+        }
+        riderResponsibility {
+          id
+          tenantId
+          label
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        active
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
     }
   }
 `;
@@ -3439,23 +3328,6 @@ export const createTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -3593,7 +3465,29 @@ export const createTaskAssignee = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       assignee {
         id
         cognitoId
@@ -3659,11 +3553,6 @@ export const createTaskAssignee = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -3681,23 +3570,6 @@ export const updateTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -3835,7 +3707,29 @@ export const updateTaskAssignee = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       assignee {
         id
         cognitoId
@@ -3901,11 +3795,6 @@ export const updateTaskAssignee = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -3923,23 +3812,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
-        createdBy {
-          id
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          profilePictureURL
-          profilePictureThumbnailURL
-          active
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
         timeOfCall
         timePickedUp
         timeDroppedOff
@@ -4077,7 +3949,29 @@ export const deleteTaskAssignee = /* GraphQL */ `
         _lastChangedAt
         createdAt
         updatedAt
+        createdBy {
+          id
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          profilePictureURL
+          profilePictureThumbnailURL
+          active
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
       }
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       assignee {
         id
         cognitoId
@@ -4143,11 +4037,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -4161,6 +4050,12 @@ export const createComment = /* GraphQL */ `
       parentId
       tenantId
       body
+      visibility
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       author {
         id
         cognitoId
@@ -4226,12 +4121,6 @@ export const createComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      visibility
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -4245,6 +4134,12 @@ export const updateComment = /* GraphQL */ `
       parentId
       tenantId
       body
+      visibility
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       author {
         id
         cognitoId
@@ -4310,12 +4205,6 @@ export const updateComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      visibility
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -4329,6 +4218,12 @@ export const deleteComment = /* GraphQL */ `
       parentId
       tenantId
       body
+      visibility
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
       author {
         id
         cognitoId
@@ -4394,12 +4289,6 @@ export const deleteComment = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      visibility
-      _version
-      _deleted
-      _lastChangedAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -4506,6 +4395,117 @@ export const deleteRiderResponsibility = /* GraphQL */ `
       id
       tenantId
       label
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createUser = /* GraphQL */ `
+  mutation CreateUser(
+    $input: CreateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    createUser(input: $input, condition: $condition) {
+      id
+      cognitoId
+      tenantId
+      contact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
+      displayName
+      name
+      roles
+      dateOfBirth
+      vehicles {
+        items {
+          id
+          tenantId
+          assignedUserID
+          name
+          manufacturer
+          model
+          dateOfManufacture
+          dateOfRegistration
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      riderResponsibility {
+        id
+        tenantId
+        label
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      profilePictureURL
+      profilePictureThumbnailURL
+      profilePicture {
+        bucket
+        key
+        region
+      }
+      profilePictureThumbnail {
+        bucket
+        key
+        region
+      }
+      comments {
+        items {
+          id
+          parentId
+          tenantId
+          body
+          visibility
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      assignments {
+        items {
+          id
+          tenantId
+          taskId
+          assigneeId
+          role
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+        }
+        nextToken
+        startedAt
+      }
+      active
       _version
       _deleted
       _lastChangedAt

@@ -19,7 +19,11 @@
               "userPoolId": "authplatelet61a0ac07"
             }
           },
-          "additionalAuthenticationProviders": []
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ]
         }
       }
     }
