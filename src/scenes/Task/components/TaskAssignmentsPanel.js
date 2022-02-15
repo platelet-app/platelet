@@ -61,30 +61,33 @@ function TaskAssignmentsPanel(props) {
     const [role, setRole] = useState(userRoles.rider);
     const tenantId = useSelector(tenantIdSelector);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    const [isFetching, setIsFetching] = useState(true);
+    const assigneesObserver = useRef({ unsubscribe: () => {} });
+    const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(false);
-    const updating = useRef(false);
     const [state, setState] = useState({});
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
+    const autoCollapse = useRef(true);
 
     function onSelect(value) {
         console.log("onSelect", value);
-        updating.current = true;
         if (value) addAssignee(value, role);
     }
 
     async function getAssignees() {
-        setIsFetching(true);
-        if (!dataStoreReadyStatus) return;
+        if (!dataStoreReadyStatus) {
+            setIsFetching(true);
+            return;
+        }
         try {
             const result = (await DataStore.query(models.TaskAssignee)).filter(
                 (assignee) => assignee.task && assignee.task.id === props.taskId
             );
             setState(convertListDataToObject(result));
             setIsFetching(false);
+            autoCollapse.current = false;
         } catch (e) {
-            console.error(e);
+            console.log(e);
             setErrorState(true);
             setIsFetching(false);
         }
@@ -135,7 +138,7 @@ function TaskAssignmentsPanel(props) {
                     dispatch(displayInfoNotification("Task moved to ACTIVE"));
                 }
             }
-            setState({ ...state, [result.id]: result });
+            //setState({ ...state, [result.id]: result });
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -190,16 +193,39 @@ function TaskAssignmentsPanel(props) {
                     updated.status = status;
                 })
             );
-            setState((prevState) => _.omit(prevState, assignmentId));
+            //setState((prevState) => _.omit(prevState, assignmentId));
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
 
+    function observer() {
+        if (!dataStoreReadyStatus) return;
+        assigneesObserver.current.unsubscribe();
+        assigneesObserver.current = DataStore.observe(
+            models.TaskAssignee
+        ).subscribe((newData) => {
+            console.log("newData", newData);
+            DataStore.query(models.TaskAssignee)
+                .then((data) => {
+                    const result = data.filter(
+                        (assignee) =>
+                            assignee.task && assignee.task.id === props.taskId
+                    );
+                    setState(convertListDataToObject(result));
+                })
+                .catch((error) => console.log(error));
+        });
+        return () => {
+            assigneesObserver.current.unsubscribe();
+        };
+    }
+
+    useEffect(observer, [props.taskId, dataStoreReadyStatus]);
+
     useEffect(() => {
-        if (updating.current) {
-            updating.current = false;
+        if (!autoCollapse.current) {
             return;
         }
         if (
@@ -253,7 +279,6 @@ function TaskAssignmentsPanel(props) {
                         <>
                             <TaskAssignees
                                 onRemove={(v) => {
-                                    updating.current = true;
                                     deleteAssignment(v);
                                 }}
                                 assignees={state}

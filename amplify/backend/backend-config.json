@@ -43,6 +43,28 @@
           ]
         }
       ]
+    },
+    "plateletAdminAddNewUser": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "platelet61a0ac07",
+          "attributes": [
+            "UserPoolId"
+          ]
+        },
+        {
+          "category": "api",
+          "resourceName": "platelet",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ]
+        }
+      ]
     }
   },
   "geo": {

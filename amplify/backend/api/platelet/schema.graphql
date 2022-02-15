@@ -221,3 +221,7 @@ enum CommentVisibility {
   EVERYONE
   ME
 }
+
+type Mutation {
+  registerUser(name: String, email: String, tenantId: ID, roles: [Role]): String @function(name: "plateletAdminAddNewUser-${env}")
+}

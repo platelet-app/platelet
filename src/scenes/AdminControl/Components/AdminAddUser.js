@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Button, TextField, Typography, Stack } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { DataStore } from "aws-amplify";
+import { Auth, DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
-import { PaddedPaper, showHide } from "../../../styles/common";
+import { PaddedPaper } from "../../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import {
@@ -20,7 +20,8 @@ import { encodeUUID } from "../../../utilities";
 import { userRoles } from "../../../apiConsts";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import { v4 as uuidv4 } from "uuid";
+import * as mutations from "../../../graphql/mutations";
+import { API, graphqlOperation } from "aws-amplify";
 
 const useStyles = makeStyles({
     root: {
@@ -33,8 +34,6 @@ const useStyles = makeStyles({
 const initialState = {
     name: "",
     email: "",
-    password: "",
-    passwordCheck: "",
 };
 
 const fields = {
@@ -84,40 +83,23 @@ function AdminAddUser() {
     }, [state]);
     async function signUp() {
         try {
-            setIsPosting(true);
-            //  const { userSub } = await Auth.signUp({
-            //      ...state,
-            //  });
-            //             dispatch(
-            //                 displayInfoNotification(
-            //                     "User registered and will be available after they confirm their account"
-            //                 )
-            //             );
-            // adminCreateUser on aws cognito
-            //
-            const userCheck = await DataStore.query(models.User);
-            if (userCheck.map((u) => u.displayName).includes(state.name)) {
-                throw new Error("That name is taken");
+            if (!tenantId) {
+                dispatch(displayErrorNotification("Tenant ID not found"));
+                return;
             }
-
-            const newUser = await DataStore.save(
-                new models.User({
+            setIsPosting(true);
+            await API.graphql(
+                graphqlOperation(mutations.registerUser, {
                     name: state.name,
-                    displayName: state.name,
-                    cognitoId: uuidv4(),
-                    active: 1,
-                    contact: { emailAddress: state.email },
-                    roles: [...rolesState, userRoles.user],
+                    email: state.email,
+                    roles: rolesState,
                     tenantId,
                 })
             );
-            dispatch(
-                displayInfoNotification(
-                    "User added",
-                    undefined,
-                    `/user/${encodeUUID(newUser.id)}`
-                )
-            );
+
+            setIsPosting(false);
+
+            dispatch(displayInfoNotification("User added"));
             setState(initialState);
             setIsPosting(false);
         } catch (error) {

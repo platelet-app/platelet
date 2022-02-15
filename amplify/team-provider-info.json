@@ -25,6 +25,10 @@
           "thumbnailWidth": "128",
           "thumbnailHeight": "128",
           "amplifyStorageBucketName": "platelet26fb7449fb884a3eb4c5fd7539c78dd3193348-jan"
+        },
+        "plateletAdminAddNewUser": {
+          "deploymentBucketName": "amplify-platelet-jan-193348-deployment",
+          "s3Key": "amplify-builds/plateletAdminAddNewUser-495a332f683370707749-build.zip"
         }
       },
       "hosting": {
