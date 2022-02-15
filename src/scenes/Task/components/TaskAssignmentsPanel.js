@@ -111,10 +111,10 @@ function TaskAssignmentsPanel(props) {
             );
             let riderResponsibility;
             if (role === userRoles.rider) {
-                if (user.riderResponsibility) {
+                if (user.userRiderResponsibilityId) {
                     riderResponsibility = await DataStore.query(
                         models.RiderResponsibility,
-                        user.riderResponsibility.id
+                        user.userRiderResponsibilityId
                     );
                 }
                 const status = determineTaskStatus({
