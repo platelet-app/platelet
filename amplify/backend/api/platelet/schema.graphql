@@ -1,4 +1,7 @@
-type User @auth(rules: [{ allow: private}]) @model
+type User @auth(rules: [
+  { allow: private},
+  { allow: private, provider: iam, operations: [read, create] }
+]) @model
 @key(name: "byCognitoId", fields: ["cognitoId"], queryField: "getUserByCognitoId")
 {
   id: ID!
@@ -220,4 +223,8 @@ enum Role {
 enum CommentVisibility {
   EVERYONE
   ME
+}
+
+type Mutation {
+  registerUser(name: String, email: String, tenantId: ID, roles: [Role]): String @function(name: "plateletAdminAddNewUser-${env}")
 }

@@ -19,7 +19,11 @@
               "userPoolId": "authplatelet61a0ac07"
             }
           },
-          "additionalAuthenticationProviders": []
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ]
         }
       }
     }
@@ -40,6 +44,28 @@
           "resourceName": "plateletStorage",
           "attributes": [
             "BucketName"
+          ]
+        }
+      ]
+    },
+    "plateletAdminAddNewUser": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "platelet61a0ac07",
+          "attributes": [
+            "UserPoolId"
+          ]
+        },
+        {
+          "category": "api",
+          "resourceName": "platelet",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
           ]
         }
       ]
