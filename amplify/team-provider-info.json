@@ -28,7 +28,7 @@
         },
         "plateletAdminAddNewUser": {
           "deploymentBucketName": "amplify-platelet-jan-193348-deployment",
-          "s3Key": "amplify-builds/plateletAdminAddNewUser-782f3552433356535677-build.zip"
+          "s3Key": "amplify-builds/plateletAdminAddNewUser-7170612f7558435a5551-build.zip"
         }
       },
       "hosting": {
