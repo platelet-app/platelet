@@ -1,5 +1,8 @@
 {
-  "key1": "value1",
-  "key2": "value2",
-  "key3": "value3"
+    "arguments": {
+        "name": "test user",
+        "email": "rasdfsdffdfsadaaaa@platelet.app",
+        "roles": ["USER"],
+        "tenantId": "testTenantId"
+    }
 }

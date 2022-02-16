@@ -8,48 +8,26 @@ Amplify Params - DO NOT EDIT */
 
 require("isomorphic-fetch");
 const aws = require("aws-sdk");
-const gql = require("graphql-tag");
 const AWS = require("aws-sdk/global");
 const AUTH_TYPE = require("aws-appsync").AUTH_TYPE;
 const AWSAppSyncClient = require("aws-appsync").default;
 const uuid = require("uuid");
-
-const createUser = gql`
-    mutation CreateUser(
-        $input: CreateUserInput!
-        $condition: ModelUserConditionInput
-    ) {
-        createUser(input: $input, condition: $condition) {
-            id
-            cognitoId
-            tenantId
-            contact {
-                name
-                telephoneNumber
-                mobileNumber
-                emailAddress
-                ward
-                line1
-                line2
-                line3
-                town
-                county
-                state
-                country
-                postcode
-                what3words
-            }
-            displayName
-            name
-            roles
-            dateOfBirth
-            active
-        }
-    }
-`;
+const createUser = require("./createUser").createUser;
+const listUsers = require("./listUsers").listUsers;
 
 async function inviteNewUserToTeam(newUser, tenantId) {
+    const config = {
+        url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
+        region: process.env.REGION,
+        auth: {
+            type: AUTH_TYPE.AWS_IAM,
+            credentials: AWS.config.credentials,
+        },
+        disableOffline: true,
+    };
     const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
+
+    const appSyncClient = new AWSAppSyncClient(config);
     const CognitoIdentityServiceProvider = aws.CognitoIdentityServiceProvider;
     const cognitoClient = new CognitoIdentityServiceProvider({
         apiVersion: "2016-04-19",
@@ -63,6 +41,10 @@ async function inviteNewUserToTeam(newUser, tenantId) {
                 {
                     Name: "email",
                     Value: newUser.email,
+                },
+                {
+                    Name: "email_verified",
+                    Value: "true",
                 },
                 {
                     Name: "custom:tenantId",
@@ -79,48 +61,24 @@ async function inviteNewUserToTeam(newUser, tenantId) {
             `Failure to create new user with email ${newUser.email}`
         );
     }
-    const newUsername = cognitoResp.User.Username;
-    const config = {
-        url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
-        region: process.env.REGION,
-        auth: {
-            type: AUTH_TYPE.AWS_IAM,
-            credentials: AWS.config.credentials,
-        },
-        disableOffline: true,
-    };
-
-    const appSyncClient = new AWSAppSyncClient(config);
-    // const listUsers = gql`
-    //     query ListUsers {
-    //         listUsers(filter: { tenantId: { eq: ${tenantId} } }) {
-    //             items {
-    //                 displayName
-    //             }
-    //         }
-    //     }
-    // `;
-    // const listUsersResp = await appSyncClient.query({
-    //     query: listUsers,
-    // });
-    // let displayName = null;
-    // const userCheck = listUsersResp.items;
-    // let counter = 0;
-    // while (!displayName) {
-    //     const current =
-    //         counter === 0 ? newUser.name : `${newUser.name}-${counter}`;
-    //     if (userCheck.map((u) => u.displayName).includes(current)) {
-    //         counter++;
-    //     } else {
-    //         displayName = current;
-    //         break;
-    //     }
-    // }
-    // console.log(displayName);
-    // if (!newUsername) {
-    //     throw new Error(`missing username attribute for newly created user`);
-    // }
-    // console.log(newUser);
+    let displayName = newUser.name;
+    const listUsersResp = await appSyncClient.query({
+        query: listUsers,
+        variables: { tenantId },
+    });
+    const userCheck = listUsersResp.data.listUsers.items;
+    let counter = 0;
+    while (true) {
+        const current =
+            counter === 0 ? newUser.name : `${newUser.name}-${counter}`;
+        if (userCheck.map((u) => u.displayName).includes(current)) {
+            counter++;
+        } else {
+            displayName = current;
+            break;
+        }
+    }
+    console.log(`Final display name: ${displayName}`);
     const subFind = cognitoResp.User.Attributes.find(
         (attr) => attr.Name === "sub"
     );
@@ -136,7 +94,7 @@ async function inviteNewUserToTeam(newUser, tenantId) {
         active: 1,
         cognitoId,
         name: newUser.name,
-        displayName: newUser.name,
+        displayName,
         roles:
             newUser.roles && newUser.roles.includes("USER")
                 ? newUser.roles
@@ -144,20 +102,24 @@ async function inviteNewUserToTeam(newUser, tenantId) {
         contact: { emailAddress: newUser.email },
     };
 
-    await appSyncClient.mutate({
+    const createdUser = await appSyncClient.mutate({
         mutation: createUser,
         variables: { input: createUserInput },
     });
+
+    return createdUser.data.createUser;
 }
 
 exports.handler = async (event) => {
+    console.log("Arguments:", event.arguments);
     const tenantId = event.arguments.tenantId;
     const user = {
         name: event.arguments.name,
         email: event.arguments.email,
         roles: event.arguments.roles || ["USER"],
     };
-    await inviteNewUserToTeam(user, tenantId);
+    const result = await inviteNewUserToTeam(user, tenantId);
+    console.log("User result:", result);
     const response = {
         statusCode: 200,
         //  Uncomment below to enable CORS requests
@@ -165,7 +127,7 @@ exports.handler = async (event) => {
         //      "Access-Control-Allow-Origin": "*",
         //      "Access-Control-Allow-Headers": "*"
         //  },
-        body: JSON.stringify("user created"),
+        body: JSON.stringify({ message: "user created", id: result.id }),
     };
     return response;
 };
