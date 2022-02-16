@@ -101,6 +101,7 @@ function AdminAddUser() {
 
             dispatch(displayInfoNotification("User added"));
             setState(initialState);
+            setRolesState([]);
             setIsPosting(false);
         } catch (error) {
             console.log("error signing up:", error);
@@ -127,6 +128,7 @@ function AdminAddUser() {
                         <TextFieldUncontrolled
                             key={key}
                             label={value}
+                            disabled={isPosting}
                             value={state[key]}
                             onChange={(e) =>
                                 setState((prevState) => ({
@@ -200,8 +202,8 @@ function AdminAddUser() {
                                                 paddingBottom: 1.5,
                                             }}
                                             key={value}
-                                            disabled={false}
-                                            aria-disabled={false}
+                                            disabled={isPosting}
+                                            aria-disabled={isPosting}
                                             aria-label={value}
                                             value={value}
                                             onClick={() => onClickToggle(value)}
