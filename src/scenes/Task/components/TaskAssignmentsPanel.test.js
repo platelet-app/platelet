@@ -213,8 +213,7 @@ describe("TaskAssignmentsPanel", () => {
             .mockResolvedValueOnce([fakeAssignments[1]])
             .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce(mockUser)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockRiderResponsibility);
+            .mockResolvedValueOnce(mockTask);
         amplify.DataStore.save
             .mockResolvedValueOnce(mockAssignment)
             .mockResolvedValue({ ...mockTask, status: tasksStatus.active });
@@ -259,13 +258,6 @@ describe("TaskAssignmentsPanel", () => {
                 5,
                 models.Task,
                 fakeTask1.id
-            )
-        );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                6,
-                models.RiderResponsibility,
-                mockUser.riderResponsibility.id
             )
         );
         await waitFor(() =>

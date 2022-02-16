@@ -61,33 +61,30 @@ function TaskAssignmentsPanel(props) {
     const [role, setRole] = useState(userRoles.rider);
     const tenantId = useSelector(tenantIdSelector);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    const assigneesObserver = useRef({ unsubscribe: () => {} });
-    const [isFetching, setIsFetching] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
+    const updating = useRef(false);
     const [state, setState] = useState({});
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
-    const autoCollapse = useRef(true);
 
     function onSelect(value) {
         console.log("onSelect", value);
+        updating.current = true;
         if (value) addAssignee(value, role);
     }
 
     async function getAssignees() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-            return;
-        }
+        setIsFetching(true);
+        if (!dataStoreReadyStatus) return;
         try {
             const result = (await DataStore.query(models.TaskAssignee)).filter(
                 (assignee) => assignee.task && assignee.task.id === props.taskId
             );
             setState(convertListDataToObject(result));
             setIsFetching(false);
-            autoCollapse.current = false;
         } catch (e) {
-            console.log(e);
+            console.error(e);
             setErrorState(true);
             setIsFetching(false);
         }
@@ -112,14 +109,7 @@ function TaskAssignmentsPanel(props) {
                     tenantId,
                 })
             );
-            let riderResponsibility;
             if (role === userRoles.rider) {
-                if (user.riderResponsibility) {
-                    riderResponsibility = await DataStore.query(
-                        models.RiderResponsibility,
-                        user.riderResponsibility.id
-                    );
-                }
                 const status = determineTaskStatus({
                     ...task,
                     assignees: [result],
@@ -127,8 +117,9 @@ function TaskAssignmentsPanel(props) {
                 await DataStore.save(
                     models.Task.copyOf(task, (updated) => {
                         updated.status = status;
-                        if (riderResponsibility)
-                            updated.riderResponsibility = riderResponsibility;
+                        if (assignee.riderResponsibility)
+                            updated.riderResponsibility =
+                                assignee.riderResponsibility;
                     })
                 );
                 if (
@@ -138,7 +129,7 @@ function TaskAssignmentsPanel(props) {
                     dispatch(displayInfoNotification("Task moved to ACTIVE"));
                 }
             }
-            //setState({ ...state, [result.id]: result });
+            setState({ ...state, [result.id]: result });
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -193,39 +184,16 @@ function TaskAssignmentsPanel(props) {
                     updated.status = status;
                 })
             );
-            //setState((prevState) => _.omit(prevState, assignmentId));
+            setState((prevState) => _.omit(prevState, assignmentId));
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
 
-    function observer() {
-        if (!dataStoreReadyStatus) return;
-        assigneesObserver.current.unsubscribe();
-        assigneesObserver.current = DataStore.observe(
-            models.TaskAssignee
-        ).subscribe((newData) => {
-            console.log("newData", newData);
-            DataStore.query(models.TaskAssignee)
-                .then((data) => {
-                    const result = data.filter(
-                        (assignee) =>
-                            assignee.task && assignee.task.id === props.taskId
-                    );
-                    setState(convertListDataToObject(result));
-                })
-                .catch((error) => console.log(error));
-        });
-        return () => {
-            assigneesObserver.current.unsubscribe();
-        };
-    }
-
-    useEffect(observer, [props.taskId, dataStoreReadyStatus]);
-
     useEffect(() => {
-        if (!autoCollapse.current) {
+        if (updating.current) {
+            updating.current = false;
             return;
         }
         if (
@@ -279,6 +247,7 @@ function TaskAssignmentsPanel(props) {
                         <>
                             <TaskAssignees
                                 onRemove={(v) => {
+                                    updating.current = true;
                                     deleteAssignment(v);
                                 }}
                                 assignees={state}
