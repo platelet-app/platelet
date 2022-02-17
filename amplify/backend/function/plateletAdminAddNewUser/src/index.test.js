@@ -46,6 +46,31 @@ const mockNewUserResult = {
     },
 };
 
+const mockEmailParams = {
+    Destination: {
+        ToAddresses: ["test@test.com"],
+    },
+    Message: {
+        Body: {
+            Html: {
+                Charset: "UTF-8",
+                Data: expect.any(String),
+            },
+            Text: {
+                Charset: "UTF-8",
+                Data: expect.any(String),
+            },
+        },
+        Subject: {
+            Charset: "UTF-8",
+            Data: "Welcome to Platelet!",
+        },
+    },
+    Source: "welcome@test.com",
+    ReplyToAddresses: ["welcome@test.com"],
+    ReturnPath: "welcome@test.com",
+};
+
 jest.mock("aws-sdk", () => {
     return {
         CognitoIdentityServiceProvider: class {
@@ -54,6 +79,14 @@ jest.mock("aws-sdk", () => {
             }
             promise() {
                 return Promise.resolve(mockCognitoResponse);
+            }
+        },
+        SES: class {
+            sendEmail() {
+                return this;
+            }
+            promise() {
+                return Promise.resolve();
             }
         },
     };
@@ -88,6 +121,8 @@ describe("plateletAdminAddNewUser", () => {
         process.env.NODE_ENV = "dev";
         process.env.AUTH_PLATELET61A0AC07_USERPOOLID = "testPoolId";
         process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT = "testEndpoint";
+        process.env.PLATELET_WELCOME_EMAIL = "welcome@test.com";
+        process.env.PLATELET_DOMAIN_NAME = "test.com";
         const cognitoSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
@@ -100,6 +135,7 @@ describe("plateletAdminAddNewUser", () => {
             appSyncClient.default.prototype,
             "query"
         );
+        const SESSpy = jest.spyOn(awssdk.SES.prototype, "sendEmail");
         const mockEvent = {
             arguments: {
                 name: "test user",
@@ -127,6 +163,8 @@ describe("plateletAdminAddNewUser", () => {
                 },
             ],
             UserPoolId: "testPoolId",
+            TemporaryPassword: expect.any(String),
+            MessageAction: "SUPPRESS",
             Username: expect.any(String),
         });
         const createUserInput = {
@@ -146,11 +184,14 @@ describe("plateletAdminAddNewUser", () => {
             query: listUsers,
             variables: { tenantId: mockEvent.arguments.tenantId },
         });
+        expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
     });
     test("add a new user with non-unique name", async () => {
         process.env.NODE_ENV = "dev";
         process.env.AUTH_PLATELET61A0AC07_USERPOOLID = "testPoolId";
         process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT = "testEndpoint";
+        process.env.PLATELET_WELCOME_EMAIL = "welcome@test.com";
+        process.env.PLATELET_DOMAIN_NAME = "test.com";
         const cognitoSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
@@ -163,6 +204,7 @@ describe("plateletAdminAddNewUser", () => {
             appSyncClient.default.prototype,
             "query"
         );
+        const SESSpy = jest.spyOn(awssdk.SES.prototype, "sendEmail");
         const mockEvent = {
             arguments: {
                 name: "Another Individual",
@@ -189,6 +231,8 @@ describe("plateletAdminAddNewUser", () => {
                     Value: mockEvent.arguments.tenantId,
                 },
             ],
+            TemporaryPassword: expect.any(String),
+            MessageAction: "SUPPRESS",
             UserPoolId: "testPoolId",
             Username: expect.any(String),
         });
@@ -209,5 +253,6 @@ describe("plateletAdminAddNewUser", () => {
             query: listUsers,
             variables: { tenantId: mockEvent.arguments.tenantId },
         });
+        expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
     });
 });
