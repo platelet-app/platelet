@@ -127,7 +127,8 @@ exports.handler = async (event) => {
         //      "Access-Control-Allow-Origin": "*",
         //      "Access-Control-Allow-Headers": "*"
         //  },
-        body: JSON.stringify({ message: "user created", id: result.id }),
+        message: "user created",
+        user: result,
     };
     return response;
 };
