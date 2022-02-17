@@ -27,6 +27,12 @@
     "apiplateletGraphQLAPIEndpointOutput": {
       "Type": "String",
       "Default": "apiplateletGraphQLAPIEndpointOutput"
+    },
+    "plateletDomainName": {
+      "Type": "String"
+    },
+    "plateletWelcomeEmail": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -90,6 +96,12 @@
             },
             "API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT": {
               "Ref": "apiplateletGraphQLAPIEndpointOutput"
+            },
+            "PLATELET_DOMAIN_NAME": {
+              "Ref": "plateletDomainName"
+            },
+            "PLATELET_WELCOME_EMAIL": {
+              "Ref": "plateletWelcomeEmail"
             }
           }
         },

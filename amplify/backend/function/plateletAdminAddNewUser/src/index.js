@@ -15,6 +15,59 @@ const uuid = require("uuid");
 const createUser = require("./createUser").createUser;
 const listUsers = require("./listUsers").listUsers;
 
+async function sendWelcomeEmail(emailAddress, recipientName, password) {
+    const ses = new aws.SES({
+        apiVersion: "2010-12-01",
+        region: process.env.REGION,
+    });
+    const params = {
+        Destination: {
+            ToAddresses: [emailAddress],
+        },
+        Message: {
+            Body: {
+                Html: {
+                    Charset: "UTF-8",
+                    Data: `
+                    <p>
+                        Welcome to ${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
+                    </p>
+                    <p>
+                        An admin has created your account for you with a temporary password.
+                    </p>
+                    <p>
+                        <b>Username:</b> ${emailAddress}
+                    </p>
+                    <p>
+                        <b>Password:</b> ${password}
+                    </p>
+                    <p>
+                        Thank you.
+                    </p>
+                    `,
+                },
+                Text: {
+                    Charset: "UTF-8",
+                    Data: `Welcome to ${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
+                    An admin has created your account for you. A temporary password has been generated for you.
+                    Username: ${emailAddress}
+                    Password: ${password}
+                    Thank you.`,
+                },
+            },
+            Subject: {
+                Charset: "UTF-8",
+                Data: "Welcome to Platelet!",
+            },
+        },
+        Source: process.env.PLATELET_WELCOME_EMAIL,
+        ReplyToAddresses: [process.env.PLATELET_WELCOME_EMAIL],
+        ReturnPath: process.env.PLATELET_WELCOME_EMAIL,
+    };
+
+    return await ses.sendEmail(params).promise();
+}
+
 async function inviteNewUserToTeam(newUser, tenantId) {
     const config = {
         url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
@@ -32,6 +85,8 @@ async function inviteNewUserToTeam(newUser, tenantId) {
     const cognitoClient = new CognitoIdentityServiceProvider({
         apiVersion: "2016-04-19",
     });
+
+    const generatedPassword = Math.random().toString(36).substr(2, 8);
 
     const cognitoResp = await cognitoClient
         .adminCreateUser({
@@ -51,8 +106,10 @@ async function inviteNewUserToTeam(newUser, tenantId) {
                     Value: tenantId,
                 },
             ],
+            TemporaryPassword: generatedPassword,
             UserPoolId: userPoolId,
             Username: uuid.v4(),
+            MessageAction: "SUPPRESS",
         })
         .promise();
 
@@ -107,7 +164,10 @@ async function inviteNewUserToTeam(newUser, tenantId) {
         variables: { input: createUserInput },
     });
 
-    return createdUser.data.createUser;
+    return {
+        newUser: createdUser.data.createUser,
+        password: generatedPassword,
+    };
 }
 
 exports.handler = async (event) => {
@@ -118,8 +178,14 @@ exports.handler = async (event) => {
         email: event.arguments.email,
         roles: event.arguments.roles || ["USER"],
     };
-    const result = await inviteNewUserToTeam(user, tenantId);
-    console.log("User result:", result);
+    const { newUser, password } = await inviteNewUserToTeam(user, tenantId);
+    console.log("User result:", newUser);
+    await sendWelcomeEmail(
+        event.arguments.email,
+        event.arguments.name,
+        password
+    );
+    console.log("Successfully sent welcome email");
     const response = {
         statusCode: 200,
         //  Uncomment below to enable CORS requests
@@ -128,7 +194,7 @@ exports.handler = async (event) => {
         //      "Access-Control-Allow-Headers": "*"
         //  },
         message: "user created",
-        user: result,
+        user: newUser,
     };
     return response;
 };
