@@ -1,6 +1,6 @@
 ![platelet logo](platelet.png "Platelet")
 
-Platelet is the only open source and cloud backed dispatch software for couriers and coordinators. It is being developed for Blood Bikers in the UK, but can be used for any delivery tracking.
+Platelet is an offline first, cloud backed, dispatch software project for couriers and coordinators. It is being developed for Blood Bikers in the UK, but can be used for any delivery tracking.
 
 ![dashboard](dashboard.png "Dashboard")
 
