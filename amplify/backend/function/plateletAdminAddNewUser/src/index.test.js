@@ -163,7 +163,7 @@ describe("plateletAdminAddNewUser", () => {
                 },
             ],
             UserPoolId: "testPoolId",
-            TemporaryPassword: expect.any(String),
+            TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),
             MessageAction: "SUPPRESS",
             Username: expect.any(String),
         });
@@ -231,7 +231,7 @@ describe("plateletAdminAddNewUser", () => {
                     Value: mockEvent.arguments.tenantId,
                 },
             ],
-            TemporaryPassword: expect.any(String),
+            TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),
             MessageAction: "SUPPRESS",
             UserPoolId: "testPoolId",
             Username: expect.any(String),
