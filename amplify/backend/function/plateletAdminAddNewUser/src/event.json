@@ -1,0 +1,8 @@
+{
+    "arguments": {
+        "name": "test user",
+        "email": "info@platelet.app",
+        "roles": ["USER"],
+        "tenantId": "testTenantId"
+    }
+}
