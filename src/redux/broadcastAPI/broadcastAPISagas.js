@@ -30,8 +30,8 @@ function* initialiseBroadcastAPIListener() {
             }
         }
     } finally {
-        //TODO: why does this run multiple times when interacting with the UI?
-        console.log("stop BroadcastChannel");
+        // TODO: why does this run multiple times when interacting with the UI?
+        // console.log("stop BroadcastChannel");
     }
 }
 
