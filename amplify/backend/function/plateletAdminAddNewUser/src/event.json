@@ -1,7 +1,7 @@
 {
     "arguments": {
         "name": "test user",
-        "email": "info@platelet.app",
+        "email": "test@platelet.app",
         "roles": ["USER"],
         "tenantId": "testTenantId"
     }
