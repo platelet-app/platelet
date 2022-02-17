@@ -1,6 +1,7 @@
 import { put, takeLatest, call, all } from "redux-saga/effects";
 import faker from "faker/locale/en_GB";
 import { initialiseAwsDataStoreListener } from "../awsHubListener/awsHubListenerActions";
+import { initialiseBroadcastAPIListener } from "../broadcastAPI/broadcastAPIActions";
 import { GET_WHOAMI_SUCCESS, getWhoamiRequest } from "../Actions";
 import * as actions from "./initialiseActions";
 import * as fakeData from "../fakeOfflineData.json";
@@ -85,8 +86,13 @@ function* initialiseAwsHub() {
     yield all([put(initialiseAwsDataStoreListener())]);
 }
 
+function* initialiseBroadcastAPI() {
+    yield all([put(initialiseBroadcastAPIListener())]);
+}
+
 export function* watchInitialWhoamiCompleted() {
     yield takeLatest(GET_WHOAMI_SUCCESS, initialiseAwsHub);
+    yield takeLatest(GET_WHOAMI_SUCCESS, initialiseBroadcastAPI);
 }
 
 async function populateFakeData() {

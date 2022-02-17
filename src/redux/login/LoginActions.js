@@ -1,4 +1,7 @@
-import {createRequestFunctions, createRequestActions} from "../reduxActionsFactory";
+import {
+    createRequestFunctions,
+    createRequestActions,
+} from "../reduxActionsFactory";
 
 export const LOGOUT = "LOGOUT";
 export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
@@ -9,37 +12,49 @@ export const LOGIN_AUTHORISED = "LOGIN_AUTHORISED";
 
 export const loginUserPrefix = "LOGIN_USER";
 export const loginUserActions = createRequestActions(loginUserPrefix);
-export const {loginUserSuccess, loginUserFailure} = createRequestFunctions(loginUserActions);
+export const { loginUserSuccess, loginUserFailure } =
+    createRequestFunctions(loginUserActions);
 
 export function loginRequest(username, password) {
-    return { type: loginUserActions.request, username, password }
+    return { type: loginUserActions.request, username, password };
 }
 
 export const refreshUserTokenPrefix = "REFRESH_USER_TOKEN";
-export const refreshUserTokenActions = createRequestActions(refreshUserTokenPrefix);
-export const {refreshUserTokenSuccess, refreshUserTokenFailure} = createRequestFunctions(refreshUserTokenActions);
+export const refreshUserTokenActions = createRequestActions(
+    refreshUserTokenPrefix
+);
+export const { refreshUserTokenSuccess, refreshUserTokenFailure } =
+    createRequestFunctions(refreshUserTokenActions);
 
 export function refreshTokenRequest() {
-    return { type: refreshUserTokenActions.request }
+    return { type: refreshUserTokenActions.request };
 }
 
-export function logoutUser() {
-    return { type: LOGOUT }
+export function logoutUser(data) {
+    if (!data) {
+        return { type: LOGOUT, data: { broadcast: true } };
+    }
+    return {
+        type: LOGOUT,
+        data: {
+            ...data,
+            broadcast: data.broadcast !== undefined ? data.broadcast : true,
+        },
+    };
 }
 
 export function logoutUserSuccess() {
-    return { type: LOGOUT_SUCCESS }
+    return { type: LOGOUT_SUCCESS };
 }
 
 export function loginIncorrectPassword() {
-    return { type: LOGIN_INCORRECT_PASSWORD }
+    return { type: LOGIN_INCORRECT_PASSWORD };
 }
 
 export function setApiURL(data) {
-    return { type: SET_API_URL, data }
+    return { type: SET_API_URL, data };
 }
 
 export function removeApiURL() {
-    return { type: REMOVE_API_URL }
+    return { type: REMOVE_API_URL };
 }
-

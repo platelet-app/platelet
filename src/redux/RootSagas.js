@@ -8,6 +8,7 @@ import {
     watchInitialWhoamiCompleted,
 } from "./initialise/initialiseSagas";
 import { watchDebounceDashboardFilter } from "./dashboardFilter/DashboardFilterSagas";
+import { watchInitialiseBroadcastAPIListener } from "./broadcastAPI/broadcastAPISagas";
 
 export default function* rootSaga() {
     yield all([
@@ -20,5 +21,6 @@ export default function* rootSaga() {
         call(watchInitialWhoamiCompleted),
         call(watchRefreshToken),
         call(watchDebounceDashboardFilter),
+        call(watchInitialiseBroadcastAPIListener),
     ]);
 }

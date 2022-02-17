@@ -42,7 +42,13 @@ export function* watchLogin() {
     yield takeLatest(loginUserActions.request, login);
 }
 
-function* logout() {
+function* logout(action) {
+    if (action.data.broadcast) {
+        const channel = yield new BroadcastChannel(
+            "platelet-broadcast-channel"
+        );
+        yield call([channel, channel.postMessage], "logout");
+    }
     yield call([DataStore, DataStore.stop]);
     yield call([DataStore, DataStore.clear]);
     yield call([Auth, Auth.signOut]);

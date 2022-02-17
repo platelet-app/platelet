@@ -6,16 +6,16 @@ import { eventChannel } from "redux-saga";
 
 function listener() {
     return eventChannel((emitter) => {
-        const listener = Hub.listen("datastore", async (hubData) => {
+        const hubListener = Hub.listen("datastore", async (hubData) => {
             emitter(hubData);
         });
         return () => {
-            listener();
+            Hub.remove("datastore", hubListener);
         };
     });
 }
 
-function* initialiseDataStoreListener(action) {
+function* initialiseDataStoreListener() {
     if (
         process.env.NODE_ENV === "test" ||
         process.env.REACT_APP_DEMO_MODE === "true"
