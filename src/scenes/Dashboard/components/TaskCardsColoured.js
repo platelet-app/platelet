@@ -15,6 +15,9 @@ import MessageIcon from "@mui/icons-material/Message";
 const colourBarPercent = "90%";
 
 const generateClass = (theme, status) => {
+    if (!theme || !status) {
+        return {};
+    }
     return {
         background: `linear-gradient(0deg,
         rgba(0,0,0,0)
@@ -39,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
     COMPLETED: generateClass(theme, "COMPLETED"),
     CANCELLED: generateClass(theme, "CANCELLED"),
     REJECTED: generateClass(theme, "REJECTED"),
+    ABANDONED: generateClass(theme, "ABANDONED"),
     itemTopBarContainer: {
         width: "100%",
         height: 30,
