@@ -187,7 +187,8 @@ function LocationDetailAndSelector(props) {
         <></>
     );
 
-    const collapsedShowFields = ["ward", "what3words", "postcode", "line1"];
+    const collapsedShowFields = ["ward", "postcode", "line1"];
+    const collapsedShowContactFields = ["telephoneNumber"];
 
     return (
         <Box className={classes.root}>
@@ -231,7 +232,10 @@ function LocationDetailAndSelector(props) {
                     <Box className={classes.separator} />
                     <Box>
                         {Object.entries(contactFields).map(([key, label]) => {
-                            if (!collapsed) {
+                            if (
+                                collapsedShowContactFields.includes(key) ||
+                                !collapsed
+                            ) {
                                 return (
                                     <LabelItemPair key={key} label={label}>
                                         <ClickableTextField

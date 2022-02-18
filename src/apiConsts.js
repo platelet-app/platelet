@@ -5,6 +5,7 @@ export const protectedFields = [
     "_deleted",
     "updatedAt",
     "createdAt",
+    "tenantId",
 ];
 
 export const deliverableIcons = {
