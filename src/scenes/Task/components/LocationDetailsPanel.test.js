@@ -297,9 +297,7 @@ describe("LocationDetailsPanel", () => {
             [locationKey]: mockLocations[6],
         });
         expect(screen.queryByRole("textbox")).toBeNull();
-        expect(
-            screen.getByRole("button", { name: "Edit" })
-        ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         expect(
             screen.getByRole("button", { name: "Clear" })
         ).toBeInTheDocument();
@@ -333,6 +331,7 @@ describe("LocationDetailsPanel", () => {
         expect(
             screen.getAllByText(mockLocations[0].line1)[0]
         ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByRole("button", { name: "Clear" }));
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
@@ -413,6 +412,7 @@ describe("LocationDetailsPanel", () => {
         expect(
             screen.getAllByText(unlistedLocation.line1)[0]
         ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByRole("button", { name: "Clear" }));
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();

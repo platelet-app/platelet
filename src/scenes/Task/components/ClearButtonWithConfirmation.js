@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { Tooltip, Typography } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import PropTypes from "prop-types";
 
@@ -22,7 +20,7 @@ function ClearButtonWithConfirmation(props) {
     }
 
     return (
-        <>
+        <Box>
             <ConfirmationDialog
                 onConfirmation={onSelect}
                 dialogTitle={"Are you sure?"}
@@ -34,16 +32,16 @@ function ClearButtonWithConfirmation(props) {
                     {props.label.toLowerCase()} location?
                 </Typography>
             </ConfirmationDialog>
-            <Tooltip title={"Clear"}>
-                <IconButton
-                    disabled={props.disabled}
-                    onClick={onClick}
-                    size="small"
-                >
-                    <CancelIcon />
-                </IconButton>
-            </Tooltip>
-        </>
+            <Button
+                sx={{ color: "red", borderColor: "red", width: "25%" }}
+                disabled={props.disabled}
+                onClick={onClick}
+                variant={"outlined"}
+                size="small"
+            >
+                Clear
+            </Button>
+        </Box>
     );
 }
 

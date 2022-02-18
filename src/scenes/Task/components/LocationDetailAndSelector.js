@@ -172,15 +172,6 @@ function LocationDetailAndSelector(props) {
                         </IconButton>
                     </Tooltip>
                 )}
-                {props.location && !props.disableClear ? (
-                    <ClearButtonWithConfirmation
-                        label={props.label}
-                        disabled={props.disabled}
-                        onClear={onClickClearButton}
-                    />
-                ) : (
-                    <></>
-                )}
             </Stack>
         </Stack>
     ) : (
@@ -267,10 +258,23 @@ function LocationDetailAndSelector(props) {
                     </Box>
                 </Stack>
                 <Divider />
-                <CollapsibleToggle
-                    onClick={() => setCollapsed((prevState) => !prevState)}
-                    value={collapsed}
-                />
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                >
+                    <CollapsibleToggle
+                        onClick={() => setCollapsed((prevState) => !prevState)}
+                        value={collapsed}
+                    />
+                    {props.location && !props.disableClear && editMode && (
+                        <ClearButtonWithConfirmation
+                            label={props.label}
+                            disabled={props.disabled}
+                            onClear={onClickClearButton}
+                        />
+                    )}
+                </Stack>
             </Stack>
         </Box>
     );
