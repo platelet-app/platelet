@@ -78,7 +78,7 @@ function TasksGrid(props) {
                 [tasksStatus.pickedUp],
                 [tasksStatus.droppedOff],
                 [tasksStatus.completed],
-                [tasksStatus.cancelled],
+                [tasksStatus.cancelled, tasksStatus.abandoned],
                 [tasksStatus.rejected],
             ]
                 .filter(
