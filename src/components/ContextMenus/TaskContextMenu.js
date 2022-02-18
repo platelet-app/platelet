@@ -235,6 +235,7 @@ function TaskContextMenu(props) {
                         task === null ||
                         [
                             tasksStatus.cancelled,
+                            tasksStatus.abandoned,
                             tasksStatus.rejected,
                             tasksStatus.droppedOff,
                             tasksStatus.completed,
@@ -249,6 +250,7 @@ function TaskContextMenu(props) {
                         task === null ||
                         [
                             tasksStatus.cancelled,
+                            tasksStatus.abandoned,
                             tasksStatus.rejected,
                             tasksStatus.droppedOff,
                             tasksStatus.completed,
