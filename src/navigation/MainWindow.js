@@ -22,6 +22,7 @@ import AdminAddRiderResponsibility from "../scenes/AdminControl/Components/Admin
 import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { AdminControl } from "../scenes/AdminControl/AdminControl";
 import { guidedSetupOpenSelector, menuIndexSelector } from "../redux/Selectors";
+import { Box } from "@mui/material";
 
 function MainWindowContainer(props) {
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
@@ -30,19 +31,19 @@ function MainWindowContainer(props) {
         root: {
             marginRight:
                 guidedSetupOpen && navIndex === "dashboard" ? "400px" : "auto",
+            marginLeft: navIndex === "dashboard" ? 20 : 200,
+            marginRight: 5,
             paddingTop: 10,
             paddingBottom: 10,
             [theme.breakpoints.down("md")]: {
                 paddingTop: 5,
+                marginLeft: 0,
+                marginRight: 0,
             },
         },
     }));
     const classes = styles();
-    return (
-        <Container maxWidth={"lg"} disableGutters className={classes.root}>
-            {props.children}
-        </Container>
-    );
+    return <Box className={classes.root}>{props.children}</Box>;
 }
 
 export default function MainWindow(_props) {

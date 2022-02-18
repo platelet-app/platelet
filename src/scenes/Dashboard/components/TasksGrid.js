@@ -7,7 +7,10 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import TasksGridColumn from "./TasksGridColumn";
 import { tasksStatus, userRoles } from "../../../apiConsts";
-import { getRoleView } from "../../../redux/Selectors";
+import {
+    dashboardFilteredUserSelector,
+    getRoleView,
+} from "../../../redux/Selectors";
 import { useSelector } from "react-redux";
 
 const getColumnTitle = (key) => {
@@ -18,18 +21,6 @@ const getColumnTitle = (key) => {
         ];
 
     return key.join(" / ").replace(/_/g, " ");
-
-    if (key.includes(tasksStatus.new)) return "New".toUpperCase();
-    else if (key.includes(tasksStatus.active)) return "Active".toUpperCase();
-    else if (key.includes(tasksStatus.pickedUp))
-        return "Picked Up".toUpperCase();
-    else if (key.includes(tasksStatus.droppedOff))
-        return "Delivered".toUpperCase();
-    else if (key.includes(tasksStatus.rejected))
-        return "Rejected".toUpperCase();
-    else if (key.includes(tasksStatus.cancelled))
-        return "Cancelled".toUpperCase();
-    else return "";
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -53,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
     },
     column: {
-        [theme.breakpoints.down("md")]: {
+        [theme.breakpoints.down("sm")]: {
             width: "100%",
         },
     },
@@ -65,53 +56,48 @@ function TasksGrid(props) {
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
     const roleView = useSelector(getRoleView);
+    const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
 
-    let justifyContent = "space-evenly";
-    if (isSm) {
-        justifyContent = "center";
-    } else if (roleView && roleView === userRoles.rider) {
-        justifyContent = "flex-start";
-    } else if (isMd) {
-        justifyContent = "flex-start";
-    }
+    let justifyContent = "flex-start";
+
+    const excludeList = dashboardFilteredUser
+        ? [...props.excludeColumnList, tasksStatus.new]
+        : props.excludeColumnList;
 
     return (
-        <>
-            <Grid
-                container
-                spacing={2}
-                direction={"row"}
-                justifyContent={justifyContent}
-                alignItems={"stretch"}
-            >
-                {[
-                    [tasksStatus.new],
-                    [tasksStatus.active],
-                    [tasksStatus.pickedUp, tasksStatus.droppedOff],
-                    [tasksStatus.completed],
-                    [tasksStatus.cancelled],
-                    [tasksStatus.rejected],
-                ]
-                    .filter(
-                        (column) =>
-                            _.intersection(props.excludeColumnList, column)
-                                .length === 0
-                    )
-                    .map((taskKey) => {
-                        const title = getColumnTitle(taskKey);
-                        return (
-                            <Grid item key={title} className={classes.column}>
-                                <TasksGridColumn
-                                    title={title}
-                                    onAddTaskClick={props.onAddTaskClick}
-                                    taskKey={taskKey}
-                                    showTasks={props.showTaskIds}
-                                />
-                            </Grid>
-                        );
-                    })}
-            </Grid>
-        </>
+        <Grid
+            container
+            spacing={1}
+            direction={"row"}
+            justifyContent={justifyContent}
+            alignItems={"stretch"}
+        >
+            {[
+                [tasksStatus.new],
+                [tasksStatus.active],
+                [tasksStatus.pickedUp],
+                [tasksStatus.droppedOff],
+                [tasksStatus.completed],
+                [tasksStatus.cancelled],
+                [tasksStatus.rejected],
+            ]
+                .filter(
+                    (column) => _.intersection(excludeList, column).length === 0
+                )
+                .map((taskKey) => {
+                    const title = getColumnTitle(taskKey);
+                    return (
+                        <Grid item key={title} className={classes.column}>
+                            <TasksGridColumn
+                                title={title}
+                                onAddTaskClick={props.onAddTaskClick}
+                                taskKey={taskKey}
+                                showTasks={props.showTaskIds}
+                            />
+                        </Grid>
+                    );
+                })}
+        </Grid>
     );
 }
 

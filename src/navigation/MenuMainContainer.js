@@ -66,28 +66,30 @@ export function MenuMainContainer() {
                     justifyContent="space-between"
                     className={classes.appBarComponents}
                 >
-                    <Box sx={{ width: 140 }}>
-                        <MobileNavigationDrawer />
-                    </Box>
-                    {menuIndex === "dashboard" && (
-                        <Hidden mdDown>
-                            <Box sx={{ width: "100%", maxWidth: 1100 }}>
-                                <DashboardDetailTabs />
-                            </Box>
+                    <Stack sx={{ width: "100%" }} direction="row">
+                        <Box sx={{ width: 140 }}>
+                            <MobileNavigationDrawer />
+                        </Box>
+                        {menuIndex === "dashboard" && (
+                            <Hidden mdDown>
+                                <Box sx={{ width: "100%", maxWidth: 1100 }}>
+                                    <DashboardDetailTabs />
+                                </Box>
+                            </Hidden>
+                        )}
+                        <Hidden mdUp>
+                            <Stack alignItems={"center"} direction={"row"}>
+                                <IconButton
+                                    onClick={toggleSearchMode}
+                                    color="inherit"
+                                    size="large"
+                                >
+                                    {toggleIcon}
+                                </IconButton>
+                                {searchMode && <TaskFilterTextField />}
+                            </Stack>
                         </Hidden>
-                    )}
-                    <Hidden mdUp>
-                        <Stack alignItems={"center"} direction={"row"}>
-                            <IconButton
-                                onClick={toggleSearchMode}
-                                color="inherit"
-                                size="large"
-                            >
-                                {toggleIcon}
-                            </IconButton>
-                            {searchMode && <TaskFilterTextField />}
-                        </Stack>
-                    </Hidden>
+                    </Stack>
                     {lightToggleProfileMenu}
                 </Stack>
             </AppBar>
