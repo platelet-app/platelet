@@ -11,7 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import { ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
-import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
+import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
 const useStyles = makeStyles((theme) => ({
@@ -269,10 +269,14 @@ function LocationDetailAndSelector(props) {
                     />
                     {props.location && !props.disableClear && editMode && (
                         <ClearButtonWithConfirmation
-                            label={props.label}
                             disabled={props.disabled}
                             onClear={onClickClearButton}
-                        />
+                        >
+                            <Typography>
+                                Are you sure you want to clear the {props.label}{" "}
+                                location?
+                            </Typography>
+                        </ClearButtonWithConfirmation>
                     )}
                 </Stack>
             </Stack>

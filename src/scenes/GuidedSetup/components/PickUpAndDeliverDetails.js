@@ -2,6 +2,7 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import LocationDetailAndSelector from "../../Task/components/LocationDetailAndSelector";
 import { Divider, Stack } from "@mui/material";
+import PopOutLocationSelector from "./PopOutLocationSelector";
 
 export const PickUpAndDeliverDetails = ({
     values,
@@ -15,7 +16,7 @@ export const PickUpAndDeliverDetails = ({
     return (
         <Stack spacing={1}>
             <Typography variant="h6">Where from?</Typography>
-            <LocationDetailAndSelector
+            <PopOutLocationSelector
                 onSelectPreset={onSelectPickUpLocation}
                 label="pick up"
                 onChange={onChangePickUpLocation}
@@ -28,9 +29,9 @@ export const PickUpAndDeliverDetails = ({
             />
             <Divider />
             <Typography variant="h6">Where to?</Typography>
-            <LocationDetailAndSelector
+            <PopOutLocationSelector
                 onSelectPreset={onSelectDropOffLocation}
-                label="drop off"
+                label="delivery"
                 onChange={onChangeDropOffLocation}
                 onClear={onClearDropOffLocation}
                 onChangeContact={(values) =>

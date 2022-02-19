@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Box, Button, Tooltip, Typography } from "@mui/material";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { Box, Button } from "@mui/material";
+import ConfirmationDialog from "./ConfirmationDialog";
 import PropTypes from "prop-types";
 
 function ClearButtonWithConfirmation(props) {
@@ -10,7 +10,7 @@ function ClearButtonWithConfirmation(props) {
         setOpen(true);
     }
 
-    function onSelect(result) {
+    function onSelect() {
         props.onClear();
         setOpen(false);
     }
@@ -27,10 +27,7 @@ function ClearButtonWithConfirmation(props) {
                 onClose={handleClose}
                 open={open}
             >
-                <Typography>
-                    Are you sure you want to clear the{" "}
-                    {props.label.toLowerCase()} location?
-                </Typography>
+                {props.children}
             </ConfirmationDialog>
             <Button
                 sx={{ color: "red", borderColor: "red", width: "25%" }}
@@ -48,13 +45,11 @@ function ClearButtonWithConfirmation(props) {
 ClearButtonWithConfirmation.propTypes = {
     disabled: PropTypes.bool,
     onClear: PropTypes.func,
-    label: PropTypes.string,
 };
 
 ClearButtonWithConfirmation.defaultProps = {
     disabled: false,
     onClear: () => {},
-    label: "",
 };
 
 export default ClearButtonWithConfirmation;
