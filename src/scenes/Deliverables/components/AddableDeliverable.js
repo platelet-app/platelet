@@ -18,7 +18,6 @@ function AddableDeliverable(props) {
 
     return (
         <DeliverableCard
-            compact
             label={deliverableType.label}
             icon={deliverableType.icon}
         >

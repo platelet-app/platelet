@@ -291,16 +291,18 @@ function DeliverableGridSelect(props) {
                             }
                         })}
                     </Stack>
-                    <Link
-                        href="#"
-                        onClick={(e) => {
-                            setTruncated((prevState) => !prevState);
-                            e.preventDefault();
-                        }}
-                        color="inherit"
-                    >
-                        {!currentTag && (truncated ? "More..." : "Less...")}
-                    </Link>
+                    {Object.values(availableDeliverables).length > 5 && (
+                        <Link
+                            href="#"
+                            onClick={(e) => {
+                                setTruncated((prevState) => !prevState);
+                                e.preventDefault();
+                            }}
+                            color="inherit"
+                        >
+                            {!currentTag && (truncated ? "More..." : "Less...")}
+                        </Link>
+                    )}
                 </Stack>
             </Box>
         );

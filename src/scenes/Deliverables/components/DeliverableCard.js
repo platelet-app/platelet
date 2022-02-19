@@ -12,13 +12,14 @@ const useStyles = makeStyles(() => ({
         width: "100%",
         backgroundColor: "rgba(180, 180, 180, 0.1)",
     }),
-    label: {
-        maxWidth: 200,
-    },
+    label: (props) => ({
+        maxWidth: props.compact ? 110 : 200,
+    }),
 }));
 
 function DeliverableCard(props) {
     const classes = useStyles(props);
+    const maxTextLength = props.compact ? 12 : 22;
     return (
         <Stack
             className={classes.root}
@@ -37,7 +38,7 @@ function DeliverableCard(props) {
                 {getDeliverableIconByEnum(props.icon, 4)}
                 <Tooltip
                     title={
-                        props.label && props.label.length > 22
+                        props.label && props.label.length > maxTextLength
                             ? props.label
                             : ""
                     }
