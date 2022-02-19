@@ -3,6 +3,7 @@ type User @auth(rules: [
   { allow: private, provider: iam, operations: [read, create] }
 ]) @model
 @key(name: "byCognitoId", fields: ["cognitoId"], queryField: "getUserByCognitoId")
+@key(name: "byTenantId", fields: ["tenantId",])
 {
   id: ID!
   cognitoId: ID!
@@ -35,7 +36,9 @@ type Group @auth(rules: [{ allow: private}]) @model {
   name: String
 }
 
-type Vehicle @auth(rules: [{ allow: private}]) @model @key(name: "byAssignedUser", fields: ["assignedUserID"]) {
+type Vehicle @auth(rules: [{ allow: private}]) @model @key(name: "byAssignedUser", fields: ["assignedUserID"])
+@key(name: "byTenantId", fields: ["tenantId",])
+{
   id: ID!
   tenantId: ID!
   assignedUserID: ID
@@ -65,7 +68,9 @@ type AddressAndContactDetails {
   what3words: String
 }
 
-type Deliverable @auth(rules: [{ allow: private}]) @model {
+type Deliverable @auth(rules: [{ allow: private}]) @model
+@key(name: "byTenantId", fields: ["tenantId",])
+{
   id: ID!
   tenantId: ID!
   deliverableType: DeliverableType! @connection
@@ -77,7 +82,9 @@ type Deliverable @auth(rules: [{ allow: private}]) @model {
   comments: [Comment!] @connection (keyName: "byParent", fields: ["id"])
 }
 
-type Location @auth(rules: [{ allow: private}]) @model {
+type Location @auth(rules: [{ allow: private}]) @model
+@key(name: "byTenantId", fields: ["tenantId",])
+{
   id: ID!
   tenantId: ID!
   name: String
@@ -104,6 +111,7 @@ type Task
   @key(name: "byStatus", fields: ["status"], queryField: "tasksByStatus")
   @key(name: "byPickUpLocation", fields: ["pickUpLocationId",])
   @key(name: "byDropOffLocation", fields: ["dropOffLocationId",])
+  @key(name: "byTenantId", fields: ["tenantId",])
   {
   id: ID!
   tenantId: ID!
@@ -135,6 +143,7 @@ type TaskAssignee
 @auth(rules: [{ allow: private}])
 @key(name: "byTask", fields: ["taskId", "assigneeId"])
 @key(name: "byAssignee", fields: ["assigneeId", "taskId"])
+@key(name: "byTenantId", fields: ["tenantId",])
 {
   id: ID!
   tenantId: ID!
@@ -145,7 +154,9 @@ type TaskAssignee
   assignee: User! @connection(fields: ["assigneeId"])
 }
 
-type Comment @auth(rules: [{ allow: private}]) @model @key(name: "byParent", fields: ["parentId"]) {
+type Comment @auth(rules: [{ allow: private}]) @model @key(name: "byParent", fields: ["parentId"])
+@key(name: "byTenantId", fields: ["tenantId",])
+{
   id: ID!
   parentId: ID
   tenantId: ID!
@@ -154,7 +165,9 @@ type Comment @auth(rules: [{ allow: private}]) @model @key(name: "byParent", fie
   visibility: CommentVisibility
 }
 
-type DeliverableType @auth(rules: [{ allow: private}]) @model {
+type DeliverableType @auth(rules: [{ allow: private}]) @model
+@key(name: "byTenantId", fields: ["tenantId",])
+{
   id: ID!
   label: String!
   tenantId: ID!
@@ -171,7 +184,9 @@ enum DeliverableTypeIcon {
   OTHER
 }
 
-type RiderResponsibility @auth(rules: [{ allow: private}]) @model {
+type RiderResponsibility @auth(rules: [{ allow: private}]) @model
+@key(name: "byTenantId", fields: ["tenantId",])
+{
   id: ID!
   tenantId: ID!
   label: String!
@@ -226,5 +241,23 @@ enum CommentVisibility {
 }
 
 type Mutation {
-  registerUser(name: String, email: String, tenantId: ID, roles: [Role]): String @function(name: "plateletAdminAddNewUser-${env}")
+  registerUser(name: String, email: String, tenantId: ID, roles: [Role]): String  @function(name: "plateletAdminAddNewUser-${env}")
 }
+
+type Statistics {
+  numCancelled: Int
+  numCompleted: Int
+  numDroppedOff: Int
+  numRejected: Int
+  numAbandoned: Int
+  numActive: Int
+  numPickedUp: Int
+  numNew: Int
+  numTest: Int
+}
+
+type Query {
+  getStatistics(tenantId: ID!): Statistics @function(name: "plateletGetStatistics-${env}")
+}
+
+

@@ -1,6 +1,21 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getStatistics = /* GraphQL */ `
+  query GetStatistics($tenantId: ID!) {
+    getStatistics(tenantId: $tenantId) {
+      numCancelled
+      numCompleted
+      numDroppedOff
+      numRejected
+      numAbandoned
+      numActive
+      numPickedUp
+      numNew
+      numTest
+    }
+  }
+`;
 export const syncGroups = /* GraphQL */ `
   query SyncGroups(
     $filter: ModelGroupFilterInput
