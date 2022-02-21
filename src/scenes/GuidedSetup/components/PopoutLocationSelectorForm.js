@@ -2,6 +2,7 @@ import { TextField, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import PropTypes from "prop-types";
+import { TextFieldUncontrolled } from "../../../components/TextFields";
 
 const initialState = {
     name: "",
@@ -65,9 +66,10 @@ function PopOutLocationSelectorForm(props) {
                     />
                 ))}
                 {Object.entries(contactFields).map(([key, label]) => (
-                    <TextField
+                    <TextFieldUncontrolled
                         key={key}
                         fullWidth
+                        tel={key === "telephoneNumber"}
                         aria-label={label}
                         label={label}
                         value={state.contact ? state.contact[key] : ""}
