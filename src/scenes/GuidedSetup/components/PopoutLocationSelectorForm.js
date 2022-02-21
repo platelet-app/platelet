@@ -70,7 +70,7 @@ function PopOutLocationSelectorForm(props) {
                         fullWidth
                         aria-label={label}
                         label={label}
-                        value={state.contact[key]}
+                        value={state.contact ? state.contact[key] : ""}
                         onChange={(e) =>
                             setState((prevState) => ({
                                 ...prevState,
