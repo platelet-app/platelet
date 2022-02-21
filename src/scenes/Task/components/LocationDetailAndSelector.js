@@ -192,8 +192,9 @@ function LocationDetailAndSelector(props) {
                 {presetSelect}
                 <Stack direction={"column"}>
                     {Object.entries(addressFields).map(([key, label]) => {
-                        if (collapsedShowFields.includes(key) || !collapsed) {
-                            return (
+                        return (
+                            (collapsedShowFields.includes(key) ||
+                                !collapsed) && (
                                 <LabelItemPair
                                     key={key}
                                     label={collapsed || editMode ? label : ""}
@@ -214,13 +215,11 @@ function LocationDetailAndSelector(props) {
                                         value={state.address[key]}
                                     />
                                 </LabelItemPair>
-                            );
-                        } else {
-                            return <React.Fragment key={key}></React.Fragment>;
-                        }
+                            )
+                        );
                     })}
 
-                    <Box className={classes.separator} />
+                    {!collapsed && <Box className={classes.separator} />}
                     <Box>
                         {Object.entries(contactFields).map(([key, label]) => {
                             if (

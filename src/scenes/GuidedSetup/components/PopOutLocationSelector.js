@@ -141,11 +141,9 @@ function PopOutLocationSelector(props) {
                         <Stack direction={"column"}>
                             {Object.entries(addressFields).map(
                                 ([key, label]) => {
-                                    if (
-                                        collapsedShowFields.includes(key) ||
-                                        !collapsed
-                                    ) {
-                                        return (
+                                    return (
+                                        (collapsedShowFields.includes(key) ||
+                                            !collapsed) && (
                                             <LabelItemPair
                                                 key={key}
                                                 label={label}
@@ -154,18 +152,14 @@ function PopOutLocationSelector(props) {
                                                     {state && state[key]}
                                                 </Typography>
                                             </LabelItemPair>
-                                        );
-                                    } else {
-                                        return (
-                                            <React.Fragment
-                                                key={key}
-                                            ></React.Fragment>
-                                        );
-                                    }
+                                        )
+                                    );
                                 }
                             )}
 
-                            <Box className={classes.separator} />
+                            {!collapsed && (
+                                <Box className={classes.separator} />
+                            )}
                             <Box>
                                 {Object.entries(contactFields).map(
                                     ([key, label]) => {
