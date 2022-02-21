@@ -163,13 +163,11 @@ function PopOutLocationSelector(props) {
                             <Box>
                                 {Object.entries(contactFields).map(
                                     ([key, label]) => {
-                                        if (
-                                            collapsedShowContactFields.includes(
+                                        return (
+                                            (collapsedShowContactFields.includes(
                                                 key
                                             ) ||
-                                            !collapsed
-                                        ) {
-                                            return (
+                                                !collapsed) && (
                                                 <LabelItemPair
                                                     key={key}
                                                     label={label}
@@ -179,14 +177,8 @@ function PopOutLocationSelector(props) {
                                                             state.contact[key]}
                                                     </Typography>
                                                 </LabelItemPair>
-                                            );
-                                        } else {
-                                            return (
-                                                <React.Fragment
-                                                    key={key}
-                                                ></React.Fragment>
-                                            );
-                                        }
+                                            )
+                                        );
                                     }
                                 )}
                             </Box>

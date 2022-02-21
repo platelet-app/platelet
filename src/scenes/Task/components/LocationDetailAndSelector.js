@@ -222,11 +222,9 @@ function LocationDetailAndSelector(props) {
                     {!collapsed && <Box className={classes.separator} />}
                     <Box>
                         {Object.entries(contactFields).map(([key, label]) => {
-                            if (
-                                collapsedShowContactFields.includes(key) ||
-                                !collapsed
-                            ) {
-                                return (
+                            return (
+                                (collapsedShowContactFields.includes(key) ||
+                                    !collapsed) && (
                                     <LabelItemPair key={key} label={label}>
                                         <ClickableTextField
                                             label={label}
@@ -247,12 +245,8 @@ function LocationDetailAndSelector(props) {
                                             value={state.contact[key]}
                                         />
                                     </LabelItemPair>
-                                );
-                            } else {
-                                return (
-                                    <React.Fragment key={key}></React.Fragment>
-                                );
-                            }
+                                )
+                            );
                         })}
                     </Box>
                 </Stack>
