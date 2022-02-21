@@ -189,6 +189,7 @@ function PopOutLocationSelector(props) {
                                                 >
                                                     <Typography>
                                                         {state &&
+                                                            state.contact &&
                                                             state.contact[key]}
                                                     </Typography>
                                                 </LabelItemPair>
