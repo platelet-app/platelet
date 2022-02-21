@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
+import _ from "lodash";
 import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
@@ -11,6 +12,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import PopOutLocationSelectorForm from "./PopoutLocationSelectorForm";
+import { protectedFields } from "../../../apiConsts";
 
 const useStyles = makeStyles((theme) => ({
     label: {
@@ -53,7 +55,7 @@ function PopOutLocationSelector(props) {
 
     function onSelectPreset(value) {
         setState(value);
-        props.onSelectPreset(value);
+        props.onChange(value);
     }
 
     function onClickClearButton() {
@@ -61,8 +63,21 @@ function PopOutLocationSelector(props) {
     }
 
     function handleConfirmation(value) {
-        setState({ ...value, listed: 0 });
-        props.onChange({ ...value, listed: 0 });
+        if (!state) {
+            setState(value);
+            props.onChange(value);
+        } else {
+            let name = state.name;
+            if (state.listed === 1) {
+                name = `${name} (edited)`;
+            }
+            const result = _.omit(
+                { ...value, name, listed: 0 },
+                ...protectedFields
+            );
+            setState(result);
+            props.onChange(result);
+        }
         setEditMode(false);
     }
 

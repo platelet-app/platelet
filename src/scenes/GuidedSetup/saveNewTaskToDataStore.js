@@ -8,21 +8,23 @@ export async function saveNewTaskToDataStore(
     author = null,
     rider = null
 ) {
+    debugger;
     if (!tenantId) {
         throw new Error("TenantId is required");
     }
-    let { pickUpLocation, dropOffLocation, deliverables, comment, ...rest } =
-        data;
+    let { locations, deliverables, comment, ...rest } = data;
     let existingAuthor = null;
     if (author) {
         existingAuthor = await DataStore.query(models.User, author);
     }
-    if (pickUpLocation && !pickUpLocation.id) {
+    let pickUpLocation = locations.pickUpLocation;
+    if (locations.pickUpLocation && !locations.pickUpLocation.id) {
         pickUpLocation = await DataStore.save(
             new models.Location({ ...pickUpLocation, listed: 0, tenantId })
         );
     }
-    if (dropOffLocation && !dropOffLocation.id) {
+    let dropOffLocation = locations.dropOffLocation;
+    if (locations.dropOffLocation && !locations.dropOffLocation.id) {
         dropOffLocation = await DataStore.save(
             new models.Location({ ...dropOffLocation, listed: 0, tenantId })
         );

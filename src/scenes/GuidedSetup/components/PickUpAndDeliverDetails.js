@@ -5,11 +5,8 @@ import { Divider, Stack } from "@mui/material";
 import PopOutLocationSelector from "./PopOutLocationSelector";
 
 export const PickUpAndDeliverDetails = ({
-    values,
-    onSelectPickUpLocation,
-    onSelectDropOffLocation,
-    onChangePickUpLocation,
-    onChangeDropOffLocation,
+    onSetPickUpLocation,
+    onSetDropOffLocation,
     onClearPickUpLocation,
     onClearDropOffLocation,
 }) => {
@@ -17,28 +14,16 @@ export const PickUpAndDeliverDetails = ({
         <Stack spacing={1}>
             <Typography variant="h6">Where from?</Typography>
             <PopOutLocationSelector
-                onSelectPreset={onSelectPickUpLocation}
                 label="pick up"
-                onChange={onChangePickUpLocation}
+                onChange={onSetPickUpLocation}
                 onClear={onClearPickUpLocation}
-                onChangeContact={(values) =>
-                    onChangePickUpLocation({ contact: values })
-                }
-                location={values.pickUpLocation}
-                noLink
             />
             <Divider />
             <Typography variant="h6">Where to?</Typography>
             <PopOutLocationSelector
-                onSelectPreset={onSelectDropOffLocation}
                 label="delivery"
-                onChange={onChangeDropOffLocation}
+                onChange={onSetDropOffLocation}
                 onClear={onClearDropOffLocation}
-                onChangeContact={(values) =>
-                    onChangeDropOffLocation({ contact: values })
-                }
-                location={values.dropOffLocation}
-                noLink
             />
         </Stack>
     );

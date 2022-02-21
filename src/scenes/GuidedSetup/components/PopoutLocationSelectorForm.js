@@ -53,6 +53,7 @@ function PopOutLocationSelectorForm(props) {
                     <TextField
                         key={key}
                         fullWidth
+                        aria-label={label}
                         label={label}
                         value={state[key]}
                         onChange={(e) =>
@@ -67,6 +68,7 @@ function PopOutLocationSelectorForm(props) {
                     <TextField
                         key={key}
                         fullWidth
+                        aria-label={label}
                         label={label}
                         value={state.contact[key]}
                         onChange={(e) =>
