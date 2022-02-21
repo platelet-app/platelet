@@ -37,7 +37,7 @@ function PopOutLocationSelectorForm(props) {
     const [state, setState] = useState(initialState);
 
     function updateStateFromProps() {
-        if (props.location) setState({ ...initialState, ...props.location });
+        if (props.location) setState(props.location);
     }
     useEffect(updateStateFromProps, [props.location]);
 

@@ -63,6 +63,10 @@ function PopOutLocationSelector(props) {
     }
 
     function handleConfirmation(value) {
+        if (_.isEqual(state, value)) {
+            setEditMode(false);
+            return;
+        }
         if (!state) {
             setState(value);
             props.onChange(value);
