@@ -8,7 +8,6 @@ export async function saveNewTaskToDataStore(
     author = null,
     rider = null
 ) {
-    debugger;
     if (!tenantId) {
         throw new Error("TenantId is required");
     }

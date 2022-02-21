@@ -967,7 +967,7 @@ describe("LocationDetailsPanel", () => {
         amplify.DataStore.query.mockRejectedValue(fakeError);
         render(
             <LocationDetailsPanel
-                taskId={"fakeid"}
+                taskId={"fakeId"}
                 locationKey={"pickUpLocation"}
             />,
             { preloadedState }
