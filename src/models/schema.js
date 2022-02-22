@@ -87,7 +87,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "userRiderResponsibilityId"
                     }
                 },
@@ -173,6 +174,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "userRiderResponsibilityId": {
+                    "name": "userRiderResponsibilityId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -186,10 +194,10 @@ export const schema = {
                     "type": "key",
                     "properties": {
                         "name": "byCognitoId",
+                        "queryField": "getUserByCognitoId",
                         "fields": [
                             "cognitoId"
-                        ],
-                        "queryField": "getUserByCognitoId"
+                        ]
                     }
                 },
                 {
@@ -333,18 +341,18 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byAssignedUser",
+                        "name": "byTenantId",
                         "fields": [
-                            "assignedUserID"
+                            "tenantId"
                         ]
                     }
                 },
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byTenantId",
+                        "name": "byAssignedUser",
                         "fields": [
-                            "tenantId"
+                            "assignedUserID"
                         ]
                     }
                 },
@@ -407,7 +415,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "commentAuthorId"
+                        "targetName": "userCommentsId"
                     }
                 },
                 "visibility": {
@@ -635,6 +643,15 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
                         "name": "byTask",
                         "fields": [
                             "taskId",
@@ -649,15 +666,6 @@ export const schema = {
                         "fields": [
                             "assigneeId",
                             "taskId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byTenantId",
-                        "fields": [
-                            "tenantId"
                         ]
                     }
                 },
@@ -705,7 +713,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "taskCreatedById"
                     }
                 },
@@ -795,7 +804,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "taskRiderResponsibilityId"
                     }
                 },
@@ -810,7 +820,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "assignee"
+                        "associatedWith": "assigneeId"
                     }
                 },
                 "priority": {
@@ -845,7 +855,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "taskRelayPreviousId"
                     }
                 },
@@ -858,7 +869,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "taskRelayNextId"
                     }
                 },
@@ -914,6 +926,34 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "taskCreatedById": {
+                    "name": "taskCreatedById",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "taskRiderResponsibilityId": {
+                    "name": "taskRiderResponsibilityId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "taskRelayPreviousId": {
+                    "name": "taskRelayPreviousId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "taskRelayNextId": {
+                    "name": "taskRelayNextId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -926,11 +966,10 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byStatus",
+                        "name": "byTenantId",
                         "fields": [
-                            "status"
-                        ],
-                        "queryField": "tasksByStatus"
+                            "tenantId"
+                        ]
                     }
                 },
                 {
@@ -954,9 +993,10 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byTenantId",
+                        "name": "byStatus",
+                        "queryField": "tasksByStatus",
                         "fields": [
-                            "tenantId"
+                            "status"
                         ]
                     }
                 },
@@ -1207,16 +1247,10 @@ export const schema = {
                     "isRequired": true,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "deliverableDeliverableTypeId"
                     }
-                },
-                "taskDeliverablesId": {
-                    "name": "taskDeliverablesId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 },
                 "task": {
                     "name": "task",
@@ -1228,7 +1262,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "deliverableTaskId"
+                        "targetName": "taskDeliverablesId"
                     }
                 },
                 "count": {
@@ -1283,6 +1317,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "deliverableDeliverableTypeId": {
+                    "name": "deliverableDeliverableTypeId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -1757,5 +1798,5 @@ export const schema = {
             }
         }
     },
-    "version": "e9831b4e13e351534c70de40b9f785d7"
+    "version": "0a331518bf5a978b2288a7697a2a89e8"
 };

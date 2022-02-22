@@ -153,6 +153,7 @@ export declare class User {
   readonly active: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
+  readonly userRiderResponsibilityId?: string;
   constructor(init: ModelInit<User, UserMetaData>);
   static copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
 }
@@ -232,6 +233,10 @@ export declare class Task {
   readonly status: TaskStatus | keyof typeof TaskStatus;
   readonly createdAt?: string;
   readonly updatedAt?: string;
+  readonly taskCreatedById?: string;
+  readonly taskRiderResponsibilityId?: string;
+  readonly taskRelayPreviousId?: string;
+  readonly taskRelayNextId?: string;
   constructor(init: ModelInit<Task, TaskMetaData>);
   static copyOf(source: Task, mutator: (draft: MutableModel<Task, TaskMetaData>) => MutableModel<Task, TaskMetaData> | void): Task;
 }
@@ -265,7 +270,6 @@ export declare class Deliverable {
   readonly id: string;
   readonly tenantId: string;
   readonly deliverableType: DeliverableType;
-  readonly taskDeliverablesId?: string;
   readonly task?: Task;
   readonly count?: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
@@ -273,6 +277,7 @@ export declare class Deliverable {
   readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
+  readonly deliverableDeliverableTypeId: string;
   constructor(init: ModelInit<Deliverable, DeliverableMetaData>);
   static copyOf(source: Deliverable, mutator: (draft: MutableModel<Deliverable, DeliverableMetaData>) => MutableModel<Deliverable, DeliverableMetaData> | void): Deliverable;
 }

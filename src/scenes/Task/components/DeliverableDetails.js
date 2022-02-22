@@ -50,10 +50,18 @@ function DeliverableDetails(props) {
             if (deliverables) {
                 deliverablesObserver.current.unsubscribe();
                 deliverablesObserver.current = DataStore.observe(
-                    models.Deliverable,
-                    (t) => t.taskDeliverablesId("eq", props.taskId)
-                ).subscribe((observeResult) => {
-                    const deliverable = observeResult.element;
+                    models.Deliverable
+                ).subscribe(async (observeResult) => {
+                    const deliverable = await DataStore.query(
+                        models.Deliverable,
+                        observeResult.element.id
+                    );
+                    if (
+                        !deliverable.task ||
+                        deliverable.task.id !== props.taskId
+                    ) {
+                        return;
+                    }
                     if (observeResult.opType === "INSERT") {
                         setState((prevState) => ({
                             ...prevState,
@@ -77,7 +85,7 @@ function DeliverableDetails(props) {
                 setIsFetching(false);
             }
         } catch (error) {
-            console.error(error);
+            console.log(error);
             setErrorState(true);
         }
     }

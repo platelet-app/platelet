@@ -4,11 +4,13 @@
       "addmissingownerfields": true,
       "improvepluralization": true,
       "validatetypenamereservedwords": true,
-      "useexperimentalpipelinedtransformer": false,
+      "useexperimentalpipelinedtransformer": true,
       "enableiterativegsiupdates": true,
       "secondarykeyasgsi": true,
       "skipoverridemutationinputtypes": true,
-      "showfieldauthnotification": false
+      "showfieldauthnotification": false,
+      "transformerversion": 2,
+      "suppressschemamigrationprompt": true
     },
     "frontend-ios": {
       "enablexcodeintegration": true
