@@ -93,6 +93,10 @@ export declare class S3Object {
   constructor(init: ModelInit<S3Object>);
 }
 
+type TenantMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -131,6 +135,15 @@ type DeliverableTypeMetaData = {
 
 type GroupMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+export declare class Tenant {
+  readonly id: string;
+  readonly referenceIdentifier: string;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  constructor(init: ModelInit<Tenant, TenantMetaData>);
+  static copyOf(source: Tenant, mutator: (draft: MutableModel<Tenant, TenantMetaData>) => MutableModel<Tenant, TenantMetaData> | void): Tenant;
 }
 
 export declare class User {

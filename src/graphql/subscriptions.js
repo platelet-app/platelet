@@ -1,6 +1,45 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateTenant = /* GraphQL */ `
+  subscription OnCreateTenant {
+    onCreateTenant {
+      id
+      referenceIdentifier
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateTenant = /* GraphQL */ `
+  subscription OnUpdateTenant {
+    onUpdateTenant {
+      id
+      referenceIdentifier
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteTenant = /* GraphQL */ `
+  subscription OnDeleteTenant {
+    onDeleteTenant {
+      id
+      referenceIdentifier
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser {
     onCreateUser {

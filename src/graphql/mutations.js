@@ -11,6 +11,54 @@ export const registerUser = /* GraphQL */ `
     registerUser(name: $name, email: $email, tenantId: $tenantId, roles: $roles)
   }
 `;
+export const createTenant = /* GraphQL */ `
+  mutation CreateTenant(
+    $input: CreateTenantInput!
+    $condition: ModelTenantConditionInput
+  ) {
+    createTenant(input: $input, condition: $condition) {
+      id
+      referenceIdentifier
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateTenant = /* GraphQL */ `
+  mutation UpdateTenant(
+    $input: UpdateTenantInput!
+    $condition: ModelTenantConditionInput
+  ) {
+    updateTenant(input: $input, condition: $condition) {
+      id
+      referenceIdentifier
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteTenant = /* GraphQL */ `
+  mutation DeleteTenant(
+    $input: DeleteTenantInput!
+    $condition: ModelTenantConditionInput
+  ) {
+    deleteTenant(input: $input, condition: $condition) {
+      id
+      referenceIdentifier
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const createUser = /* GraphQL */ `
   mutation CreateUser(
     $input: CreateUserInput!

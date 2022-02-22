@@ -16,6 +16,67 @@ export const getStatistics = /* GraphQL */ `
     }
   }
 `;
+export const getTenant = /* GraphQL */ `
+  query GetTenant($id: ID!) {
+    getTenant(id: $id) {
+      id
+      referenceIdentifier
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const listTenants = /* GraphQL */ `
+  query ListTenants(
+    $filter: ModelTenantFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listTenants(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        referenceIdentifier
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const syncTenants = /* GraphQL */ `
+  query SyncTenants(
+    $filter: ModelTenantFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncTenants(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        referenceIdentifier
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const getUser = /* GraphQL */ `
   query GetUser($id: ID!) {
     getUser(id: $id) {

@@ -1,3 +1,8 @@
+type Tenant @auth(rules: [{allow: private}]) @model {
+  id: ID!
+  referenceIdentifier: String!
+}
+
 type User @auth(rules: [{allow: private}, {allow: private, provider: iam, operations: [read, create]}]) @model {
   id: ID!
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId")
