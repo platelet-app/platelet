@@ -97,7 +97,7 @@ type Task @model @auth(rules: [{allow: private}]) {
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   riderResponsibility: RiderResponsibility @hasOne
-  assignees: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
+  assignees: [TaskAssignee] @hasMany(indexName: "byTask", fields: ["id"])
   priority: Priority
   deliverables: [Deliverable!] @hasMany
   relayPrevious: Task @hasOne
@@ -107,7 +107,7 @@ type Task @model @auth(rules: [{allow: private}]) {
   status: TaskStatus! @index(name: "byStatus", queryField: "tasksByStatus")
 }
 
-type TaskAssignee @model(queries: null) @auth(rules: [{allow: private}]) {
+type TaskAssignee @model @auth(rules: [{allow: private}]) {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   taskId: ID! @index(name: "byTask", sortKeyFields: ["assigneeId"])

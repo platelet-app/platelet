@@ -636,9 +636,7 @@ export const schema = {
             "attributes": [
                 {
                     "type": "model",
-                    "properties": {
-                        "queries": null
-                    }
+                    "properties": {}
                 },
                 {
                     "type": "key",
@@ -820,7 +818,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "assigneeId"
+                        "associatedWith": "task"
                     }
                 },
                 "priority": {
@@ -1798,5 +1796,5 @@ export const schema = {
             }
         }
     },
-    "version": "0a331518bf5a978b2288a7697a2a89e8"
+    "version": "e25ec8ad9c139345cf0227c40ed77871"
 };
