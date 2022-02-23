@@ -214,7 +214,8 @@ enum CommentVisibility {
 }
 
 type Mutation {
-  registerUser(name: String, email: String, tenantId: ID, roles: [Role]): String @function(name: "plateletAdminAddNewUser-${env}")
+  registerUser(name: String, email: String, tenantId: ID, roles: [Role]): String @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: private}])
+  registerTenant(name: String, email: String): User @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: private}])
 }
 
 type Statistics {
