@@ -5,6 +5,7 @@ export const onCreateTenant = /* GraphQL */ `
   subscription OnCreateTenant {
     onCreateTenant {
       id
+      name
       referenceIdentifier
       createdAt
       updatedAt
@@ -18,6 +19,7 @@ export const onUpdateTenant = /* GraphQL */ `
   subscription OnUpdateTenant {
     onUpdateTenant {
       id
+      name
       referenceIdentifier
       createdAt
       updatedAt
@@ -31,6 +33,7 @@ export const onDeleteTenant = /* GraphQL */ `
   subscription OnDeleteTenant {
     onDeleteTenant {
       id
+      name
       referenceIdentifier
       createdAt
       updatedAt
@@ -364,48 +367,6 @@ export const onDeleteUser = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userRiderResponsibilityId
-    }
-  }
-`;
-export const onCreateGroup = /* GraphQL */ `
-  subscription OnCreateGroup {
-    onCreateGroup {
-      id
-      taskGroupId
-      name
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onUpdateGroup = /* GraphQL */ `
-  subscription OnUpdateGroup {
-    onUpdateGroup {
-      id
-      taskGroupId
-      name
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onDeleteGroup = /* GraphQL */ `
-  subscription OnDeleteGroup {
-    onDeleteGroup {
-      id
-      taskGroupId
-      name
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -1435,10 +1396,6 @@ export const onCreateTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1606,10 +1563,6 @@ export const onCreateTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1624,20 +1577,6 @@ export const onCreateTask = /* GraphQL */ `
         taskRiderResponsibilityId
         taskRelayPreviousId
         taskRelayNextId
-      }
-      group {
-        items {
-          id
-          taskGroupId
-          name
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       comments {
         items {
@@ -2058,10 +1997,6 @@ export const onUpdateTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2229,10 +2164,6 @@ export const onUpdateTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2247,20 +2178,6 @@ export const onUpdateTask = /* GraphQL */ `
         taskRiderResponsibilityId
         taskRelayPreviousId
         taskRelayNextId
-      }
-      group {
-        items {
-          id
-          taskGroupId
-          name
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       comments {
         items {
@@ -2681,10 +2598,6 @@ export const onDeleteTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2852,10 +2765,6 @@ export const onDeleteTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2870,20 +2779,6 @@ export const onDeleteTask = /* GraphQL */ `
         taskRiderResponsibilityId
         taskRelayPreviousId
         taskRelayNextId
-      }
-      group {
-        items {
-          id
-          taskGroupId
-          name
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       comments {
         items {
@@ -3073,10 +2968,6 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken
@@ -3327,10 +3218,6 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -3579,10 +3466,6 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken
@@ -4141,10 +4024,6 @@ export const onCreateDeliverable = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -4359,10 +4238,6 @@ export const onUpdateDeliverable = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -4576,10 +4451,6 @@ export const onDeleteDeliverable = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken

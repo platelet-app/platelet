@@ -1,9 +1,10 @@
 type Tenant @auth(rules: [{allow: private}]) @model {
   id: ID!
+  name: String!
   referenceIdentifier: String!
 }
 
-type User @auth(rules: [{allow: private}, {allow: private, provider: iam, operations: [read, create]}]) @model {
+type User @auth(rules: [{allow: private}]) @model {
   id: ID!
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId")
   tenantId: ID! @index(name: "byTenantId")
@@ -27,12 +28,6 @@ type S3Object {
   bucket: String!
   key: String!
   region: String!
-}
-
-type Group @auth(rules: [{allow: private}]) @model {
-  id: ID!
-  taskGroupId: ID
-  name: String
 }
 
 type Vehicle @auth(rules: [{allow: private}]) @model {
@@ -107,7 +102,6 @@ type Task @model @auth(rules: [{allow: private}]) {
   deliverables: [Deliverable!] @hasMany
   relayPrevious: Task @hasOne
   relayNext: Task @hasOne
-  group: [Group] @hasMany
   comments: [Comment!] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus! @index(name: "byStatus", queryField: "tasksByStatus")
 }

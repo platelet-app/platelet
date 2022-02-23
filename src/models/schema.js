@@ -227,7 +227,8 @@ export const schema = {
                                 "provider": "iam",
                                 "operations": [
                                     "read",
-                                    "create"
+                                    "create",
+                                    "delete"
                                 ]
                             }
                         ]
@@ -872,20 +873,6 @@ export const schema = {
                         "targetName": "taskRelayNextId"
                     }
                 },
-                "group": {
-                    "name": "group",
-                    "isArray": true,
-                    "type": {
-                        "model": "Group"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "taskGroupId"
-                    }
-                },
                 "comments": {
                     "name": "comments",
                     "isArray": true,
@@ -1459,8 +1446,8 @@ export const schema = {
                 }
             ]
         },
-        "Group": {
-            "name": "Group",
+        "Tenant": {
+            "name": "Tenant",
             "fields": {
                 "id": {
                     "name": "id",
@@ -1469,69 +1456,10 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "taskGroupId": {
-                    "name": "taskGroupId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "name": {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Groups",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "private",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "Tenant": {
-            "name": "Tenant",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -1577,6 +1505,15 @@ export const schema = {
                                     "update",
                                     "delete",
                                     "read"
+                                ]
+                            },
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "create",
+                                    "delete"
                                 ]
                             }
                         ]
@@ -1855,5 +1792,5 @@ export const schema = {
             }
         }
     },
-    "version": "f08aeb7e1e9f2335d4096d11a539d899"
+    "version": "ab511a069202aca4b31bab52569e3f2c"
 };

@@ -20,6 +20,7 @@ export const getTenant = /* GraphQL */ `
   query GetTenant($id: ID!) {
     getTenant(id: $id) {
       id
+      name
       referenceIdentifier
       createdAt
       updatedAt
@@ -38,6 +39,7 @@ export const listTenants = /* GraphQL */ `
     listTenants(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        name
         referenceIdentifier
         createdAt
         updatedAt
@@ -65,6 +67,7 @@ export const syncTenants = /* GraphQL */ `
     ) {
       items {
         id
+        name
         referenceIdentifier
         createdAt
         updatedAt
@@ -428,70 +431,6 @@ export const getUserByCognitoId = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userRiderResponsibilityId
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const getGroup = /* GraphQL */ `
-  query GetGroup($id: ID!) {
-    getGroup(id: $id) {
-      id
-      taskGroupId
-      name
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const listGroups = /* GraphQL */ `
-  query ListGroups(
-    $filter: ModelGroupFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listGroups(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        taskGroupId
-        name
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const syncGroups = /* GraphQL */ `
-  query SyncGroups(
-    $filter: ModelGroupFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncGroups(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        taskGroupId
-        name
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
       }
       nextToken
       startedAt
@@ -1332,10 +1271,6 @@ export const getTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1503,10 +1438,6 @@ export const getTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1521,20 +1452,6 @@ export const getTask = /* GraphQL */ `
         taskRiderResponsibilityId
         taskRelayPreviousId
         taskRelayNextId
-      }
-      group {
-        items {
-          id
-          taskGroupId
-          name
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       comments {
         items {
@@ -1724,10 +1641,6 @@ export const listTasks = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1912,10 +1825,6 @@ export const syncTasks = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken
@@ -2104,10 +2013,6 @@ export const tasksByStatus = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2287,10 +2192,6 @@ export const getTaskAssignee = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken
@@ -2936,10 +2837,6 @@ export const getDeliverable = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken

@@ -129,10 +129,6 @@ type DeliverableTypeMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type GroupMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
 type TenantMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -232,7 +228,6 @@ export declare class Task {
   readonly deliverables?: Deliverable[];
   readonly relayPrevious?: Task;
   readonly relayNext?: Task;
-  readonly group?: (Group | null)[];
   readonly comments?: Comment[];
   readonly status: TaskStatus | keyof typeof TaskStatus;
   readonly createdAt?: string;
@@ -299,18 +294,9 @@ export declare class DeliverableType {
   static copyOf(source: DeliverableType, mutator: (draft: MutableModel<DeliverableType, DeliverableTypeMetaData>) => MutableModel<DeliverableType, DeliverableTypeMetaData> | void): DeliverableType;
 }
 
-export declare class Group {
-  readonly id: string;
-  readonly taskGroupId?: string;
-  readonly name?: string;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
-  constructor(init: ModelInit<Group, GroupMetaData>);
-  static copyOf(source: Group, mutator: (draft: MutableModel<Group, GroupMetaData>) => MutableModel<Group, GroupMetaData> | void): Group;
-}
-
 export declare class Tenant {
   readonly id: string;
+  readonly name: string;
   readonly referenceIdentifier: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;

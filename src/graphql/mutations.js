@@ -8,6 +8,7 @@ export const createTenant = /* GraphQL */ `
   ) {
     createTenant(input: $input, condition: $condition) {
       id
+      name
       referenceIdentifier
       createdAt
       updatedAt
@@ -24,6 +25,7 @@ export const updateTenant = /* GraphQL */ `
   ) {
     updateTenant(input: $input, condition: $condition) {
       id
+      name
       referenceIdentifier
       createdAt
       updatedAt
@@ -40,6 +42,7 @@ export const deleteTenant = /* GraphQL */ `
   ) {
     deleteTenant(input: $input, condition: $condition) {
       id
+      name
       referenceIdentifier
       createdAt
       updatedAt
@@ -382,57 +385,6 @@ export const deleteUser = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userRiderResponsibilityId
-    }
-  }
-`;
-export const createGroup = /* GraphQL */ `
-  mutation CreateGroup(
-    $input: CreateGroupInput!
-    $condition: ModelGroupConditionInput
-  ) {
-    createGroup(input: $input, condition: $condition) {
-      id
-      taskGroupId
-      name
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const updateGroup = /* GraphQL */ `
-  mutation UpdateGroup(
-    $input: UpdateGroupInput!
-    $condition: ModelGroupConditionInput
-  ) {
-    updateGroup(input: $input, condition: $condition) {
-      id
-      taskGroupId
-      name
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const deleteGroup = /* GraphQL */ `
-  mutation DeleteGroup(
-    $input: DeleteGroupInput!
-    $condition: ModelGroupConditionInput
-  ) {
-    deleteGroup(input: $input, condition: $condition) {
-      id
-      taskGroupId
-      name
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -1483,10 +1435,6 @@ export const createTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1654,10 +1602,6 @@ export const createTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1672,20 +1616,6 @@ export const createTask = /* GraphQL */ `
         taskRiderResponsibilityId
         taskRelayPreviousId
         taskRelayNextId
-      }
-      group {
-        items {
-          id
-          taskGroupId
-          name
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       comments {
         items {
@@ -2109,10 +2039,6 @@ export const updateTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2280,10 +2206,6 @@ export const updateTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2298,20 +2220,6 @@ export const updateTask = /* GraphQL */ `
         taskRiderResponsibilityId
         taskRelayPreviousId
         taskRelayNextId
-      }
-      group {
-        items {
-          id
-          taskGroupId
-          name
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       comments {
         items {
@@ -2735,10 +2643,6 @@ export const deleteTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2906,10 +2810,6 @@ export const deleteTask = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2924,20 +2824,6 @@ export const deleteTask = /* GraphQL */ `
         taskRiderResponsibilityId
         taskRelayPreviousId
         taskRelayNextId
-      }
-      group {
-        items {
-          id
-          taskGroupId
-          name
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       comments {
         items {
@@ -3130,10 +3016,6 @@ export const createTaskAssignee = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken
@@ -3387,10 +3269,6 @@ export const updateTaskAssignee = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -3642,10 +3520,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken
@@ -4225,10 +4099,6 @@ export const createDeliverable = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -4446,10 +4316,6 @@ export const updateDeliverable = /* GraphQL */ `
           taskRelayPreviousId
           taskRelayNextId
         }
-        group {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -4666,10 +4532,6 @@ export const deleteDeliverable = /* GraphQL */ `
           taskRiderResponsibilityId
           taskRelayPreviousId
           taskRelayNextId
-        }
-        group {
-          nextToken
-          startedAt
         }
         comments {
           nextToken
