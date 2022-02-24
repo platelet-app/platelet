@@ -96,6 +96,7 @@ function TasksGridColumn(props) {
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
     const roleViewRef = useRef(roleView);
+    const getTasksRef = useRef(null);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
@@ -173,6 +174,8 @@ function TasksGridColumn(props) {
         }
     }
 
+    getTasksRef.current = getTasks;
+
     useEffect(
         () => {
             setIsFetching(true);
@@ -198,7 +201,7 @@ function TasksGridColumn(props) {
                         props.taskKey.includes(newTask.element.status)
                     ) {
                         animate.current = true;
-                        getTasks();
+                        getTasksRef.current();
                         return;
                     } else if (
                         newTask.element.status &&
@@ -216,7 +219,7 @@ function TasksGridColumn(props) {
                 } else {
                     // if roleView is rider or coordinator, let the assignments observer deal with it
                     if (roleViewRef.current !== "ALL") return;
-                    getTasks();
+                    getTasksRef.current();
                 }
             }
         );
@@ -274,7 +277,7 @@ function TasksGridColumn(props) {
                     ) {
                         if (!element.taskId) return;
                         animate.current = true;
-                        getTasks();
+                        getTasksRef.current();
                     }
                 } else if (taskAssignee.opType === "DELETE") {
                     const element = taskAssignee.element;
