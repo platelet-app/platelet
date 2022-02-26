@@ -1,8 +1,11 @@
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { userRoles } from "../../../apiConsts";
-import { addAssigneesAndConvertToObject, isCompletedTab } from "./functions";
-import moment from "moment";
+import {
+    addAssigneesAndConvertToObject,
+    filterTasksToOneWeek,
+    isCompletedTab,
+} from "./functions";
 
 export default async function getAllTasksByUser(
     keys,
@@ -10,46 +13,21 @@ export default async function getAllTasksByUser(
     role = userRoles.rider
 ) {
     const allAssignments = await DataStore.query(models.TaskAssignee);
-    let allTasks = [];
-    // only get one week worth if completed tab
-    if (isCompletedTab(keys)) {
-        const newMoment = moment();
-        const start = newMoment.toISOString();
-        const end = newMoment.subtract(1, "week").toISOString();
-        allTasks = await DataStore.query(
-            models.Task,
-            (task) =>
-                task.or((task) =>
-                    task
-                        // TODO: not ideal since it sometimes is one index but works for now
-                        .status("eq", keys[0])
-                        .status("eq", keys[1])
-                        .createdAt("le", start)
-                        .createdAt("ge", end)
-                ),
+    const allTasks = await DataStore.query(
+        models.Task,
+        (task) =>
+            task.or((task) =>
+                task
+                    // TODO: not ideal since it sometimes is one index but works for now
+                    .status("eq", keys[0])
+                    .status("eq", keys[1])
+            ),
 
-            {
-                sort: (s) => s.createdAt("desc"),
-                limit: 200,
-            }
-        );
-    } else {
-        allTasks = await DataStore.query(
-            models.Task,
-            (task) =>
-                task.or((task) =>
-                    task
-                        // TODO: not ideal since it sometimes is one index but works for now
-                        .status("eq", keys[0])
-                        .status("eq", keys[1])
-                ),
-
-            {
-                sort: (s) => s.createdAt("desc"),
-                limit: 0,
-            }
-        );
-    }
+        {
+            sort: (s) => s.createdAt("desc"),
+            limit: isCompletedTab(keys) ? 200 : 0,
+        }
+    );
     const riderAssigneesFiltered = allAssignments
         .filter(
             (a) =>
@@ -63,5 +41,12 @@ export default async function getAllTasksByUser(
 
     const riderTaskIds = riderAssigneesFiltered.map((t) => t.id);
     const riderTasks = allTasks.filter((t) => riderTaskIds.includes(t.id));
+    if (isCompletedTab(keys)) {
+        // filter tasksResult to only return tasks that were created in the last week
+        return addAssigneesAndConvertToObject(
+            riderTasks.filter(filterTasksToOneWeek),
+            allAssignments
+        );
+    }
     return addAssigneesAndConvertToObject(riderTasks, allAssignments);
 }
