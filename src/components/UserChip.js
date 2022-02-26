@@ -20,14 +20,21 @@ function UserChip(props) {
     useEffect(() => getThumbnail(), [props.user]);
 
     async function setText() {
-        console.log(props.user);
-        if (props.showResponsibility && props.user.userRiderResponsibilityId) {
-            const riderResponsibility = await DataStore.query(
-                models.RiderResponsibility,
+        try {
+            if (
+                props.showResponsibility &&
                 props.user.userRiderResponsibilityId
-            );
-            setLabel(`${displayName} (${riderResponsibility.label})`);
-        } else {
+            ) {
+                const riderResponsibility = await DataStore.query(
+                    models.RiderResponsibility,
+                    props.user.userRiderResponsibilityId
+                );
+                setLabel(`${displayName} (${riderResponsibility.label})`);
+            } else {
+                setLabel(displayName);
+            }
+        } catch (error) {
+            console.log(error);
             setLabel(displayName);
         }
     }
