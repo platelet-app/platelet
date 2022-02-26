@@ -148,7 +148,6 @@ export declare class User {
   readonly profilePictureThumbnailURL?: string;
   readonly profilePicture?: S3Object;
   readonly profilePictureThumbnail?: S3Object;
-  readonly comments?: Comment[];
   readonly assignments?: (TaskAssignee | null)[];
   readonly active: number;
   readonly createdAt?: string;
@@ -183,6 +182,7 @@ export declare class Comment {
   readonly visibility?: CommentVisibility | keyof typeof CommentVisibility;
   readonly createdAt?: string;
   readonly updatedAt?: string;
+  readonly commentAuthorId?: string;
   constructor(init: ModelInit<Comment, CommentMetaData>);
   static copyOf(source: Comment, mutator: (draft: MutableModel<Comment, CommentMetaData>) => MutableModel<Comment, CommentMetaData> | void): Comment;
 }

@@ -124,20 +124,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "comments": {
-                    "name": "comments",
-                    "isArray": true,
-                    "type": {
-                        "model": "Comment"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "parentId"
-                    }
-                },
                 "assignments": {
                     "name": "assignments",
                     "isArray": true,
@@ -406,8 +392,9 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "userCommentsId"
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "commentAuthorId"
                     }
                 },
                 "visibility": {
@@ -434,6 +421,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "commentAuthorId": {
+                    "name": "commentAuthorId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -1774,5 +1768,5 @@ export const schema = {
             }
         }
     },
-    "version": "ab511a069202aca4b31bab52569e3f2c"
+    "version": "065009478c4716fbe6adc66e14c3920c"
 };

@@ -122,22 +122,6 @@ export const createUser = /* GraphQL */ `
         key
         region
       }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       assignments {
         items {
           id
@@ -233,22 +217,6 @@ export const updateUser = /* GraphQL */ `
         bucket
         key
         region
-      }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       assignments {
         items {
@@ -346,22 +314,6 @@ export const deleteUser = /* GraphQL */ `
         key
         region
       }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       assignments {
         items {
           id
@@ -452,10 +404,6 @@ export const createVehicle = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -480,6 +428,7 @@ export const createVehicle = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -556,10 +505,6 @@ export const updateVehicle = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -584,6 +529,7 @@ export const updateVehicle = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -660,10 +606,6 @@ export const deleteVehicle = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -688,6 +630,7 @@ export const deleteVehicle = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -802,6 +745,7 @@ export const createLocation = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -916,6 +860,7 @@ export const updateLocation = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -1030,6 +975,7 @@ export const deleteLocation = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -1099,10 +1045,6 @@ export const createTask = /* GraphQL */ `
           bucket
           key
           region
-        }
-        comments {
-          nextToken
-          startedAt
         }
         assignments {
           nextToken
@@ -1629,6 +1571,7 @@ export const createTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -1704,10 +1647,6 @@ export const updateTask = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -2233,6 +2172,7 @@ export const updateTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -2308,10 +2248,6 @@ export const deleteTask = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -2837,6 +2773,7 @@ export const deleteTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -3081,10 +3018,6 @@ export const createTaskAssignee = /* GraphQL */ `
           bucket
           key
           region
-        }
-        comments {
-          nextToken
-          startedAt
         }
         assignments {
           nextToken
@@ -3334,10 +3267,6 @@ export const updateTaskAssignee = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -3586,10 +3515,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -3670,10 +3595,6 @@ export const createComment = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -3692,6 +3613,7 @@ export const createComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      commentAuthorId
     }
   }
 `;
@@ -3755,10 +3677,6 @@ export const updateComment = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -3777,6 +3695,7 @@ export const updateComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      commentAuthorId
     }
   }
 `;
@@ -3840,10 +3759,6 @@ export const deleteComment = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -3862,6 +3777,7 @@ export const deleteComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      commentAuthorId
     }
   }
 `;
@@ -4129,6 +4045,7 @@ export const createDeliverable = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -4346,6 +4263,7 @@ export const updateDeliverable = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -4563,6 +4481,7 @@ export const deleteDeliverable = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -4703,22 +4622,6 @@ export const registerTenant = /* GraphQL */ `
         bucket
         key
         region
-      }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
       }
       assignments {
         items {

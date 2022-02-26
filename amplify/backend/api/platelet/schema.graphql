@@ -19,7 +19,6 @@ type User @auth(rules: [{allow: private}]) @model {
   profilePictureThumbnailURL: String
   profilePicture: S3Object
   profilePictureThumbnail: S3Object
-  comments: [Comment!] @hasMany(indexName: "byParent", fields: ["id"])
   assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
   active: Int!
 }
@@ -121,7 +120,7 @@ type Comment @auth(rules: [{allow: private}]) @model {
   parentId: ID @index(name: "byParent")
   tenantId: ID! @index(name: "byTenantId")
   body: String
-  author: User @belongsTo
+  author: User @hasOne
   visibility: CommentVisibility
 }
 

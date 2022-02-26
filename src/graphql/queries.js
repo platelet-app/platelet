@@ -147,22 +147,6 @@ export const getUser = /* GraphQL */ `
         key
         region
       }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
       assignments {
         items {
           id
@@ -246,10 +230,6 @@ export const listUsers = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -329,10 +309,6 @@ export const syncUsers = /* GraphQL */ `
           bucket
           key
           region
-        }
-        comments {
-          nextToken
-          startedAt
         }
         assignments {
           nextToken
@@ -416,10 +392,6 @@ export const getUserByCognitoId = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -498,10 +470,6 @@ export const getVehicle = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -526,6 +494,7 @@ export const getVehicle = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -741,6 +710,7 @@ export const getLocation = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -935,10 +905,6 @@ export const getTask = /* GraphQL */ `
           bucket
           key
           region
-        }
-        comments {
-          nextToken
-          startedAt
         }
         assignments {
           nextToken
@@ -1465,6 +1431,7 @@ export const getTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
@@ -2258,10 +2225,6 @@ export const getTaskAssignee = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -2475,10 +2438,6 @@ export const getComment = /* GraphQL */ `
           key
           region
         }
-        comments {
-          nextToken
-          startedAt
-        }
         assignments {
           nextToken
           startedAt
@@ -2497,6 +2456,7 @@ export const getComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      commentAuthorId
     }
   }
 `;
@@ -2536,6 +2496,7 @@ export const listComments = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        commentAuthorId
       }
       nextToken
       startedAt
@@ -2584,6 +2545,7 @@ export const syncComments = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        commentAuthorId
       }
       nextToken
       startedAt
@@ -2868,6 +2830,7 @@ export const getDeliverable = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+          commentAuthorId
         }
         nextToken
         startedAt
