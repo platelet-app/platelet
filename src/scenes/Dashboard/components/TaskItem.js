@@ -124,6 +124,7 @@ function TaskItem(props) {
             (c) =>
                 c.visibility === commentVisibility.everyone ||
                 (c.visibility === commentVisibility.me &&
+                    c.author &&
                     c.author.id === whoami.id)
         );
         return commentsResult.length;
