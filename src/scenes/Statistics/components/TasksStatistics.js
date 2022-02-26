@@ -1,68 +1,60 @@
-import React, {useEffect, useState} from "react";
-import {PaddedPaper} from "../../../styles/common";
+import React, { useEffect, useState } from "react";
+import { PaddedPaper } from "../../../styles/common";
 import Grid from "@mui/material/Grid";
-import {useSelector} from "react-redux";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { useSelector } from "react-redux";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { priorities, tasksStatus } from "../../../apiConsts";
 
 function getTitle(key) {
     switch (key) {
-        case "num_tasks":
+        case "TOTAL":
             return "Total";
-        case "num_deleted":
-            return "Deleted";
-        case "num_completed":
+        case tasksStatus.completed:
             return "Completed";
-        case "num_picked_up":
+        case tasksStatus.pickedUp:
             return "Picked up";
-        case "num_active":
+        case tasksStatus.droppedOff:
+            return "Delivered";
+        case tasksStatus.active:
             return "Active";
-        case "num_unassigned":
+        case tasksStatus.new:
             return "Unassigned";
-        case "num_rejected":
+        case tasksStatus.rejected:
             return "Rejected";
-        case "num_cancelled":
+        case tasksStatus.cancelled:
             return "Cancelled";
-        case "time_active":
-            return "Time Active";
-        case "unassigned":
-            return "Unassigned";
+        case tasksStatus.abandoned:
+            return "Abandoned";
         default:
             return key;
-
     }
 }
 
 function pad(num) {
-    return ("0"+num).slice(-2);
+    return ("0" + num).slice(-2);
 }
 function hhmmss(secs) {
     var minutes = Math.floor(secs / 60);
-    secs = secs%60;
-    var hours = Math.floor(minutes/60)
-    minutes = minutes%60;
+    secs = secs % 60;
+    var hours = Math.floor(minutes / 60);
+    minutes = minutes % 60;
     return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
 }
 
-
 function CommonStats(props) {
-    const columns = [
-        "num_completed",
-        "num_picked_up",
-        "num_active",
-        "num_unassigned",
-        "num_rejected",
-        "num_cancelled",
-        "num_tasks",
-        "time_active",
-    ];
+    const columns = [...Object.values(tasksStatus), "TOTAL"];
     return (
-        <TableContainer component={PaddedPaper}>
-            <Table size={"small"} style={{minWidth: "600px"}} aria-label="simple table">
+        <TableContainer>
+            <Table
+                size={"small"}
+                style={{ minWidth: "600px" }}
+                aria-label="simple table"
+            >
                 <TableHead>
                     <TableRow>
                         {columns.map((key) => (
@@ -74,33 +66,48 @@ function CommonStats(props) {
                     <TableRow>
                         {columns.map((key) => {
                             if (key === "time_active")
-                                return <TableCell key={key}>{hhmmss(props.stats[key])}</TableCell>;
+                                return (
+                                    <TableCell key={key}>
+                                        {hhmmss(props.stats[key])}
+                                    </TableCell>
+                                );
                             else
-                                return <TableCell key={key}
-                                                  style={{fontWeight: key === "num_tasks" ? "bold" : "none"}}>{props.stats[key]}</TableCell>
+                                return (
+                                    <TableCell
+                                        key={key}
+                                        style={{
+                                            fontWeight:
+                                                key === "numTasks"
+                                                    ? "bold"
+                                                    : "none",
+                                        }}
+                                    >
+                                        {props.stats[key]}
+                                    </TableCell>
+                                );
                         })}
                     </TableRow>
-
                 </TableBody>
             </Table>
         </TableContainer>
-
-
-    )
-
-
+    );
 }
 
 function PatchStats(props) {
-    const priorities = useSelector(state => state.availablePriorities.priorities);
-    let columns = ["Patch"];
-    columns.push(...priorities.map((p) => p.label));
-    columns.push("None");
-    columns.push("Total");
+    let columns = [
+        "Responsibility",
+        ...Object.values(priorities),
+        "None",
+        "Total",
+    ];
 
     return (
-        <TableContainer component={PaddedPaper}>
-            <Table size={"small"} style={{minWidth: "600px"}} aria-label="simple table">
+        <TableContainer>
+            <Table
+                size={"small"}
+                style={{ minWidth: "600px" }}
+                aria-label="responsibilities table"
+            >
                 <TableHead>
                     <TableRow>
                         {columns.map((title) => (
@@ -109,66 +116,70 @@ function PatchStats(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.keys(props.stats.patches ? props.stats.patches : {}).map((patch) => {
+                    {Object.keys(props.stats || {}).map((patch) => {
                         return (
                             <TableRow key={patch} align="right">
-                                {columns.map((column) => (
-                                    column === "Patch" ? <TableCell key={column}>{patch}</TableCell> :
-                                        <TableCell key={column}>{props.stats.patches[patch][column]}</TableCell>
-                                ))}
-
+                                {columns.map((column) =>
+                                    column === "Responsibility" ? (
+                                        <TableCell key={column}>
+                                            {patch}
+                                        </TableCell>
+                                    ) : (
+                                        <TableCell key={column}>
+                                            {
+                                                props.stats[patch][
+                                                    column.toUpperCase()
+                                                ]
+                                            }
+                                        </TableCell>
+                                    )
+                                )}
                             </TableRow>
-                        )
-
+                        );
                     })}
                     <TableRow align="right">
                         {columns.map((column) => {
-                            if (column === "Total")
-                                return <TableCell key={column}
-                                    style={{fontWeight: "bold"}}>{props.stats.num_tasks ? props.stats.num_tasks : ""}</TableCell>;
-                            else if (column === "Patch")
-                                return <TableCell key={column} style={{fontWeight: "bold"}}>Totals:</TableCell>;
+                            if (column === "Responsibility")
+                                return (
+                                    <TableCell
+                                        key={column}
+                                        style={{ fontWeight: "bold" }}
+                                    >
+                                        Totals:
+                                    </TableCell>
+                                );
                             else
-                                return <TableCell key={column}
-                                    style={{fontWeight: "bold"}}>{props.stats.priorities ? props.stats.priorities[column] : ""}</TableCell>
+                                return (
+                                    <TableCell
+                                        key={column}
+                                        style={{ fontWeight: "bold" }}
+                                    >
+                                        {props.stats &&
+                                        props.stats[column.toUpperCase()]
+                                            ? props.stats[column.toUpperCase()][
+                                                  "Total"
+                                              ]
+                                            : ""}
+                                    </TableCell>
+                                );
                         })}
                     </TableRow>
                 </TableBody>
             </Table>
         </TableContainer>
-    )
-
+    );
 }
 
 function RiderStats(props) {
-    const priorities = useSelector(state => state.availablePriorities.priorities);
-    const [priorityTotals, setPriorityTotals] = useState({})
-    let columns = ["Assignee"];
-    columns.push(...priorities.map((p) => p.label));
-    columns.push("None");
-    columns.push("Total");
-    let totals = {};
-    function calculatePriorityTotals() {
-        // for each priority create an entry for that label
-        for (const priority of priorities) {
-            totals[priority.label] = 0;
-            // for each rider sum the total amounts for each priority
-            for (const displayName in props.stats.riders) {
-                totals[priority.label] += props.stats.riders[displayName][priority.label]
-            }
-        }
-        totals["None"] = 0;
-        // sum the total for unassigned tasks
-        for (const displayName in props.stats.riders) {
-            totals["None"] += props.stats.riders[displayName]["None"]
-        }
-        setPriorityTotals(totals);
-    }
-    useEffect(calculatePriorityTotals, [props.stats.riders])
+    let columns = ["Assignee", ...Object.values(priorities), "None", "Total"];
 
     return (
-        <TableContainer component={PaddedPaper}>
-            <Table size={"small"} style={{minWidth: "600px"}} aria-label="simple table">
+        <TableContainer>
+            <Table
+                size={"small"}
+                style={{ minWidth: "600px" }}
+                aria-label="statistics table"
+            >
                 <TableHead>
                     <TableRow>
                         {columns.map((title) => (
@@ -177,51 +188,47 @@ function RiderStats(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.keys(props.stats.riders ? props.stats.riders : {}).map((rider) => {
-                        return (
-                            <TableRow key={rider} align="right">
-                                {columns.map((column) => (
-                                    column === "Assignee" ? <TableCell key={column}>{rider}</TableCell> :
-                                        <TableCell key={column}>{props.stats.riders[rider][column]}</TableCell>
-                                ))}
-
-                            </TableRow>
-                        )
-
-                    })}
-                    <TableRow align="right">
-                        {columns.map((column) => {
-                            if (column === "Total")
-                                return <TableCell key={column}
-                                    style={{fontWeight: "bold"}}>{props.stats.num_all_riders ? props.stats.num_all_riders : ""}</TableCell>;
-                            else if (column === "Assignee")
-                                return <TableCell key={column} style={{fontWeight: "bold"}}>Totals:</TableCell>;
-                            else
-                                return <TableCell key={column}
-                                    style={{fontWeight: "bold"}}>{priorityTotals[column]}</TableCell>
-                        })}
-                    </TableRow>
+                    {Object.keys(props.stats ? props.stats : {}).map(
+                        (rider) => {
+                            return (
+                                <TableRow key={rider} align="right">
+                                    {columns.map((column) =>
+                                        column === "Assignee" ? (
+                                            <TableCell key={column}>
+                                                {rider}
+                                            </TableCell>
+                                        ) : (
+                                            <TableCell key={column}>
+                                                {
+                                                    props.stats[rider][
+                                                        column.toUpperCase()
+                                                    ]
+                                                }
+                                            </TableCell>
+                                        )
+                                    )}
+                                </TableRow>
+                            );
+                        }
+                    )}
                 </TableBody>
             </Table>
         </TableContainer>
-    )
-
+    );
 }
 
 export default function TasksStatistics(props) {
-
-        return (
-            <Grid container direction={"column"} spacing={3}>
-                <Grid item>
-                    <CommonStats stats={props.stats}/>
-                </Grid>
-                <Grid item>
-                    <RiderStats stats={props.stats}/>
-                </Grid>
-                <Grid item>
-                    <PatchStats stats={props.stats}/>
-                </Grid>
+    return (
+        <Grid container direction={"column"} spacing={3}>
+            <Grid item>
+                <CommonStats stats={props.data.common} />
             </Grid>
-        )
-
+            <Grid item>
+                <RiderStats stats={props.data.riders} />
+            </Grid>
+            <Grid item>
+                <PatchStats stats={props.data.riderResponsibilities} />
+            </Grid>
+        </Grid>
+    );
 }
