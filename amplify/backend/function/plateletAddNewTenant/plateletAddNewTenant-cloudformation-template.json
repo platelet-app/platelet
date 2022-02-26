@@ -27,12 +27,6 @@
     "apiplateletGraphQLAPIEndpointOutput": {
       "Type": "String",
       "Default": "apiplateletGraphQLAPIEndpointOutput"
-    },
-    "plateletDomainName": {
-      "Type": "String"
-    },
-    "plateletWelcomeEmail": {
-      "Type": "String"
     }
   },
   "Conditions": {
@@ -65,12 +59,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "plateletAdminAddNewUser",
+            "plateletAddNewTenant",
             {
               "Fn::Join": [
                 "",
                 [
-                  "plateletAdminAddNewUser",
+                  "plateletAddNewTenant",
                   "-",
                   {
                     "Ref": "env"
@@ -96,12 +90,6 @@
             },
             "API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT": {
               "Ref": "apiplateletGraphQLAPIEndpointOutput"
-            },
-            "PLATELET_DOMAIN_NAME": {
-              "Ref": "plateletDomainName"
-            },
-            "PLATELET_WELCOME_EMAIL": {
-              "Ref": "plateletWelcomeEmail"
             }
           }
         },
@@ -122,12 +110,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "plateletLambdaRolea876b556",
+            "plateletLambdaRole5d9ca349",
             {
               "Fn::Join": [
                 "",
                 [
-                  "plateletLambdaRolea876b556",
+                  "plateletLambdaRole5d9ca349",
                   "-",
                   {
                     "Ref": "env"
@@ -286,7 +274,17 @@
                 "cognito-idp:UpdateGroup",
                 "cognito-idp:AdminUpdateAuthEventFeedback",
                 "cognito-idp:UpdateDeviceStatus",
-                "cognito-idp:UpdateUserPool"
+                "cognito-idp:UpdateUserPool",
+                "cognito-idp:DeleteUserPoolDomain",
+                "cognito-idp:DeleteResourceServer",
+                "cognito-idp:DeleteGroup",
+                "cognito-idp:AdminDeleteUserAttributes",
+                "cognito-idp:DeleteUserPoolClient",
+                "cognito-idp:DeleteUserAttributes",
+                "cognito-idp:DeleteUserPool",
+                "cognito-idp:AdminDeleteUser",
+                "cognito-idp:DeleteIdentityProvider",
+                "cognito-idp:DeleteUser"
               ],
               "Resource": [
                 {
