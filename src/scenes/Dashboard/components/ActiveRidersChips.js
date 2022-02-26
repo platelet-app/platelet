@@ -251,6 +251,7 @@ function ActiveRidersChips() {
                             key={rider.id}
                         >
                             <UserChip
+                                showResponsibility
                                 onClick={() => {
                                     if (dashboardFilteredUser === rider.id) {
                                         dispatch(
