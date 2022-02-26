@@ -37,7 +37,7 @@ const CommentCard = React.memo((props) => {
             direction={"column"}
             wrap={"nowrap"}
             alignItems={
-                whoami.id === props.author && props.author.id
+                props.author && whoami.id === props.author.id
                     ? "flex-end"
                     : "flex-start"
             }
