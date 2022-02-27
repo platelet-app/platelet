@@ -13,7 +13,6 @@ import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import { useDispatch, useSelector } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
 import makeStyles from "@mui/styles/makeStyles";
-import Container from "@mui/material/Container";
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
 import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";
@@ -31,7 +30,7 @@ function MainWindowContainer(props) {
         root: {
             marginRight:
                 guidedSetupOpen && navIndex === "dashboard" ? "400px" : "auto",
-            marginLeft: navIndex === "dashboard" ? 20 : 200,
+            marginLeft: navIndex === "dashboard" ? 0 : 200,
             marginRight: 5,
             paddingTop: 10,
             paddingBottom: 10,
