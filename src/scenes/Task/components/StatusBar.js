@@ -128,7 +128,7 @@ function StatusBar(props) {
                 <Hidden mdDown>
                     <Button onClick={props.handleClose}>Close</Button>
                 </Hidden>
-                <Hidden smUp>
+                <Hidden mdUp>
                     <IconButton
                         aria-label={"Close"}
                         size={"small"}
