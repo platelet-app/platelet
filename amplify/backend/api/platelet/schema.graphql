@@ -75,8 +75,6 @@ type Location @auth(rules: [{allow: private}]) @model {
   country: String
   postcode: String
   what3words: String
-  tasksAsPickUp: [Task] @hasMany(indexName: "byPickUpLocation", fields: ["id"])
-  tasksAsDropOff: [Task] @hasMany(indexName: "byDropOffLocation", fields: ["id"])
   comments: [Comment!] @hasMany(indexName: "byParent", fields: ["id"])
 }
 
@@ -93,8 +91,8 @@ type Task @model @auth(rules: [{allow: private}]) {
   requesterContact: AddressAndContactDetails
   pickUpLocationId: ID @index(name: "byPickUpLocation")
   dropOffLocationId: ID @index(name: "byDropOffLocation")
-  pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
-  dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
+  pickUpLocation: Location @hasOne(fields: ["pickUpLocationId"])
+  dropOffLocation: Location @hasOne(fields: ["dropOffLocationId"])
   riderResponsibility: RiderResponsibility @hasOne
   assignees: [TaskAssignee] @hasMany(indexName: "byTask", fields: ["id"])
   priority: Priority

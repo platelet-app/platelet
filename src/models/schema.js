@@ -753,6 +753,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "pickUpLocationId": {
+                    "name": "pickUpLocationId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dropOffLocationId": {
+                    "name": "dropOffLocationId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "pickUpLocation": {
                     "name": "pickUpLocation",
                     "isArray": false,
@@ -762,7 +776,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "pickUpLocationId"
                     }
                 },
@@ -775,7 +790,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "dropOffLocationId"
                     }
                 },
@@ -1097,34 +1113,6 @@ export const schema = {
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
-                },
-                "tasksAsPickUp": {
-                    "name": "tasksAsPickUp",
-                    "isArray": true,
-                    "type": {
-                        "model": "Task"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "pickUpLocation"
-                    }
-                },
-                "tasksAsDropOff": {
-                    "name": "tasksAsDropOff",
-                    "isArray": true,
-                    "type": {
-                        "model": "Task"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "dropOffLocation"
-                    }
                 },
                 "comments": {
                     "name": "comments",
@@ -1768,5 +1756,5 @@ export const schema = {
             }
         }
     },
-    "version": "065009478c4716fbe6adc66e14c3920c"
+    "version": "de4e1805a08dbb4ac5e4495bef8b2338"
 };

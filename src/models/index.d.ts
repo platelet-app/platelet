@@ -220,6 +220,8 @@ export declare class Task {
   readonly timeRejected?: string;
   readonly timeRiderHome?: string;
   readonly requesterContact?: AddressAndContactDetails;
+  readonly pickUpLocationId?: string;
+  readonly dropOffLocationId?: string;
   readonly pickUpLocation?: Location;
   readonly dropOffLocation?: Location;
   readonly riderResponsibility?: RiderResponsibility;
@@ -256,8 +258,6 @@ export declare class Location {
   readonly country?: string;
   readonly postcode?: string;
   readonly what3words?: string;
-  readonly tasksAsPickUp?: (Task | null)[];
-  readonly tasksAsDropOff?: (Task | null)[];
   readonly comments?: Comment[];
   readonly createdAt?: string;
   readonly updatedAt?: string;

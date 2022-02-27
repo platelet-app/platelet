@@ -679,60 +679,6 @@ export const createLocation = /* GraphQL */ `
       country
       postcode
       what3words
-      tasksAsPickUp {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          taskCreatedById
-          taskRiderResponsibilityId
-          taskRelayPreviousId
-          taskRelayNextId
-        }
-        nextToken
-        startedAt
-      }
-      tasksAsDropOff {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          taskCreatedById
-          taskRiderResponsibilityId
-          taskRelayPreviousId
-          taskRelayNextId
-        }
-        nextToken
-        startedAt
-      }
       comments {
         items {
           id
@@ -794,60 +740,6 @@ export const updateLocation = /* GraphQL */ `
       country
       postcode
       what3words
-      tasksAsPickUp {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          taskCreatedById
-          taskRiderResponsibilityId
-          taskRelayPreviousId
-          taskRelayNextId
-        }
-        nextToken
-        startedAt
-      }
-      tasksAsDropOff {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          taskCreatedById
-          taskRiderResponsibilityId
-          taskRelayPreviousId
-          taskRelayNextId
-        }
-        nextToken
-        startedAt
-      }
       comments {
         items {
           id
@@ -909,60 +801,6 @@ export const deleteLocation = /* GraphQL */ `
       country
       postcode
       what3words
-      tasksAsPickUp {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          taskCreatedById
-          taskRiderResponsibilityId
-          taskRelayPreviousId
-          taskRelayNextId
-        }
-        nextToken
-        startedAt
-      }
-      tasksAsDropOff {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          taskCreatedById
-          taskRiderResponsibilityId
-          taskRelayPreviousId
-          taskRelayNextId
-        }
-        nextToken
-        startedAt
-      }
       comments {
         items {
           id
@@ -1113,14 +951,6 @@ export const createTask = /* GraphQL */ `
         country
         postcode
         what3words
-        tasksAsPickUp {
-          nextToken
-          startedAt
-        }
-        tasksAsDropOff {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1162,14 +992,6 @@ export const createTask = /* GraphQL */ `
         country
         postcode
         what3words
-        tasksAsPickUp {
-          nextToken
-          startedAt
-        }
-        tasksAsDropOff {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1714,14 +1536,6 @@ export const updateTask = /* GraphQL */ `
         country
         postcode
         what3words
-        tasksAsPickUp {
-          nextToken
-          startedAt
-        }
-        tasksAsDropOff {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -1763,14 +1577,6 @@ export const updateTask = /* GraphQL */ `
         country
         postcode
         what3words
-        tasksAsPickUp {
-          nextToken
-          startedAt
-        }
-        tasksAsDropOff {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2315,14 +2121,6 @@ export const deleteTask = /* GraphQL */ `
         country
         postcode
         what3words
-        tasksAsPickUp {
-          nextToken
-          startedAt
-        }
-        tasksAsDropOff {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
@@ -2364,14 +2162,6 @@ export const deleteTask = /* GraphQL */ `
         country
         postcode
         what3words
-        tasksAsPickUp {
-          nextToken
-          startedAt
-        }
-        tasksAsDropOff {
-          nextToken
-          startedAt
-        }
         comments {
           nextToken
           startedAt
