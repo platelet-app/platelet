@@ -12,10 +12,6 @@ export async function saveNewTaskToDataStore(
         throw new Error("TenantId is required");
     }
     let { locations, deliverables, comment, ...rest } = data;
-    let existingAuthor = null;
-    if (author) {
-        existingAuthor = await DataStore.query(models.User, author);
-    }
     let pickUpLocation = locations.pickUpLocation;
     if (locations.pickUpLocation && !locations.pickUpLocation.id) {
         pickUpLocation = await DataStore.save(
@@ -44,7 +40,7 @@ export async function saveNewTaskToDataStore(
                 models.DeliverableType,
                 deliverable.id
             );
-            await DataStore.save(
+            DataStore.save(
                 new models.Deliverable({
                     deliverableType,
                     count: deliverable.count,
@@ -56,26 +52,29 @@ export async function saveNewTaskToDataStore(
         }
     }
 
-    if (existingAuthor) {
-        await DataStore.save(
-            new models.TaskAssignee({
-                task: newTask,
-                assignee: existingAuthor,
-                role: userRoles.coordinator,
-                tenantId,
-            })
-        );
-    }
-
-    if (comment && comment.body && existingAuthor) {
-        await DataStore.save(
-            new models.Comment({
-                ...comment,
-                parentId: newTask.id,
-                author: existingAuthor,
-                tenantId,
-            })
-        );
+    if (author) {
+        DataStore.query(models.User, author).then((result) => {
+            if (result) {
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task: newTask,
+                        assignee: result,
+                        role: userRoles.coordinator,
+                        tenantId,
+                    })
+                );
+            }
+            if (comment && comment.body) {
+                DataStore.save(
+                    new models.Comment({
+                        ...comment,
+                        parentId: newTask.id,
+                        author: result,
+                        tenantId,
+                    })
+                );
+            }
+        });
     }
 
     return newTask;
