@@ -124,6 +124,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userCommentsId"
+                    }
+                },
                 "assignments": {
                     "name": "assignments",
                     "isArray": true,
@@ -207,6 +221,16 @@ export const schema = {
                                     "delete",
                                     "read"
                                 ]
+                            },
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "update",
+                                    "delete"
+                                ]
                             }
                         ]
                     }
@@ -234,7 +258,7 @@ export const schema = {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "manufacturer": {
@@ -284,7 +308,7 @@ export const schema = {
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -392,9 +416,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "commentAuthorId"
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCommentsId"
                     }
                 },
                 "visibility": {
@@ -421,13 +444,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "commentAuthorId": {
-                    "name": "commentAuthorId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,
@@ -753,20 +769,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "pickUpLocationId": {
-                    "name": "pickUpLocationId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "dropOffLocationId": {
-                    "name": "dropOffLocationId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "pickUpLocation": {
                     "name": "pickUpLocation",
                     "isArray": false,
@@ -776,8 +778,7 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
+                        "connectionType": "BELONGS_TO",
                         "targetName": "pickUpLocationId"
                     }
                 },
@@ -790,8 +791,7 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
+                        "connectionType": "BELONGS_TO",
                         "targetName": "dropOffLocationId"
                     }
                 },
@@ -838,7 +838,7 @@ export const schema = {
                     "type": {
                         "model": "Deliverable"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -880,7 +880,7 @@ export const schema = {
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -894,7 +894,7 @@ export const schema = {
                     "type": {
                         "enum": "TaskStatus"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -1114,13 +1114,41 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "tasksAsPickUp": {
+                    "name": "tasksAsPickUp",
+                    "isArray": true,
+                    "type": {
+                        "model": "Task"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "pickUpLocation"
+                    }
+                },
+                "tasksAsDropOff": {
+                    "name": "tasksAsDropOff",
+                    "isArray": true,
+                    "type": {
+                        "model": "Task"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "dropOffLocation"
+                    }
+                },
                 "comments": {
                     "name": "comments",
                     "isArray": true,
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -1202,12 +1230,11 @@ export const schema = {
                     "type": {
                         "model": "DeliverableType"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "deliverableDeliverableTypeId"
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "deliverableTypeDeliverablesId"
                     }
                 },
                 "task": {
@@ -1252,7 +1279,7 @@ export const schema = {
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -1275,13 +1302,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "deliverableDeliverableTypeId": {
-                    "name": "deliverableDeliverableTypeId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
                 }
             },
             "syncable": true,
@@ -1359,6 +1379,20 @@ export const schema = {
                     },
                     "isRequired": false,
                     "attributes": []
+                },
+                "deliverables": {
+                    "name": "deliverables",
+                    "isArray": true,
+                    "type": {
+                        "model": "Deliverable"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "deliverableTypeDeliverablesId"
+                    }
                 },
                 "tags": {
                     "name": "tags",
@@ -1478,6 +1512,16 @@ export const schema = {
                                     "update",
                                     "delete",
                                     "read"
+                                ]
+                            },
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "update",
+                                    "delete"
                                 ]
                             }
                         ]
@@ -1756,5 +1800,5 @@ export const schema = {
             }
         }
     },
-    "version": "de4e1805a08dbb4ac5e4495bef8b2338"
+    "version": "b78ac2ab5248c1f3055b889e75309049"
 };

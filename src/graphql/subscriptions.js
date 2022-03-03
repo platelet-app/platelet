@@ -110,6 +110,23 @@ export const onCreateUser = /* GraphQL */ `
         key
         region
       }
+      comments {
+        items {
+          id
+          parentId
+          tenantId
+          body
+          visibility
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCommentsId
+        }
+        nextToken
+        startedAt
+      }
       assignments {
         items {
           id
@@ -202,6 +219,23 @@ export const onUpdateUser = /* GraphQL */ `
         bucket
         key
         region
+      }
+      comments {
+        items {
+          id
+          parentId
+          tenantId
+          body
+          visibility
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCommentsId
+        }
+        nextToken
+        startedAt
       }
       assignments {
         items {
@@ -296,6 +330,23 @@ export const onDeleteUser = /* GraphQL */ `
         key
         region
       }
+      comments {
+        items {
+          id
+          parentId
+          tenantId
+          body
+          visibility
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCommentsId
+        }
+        nextToken
+        startedAt
+      }
       assignments {
         items {
           id
@@ -383,6 +434,10 @@ export const onCreateVehicle = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -407,7 +462,7 @@ export const onCreateVehicle = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -481,6 +536,10 @@ export const onUpdateVehicle = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -505,7 +564,7 @@ export const onUpdateVehicle = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -579,6 +638,10 @@ export const onDeleteVehicle = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -603,7 +666,7 @@ export const onDeleteVehicle = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -649,6 +712,60 @@ export const onCreateLocation = /* GraphQL */ `
       country
       postcode
       what3words
+      tasksAsPickUp {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskCreatedById
+          taskRiderResponsibilityId
+          taskRelayPreviousId
+          taskRelayNextId
+        }
+        nextToken
+        startedAt
+      }
+      tasksAsDropOff {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskCreatedById
+          taskRiderResponsibilityId
+          taskRelayPreviousId
+          taskRelayNextId
+        }
+        nextToken
+        startedAt
+      }
       comments {
         items {
           id
@@ -661,7 +778,7 @@ export const onCreateLocation = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -707,6 +824,60 @@ export const onUpdateLocation = /* GraphQL */ `
       country
       postcode
       what3words
+      tasksAsPickUp {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskCreatedById
+          taskRiderResponsibilityId
+          taskRelayPreviousId
+          taskRelayNextId
+        }
+        nextToken
+        startedAt
+      }
+      tasksAsDropOff {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskCreatedById
+          taskRiderResponsibilityId
+          taskRelayPreviousId
+          taskRelayNextId
+        }
+        nextToken
+        startedAt
+      }
       comments {
         items {
           id
@@ -719,7 +890,7 @@ export const onUpdateLocation = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -765,6 +936,60 @@ export const onDeleteLocation = /* GraphQL */ `
       country
       postcode
       what3words
+      tasksAsPickUp {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskCreatedById
+          taskRiderResponsibilityId
+          taskRelayPreviousId
+          taskRelayNextId
+        }
+        nextToken
+        startedAt
+      }
+      tasksAsDropOff {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskCreatedById
+          taskRiderResponsibilityId
+          taskRelayPreviousId
+          taskRelayNextId
+        }
+        nextToken
+        startedAt
+      }
       comments {
         items {
           id
@@ -777,7 +1002,7 @@ export const onDeleteLocation = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -844,6 +1069,10 @@ export const onCreateTask = /* GraphQL */ `
           bucket
           key
           region
+        }
+        comments {
+          nextToken
+          startedAt
         }
         assignments {
           nextToken
@@ -912,6 +1141,14 @@ export const onCreateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -953,6 +1190,14 @@ export const onCreateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -994,7 +1239,6 @@ export const onCreateTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskDeliverablesId
           count
           unit
           orderInGrid
@@ -1003,7 +1247,8 @@ export const onCreateTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          deliverableDeliverableTypeId
+          taskDeliverablesId
+          deliverableTypeDeliverablesId
         }
         nextToken
         startedAt
@@ -1354,7 +1599,7 @@ export const onCreateTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -1427,6 +1672,10 @@ export const onUpdateTask = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -1494,6 +1743,14 @@ export const onUpdateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -1535,6 +1792,14 @@ export const onUpdateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -1576,7 +1841,6 @@ export const onUpdateTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskDeliverablesId
           count
           unit
           orderInGrid
@@ -1585,7 +1849,8 @@ export const onUpdateTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          deliverableDeliverableTypeId
+          taskDeliverablesId
+          deliverableTypeDeliverablesId
         }
         nextToken
         startedAt
@@ -1936,7 +2201,7 @@ export const onUpdateTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -2009,6 +2274,10 @@ export const onDeleteTask = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -2076,6 +2345,14 @@ export const onDeleteTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -2117,6 +2394,14 @@ export const onDeleteTask = /* GraphQL */ `
         country
         postcode
         what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -2158,7 +2443,6 @@ export const onDeleteTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskDeliverablesId
           count
           unit
           orderInGrid
@@ -2167,7 +2451,8 @@ export const onDeleteTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          deliverableDeliverableTypeId
+          taskDeliverablesId
+          deliverableTypeDeliverablesId
         }
         nextToken
         startedAt
@@ -2518,7 +2803,7 @@ export const onDeleteTask = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -2760,6 +3045,10 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           bucket
           key
           region
+        }
+        comments {
+          nextToken
+          startedAt
         }
         assignments {
           nextToken
@@ -3006,6 +3295,10 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -3251,6 +3544,10 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -3328,6 +3625,10 @@ export const onCreateComment = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -3346,7 +3647,7 @@ export const onCreateComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
-      commentAuthorId
+      userCommentsId
     }
   }
 `;
@@ -3407,6 +3708,10 @@ export const onUpdateComment = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -3425,7 +3730,7 @@ export const onUpdateComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
-      commentAuthorId
+      userCommentsId
     }
   }
 `;
@@ -3486,6 +3791,10 @@ export const onDeleteComment = /* GraphQL */ `
           key
           region
         }
+        comments {
+          nextToken
+          startedAt
+        }
         assignments {
           nextToken
           startedAt
@@ -3504,7 +3813,7 @@ export const onDeleteComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
-      commentAuthorId
+      userCommentsId
     }
   }
 `;
@@ -3516,6 +3825,24 @@ export const onCreateDeliverableType = /* GraphQL */ `
       tenantId
       icon
       defaultUnit
+      deliverables {
+        items {
+          id
+          tenantId
+          count
+          unit
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskDeliverablesId
+          deliverableTypeDeliverablesId
+        }
+        nextToken
+        startedAt
+      }
       tags
       createdAt
       updatedAt
@@ -3533,6 +3860,24 @@ export const onUpdateDeliverableType = /* GraphQL */ `
       tenantId
       icon
       defaultUnit
+      deliverables {
+        items {
+          id
+          tenantId
+          count
+          unit
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskDeliverablesId
+          deliverableTypeDeliverablesId
+        }
+        nextToken
+        startedAt
+      }
       tags
       createdAt
       updatedAt
@@ -3550,6 +3895,24 @@ export const onDeleteDeliverableType = /* GraphQL */ `
       tenantId
       icon
       defaultUnit
+      deliverables {
+        items {
+          id
+          tenantId
+          count
+          unit
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          taskDeliverablesId
+          deliverableTypeDeliverablesId
+        }
+        nextToken
+        startedAt
+      }
       tags
       createdAt
       updatedAt
@@ -3570,6 +3933,10 @@ export const onCreateDeliverable = /* GraphQL */ `
         tenantId
         icon
         defaultUnit
+        deliverables {
+          nextToken
+          startedAt
+        }
         tags
         createdAt
         updatedAt
@@ -3577,7 +3944,6 @@ export const onCreateDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
-      taskDeliverablesId
       task {
         id
         tenantId
@@ -3760,7 +4126,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -3770,7 +4136,8 @@ export const onCreateDeliverable = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
-      deliverableDeliverableTypeId
+      taskDeliverablesId
+      deliverableTypeDeliverablesId
     }
   }
 `;
@@ -3785,6 +4152,10 @@ export const onUpdateDeliverable = /* GraphQL */ `
         tenantId
         icon
         defaultUnit
+        deliverables {
+          nextToken
+          startedAt
+        }
         tags
         createdAt
         updatedAt
@@ -3792,7 +4163,6 @@ export const onUpdateDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
-      taskDeliverablesId
       task {
         id
         tenantId
@@ -3975,7 +4345,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -3985,7 +4355,8 @@ export const onUpdateDeliverable = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
-      deliverableDeliverableTypeId
+      taskDeliverablesId
+      deliverableTypeDeliverablesId
     }
   }
 `;
@@ -4000,6 +4371,10 @@ export const onDeleteDeliverable = /* GraphQL */ `
         tenantId
         icon
         defaultUnit
+        deliverables {
+          nextToken
+          startedAt
+        }
         tags
         createdAt
         updatedAt
@@ -4007,7 +4382,6 @@ export const onDeleteDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
-      taskDeliverablesId
       task {
         id
         tenantId
@@ -4190,7 +4564,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
-          commentAuthorId
+          userCommentsId
         }
         nextToken
         startedAt
@@ -4200,7 +4574,8 @@ export const onDeleteDeliverable = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
-      deliverableDeliverableTypeId
+      taskDeliverablesId
+      deliverableTypeDeliverablesId
     }
   }
 `;

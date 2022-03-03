@@ -148,6 +148,7 @@ export declare class User {
   readonly profilePictureThumbnailURL?: string;
   readonly profilePicture?: S3Object;
   readonly profilePictureThumbnail?: S3Object;
+  readonly comments?: (Comment | null)[];
   readonly assignments?: (TaskAssignee | null)[];
   readonly active: number;
   readonly createdAt?: string;
@@ -160,13 +161,13 @@ export declare class User {
 export declare class Vehicle {
   readonly id: string;
   readonly tenantId: string;
-  readonly name: string;
+  readonly name?: string;
   readonly manufacturer?: string;
   readonly model?: string;
   readonly dateOfManufacture?: string;
   readonly dateOfRegistration?: string;
   readonly assignedUser?: User;
-  readonly comments?: Comment[];
+  readonly comments?: (Comment | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Vehicle, VehicleMetaData>);
@@ -182,7 +183,6 @@ export declare class Comment {
   readonly visibility?: CommentVisibility | keyof typeof CommentVisibility;
   readonly createdAt?: string;
   readonly updatedAt?: string;
-  readonly commentAuthorId?: string;
   constructor(init: ModelInit<Comment, CommentMetaData>);
   static copyOf(source: Comment, mutator: (draft: MutableModel<Comment, CommentMetaData>) => MutableModel<Comment, CommentMetaData> | void): Comment;
 }
@@ -220,18 +220,16 @@ export declare class Task {
   readonly timeRejected?: string;
   readonly timeRiderHome?: string;
   readonly requesterContact?: AddressAndContactDetails;
-  readonly pickUpLocationId?: string;
-  readonly dropOffLocationId?: string;
   readonly pickUpLocation?: Location;
   readonly dropOffLocation?: Location;
   readonly riderResponsibility?: RiderResponsibility;
   readonly assignees?: (TaskAssignee | null)[];
   readonly priority?: Priority | keyof typeof Priority;
-  readonly deliverables?: Deliverable[];
+  readonly deliverables?: (Deliverable | null)[];
   readonly relayPrevious?: Task;
   readonly relayNext?: Task;
-  readonly comments?: Comment[];
-  readonly status: TaskStatus | keyof typeof TaskStatus;
+  readonly comments?: (Comment | null)[];
+  readonly status?: TaskStatus | keyof typeof TaskStatus;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   readonly taskCreatedById?: string;
@@ -258,7 +256,9 @@ export declare class Location {
   readonly country?: string;
   readonly postcode?: string;
   readonly what3words?: string;
-  readonly comments?: Comment[];
+  readonly tasksAsPickUp?: (Task | null)[];
+  readonly tasksAsDropOff?: (Task | null)[];
+  readonly comments?: (Comment | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Location, LocationMetaData>);
@@ -268,15 +268,14 @@ export declare class Location {
 export declare class Deliverable {
   readonly id: string;
   readonly tenantId: string;
-  readonly deliverableType: DeliverableType;
+  readonly deliverableType?: DeliverableType;
   readonly task?: Task;
   readonly count?: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
   readonly orderInGrid?: number;
-  readonly comments?: Comment[];
+  readonly comments?: (Comment | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
-  readonly deliverableDeliverableTypeId: string;
   constructor(init: ModelInit<Deliverable, DeliverableMetaData>);
   static copyOf(source: Deliverable, mutator: (draft: MutableModel<Deliverable, DeliverableMetaData>) => MutableModel<Deliverable, DeliverableMetaData> | void): Deliverable;
 }
@@ -287,6 +286,7 @@ export declare class DeliverableType {
   readonly tenantId: string;
   readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
   readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;
+  readonly deliverables?: (Deliverable | null)[];
   readonly tags?: (string | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
