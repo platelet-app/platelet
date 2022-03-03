@@ -22,30 +22,11 @@ const useStyles = makeStyles((theme) => {
     return {
         root: {
             [theme.breakpoints.down("md")]: {
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                },
-                "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                    {
-                        borderColor: "white",
-                    },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                    {
-                        borderColor: "white",
-                    },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input":
-                    {
-                        color: "white",
-                    },
-                "& .MuiInputLabel-outlined.Mui-focused": {
-                    color: "white",
-                },
                 width: "100%",
             },
         },
         searchIcon: {
             [theme.breakpoints.down("md")]: {
-                color: "white",
                 display: "none",
             },
         },
@@ -53,51 +34,19 @@ const useStyles = makeStyles((theme) => {
 });
 
 
-function filterUsers(users, search) {
-    if (!search) {
-        return users;
-    } else {
-        return users.filter((user) => {
-            if (
-                user.displayName
-                    ? user.displayName
-                          .toLowerCase()
-                          .includes(search.toLowerCase())
-                    : false
-            ) {
-                return user;
-            } else if (
-                user.patch
-                    ? user.patch.toLowerCase().includes(search.toLowerCase())
-                    : false
-            ) {
-                return user;
-            } else if (
-                user.roles
-                    ? user.roles.toLowerCase().includes(search.toLowerCase())
-                    : false
-            ) {
-                return user;
-            }
-        });
-    }
-}
 
 export default function UsersList(props) {
-    const [users, setUsers] = useState([]);
+    const usersRef = useRef([]); 
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    //useEffect(() => setFilteredUsers(users), [users]);
-    //const fetchTimer = useRef();
-    //const fetchingTimer = setTimeout(() => setIsFetching(true), 1000);
     const classes = useStyles();
 
 
     function onChangeFilterText(e) {
-        setFilteredUsers(matchSorter(users, e.target.value,{
+        setFilteredUsers(matchSorter(usersRef.current, e.target.value,{
           keys: ['name', 'displayName', 'riderResponsibility.label']
         }))
     }
@@ -109,7 +58,7 @@ export default function UsersList(props) {
             try {
                 const users = await DataStore.query(models.User);
                 setIsFetching(false);
-                setUsers(users);
+                usersRef.current = users;
                 setFilteredUsers(users);
             } catch (error) {
                 console.log("Request failed", error);

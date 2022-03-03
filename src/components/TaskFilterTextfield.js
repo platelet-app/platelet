@@ -14,30 +14,11 @@ const useStyles = makeStyles((theme) => {
     return {
         root: {
             [theme.breakpoints.down("md")]: {
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                },
-                "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                    {
-                        borderColor: "white",
-                    },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                    {
-                        borderColor: "white",
-                    },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input":
-                    {
-                        color: "white",
-                    },
-                "& .MuiInputLabel-outlined.Mui-focused": {
-                    color: "white",
-                },
                 width: "100%",
             },
         },
         searchIcon: {
             [theme.breakpoints.down("md")]: {
-                color: "white",
                 display: "none",
             },
         },

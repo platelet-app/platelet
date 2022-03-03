@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../App.css";
 import { PaddedPaper, ThemedLink } from "../styles/common";
 import Button from "@mui/material/Button";
@@ -23,30 +23,11 @@ const useStyles = makeStyles((theme) => {
     return {
         root: {
             [theme.breakpoints.down("md")]: {
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                },
-                "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                    {
-                        borderColor: "white",
-                    },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                    {
-                        borderColor: "white",
-                    },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input":
-                    {
-                        color: "white",
-                    },
-                "& .MuiInputLabel-outlined.Mui-focused": {
-                    color: "white",
-                },
                 width: "100%",
             },
         },
         searchIcon: {
             [theme.breakpoints.down("md")]: {
-                color: "white",
                 display: "none",
             },
         },
@@ -58,14 +39,14 @@ function VehicleList() {
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
-    const [vehicles, setVehicles] = useState([]);
+    const vehiclesRef = useRef([]);
     const [filteredVehicles, setFilteredVehicles] = useState([]);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const classes = useStyles();
 
     function onChangeFilterText(e) {
         setFilteredVehicles(
-          matchSorter( vehicles, e.target.value, {keys: 
+          matchSorter( vehiclesRef.current, e.target.value, {keys: 
               ['name','manufacturer','model','registrationNumber' ]
             }
           )
@@ -86,7 +67,7 @@ function VehicleList() {
             try {
                 const vehicles = await DataStore.query(models.Vehicle);
                 setIsFetching(false);
-                setVehicles(vehicles);
+                vehiclesRef.current = vehicles;
                 setFilteredVehicles(vehicles)
             } catch (error) {
                 console.log("Request failed", error);
@@ -98,7 +79,6 @@ function VehicleList() {
     }
 
     useEffect(() => getVehicles(), [dataStoreReadyStatus]);
-
     if (isFetching) {
         return (
            <Stack

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import LocationCard from "../components/LocationCard";
 import { PaddedPaper } from "../styles/common";
@@ -20,30 +20,11 @@ const useStyles = makeStyles((theme) => {
     return {
         root: {
             [theme.breakpoints.down("md")]: {
-                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                },
-                "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                    {
-                        borderColor: "white",
-                    },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                    {
-                        borderColor: "white",
-                    },
-                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input":
-                    {
-                        color: "white",
-                    },
-                "& .MuiInputLabel-outlined.Mui-focused": {
-                    color: "white",
-                },
                 width: "100%",
             },
         },
         searchIcon: {
             [theme.breakpoints.down("md")]: {
-                color: "white",
                 display: "none",
             },
         },
@@ -52,7 +33,7 @@ const useStyles = makeStyles((theme) => {
 
 
 export default function LocationsList() {
-    const [locations, setLocations] = useState([]);
+    const locationsRef = useRef([]);
     const [filteredLocations, setFilteredLocations] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
@@ -61,7 +42,7 @@ export default function LocationsList() {
     const classes = useStyles();
 
     function onChangeFilterText(e) {
-        setFilteredLocations(matchSorter(locations, e.target.value, {keys: ['name']}))
+        setFilteredLocations(matchSorter(locationsRef.current, e.target.value, {keys: ['name']}))
     }
 
     async function getLocations() {
@@ -74,7 +55,7 @@ export default function LocationsList() {
                     (loc) => loc.listed("eq", 1)
                 );
                 setIsFetching(false);
-                setLocations(locations);
+                locationsRef.current = locations;
                 setFilteredLocations(locations);
             } catch (error) {
                 console.log("Request failed", error);
