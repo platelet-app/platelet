@@ -99,7 +99,7 @@ async function createNewTenant(newUser, tenantId) {
     const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
 
     const appSyncClient = new AWSAppSyncClient(appSyncConfig);
-    /*const CognitoIdentityServiceProvider = aws.CognitoIdentityServiceProvider;
+    const CognitoIdentityServiceProvider = aws.CognitoIdentityServiceProvider;
     const cognitoClient = new CognitoIdentityServiceProvider({
         apiVersion: "2016-04-19",
     });
@@ -136,24 +136,7 @@ async function createNewTenant(newUser, tenantId) {
             `Failure to create new user with email ${newUser.email}`
         );
     }
-    let displayName = newUser.name;
-    const listUsersResp = await appSyncClient.query({
-        query: listUsers,
-        variables: { tenantId },
-    });
-    const userCheck = listUsersResp.data.listUsers.items;
-    let counter = 0;
-    while (true) {
-        const current =
-            counter === 0 ? newUser.name : `${newUser.name}-${counter}`;
-        if (userCheck.map((u) => u.displayName).includes(current)) {
-            counter++;
-        } else {
-            displayName = current;
-            break;
-        }
-    }
-    console.log(`Final display name: ${displayName}`);
+    let { name, displayName } = newUser;
     const subFind = cognitoResp.User.Attributes.find(
         (attr) => attr.Name === "sub"
     );
@@ -163,13 +146,13 @@ async function createNewTenant(newUser, tenantId) {
     const cognitoId = subFind.Value;
     if (!cognitoId) {
         throw new Error(`missing cognitoId attribute for newly created user`);
-    }*/
+    }
     const createUserInput = {
         tenantId: tenantId,
         active: 1,
-        cognitoId: "test",
-        name: newUser.name,
-        displayName: "test",
+        cognitoId,
+        name,
+        displayName,
         roles:
             newUser.roles && newUser.roles.includes("USER")
                 ? newUser.roles
@@ -184,12 +167,19 @@ async function createNewTenant(newUser, tenantId) {
 
     return {
         newUser: createdUser.data.createUser,
-        password: "test",
+        password: generatedPassword,
     };
 }
 
 exports.handler = async (event) => {
     console.log("Arguments:", event.arguments);
+    console.log(
+        process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
+        process.env.API_PLATELET_GRAPHQLAPIIDOUTPUT,
+        process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
+        process.env.ENV,
+        process.env.REGION
+    );
     const user = {
         name: event.arguments.name,
         email: event.arguments.email,
@@ -199,11 +189,9 @@ exports.handler = async (event) => {
         referenceIdentifier: event.arguments.referenceIdentifier,
         name: event.arguments.tenantName,
     };
-    const { newUser, password } = await createNewTenant(user, "nope");
-    return;
     const newTenant = await addTenant(tenant);
-    console.log("Tenant result:", tenant);
-    //const { newUser, password } = await createNewTenant(user, newTenant.id);
+    console.log("Tenant result:", newTenant);
+    const { newUser, password } = await createNewTenant(user, newTenant.id);
     console.log("User result:", newUser);
     await sendWelcomeEmail(
         event.arguments.email,
