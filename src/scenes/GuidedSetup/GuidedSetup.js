@@ -262,19 +262,20 @@ export const GuidedSetup = () => {
 
     const onCloseForm = () => {
         dispatch(setGuidedSetupOpen(false));
-        setFormValues(defaultValues);
-        deliverables.current = {};
-        requesterContact.current = defaultContact;
-        comment.current = defaultComment;
-        locations.current = { pickUpLocation: null, dropOffLocation: null };
-        // force rerender so that all the tabs are reset
-        setReset((prevState) => !prevState);
         setTabIndex(0);
     };
 
     useEffect(() => {
         if (guidedSetupOpen) {
             timeOfCall.current = new Date().toISOString();
+        } else {
+            setFormValues(defaultValues);
+            deliverables.current = {};
+            requesterContact.current = defaultContact;
+            comment.current = defaultComment;
+            locations.current = { pickUpLocation: null, dropOffLocation: null };
+            // force rerender so that all the tabs are reset
+            setReset((prevState) => !prevState);
         }
     }, [guidedSetupOpen]);
 
