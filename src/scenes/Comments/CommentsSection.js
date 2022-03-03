@@ -10,7 +10,6 @@ import { convertListDataToObject } from "../../utilities";
 import _ from "lodash";
 import { commentVisibility } from "../../apiConsts";
 import GetError from "../../ErrorComponents/GetError";
-import { Typography } from "@mui/material";
 
 function CommentsSection(props) {
     const [isFetching, setIsFetching] = useState(false);
@@ -19,37 +18,11 @@ function CommentsSection(props) {
     const [errorState, setErrorState] = useState(null);
     const whoami = useSelector(getWhoami);
     const commentsRef = useRef({});
+    const getCommentsRef = useRef(null);
     commentsRef.current = comments;
     const commentsSubscription = useRef({
         unsubscribe: () => {},
     });
-
-    function removeCommentFromState(commentId) {
-        if (commentId) {
-            setComments((prevState) => _.omit(prevState, commentId));
-        }
-    }
-
-    async function addCommentToState(comment) {
-        if (comment) {
-            let author = comment.author;
-            if (!author) {
-                author = await DataStore.query(
-                    models.User,
-                    comment.commentAuthorId
-                );
-            }
-            setComments((prevState) => {
-                return {
-                    ...prevState,
-                    [comment.id]: {
-                        ...comment,
-                        author,
-                    },
-                };
-            });
-        }
-    }
 
     async function getComments() {
         if (!dataStoreReadyStatus) {
@@ -65,6 +38,7 @@ function CommentsSection(props) {
                     (c) =>
                         c.visibility === commentVisibility.everyone ||
                         (c.visibility === commentVisibility.me &&
+                            c.author &&
                             c.author.id === whoami.id)
                 );
                 const commentsObject = convertListDataToObject(commentsResult);
@@ -78,7 +52,7 @@ function CommentsSection(props) {
         }
     }
     useEffect(() => getComments(), [props.parentId, dataStoreReadyStatus]);
-    const getCommentsRef = useRef(getComments);
+    getCommentsRef.current = getComments;
 
     useEffect(() => {
         commentsSubscription.current.unsubscribe();
@@ -100,7 +74,6 @@ function CommentsSection(props) {
     } else {
         return (
             <CommentsMain
-                onNewComment={addCommentToState}
                 parentUUID={props.parentId}
                 comments={Object.values(comments).filter((c) => !c._deleted)}
                 onRestore={(comment) => {
