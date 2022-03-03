@@ -25,17 +25,21 @@ function CoordinatorPicker(props) {
         setReset((prevState) => !prevState);
     };
     async function getCoordinators() {
-        const coords = await DataStore.query(models.User);
-        setAvailableUsers(coords);
+        try {
+            const coords = await DataStore.query(models.User, (u) =>
+                u.roles("contains", userRoles.coordinator)
+            );
+            setAvailableUsers(coords);
+        } catch (e) {
+            setAvailableUsers([]);
+            console.log(e);
+        }
     }
     useEffect(() => getCoordinators(), []);
 
     useEffect(() => {
         const filteredSuggestions = availableUsers.filter(
-            (u) =>
-                u.roles &&
-                u.roles.includes(userRoles.coordinator) &&
-                !props.exclude.includes(u.id)
+            (u) => !props.exclude.includes(u.id)
         );
         // const vehicleUsers = filteredSuggestions.filter(
         //     (user) => user.assigned_vehicles.length !== 0
