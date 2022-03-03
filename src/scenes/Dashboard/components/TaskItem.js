@@ -64,8 +64,6 @@ function TaskItem(props) {
     const commentObserver = useRef({ unsubscribe: () => {} });
     const roleView = useSelector(getRoleView);
 
-    const theme = useTheme();
-
     const { ref, inView, entry } = useInView({
         threshold: 0,
     });
@@ -77,7 +75,7 @@ function TaskItem(props) {
     }, [inView]);
 
     async function getAssignees() {
-        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+        if (!visibility || !dataStoreReadyStatus || !props.task) return;
         // inefficient method of getting assignees
         /*const allAssignments = (
             await DataStore.query(models.TaskAssignee)
