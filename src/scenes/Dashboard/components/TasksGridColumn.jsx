@@ -30,6 +30,7 @@ import getAllMyTasks from "../utilities/getAllMyTasks";
 import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { useTheme } from "@mui/styles";
+import { useInView } from "react-intersection-observer";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -90,6 +91,7 @@ function TasksGridColumn(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
+    const [visibility, setVisibility] = useState(false);
     const [width, height] = useWindowSize();
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
@@ -107,6 +109,16 @@ function TasksGridColumn(props) {
         unsubscribe: () => {},
     });
     const theme = useTheme();
+    const { ref, inView, entry } = useInView({
+        threshold: 0,
+    });
+
+    useEffect(() => {
+        console.log("asdf", inView);
+        if (inView && !visibility) {
+            setVisibility(true);
+        }
+    }, [inView]);
 
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -135,7 +147,8 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (!dataStoreReadyStatus) {
+        console.log("getTasks", dataStoreReadyStatus, visibility);
+        if (!dataStoreReadyStatus || !visibility) {
             return;
         } else {
             try {
@@ -185,6 +198,7 @@ function TasksGridColumn(props) {
         [
             dataStoreReadyStatus,
             dashboardFilteredUser,
+            visibility,
             roleView,
             JSON.stringify(props.taskKey),
         ]
@@ -314,6 +328,7 @@ function TasksGridColumn(props) {
     } else if (isFetching) {
         return (
             <Box
+                ref={ref}
                 className={classes.column}
                 sx={{
                     width: isSm ? "100%" : width / 4.2,
