@@ -7,7 +7,12 @@ import { convertListDataToObject } from "../../../utilities";
 
 export const isCompletedTab = (keys) =>
     _.intersection(
-        [tasksStatus.completed, tasksStatus.cancelled, tasksStatus.rejected],
+        [
+            tasksStatus.completed,
+            tasksStatus.cancelled,
+            tasksStatus.rejected,
+            tasksStatus.abandoned,
+        ],
         keys
     ).length > 0;
 

@@ -113,6 +113,7 @@ function Dashboard() {
                                       : "",
                                   tasksStatus.completed,
                                   tasksStatus.cancelled,
+                                  tasksStatus.abandoned,
                                   tasksStatus.rejected,
                               ]
                     }

@@ -53,9 +53,6 @@ const useStyles = makeStyles((theme) => ({
 function TasksGrid(props) {
     const classes = useStyles();
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("md"));
-    const isMd = useMediaQuery(theme.breakpoints.down("lg"));
-    const roleView = useSelector(getRoleView);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
 
     let justifyContent = "flex-start";
@@ -78,7 +75,8 @@ function TasksGrid(props) {
                 [tasksStatus.pickedUp],
                 [tasksStatus.droppedOff],
                 [tasksStatus.completed],
-                [tasksStatus.cancelled, tasksStatus.abandoned],
+                [tasksStatus.cancelled],
+                [tasksStatus.abandoned],
                 [tasksStatus.rejected],
             ]
                 .filter(
