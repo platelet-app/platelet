@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { AppBar, Hidden, Stack } from "@mui/material";
+import { AppBar, Box, Hidden, Stack } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import {
@@ -128,7 +128,7 @@ function StatusBar(props) {
                 <Hidden mdDown>
                     <Button onClick={props.handleClose}>Close</Button>
                 </Hidden>
-                <Hidden smUp>
+                <Hidden mdUp>
                     <IconButton
                         aria-label={"Close"}
                         size={"small"}
@@ -137,8 +137,11 @@ function StatusBar(props) {
                         <ArrowButton size={3} direction={"back"} />
                     </IconButton>
                 </Hidden>
-                <Typography className={clsx(classes.italic, classes.text)}>
-                    Status: {statusHumanReadable}
+                <Typography>
+                    Status:{" "}
+                    <span style={{ fontWeight: "bold" }}>
+                        {statusHumanReadable}
+                    </span>
                 </Typography>
                 <Tooltip title={"Copy to clipboard"}>
                     <IconButton

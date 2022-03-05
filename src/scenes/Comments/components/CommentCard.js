@@ -37,21 +37,25 @@ const CommentCard = React.memo((props) => {
             direction={"column"}
             wrap={"nowrap"}
             alignItems={
-                whoami.id === props.author.id ? "flex-end" : "flex-start"
+                props.author && whoami.id === props.author.id
+                    ? "flex-end"
+                    : "flex-start"
             }
             spacing={1}
         >
-            <Grid item className={props.showAuthor ? show : hide}>
-                <CommentAuthor
-                    uuid={props.author.id}
-                    displayName={props.author.displayName}
-                    thumbnailKey={
-                        props.author && props.author.profilePictureThumbnail
-                            ? props.author.profilePictureThumbnail.key
-                            : null
-                    }
-                />
-            </Grid>
+            {props.author && (
+                <Grid item className={props.showAuthor ? show : hide}>
+                    <CommentAuthor
+                        uuid={props.author.id}
+                        displayName={props.author.displayName}
+                        thumbnailKey={
+                            props.author && props.author.profilePictureThumbnail
+                                ? props.author.profilePictureThumbnail.key
+                                : null
+                        }
+                    />
+                </Grid>
+            )}
             <Grid item>
                 <Card>
                     <Grid

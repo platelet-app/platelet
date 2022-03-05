@@ -29,29 +29,22 @@ describe("StatusBar", () => {
     it("renders correctly", () => {
         render(<StatusBar />);
     });
-    it("renders with the NEW status", () => {
-        render(<StatusBar status={tasksStatus.new} />);
-        expect(screen.getByText(/New/)).toBeInTheDocument();
-    });
-    it("renders with the ACTIVE status", () => {
-        render(<StatusBar status={tasksStatus.active} />);
-        expect(screen.getByText(/Active/)).toBeInTheDocument();
-    });
-    it("renders with the PICKED_UP status", () => {
-        render(<StatusBar status={tasksStatus.pickedUp} />);
-        expect(screen.getByText(/Picked up/)).toBeInTheDocument();
-    });
-    it("renders with the CANCELLED status", () => {
-        render(<StatusBar status={tasksStatus.cancelled} />);
-        expect(screen.getByText(/Cancelled/)).toBeInTheDocument();
-    });
-    it("renders with the REJECTED status", () => {
-        render(<StatusBar status={tasksStatus.rejected} />);
-        expect(screen.getByText(/Rejected/)).toBeInTheDocument();
-    });
-    it("renders with the DROPPED_OFF status", () => {
-        render(<StatusBar status={tasksStatus.droppedOff} />);
-        expect(screen.getByText(/Delivered/)).toBeInTheDocument();
+
+    it.each`
+        status
+        ${tasksStatus.completed}
+        ${tasksStatus.cancelled}
+        ${tasksStatus.pickedUp}
+        ${tasksStatus.droppedOff}
+        ${tasksStatus.abandoned}
+        ${tasksStatus.active}
+        ${tasksStatus.new}
+        ${tasksStatus.rejected}
+    `("renders the correct status", async ({ status }) => {
+        render(<StatusBar status={status} />);
+        if (status === tasksStatus.droppedOff) status = "DELIVERED";
+        else if (status === tasksStatus.pickedUp) status = "PICKED UP";
+        expect(screen.getByText(status)).toBeInTheDocument();
     });
     test("click the copy to clipboard button", async () => {
         const timeOfCall = new Date().toISOString();

@@ -11,7 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import { ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
-import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
+import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
 const useStyles = makeStyles((theme) => ({
@@ -172,22 +172,14 @@ function LocationDetailAndSelector(props) {
                         </IconButton>
                     </Tooltip>
                 )}
-                {props.location && !props.disableClear ? (
-                    <ClearButtonWithConfirmation
-                        label={props.label}
-                        disabled={props.disabled}
-                        onClear={onClickClearButton}
-                    />
-                ) : (
-                    <></>
-                )}
             </Stack>
         </Stack>
     ) : (
         <></>
     );
 
-    const collapsedShowFields = ["ward", "what3words", "postcode", "line1"];
+    const collapsedShowFields = ["ward", "postcode", "line1"];
+    const collapsedShowContactFields = ["telephoneNumber"];
 
     return (
         <Box className={classes.root}>
@@ -200,8 +192,9 @@ function LocationDetailAndSelector(props) {
                 {presetSelect}
                 <Stack direction={"column"}>
                     {Object.entries(addressFields).map(([key, label]) => {
-                        if (collapsedShowFields.includes(key) || !collapsed) {
-                            return (
+                        return (
+                            (collapsedShowFields.includes(key) ||
+                                !collapsed) && (
                                 <LabelItemPair
                                     key={key}
                                     label={collapsed || editMode ? label : ""}
@@ -222,17 +215,16 @@ function LocationDetailAndSelector(props) {
                                         value={state.address[key]}
                                     />
                                 </LabelItemPair>
-                            );
-                        } else {
-                            return <React.Fragment key={key}></React.Fragment>;
-                        }
+                            )
+                        );
                     })}
 
-                    <Box className={classes.separator} />
+                    {!collapsed && <Box className={classes.separator} />}
                     <Box>
                         {Object.entries(contactFields).map(([key, label]) => {
-                            if (!collapsed) {
-                                return (
+                            return (
+                                (collapsedShowContactFields.includes(key) ||
+                                    !collapsed) && (
                                     <LabelItemPair key={key} label={label}>
                                         <ClickableTextField
                                             label={label}
@@ -253,20 +245,33 @@ function LocationDetailAndSelector(props) {
                                             value={state.contact[key]}
                                         />
                                     </LabelItemPair>
-                                );
-                            } else {
-                                return (
-                                    <React.Fragment key={key}></React.Fragment>
-                                );
-                            }
+                                )
+                            );
                         })}
                     </Box>
                 </Stack>
                 <Divider />
-                <CollapsibleToggle
-                    onClick={() => setCollapsed((prevState) => !prevState)}
-                    value={collapsed}
-                />
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                >
+                    <CollapsibleToggle
+                        onClick={() => setCollapsed((prevState) => !prevState)}
+                        value={collapsed}
+                    />
+                    {props.location && !props.disableClear && editMode && (
+                        <ClearButtonWithConfirmation
+                            disabled={props.disabled}
+                            onClear={onClickClearButton}
+                        >
+                            <Typography>
+                                Are you sure you want to clear the {props.label}{" "}
+                                location?
+                            </Typography>
+                        </ClearButtonWithConfirmation>
+                    )}
+                </Stack>
             </Stack>
         </Box>
     );

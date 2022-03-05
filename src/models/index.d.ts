@@ -55,6 +55,19 @@ export enum Patch {
   AIR_AMBULANCE = "AIR_AMBULANCE"
 }
 
+export declare class Statistics {
+  readonly numCancelled?: number;
+  readonly numCompleted?: number;
+  readonly numDroppedOff?: number;
+  readonly numRejected?: number;
+  readonly numAbandoned?: number;
+  readonly numActive?: number;
+  readonly numPickedUp?: number;
+  readonly numNew?: number;
+  readonly numTest?: number;
+  constructor(init: ModelInit<Statistics>);
+}
+
 export declare class AddressAndContactDetails {
   readonly name?: string;
   readonly telephoneNumber?: string;
@@ -116,7 +129,7 @@ type DeliverableTypeMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type GroupMetaData = {
+type TenantMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
@@ -135,11 +148,12 @@ export declare class User {
   readonly profilePictureThumbnailURL?: string;
   readonly profilePicture?: S3Object;
   readonly profilePictureThumbnail?: S3Object;
-  readonly comments?: Comment[];
+  readonly comments?: (Comment | null)[];
   readonly assignments?: (TaskAssignee | null)[];
   readonly active: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
+  readonly userRiderResponsibilityId?: string;
   constructor(init: ModelInit<User, UserMetaData>);
   static copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
 }
@@ -147,13 +161,13 @@ export declare class User {
 export declare class Vehicle {
   readonly id: string;
   readonly tenantId: string;
-  readonly name: string;
+  readonly name?: string;
   readonly manufacturer?: string;
   readonly model?: string;
   readonly dateOfManufacture?: string;
   readonly dateOfRegistration?: string;
   readonly assignedUser?: User;
-  readonly comments?: Comment[];
+  readonly comments?: (Comment | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Vehicle, VehicleMetaData>);
@@ -211,14 +225,17 @@ export declare class Task {
   readonly riderResponsibility?: RiderResponsibility;
   readonly assignees?: (TaskAssignee | null)[];
   readonly priority?: Priority | keyof typeof Priority;
-  readonly deliverables?: Deliverable[];
+  readonly deliverables?: (Deliverable | null)[];
   readonly relayPrevious?: Task;
   readonly relayNext?: Task;
-  readonly group?: (Group | null)[];
-  readonly comments?: Comment[];
-  readonly status: TaskStatus | keyof typeof TaskStatus;
+  readonly comments?: (Comment | null)[];
+  readonly status?: TaskStatus | keyof typeof TaskStatus;
   readonly createdAt?: string;
   readonly updatedAt?: string;
+  readonly taskCreatedById?: string;
+  readonly taskRiderResponsibilityId?: string;
+  readonly taskRelayPreviousId?: string;
+  readonly taskRelayNextId?: string;
   constructor(init: ModelInit<Task, TaskMetaData>);
   static copyOf(source: Task, mutator: (draft: MutableModel<Task, TaskMetaData>) => MutableModel<Task, TaskMetaData> | void): Task;
 }
@@ -241,7 +258,7 @@ export declare class Location {
   readonly what3words?: string;
   readonly tasksAsPickUp?: (Task | null)[];
   readonly tasksAsDropOff?: (Task | null)[];
-  readonly comments?: Comment[];
+  readonly comments?: (Comment | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Location, LocationMetaData>);
@@ -251,13 +268,12 @@ export declare class Location {
 export declare class Deliverable {
   readonly id: string;
   readonly tenantId: string;
-  readonly deliverableType: DeliverableType;
-  readonly taskDeliverablesId?: string;
+  readonly deliverableType?: DeliverableType;
   readonly task?: Task;
   readonly count?: number;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
   readonly orderInGrid?: number;
-  readonly comments?: Comment[];
+  readonly comments?: (Comment | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Deliverable, DeliverableMetaData>);
@@ -270,6 +286,7 @@ export declare class DeliverableType {
   readonly tenantId: string;
   readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
   readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;
+  readonly deliverables?: (Deliverable | null)[];
   readonly tags?: (string | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
@@ -277,12 +294,12 @@ export declare class DeliverableType {
   static copyOf(source: DeliverableType, mutator: (draft: MutableModel<DeliverableType, DeliverableTypeMetaData>) => MutableModel<DeliverableType, DeliverableTypeMetaData> | void): DeliverableType;
 }
 
-export declare class Group {
+export declare class Tenant {
   readonly id: string;
-  readonly taskGroupId?: string;
-  readonly name?: string;
+  readonly name: string;
+  readonly referenceIdentifier: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
-  constructor(init: ModelInit<Group, GroupMetaData>);
-  static copyOf(source: Group, mutator: (draft: MutableModel<Group, GroupMetaData>) => MutableModel<Group, GroupMetaData> | void): Group;
+  constructor(init: ModelInit<Tenant, TenantMetaData>);
+  static copyOf(source: Tenant, mutator: (draft: MutableModel<Tenant, TenantMetaData>) => MutableModel<Tenant, TenantMetaData> | void): Tenant;
 }

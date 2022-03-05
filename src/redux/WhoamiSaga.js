@@ -97,21 +97,17 @@ function* getWhoami() {
                     }
                 }
 
-                // DataStore.configure({
-                //     syncExpressions: [
-                //         syncExpression(models.Task, () => {
-                //             return (c) => c.tenantId("eq", tenantId);
-                //         }),
-                //         syncExpression(models.User, () => {
-                //             return (c) => c.tenantId("eq", tenantId);
-                //         }),
-                //     ],
-                // });
-
                 yield call([DataStore, DataStore.configure], {
-                    syncExpressions: modelsToSync.map((model) =>
-                        syncExpression(model, (m) => m.tenantId("eq", tenantId))
-                    ),
+                    syncExpressions: [
+                        ...modelsToSync.map((model) =>
+                            syncExpression(model, (m) =>
+                                m.tenantId("eq", tenantId)
+                            )
+                        ),
+                        syncExpression(models.Tenant, (m) =>
+                            m.id("eq", tenantId)
+                        ),
+                    ],
                 });
                 result = yield call(
                     [DataStore, DataStore.query],

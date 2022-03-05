@@ -127,6 +127,9 @@ function RecentlyAssignedUsers(props) {
                             key={rider.id}
                         >
                             <UserChip
+                                showResponsibility={
+                                    props.role === userRoles.rider
+                                }
                                 onClick={() => {
                                     if (selectedId === rider.id) {
                                         props.onChange(null);

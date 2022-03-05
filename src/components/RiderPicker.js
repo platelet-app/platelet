@@ -8,6 +8,7 @@ import { userRoles } from "../apiConsts";
 import * as models from "../models/index";
 import { Box } from "@mui/material";
 import { matchSorter } from "match-sorter";
+import { convertListDataToObject } from "../utilities";
 
 const filterOptions = (options, { inputValue }) => {
     return matchSorter(options, inputValue, { keys: ["displayName"] });
@@ -26,17 +27,29 @@ function RiderPicker(props) {
     };
 
     async function getRiders() {
-        const users = await DataStore.query(models.User);
-        setAvailableUsers(users);
+        try {
+            const users = await DataStore.query(models.User, (u) =>
+                u.roles("contains", userRoles.rider)
+            );
+            const riderResponsibilities = await DataStore.query(
+                models.RiderResponsibility
+            );
+            const resps = convertListDataToObject(riderResponsibilities);
+            const usersWithRiderResponsibilities = users.map((user) => ({
+                ...user,
+                riderResponsibility: resps[user.userRiderResponsibilityId],
+            }));
+            setAvailableUsers(usersWithRiderResponsibilities);
+        } catch (e) {
+            console.log(e);
+            setAvailableUsers([]);
+        }
     }
     useEffect(() => getRiders(), []);
 
     useEffect(() => {
         const filteredSuggestions = availableUsers.filter(
-            (u) =>
-                u.roles &&
-                u.roles.includes(userRoles.rider) &&
-                !props.exclude.includes(u.id)
+            (u) => !props.exclude.includes(u.id)
         );
         // const vehicleUsers = filteredSuggestions.filter(
         //     (user) => user.assigned_vehicles.length !== 0

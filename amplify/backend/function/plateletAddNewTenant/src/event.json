@@ -1,0 +1,8 @@
+{
+    "arguments": {
+        "email": "info@platelet.app",
+        "name": "Some Admin",
+        "referenceIdentifier": "ABCD",
+        "tenantName": "test tenant"
+    }
+}

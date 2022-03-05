@@ -169,7 +169,7 @@ describe("LocationDetailsPanel", () => {
         amplify.DataStore.query.mockResolvedValue([]);
         render(<LocationDetailsPanel />, { preloadedState });
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(0)
         );
     });
     it.each`
@@ -181,7 +181,7 @@ describe("LocationDetailsPanel", () => {
             preloadedState,
         });
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(0)
         );
         expect(
             screen.getByText(
@@ -191,11 +191,14 @@ describe("LocationDetailsPanel", () => {
     });
 
     it("renders the correct location name", async () => {
-        amplify.DataStore.query.mockResolvedValueOnce(mockLocations[1]);
+        const mockTask = new models.Task({ pickUpLocation: mockLocations[1] });
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValueOnce(mockLocations[1]);
         const mockLocation = mockLocations[1];
         render(
             <LocationDetailsPanel
-                locationId={mockLocation.id}
+                taskId={mockTask.id}
                 locationKey={"pickUpLocation"}
             />,
             { preloadedState }
@@ -203,7 +206,13 @@ describe("LocationDetailsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
-        expect(amplify.DataStore.query).toHaveBeenCalledWith(
+        expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+            1,
+            models.Task,
+            mockTask.id
+        );
+        expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+            2,
             models.Location,
             mockLocation.id
         );
@@ -211,8 +220,11 @@ describe("LocationDetailsPanel", () => {
         expect(screen.getByText(mockLocation.ward)).toBeInTheDocument();
     });
 
-    it("expands the location details", async () => {
-        const mockLocation = {
+    it.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `("expands the location details", async ({ locationKey }) => {
+        const mockLocation = new models.Location({
             name: "Bristol Royal Infirmary - A&E",
             listed: 1,
             ward: "Accident and Emergency",
@@ -230,13 +242,13 @@ describe("LocationDetailsPanel", () => {
                 name: "Someone Person",
                 id: "9b346c7d-e579-460b-8106-1866cf139f3c",
             },
-        };
-        amplify.DataStore.query.mockResolvedValue(mockLocation);
+        });
+        const task = new models.Task({ [locationKey]: mockLocation });
+        amplify.DataStore.query
+            .mockResolvedValueOnce(task)
+            .mockResolvedValueOnce(mockLocation);
         render(
-            <LocationDetailsPanel
-                locationId={mockLocation.id}
-                locationKey={"pickUpLocation"}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             { preloadedState }
         );
 
@@ -265,15 +277,19 @@ describe("LocationDetailsPanel", () => {
     `("selecting a location from a preset", async ({ locationKey }) => {
         const task = new models.Task({});
         amplify.DataStore.query
+            .mockResolvedValueOnce(task)
             .mockResolvedValueOnce(mockLocations)
             .mockResolvedValue(task);
         amplify.DataStore.save.mockResolvedValueOnce({
             ...task,
             [locationKey]: mockLocations[6],
         });
-        render(<LocationDetailsPanel locationKey={locationKey} />, {
-            preloadedState,
-        });
+        render(
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
+            {
+                preloadedState,
+            }
+        );
 
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
@@ -287,7 +303,7 @@ describe("LocationDetailsPanel", () => {
             await screen.findByText("Great Western Hospital - A&E")
         );
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
@@ -297,9 +313,7 @@ describe("LocationDetailsPanel", () => {
             [locationKey]: mockLocations[6],
         });
         expect(screen.queryByRole("textbox")).toBeNull();
-        expect(
-            screen.getByRole("button", { name: "Edit" })
-        ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         expect(
             screen.getByRole("button", { name: "Clear" })
         ).toBeInTheDocument();
@@ -311,6 +325,7 @@ describe("LocationDetailsPanel", () => {
     `("clear a listed location", async ({ locationKey }) => {
         const task = new models.Task({ [locationKey]: mockLocations[0] });
         amplify.DataStore.query
+            .mockResolvedValueOnce(task)
             .mockResolvedValueOnce(mockLocations[0])
             .mockResolvedValueOnce(task)
             .mockResolvedValue(mockLocations[0]);
@@ -321,18 +336,16 @@ describe("LocationDetailsPanel", () => {
             .mockResolvedValueOnce({ ...task, [locationKey]: null });
         amplify.DataStore.delete.mockResolvedValueOnce(dummyLocation);
         render(
-            <LocationDetailsPanel
-                locationId={mockLocations[0].id}
-                locationKey={locationKey}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             { preloadedState }
         );
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
         expect(
             screen.getAllByText(mockLocations[0].line1)[0]
         ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByRole("button", { name: "Clear" }));
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
@@ -385,6 +398,7 @@ describe("LocationDetailsPanel", () => {
             listed: 0,
         });
         amplify.DataStore.query
+            .mockResolvedValueOnce(task)
             .mockResolvedValueOnce(unlistedLocation)
             .mockResolvedValueOnce(task)
             .mockResolvedValue(unlistedLocation);
@@ -401,10 +415,7 @@ describe("LocationDetailsPanel", () => {
             .mockResolvedValueOnce({ ...task, [locationKey]: null });
         amplify.DataStore.delete.mockResolvedValueOnce(clearedLocation);
         render(
-            <LocationDetailsPanel
-                locationId={mockLocations[0].id}
-                locationKey={locationKey}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             { preloadedState }
         );
         await waitFor(() =>
@@ -413,6 +424,7 @@ describe("LocationDetailsPanel", () => {
         expect(
             screen.getAllByText(unlistedLocation.line1)[0]
         ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByRole("button", { name: "Clear" }));
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeInTheDocument();
@@ -454,6 +466,7 @@ describe("LocationDetailsPanel", () => {
         });
         const task = new models.Task({ [locationKey]: fakeListedLocation });
         amplify.DataStore.query
+            .mockResolvedValueOnce(task)
             .mockResolvedValueOnce(fakeListedLocation)
             .mockResolvedValueOnce(fakeListedLocation)
             .mockResolvedValueOnce(task)
@@ -461,7 +474,7 @@ describe("LocationDetailsPanel", () => {
         const fakeLocation = new models.Location({
             ...fakeListedLocation,
             listed: 0,
-            name: `Copy of ${mockLocations[0].name}`,
+            name: `${mockLocations[0].name} (edited)`,
         });
         const fakeTask = new models.Task({
             ...task,
@@ -473,14 +486,11 @@ describe("LocationDetailsPanel", () => {
             .mockResolvedValueOnce({
                 ...fakeLocation,
                 listed: 0,
-                name: `Copy of ${mockLocations[0].name}`,
+                name: `${mockLocations[0].name} (edited)`,
             });
 
         render(
-            <LocationDetailsPanel
-                locationId={mockLocations[0].id}
-                locationKey={locationKey}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             { preloadedState }
         );
         await waitFor(() =>
@@ -508,7 +518,7 @@ describe("LocationDetailsPanel", () => {
             expect.objectContaining(_.omit(fakeTask, "id"))
         );
         expect(
-            screen.getByText(`Copy of ${mockLocations[0].name}`)
+            screen.getByText(`${mockLocations[0].name} (edited)`)
         ).toBeInTheDocument();
     });
 
@@ -521,20 +531,25 @@ describe("LocationDetailsPanel", () => {
             ...mockLocations[1],
             listed: 0,
         });
-        amplify.DataStore.query.mockResolvedValue(fakeModel);
+        const mockTask = new models.Task({
+            [locationKey]: fakeModel,
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValue(fakeModel);
         amplify.DataStore.save.mockResolvedValueOnce({
             ...fakeModel,
             ward: fakeInputData,
         });
         render(
             <LocationDetailsPanel
-                locationId={fakeModel.id}
+                taskId={mockTask.id}
                 locationKey={locationKey}
             />,
             { preloadedState }
         );
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(mockLocations[1].ward));
@@ -544,7 +559,7 @@ describe("LocationDetailsPanel", () => {
         userEvent.type(textBox, " new data");
         userEvent.type(textBox, "{enter}");
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(1)
@@ -567,6 +582,7 @@ describe("LocationDetailsPanel", () => {
             });
             const fakeTaskModel = new models.Task({});
             amplify.DataStore.query
+                .mockResolvedValueOnce(fakeTaskModel)
                 .mockResolvedValueOnce(mockLocations)
                 .mockResolvedValue(fakeTaskModel);
             amplify.DataStore.save.mockResolvedValue({
@@ -574,10 +590,13 @@ describe("LocationDetailsPanel", () => {
             });
             render(
                 <LocationDetailsPanel
-                    locationId={null}
+                    taskId={fakeTaskModel.id}
                     locationKey={locationKey}
                 />,
                 { preloadedState }
+            );
+            await waitFor(() =>
+                expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
             );
             screen.getByText("Line one").click();
             const textBox = screen.getByRole("textbox", { name: "" });
@@ -613,19 +632,24 @@ describe("LocationDetailsPanel", () => {
             ...mockLocations[1],
             listed: 0,
         });
-        amplify.DataStore.query.mockResolvedValue(fakeModel);
+        const mockTask = new models.Task({
+            [locationKey]: fakeModel,
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce(mockTask)
+            .mockResolvedValue(fakeModel);
         amplify.DataStore.save.mockResolvedValueOnce({
             ...fakeModel,
             contact: { name: fakeInputData },
         });
         render(
             <LocationDetailsPanel
-                locationId={fakeModel.id}
+                taskId={mockTask.id}
                 locationKey={locationKey}
             />
         );
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2)
         );
         userEvent.click(screen.getByText("Expand to see more"));
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
@@ -662,7 +686,8 @@ describe("LocationDetailsPanel", () => {
                 tenantId: "tenant-id",
             });
             amplify.DataStore.query
-                .mockResolvedValue([])
+                .mockResolvedValueOnce(fakeTask)
+                .mockResolvedValueOnce([])
                 .mockResolvedValue(fakeTask);
             amplify.DataStore.save
                 .mockResolvedValueOnce({
@@ -678,7 +703,7 @@ describe("LocationDetailsPanel", () => {
                 });
             render(
                 <LocationDetailsPanel
-                    locationId={null}
+                    taskId={fakeTask.id}
                     locationKey={locationKey}
                 />,
                 { preloadedState }
@@ -740,6 +765,7 @@ describe("LocationDetailsPanel", () => {
                 tenantId: "tenant-id",
             });
             amplify.DataStore.query
+                .mockResolvedValueOnce(fakeTask)
                 .mockResolvedValueOnce([])
                 .mockResolvedValueOnce(fakeTask)
                 .mockResolvedValue(fakeModel);
@@ -761,7 +787,7 @@ describe("LocationDetailsPanel", () => {
                 });
             render(
                 <LocationDetailsPanel
-                    locationId={null}
+                    taskId={fakeTask.id}
                     locationKey={locationKey}
                 />,
                 { preloadedState }
@@ -841,6 +867,7 @@ describe("LocationDetailsPanel", () => {
                 tenantId: "tenant-id",
             });
             amplify.DataStore.query
+                .mockResolvedValueOnce(fakeTask)
                 .mockResolvedValueOnce([])
                 .mockResolvedValueOnce(fakeTask)
                 .mockResolvedValueOnce(fakeModel2)
@@ -868,7 +895,7 @@ describe("LocationDetailsPanel", () => {
                 });
             render(
                 <LocationDetailsPanel
-                    locationId={null}
+                    taskId={fakeTask.id}
                     locationKey={locationKey}
                 />,
                 { preloadedState }
@@ -940,7 +967,7 @@ describe("LocationDetailsPanel", () => {
         amplify.DataStore.query.mockRejectedValue(fakeError);
         render(
             <LocationDetailsPanel
-                locationId={"fakeId"}
+                taskId={"fakeId"}
                 locationKey={"pickUpLocation"}
             />,
             { preloadedState }

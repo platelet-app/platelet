@@ -88,7 +88,7 @@ function Dashboard() {
 
     return (
         <>
-            <Paper>
+            <Paper sx={{ maxWidth: 1480 }}>
                 <Hidden mdUp>
                     <DashboardDetailTabs />
                 </Hidden>
@@ -113,6 +113,7 @@ function Dashboard() {
                                       : "",
                                   tasksStatus.completed,
                                   tasksStatus.cancelled,
+                                  tasksStatus.abandoned,
                                   tasksStatus.rejected,
                               ]
                     }

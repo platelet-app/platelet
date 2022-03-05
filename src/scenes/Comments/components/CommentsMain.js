@@ -87,6 +87,7 @@ CommentsMain.propTypes = {
     comments: PropTypes.arrayOf(PropTypes.object),
     onDelete: PropTypes.func,
     onRestore: PropTypes.func,
+    onNewComment: PropTypes.func,
 };
 
 CommentsMain.defaultProps = {
@@ -94,6 +95,7 @@ CommentsMain.defaultProps = {
     comments: [],
     onDelete: () => {},
     onRestore: () => {},
+    onNewComment: () => {},
 };
 
 export default CommentsMain;

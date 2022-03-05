@@ -33,6 +33,9 @@ function TaskAssignees(props) {
                         return (
                             <Grid item>
                                 <UserChip
+                                    showResponsibility={
+                                        assignment.role === userRoles.rider
+                                    }
                                     user={user}
                                     key={assignment.id}
                                     onDelete={() =>

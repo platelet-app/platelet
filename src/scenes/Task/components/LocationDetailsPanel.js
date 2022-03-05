@@ -29,16 +29,21 @@ function LocationDetailsPanel(props) {
 
     async function getLocation() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus) {
+        if (!dataStoreReadyStatus || !props.taskId) {
             return;
         }
         try {
-            if (!props.locationId) {
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
+            if (!existingTask) throw new Error("Task not found");
+            if (!existingTask[props.locationKey]) {
                 setState(null);
             } else {
                 const location = await DataStore.query(
                     models.Location,
-                    props.locationId
+                    existingTask[props.locationKey].id
                 );
                 setState(location);
             }
@@ -49,7 +54,7 @@ function LocationDetailsPanel(props) {
         }
     }
 
-    useEffect(() => getLocation(), [props.locationId, dataStoreReadyStatus]);
+    useEffect(() => getLocation(), [props.taskId, dataStoreReadyStatus]);
 
     async function editPreset(additionalValues) {
         try {
@@ -73,7 +78,7 @@ function LocationDetailsPanel(props) {
                 new models.Location({
                     ...newValues,
                     listed: 0,
-                    name: `Copy of ${name}`,
+                    name: `${name} (edited)`,
                     tenantId,
                 })
             );

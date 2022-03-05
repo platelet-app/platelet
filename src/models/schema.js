@@ -87,7 +87,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "userRiderResponsibilityId"
                     }
                 },
@@ -129,12 +130,12 @@ export const schema = {
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "parentId"
+                        "associatedWith": "userCommentsId"
                     }
                 },
                 "assignments": {
@@ -173,6 +174,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "userRiderResponsibilityId": {
+                    "name": "userRiderResponsibilityId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -186,10 +194,19 @@ export const schema = {
                     "type": "key",
                     "properties": {
                         "name": "byCognitoId",
+                        "queryField": "getUserByCognitoId",
                         "fields": [
                             "cognitoId"
-                        ],
-                        "queryField": "getUserByCognitoId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
                     }
                 },
                 {
@@ -209,8 +226,10 @@ export const schema = {
                                 "allow": "private",
                                 "provider": "iam",
                                 "operations": [
+                                    "create",
                                     "read",
-                                    "create"
+                                    "update",
+                                    "delete"
                                 ]
                             }
                         ]
@@ -239,7 +258,7 @@ export const schema = {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "manufacturer": {
@@ -289,7 +308,7 @@ export const schema = {
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -320,6 +339,15 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
                 },
                 {
                     "type": "key",
@@ -389,7 +417,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "commentAuthorId"
+                        "targetName": "userCommentsId"
                     }
                 },
                 "visibility": {
@@ -431,6 +459,15 @@ export const schema = {
                         "name": "byParent",
                         "fields": [
                             "parentId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
                         ]
                     }
                 },
@@ -499,6 +536,15 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -592,8 +638,15 @@ export const schema = {
             "attributes": [
                 {
                     "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
                     "properties": {
-                        "queries": null
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
                     }
                 },
                 {
@@ -660,7 +713,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "taskCreatedById"
                     }
                 },
@@ -750,7 +804,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "taskRiderResponsibilityId"
                     }
                 },
@@ -765,7 +820,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "assignee"
+                        "associatedWith": "task"
                     }
                 },
                 "priority": {
@@ -783,7 +838,7 @@ export const schema = {
                     "type": {
                         "model": "Deliverable"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -800,7 +855,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "taskRelayPreviousId"
                     }
                 },
@@ -813,22 +869,9 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "BELONGS_TO",
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
                         "targetName": "taskRelayNextId"
-                    }
-                },
-                "group": {
-                    "name": "group",
-                    "isArray": true,
-                    "type": {
-                        "model": "Group"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "taskGroupId"
                     }
                 },
                 "comments": {
@@ -837,7 +880,7 @@ export const schema = {
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -851,7 +894,7 @@ export const schema = {
                     "type": {
                         "enum": "TaskStatus"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -869,6 +912,34 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "taskCreatedById": {
+                    "name": "taskCreatedById",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "taskRiderResponsibilityId": {
+                    "name": "taskRiderResponsibilityId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "taskRelayPreviousId": {
+                    "name": "taskRelayPreviousId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "taskRelayNextId": {
+                    "name": "taskRelayNextId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -881,11 +952,10 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byStatus",
+                        "name": "byTenantId",
                         "fields": [
-                            "status"
-                        ],
-                        "queryField": "tasksByStatus"
+                            "tenantId"
+                        ]
                     }
                 },
                 {
@@ -903,6 +973,16 @@ export const schema = {
                         "name": "byDropOffLocation",
                         "fields": [
                             "dropOffLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byStatus",
+                        "queryField": "tasksByStatus",
+                        "fields": [
+                            "status"
                         ]
                     }
                 },
@@ -1068,7 +1148,7 @@ export const schema = {
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -1099,6 +1179,15 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -1141,19 +1230,12 @@ export const schema = {
                     "type": {
                         "model": "DeliverableType"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "deliverableDeliverableTypeId"
+                        "targetName": "deliverableTypeDeliverablesId"
                     }
-                },
-                "taskDeliverablesId": {
-                    "name": "taskDeliverablesId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 },
                 "task": {
                     "name": "task",
@@ -1165,7 +1247,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "deliverableTaskId"
+                        "targetName": "taskDeliverablesId"
                     }
                 },
                 "count": {
@@ -1197,7 +1279,7 @@ export const schema = {
                     "type": {
                         "model": "Comment"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
@@ -1228,6 +1310,15 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -1289,6 +1380,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "deliverables": {
+                    "name": "deliverables",
+                    "isArray": true,
+                    "type": {
+                        "model": "Deliverable"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "deliverableTypeDeliverablesId"
+                    }
+                },
                 "tags": {
                     "name": "tags",
                     "isArray": true,
@@ -1322,6 +1427,15 @@ export const schema = {
                     "properties": {}
                 },
                 {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
+                },
+                {
                     "type": "auth",
                     "properties": {
                         "rules": [
@@ -1339,8 +1453,8 @@ export const schema = {
                 }
             ]
         },
-        "Group": {
-            "name": "Group",
+        "Tenant": {
+            "name": "Tenant",
             "fields": {
                 "id": {
                     "name": "id",
@@ -1349,18 +1463,18 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "taskGroupId": {
-                    "name": "taskGroupId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "name": {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "referenceIdentifier": {
+                    "name": "referenceIdentifier",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
                     "attributes": []
                 },
                 "createdAt": {
@@ -1381,7 +1495,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Groups",
+            "pluralName": "Tenants",
             "attributes": [
                 {
                     "type": "model",
@@ -1398,6 +1512,16 @@ export const schema = {
                                     "update",
                                     "delete",
                                     "read"
+                                ]
+                            },
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "update",
+                                    "delete"
                                 ]
                             }
                         ]
@@ -1478,6 +1602,74 @@ export const schema = {
         }
     },
     "nonModels": {
+        "Statistics": {
+            "name": "Statistics",
+            "fields": {
+                "numCancelled": {
+                    "name": "numCancelled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numCompleted": {
+                    "name": "numCompleted",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numDroppedOff": {
+                    "name": "numDroppedOff",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numRejected": {
+                    "name": "numRejected",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numAbandoned": {
+                    "name": "numAbandoned",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numActive": {
+                    "name": "numActive",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numPickedUp": {
+                    "name": "numPickedUp",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numNew": {
+                    "name": "numNew",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numTest": {
+                    "name": "numTest",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
         "AddressAndContactDetails": {
             "name": "AddressAndContactDetails",
             "fields": {
@@ -1608,5 +1800,5 @@ export const schema = {
             }
         }
     },
-    "version": "60aca43e9d9162a2009a1de2015038b1"
+    "version": "b78ac2ab5248c1f3055b889e75309049"
 };

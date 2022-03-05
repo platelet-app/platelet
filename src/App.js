@@ -165,6 +165,7 @@ const taskStatus = {
     DROPPED_OFF: "darkgreen",
     COMPLETED: "lightgreen",
     CANCELLED: "blue",
+    ABANDONED: "red",
     REJECTED: "grey",
 };
 

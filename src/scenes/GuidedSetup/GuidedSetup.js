@@ -144,6 +144,7 @@ export const GuidedSetup = () => {
     const comment = useRef(defaultComment);
     const timeOfCall = useRef(new Date().toISOString());
     const dispatch = useDispatch();
+    const locations = useRef({ pickUpLocation: null, dropOffLocation: null });
     const { show, hide } = showHide();
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
@@ -185,6 +186,7 @@ export const GuidedSetup = () => {
                 {
                     ...formValues,
                     deliverables: deliverables.current,
+                    locations: locations.current,
                     requesterContact: requesterContact.current,
                     comment: comment.current,
                     timeOfCall: timeOfCall.current,
@@ -203,11 +205,14 @@ export const GuidedSetup = () => {
     };
 
     const handleDiscard = () => {
+        console.log(locations.current);
         if (
             !_.isEqual(formValues, defaultValues) ||
             !_.isEqual(requesterContact.current, defaultContact) ||
             !_.isEqual(comment.current.body, defaultComment.body) ||
-            !_.isEmpty(deliverables.current)
+            !_.isEmpty(deliverables.current) ||
+            locations.current.pickUpLocation ||
+            locations.current.dropOffLocation
         ) {
             setDiscardConfirmationOpen(true);
         } else {
@@ -223,66 +228,10 @@ export const GuidedSetup = () => {
         comment.current = { ...comment.current, body: value };
     };
 
-    const handleSaveLocationFromPreset = (key, location) => {
-        setFormValues((prevState) => ({ ...prevState, [key]: location }));
-    };
-
-    const handleLocationChangeContact = (key, values) => {
-        setFormValues((prevState) => {
-            if (prevState[key] && prevState[key].listed === 1) {
-                const { id, ...rest } = prevState[key];
-                return {
-                    ...prevState,
-                    [key]: {
-                        ...rest,
-                        contact: { ...rest.contact, ...values },
-                        name: rest && rest.name ? `Copy of ${rest.name}` : "",
-                        listed: 0,
-                    },
-                };
-            } else if (prevState[key]) {
-                return {
-                    ...prevState,
-                    [key]: {
-                        ...prevState[key],
-                        contact: { ...prevState[key].contact, ...values },
-                    },
-                };
-            } else {
-                return {
-                    ...prevState,
-                    [key]: { contact: values, listed: 0 },
-                };
-            }
-        });
-    };
-
-    const handleLocationChangeAddress = (key, values) => {
-        setFormValues((prevState) => {
-            if (prevState[key] && prevState[key].listed === 1) {
-                const { id, ...rest } = prevState[key];
-                return {
-                    ...prevState,
-                    [key]: {
-                        ...rest,
-                        ...values,
-                        name: rest && rest.name ? `Copy of ${rest.name}` : "",
-                        listed: 0,
-                    },
-                };
-            } else if (prevState[key]) {
-                return {
-                    ...prevState,
-                    [key]: { ...prevState[key], ...values },
-                };
-            } else {
-                return {
-                    ...prevState,
-                    [key]: { ...values, listed: 0 },
-                };
-            }
-        });
-    };
+    function setLocation(key, location) {
+        console.log(key, location);
+        locations.current[key] = location;
+    }
 
     const handleDeliverablesChange = (value) => {
         if (!value || !value.id) {
@@ -313,18 +262,20 @@ export const GuidedSetup = () => {
 
     const onCloseForm = () => {
         dispatch(setGuidedSetupOpen(false));
-        setFormValues(defaultValues);
-        deliverables.current = {};
-        requesterContact.current = defaultContact;
-        comment.current = defaultComment;
-        // force rerender so that all the tabs are reset
-        setReset((prevState) => !prevState);
         setTabIndex(0);
     };
 
     useEffect(() => {
         if (guidedSetupOpen) {
             timeOfCall.current = new Date().toISOString();
+        } else {
+            setFormValues(defaultValues);
+            deliverables.current = {};
+            requesterContact.current = defaultContact;
+            comment.current = defaultComment;
+            locations.current = { pickUpLocation: null, dropOffLocation: null };
+            // force rerender so that all the tabs are reset
+            setReset((prevState) => !prevState);
         }
     }, [guidedSetupOpen]);
 
@@ -394,62 +345,18 @@ export const GuidedSetup = () => {
                     </Box>
                     <Box className={tabIndex === 2 ? show : hide}>
                         <PickUpAndDeliverDetails
-                            values={formValues}
-                            onChange={handleReceiverContactChange}
-                            onSelectPickUpLocation={(value) =>
-                                handleSaveLocationFromPreset(
-                                    "pickUpLocation",
-                                    value
-                                )
-                            }
-                            onSelectDropOffLocation={(value) =>
-                                handleSaveLocationFromPreset(
-                                    "dropOffLocation",
-                                    value
-                                )
-                            }
+                            onSetPickUpLocation={(value) => {
+                                setLocation("pickUpLocation", value);
+                            }}
+                            onSetDropOffLocation={(value) => {
+                                setLocation("dropOffLocation", value);
+                            }}
                             onClearDropOffLocation={() =>
-                                setFormValues((prevState) => ({
-                                    ...prevState,
-                                    dropOffLocation: null,
-                                }))
+                                (locations.current.dropOffLocation = null)
                             }
                             onClearPickUpLocation={() =>
-                                setFormValues((prevState) => ({
-                                    ...prevState,
-                                    pickUpLocation: null,
-                                }))
+                                (locations.current.pickUpLocation = null)
                             }
-                            onChangePickUpLocation={(values) => {
-                                const { contact, ...rest } = values;
-                                if (!_.isEmpty(rest)) {
-                                    handleLocationChangeAddress(
-                                        "pickUpLocation",
-                                        rest
-                                    );
-                                }
-                                if (!_.isEmpty(contact)) {
-                                    handleLocationChangeContact(
-                                        "pickUpLocation",
-                                        contact
-                                    );
-                                }
-                            }}
-                            onChangeDropOffLocation={(values) => {
-                                const { contact, ...rest } = values;
-                                if (!_.isEmpty(rest)) {
-                                    handleLocationChangeAddress(
-                                        "dropOffLocation",
-                                        rest
-                                    );
-                                }
-                                if (!_.isEmpty(contact)) {
-                                    handleLocationChangeContact(
-                                        "dropOffLocation",
-                                        contact
-                                    );
-                                }
-                            }}
                         />
                     </Box>
                     <Box className={tabIndex === 3 ? show : hide}>

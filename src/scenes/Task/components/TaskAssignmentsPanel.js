@@ -69,7 +69,6 @@ function TaskAssignmentsPanel(props) {
     const errorMessage = "Sorry, something went wrong";
 
     function onSelect(value) {
-        console.log("onSelect", value);
         updating.current = true;
         if (value) addAssignee(value, role);
     }
@@ -211,39 +210,33 @@ function TaskAssignmentsPanel(props) {
     } else {
         return (
             <Paper sx={{ padding: 1 }}>
-                <Stack direction="column" spacing={2}>
+                <Stack divider={<Divider />} direction="column" spacing={2}>
                     <Typography variant={"h6"}>
                         People assigned to this task
                     </Typography>
-                    <Divider />
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent={"space-between"}
-                    >
-                        {collapsed && (
-                            <Grid container spacing={1} direction={"row"}>
-                                {Object.values(state)
-                                    .sort(sortByUserRole)
-                                    .map((assignment) => {
-                                        if (assignment && assignment.assignee) {
-                                            const user = assignment.assignee;
-                                            return (
-                                                <Grid key={user.id} item>
-                                                    <UserChip
-                                                        key={user.id}
-                                                        user={user}
-                                                    />
-                                                </Grid>
-                                            );
-                                        } else {
-                                            return <></>;
-                                        }
-                                    })}
-                            </Grid>
-                        )}
-                    </Stack>
-                    {!collapsed && !isFetching ? (
+                    {collapsed && (
+                        <Grid container spacing={1} direction={"row"}>
+                            {Object.values(state)
+                                .sort(sortByUserRole)
+                                .map((assignment) => {
+                                    return (
+                                        assignment &&
+                                        assignment.assignee && (
+                                            <Grid
+                                                key={assignment.assignee.id}
+                                                item
+                                            >
+                                                <UserChip
+                                                    key={assignment.assignee.id}
+                                                    user={assignment.assignee}
+                                                />
+                                            </Grid>
+                                        )
+                                    );
+                                })}
+                        </Grid>
+                    )}
+                    {!collapsed && !isFetching && (
                         <>
                             <TaskAssignees
                                 onRemove={(v) => {
@@ -301,10 +294,7 @@ function TaskAssignmentsPanel(props) {
                                 />
                             )}
                         </>
-                    ) : (
-                        <></>
                     )}
-                    <Divider />
                     {isFetching ? (
                         <></>
                     ) : (

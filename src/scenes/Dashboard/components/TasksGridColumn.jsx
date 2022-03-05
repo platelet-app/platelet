@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { TasksKanbanColumn } from "../styles/TaskColumns";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Skeleton, Stack, Typography } from "@mui/material";
+import { Skeleton, Stack, Typography, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import clsx from "clsx";
@@ -21,13 +21,16 @@ import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
-import { tasksStatus, userRoles } from "../../../apiConsts";
+import { userRoles } from "../../../apiConsts";
 import Box from "@mui/material/Box";
 import DateStampDivider from "./TimeStampDivider";
 import getTasksAll from "../utilities/getTasksAll";
 import getAllTasksByUser from "../utilities/getAllTasksByUser";
 import getAllMyTasks from "../utilities/getAllMyTasks";
 import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
+import useWindowSize from "../../../hooks/useWindowSize";
+import { useTheme } from "@mui/styles";
+import { useInView } from "react-intersection-observer";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -54,6 +57,23 @@ const useStyles = makeStyles((theme) => ({
     spacer: {
         height: 35,
     },
+    column: {
+        padding: 5,
+        backgroundColor: "rgba(180, 180, 180, 0.1)",
+        borderRadius: 5,
+        border: 0,
+        boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
+        height: "100%",
+        maxWidth: 360,
+        minWidth: 285,
+        [theme.breakpoints.down("lg")]: {
+            padding: 0,
+        },
+        [theme.breakpoints.down("sm")]: {
+            maxWidth: "100%",
+            width: "100%",
+        },
+    },
     taskItem: {
         width: "100%",
     },
@@ -71,11 +91,14 @@ function TasksGridColumn(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
+    const [visibility, setVisibility] = useState(false);
+    const [width, height] = useWindowSize();
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
     const roleViewRef = useRef(roleView);
+    const getTasksRef = useRef(null);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
@@ -85,6 +108,19 @@ function TasksGridColumn(props) {
     const taskAssigneesObserver = useRef({
         unsubscribe: () => {},
     });
+    const theme = useTheme();
+    const { ref, inView, entry } = useInView({
+        threshold: 0,
+    });
+
+    useEffect(() => {
+        console.log("asdf", inView);
+        if (inView && !visibility) {
+            setVisibility(true);
+        }
+    }, [inView]);
+
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     stateRef.current = state;
 
@@ -111,7 +147,8 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (!dataStoreReadyStatus) {
+        console.log("getTasks", dataStoreReadyStatus, visibility);
+        if (!dataStoreReadyStatus || !visibility) {
             return;
         } else {
             try {
@@ -150,6 +187,8 @@ function TasksGridColumn(props) {
         }
     }
 
+    getTasksRef.current = getTasks;
+
     useEffect(
         () => {
             setIsFetching(true);
@@ -159,6 +198,7 @@ function TasksGridColumn(props) {
         [
             dataStoreReadyStatus,
             dashboardFilteredUser,
+            visibility,
             roleView,
             JSON.stringify(props.taskKey),
         ]
@@ -175,7 +215,7 @@ function TasksGridColumn(props) {
                         props.taskKey.includes(newTask.element.status)
                     ) {
                         animate.current = true;
-                        getTasks();
+                        getTasksRef.current();
                         return;
                     } else if (
                         newTask.element.status &&
@@ -193,7 +233,7 @@ function TasksGridColumn(props) {
                 } else {
                     // if roleView is rider or coordinator, let the assignments observer deal with it
                     if (roleViewRef.current !== "ALL") return;
-                    getTasks();
+                    getTasksRef.current();
                 }
             }
         );
@@ -251,7 +291,7 @@ function TasksGridColumn(props) {
                     ) {
                         if (!element.taskId) return;
                         animate.current = true;
-                        getTasks();
+                        getTasksRef.current();
                     }
                 } else if (taskAssignee.opType === "DELETE") {
                     const element = taskAssignee.element;
@@ -287,7 +327,13 @@ function TasksGridColumn(props) {
         return <GetError />;
     } else if (isFetching) {
         return (
-            <TasksKanbanColumn>
+            <Box
+                ref={ref}
+                className={classes.column}
+                sx={{
+                    width: isSm ? "100%" : width / 4.2,
+                }}
+            >
                 <Stack direction="column" spacing={4}>
                     <Skeleton
                         variant="rectangular"
@@ -295,22 +341,29 @@ function TasksGridColumn(props) {
                         height={50}
                     />
                     {_.range(4).map((i) => (
-                        <Skeleton
-                            key={i}
-                            variant="rectangular"
-                            width={"100%"}
-                            height={200}
-                        />
+                        <Box className={classes.taskItem}>
+                            <Skeleton
+                                key={i}
+                                variant="rectangular"
+                                width={"100%"}
+                                height={200}
+                            />
+                        </Box>
                     ))}
                 </Stack>
-            </TasksKanbanColumn>
+            </Box>
         );
     } else {
         let displayDate = false;
         let lastTime = new Date();
         const filteredTasksIdsList = filteredTasksIds || [];
         return (
-            <TasksKanbanColumn>
+            <Box
+                className={classes.column}
+                sx={{
+                    width: isSm ? "100%" : width / 4.2,
+                }}
+            >
                 {header}
                 <Stack
                     direction={"column"}
@@ -337,7 +390,7 @@ function TasksGridColumn(props) {
                             displayDate = true;
                         }
                         return (
-                            <div
+                            <Box
                                 className={clsx(
                                     classes.taskItem,
                                     filteredTasksIds === null ||
@@ -364,7 +417,7 @@ function TasksGridColumn(props) {
                                     taskUUID={task.id}
                                     deleteDisabled
                                 />
-                                <div
+                                <Box
                                     className={
                                         !!task.relayNext &&
                                         props.showTasks === null &&
@@ -381,12 +434,12 @@ function TasksGridColumn(props) {
                                             }}
                                         />
                                     </Tooltip>
-                                </div>
-                            </div>
+                                </Box>
+                            </Box>
                         );
                     })}
                 </Stack>
-            </TasksKanbanColumn>
+            </Box>
         );
     }
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import TaskCard from "./TaskCardsColoured";
 import {
     convertListDataToObject,
@@ -7,8 +8,8 @@ import {
     encodeUUID,
 } from "../../../utilities";
 import PropTypes from "prop-types";
-import { Grow, Skeleton } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, Grow, Skeleton } from "@mui/material";
+import { makeStyles, useTheme } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { commentVisibility, userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
@@ -20,6 +21,7 @@ import {
     getWhoami,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
+import useWindowSize from "../../../hooks/useWindowSize";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -29,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
                 display: "inline",
             },
         },
+        padding: 1,
+        width: "100%",
+        cursor: "context-menu",
     },
     dots: () => {
         const background =
@@ -70,7 +75,7 @@ function TaskItem(props) {
     }, [inView]);
 
     async function getAssignees() {
-        if ((visibility && !dataStoreReadyStatus) || !props.task) return;
+        if (!visibility || !dataStoreReadyStatus || !props.task) return;
         // inefficient method of getting assignees
         /*const allAssignments = (
             await DataStore.query(models.TaskAssignee)
@@ -117,6 +122,7 @@ function TaskItem(props) {
             (c) =>
                 c.visibility === commentVisibility.everyone ||
                 (c.visibility === commentVisibility.me &&
+                    c.author &&
                     c.author.id === whoami.id)
         );
         return commentsResult.length;
@@ -149,10 +155,7 @@ function TaskItem(props) {
 
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
-            <div
-                className={classes.root}
-                style={{ cursor: "context-menu", position: "relative" }}
-            >
+            <Box className={classes.root}>
                 <Link
                     style={{ textDecoration: "none" }}
                     to={{
@@ -187,7 +190,7 @@ function TaskItem(props) {
                         task={task}
                     />
                 </div>
-            </div>
+            </Box>
         </Grow>
     ) : (
         <Skeleton variant="rectangle" width="100%" height={200} />

@@ -277,7 +277,7 @@ describe("CommentsSection", () => {
         const mockTask = new models.Task({});
         const mockComment = new models.Comment({
             body: "This is a comment",
-            commentAuthorId: mockAuthor.id,
+            author: mockAuthor,
             visibility: commentVisibility.everyone,
         });
         const mockObservedResult = {
@@ -318,7 +318,7 @@ describe("CommentsSection", () => {
         const mockTask = new models.Task({});
         const mockComment = new models.Comment({
             body: "This is a comment",
-            commentAuthorId: mockAuthor.id,
+            author: mockAuthor,
             visibility: commentVisibility.everyone,
         });
         const mockObservedResult = {
@@ -361,7 +361,7 @@ describe("CommentsSection", () => {
         const mockTask = new models.Task({});
         const mockComment = new models.Comment({
             body: "This is a comment",
-            commentAuthorId: mockAuthor.id,
+            author: mockAuthor,
             visibility: commentVisibility.everyone,
         });
         const mockObservedResult = {

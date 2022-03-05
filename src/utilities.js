@@ -79,7 +79,9 @@ export function getDeliverableIconByEnum(deliverableType, size) {
 export function determineTaskStatus(task) {
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
-        return tasksStatus.cancelled;
+        return !!task.timePickedUp
+            ? tasksStatus.abandoned
+            : tasksStatus.cancelled;
     } else if (!!task.timeRejected) {
         return tasksStatus.rejected;
     }
@@ -124,24 +126,11 @@ export function determineTaskStatus(task) {
 }
 
 export function taskStatusHumanReadable(status) {
-    switch (status) {
-        case "NEW":
-            return "New";
-        case "ACTIVE":
-            return "Active";
-        case "PICKED_UP":
-            return "Picked up";
-        case "DROPPED_OFF":
-            return "Delivered";
-        case "REJECTED":
-            return "Rejected";
-        case "CANCELLED":
-            return "Cancelled";
-        case "COMPLETED":
-            return "Completed";
-        default:
-            return "Unknown status";
+    if (!status) {
+        return "";
     }
+    if (status === tasksStatus.droppedOff) return "DELIVERED";
+    return status.replace(/_/g, " ");
 }
 
 export function sortByCreatedTime(items, order = "newest") {
