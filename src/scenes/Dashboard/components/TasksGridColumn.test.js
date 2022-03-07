@@ -54,6 +54,7 @@ describe("TasksGridColumn", () => {
             subscribe: () => ({ unsubscribe: () => {} }),
         });
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />);
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
         });
@@ -99,6 +100,7 @@ describe("TasksGridColumn", () => {
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
             preloadedState,
         });
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
@@ -142,6 +144,7 @@ describe("TasksGridColumn", () => {
             render(
                 <TasksGridColumn title={taskStatus} taskKey={[taskStatus]} />
             );
+            mockAllIsIntersecting(true);
             await waitFor(() => {
                 expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                     1,
@@ -206,6 +209,7 @@ describe("TasksGridColumn", () => {
                 },
             }
         );
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
@@ -315,6 +319,7 @@ describe("TasksGridColumn", () => {
                 preloadedState,
             }
         );
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
@@ -436,6 +441,7 @@ describe("TasksGridColumn", () => {
                 />
             </>
         );
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
@@ -528,14 +534,14 @@ describe("TasksGridColumn", () => {
         };
         amplify.DataStore.query
             .mockResolvedValueOnce([])
-            .mockReturnValueOnce([])
-            .mockReturnValueOnce([])
-            .mockReturnValueOnce([mockTask])
-            .mockReturnValue([]);
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([mockTask])
+            .mockResolvedValue([]);
         amplify.DataStore.observe
             .mockReturnValueOnce({
                 subscribe: jest.fn().mockImplementation((callback) => {
-                    callback(mockObservedResult);
+                    setTimeout(() => callback(mockObservedResult), 1000);
                     return { unsubscribe: jest.fn() };
                 }),
             })
@@ -544,7 +550,7 @@ describe("TasksGridColumn", () => {
             })
             .mockReturnValueOnce({
                 subscribe: jest.fn().mockImplementation((callback) => {
-                    callback(mockObservedResult2);
+                    setTimeout(() => callback(mockObservedResult2), 1100);
                     return { unsubscribe: jest.fn() };
                 }),
             })
@@ -554,6 +560,7 @@ describe("TasksGridColumn", () => {
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
             preloadedState,
         });
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
@@ -563,15 +570,15 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
-                models.TaskAssignee
+                models.Task,
+                expect.any(Function),
+                { limit: 0, sort: expect.any(Function) }
             );
         });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 3,
-                models.Task,
-                expect.any(Function),
-                { limit: 0, sort: expect.any(Function) }
+                models.TaskAssignee
             );
         });
         await waitFor(() => {
@@ -582,15 +589,7 @@ describe("TasksGridColumn", () => {
                 { limit: 0, sort: expect.any(Function) }
             );
         });
-        expect(screen.queryAllByRole("link")).toHaveLength(0);
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                5,
-                models.Comment,
-                expect.any(Function)
-            );
-        });
         expect(screen.queryAllByRole("link")).toHaveLength(1);
         expect(
             screen.getByText(moment(timeOfCall).calendar())
@@ -645,6 +644,7 @@ describe("TasksGridColumn", () => {
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
             preloadedState,
         });
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
@@ -654,20 +654,6 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
-                models.TaskAssignee
-            );
-        });
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                3,
-                models.Task,
-                expect.any(Function),
-                { limit: 0, sort: expect.any(Function) }
-            );
-        });
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                4,
                 models.Task,
                 expect.any(Function),
                 { limit: 0, sort: expect.any(Function) }
@@ -678,9 +664,8 @@ describe("TasksGridColumn", () => {
             expect(amplify.DataStore.observe).toHaveBeenCalledTimes(3);
         });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(4);
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
         });
-        mockAllIsIntersecting(true);
         expect(screen.queryAllByRole("link")).toHaveLength(0);
         expect(screen.queryByText(moment(timeOfCall).calendar())).toBeNull();
     });
@@ -742,6 +727,7 @@ describe("TasksGridColumn", () => {
             render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
                 preloadedState,
             });
+            mockAllIsIntersecting(true);
             expect(screen.queryAllByRole("link")).toHaveLength(0);
             await waitFor(() => {
                 expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
@@ -829,6 +815,7 @@ describe("TasksGridColumn", () => {
             render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
                 preloadedState,
             });
+            mockAllIsIntersecting(true);
             expect(screen.queryAllByRole("link")).toHaveLength(0);
             await waitFor(() => {
                 expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
@@ -917,6 +904,7 @@ describe("TasksGridColumn", () => {
             render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
                 preloadedState,
             });
+            mockAllIsIntersecting(true);
             expect(screen.queryAllByRole("link")).toHaveLength(0);
             await waitFor(() => {
                 expect(amplify.DataStore.observe).toHaveBeenNthCalledWith(
@@ -955,6 +943,7 @@ describe("TasksGridColumn", () => {
             <TasksGridColumn taskKey={[tasksStatus.new]} />,
             { preloadedState }
         );
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
         });
@@ -1007,6 +996,7 @@ describe("TasksGridColumn", () => {
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
             preloadedState,
         });
+        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
         });
