@@ -147,7 +147,6 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        console.log("getTasks", dataStoreReadyStatus, visibility);
         if (!dataStoreReadyStatus || !visibility) {
             return;
         } else {
@@ -209,31 +208,36 @@ function TasksGridColumn(props) {
         tasksSubscription.current.unsubscribe();
         tasksSubscription.current = DataStore.observe(models.Task).subscribe(
             (newTask) => {
-                if (newTask.opType === "UPDATE") {
-                    if (
-                        newTask.element.status &&
-                        props.taskKey.includes(newTask.element.status)
-                    ) {
-                        animate.current = true;
-                        getTasksRef.current();
-                        return;
-                    } else if (
-                        newTask.element.status &&
-                        !props.taskKey.includes(newTask.element.status)
-                    ) {
-                        removeTaskFromState(newTask.element);
-                        return;
-                    } else if (newTask.element.id in stateRef.current) {
-                        DataStore.query(models.Task, newTask.element.id).then(
-                            (result) => {
+                try {
+                    if (newTask.opType === "UPDATE") {
+                        if (
+                            newTask.element.status &&
+                            props.taskKey.includes(newTask.element.status)
+                        ) {
+                            animate.current = true;
+                            getTasksRef.current();
+                            return;
+                        } else if (
+                            newTask.element.status &&
+                            !props.taskKey.includes(newTask.element.status)
+                        ) {
+                            removeTaskFromState(newTask.element);
+                            return;
+                        } else if (newTask.element.id in stateRef.current) {
+                            DataStore.query(
+                                models.Task,
+                                newTask.element.id
+                            ).then((result) => {
                                 addTaskToState(result);
-                            }
-                        );
+                            });
+                        }
+                    } else {
+                        // if roleView is rider or coordinator, let the assignments observer deal with it
+                        if (roleViewRef.current !== "ALL") return;
+                        getTasksRef.current();
                     }
-                } else {
-                    // if roleView is rider or coordinator, let the assignments observer deal with it
-                    if (roleViewRef.current !== "ALL") return;
-                    getTasksRef.current();
+                } catch (error) {
+                    console.log(error);
                 }
             }
         );
@@ -241,39 +245,43 @@ function TasksGridColumn(props) {
         locationsSubscription.current = DataStore.observe(
             models.Location
         ).subscribe(async (location) => {
-            if (location.opType === "UPDATE") {
-                for (const task of Object.values(stateRef.current)) {
-                    if (
-                        task.pickUpLocation &&
-                        task.pickUpLocation.id === location.element.id
-                    ) {
-                        setState((prevState) => ({
-                            ...prevState,
-                            [task.id]: {
-                                ...prevState[task.id],
-                                pickUpLocation: {
-                                    ...task.pickUpLocation,
-                                    ...location.element,
+            try {
+                if (location.opType === "UPDATE") {
+                    for (const task of Object.values(stateRef.current)) {
+                        if (
+                            task.pickUpLocation &&
+                            task.pickUpLocation.id === location.element.id
+                        ) {
+                            setState((prevState) => ({
+                                ...prevState,
+                                [task.id]: {
+                                    ...prevState[task.id],
+                                    pickUpLocation: {
+                                        ...task.pickUpLocation,
+                                        ...location.element,
+                                    },
                                 },
-                            },
-                        }));
-                    }
-                    if (
-                        task.dropOffLocation &&
-                        task.dropOffLocation.id === location.element.id
-                    ) {
-                        setState((prevState) => ({
-                            ...prevState,
-                            [task.id]: {
-                                ...prevState[task.id],
-                                dropOffLocation: {
-                                    ...task.dropOffLocation,
-                                    ...location.element,
+                            }));
+                        }
+                        if (
+                            task.dropOffLocation &&
+                            task.dropOffLocation.id === location.element.id
+                        ) {
+                            setState((prevState) => ({
+                                ...prevState,
+                                [task.id]: {
+                                    ...prevState[task.id],
+                                    dropOffLocation: {
+                                        ...task.dropOffLocation,
+                                        ...location.element,
+                                    },
                                 },
-                            },
-                        }));
+                            }));
+                        }
                     }
                 }
+            } catch (error) {
+                console.log(error);
             }
         });
         taskAssigneesObserver.current.unsubscribe();
