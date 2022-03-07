@@ -4718,7 +4718,117 @@ export const registerUser = /* GraphQL */ `
     $tenantId: ID
     $roles: [Role]
   ) {
-    registerUser(name: $name, email: $email, tenantId: $tenantId, roles: $roles)
+    registerUser(
+      name: $name
+      email: $email
+      tenantId: $tenantId
+      roles: $roles
+    ) {
+      id
+      cognitoId
+      tenantId
+      contact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
+      displayName
+      name
+      roles
+      dateOfBirth
+      vehicles {
+        items {
+          id
+          tenantId
+          assignedUserID
+          name
+          manufacturer
+          model
+          dateOfManufacture
+          dateOfRegistration
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      riderResponsibility {
+        id
+        tenantId
+        label
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      profilePictureURL
+      profilePictureThumbnailURL
+      profilePicture {
+        bucket
+        key
+        region
+      }
+      profilePictureThumbnail {
+        bucket
+        key
+        region
+      }
+      comments {
+        items {
+          id
+          parentId
+          tenantId
+          body
+          visibility
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCommentsId
+        }
+        nextToken
+        startedAt
+      }
+      assignments {
+        items {
+          id
+          tenantId
+          taskId
+          assigneeId
+          role
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      active
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userRiderResponsibilityId
+    }
   }
 `;
 export const registerTenant = /* GraphQL */ `
