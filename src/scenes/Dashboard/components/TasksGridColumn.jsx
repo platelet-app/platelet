@@ -114,7 +114,6 @@ function TasksGridColumn(props) {
     });
 
     useEffect(() => {
-        console.log("asdf", inView);
         if (inView && !visibility) {
             setVisibility(true);
         }
