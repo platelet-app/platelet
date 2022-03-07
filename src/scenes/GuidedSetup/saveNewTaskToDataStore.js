@@ -1,6 +1,8 @@
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
+import { convertListDataToObject } from "../../utilities";
+import _ from "lodash";
 
 export async function saveNewTaskToDataStore(
     data,
@@ -34,12 +36,12 @@ export async function saveNewTaskToDataStore(
         })
     );
 
-    if (deliverables) {
+    if (deliverables && !_.isEmpty(deliverables)) {
+        const deliverableTypes = await DataStore.query(models.DeliverableType);
+        const deliverableTypesObject =
+            convertListDataToObject(deliverableTypes);
         for (const deliverable of Object.values(deliverables)) {
-            const deliverableType = await DataStore.query(
-                models.DeliverableType,
-                deliverable.id
-            );
+            const deliverableType = deliverableTypesObject[deliverable.id];
             DataStore.save(
                 new models.Deliverable({
                     deliverableType,

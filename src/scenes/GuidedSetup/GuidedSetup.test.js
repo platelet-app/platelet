@@ -348,9 +348,8 @@ describe("GuidedSetup", () => {
             .mockResolvedValueOnce([mockDeliverableType, mockDeliverableType2])
             .mockResolvedValueOnce([])
             .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([mockDeliverableType, mockDeliverableType2])
             .mockResolvedValueOnce(whoami)
-            .mockResolvedValueOnce(mockDeliverableType)
-            .mockResolvedValueOnce(mockDeliverableType2)
             .mockResolvedValue([]);
         amplify.DataStore.save
             .mockResolvedValueOnce(mockTask)
@@ -385,28 +384,20 @@ describe("GuidedSetup", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 4,
-                models.User,
-                whoami.id
+                models.DeliverableType
             )
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 5,
-                models.DeliverableType,
-                mockDeliverableType.id
+                models.User,
+                whoami.id
             )
         );
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
                 2,
                 expect.objectContaining(_.omit(mockDeliverable, "id"))
-            )
-        );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                6,
-                models.DeliverableType,
-                mockDeliverableType2.id
             )
         );
         await waitFor(() =>
@@ -422,7 +413,7 @@ describe("GuidedSetup", () => {
             )
         );
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(9)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(8)
         );
     });
 

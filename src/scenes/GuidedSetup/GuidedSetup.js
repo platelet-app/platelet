@@ -116,8 +116,6 @@ const guidedSetupStyles = makeStyles((theme) => ({
 }));
 
 const defaultValues = {
-    pickUpLocation: null,
-    dropOffLocation: null,
     priority: null,
 };
 
