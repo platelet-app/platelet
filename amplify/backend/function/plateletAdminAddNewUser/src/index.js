@@ -13,7 +13,13 @@ const AUTH_TYPE = require("aws-appsync").AUTH_TYPE;
 const AWSAppSyncClient = require("aws-appsync").default;
 const uuid = require("uuid");
 const createUser = require("./createUser").createUser;
+const deleteUser = require("./deleteUser").deleteUser;
 const listUsers = require("./listUsers").listUsers;
+
+const cleanUpData = {
+    userId: null,
+    cognitoId: null,
+};
 
 async function sendWelcomeEmail(emailAddress, recipientName, password) {
     const ses = new aws.SES({
@@ -170,6 +176,30 @@ async function inviteNewUserToTeam(newUser, tenantId) {
     };
 }
 
+function cleanUp() {
+    if (cleanUpData.userId) {
+        console.log(`Cleaning up user ${cleanUpData.userId}`);
+        const config = {
+            url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
+            region: process.env.REGION,
+            auth: {
+                type: AUTH_TYPE.AWS_IAM,
+                credentials: AWS.config.credentials,
+            },
+            disableOffline: true,
+        };
+        const appSyncClient = new AWSAppSyncClient(config);
+        return appSyncClient.mutate({
+            mutation: deleteUser,
+            variables: {
+                input: {
+                    id: cleanUpData.userId,
+                },
+            },
+        });
+    }
+}
+
 exports.handler = async (event) => {
     console.log("Arguments:", event.arguments);
     const tenantId = event.arguments.tenantId;
@@ -186,15 +216,5 @@ exports.handler = async (event) => {
         password
     );
     console.log("Successfully sent welcome email");
-    const response = {
-        statusCode: 200,
-        //  Uncomment below to enable CORS requests
-        //  headers: {
-        //      "Access-Control-Allow-Origin": "*",
-        //      "Access-Control-Allow-Headers": "*"
-        //  },
-        message: "user created",
-        user: newUser,
-    };
-    return response;
+    return newUser;
 };
