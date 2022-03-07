@@ -123,17 +123,15 @@ describe("CommentsSection", () => {
     });
 
     it("posts a new comment", async () => {
-        const mockWhoami = {
-            id: "whoami",
+        const mockWhoami = new models.User({
+            cognitoId: "test",
             displayName: "Mock User",
-        };
-        const mockComment = {
-            id: "test",
+        });
+        const mockComment = new models.Comment({
             body: "This is a comment",
             visibility: commentVisibility.everyone,
-            createdAt: "2020-01-01T00:00:00.000Z",
             author: mockWhoami,
-        };
+        });
         amplify.DataStore.query
             .mockResolvedValueOnce([])
             .mockResolvedValue(mockWhoami);
@@ -155,12 +153,12 @@ describe("CommentsSection", () => {
         expect(postButton).toBeEnabled();
         userEvent.click(postButton);
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenCalledTimes(1);
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                1,
+                expect.objectContaining(_.omit(mockComment, "id"))
+            );
         });
         expect(commentTextBox).toHaveValue("");
-        expect(screen.getByText("This is a comment")).toBeInTheDocument();
-        // one for the comment, one for the new comment card
-        expect(screen.getAllByText("Mock User")).toHaveLength(2);
     });
 
     it("deletes a comment", async () => {
