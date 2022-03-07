@@ -492,19 +492,48 @@ describe("TaskAssignmentsPanel", () => {
         });
     });
 
-    test("delete assignment error", async () => {
+    test.only("delete assignment error", async () => {
         amplify.DataStore.query
             .mockResolvedValueOnce(fakeAssignments)
             .mockResolvedValueOnce(fakeAssignments)
+            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(fakeUsers)
+            .mockResolvedValueOnce([])
             .mockRejectedValue(new Error("test error"));
         render(<TaskAssignmentsPanel taskId={fakeTask1.id} />);
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee
+            )
         );
         userEvent.click(screen.getByText("Expand to see more"));
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.RiderResponsibility
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
+                models.TaskAssignee,
+                expect.any(Function),
+                { limit: 100, sort: expect.any(Function) }
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                4,
+                models.User,
+                expect.any(Function)
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                5,
+                models.RiderResponsibility
+            )
         );
         const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);

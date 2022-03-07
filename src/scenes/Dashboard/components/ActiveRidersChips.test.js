@@ -209,6 +209,7 @@ describe("ActiveRiderChips", () => {
             subscribe: () => ({ unsubscribe }),
         });
         amplify.DataStore.query
+            .mockResolvedValueOnce([])
             .mockResolvedValueOnce([...fakeAssignmentsRiders])
             .mockResolvedValue([
                 ...fakeAssignmentsSecondCoord,
@@ -220,7 +221,24 @@ describe("ActiveRiderChips", () => {
         };
         render(<ActiveRidersChips />, { preloadedState });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.RiderResponsibility
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.TaskAssignee,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
+                models.TaskAssignee,
+                expect.any(Function)
+            );
         });
         for (const assign of fakeAssignmentsRiders.filter((a) =>
             fakeAssignmentsFirstCoord

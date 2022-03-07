@@ -38,6 +38,7 @@ const olderThanOneWeek = (assignment) => {
 function RecentlyAssignedUsers(props) {
     const [activeRiders, setActiveRiders] = useState({});
     const [errorState, setErrorState] = useState(null);
+    const responsibilities = useRef({});
     const whoami = useSelector(getWhoami);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
@@ -47,6 +48,10 @@ function RecentlyAssignedUsers(props) {
 
     async function calculateRidersStatus() {
         let activeRidersResult = [];
+        if (["ALL", userRoles.coordinator].includes(roleView)) {
+            const resps = await DataStore.query(models.RiderResponsibility);
+            responsibilities.current = convertListDataToObject(resps);
+        }
         if (roleView === "ALL") {
             const assignments = await DataStore.query(
                 models.TaskAssignee,
@@ -120,6 +125,13 @@ function RecentlyAssignedUsers(props) {
         return (
             <Grid container direction="row">
                 {Object.values(activeRiders).map((rider) => {
+                    const responsibility =
+                        responsibilities.current[
+                            rider.userRiderResponsibilityId
+                        ] || null;
+                    const respLabel = responsibility
+                        ? responsibility.label
+                        : null;
                     return (
                         <Grid
                             item
@@ -127,9 +139,7 @@ function RecentlyAssignedUsers(props) {
                             key={rider.id}
                         >
                             <UserChip
-                                showResponsibility={
-                                    props.role === userRoles.rider
-                                }
+                                responsibility={respLabel}
                                 onClick={() => {
                                     if (selectedId === rider.id) {
                                         props.onChange(null);

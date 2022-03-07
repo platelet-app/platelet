@@ -103,11 +103,19 @@ describe("RecentlyAssignedUsers", () => {
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValue(fakeAssignments);
         render(<RecentlyAssignedUsers />, { preloadedState });
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
+                models.RiderResponsibility
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
                 models.TaskAssignee,
                 expect.any(Function),
                 { limit: 100, sort: expect.any(Function) }
@@ -301,6 +309,7 @@ describe("RecentlyAssignedUsers", () => {
 
     test("coordinator roleview shows only intersecting assignments", async () => {
         amplify.DataStore.query
+            .mockResolvedValueOnce([])
             .mockResolvedValueOnce([...fakeAssignmentsRiders])
             .mockResolvedValue([
                 ...fakeAssignmentsSecondCoord,
@@ -316,7 +325,7 @@ describe("RecentlyAssignedUsers", () => {
         };
         render(<RecentlyAssignedUsers />, { preloadedState });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
         });
         for (const assign of fakeAssignmentsRiders.filter((a) =>
             fakeAssignmentsFirstCoord
@@ -337,6 +346,7 @@ describe("RecentlyAssignedUsers", () => {
     });
     test("exclude users while in coordinator roleview", async () => {
         amplify.DataStore.query
+            .mockResolvedValueOnce([])
             .mockResolvedValueOnce([...fakeAssignmentsRiders])
             .mockResolvedValue([
                 ...fakeAssignmentsSecondCoord,
@@ -357,7 +367,7 @@ describe("RecentlyAssignedUsers", () => {
             { preloadedState }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
         });
         expect(
             screen.queryByText(fakeAssignmentsRiders[0].assignee.displayName)

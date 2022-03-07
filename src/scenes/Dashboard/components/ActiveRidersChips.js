@@ -106,12 +106,18 @@ function ActiveRidersChips() {
     const animate = useRef(false);
     const roleView = useSelector(getRoleView);
     const dashboardFilteredUserRef = useRef(null);
+    const responsibilities = useRef({});
     dashboardFilteredUserRef.current = dashboardFilteredUser;
 
     const dispatch = useDispatch();
 
     async function calculateRidersStatus() {
+        debugger;
         let activeRidersResult = [];
+        if (["ALL", userRoles.coordinator].includes(roleView)) {
+            const resps = await DataStore.query(models.RiderResponsibility);
+            responsibilities.current = convertListDataToObject(resps);
+        }
         if (roleView === "ALL") {
             const assignments = await DataStore.query(
                 models.TaskAssignee,
@@ -244,6 +250,13 @@ function ActiveRidersChips() {
                     />
                 </Box>
                 {Object.values(activeRiders).map((rider) => {
+                    const responsibility =
+                        responsibilities.current[
+                            rider.userRiderResponsibilityId
+                        ] || null;
+                    const respLabel = responsibility
+                        ? responsibility.label
+                        : null;
                     return (
                         <Box
                             itemId={rider.id}
@@ -251,7 +264,7 @@ function ActiveRidersChips() {
                             key={rider.id}
                         >
                             <UserChip
-                                showResponsibility
+                                responsibility={respLabel}
                                 onClick={() => {
                                     if (dashboardFilteredUser === rider.id) {
                                         dispatch(
