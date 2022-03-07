@@ -21,15 +21,8 @@ function UserChip(props) {
 
     async function setText() {
         try {
-            if (
-                props.showResponsibility &&
-                props.user.userRiderResponsibilityId
-            ) {
-                const riderResponsibility = await DataStore.query(
-                    models.RiderResponsibility,
-                    props.user.userRiderResponsibilityId
-                );
-                setLabel(`${displayName} (${riderResponsibility.label})`);
+            if (props.responsibility) {
+                setLabel(`${displayName} (${props.responsibility})`);
             } else {
                 setLabel(displayName);
             }
@@ -38,7 +31,7 @@ function UserChip(props) {
             setLabel(displayName);
         }
     }
-    useEffect(() => setText(), [props.showResponsibility]);
+    useEffect(() => setText(), [props.responsibility, props.user]);
 
     if (thumbnail) {
         return (
@@ -70,7 +63,7 @@ UserChip.propTypes = {
     onDelete: PropTypes.func,
     variant: PropTypes.string,
     color: PropTypes.string,
-    showResponsibility: PropTypes.bool,
+    responsibility: PropTypes.string,
 };
 
 UserChip.defaultProps = {
@@ -78,7 +71,7 @@ UserChip.defaultProps = {
     onDelete: null,
     variant: "default",
     color: "default",
-    showResponsibility: false,
+    responsibility: null,
 };
 
 export default UserChip;
