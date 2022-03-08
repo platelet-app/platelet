@@ -149,10 +149,12 @@ export default function UsersList(props) {
                         alignItems={"flex-start"}
                     >
                         {sortByCreatedTime(filteredUsers).map((user) => {
-                            const respLabel = user.userRiderResponsibilityId
-                                ? riderResponsibilities.current[
-                                      user.userRiderResponsibilityId
-                                  ].label
+                            const responsibility =
+                                riderResponsibilities.current[
+                                    user.userRiderResponsibilityId
+                                ] || null;
+                            const respLabel = responsibility
+                                ? responsibility.label
                                 : null;
                             return (
                                 <UserCard
