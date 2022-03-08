@@ -60,10 +60,10 @@ if (
 
 function* initialiseApp() {
     if (process.env.REACT_APP_DEMO_MODE === "true") {
-        yield call([DataStore, DataStore.start]);
+        /*yield call([DataStore, DataStore.start]);
         yield call([DataStore, DataStore.stop]);
         yield call([DataStore, DataStore.clear]);
-        yield call([DataStore, DataStore.start]);
+        yield call([DataStore, DataStore.start]);*/
     }
     if (process.env.NODE_ENV !== "test") {
         if (
