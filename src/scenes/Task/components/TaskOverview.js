@@ -14,10 +14,9 @@ import LocationDetailsPanel from "./LocationDetailsPanel";
 const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 1800,
-        paddingTop: 20,
-        [theme.breakpoints.down("lg")]: {
+        padding: 15,
+        [theme.breakpoints.down("xl")]: {
             padding: 5,
-            paddingTop: 5,
         },
     },
 
@@ -37,10 +36,6 @@ const useStyles = makeStyles((theme) => ({
     statusBar: {
         paddingBottom: 8,
     },
-    separator: {
-        height: 25,
-        width: 25,
-    },
 }));
 
 function TaskOverview(props) {
@@ -53,6 +48,7 @@ function TaskOverview(props) {
         <Container className={classes.root} maxWidth={true}>
             <Grid
                 container
+                direction="row"
                 className={classes.container}
                 spacing={isSm ? 1 : 3}
             >
