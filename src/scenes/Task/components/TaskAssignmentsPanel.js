@@ -211,7 +211,7 @@ function TaskAssignmentsPanel(props) {
         return <Skeleton variant={"rectangular"} width={"100%"} height={40} />;
     } else {
         return (
-            <Paper sx={{ padding: 1 }}>
+            <Paper sx={{ padding: 2 }}>
                 <Stack divider={<Divider />} direction="column" spacing={2}>
                     <Stack
                         direction="row"
