@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
+import EditIcon from "@mui/icons-material/Edit";
 import {
     Divider,
     Grid,
+    IconButton,
     Paper,
     Skeleton,
     Stack,
+    Tooltip,
     Typography,
 } from "@mui/material";
 import PropTypes from "prop-types";
@@ -14,7 +17,6 @@ import RiderPicker from "../../../components/RiderPicker";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import UserRoleSelect from "../../../components/UserRoleSelect";
 import TaskAssignees from "./TaskAssignees";
-import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import {
@@ -211,9 +213,29 @@ function TaskAssignmentsPanel(props) {
         return (
             <Paper sx={{ padding: 1 }}>
                 <Stack divider={<Divider />} direction="column" spacing={2}>
-                    <Typography variant={"h6"}>
-                        People assigned to this task
-                    </Typography>
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                    >
+                        <Typography variant={"h6"}>
+                            People assigned to this task
+                        </Typography>
+                        <Tooltip title={"Edit Assignees"}>
+                            <IconButton
+                                aria-label={"Edit Assignees"}
+                                size={"small"}
+                                disabled={props.disabled}
+                                onClick={() =>
+                                    setCollapsed((prevState) => !prevState)
+                                }
+                            >
+                                <EditIcon
+                                    color={!collapsed ? "secondary" : "inherit"}
+                                />
+                            </IconButton>
+                        </Tooltip>
+                    </Stack>
                     {collapsed && (
                         <Grid container spacing={1} direction={"row"}>
                             {Object.values(state)
@@ -294,16 +316,6 @@ function TaskAssignmentsPanel(props) {
                                 />
                             )}
                         </>
-                    )}
-                    {isFetching ? (
-                        <></>
-                    ) : (
-                        <CollapsibleToggle
-                            onClick={() =>
-                                setCollapsed((prevState) => !prevState)
-                            }
-                            value={collapsed}
-                        />
                     )}
                 </Stack>
             </Paper>

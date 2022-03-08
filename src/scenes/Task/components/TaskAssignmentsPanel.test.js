@@ -174,7 +174,7 @@ describe("TaskAssignmentsPanel", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
         // click the expand button
-        userEvent.click(screen.getByText("Expand to see more"));
+        userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
         );
@@ -199,7 +199,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
         );
-        expect(screen.getByText("Show less")).toBeInTheDocument();
+        expect(screen.getByRole("combobox")).toBeInTheDocument();
         expect(
             screen.getByText(fakeAssignments[1].assignee.displayName)
         ).toBeInTheDocument();
@@ -459,7 +459,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
-        userEvent.click(screen.getByText("Expand to see more"));
+        userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
         );
@@ -509,7 +509,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
         );
-        userEvent.click(screen.getByText("Expand to see more"));
+        userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
         );
@@ -549,7 +549,7 @@ describe("TaskAssignmentsPanel", () => {
                 models.TaskAssignee
             )
         );
-        userEvent.click(screen.getByText("Expand to see more"));
+        userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
