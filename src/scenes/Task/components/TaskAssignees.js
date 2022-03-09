@@ -62,6 +62,7 @@ function TaskAssignees(props) {
                             <Grid item>
                                 <UserChip
                                     responsibility={respLabel}
+                                    disabled={props.disabled}
                                     user={user}
                                     key={assignment.id}
                                     onDelete={() =>
@@ -81,11 +82,13 @@ function TaskAssignees(props) {
 TaskAssignees.propTypes = {
     assignees: PropTypes.object,
     onRemove: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 
 TaskAssignees.defaultProps = {
     assignees: {},
     onRemove: () => {},
+    disabled: false,
 };
 
 export default TaskAssignees;

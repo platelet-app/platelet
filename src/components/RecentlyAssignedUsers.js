@@ -137,6 +137,7 @@ function RecentlyAssignedUsers(props) {
                             >
                                 <UserChip
                                     responsibility={respLabel}
+                                    disabled={props.disabled}
                                     onClick={() => {
                                         if (selectedId === rider.id) {
                                             props.onChange(null);
@@ -171,6 +172,7 @@ RecentlyAssignedUsers.propTypes = {
     onChange: PropTypes.func,
     limit: PropTypes.number,
     exclude: PropTypes.array,
+    disabled: PropTypes.bool,
 };
 
 RecentlyAssignedUsers.defaultProps = {
@@ -179,6 +181,7 @@ RecentlyAssignedUsers.defaultProps = {
     onChange: () => {},
     limit: 10,
     exclude: [],
+    disabled: false,
 };
 
 export default RecentlyAssignedUsers;

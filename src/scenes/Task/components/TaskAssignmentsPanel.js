@@ -61,6 +61,8 @@ const sortByUserRole = (a, b) => {
 function TaskAssignmentsPanel(props) {
     const [collapsed, setCollapsed] = useState(true);
     const [role, setRole] = useState(userRoles.rider);
+    const [isPosting, setIsPosting] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const tenantId = useSelector(tenantIdSelector);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
@@ -95,6 +97,7 @@ function TaskAssignmentsPanel(props) {
     }, [props.taskId, dataStoreReadyStatus]);
 
     async function addAssignee(user, role) {
+        setIsPosting(true);
         try {
             const assignee = await DataStore.query(models.User, user.id);
             const task = await DataStore.query(models.Task, props.taskId);
@@ -131,13 +134,16 @@ function TaskAssignmentsPanel(props) {
                 }
             }
             setState({ ...state, [result.id]: result });
+            setIsPosting(false);
         } catch (error) {
             console.log(error);
+            setIsPosting(false);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
 
     async function deleteAssignment(assignmentId) {
+        setIsDeleting(true);
         try {
             if (!assignmentId) throw new Error("Assignment ID not provided");
             const existingTask = await DataStore.query(
@@ -186,8 +192,10 @@ function TaskAssignmentsPanel(props) {
                 })
             );
             setState((prevState) => _.omit(prevState, assignmentId));
+            setIsDeleting(false);
         } catch (error) {
             console.log(error);
+            setIsDeleting(false);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -261,6 +269,7 @@ function TaskAssignmentsPanel(props) {
                     {!collapsed && !isFetching && (
                         <>
                             <TaskAssignees
+                                disabled={isDeleting}
                                 onRemove={(v) => {
                                     updating.current = true;
                                     deleteAssignment(v);
@@ -281,6 +290,7 @@ function TaskAssignmentsPanel(props) {
                             />
                             <RecentlyAssignedUsers
                                 onChange={onSelect}
+                                disabled={isPosting}
                                 role={role}
                                 limit={5}
                                 exclude={Object.values(state)

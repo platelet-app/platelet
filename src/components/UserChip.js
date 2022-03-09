@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Chip } from "@mui/material";
 import PropTypes from "prop-types";
 import { generateS3Link } from "../amplifyUtilities";
-import { DataStore } from "aws-amplify";
-import * as models from "../models";
 
 function UserChip(props) {
     let { profilePictureThumbnail, displayName } = props.user;
@@ -38,6 +36,7 @@ function UserChip(props) {
             <Chip
                 onClick={props.onClick}
                 variant={props.variant}
+                disabled={props.disabled}
                 color={props.color}
                 onDelete={props.onDelete}
                 avatar={<Avatar alt={displayName} src={thumbnail} />}
@@ -49,6 +48,7 @@ function UserChip(props) {
             <Chip
                 onDelete={props.onDelete}
                 variant={props.variant}
+                disabled={props.disabled}
                 color={props.color}
                 onClick={props.onClick}
                 label={label}
@@ -64,6 +64,7 @@ UserChip.propTypes = {
     variant: PropTypes.string,
     color: PropTypes.string,
     responsibility: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 UserChip.defaultProps = {
@@ -72,6 +73,7 @@ UserChip.defaultProps = {
     variant: "default",
     color: "default",
     responsibility: null,
+    disabled: false,
 };
 
 export default UserChip;
