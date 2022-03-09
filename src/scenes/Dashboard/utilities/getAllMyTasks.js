@@ -20,7 +20,7 @@ export default async function getAllMyTasks(keys, userId, roleView) {
 
         {
             sort: (s) => s.createdAt("desc"),
-            limit: isCompletedTab(keys) ? 200 : 0,
+            limit: isCompletedTab(keys) ? 100 : 0,
         }
     );
     const myTasks = allAssignees

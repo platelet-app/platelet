@@ -21,7 +21,7 @@ export default async function getTasksAll(keys = []) {
 
         {
             sort: (s) => s.createdAt("desc"),
-            limit: isCompletedTab(keys) ? 200 : 0,
+            limit: isCompletedTab(keys) ? 100 : 0,
         }
     );
     if (isCompletedTab(keys)) {
