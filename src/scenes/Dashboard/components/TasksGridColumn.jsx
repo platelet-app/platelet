@@ -3,7 +3,6 @@ import _ from "lodash";
 import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
 import { useSelector } from "react-redux";
-import { TasksKanbanColumn } from "../styles/TaskColumns";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { Skeleton, Stack, Typography, useMediaQuery } from "@mui/material";
@@ -214,7 +213,11 @@ function TasksGridColumn(props) {
                             props.taskKey.includes(newTask.element.status)
                         ) {
                             animate.current = true;
-                            getTasksRef.current();
+                            setState((prevState) => ({
+                                ...prevState,
+                                [newTask.element.id]: newTask.element,
+                            }));
+                            animate.current = false;
                             return;
                         } else if (
                             newTask.element.status &&
@@ -233,7 +236,9 @@ function TasksGridColumn(props) {
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
                         if (roleViewRef.current !== "ALL") return;
-                        getTasksRef.current();
+                        if (props.taskKey.includes(newTask.element.status)) {
+                            getTasksRef.current();
+                        }
                     }
                 } catch (error) {
                     console.log(error);
@@ -297,14 +302,26 @@ function TasksGridColumn(props) {
                         element.role === roleView
                     ) {
                         if (!element.taskId) return;
-                        animate.current = true;
-                        getTasksRef.current();
+                        DataStore.query(models.Task, element.taskId).then(
+                            (result) => {
+                                if (props.taskKey.includes(result.status)) {
+                                    animate.current = true;
+                                    getTasksRef.current();
+                                }
+                            }
+                        );
                     }
                 } else if (taskAssignee.opType === "DELETE") {
                     const element = taskAssignee.element;
-                    // if roleView is ALL let the task observer deal with it
+                    // if roleView is ALL do nothing
                     if (roleView === "ALL") return;
-                    removeTaskFromState(element.task);
+                    if (
+                        element.assignee &&
+                        element.assignee.id === whoami.id &&
+                        element.role === roleView
+                    ) {
+                        removeTaskFromState(element.task);
+                    }
                 }
             } catch (e) {
                 console.log(e);
@@ -348,9 +365,8 @@ function TasksGridColumn(props) {
                         height={50}
                     />
                     {_.range(4).map((i) => (
-                        <Box className={classes.taskItem}>
+                        <Box key={i} className={classes.taskItem}>
                             <Skeleton
-                                key={i}
                                 variant="rectangular"
                                 width={"100%"}
                                 height={200}
