@@ -59,9 +59,6 @@ function RecentlyAssignedUsers(props) {
                 { limit: 100, sort: (s) => s.createdAt("desc") }
             );
             activeRidersResult = assignments.map((a) => a.assignee);
-            activeRidersResult = activeRidersResult.filter(
-                (user) => !props.exclude.includes(user.id)
-            );
         } else if (roleView === userRoles.coordinator && whoami) {
             const theirAssignments = await DataStore.query(
                 models.TaskAssignee,
@@ -92,9 +89,6 @@ function RecentlyAssignedUsers(props) {
                     myAssignedTasksIds.includes(a.task.id)
             );
             activeRidersResult = assignedToMeUsers.map((a) => a.assignee);
-            activeRidersResult = activeRidersResult.filter(
-                (user) => !props.exclude.includes(user.id)
-            );
         }
         // remove duplicates and truncate to limit
         activeRidersResult = _.uniqBy(activeRidersResult, (u) => u.id);
@@ -117,7 +111,7 @@ function RecentlyAssignedUsers(props) {
 
     useEffect(() => {
         getActiveRiders();
-    }, [dataStoreReadyStatus, roleView, props.role, props.exclude]);
+    }, [dataStoreReadyStatus, roleView, props.role]);
 
     if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;
@@ -132,35 +126,39 @@ function RecentlyAssignedUsers(props) {
                     const respLabel = responsibility
                         ? responsibility.label
                         : null;
-                    return (
-                        <Grid
-                            item
-                            sx={{ marginRight: 0.5, marginBottom: 0.5 }}
-                            key={rider.id}
-                        >
-                            <UserChip
-                                responsibility={respLabel}
-                                onClick={() => {
-                                    if (selectedId === rider.id) {
-                                        props.onChange(null);
-                                    } else {
-                                        props.onChange(rider);
+                    if (props.exclude.includes(rider.id)) {
+                        return <></>;
+                    } else {
+                        return (
+                            <Grid
+                                item
+                                sx={{ marginRight: 0.5, marginBottom: 0.5 }}
+                                key={rider.id}
+                            >
+                                <UserChip
+                                    responsibility={respLabel}
+                                    onClick={() => {
+                                        if (selectedId === rider.id) {
+                                            props.onChange(null);
+                                        } else {
+                                            props.onChange(rider);
+                                        }
+                                    }}
+                                    color={
+                                        selectedId === rider.id
+                                            ? "primary"
+                                            : "default"
                                     }
-                                }}
-                                color={
-                                    selectedId === rider.id
-                                        ? "primary"
-                                        : "default"
-                                }
-                                variant={
-                                    selectedId === rider.id
-                                        ? "default"
-                                        : "outlined"
-                                }
-                                user={rider}
-                            />
-                        </Grid>
-                    );
+                                    variant={
+                                        selectedId === rider.id
+                                            ? "default"
+                                            : "outlined"
+                                    }
+                                    user={rider}
+                                />
+                            </Grid>
+                        );
+                    }
                 })}
             </Grid>
         );
