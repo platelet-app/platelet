@@ -63,6 +63,7 @@ function TaskActions(props) {
     const [state, setState] = useState([]);
     const [task, setTask] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
+    const [isPosting, setIsPosting] = useState(false);
     const [errorState, setErrorState] = useState(null);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const confirmationKey = useRef(null);
@@ -99,10 +100,13 @@ function TaskActions(props) {
     }
 
     async function setTimeWithKey(key, value) {
+        setIsPosting(true);
         try {
-            saveTaskTimeWithKey(key, value, props.taskId);
+            await saveTaskTimeWithKey(key, value, props.taskId);
+            setIsPosting(false);
         } catch (error) {
             console.log(error);
+            setIsPosting(false);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
@@ -216,10 +220,14 @@ function TaskActions(props) {
                                             }}
                                             key={key}
                                             disabled={
-                                                isFetching || checkDisabled(key)
+                                                isPosting ||
+                                                isFetching ||
+                                                checkDisabled(key)
                                             }
                                             aria-disabled={
-                                                isFetching || checkDisabled(key)
+                                                isPosting ||
+                                                isFetching ||
+                                                checkDisabled(key)
                                             }
                                             aria-label={value}
                                             value={key}
@@ -237,7 +245,9 @@ function TaskActions(props) {
                             <Stack sx={{ width: "100%" }} direction="column">
                                 {Object.entries(fields).map(([key, value]) => {
                                     const disabled =
-                                        isFetching || checkDisabled(key);
+                                        isPosting ||
+                                        isFetching ||
+                                        checkDisabled(key);
                                     return (
                                         <Stack
                                             justifyContent="space-between"
