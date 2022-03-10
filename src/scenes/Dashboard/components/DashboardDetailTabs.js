@@ -162,12 +162,24 @@ export function DashboardDetailTabs(props) {
                 alignItems={"center"}
             >
                 <Hidden mdDown>
-                    <Typography id="role-identifier">
+                    <Typography
+                        onClick={(event) => {
+                            setAnchorElRoleMenu(event.currentTarget);
+                        }}
+                        sx={{ cursor: "pointer" }}
+                        id="role-identifier"
+                    >
                         {`${roleView} view`.toUpperCase()}
                     </Typography>
                 </Hidden>
                 <Hidden mdUp>
-                    <Typography id="role-identifier">
+                    <Typography
+                        onClick={(event) => {
+                            setAnchorElRoleMenu(event.currentTarget);
+                        }}
+                        sx={{ cursor: "pointer" }}
+                        id="role-identifier"
+                    >
                         {`${roleView.substring(0, 5).toUpperCase()}`}
                     </Typography>
                 </Hidden>
