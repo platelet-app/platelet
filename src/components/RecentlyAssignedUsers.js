@@ -38,6 +38,7 @@ const olderThanOneWeek = (assignment) => {
 function RecentlyAssignedUsers(props) {
     const [activeRiders, setActiveRiders] = useState({});
     const [errorState, setErrorState] = useState(null);
+    const [isFetching, setIsFetching] = useState(false);
     const responsibilities = useRef({});
     const whoami = useSelector(getWhoami);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
@@ -47,6 +48,7 @@ function RecentlyAssignedUsers(props) {
     const selectedId = props.value && props.value.id;
 
     async function calculateRidersStatus() {
+        setIsFetching(true);
         let activeRidersResult = [];
         if (["ALL", userRoles.coordinator].includes(roleView)) {
             const resps = await DataStore.query(models.RiderResponsibility);
@@ -95,6 +97,7 @@ function RecentlyAssignedUsers(props) {
         if (props.limit) {
             activeRidersResult = activeRidersResult.slice(0, props.limit);
         }
+        setIsFetching(false);
         return convertListDataToObject(activeRidersResult);
     }
 
@@ -137,7 +140,7 @@ function RecentlyAssignedUsers(props) {
                             >
                                 <UserChip
                                     responsibility={respLabel}
-                                    disabled={props.disabled}
+                                    disabled={isFetching || props.disabled}
                                     onClick={() => {
                                         if (selectedId === rider.id) {
                                             props.onChange(null);
