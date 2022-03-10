@@ -74,7 +74,7 @@ function TaskOverview(props) {
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <LocationDetailsPanel
-                            taskId={taskUUID}
+                            taskId={task ? task.id : null}
                             task={task}
                             locationId={
                                 task.pickUpLocation
@@ -85,7 +85,7 @@ function TaskOverview(props) {
                         />
 
                         <LocationDetailsPanel
-                            taskId={taskUUID}
+                            taskId={task ? task.id : null}
                             task={task}
                             locationId={
                                 task.dropOffLocation
