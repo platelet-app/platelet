@@ -114,10 +114,12 @@ function TaskAssignmentsPanel(props) {
                 })
             );
             if (role === userRoles.rider) {
-                const status = determineTaskStatus({
-                    ...task,
-                    assignees: [result],
-                });
+                const status = await determineTaskStatus(
+                    {
+                        ...task,
+                    },
+                    [result]
+                );
                 await DataStore.save(
                     models.Task.copyOf(task, (updated) => {
                         updated.status = status;
@@ -182,10 +184,12 @@ function TaskAssignmentsPanel(props) {
                 );
             }
             if (existingAssignment) await DataStore.delete(existingAssignment);
-            const status = determineTaskStatus({
-                ...existingTask,
-                assignees: _.omit(state, assignmentId),
-            });
+            const status = await determineTaskStatus(
+                {
+                    ...existingTask,
+                },
+                Object.values(_.omit(state, assignmentId))
+            );
             await DataStore.save(
                 models.Task.copyOf(existingTask, (updated) => {
                     updated.status = status;

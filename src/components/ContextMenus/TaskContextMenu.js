@@ -101,13 +101,9 @@ function TaskContextMenu(props) {
     async function setTimeValue(value, key) {
         try {
             const result = await DataStore.query(models.Task, task.id);
-            const assignees = (
-                await DataStore.query(models.TaskAssignee)
-            ).filter((a) => a.task.id === task.id);
-            const status = determineTaskStatus({
+            const status = await determineTaskStatus({
                 ...result,
                 [key]: value,
-                assignees: convertListDataToObject(assignees),
             });
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {

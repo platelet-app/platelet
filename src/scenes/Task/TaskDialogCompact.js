@@ -218,13 +218,9 @@ function TaskDialogCompact(props) {
             }
             const existingTask = await DataStore.query(models.Task, taskUUID);
             if (!existingTask) throw new Error("Task doesn't exist");
-            const assignees = (
-                await DataStore.query(models.TaskAssignee)
-            ).filter((a) => a.task.id === taskUUID);
-            const status = determineTaskStatus({
+            const status = await determineTaskStatus({
                 ...existingTask,
                 [key]: result,
-                assignees,
             });
             await DataStore.save(
                 models.Task.copyOf(existingTask, (updated) => {

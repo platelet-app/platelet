@@ -9,13 +9,9 @@ export async function saveTaskTimeWithKey(key, value, taskId) {
     }
     const existingTask = await DataStore.query(models.Task, taskId);
     if (!existingTask) throw new Error("Task doesn't exist");
-    const assignees = (await DataStore.query(models.TaskAssignee)).filter(
-        (a) => a.task && a.task.id === taskId
-    );
-    const status = determineTaskStatus({
+    const status = await determineTaskStatus({
         ...existingTask,
         [key]: isoString,
-        assignees,
     });
     if (existingTask.status === status) {
         return await DataStore.save(

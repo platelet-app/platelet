@@ -112,7 +112,6 @@ function ActiveRidersChips() {
     const dispatch = useDispatch();
 
     async function calculateRidersStatus() {
-        debugger;
         let activeRidersResult = [];
         if (["ALL", userRoles.coordinator].includes(roleView)) {
             const resps = await DataStore.query(models.RiderResponsibility);

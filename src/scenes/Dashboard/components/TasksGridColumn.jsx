@@ -472,6 +472,7 @@ function TasksGridColumn(props) {
 
 TasksGridColumn.propTypes = {
     title: PropTypes.string,
+    // this array only works up to two keys for now
     taskKey: PropTypes.array.isRequired,
     showTasks: PropTypes.arrayOf(PropTypes.string),
     hideRelayIcons: PropTypes.bool,

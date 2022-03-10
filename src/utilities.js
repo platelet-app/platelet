@@ -1,5 +1,6 @@
 import React from "react";
 import uuidBase62 from "uuid-base62";
+import * as models from "./models";
 import { v4 as uuidv4 } from "uuid";
 import { deliverableIcons, tasksStatus, userRoles } from "./apiConsts";
 import BugIcon from "./components/deliverableIcons/BugIcon";
@@ -8,6 +9,7 @@ import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
 import OtherIcon from "./components/deliverableIcons/OtherIcon";
 import DocumentIcon from "./components/deliverableIcons/DocumentIcon";
 import moment from "moment";
+import { DataStore } from "aws-amplify";
 
 export function convertListDataToObject(list) {
     const result = {};
@@ -76,7 +78,7 @@ export function getDeliverableIconByEnum(deliverableType, size) {
     }
 }
 
-export function determineTaskStatus(task) {
+export async function determineTaskStatus(task, riderAssignees = null) {
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
         return !!task.timePickedUp
@@ -85,38 +87,39 @@ export function determineTaskStatus(task) {
     } else if (!!task.timeRejected) {
         return tasksStatus.rejected;
     }
-    if (!task.assignees) {
+    if (!riderAssignees) {
+        riderAssignees = await DataStore.query(models.TaskAssignee, (a) =>
+            a.role("eq", userRoles.rider)
+        );
+    }
+    let isRiderAssigned = false;
+    if (task && task.id) {
+        isRiderAssigned = riderAssignees.some(
+            (a) => a.task && a.task.id === task.id
+        );
+    }
+    if (!isRiderAssigned) {
         return tasksStatus.new;
     }
-    const assignedRiders = Object.values(task.assignees).filter(
-        (a) => a.role === userRoles.rider
-    );
-    if (!assignedRiders || assignedRiders.length === 0) {
+    if (!isRiderAssigned) {
         return tasksStatus.new;
-    } else if (
-        assignedRiders &&
-        assignedRiders.length > 0 &&
-        !!!task.timePickedUp
-    ) {
+    } else if (!isRiderAssigned && !!!task.timePickedUp) {
         return tasksStatus.active;
     } else if (
-        assignedRiders &&
-        assignedRiders.length > 0 &&
+        isRiderAssigned &&
         !!task.timePickedUp &&
         !!!task.timeDroppedOff
     ) {
         return tasksStatus.pickedUp;
     } else if (
-        assignedRiders &&
-        assignedRiders.length > 0 &&
+        isRiderAssigned &&
         !!task.timePickedUp &&
         !!task.timeDroppedOff &&
         !!!task.timeRiderHome
     ) {
         return tasksStatus.droppedOff;
     } else if (
-        assignedRiders &&
-        assignedRiders.length > 0 &&
+        isRiderAssigned &&
         !!task.timePickedUp &&
         !!task.timeDroppedOff &&
         !!task.timeRiderHome

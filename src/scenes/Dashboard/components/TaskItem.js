@@ -2,11 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import TaskCard from "./TaskCardsColoured";
-import {
-    convertListDataToObject,
-    determineTaskStatus,
-    encodeUUID,
-} from "../../../utilities";
+import { convertListDataToObject, encodeUUID } from "../../../utilities";
 import PropTypes from "prop-types";
 import { Box, Grow, Skeleton } from "@mui/material";
 import { makeStyles, useTheme } from "@mui/styles";
