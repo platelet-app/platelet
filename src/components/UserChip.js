@@ -10,9 +10,15 @@ function UserChip(props) {
 
     async function getThumbnail() {
         if (profilePictureThumbnail && profilePictureThumbnail.key) {
-            const profilePictureKey = profilePictureThumbnail.key;
-            const result = await generateS3Link(profilePictureKey);
-            setThumbnail(result);
+            try {
+                const profilePictureKey = profilePictureThumbnail.key;
+                const result = await generateS3Link(profilePictureKey);
+                if (result) {
+                    setThumbnail(result);
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
     useEffect(() => getThumbnail(), [props.user]);

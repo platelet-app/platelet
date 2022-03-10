@@ -33,9 +33,13 @@ const UserAvatar = React.memo((props) => {
 
     async function getThumbnail() {
         if (props.thumbnailKey) {
-            const result = await generateS3Link(props.thumbnailKey);
-            if (result) {
-                setAvatarURL(result);
+            try {
+                const result = await generateS3Link(props.thumbnailKey);
+                if (result) {
+                    setAvatarURL(result);
+                }
+            } catch (e) {
+                console.log(e);
             }
         }
     }

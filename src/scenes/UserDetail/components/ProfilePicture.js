@@ -40,7 +40,16 @@ export default function ProfilePicture(props) {
 
     async function getProfilePicture() {
         if (props.profilePicture && props.profilePicture.key) {
-            setImageUrl(await generateS3Link(props.profilePicture.key));
+            try {
+                const profilePicture = await generateS3Link(
+                    props.profilePicture.key
+                );
+                if (profilePicture) {
+                    setImageUrl(profilePicture);
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
     useEffect(() => getProfilePicture(), [props.profilePicture]);
