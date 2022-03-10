@@ -158,7 +158,7 @@ describe("TasksGridColumn", () => {
                     expect.any(Function),
                     {
                         limit: dashboardUtils.isCompletedTab([taskStatus])
-                            ? 200
+                            ? 100
                             : 0,
                         sort: expect.any(Function),
                     }
