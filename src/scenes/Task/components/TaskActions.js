@@ -111,18 +111,22 @@ function TaskActions(props) {
         }
     }
 
-    function calculateState(task) {
-        return Object.keys(fields).filter((key) => {
+    function calculateState() {
+        if (!task) return;
+        const result = Object.keys(fields).filter((key) => {
             return !!task[key];
         });
+        console.log(result);
+        setState(result);
     }
+
+    useEffect(calculateState, [task]);
 
     async function getTaskAndUpdateState() {
         if (!dataStoreReadyStatus) return;
         try {
             const task = await DataStore.query(models.Task, props.taskId);
             if (!task) throw new Error("Task not found");
-            setState(calculateState(task));
             setTask(task);
             setIsFetching(false);
             taskObserver.current.unsubscribe();
@@ -130,17 +134,12 @@ function TaskActions(props) {
                 models.Task,
                 props.taskId
             ).subscribe(async (observeResult) => {
+                console.log(observeResult);
                 const taskData = observeResult.element;
                 if (observeResult.opType === "INSERT") {
-                    setState(calculateState(taskData));
-                    setTask((prevState) => ({ ...prevState, ...taskData }));
+                    setTask(taskData);
                 } else if (observeResult.opType === "UPDATE") {
-                    const observedTask = await DataStore.query(
-                        models.Task,
-                        props.taskId
-                    );
-                    setState(calculateState(observedTask));
-                    setTask(observedTask);
+                    setTask((prevState) => ({ ...prevState, ...taskData }));
                 } else if (observeResult.opType === "DELETE") {
                     // just disable the buttons if the task is deleted
                     setIsFetching(true);
