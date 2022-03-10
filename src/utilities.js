@@ -100,10 +100,7 @@ export async function determineTaskStatus(task, riderAssignees = null) {
     }
     if (!isRiderAssigned) {
         return tasksStatus.new;
-    }
-    if (!isRiderAssigned) {
-        return tasksStatus.new;
-    } else if (!isRiderAssigned && !!!task.timePickedUp) {
+    } else if (isRiderAssigned && !!!task.timePickedUp) {
         return tasksStatus.active;
     } else if (
         isRiderAssigned &&
