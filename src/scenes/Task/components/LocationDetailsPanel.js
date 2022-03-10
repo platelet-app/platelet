@@ -49,10 +49,7 @@ function LocationDetailsPanel(props) {
         }
     }
 
-    useEffect(
-        () => getLocation(),
-        [props.task, props.taskId, dataStoreReadyStatus]
-    );
+    useEffect(() => getLocation(), [props.taskId, dataStoreReadyStatus]);
 
     async function editPreset(additionalValues) {
         try {
