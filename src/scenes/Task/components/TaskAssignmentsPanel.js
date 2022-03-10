@@ -188,7 +188,9 @@ function TaskAssignmentsPanel(props) {
                 {
                     ...existingTask,
                 },
-                Object.values(_.omit(state, assignmentId))
+                Object.values(_.omit(state, assignmentId)).filter(
+                    (a) => a.role === userRoles.rider
+                )
             );
             await DataStore.save(
                 models.Task.copyOf(existingTask, (updated) => {
