@@ -29,24 +29,22 @@ function LocationDetailsPanel(props) {
 
     async function getLocation() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus || !props.taskId) {
+        if (!dataStoreReadyStatus || !props.task) {
             return;
         }
         try {
-            const existingTask = await DataStore.query(
-                models.Task,
-                props.taskId
-            );
-            if (!existingTask) throw new Error("Task not found");
-            if (!existingTask[props.locationKey]) {
+            const start = performance.now();
+            if (!props.task[props.locationKey]) {
                 setState(null);
             } else {
                 const location = await DataStore.query(
                     models.Location,
-                    existingTask[props.locationKey].id
+                    props.task[props.locationKey].id
                 );
                 setState(location);
             }
+            const end = performance.now();
+            console.log("getLocation took " + (end - start) + " milliseconds.");
             setIsFetching(false);
         } catch (err) {
             console.log(err);
@@ -54,7 +52,7 @@ function LocationDetailsPanel(props) {
         }
     }
 
-    useEffect(() => getLocation(), [props.taskId, dataStoreReadyStatus]);
+    useEffect(() => getLocation(), [props.task, dataStoreReadyStatus]);
 
     async function editPreset(additionalValues) {
         try {

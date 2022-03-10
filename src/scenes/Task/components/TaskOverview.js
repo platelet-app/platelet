@@ -75,6 +75,7 @@ function TaskOverview(props) {
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <LocationDetailsPanel
                             taskId={taskUUID}
+                            task={task}
                             locationId={
                                 task.pickUpLocation
                                     ? task.pickUpLocation.id
@@ -85,6 +86,7 @@ function TaskOverview(props) {
 
                         <LocationDetailsPanel
                             taskId={taskUUID}
+                            task={task}
                             locationId={
                                 task.dropOffLocation
                                     ? task.dropOffLocation.id
