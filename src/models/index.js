@@ -57,19 +57,19 @@ const Patch = {
   "AIR_AMBULANCE": "AIR_AMBULANCE"
 };
 
-const { User, Vehicle, Comment, RiderResponsibility, TaskAssignee, Task, Location, Deliverable, DeliverableType, Tenant, Statistics, AddressAndContactDetails, S3Object } = initSchema(schema);
+const { User, Task, Location, Comment, TaskAssignee, Deliverable, DeliverableType, Tenant, Vehicle, RiderResponsibility, Statistics, AddressAndContactDetails, S3Object } = initSchema(schema);
 
 export {
   User,
-  Vehicle,
-  Comment,
-  RiderResponsibility,
-  TaskAssignee,
   Task,
   Location,
+  Comment,
+  TaskAssignee,
   Deliverable,
   DeliverableType,
   Tenant,
+  Vehicle,
+  RiderResponsibility,
   Role,
   CommentVisibility,
   Priority,
