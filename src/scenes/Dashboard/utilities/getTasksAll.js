@@ -13,12 +13,8 @@ export default async function getTasksAll(keys = []) {
         models.Task,
         (task) =>
             task.or((task) =>
-                task
-                    // TODO: not ideal since it sometimes is one index but works for now
-                    .status("eq", keys[0])
-                    .status("eq", keys[1])
+                keys.reduce((task, status) => task.status("eq", status), task)
             ),
-
         {
             sort: (s) => s.createdAt("desc"),
             limit: isCompletedTab(keys) ? 100 : 0,
