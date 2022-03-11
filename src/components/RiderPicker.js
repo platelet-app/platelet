@@ -31,15 +31,7 @@ function RiderPicker(props) {
             const users = await DataStore.query(models.User, (u) =>
                 u.roles("contains", userRoles.rider)
             );
-            const riderResponsibilities = await DataStore.query(
-                models.RiderResponsibility
-            );
-            const resps = convertListDataToObject(riderResponsibilities);
-            const usersWithRiderResponsibilities = users.map((user) => ({
-                ...user,
-                riderResponsibility: resps[user.userRiderResponsibilityId],
-            }));
-            setAvailableUsers(usersWithRiderResponsibilities);
+            setAvailableUsers(users);
         } catch (e) {
             console.log(e);
             setAvailableUsers([]);
@@ -97,9 +89,7 @@ function RiderPicker(props) {
                                 userUUID={option.id}
                                 displayName={option.displayName}
                                 responsibility={
-                                    option.riderResponsibility
-                                        ? option.riderResponsibility.label
-                                        : ""
+                                    option.riderResponsibility || ""
                                 }
                                 profilePictureThumbnail={
                                     option.profilePictureThumbnail

@@ -12,10 +12,14 @@ function RiderResponsibilitySelect(props) {
 
     async function getResponsibilities() {
         if (!dataStoreReadyStatus) return;
-        const responsibilities = await DataStore.query(
-            models.RiderResponsibility
-        );
-        setResponsibilities(responsibilities);
+        try {
+            const responsibilities = await DataStore.query(
+                models.RiderResponsibility
+            );
+            setResponsibilities(responsibilities);
+        } catch (error) {
+            console.log(error);
+        }
     }
     useEffect(() => getResponsibilities(), [dataStoreReadyStatus]);
 
@@ -33,7 +37,7 @@ function RiderResponsibilitySelect(props) {
                     disabled={props.disabled}
                     labelId="select-rider-responsibilities-label"
                     id="select-rider-responsibilities"
-                    value={props.value}
+                    value={props.value || 0}
                     label="Responsibility"
                     onChange={handleChange}
                 >
@@ -41,9 +45,9 @@ function RiderResponsibilitySelect(props) {
                         None
                     </MenuItem>
                     {responsibilities
-                        .filter((value) => !props.exclude.includes(value.id))
+                        .filter((value) => !props.exclude.includes(value.label))
                         .map((value) => (
-                            <MenuItem key={value.id} value={value.id}>
+                            <MenuItem key={value.label} value={value.label}>
                                 {value.label}
                             </MenuItem>
                         ))}
@@ -56,14 +60,14 @@ function RiderResponsibilitySelect(props) {
 RiderResponsibilitySelect.propTypes = {
     exclude: PropTypes.arrayOf(PropTypes.string),
     onSelect: PropTypes.func,
-    value: PropTypes.string,
+    value: PropTypes.object,
     disabled: PropTypes.bool,
 };
 
 RiderResponsibilitySelect.defaultProps = {
     exclude: [],
     onSelect: () => {},
-    value: null,
+    value: { id: 0 },
     disabled: false,
 };
 

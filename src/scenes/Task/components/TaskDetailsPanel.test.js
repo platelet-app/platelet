@@ -43,7 +43,7 @@ describe("TaskDetailsPanel", () => {
     it("renders task details", async () => {
         const timeOfCall = new Date().toISOString();
         amplify.DataStore.query.mockResolvedValue({
-            riderResponsibility: { label: "North" },
+            riderResponsibility: "North",
             timeOfCall,
             priority: priorities.high,
             reference: "test-reference",

@@ -121,10 +121,12 @@ async function populateFakeData() {
         await DataStore.save(
             new models.User({
                 name: "offline",
-                userRiderResponsibilityId:
-                    _.sample(responsibilities).id || null,
+                riderResponsibility: _.sample(responsibilities).label || null,
                 displayName: "Demo User",
-                dateOfBirth: faker.date.past(50, new Date()).toISOString(),
+                dateOfBirth: faker.date
+                    .past(50, new Date())
+                    .toISOString()
+                    .split("T")[0],
                 profilePicture: {
                     key: profilePictureKey,
                     bucket: process.env
@@ -150,7 +152,10 @@ async function populateFakeData() {
             let userToSave = {
                 name: generatedName,
                 displayName: generatedName,
-                dateOfBirth: faker.date.past(50, new Date()).toISOString(),
+                dateOfBirth: faker.date
+                    .past(50, new Date())
+                    .toISOString()
+                    .split("T")[0],
                 contact: {
                     line1: faker.address.streetAddress(),
                     line2: faker.address.secondaryAddress(),
@@ -180,7 +185,8 @@ async function populateFakeData() {
             await DataStore.save(
                 new models.User({
                     ...userToSave,
-                    riderResponsibility: _.sample(responsibilities) || null,
+                    riderResponsibility:
+                        _.sample(responsibilities).label || null,
                     profilePicture: {
                         key: profilePictureKey,
                         bucket: process.env
@@ -204,8 +210,8 @@ async function populateFakeData() {
         if (checker.length === 0) {
             for (const value of Object.values(fakeData.vehicles)) {
                 let { dateOfManufacture, dateOfRegistration, ...rest } = value;
-                dateOfRegistration = new Date().toISOString();
-                dateOfManufacture = new Date().toISOString();
+                dateOfRegistration = new Date().toISOString().split("T")[0];
+                dateOfManufacture = new Date().toISOString().split("T")[0];
                 await DataStore.save(
                     new models.Vehicle({
                         ...rest,

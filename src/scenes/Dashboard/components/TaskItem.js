@@ -165,11 +165,7 @@ function TaskItem(props) {
                         timeOfCall={task.timeOfCall}
                         priority={task.priority}
                         pickUpLocation={task.pickUpLocation}
-                        riderResponsibility={
-                            task.riderResponsibility
-                                ? task.riderResponsibility.label
-                                : ""
-                        }
+                        riderResponsibility={task.riderResponsibility || ""}
                         dropOffLocation={task.dropOffLocation}
                         assignees={assignees}
                         assigneeDisplayString={assignees

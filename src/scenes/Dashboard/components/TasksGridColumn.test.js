@@ -433,7 +433,6 @@ describe("TasksGridColumn", () => {
         );
 
         amplify.DataStore.query
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(mockAssignments)
             .mockResolvedValueOnce(mockAssignments)
             .mockResolvedValueOnce(mockTasks)
@@ -454,7 +453,8 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 1,
-                models.RiderResponsibility
+                models.TaskAssignee,
+                expect.any(Function)
             );
         });
         await waitFor(() => {
@@ -466,13 +466,6 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 3,
-                models.TaskAssignee,
-                expect.any(Function)
-            );
-        });
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                4,
                 models.Task,
                 expect.any(Function),
                 { limit: 0, sort: expect.any(Function) }
@@ -480,7 +473,7 @@ describe("TasksGridColumn", () => {
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(14);
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(13);
         });
         screen.getByText("NEW");
         jest.clearAllMocks();

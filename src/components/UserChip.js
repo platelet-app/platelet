@@ -4,7 +4,8 @@ import PropTypes from "prop-types";
 import { generateS3Link } from "../amplifyUtilities";
 
 function UserChip(props) {
-    let { profilePictureThumbnail, displayName } = props.user;
+    let { profilePictureThumbnail, displayName, riderResponsibility } =
+        props.user;
     const [thumbnail, setThumbnail] = useState(null);
     const [label, setLabel] = useState(displayName);
 
@@ -25,8 +26,8 @@ function UserChip(props) {
 
     async function setText() {
         try {
-            if (props.responsibility) {
-                setLabel(`${displayName} (${props.responsibility})`);
+            if (props.showResponsibility && riderResponsibility) {
+                setLabel(`${displayName} (${riderResponsibility})`);
             } else {
                 setLabel(displayName);
             }
@@ -35,7 +36,7 @@ function UserChip(props) {
             setLabel(displayName);
         }
     }
-    useEffect(() => setText(), [props.responsibility, props.user]);
+    useEffect(() => setText(), [props.showResponsibility, props.user]);
 
     if (thumbnail) {
         return (
@@ -69,7 +70,7 @@ UserChip.propTypes = {
     onDelete: PropTypes.func,
     variant: PropTypes.string,
     color: PropTypes.string,
-    responsibility: PropTypes.string,
+    showResponsibility: PropTypes.bool,
     disabled: PropTypes.bool,
 };
 
@@ -78,7 +79,7 @@ UserChip.defaultProps = {
     onDelete: null,
     variant: "default",
     color: "default",
-    responsibility: null,
+    showResponsibility: false,
     disabled: false,
 };
 

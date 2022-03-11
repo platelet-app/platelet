@@ -170,11 +170,8 @@ function TaskAssignmentsPanel(props) {
                     .map((a) => a.assignee);
                 if (riders.length > 0) {
                     const rider = riders[riders.length - 1];
-                    if (rider && rider.userRiderResponsibilityId) {
-                        riderResponsibility = await DataStore.query(
-                            models.RiderResponsibility,
-                            rider.userRiderResponsibilityId
-                        );
+                    if (rider && rider.riderResponsibility) {
+                        riderResponsibility = rider.riderResponsibility;
                     }
                 }
                 await DataStore.save(

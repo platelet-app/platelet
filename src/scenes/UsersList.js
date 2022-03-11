@@ -35,7 +35,6 @@ const useStyles = makeStyles((theme) => {
 export default function UsersList(props) {
     const usersRef = useRef([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
-    const riderResponsibilities = useRef({});
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
@@ -45,7 +44,7 @@ export default function UsersList(props) {
     function onChangeFilterText(e) {
         setFilteredUsers(
             matchSorter(usersRef.current, e.target.value, {
-                keys: ["name", "displayName", "riderResponsibility.label"],
+                keys: ["name", "displayName", "riderResponsibility"],
             })
         );
     }
@@ -55,8 +54,6 @@ export default function UsersList(props) {
             setIsFetching(true);
         } else {
             try {
-                const resps = await DataStore.query(models.RiderResponsibility);
-                riderResponsibilities.current = convertListDataToObject(resps);
                 const users = await DataStore.query(models.User);
                 setIsFetching(false);
                 usersRef.current = users;
@@ -149,18 +146,13 @@ export default function UsersList(props) {
                         alignItems={"flex-start"}
                     >
                         {sortByCreatedTime(filteredUsers).map((user) => {
-                            const responsibility =
-                                riderResponsibilities.current[
-                                    user.userRiderResponsibilityId
-                                ] || null;
-                            const respLabel = responsibility
-                                ? responsibility.label
-                                : null;
                             return (
                                 <UserCard
                                     key={user.id}
                                     displayName={user.displayName}
-                                    riderResponsibility={respLabel}
+                                    riderResponsibility={
+                                        user.riderResponsibility
+                                    }
                                     userUUID={user.id}
                                     thumbnailKey={
                                         user.profilePictureThumbnail

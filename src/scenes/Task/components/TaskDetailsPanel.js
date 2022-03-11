@@ -180,9 +180,7 @@ function TaskDetailsPanel(props) {
                     <Divider />
                     <LabelItemPair label={"Responsibility"}>
                         <Typography>
-                            {state.riderResponsibility
-                                ? state.riderResponsibility.label
-                                : ""}
+                            {state.riderResponsibility || ""}
                         </Typography>
                     </LabelItemPair>
                 </Stack>

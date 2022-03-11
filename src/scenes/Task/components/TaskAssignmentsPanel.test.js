@@ -6,7 +6,7 @@ import * as amplify from "aws-amplify";
 import * as models from "../../../models/index";
 import _ from "lodash";
 import { tasksStatus, userRoles } from "../../../apiConsts";
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 jest.mock("aws-amplify");
@@ -26,69 +26,6 @@ const preloadedState = {
     },
 };
 
-const fakeAssignmentsno = [
-    {
-        id: "1",
-        assignee: {
-            id: "someId",
-            riderResponsibility: "Something",
-            userRiderResponsibilityId: "responsibilityId",
-            displayName: "Some Person",
-            tenantId: "tenant-id",
-            profilePictureThumbnailURL,
-        },
-        tenantId: "tenant-id",
-        task: { id: "test", tenantId: "tenant-id" },
-        role: userRoles.rider,
-    },
-    {
-        id: "2",
-        assignee: {
-            id: "someId2",
-            displayName: "Another Individual",
-            tenantId: "tenant-id",
-            profilePictureThumbnailURL,
-        },
-        tenantId: "tenant-id",
-        task: { id: "test", tenantId: "tenant-id" },
-        role: userRoles.coordinator,
-    },
-    {
-        id: "3",
-        assignee: {
-            id: "someId3",
-            riderResponsibility: "Something",
-            riderResponsibilityId: "responsibilityId",
-            tenantId: "tenant-id",
-            displayName: "Nope",
-            profilePictureThumbnailURL,
-        },
-        tenantId: "tenant-id",
-        task: {
-            id: "not_test",
-
-            tenantId: "tenant-id",
-        },
-        role: userRoles.rider,
-    },
-    {
-        id: "4",
-        assignee: {
-            id: "someId4",
-            displayName: "Nope the second",
-            profilePictureThumbnailURL,
-            tenantId: "tenant-id",
-        },
-        tenantId: "tenant-id",
-        task: {
-            id: "not_test",
-
-            tenantId: "tenant-id",
-        },
-        role: userRoles.coordinator,
-    },
-];
-
 const fakeUsers = _.range(0, 3).map(() => {
     const riderResponsibility = new models.RiderResponsibility({
         tenantId: "tenant-id",
@@ -96,8 +33,7 @@ const fakeUsers = _.range(0, 3).map(() => {
     });
     return new models.User({
         displayName: uuidv4(),
-        riderResponsibility: riderResponsibility,
-        userRiderResponsibilityId: riderResponsibility.id,
+        riderResponsibility: riderResponsibility.label,
         profilePictureThumbnailURL,
         tenantId: "tenant-id",
         roles: [userRoles.coordinator, userRoles.rider, userRoles.user],
@@ -162,11 +98,8 @@ describe("TaskAssignmentsPanel", () => {
     it("displays cards for the assigned users when expanded", async () => {
         amplify.DataStore.query
             .mockResolvedValueOnce(fakeAssignments)
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
-            .mockResolvedValue(fakeUsers)
-            .mockResolvedValueOnce(fakeAssignments)
-            .mockResolvedValueOnce([]);
+            .mockResolvedValueOnce(fakeUsers)
+            .mockResolvedValueOnce(fakeAssignments);
         render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
             preloadedState,
         });
@@ -176,7 +109,7 @@ describe("TaskAssignmentsPanel", () => {
         // click the expand button
         userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         for (const user of fakeAssignments
             .filter((a) => a.task.id === "test")
@@ -188,16 +121,13 @@ describe("TaskAssignmentsPanel", () => {
     it("is expanded by default when there are no riders assignees", async () => {
         amplify.DataStore.query
             .mockResolvedValueOnce([fakeAssignments[1]])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
-            .mockResolvedValue(fakeUsers)
             .mockResolvedValueOnce([fakeAssignments[1]])
-            .mockResolvedValueOnce([]);
+            .mockResolvedValueOnce(fakeUsers);
         render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
             preloadedState,
         });
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         expect(screen.getByRole("combobox")).toBeInTheDocument();
         expect(
@@ -215,14 +145,12 @@ describe("TaskAssignmentsPanel", () => {
         });
         const mockRiderResponsibility = new models.RiderResponsibility({
             id: "responsibilityId",
+            label: mockUser.riderResponsibility,
         });
         amplify.DataStore.query
             .mockResolvedValueOnce([fakeAssignments[1]])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce([fakeAssignments[1]])
-            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce(mockUser)
             .mockResolvedValueOnce(mockTask);
         amplify.DataStore.save
@@ -240,25 +168,6 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
-                models.RiderResponsibility
-            )
-        );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                3,
-                models.RiderResponsibility
-            )
-        );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                4,
-                models.User,
-                expect.any(Function)
-            )
-        );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                5,
                 models.TaskAssignee,
                 expect.any(Function),
                 { limit: 100, sort: expect.any(Function) }
@@ -266,8 +175,9 @@ describe("TaskAssignmentsPanel", () => {
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                6,
-                models.RiderResponsibility
+                3,
+                models.User,
+                expect.any(Function)
             )
         );
         expect(screen.getByText("RIDER")).toBeInTheDocument();
@@ -278,14 +188,14 @@ describe("TaskAssignmentsPanel", () => {
         userEvent.click(option);
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                7,
+                4,
                 models.User,
                 mockUser.id
             )
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                8,
+                5,
                 models.Task,
                 fakeTask1.id
             )
@@ -293,21 +203,25 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(2)
         );
-        expect(screen.getByText(mockUser.displayName)).toBeInTheDocument();
-        expect(amplify.DataStore.save).toHaveBeenCalledWith(
+        expect(
+            screen.getByText(
+                `${mockUser.displayName} (${mockUser.riderResponsibility})`
+            )
+        ).toBeInTheDocument();
+        expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+            1,
             expect.objectContaining({
                 ..._.omit(mockAssignment, "id"),
                 assignee: expect.objectContaining(_.omit(mockUser, "id")),
                 task: expect.objectContaining(_.omit(mockTask, "id")),
             })
         );
-        expect(amplify.DataStore.save).toHaveBeenCalledWith(
+        expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+            2,
             expect.objectContaining({
                 ..._.omit(mockTask, "id"),
                 status: tasksStatus.active,
-                riderResponsibility: expect.objectContaining(
-                    _.omit(mockRiderResponsibility, "id")
-                ),
+                riderResponsibility: mockRiderResponsibility.label,
             })
         );
         expect(
@@ -327,14 +241,9 @@ describe("TaskAssignmentsPanel", () => {
         amplify.DataStore.query
             .mockResolvedValueOnce([])
             .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce(fakeUsers)
-            //fakeUser mock resolve twice for role select refreshing picker component
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce([])
+            .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce(mockUser)
             .mockResolvedValueOnce(mockTask)
             .mockResolvedValueOnce(fakeUsers);
@@ -343,13 +252,42 @@ describe("TaskAssignmentsPanel", () => {
             .mockResolvedValue(mockTask);
         render(<TaskAssignmentsPanel taskId="eee" />, { preloadedState });
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                1,
+                models.TaskAssignee
+            )
         );
-        expect(screen.getByText("RIDER")).toBeInTheDocument();
         const roleOption = screen.getByText("COORDINATOR");
         userEvent.click(roleOption);
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(8)
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                2,
+                models.TaskAssignee,
+                expect.any(Function),
+                { limit: 100, sort: expect.any(Function) }
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
+                models.User,
+                expect.any(Function)
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                4,
+                models.TaskAssignee,
+                expect.any(Function),
+                { limit: 100, sort: expect.any(Function) }
+            )
+        );
+        await waitFor(() =>
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                5,
+                models.User,
+                expect.any(Function)
+            )
         );
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, mockUser.displayName);
@@ -382,12 +320,8 @@ describe("TaskAssignmentsPanel", () => {
         const mockUser = fakeUsers[0];
         amplify.DataStore.query
             .mockResolvedValueOnce([fakeAssignments[1]])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce([fakeAssignments[1]])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce(mockUser)
             .mockResolvedValueOnce(fakeTask1)
@@ -397,7 +331,7 @@ describe("TaskAssignmentsPanel", () => {
             preloadedState,
         });
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         expect(screen.getByText("RIDER")).toBeInTheDocument();
         const textBox = screen.getByRole("textbox");
@@ -415,11 +349,8 @@ describe("TaskAssignmentsPanel", () => {
         const mockAssignment = fakeAssignments[1];
         amplify.DataStore.query
             .mockResolvedValueOnce([mockAssignment])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce([mockAssignment])
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce(mockAssignment);
         amplify.DataStore.delete.mockResolvedValueOnce(mockAssignment);
@@ -429,7 +360,7 @@ describe("TaskAssignmentsPanel", () => {
         });
         render(<TaskAssignmentsPanel taskId={fakeTask1.id} />);
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() =>
@@ -443,11 +374,8 @@ describe("TaskAssignmentsPanel", () => {
         const mockTask = new models.Task({ status: tasksStatus.active });
         amplify.DataStore.query
             .mockResolvedValueOnce([mockAssignment])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce([mockAssignment])
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(mockTask)
             .mockResolvedValueOnce(mockAssignment);
         amplify.DataStore.delete.mockResolvedValueOnce(mockAssignment);
@@ -461,7 +389,7 @@ describe("TaskAssignmentsPanel", () => {
         );
         userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() =>
@@ -492,11 +420,8 @@ describe("TaskAssignmentsPanel", () => {
         );
         amplify.DataStore.query
             .mockResolvedValueOnce([mockAssignment, mockAssignment2])
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce([mockAssignment, mockAssignment2])
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(mockTask)
             .mockResolvedValueOnce(mockAssignment)
             .mockResolvedValue(mockRiderResponsibility);
@@ -511,7 +436,7 @@ describe("TaskAssignmentsPanel", () => {
         );
         userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(6)
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
@@ -529,18 +454,15 @@ describe("TaskAssignmentsPanel", () => {
         });
         expect(amplify.DataStore.save).toHaveBeenCalledWith({
             ...mockTask,
-            riderResponsibility: mockRiderResponsibility,
+            riderResponsibility: mockRiderResponsibility.label,
         });
     });
 
     test("delete assignment error", async () => {
         amplify.DataStore.query
             .mockResolvedValueOnce(fakeAssignments)
-            .mockResolvedValueOnce([])
-            .mockResolvedValueOnce([])
             .mockResolvedValueOnce(fakeUsers)
             .mockResolvedValueOnce(fakeAssignments)
-            .mockResolvedValueOnce([])
             .mockRejectedValue(new Error("test error"));
         render(<TaskAssignmentsPanel taskId={fakeTask1.id} />);
         await waitFor(() =>
@@ -553,25 +475,6 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
-                models.RiderResponsibility
-            )
-        );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                3,
-                models.RiderResponsibility
-            )
-        );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                4,
-                models.User,
-                expect.any(Function)
-            )
-        );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                5,
                 models.TaskAssignee,
                 expect.any(Function),
                 { limit: 100, sort: expect.any(Function) }
@@ -579,8 +482,9 @@ describe("TaskAssignmentsPanel", () => {
         );
         await waitFor(() =>
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                6,
-                models.RiderResponsibility
+                3,
+                models.User,
+                expect.any(Function)
             )
         );
         const deleteButtons = await screen.findAllByTestId("CancelIcon");

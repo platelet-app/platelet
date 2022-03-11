@@ -79,9 +79,8 @@ export function filterTasks(tasks, search) {
                     ) {
                         return true;
                     } else if (
-                        task.riderResponsibility &&
-                        task.riderResponsibility.label
-                            ? task.riderResponsibility.label
+                        task.riderResponsibility
+                            ? task.riderResponsibility
                                   .toLowerCase()
                                   .includes(searchTerm)
                             : false

@@ -116,7 +116,6 @@ function TaskActions(props) {
         const result = Object.keys(fields).filter((key) => {
             return !!task[key];
         });
-        console.log(result);
         setState(result);
     }
 
@@ -134,7 +133,6 @@ function TaskActions(props) {
                 models.Task,
                 props.taskId
             ).subscribe(async (observeResult) => {
-                console.log(observeResult);
                 const taskData = observeResult.element;
                 if (observeResult.opType === "INSERT") {
                     setTask(taskData);
