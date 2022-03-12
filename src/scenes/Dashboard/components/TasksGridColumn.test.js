@@ -1041,7 +1041,7 @@ describe("TasksGridColumn", () => {
         roleView
         ${userRoles.rider} | ${userRoles.coordinator}
     `(
-        "shows the location details on each task for the ALL view",
+        "shows the location details on each task for the role views",
         async ({ roleView }) => {
             const mockLocation = new models.Location({
                 line1: "first line1",
