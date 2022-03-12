@@ -27,11 +27,9 @@ export default async function getAllMyTasks(keys, userId, roleView) {
                             task
                         )
                     )
-                    .and((task) =>
-                        task.createdAt(
-                            "gt",
-                            moment.utc().subtract(7, "days").toISOString()
-                        )
+                    .createdAt(
+                        "gt",
+                        moment.utc().subtract(7, "days").toISOString()
                     ),
             {
                 sort: (s) => s.createdAt("desc"),
