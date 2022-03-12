@@ -89,10 +89,12 @@ describe("TasksGridColumn", () => {
                 })
         );
         const preloadedState = { whoami: { user: testUser }, roleView };
-
         amplify.DataStore.query
             .mockResolvedValueOnce(mockAssignments)
-            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(
+                mockTasks.filter((t) => t.priority === priorities.medium)
+            )
             .mockResolvedValue([]);
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe: () => {} }),
@@ -110,9 +112,16 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
+                models.TaskAssignee,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
                 models.Task,
                 expect.any(Function),
-                { limit: 0, sort: expect.any(Function) }
+                { sort: expect.any(Function) }
             );
         });
         mockAllIsIntersecting(true);
@@ -479,7 +488,12 @@ describe("TasksGridColumn", () => {
         jest.clearAllMocks();
         amplify.DataStore.query
             .mockResolvedValueOnce(mockAssignments)
-            .mockResolvedValueOnce(mockTasks)
+            .mockResolvedValueOnce(mockAssignments)
+            .mockResolvedValueOnce(
+                mockAssignments
+                    .filter((a) => a.assignee.id === fakeUser1.id)
+                    .map((a) => a.task)
+            )
             .mockResolvedValue([]);
         expect(screen.queryAllByText("AI")).toHaveLength(5);
         expect(screen.queryAllByText("SP")).toHaveLength(5);
@@ -493,6 +507,13 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
                 2,
+                models.TaskAssignee,
+                expect.any(Function)
+            );
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
+                3,
                 models.Task,
                 expect.any(Function),
                 { limit: 0, sort: expect.any(Function) }
@@ -501,13 +522,13 @@ describe("TasksGridColumn", () => {
         mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                3,
+                4,
                 models.Comment,
                 expect.any(Function)
             );
         });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(7);
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(8);
         });
         const firstFakeUser = screen.getAllByText("AI");
         expect(screen.queryAllByText("SP")).toHaveLength(0);
@@ -964,56 +985,112 @@ describe("TasksGridColumn", () => {
         });
     });
 
+    it.each(
+        "shows the location details on each task for the ALL view",
+        async () => {
+            const roleView = "ALL";
+            const mockLocation = new models.Location({
+                line1: "first line1",
+                ward: "first ward",
+            });
+            const mockLocation2 = new models.Location({
+                line1: "second line1",
+                ward: "second ward",
+            });
+            const mockTasks = _.range(0, 10).map(
+                (i) =>
+                    new models.Task({
+                        status: tasksStatus.new,
+                        priority: priorities.medium,
+                        pickUpLocation: mockLocation,
+                        dropOffLocation: mockLocation2,
+                    })
+            );
+            const mockAssignments = _.range(0, 10).map(
+                (i) =>
+                    new models.TaskAssignee({
+                        task: mockTasks[i],
+                        assignee: testUser,
+                        role: roleView,
+                    })
+            );
+            const preloadedState = { whoami: { user: testUser }, roleView };
+            amplify.DataStore.query
+                .mockResolvedValueOnce(mockAssignments)
+                .mockResolvedValueOnce(mockTasks)
+                .mockResolvedValue([]);
+            amplify.DataStore.observe.mockReturnValue({
+                subscribe: () => ({ unsubscribe: () => {} }),
+            });
+            render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+                preloadedState,
+            });
+            mockAllIsIntersecting(true);
+            await waitFor(() => {
+                expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+            });
+            mockAllIsIntersecting(true);
+            expect(screen.getAllByText(mockLocation.ward)).toHaveLength(10);
+            expect(screen.getAllByText(mockLocation.line1)).toHaveLength(10);
+            expect(screen.getAllByText(mockLocation2.ward)).toHaveLength(10);
+            expect(screen.getAllByText(mockLocation2.line1)).toHaveLength(10);
+        }
+    );
+
     it.each`
         roleView
-        ${userRoles.rider} | ${userRoles.coordinator} | ${"ALL"}
-    `("shows the location details on each task", async ({ roleView }) => {
-        const mockLocation = new models.Location({
-            line1: "first line1",
-            ward: "first ward",
-        });
-        const mockLocation2 = new models.Location({
-            line1: "second line1",
-            ward: "second ward",
-        });
-        const mockTasks = _.range(0, 10).map(
-            (i) =>
-                new models.Task({
-                    status: tasksStatus.new,
-                    priority: priorities.medium,
-                    pickUpLocation: mockLocation,
-                    dropOffLocation: mockLocation2,
-                })
-        );
-        const mockAssignments = _.range(0, 10).map(
-            (i) =>
-                new models.TaskAssignee({
-                    task: mockTasks[i],
-                    assignee: testUser,
-                    role: roleView,
-                })
-        );
-        const preloadedState = { whoami: { user: testUser }, roleView };
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockAssignments)
-            .mockResolvedValueOnce(mockTasks)
-            .mockResolvedValue([]);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
-            preloadedState,
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
-        });
-        mockAllIsIntersecting(true);
-        expect(screen.getAllByText(mockLocation.ward)).toHaveLength(10);
-        expect(screen.getAllByText(mockLocation.line1)).toHaveLength(10);
-        expect(screen.getAllByText(mockLocation2.ward)).toHaveLength(10);
-        expect(screen.getAllByText(mockLocation2.line1)).toHaveLength(10);
-    });
+        ${userRoles.rider} | ${userRoles.coordinator}
+    `(
+        "shows the location details on each task for the ALL view",
+        async ({ roleView }) => {
+            const mockLocation = new models.Location({
+                line1: "first line1",
+                ward: "first ward",
+            });
+            const mockLocation2 = new models.Location({
+                line1: "second line1",
+                ward: "second ward",
+            });
+            const mockTasks = _.range(0, 10).map(
+                (i) =>
+                    new models.Task({
+                        status: tasksStatus.new,
+                        priority: priorities.medium,
+                        pickUpLocation: mockLocation,
+                        dropOffLocation: mockLocation2,
+                    })
+            );
+            const mockAssignments = _.range(0, 10).map(
+                (i) =>
+                    new models.TaskAssignee({
+                        task: mockTasks[i],
+                        assignee: testUser,
+                        role: roleView,
+                    })
+            );
+            const preloadedState = { whoami: { user: testUser }, roleView };
+            amplify.DataStore.query
+                .mockResolvedValueOnce(mockAssignments)
+                .mockResolvedValueOnce(mockAssignments)
+                .mockResolvedValueOnce(mockTasks)
+                .mockResolvedValue([]);
+            amplify.DataStore.observe.mockReturnValue({
+                subscribe: () => ({ unsubscribe: () => {} }),
+            });
+            render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+                preloadedState,
+            });
+            mockAllIsIntersecting(true);
+            await waitFor(() => {
+                expect(amplify.DataStore.query).toHaveBeenCalledTimes(3);
+            });
+            mockAllIsIntersecting(true);
+            expect(screen.getAllByText(mockLocation.ward)).toHaveLength(10);
+            expect(screen.getAllByText(mockLocation.line1)).toHaveLength(10);
+            expect(screen.getAllByText(mockLocation2.ward)).toHaveLength(10);
+            expect(screen.getAllByText(mockLocation2.line1)).toHaveLength(10);
+        }
+    );
 
     it.skip("filters by selected rider chip and search term", async () => {
         const filterTaskSpy = jest.spyOn(dashboardUtils, "filterTasks");
