@@ -5,13 +5,13 @@ import TextField from "@mui/material/TextField";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
-import _ from "lodash";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import RiderResponsibilitySelect from "./RiderResponsibilitySelect";
 import { userRoles } from "../../../apiConsts";
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
+import UserRolesAndSelector from "./UserRolesAndSelector";
 
 const fields = {
     name: "Name",
@@ -43,14 +43,8 @@ export default function UserProfile(props) {
 
     function updateStateFromProps() {
         if (props.user) {
-            const newState = {
-                ...props.user,
-                userRiderResponsibilityId: props.user.riderResponsibility
-                    ? props.user.riderResponsibility.id
-                    : null,
-            };
-            setState(newState);
-            oldState.current = newState;
+            setState(props.user);
+            oldState.current = props.user;
         }
     }
     useEffect(updateStateFromProps, [props.user]);
@@ -77,6 +71,24 @@ export default function UserProfile(props) {
                     }}
                 />
             );
+        }
+    }
+
+    function onSelectRole(role) {
+        if (state.roles.includes(role)) {
+            const result = state.roles.filter((r) => r !== role);
+            toChange.current.roles = result;
+            setState({
+                ...state,
+                roles: result,
+            });
+        } else {
+            const result = [...state.roles, role];
+            toChange.current.roles = result;
+            setState({
+                ...state,
+                roles: result,
+            });
         }
     }
 
@@ -115,6 +127,8 @@ export default function UserProfile(props) {
         />
     );
 
+    console.log(state);
+
     const responsibility =
         props.user &&
         props.user.roles &&
@@ -122,23 +136,17 @@ export default function UserProfile(props) {
             editMode ? (
                 <>
                     <RiderResponsibilitySelect
-                        onSelect={async (value) => {
-                            const riderResponsibility = await DataStore.query(
-                                models.RiderResponsibility,
-                                value
-                            );
+                        onSelect={async (riderResponsibility) => {
                             toChange.current = {
                                 ...toChange.current,
                                 riderResponsibility,
-                                userRiderResponsibilityId: value,
                             };
                             setState((prevState) => ({
                                 ...prevState,
-                                userRiderResponsibilityId: value,
                                 riderResponsibility,
                             }));
                         }}
-                        value={state.userRiderResponsibilityId}
+                        value={state.riderResponsibility}
                     />
                     <Divider />
                 </>
@@ -147,9 +155,7 @@ export default function UserProfile(props) {
                     <Stack direction={"row"} justifyContent={"space-between"}>
                         <Typography>Responsibility</Typography>
                         <Typography>
-                            {state.riderResponsibility
-                                ? state.riderResponsibility.label
-                                : "No responsibility"}
+                            {state.riderResponsibility || "No responsibility"}
                         </Typography>
                     </Stack>
                     <Divider />
@@ -305,10 +311,11 @@ export default function UserProfile(props) {
             {responsibility}
 
             <Stack direction="row" spacing={1}>
-                {props.user.roles &&
-                    props.user.roles.map((role) => (
-                        <Chip key={role} label={role} />
-                    ))}
+                <UserRolesAndSelector
+                    selectMode={editMode}
+                    onSelect={onSelectRole}
+                    value={state.roles}
+                />
             </Stack>
             {saveButtons}
         </Stack>

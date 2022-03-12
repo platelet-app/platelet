@@ -373,6 +373,7 @@ describe("LocationDetailsPanel", () => {
             ...task,
             [locationKey]: null,
         });
+        expect(amplify.DataStore.delete).toHaveBeenCalledTimes(1);
         expect(screen.queryByText(mockLocations[0].line1)).toBeNull();
         expect(screen.getByRole("textbox")).toBeInTheDocument();
         expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();

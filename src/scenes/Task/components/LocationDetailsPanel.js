@@ -116,6 +116,7 @@ function LocationDetailsPanel(props) {
                 result[props.locationKey].id
             );
             if (currentLocation.listed === 1) {
+                debugger;
                 // this is to trigger the observer on the dashboard and clear the card
                 const dummyLocation = await DataStore.save(
                     new models.Location({ tenantId })

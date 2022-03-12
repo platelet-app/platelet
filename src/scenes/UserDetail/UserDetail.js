@@ -1,20 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { decodeUUID } from "../../utilities";
 import _ from "lodash";
-
 import { useDispatch, useSelector } from "react-redux";
 import UserProfile from "./components/UserProfile";
 import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
-import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { protectedFields } from "../../apiConsts";
-import { Chip, Stack, useMediaQuery } from "@mui/material";
+import { Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
+import * as mutations from "../../graphql/mutations";
+import { API, graphqlOperation } from "aws-amplify";
 
 const initialUserState = {
     id: "",
@@ -24,6 +25,7 @@ const initialUserState = {
     },
     displayName: "",
     name: "",
+    roles: [],
     responsibility: null,
     dateOfBirth: null,
     patch: null,
@@ -70,8 +72,6 @@ export default function UserDetail(props) {
         [props.location.key, dataStoreReadyStatus]
     );
 
-    console.log("asdfsadf", user.profilePicture);
-
     async function getDisplayNames() {
         try {
             const users = await DataStore.query(models.User);
@@ -92,14 +92,10 @@ export default function UserDetail(props) {
 
     async function onUpdate(value) {
         setIsPosting(true);
+        debugger;
         try {
             const existingUser = await DataStore.query(models.User, user.id);
-            const {
-                userRiderResponsibilityId,
-                riderResponsibility,
-                contact,
-                ...rest
-            } = value;
+            const { roles, riderResponsibility, contact, ...rest } = value;
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
                     for (const [key, newValue] of Object.entries(rest)) {
@@ -118,35 +114,26 @@ export default function UserDetail(props) {
                     })
                 );
             }
-            if (userRiderResponsibilityId) {
-                const existingUserResponsibility = await DataStore.query(
-                    models.User,
-                    user.id
-                );
-                const riderResponsibility = await DataStore.query(
-                    models.RiderResponsibility,
-                    userRiderResponsibilityId
-                );
+            if (riderResponsibility) {
                 await DataStore.save(
-                    models.User.copyOf(
-                        existingUserResponsibility,
-                        (updated) => {
-                            updated.riderResponsibility = riderResponsibility;
-                        }
-                    )
+                    models.User.copyOf(existingUser, (updated) => {
+                        updated.riderResponsibility =
+                            riderResponsibility || null;
+                    })
                 );
-            } else if (userRiderResponsibilityId === null) {
-                const existingUserResponsibility = await DataStore.query(
-                    models.User,
-                    user.id
-                );
+            } else if (riderResponsibility === null) {
                 await DataStore.save(
-                    models.User.copyOf(
-                        existingUserResponsibility,
-                        (updated) => {
-                            updated.riderResponsibility = null;
-                        }
-                    )
+                    models.User.copyOf(existingUser, (updated) => {
+                        updated.riderResponsibility = null;
+                    })
+                );
+            }
+            if (roles) {
+                await API.graphql(
+                    graphqlOperation(mutations.updateUserRoles, {
+                        userId: user.id,
+                        roles,
+                    })
                 );
             }
             setIsPosting(false);
@@ -179,7 +166,7 @@ export default function UserDetail(props) {
                     profilePicture={user.profilePicture}
                     userId={user.id}
                     altText={user.displayName}
-                    editable={true}
+                    editable
                 />
             </Stack>
         );

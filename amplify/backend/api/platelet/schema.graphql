@@ -6,15 +6,15 @@ type Tenant @auth(rules: [{allow: private}, {allow: private, provider: iam, oper
 
 type User @auth(rules: [{allow: private}, {allow: private, provider: iam, operations: [create, read, update, delete]}]) @model {
   id: ID!
+  createdTasks: [Task] @hasMany
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId")
   tenantId: ID! @index(name: "byTenantId")
   contact: AddressAndContactDetails
   displayName: String!
   name: String
   roles: [Role!]!
-  dateOfBirth: AWSDateTime
-  vehicles: [Vehicle] @hasMany(indexName: "byAssignedUser", fields: ["id"])
-  riderResponsibility: RiderResponsibility @hasOne
+  dateOfBirth: AWSDate
+  riderResponsibility: String
   profilePictureURL: String
   profilePictureThumbnailURL: String
   profilePicture: S3Object
@@ -37,9 +37,8 @@ type Vehicle @auth(rules: [{allow: private}]) @model {
   name: String
   manufacturer: String
   model: String
-  dateOfManufacture: AWSDateTime
-  dateOfRegistration: AWSDateTime
-  assignedUser: User @belongsTo(fields: ["assignedUserID"])
+  dateOfManufacture: AWSDate
+  dateOfRegistration: AWSDate
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
 }
 
@@ -84,7 +83,7 @@ type Location @auth(rules: [{allow: private}]) @model {
 type Task @model @auth(rules: [{allow: private}]) {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  createdBy: User @hasOne
+  createdBy: User @belongsTo
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
   timeDroppedOff: AWSDateTime
@@ -96,12 +95,10 @@ type Task @model @auth(rules: [{allow: private}]) {
   dropOffLocationId: ID @index(name: "byDropOffLocation")
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
-  riderResponsibility: RiderResponsibility @hasOne
+  riderResponsibility: String
   assignees: [TaskAssignee] @hasMany(indexName: "byTask", fields: ["id"])
   priority: Priority
   deliverables: [Deliverable] @hasMany
-  relayPrevious: Task @hasOne
-  relayNext: Task @hasOne
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
 }
@@ -210,6 +207,7 @@ enum CommentVisibility {
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: private}])
   registerTenant(name: String, email: String): User @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: private}])
+  updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: private}])
 }
 
 type Statistics {

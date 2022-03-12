@@ -167,6 +167,7 @@ function TaskDialogCompact(props) {
                                 }));
                             }
                         } else if (observeResult.opType === "DELETE") {
+                            console.log("DELETE", observeResult);
                             setNotFound(true);
                             setState(initialState);
                         }

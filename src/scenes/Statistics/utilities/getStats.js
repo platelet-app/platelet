@@ -95,19 +95,18 @@ export default async function getStats(role, range, whoamiId) {
     for (const task of myTasks) {
         const t = {
             ...task,
-            riderResponsibility: resps[task.taskRiderResponsibilityId],
         };
         if (!t.riderResponsibility) {
             responsibilities["None"].Total = responsibilities["None"].Total++;
             continue;
         }
-        if (!responsibilities[t.riderResponsibility.label]) {
-            responsibilities[t.riderResponsibility.label] = {
+        if (!responsibilities[t.riderResponsibility]) {
+            responsibilities[t.riderResponsibility] = {
                 Total: 1,
                 ...prioritiesTemplate,
             };
         } else {
-            responsibilities[t.riderResponsibility.label].Total++;
+            responsibilities[t.riderResponsibility].Total++;
         }
     }
     const myTasksWithResps = myTasks.map((task) => {
@@ -125,7 +124,7 @@ export default async function getStats(role, range, whoamiId) {
                     myTasksWithResps.filter(
                         (t) =>
                             t.riderResponsibility &&
-                            t.riderResponsibility.label === resp.label &&
+                            t.riderResponsibility === resp.label &&
                             t.priority === priority
                     ).length;
             }
