@@ -213,14 +213,9 @@ function TasksGridColumn(props) {
                             props.taskKey.includes(newTask.element.status)
                         ) {
                             animate.current = true;
-                            setState((prevState) => ({
-                                ...prevState,
-                                [newTask.element.id]: {
-                                    ...prevState[newTask.element.id],
-                                    ...newTask.element,
-                                },
-                            }));
-                            animate.current = false;
+                            getTasksRef
+                                .current()
+                                .then(() => (animate.current = false));
                             return;
                         } else if (
                             newTask.element.status &&
