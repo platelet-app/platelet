@@ -136,8 +136,9 @@ function TaskItem(props) {
                 observedResult.opType === "INSERT" ||
                 observedResult.opType === "DELETE"
             ) {
-                const commentCount = await getCommentCount();
-                setCommentCount(commentCount);
+                getCommentCount().then((count) => {
+                    setCommentCount(count);
+                });
             }
         });
     }
