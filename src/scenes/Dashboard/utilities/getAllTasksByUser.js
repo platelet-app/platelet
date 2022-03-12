@@ -1,11 +1,8 @@
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { userRoles } from "../../../apiConsts";
-import {
-    addAssigneesAndConvertToObject,
-    filterTasksToOneWeek,
-    isCompletedTab,
-} from "./functions";
+import { addAssigneesAndConvertToObject, isCompletedTab } from "./functions";
+import moment from "moment";
 
 export default async function getAllTasksByUser(
     keys,
@@ -13,36 +10,64 @@ export default async function getAllTasksByUser(
     role = userRoles.rider
 ) {
     const allAssignments = await DataStore.query(models.TaskAssignee);
-    const allTasks = await DataStore.query(
-        models.Task,
-        (task) =>
-            task.or((task) =>
-                keys.reduce((task, status) => task.status("eq", status), task)
-            ),
-        {
-            sort: (s) => s.createdAt("desc"),
-            limit: isCompletedTab(keys) ? 100 : 0,
-        }
+    const roleAssignments = await DataStore.query(models.TaskAssignee, (a) =>
+        a.role("eq", role)
     );
-    const riderAssigneesFiltered = allAssignments
-        .filter(
-            (a) =>
-                a.role === role &&
-                a.task &&
-                keys.includes(a.task.status) &&
-                a.assignee &&
-                userId === a.assignee.id
-        )
-        .map((a) => a.task && a.task);
+    let allTasks = [];
+    const riderTaskIds = roleAssignments
+        .filter((a) => a.assignee && userId === a.assignee.id)
+        .map((a) => a.task && a.task.id);
 
-    const riderTaskIds = riderAssigneesFiltered.map((t) => t.id);
-    const riderTasks = allTasks.filter((t) => riderTaskIds.includes(t.id));
     if (isCompletedTab(keys)) {
-        // filter tasksResult to only return tasks that were created in the last week
-        return addAssigneesAndConvertToObject(
-            riderTasks.filter(filterTasksToOneWeek),
-            allAssignments
+        allTasks = await DataStore.query(
+            models.Task,
+            (task) =>
+                task
+                    .or((task) =>
+                        riderTaskIds.reduce(
+                            (task, id) => task.id("eq", id),
+                            task
+                        )
+                    )
+                    .or((task) =>
+                        keys.reduce(
+                            (task, status) => task.status("eq", status),
+                            task
+                        )
+                    )
+                    .and((task) =>
+                        task.createdAt(
+                            "gt",
+                            moment.utc().subtract(7, "days").toISOString()
+                        )
+                    ),
+            {
+                sort: (s) => s.createdAt("desc"),
+                limit: 100,
+            }
+        );
+    } else {
+        allTasks = await DataStore.query(
+            models.Task,
+            (task) =>
+                task
+                    .or((task) =>
+                        riderTaskIds.reduce(
+                            (task, id) => task.id("eq", id),
+                            task
+                        )
+                    )
+                    .or((task) =>
+                        keys.reduce(
+                            (task, status) => task.status("eq", status),
+                            task
+                        )
+                    ),
+            {
+                sort: (s) => s.createdAt("desc"),
+                limit: 0,
+            }
         );
     }
-    return addAssigneesAndConvertToObject(riderTasks, allAssignments);
+    return addAssigneesAndConvertToObject(allTasks, allAssignments);
 }
