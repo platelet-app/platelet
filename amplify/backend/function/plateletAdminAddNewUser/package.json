@@ -1,0 +1,14 @@
+{
+  "name": "plateletAdminAddNewUser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-appsync": "4.0.0",
+    "aws-sdk": "^2.1088.0",
+    "graphql": "^16.3.0",
+    "graphql-tag": "^2.12.6",
+    "isomorphic-fetch": "^3.0.0",
+    "uuid": "^8.3.2"
+  }
+}

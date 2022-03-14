@@ -16,6 +16,10 @@ exports.createUser = gql`
             name
             roles
             active
+            createdAt
+            updatedAt
+            _version
+            _deleted
         }
     }
 `;

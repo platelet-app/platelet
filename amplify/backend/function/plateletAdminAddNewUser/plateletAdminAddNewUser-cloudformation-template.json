@@ -375,7 +375,7 @@
                 "ses:SendRawEmail"
               ],
               "Resource": [
-                "arn:aws:ses:::*"
+                "*"
               ],
               "Effect": "Allow"
             }
