@@ -59,31 +59,7 @@ export const createUser = /* GraphQL */ `
   ) {
     createUser(input: $input, condition: $condition) {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -148,6 +124,31 @@ export const createUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt
@@ -168,31 +169,7 @@ export const updateUser = /* GraphQL */ `
   ) {
     updateUser(input: $input, condition: $condition) {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -257,6 +234,31 @@ export const updateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt
@@ -277,31 +279,7 @@ export const deleteUser = /* GraphQL */ `
   ) {
     deleteUser(input: $input, condition: $condition) {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -366,6 +344,31 @@ export const deleteUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt
@@ -839,10 +842,7 @@ export const createTask = /* GraphQL */ `
       tenantId
       createdBy {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -883,6 +883,10 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1088,10 +1092,7 @@ export const updateTask = /* GraphQL */ `
       tenantId
       createdBy {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1132,6 +1133,10 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1337,10 +1342,7 @@ export const deleteTask = /* GraphQL */ `
       tenantId
       createdBy {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1381,6 +1383,10 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1592,6 +1598,7 @@ export const createTaskAssignee = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1698,10 +1705,7 @@ export const createTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1742,6 +1746,10 @@ export const createTaskAssignee = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1776,6 +1784,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1882,10 +1891,7 @@ export const updateTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1926,6 +1932,10 @@ export const updateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1960,6 +1970,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -2066,10 +2077,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -2110,6 +2118,10 @@ export const deleteTaskAssignee = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -2140,10 +2152,7 @@ export const createComment = /* GraphQL */ `
       body
       author {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -2184,6 +2193,10 @@ export const createComment = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -2216,10 +2229,7 @@ export const updateComment = /* GraphQL */ `
       body
       author {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -2260,6 +2270,10 @@ export const updateComment = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -2292,10 +2306,7 @@ export const deleteComment = /* GraphQL */ `
       body
       author {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -2336,6 +2347,10 @@ export const deleteComment = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -2500,6 +2515,7 @@ export const createDeliverable = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -2664,6 +2680,7 @@ export const updateDeliverable = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -2828,6 +2845,7 @@ export const deleteDeliverable = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -3027,31 +3045,7 @@ export const registerUser = /* GraphQL */ `
       roles: $roles
     ) {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -3116,6 +3110,31 @@ export const registerUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt
@@ -3130,34 +3149,20 @@ export const registerUser = /* GraphQL */ `
   }
 `;
 export const registerTenant = /* GraphQL */ `
-  mutation RegisterTenant($name: String, $email: String) {
-    registerTenant(name: $name, email: $email) {
+  mutation RegisterTenant(
+    $name: String
+    $email: String
+    $tenantName: String
+    $referenceIdentifier: String
+  ) {
+    registerTenant(
+      name: $name
+      email: $email
+      tenantName: $tenantName
+      referenceIdentifier: $referenceIdentifier
+    ) {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -3222,6 +3227,31 @@ export const registerTenant = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt
@@ -3239,31 +3269,7 @@ export const updateUserRoles = /* GraphQL */ `
   mutation UpdateUserRoles($userId: ID, $roles: [Role]) {
     updateUserRoles(userId: $userId, roles: $roles) {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -3328,6 +3334,31 @@ export const updateUserRoles = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt

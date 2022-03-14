@@ -6,7 +6,7 @@ type Tenant @auth(rules: [{allow: private}, {allow: private, provider: iam, oper
 
 type User @auth(rules: [{allow: private}, {allow: private, provider: iam, operations: [create, read, update, delete]}]) @model {
   id: ID!
-  createdTasks: [Task] @hasMany
+  username: String!
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId")
   tenantId: ID! @index(name: "byTenantId")
   contact: AddressAndContactDetails
@@ -21,6 +21,7 @@ type User @auth(rules: [{allow: private}, {allow: private, provider: iam, operat
   profilePictureThumbnail: S3Object
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
+  createdTasks: [Task] @hasMany
   active: Int!
 }
 
@@ -206,7 +207,7 @@ enum CommentVisibility {
 
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: private}])
-  registerTenant(name: String, email: String): User @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: private}])
+  registerTenant(name: String, email: String, tenantName: String, referenceIdentifier: String): User @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: private}])
   updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: private}])
 }
 

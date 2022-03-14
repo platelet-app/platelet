@@ -84,31 +84,7 @@ export const getUser = /* GraphQL */ `
   query GetUser($id: ID!) {
     getUser(id: $id) {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -177,6 +153,31 @@ export const getUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
+        }
+        nextToken
+        startedAt
+      }
       active
       createdAt
       updatedAt
@@ -195,10 +196,7 @@ export const listUsers = /* GraphQL */ `
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -239,6 +237,10 @@ export const listUsers = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -269,10 +271,7 @@ export const syncUsers = /* GraphQL */ `
     ) {
       items {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -313,6 +312,10 @@ export const syncUsers = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -345,10 +348,7 @@ export const getUserByCognitoId = /* GraphQL */ `
     ) {
       items {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -389,6 +389,10 @@ export const getUserByCognitoId = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -751,10 +755,7 @@ export const getTask = /* GraphQL */ `
       tenantId
       createdBy {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -795,6 +796,10 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1002,6 +1007,7 @@ export const listTasks = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1129,6 +1135,7 @@ export const syncTasks = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1258,6 +1265,7 @@ export const tasksByStatus = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1380,6 +1388,7 @@ export const getTaskAssignee = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1486,10 +1495,7 @@ export const getTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1530,6 +1536,10 @@ export const getTaskAssignee = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1584,6 +1594,7 @@ export const listTaskAssignees = /* GraphQL */ `
         }
         assignee {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1653,6 +1664,7 @@ export const syncTaskAssignees = /* GraphQL */ `
         }
         assignee {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1689,10 +1701,7 @@ export const getComment = /* GraphQL */ `
       body
       author {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1736,6 +1745,10 @@ export const getComment = /* GraphQL */ `
           nextToken
           startedAt
         }
+        createdTasks {
+          nextToken
+          startedAt
+        }
         active
         createdAt
         updatedAt
@@ -1767,6 +1780,7 @@ export const listComments = /* GraphQL */ `
         body
         author {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1816,6 +1830,7 @@ export const syncComments = /* GraphQL */ `
         body
         author {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1975,6 +1990,7 @@ export const getDeliverable = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName

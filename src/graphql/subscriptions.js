@@ -47,31 +47,7 @@ export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser {
     onCreateUser {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -136,6 +112,31 @@ export const onCreateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt
@@ -153,31 +154,7 @@ export const onUpdateUser = /* GraphQL */ `
   subscription OnUpdateUser {
     onUpdateUser {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -242,6 +219,31 @@ export const onUpdateUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt
@@ -259,31 +261,7 @@ export const onDeleteUser = /* GraphQL */ `
   subscription OnDeleteUser {
     onDeleteUser {
       id
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
-        }
-        nextToken
-        startedAt
-      }
+      username
       cognitoId
       tenantId
       contact {
@@ -348,6 +326,31 @@ export const onDeleteUser = /* GraphQL */ `
           _version
           _deleted
           _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
         }
         nextToken
         startedAt
@@ -800,10 +803,7 @@ export const onCreateTask = /* GraphQL */ `
       tenantId
       createdBy {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -844,6 +844,10 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1046,10 +1050,7 @@ export const onUpdateTask = /* GraphQL */ `
       tenantId
       createdBy {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1090,6 +1091,10 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1292,10 +1297,7 @@ export const onDeleteTask = /* GraphQL */ `
       tenantId
       createdBy {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1336,6 +1338,10 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1544,6 +1550,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1650,10 +1657,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1694,6 +1698,10 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1725,6 +1733,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -1831,10 +1840,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -1875,6 +1881,10 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -1906,6 +1916,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -2012,10 +2023,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
       }
       assignee {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -2056,6 +2064,10 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -2083,10 +2095,7 @@ export const onCreateComment = /* GraphQL */ `
       body
       author {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -2127,6 +2136,10 @@ export const onCreateComment = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -2156,10 +2169,7 @@ export const onUpdateComment = /* GraphQL */ `
       body
       author {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -2200,6 +2210,10 @@ export const onUpdateComment = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -2229,10 +2243,7 @@ export const onDeleteComment = /* GraphQL */ `
       body
       author {
         id
-        createdTasks {
-          nextToken
-          startedAt
-        }
+        username
         cognitoId
         tenantId
         contact {
@@ -2273,6 +2284,10 @@ export const onDeleteComment = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
           nextToken
           startedAt
         }
@@ -2425,6 +2440,7 @@ export const onCreateDeliverable = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -2586,6 +2602,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
@@ -2747,6 +2764,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
         tenantId
         createdBy {
           id
+          username
           cognitoId
           tenantId
           displayName
