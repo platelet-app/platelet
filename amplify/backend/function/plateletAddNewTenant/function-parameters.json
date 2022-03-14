@@ -15,5 +15,11 @@
       ]
     }
   },
-  "lambdaLayers": []
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "plateletWelcomeEmail",
+      "environmentVariableName": "PLATELET_WELCOME_EMAIL"
+    }
+  ]
 }

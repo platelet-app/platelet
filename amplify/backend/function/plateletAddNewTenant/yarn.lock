@@ -21,9 +21,9 @@
     tslib "^1.11.1"
 
 "@aws-sdk/types@^3.1.0", "@aws-sdk/types@^3.25.0":
-  version "3.54.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/types/-/types-3.54.0.tgz#c15a821d1926c5ec9b9bd5e643d376f907b84b95"
-  integrity sha512-Jp2MHXnrM0pk0RIoSl5AHFm7TBk+7b8HTIcQ2X/6kGwwwnWw9qlg9ZFziegJTNTLJ4iVgZjz/yMlEvgrp7z9CA==
+  version "3.53.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/types/-/types-3.53.0.tgz#fcc1db0c2114e94e8b9fd5b14b410aef6cd36b95"
+  integrity sha512-FqHfWRXdnQvfxgngDKfYpYOuQ1HmPgxaGKELx3pFaEnQdMo/dMXjfBGQcEQgP8jqU6bPLaJSfykjWjDzua8JBg==
 
 "@aws-sdk/util-hex-encoding@^3.29.0":
   version "3.52.0"
@@ -58,11 +58,6 @@
   version "2.0.50"
   resolved "https://registry.yarnpkg.com/@types/async/-/async-2.0.50.tgz#117540e026d64e1846093abbd5adc7e27fda7bcb"
   integrity sha512-VMhZMMQgV1zsR+lX/0IBfAk+8Eb7dPVMWiQGFAt3qjo5x7Ml6b77jUo0e1C3ToD+XRDXqtrfw+6AB0uUsPEr3Q==
-
-"@types/aws-lambda@^8.10.92":
-  version "8.10.92"
-  resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.92.tgz#645f769ff88b8eba1acd35542695ac322c7757c4"
-  integrity sha512-dB14TltT1SNq73z3MaZfKyyBZ37NAgAFl8jze59bisR4fJ6pB6AYGxItHFkooZbN7UcVJX/cFudM4p8wp1W4rA==
 
 "@types/zen-observable@0.8.0":
   version "0.8.0"
@@ -287,10 +282,10 @@ aws-sdk@2.518.0:
     uuid "3.3.2"
     xml2js "0.4.19"
 
-aws-sdk@^2.1092.0:
-  version "2.1092.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1092.0.tgz#79452dee35ab35b8c1de63340a0bd697fa8db3e8"
-  integrity sha512-8PH2rOgZazGT3VfGPkKcvzz2K9ylVfDniJH4WfJXHEBGxu0+XEMDbjuYpe8k/L1C7w0UTP6CuChjqCxgJznrxg==
+aws-sdk@^2.1088.0:
+  version "2.1088.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1088.0.tgz#e8ea761eff2b5c42aca6136c5a01fa9b8066f0a2"
+  integrity sha512-KtGJTvMPJL6QynasbSMNvz7Onc5ejebY6NzuUvgrw6sNohNJDR/3J/0e016ocQwvEq79MNK4v4EsxNi9eMELtg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"

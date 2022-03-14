@@ -4,6 +4,7 @@ exports.createTenant = gql`
     mutation CreateTenant($input: CreateTenantInput!) {
         createTenant(input: $input) {
             referenceIdentifier
+            id
         }
     }
 `;

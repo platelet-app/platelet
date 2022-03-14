@@ -153,10 +153,7 @@ async function createNewTenant(newUser, tenantId) {
         cognitoId,
         name,
         displayName,
-        roles:
-            newUser.roles && newUser.roles.includes("USER")
-                ? newUser.roles
-                : ["USER"],
+        roles: ["USER", "ADMIN", "COORDINATOR", "RIDER"],
         contact: { emailAddress: newUser.email },
     };
 
@@ -182,6 +179,7 @@ exports.handler = async (event) => {
     );
     const user = {
         name: event.arguments.name,
+        displayName: event.arguments.name,
         email: event.arguments.email,
         roles: ["USER", "ADMIN"],
     };
