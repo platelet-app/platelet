@@ -57,15 +57,17 @@ function AdminAddVehicle() {
                 state.dateOfRegistration &&
                 state.dateOfRegistration instanceof Date
             ) {
-                result.dateOfRegistration =
-                    state.dateOfRegistration.toISOString();
+                result.dateOfRegistration = state.dateOfRegistration
+                    .toISOString()
+                    .split("T")[0];
             }
             if (
                 state.dateOfManufacture &&
                 state.dateOfManufacture instanceof Date
             ) {
-                result.dateOfManufacture =
-                    state.dateOfManufacture.toISOString();
+                result.dateOfManufacture = state.dateOfManufacture
+                    .toISOString()
+                    .split("T")[0];
             }
             const newVehicle = await DataStore.save(
                 new models.Vehicle({ ...result, tenantId })
