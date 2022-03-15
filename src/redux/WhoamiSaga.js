@@ -16,6 +16,7 @@ import { userRoles } from "../apiConsts";
 const fakeUser = {
     id: "offline",
     name: "offline",
+    username: "offline",
     displayName: "Offline User",
     roles: Object.values(userRoles),
     dateOfBirth: null,

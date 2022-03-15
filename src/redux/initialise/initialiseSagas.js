@@ -1,4 +1,5 @@
 import { put, takeLatest, call, all } from "redux-saga/effects";
+import { v4 as uuidv4 } from "uuid";
 import faker from "faker/locale/en_GB";
 import { initialiseAwsDataStoreListener } from "../awsHubListener/awsHubListenerActions";
 import { initialiseBroadcastAPIListener } from "../broadcastAPI/broadcastAPIActions";
@@ -121,6 +122,7 @@ async function populateFakeData() {
         await DataStore.save(
             new models.User({
                 name: "offline",
+                username: "offline",
                 riderResponsibility: _.sample(responsibilities).label || null,
                 displayName: "Demo User",
                 dateOfBirth: faker.date
@@ -151,6 +153,7 @@ async function populateFakeData() {
             const generatedName = faker.name.findName();
             let userToSave = {
                 name: generatedName,
+                username: uuidv4(),
                 displayName: generatedName,
                 dateOfBirth: faker.date
                     .past(50, new Date())
