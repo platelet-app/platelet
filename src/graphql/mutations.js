@@ -108,6 +108,7 @@ export const createUser = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -218,6 +219,7 @@ export const updateUser = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -328,6 +330,7 @@ export const deleteUser = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -409,6 +412,7 @@ export const createVehicle = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -448,6 +452,7 @@ export const updateVehicle = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -487,6 +492,7 @@ export const deleteVehicle = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -598,6 +604,7 @@ export const createLocation = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -709,6 +716,7 @@ export const updateLocation = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -820,6 +828,7 @@ export const deleteLocation = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -1068,6 +1077,7 @@ export const createTask = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -1318,6 +1328,7 @@ export const updateTask = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -1568,6 +1579,7 @@ export const deleteTask = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -2214,6 +2226,7 @@ export const createComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      owner
     }
   }
 `;
@@ -2291,6 +2304,7 @@ export const updateComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      owner
     }
   }
 `;
@@ -2368,6 +2382,7 @@ export const deleteComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      owner
     }
   }
 `;
@@ -2636,6 +2651,7 @@ export const createDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -2801,6 +2817,7 @@ export const updateDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -2966,6 +2983,7 @@ export const deleteDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -3094,6 +3112,7 @@ export const registerUser = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -3211,6 +3230,7 @@ export const registerTenant = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -3318,6 +3338,7 @@ export const updateUserRoles = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt

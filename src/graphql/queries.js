@@ -1,21 +1,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getStatistics = /* GraphQL */ `
-  query GetStatistics($tenantId: ID!) {
-    getStatistics(tenantId: $tenantId) {
-      numCancelled
-      numCompleted
-      numDroppedOff
-      numRejected
-      numAbandoned
-      numActive
-      numPickedUp
-      numNew
-      numTest
-    }
-  }
-`;
 export const getTenant = /* GraphQL */ `
   query GetTenant($id: ID!) {
     getTenant(id: $id) {
@@ -133,6 +118,7 @@ export const getUser = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -432,6 +418,7 @@ export const getVehicle = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -608,6 +595,7 @@ export const getLocation = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -981,6 +969,7 @@ export const getTask = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -1763,6 +1752,7 @@ export const getComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      owner
     }
   }
 `;
@@ -1804,6 +1794,7 @@ export const listComments = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCommentsId
+        owner
       }
       nextToken
       startedAt
@@ -1854,6 +1845,7 @@ export const syncComments = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCommentsId
+        owner
       }
       nextToken
       startedAt
@@ -2111,6 +2103,7 @@ export const getDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -2324,6 +2317,21 @@ export const syncRiderResponsibilities = /* GraphQL */ `
       }
       nextToken
       startedAt
+    }
+  }
+`;
+export const getStatistics = /* GraphQL */ `
+  query GetStatistics($tenantId: ID!) {
+    getStatistics(tenantId: $tenantId) {
+      numCancelled
+      numCompleted
+      numDroppedOff
+      numRejected
+      numAbandoned
+      numActive
+      numPickedUp
+      numNew
+      numTest
     }
   }
 `;

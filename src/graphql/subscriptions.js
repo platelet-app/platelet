@@ -96,6 +96,7 @@ export const onCreateUser = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -203,6 +204,7 @@ export const onUpdateUser = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -310,6 +312,7 @@ export const onDeleteUser = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -388,6 +391,7 @@ export const onCreateVehicle = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -424,6 +428,7 @@ export const onUpdateVehicle = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -460,6 +465,7 @@ export const onDeleteVehicle = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -568,6 +574,7 @@ export const onCreateLocation = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -676,6 +683,7 @@ export const onUpdateLocation = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -784,6 +792,7 @@ export const onDeleteLocation = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -1029,6 +1038,7 @@ export const onCreateTask = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -1276,6 +1286,7 @@ export const onUpdateTask = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -1523,6 +1534,7 @@ export const onDeleteTask = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -2087,8 +2099,8 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
   }
 `;
 export const onCreateComment = /* GraphQL */ `
-  subscription OnCreateComment {
-    onCreateComment {
+  subscription OnCreateComment($owner: String) {
+    onCreateComment(owner: $owner) {
       id
       parentId
       tenantId
@@ -2157,12 +2169,13 @@ export const onCreateComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      owner
     }
   }
 `;
 export const onUpdateComment = /* GraphQL */ `
-  subscription OnUpdateComment {
-    onUpdateComment {
+  subscription OnUpdateComment($owner: String) {
+    onUpdateComment(owner: $owner) {
       id
       parentId
       tenantId
@@ -2231,12 +2244,13 @@ export const onUpdateComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      owner
     }
   }
 `;
 export const onDeleteComment = /* GraphQL */ `
-  subscription OnDeleteComment {
-    onDeleteComment {
+  subscription OnDeleteComment($owner: String) {
+    onDeleteComment(owner: $owner) {
       id
       parentId
       tenantId
@@ -2305,6 +2319,7 @@ export const onDeleteComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      owner
     }
   }
 `;
@@ -2561,6 +2576,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -2723,6 +2739,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt
@@ -2885,6 +2902,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
           userCommentsId
+          owner
         }
         nextToken
         startedAt

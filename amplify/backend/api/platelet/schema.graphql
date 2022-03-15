@@ -4,7 +4,14 @@ type Tenant @auth(rules: [{allow: private}, {allow: private, provider: iam, oper
   referenceIdentifier: String!
 }
 
-type User @auth(rules: [{allow: private}, {allow: private, provider: iam, operations: [create, read, update, delete]}]) @model {
+type User
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: owner, ownerField: "cognitoId", operations: [update]},
+  {allow: groups, groups: ["ADMIN"], operations: [update]},
+  {allow: private, provider: iam, operations: [create, read, update, delete]}
+])
+@model {
   id: ID!
   username: String!
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId")
@@ -31,7 +38,12 @@ type S3Object {
   region: String!
 }
 
-type Vehicle @auth(rules: [{allow: private}]) @model {
+type Vehicle
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, update]},
+])
+@model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   assignedUserID: ID @index(name: "byAssignedUser")
@@ -60,7 +72,12 @@ type AddressAndContactDetails {
   what3words: String
 }
 
-type Location @auth(rules: [{allow: private}]) @model {
+type Location
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, update]},
+])
+@model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   name: String
@@ -81,7 +98,12 @@ type Location @auth(rules: [{allow: private}]) @model {
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
 }
 
-type Task @model @auth(rules: [{allow: private}]) {
+type Task
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update]},
+])
+@model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   createdBy: User @belongsTo
@@ -104,7 +126,12 @@ type Task @model @auth(rules: [{allow: private}]) {
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
 }
 
-type TaskAssignee @model @auth(rules: [{allow: private}]) {
+type TaskAssignee
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
+])
+@model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   taskId: ID! @index(name: "byTask", sortKeyFields: ["assigneeId"])
@@ -114,7 +141,13 @@ type TaskAssignee @model @auth(rules: [{allow: private}]) {
   assignee: User! @belongsTo(fields: ["assigneeId"])
 }
 
-type Comment @auth(rules: [{allow: private}]) @model {
+type Comment
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: owner, operations: [create, read, delete, update]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
+])
+@model {
   id: ID!
   parentId: ID @index(name: "byParent")
   tenantId: ID! @index(name: "byTenantId")
@@ -123,7 +156,12 @@ type Comment @auth(rules: [{allow: private}]) @model {
   visibility: CommentVisibility
 }
 
-type DeliverableType @auth(rules: [{allow: private}]) @model {
+type DeliverableType
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, update]},
+])
+@model {
   id: ID!
   label: String!
   tenantId: ID! @index(name: "byTenantId")
@@ -133,7 +171,12 @@ type DeliverableType @auth(rules: [{allow: private}]) @model {
   tags: [String]
 }
 
-type Deliverable @auth(rules: [{allow: private}]) @model {
+type Deliverable
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["ADMIN", "COORDINATOR", "RIDER"], operations: [create, read, delete, update]},
+])
+@model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   deliverableType: DeliverableType @belongsTo
@@ -152,7 +195,12 @@ enum DeliverableTypeIcon {
   OTHER
 }
 
-type RiderResponsibility @auth(rules: [{allow: private}]) @model {
+type RiderResponsibility
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
+])
+@model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   label: String!
@@ -206,9 +254,9 @@ enum CommentVisibility {
 }
 
 type Mutation {
-  registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: private}])
-  registerTenant(name: String, email: String, tenantName: String, referenceIdentifier: String): User @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: private}])
-  updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: private}])
+  registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  registerTenant(name: String, email: String, tenantName: String, referenceIdentifier: String): User @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
+  updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
 type Statistics {
@@ -224,5 +272,5 @@ type Statistics {
 }
 
 type Query {
-  getStatistics(tenantId: ID!): Statistics @function(name: "plateletGetStatistics-${env}")
+  getStatistics(tenantId: ID!): Statistics @function(name: "plateletGetStatistics-${env}") @auth(rules: [{allow: private}])
 }
