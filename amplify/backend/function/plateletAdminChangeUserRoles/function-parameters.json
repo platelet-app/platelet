@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "auth": {
+      "platelet61a0ac07": [
+        "update"
+      ]
+    },
+    "api": {
+      "platelet": [
+        "Query",
+        "Mutation"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

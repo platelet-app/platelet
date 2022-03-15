@@ -1,0 +1,9 @@
+[
+    {
+        "Action": [
+            "cognito-idp:AdminAddUserToGroup",
+            "cognito-idp:AdminRemoveUserFromGroup"
+        ],
+        "Resource": ["*"]
+    }
+]
