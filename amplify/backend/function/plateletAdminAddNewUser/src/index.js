@@ -96,7 +96,6 @@ async function inviteNewUserToTeam(newUser, tenantId) {
 
     const cognitoResp = await cognitoClient
         .adminCreateUser({
-            DesiredDeliveryMediums: ["EMAIL"],
             ForceAliasCreation: false,
             UserAttributes: [
                 {
@@ -114,10 +113,25 @@ async function inviteNewUserToTeam(newUser, tenantId) {
             ],
             TemporaryPassword: generatedPassword,
             UserPoolId: userPoolId,
-            Username: uuid.v4(),
+            Username: newUser.username,
             MessageAction: "SUPPRESS",
         })
         .promise();
+
+    const roles =
+        newUser.roles && newUser.roles.includes("USER")
+            ? newUser.roles
+            : ["USER"];
+
+    for (const role of roles) {
+        await cognitoClient
+            .adminAddUserToGroup({
+                GroupName: role,
+                UserPoolId: userPoolId,
+                Username: newUser.username,
+            })
+            .promise();
+    }
 
     if (!cognitoResp.User) {
         throw new Error(
@@ -157,6 +171,7 @@ async function inviteNewUserToTeam(newUser, tenantId) {
         active: 1,
         cognitoId,
         name: newUser.name,
+        username: newUser.username,
         displayName,
         roles:
             newUser.roles && newUser.roles.includes("USER")
@@ -205,6 +220,7 @@ exports.handler = async (event) => {
     const tenantId = event.arguments.tenantId;
     const user = {
         name: event.arguments.name,
+        username: event.arguments.username || uuid.v4(),
         email: event.arguments.email,
         roles: event.arguments.roles || ["USER"],
     };

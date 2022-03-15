@@ -2,5 +2,9 @@
     {
         "Action": ["ses:SendEmail", "ses:SendRawEmail"],
         "Resource": ["*"]
+    },
+    {
+        "Action": ["cognito-idp:AdminAddUserToGroup"],
+        "Resource": ["*"]
     }
 ]

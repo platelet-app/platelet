@@ -20,6 +20,7 @@ exports.createUser = gql`
             updatedAt
             _version
             _deleted
+            _lastChangedAt
         }
     }
 `;
