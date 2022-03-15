@@ -22,6 +22,7 @@ const cleanUpData = {
 };
 
 async function sendWelcomeEmail(emailAddress, recipientName, password) {
+    return;
     const ses = new aws.SES({
         apiVersion: "2010-12-01",
         region: process.env.REGION,
@@ -179,6 +180,8 @@ async function inviteNewUserToTeam(newUser, tenantId) {
                 : ["USER"],
         contact: { emailAddress: newUser.email },
     };
+
+    console.log(`Creating user ${createUserInput.username}`);
 
     const createdUser = await appSyncClient.mutate({
         mutation: createUser,

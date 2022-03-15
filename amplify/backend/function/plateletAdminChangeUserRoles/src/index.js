@@ -97,6 +97,7 @@ async function cognitoAmendRoles(username, roles) {
 exports.handler = async (event) => {
     const roles = event.arguments.roles;
     const userId = event.arguments.userId;
-    const { username } = await appSyncAmendRoles(userId, roles);
-    await cognitoAmendRoles(username, roles);
+    const user = await appSyncAmendRoles(userId, roles);
+    await cognitoAmendRoles(user.username, roles);
+    return user;
 };

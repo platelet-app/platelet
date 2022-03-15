@@ -378,6 +378,15 @@
                 "*"
               ],
               "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "cognito-idp:AdminAddUserToGroup"
+              ],
+              "Resource": [
+                "*"
+              ],
+              "Effect": "Allow"
             }
           ]
         },
