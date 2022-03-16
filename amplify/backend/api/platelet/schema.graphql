@@ -1,4 +1,9 @@
-type Tenant @auth(rules: [{allow: private}, {allow: private, provider: iam, operations: [create, read, update, delete]}]) @model {
+type Tenant
+@auth(rules: [
+{allow: private, operations: [read]},
+{allow: private, provider: iam, operations: [create, read, update, delete]}
+])
+@model {
   id: ID!
   name: String!
   referenceIdentifier: String!

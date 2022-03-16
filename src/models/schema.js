@@ -1320,9 +1320,6 @@ export const schema = {
                             {
                                 "allow": "private",
                                 "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
                                     "read"
                                 ]
                             },
