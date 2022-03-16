@@ -1289,6 +1289,20 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "admin": {
+                    "name": "admin",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "tenantAdminId"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1304,6 +1318,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "tenantAdminId": {
+                    "name": "tenantAdminId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -1838,5 +1859,5 @@ export const schema = {
             }
         }
     },
-    "version": "d1476bb3bf23f5f722b5b534e62e5a08"
+    "version": "1cc027705232f189290539e1c3781020"
 };

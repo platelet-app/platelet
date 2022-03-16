@@ -266,8 +266,10 @@ export declare class Tenant {
   readonly id: string;
   readonly name: string;
   readonly referenceIdentifier: string;
+  readonly admin: User;
   readonly createdAt?: string;
   readonly updatedAt?: string;
+  readonly tenantAdminId: string;
   constructor(init: ModelInit<Tenant, TenantMetaData>);
   static copyOf(source: Tenant, mutator: (draft: MutableModel<Tenant, TenantMetaData>) => MutableModel<Tenant, TenantMetaData> | void): Tenant;
 }

@@ -7,6 +7,7 @@ type Tenant
   id: ID!
   name: String!
   referenceIdentifier: String!
+  admin: User! @hasOne
 }
 
 type User
@@ -260,7 +261,7 @@ enum CommentVisibility {
 
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
-  registerTenant(name: String, email: String, tenantName: String, referenceIdentifier: String): User @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
+  registerTenant(name: String, email: String, tenantName: String, referenceIdentifier: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
   updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
