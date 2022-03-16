@@ -29,6 +29,9 @@ export default async function getAllMyTasksWithUser(
         (a) => a.task && a.task.id
     );
     let filteredTasks = [];
+    if (!intersectingTasksIds || intersectingTasksIds.length === 0) {
+        return {};
+    }
     if (isCompletedTab(keys)) {
         filteredTasks = await DataStore.query(
             models.Task,

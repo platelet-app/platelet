@@ -13,6 +13,9 @@ export default async function getAllMyTasks(keys, userId, roleView) {
         .filter((a) => a.assignee && a.assignee.id === userId)
         .map((a2) => a2.task && a2.task.id);
     let filteredTasks = [];
+    if (!myTasksIds || myTasksIds.length === 0) {
+        return {};
+    }
     if (isCompletedTab(keys)) {
         filteredTasks = await DataStore.query(
             models.Task,
