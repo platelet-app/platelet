@@ -1,12 +1,9 @@
 const handler = require("./index").handler;
-const cognitoServiceProvider =
-    require("aws-sdk").CognitoIdentityServiceProvider;
 const appSyncClient = require("aws-appsync");
 const awssdk = require("aws-sdk");
 const createUser = require("./createUser").createUser;
+const deleteUser = require("./deleteUser").deleteUser;
 const listUsers = require("./listUsers").listUsers;
-
-jest.mock("aws-sdk");
 
 const mockCognitoResponse = {
     User: {
@@ -77,6 +74,12 @@ jest.mock("aws-sdk", () => {
             adminCreateUser() {
                 return this;
             }
+            adminAddUserToGroup() {
+                return this;
+            }
+            adminDeleteUser() {
+                return this;
+            }
             promise() {
                 return Promise.resolve(mockCognitoResponse);
             }
@@ -113,6 +116,8 @@ describe("plateletAdminAddNewUser", () => {
         process.env = { ...OLD_ENV }; // Make a copy
     });
 
+    afterEach(() => jest.clearAllMocks());
+
     it("should return a function", () => {
         expect(typeof handler).toBe("function");
     });
@@ -127,6 +132,10 @@ describe("plateletAdminAddNewUser", () => {
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
         );
+        const cognitoGroupsSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminAddUserToGroup"
+        );
         const appSyncMutateSpy = jest.spyOn(
             appSyncClient.default.prototype,
             "mutate"
@@ -140,13 +149,12 @@ describe("plateletAdminAddNewUser", () => {
             arguments: {
                 name: "test user",
                 email: "test@test.com",
-                roles: ["USER"],
+                roles: ["USER", "COORDINATOR"],
                 tenantId: "testTenantId",
             },
         };
         await handler(mockEvent);
         expect(cognitoSpy).toHaveBeenCalledWith({
-            DesiredDeliveryMediums: ["EMAIL"],
             ForceAliasCreation: false,
             UserAttributes: [
                 {
@@ -173,8 +181,9 @@ describe("plateletAdminAddNewUser", () => {
             cognitoId: "testSubId",
             name: mockEvent.arguments.name,
             displayName: mockEvent.arguments.name,
-            roles: ["USER"],
+            roles: ["USER", "COORDINATOR"],
             contact: { emailAddress: mockEvent.arguments.email },
+            username: expect.any(String),
         };
         expect(appSyncMutateSpy).toHaveBeenCalledWith({
             mutation: createUser,
@@ -183,6 +192,16 @@ describe("plateletAdminAddNewUser", () => {
         expect(appSyncQuerySpy).toHaveBeenCalledWith({
             query: listUsers,
             variables: { tenantId: mockEvent.arguments.tenantId },
+        });
+        expect(cognitoGroupsSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: expect.any(String),
+            GroupName: "USER",
+        });
+        expect(cognitoGroupsSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: expect.any(String),
+            GroupName: "COORDINATOR",
         });
         expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
     });
@@ -215,7 +234,6 @@ describe("plateletAdminAddNewUser", () => {
         };
         await handler(mockEvent);
         expect(cognitoSpy).toHaveBeenCalledWith({
-            DesiredDeliveryMediums: ["EMAIL"],
             ForceAliasCreation: false,
             UserAttributes: [
                 {
@@ -244,6 +262,7 @@ describe("plateletAdminAddNewUser", () => {
             displayName: `${mockEvent.arguments.name}-2`,
             roles: ["USER"],
             contact: { emailAddress: mockEvent.arguments.email },
+            username: expect.any(String),
         };
         expect(appSyncMutateSpy).toHaveBeenCalledWith({
             mutation: createUser,
@@ -254,5 +273,52 @@ describe("plateletAdminAddNewUser", () => {
             variables: { tenantId: mockEvent.arguments.tenantId },
         });
         expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
+        expect(appSyncMutateSpy).toHaveBeenCalledTimes(1);
+        expect(appSyncQuerySpy).toHaveBeenCalledTimes(1);
+        expect(SESSpy).toHaveBeenCalledTimes(1);
+    });
+
+    // throw an error in index.js in the send email function
+    // and remove throw e from the catch block
+    // can't get this to automate properly, but it verifies it works
+    test.skip("clean up on failure", async () => {
+        process.env.NODE_ENV = "dev";
+        process.env.AUTH_PLATELET61A0AC07_USERPOOLID = "testPoolId";
+        process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT = "testEndpoint";
+        process.env.PLATELET_WELCOME_EMAIL = "welcome@test.com";
+        process.env.PLATELET_DOMAIN_NAME = "test.com";
+        const cognitoSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminCreateUser"
+        );
+        const cognitoDeleteSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminDeleteUser"
+        );
+        const appSyncMutateSpy = jest.spyOn(
+            appSyncClient.default.prototype,
+            "mutate"
+        );
+        const mockEvent = {
+            arguments: {
+                name: "Another Individual",
+                email: "test@test.com",
+                roles: ["USER"],
+                tenantId: "testTenantId",
+            },
+        };
+        await handler(mockEvent);
+        expect(appSyncMutateSpy).toHaveBeenCalledTimes(2);
+        expect(appSyncMutateSpy).toHaveBeenCalledWith({
+            mutation: deleteUser,
+            variables: {
+                input: {
+                    id: expect.any(String),
+                    _version: 1,
+                },
+            },
+        });
+        expect(cognitoSpy).toHaveBeenCalledTimes(1);
+        expect(cognitoDeleteSpy).toHaveBeenCalledTimes(1);
     });
 });

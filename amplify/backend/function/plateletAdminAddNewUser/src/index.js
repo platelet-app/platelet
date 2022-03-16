@@ -16,13 +16,7 @@ const createUser = require("./createUser").createUser;
 const deleteUser = require("./deleteUser").deleteUser;
 const listUsers = require("./listUsers").listUsers;
 
-const cleanUpData = {
-    userId: null,
-    cognitoId: null,
-};
-
 async function sendWelcomeEmail(emailAddress, recipientName, password) {
-    return;
     const ses = new aws.SES({
         apiVersion: "2010-12-01",
         region: process.env.REGION,
@@ -194,9 +188,9 @@ async function inviteNewUserToTeam(newUser, tenantId) {
     };
 }
 
-function cleanUp() {
-    if (cleanUpData.userId) {
-        console.log(`Cleaning up user ${cleanUpData.userId}`);
+function cleanUp(user) {
+    if (user) {
+        console.log(`Cleaning up user`, user);
         const config = {
             url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
             region: process.env.REGION,
@@ -207,14 +201,27 @@ function cleanUp() {
             disableOffline: true,
         };
         const appSyncClient = new AWSAppSyncClient(config);
-        return appSyncClient.mutate({
+        appSyncClient.mutate({
             mutation: deleteUser,
             variables: {
                 input: {
-                    id: cleanUpData.userId,
+                    id: user.id,
+                    _version: user._version || 1,
                 },
             },
         });
+        console.log(`Cleaning up from cognito`);
+        const CognitoIdentityServiceProvider =
+            aws.CognitoIdentityServiceProvider;
+        const cognitoClient = new CognitoIdentityServiceProvider({
+            apiVersion: "2016-04-19",
+        });
+        return cognitoClient
+            .adminDeleteUser({
+                UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
+                Username: user.username,
+            })
+            .promise();
     }
 }
 
@@ -227,13 +234,23 @@ exports.handler = async (event) => {
         email: event.arguments.email,
         roles: event.arguments.roles || ["USER"],
     };
-    const { newUser, password } = await inviteNewUserToTeam(user, tenantId);
-    console.log("User result:", newUser);
-    await sendWelcomeEmail(
-        event.arguments.email,
-        event.arguments.name,
-        password
-    );
-    console.log("Successfully sent welcome email");
-    return newUser;
+    let newUser = null;
+    let password = null;
+    try {
+        const result = await inviteNewUserToTeam(user, tenantId);
+        newUser = result.newUser;
+        password = result.password;
+        console.log("User result:", newUser);
+        await sendWelcomeEmail(
+            event.arguments.email,
+            event.arguments.name,
+            password
+        );
+        console.log("Successfully sent welcome email");
+        return newUser;
+    } catch (e) {
+        console.log(e);
+        cleanUp(newUser);
+        throw e;
+    }
 };
