@@ -103,7 +103,8 @@ function AdminAddUser() {
         } catch (error) {
             console.log("error signing up:", error);
             setIsPosting(false);
-            dispatch(displayErrorNotification(error.message));
+            const message = _.get(error, "errors[0].message");
+            dispatch(displayErrorNotification(message));
         }
     }
     if (whoamiFetching) {
