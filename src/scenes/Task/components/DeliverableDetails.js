@@ -52,35 +52,37 @@ function DeliverableDetails(props) {
                 deliverablesObserver.current = DataStore.observe(
                     models.Deliverable
                 ).subscribe(async (observeResult) => {
-                    const deliverable = await DataStore.query(
+                    DataStore.query(
                         models.Deliverable,
                         observeResult.element.id
-                    );
-                    if (
-                        !deliverable.task ||
-                        deliverable.task.id !== props.taskId
-                    ) {
-                        return;
-                    }
-                    if (observeResult.opType === "INSERT") {
-                        setState((prevState) => ({
-                            ...prevState,
-                            [deliverable.id]: deliverable,
-                        }));
-                    } else if (observeResult.opType === "UPDATE") {
-                        setState((prevState) => ({
-                            ...prevState,
-                            [deliverable.id]: {
-                                ...prevState[deliverable.id],
-                                ...deliverable,
-                            },
-                        }));
-                    }
-                    if (observeResult.opType === "DELETE") {
-                        setState((prevState) =>
-                            _.omit(prevState, deliverable.id)
-                        );
-                    }
+                    ).then((deliverable) => {
+                        if (
+                            !deliverable ||
+                            !deliverable.task ||
+                            deliverable.task.id !== props.taskId
+                        ) {
+                            return;
+                        }
+                        if (observeResult.opType === "INSERT") {
+                            setState((prevState) => ({
+                                ...prevState,
+                                [deliverable.id]: deliverable,
+                            }));
+                        } else if (observeResult.opType === "UPDATE") {
+                            setState((prevState) => ({
+                                ...prevState,
+                                [deliverable.id]: {
+                                    ...prevState[deliverable.id],
+                                    ...deliverable,
+                                },
+                            }));
+                        }
+                        if (observeResult.opType === "DELETE") {
+                            setState((prevState) =>
+                                _.omit(prevState, deliverable.id)
+                            );
+                        }
+                    });
                 });
                 setIsFetching(false);
             }
