@@ -3,15 +3,9 @@ import TaskActions from "./TaskActions";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import * as amplify from "aws-amplify";
 import * as models from "../../../models";
+import { DataStore } from "aws-amplify";
 import { tasksStatus, userRoles } from "../../../apiConsts";
-
-jest.mock("aws-amplify");
-
-jest.mock("../../../redux/Selectors", () => ({
-    dataStoreReadyStatusSelector: () => true,
-}));
 
 describe("TaskActions", () => {
     const RealDate = Date;
@@ -26,28 +20,22 @@ describe("TaskActions", () => {
         };
     }
 
-    afterEach(() => {
+    afterEach(async () => {
         global.Date = RealDate;
     });
-    beforeEach(() => {
+    beforeEach(async () => {
         jest.restoreAllMocks();
         mockDate();
     });
     it("renders", async () => {
-        amplify.DataStore.query.mockResolvedValue({});
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        const spy = jest.spyOn(DataStore, "query");
         render(<TaskActions taskId={"test"} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
     });
     test("all buttons are disabled when isFetching state is set", async () => {
-        amplify.DataStore.query.mockResolvedValue({});
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        const querySpy = jest.spyOn(DataStore, "query");
         render(<TaskActions taskId={"test"} />);
         expect(
             screen.getByRole("button", { name: "Picked up" })
@@ -60,27 +48,18 @@ describe("TaskActions", () => {
         ).toBeDisabled();
         expect(screen.getByRole("button", { name: "Rejected" })).toBeDisabled();
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
     });
 
     it("clicks the picked up button", async () => {
         const mockTask = new models.Task({});
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue([]);
-        amplify.DataStore.save.mockResolvedValue({
-            ...mockTask,
-            timePickedUp: isoDate,
-            status: tasksStatus.new,
-        });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Picked up" });
         expect(button).toBeInTheDocument();
@@ -96,7 +75,7 @@ describe("TaskActions", () => {
         });
         expect(buttonDroppedOff).toBeEnabled();
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: isoDate,
                 status: tasksStatus.new,
@@ -105,13 +84,12 @@ describe("TaskActions", () => {
     });
 
     test("delivered button is disabled without timePickedUp set", async () => {
-        amplify.DataStore.query.mockResolvedValue({ timePickedUp: null });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TaskActions taskId={"test"} />);
+        const mockTask = new models.Task({});
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Delivered" });
         expect(button).toBeInTheDocument();
@@ -120,27 +98,17 @@ describe("TaskActions", () => {
 
     it("clicks the delivered button when timePickedUp is set and there are assignees", async () => {
         const mockTask = new models.Task({ timePickedUp: isoDate });
-        const mockAssignments = [
-            new models.TaskAssignee({
-                task: { id: mockTask.id },
-                role: userRoles.rider,
-            }),
-        ];
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue(mockAssignments);
-        amplify.DataStore.save.mockResolvedValue({
-            ...mockTask,
-            timeDroppedOff: isoDate,
-            status: tasksStatus.droppedOff,
+        const mockAssignment = new models.TaskAssignee({
+            task: { id: mockTask.id },
+            role: userRoles.rider,
         });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await DataStore.save(mockTask);
+        await DataStore.save(mockAssignment);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Delivered" });
         expect(button).toBeInTheDocument();
@@ -153,7 +121,7 @@ describe("TaskActions", () => {
         // expect button to be toggled
         expect(button).toHaveAttribute("aria-pressed", "true");
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeDroppedOff: isoDate,
                 status: tasksStatus.droppedOff,
@@ -166,27 +134,17 @@ describe("TaskActions", () => {
             timePickedUp: isoDate,
             timeDroppedOff: isoDate,
         });
-        const mockAssignments = [
-            new models.TaskAssignee({
-                task: { id: mockTask.id },
-                role: userRoles.rider,
-            }),
-        ];
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue(mockAssignments);
-        amplify.DataStore.save.mockResolvedValue({
-            ...mockTask,
-            timeDroppedOff: isoDate,
-            status: tasksStatus.droppedOff,
+        const mockAssignment = new models.TaskAssignee({
+            task: { id: mockTask.id },
+            role: userRoles.rider,
         });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await DataStore.save(mockTask);
+        await DataStore.save(mockAssignment);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Rider home" });
         expect(button).toBeInTheDocument();
@@ -199,7 +157,7 @@ describe("TaskActions", () => {
         // expect button to be toggled
         expect(button).toHaveAttribute("aria-pressed", "true");
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRiderHome: isoDate,
                 status: tasksStatus.completed,
@@ -208,16 +166,15 @@ describe("TaskActions", () => {
     });
 
     test("rider home button is disabled", async () => {
-        amplify.DataStore.query.mockResolvedValue({
+        const mockTask = new models.Task({
             timePickedUp: isoDate,
             timeDroppedOff: null,
         });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TaskActions taskId={"test"} />);
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Rider home" });
         expect(button).toBeInTheDocument();
@@ -226,20 +183,12 @@ describe("TaskActions", () => {
 
     it("clicks the cancelled button", async () => {
         const mockTask = new models.Task({});
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue([]);
-        amplify.DataStore.save.mockResolvedValue({
-            ...mockTask,
-            status: tasksStatus.new,
-        });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Cancelled" });
         userEvent.click(button);
@@ -248,7 +197,7 @@ describe("TaskActions", () => {
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeCancelled: isoDate,
                 status: tasksStatus.cancelled,
@@ -269,20 +218,12 @@ describe("TaskActions", () => {
 
     it("clicks the rejected button", async () => {
         const mockTask = new models.Task({});
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue([]);
-        amplify.DataStore.save.mockResolvedValue({
-            ...mockTask,
-            status: tasksStatus.new,
-        });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Rejected" });
         userEvent.click(button);
@@ -291,7 +232,7 @@ describe("TaskActions", () => {
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRejected: isoDate,
                 status: tasksStatus.rejected,
@@ -314,16 +255,16 @@ describe("TaskActions", () => {
     });
 
     test("rejected and cancelled are disabled when timePickedUp and timeDroppedOff is set", async () => {
-        amplify.DataStore.query.mockResolvedValue({
+        const mockTask = new models.Task({
             timeDroppedOff: new Date().toISOString(),
             timePickedUp: new Date().toISOString(),
         });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TaskActions taskId={"test"} />);
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TaskActions taskId={mockTask.id} />);
+
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         expect(screen.getByRole("button", { name: "Rejected" })).toBeDisabled();
         expect(
@@ -332,16 +273,15 @@ describe("TaskActions", () => {
     });
 
     test("delivered is disabled it rider home is set", async () => {
-        amplify.DataStore.query.mockResolvedValue({
+        const mockTask = new models.Task({
             timeDroppedOff: new Date().toISOString(),
             timeRiderHome: new Date().toISOString(),
         });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TaskActions taskId={"test"} />);
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         expect(
             screen.getByRole("button", { name: "Delivered" })
@@ -350,17 +290,12 @@ describe("TaskActions", () => {
 
     test("untoggle timePickedUp", async () => {
         const mockTask = new models.Task({ timePickedUp: isoDate });
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue([]);
-        amplify.DataStore.save.mockResolvedValue({});
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Picked up" });
         expect(button).toBeInTheDocument();
@@ -372,7 +307,7 @@ describe("TaskActions", () => {
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: null,
                 status: tasksStatus.new,
@@ -385,23 +320,17 @@ describe("TaskActions", () => {
             timePickedUp: new Date().toISOString(),
             timeDroppedOff: new Date().toISOString(),
         });
-        const mockAssignments = [
-            new models.TaskAssignee({
-                task: { id: mockTask.id },
-                role: userRoles.rider,
-            }),
-        ];
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue(mockAssignments);
-        amplify.DataStore.save.mockResolvedValue({});
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
+        const mockAssignment = new models.TaskAssignee({
+            task: { id: mockTask.id },
+            role: userRoles.rider,
         });
+        await DataStore.save(mockTask);
+        await DataStore.save(mockAssignment);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Delivered" });
         expect(button).toBeInTheDocument();
@@ -414,7 +343,7 @@ describe("TaskActions", () => {
         userEvent.click(okButton);
         // expect the mock function to have been called with null
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeDroppedOff: null,
                 status: tasksStatus.pickedUp,
@@ -426,17 +355,12 @@ describe("TaskActions", () => {
         const mockTask = new models.Task({
             timeCancelled: isoDate,
         });
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue([]);
-        amplify.DataStore.save.mockResolvedValue({});
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Cancelled" });
         expect(button).toBeInTheDocument();
@@ -449,7 +373,7 @@ describe("TaskActions", () => {
         userEvent.click(okButton);
         // expect the mock function to have been called with null
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeCancelled: null,
                 status: tasksStatus.new,
@@ -461,17 +385,12 @@ describe("TaskActions", () => {
         const mockTask = new models.Task({
             timeRejected: isoDate,
         });
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue([]);
-        amplify.DataStore.save.mockResolvedValue({});
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Rejected" });
         expect(button).toBeInTheDocument();
@@ -482,7 +401,7 @@ describe("TaskActions", () => {
         userEvent.click(okButton);
         // expect the mock function to have been called with null
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRejected: null,
                 status: tasksStatus.new,
@@ -490,71 +409,64 @@ describe("TaskActions", () => {
         });
     });
 
-    test("observer is unsubscribed on unmount", async () => {
+    test.skip("observer is unsubscribed on unmount", async () => {
         const mockTask = new models.Task({
             timePickedUp: new Date().toISOString(),
         });
         const unsubscribe = jest.fn();
-        amplify.DataStore.query.mockResolvedValue(mockTask);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
+        const observerSpy = jest
+            .spyOn(DataStore.observe, "subscribe")
+            .mockImplementation(() => ({ unsubscribe }));
+        const querySpy = jest.spyOn(DataStore, "query");
         const component = render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         expect(unsubscribe).toHaveBeenCalledTimes(0);
         component.unmount();
         await waitFor(() => {
             expect(unsubscribe).toHaveBeenCalledTimes(1);
         });
+        jest.clearAllMocks();
     });
 
     test("observer updates component on task update", async () => {
         const mockTask = new models.Task({
             timePickedUp: new Date().toISOString(),
         });
-        const mockObservedResult = {
-            element: { timeDroppedOff: new Date().toISOString() },
-            opType: "INSERT",
-        };
-        amplify.DataStore.query.mockResolvedValue(mockTask);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: jest.fn().mockImplementation((callback) => {
-                callback(mockObservedResult);
-                return { unsubscribe: jest.fn() };
-            }),
-        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const observerSpy = jest.spyOn(DataStore, "observe");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         await waitFor(() => {
-            expect(amplify.DataStore.observe).toHaveBeenCalledTimes(1);
+            expect(observerSpy).toHaveBeenCalledTimes(1);
         });
+        await DataStore.save(
+            models.Task.copyOf(
+                mockTask,
+                (updated) => (updated.timeDroppedOff = new Date().toISOString())
+            )
+        );
         const button = screen.getByRole("button", { name: "Delivered" });
         expect(button).toHaveAttribute("aria-pressed", "true");
     });
 
     test("observer updates component on task deleted", async () => {
         const mockTask = new models.Task({});
-        const mockObservedResult = {
-            opType: "DELETE",
-        };
-        amplify.DataStore.query.mockResolvedValue(mockTask);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: jest.fn().mockImplementation((callback) => {
-                callback(mockObservedResult);
-                return { unsubscribe: jest.fn() };
-            }),
-        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const observerSpy = jest.spyOn(DataStore, "observe");
         render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         await waitFor(() => {
-            expect(amplify.DataStore.observe).toHaveBeenCalledTimes(1);
+            expect(observerSpy).toHaveBeenCalledTimes(1);
         });
+        await DataStore.delete(mockTask);
         const buttons = screen.getAllByRole("button");
         // expect all buttons to be disabled
         buttons.forEach((button) => {
