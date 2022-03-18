@@ -8,12 +8,7 @@ import { priorities, tasksStatus } from "../../../apiConsts";
 import moment from "moment";
 import userEvent from "@testing-library/user-event";
 import mediaQuery from "css-mediaquery";
-
-jest.mock("aws-amplify");
-
-jest.mock("../../../redux/Selectors", () => ({
-    dataStoreReadyStatusSelector: () => true,
-}));
+import { DataStore } from "aws-amplify";
 
 function createMatchMedia(width) {
     return (query) => ({
@@ -30,19 +25,22 @@ describe("TaskDetailsPanel", () => {
         window.matchMedia = createMatchMedia(window.innerWidth);
     });
 
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
     it("renders", async () => {
-        amplify.DataStore.query.mockResolvedValue({});
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TaskDetailsPanel taskId={"test"} />);
+        const mockTask = new models.Task({});
+        const querySpy = jest.spyOn(DataStore, "query");
+        await DataStore.save(mockTask);
+        render(<TaskDetailsPanel taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
     });
     it("renders task details", async () => {
         const timeOfCall = new Date().toISOString();
-        amplify.DataStore.query.mockResolvedValue({
+        const mockTask = new models.Task({
             riderResponsibility: "North",
             timeOfCall,
             priority: priorities.high,
@@ -52,12 +50,11 @@ describe("TaskDetailsPanel", () => {
                 name: "Someone Person",
             },
         });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<TaskDetailsPanel taskId={"test"} />);
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        render(<TaskDetailsPanel taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         expect(screen.getByText("North")).toBeInTheDocument();
         expect(screen.getByText("test-reference")).toBeInTheDocument();
@@ -118,15 +115,21 @@ describe("TaskDetailsPanel", () => {
         const mockTask = new models.Task({
             status: tasksStatus.new,
         });
-        amplify.DataStore.query.mockResolvedValue(mockTask);
+        await DataStore.save(mockTask);
         const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        const component = render(<TaskDetailsPanel taskId={"test"} />);
+        const observeSpy = jest
+            .spyOn(amplify.DataStore, "observe")
+            .mockImplementation(() => {
+                return {
+                    subscribe: () => ({ unsubscribe }),
+                };
+            });
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const component = render(<TaskDetailsPanel taskId={mockTask.id} />);
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
+        expect(observeSpy).toHaveBeenCalledTimes(1);
         expect(unsubscribe).toHaveBeenCalledTimes(0);
         component.unmount();
         expect(unsubscribe).toHaveBeenCalledTimes(1);
