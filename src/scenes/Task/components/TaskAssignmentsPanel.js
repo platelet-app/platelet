@@ -148,10 +148,7 @@ function TaskAssignmentsPanel(props) {
         setIsDeleting(true);
         try {
             if (!assignmentId) throw new Error("Assignment ID not provided");
-            const existingTask = await DataStore.query(
-                models.Task,
-                props.taskId
-            );
+            let existingTask = await DataStore.query(models.Task, props.taskId);
             if (!existingTask) throw new Error("Task doesn't exist");
             const existingAssignment = await DataStore.query(
                 models.TaskAssignee,
@@ -174,7 +171,7 @@ function TaskAssignmentsPanel(props) {
                         riderResponsibility = rider.riderResponsibility;
                     }
                 }
-                await DataStore.save(
+                existingTask = await DataStore.save(
                     models.Task.copyOf(existingTask, (updated) => {
                         updated.riderResponsibility = riderResponsibility;
                     })
