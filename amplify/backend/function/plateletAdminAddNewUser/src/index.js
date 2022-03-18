@@ -188,7 +188,7 @@ async function inviteNewUserToTeam(newUser, tenantId) {
     };
 }
 
-function cleanUp(user) {
+async function cleanUp(user) {
     if (user) {
         console.log(`Cleaning up user`, user);
         const config = {
@@ -250,7 +250,7 @@ exports.handler = async (event) => {
         return newUser;
     } catch (e) {
         console.log(e);
-        cleanUp(newUser);
+        await cleanUp(newUser);
         throw e;
     }
 };
