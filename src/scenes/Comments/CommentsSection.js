@@ -30,11 +30,10 @@ function CommentsSection(props) {
         } else {
             //TODO: see if a more secure way to restrict private comment access
             try {
-                const commentsResult = (
-                    await DataStore.query(models.Comment, (c) =>
-                        c.parentId("eq", props.parentId)
-                    )
-                ).filter(
+                const commentsGet = await DataStore.query(models.Comment, (c) =>
+                    c.parentId("eq", props.parentId)
+                );
+                const commentsResult = commentsGet.filter(
                     (c) =>
                         c.visibility === commentVisibility.everyone ||
                         (c.visibility === commentVisibility.me &&
