@@ -19,6 +19,7 @@ import { dashboardFilter } from "./dashboardFilter/DashboardFilterReducers";
 import { notification } from "./notifications/NotificationsReducers";
 import { getDarkModePreference } from "./redux_utilities";
 import { awsHubDataStoreEventsReducer } from "./awsHubListener/awsHubListenerReducers";
+import { taskAssigneesReducer } from "./taskAssignees/taskAssigneesReducers";
 
 const darkModeInitialState = getDarkModePreference();
 
@@ -291,6 +292,7 @@ const appReducer = combineReducers({
     dashboardTabIndex,
     dashboardFilteredUser,
     awsHubDataStoreEventsReducer,
+    taskAssigneesReducer,
 });
 
 const rootReducer = (state, action) => {

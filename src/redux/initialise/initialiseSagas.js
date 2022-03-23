@@ -16,6 +16,7 @@ import {
     tasksStatus,
     userRoles,
 } from "../../apiConsts";
+import { initTaskAssignees } from "../taskAssignees/taskAssigneesActions";
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -91,9 +92,14 @@ function* initialiseBroadcastAPI() {
     yield all([put(initialiseBroadcastAPIListener())]);
 }
 
+function* initialiseTaskAssigneesObserver() {
+    yield all([put(initTaskAssignees())]);
+}
+
 export function* watchInitialWhoamiCompleted() {
     yield takeLatest(GET_WHOAMI_SUCCESS, initialiseAwsHub);
     yield takeLatest(GET_WHOAMI_SUCCESS, initialiseBroadcastAPI);
+    yield takeLatest(GET_WHOAMI_SUCCESS, initialiseTaskAssigneesObserver);
 }
 
 async function populateFakeData() {

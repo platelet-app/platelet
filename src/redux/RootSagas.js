@@ -9,6 +9,7 @@ import {
 } from "./initialise/initialiseSagas";
 import { watchDebounceDashboardFilter } from "./dashboardFilter/DashboardFilterSagas";
 import { watchInitialiseBroadcastAPIListener } from "./broadcastAPI/broadcastAPISagas";
+import { watchInitializeTaskAssigneesObserver } from "./taskAssignees/taskAssigneesSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -22,5 +23,6 @@ export default function* rootSaga() {
         call(watchRefreshToken),
         call(watchDebounceDashboardFilter),
         call(watchInitialiseBroadcastAPIListener),
+        call(watchInitializeTaskAssigneesObserver),
     ]);
 }

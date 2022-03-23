@@ -24,3 +24,4 @@ export const menuIndexSelector = (state) => state.menuIndex;
 export const guidedSetupOpenSelector = (state) => state.guidedSetupOpen;
 export const dashboardFilteredUserSelector = (state) =>
     state.dashboardFilteredUser;
+export const taskAssigneesSelector = (state) => state.taskAssigneesReducer;
