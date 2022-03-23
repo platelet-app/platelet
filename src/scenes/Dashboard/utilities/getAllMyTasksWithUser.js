@@ -2,7 +2,9 @@ import { DataStore } from "aws-amplify";
 import moment from "moment";
 import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
-import { addAssigneesAndConvertToObject, isCompletedTab } from "./functions";
+import { convertListDataToObject } from "../../../utilities";
+import { isCompletedTab } from "./functions";
+import store from "../../../redux/Store";
 
 export default async function getAllMyTasksWithUser(
     keys,
@@ -10,17 +12,15 @@ export default async function getAllMyTasksWithUser(
     roleView,
     filteredUser
 ) {
-    const coordAssignments = await DataStore.query(models.TaskAssignee, (a) =>
-        a.role("eq", roleView)
+    const allAssignments = store.getState().taskAssigneesReducer.items;
+    const myAssignments = allAssignments.filter(
+        (a) => a.role === roleView && a.assignee && a.assignee.id === userId
     );
-    const myAssignments = coordAssignments.filter(
-        (a) => a.assignee && a.assignee.id === userId
-    );
-    const riderAssignments = await DataStore.query(models.TaskAssignee, (a) =>
-        a.role("eq", userRoles.rider)
-    );
-    const theirAssignments = riderAssignments.filter(
-        (a) => a.assignee && a.assignee.id === filteredUser
+    const theirAssignments = allAssignments.filter(
+        (a) =>
+            a.role === userRoles.rider &&
+            a.assignee &&
+            a.assignee.id === filteredUser
     );
     const intersectingTasks = myAssignments.filter((a) =>
         theirAssignments.some((b) => b.task.id === a.task.id)
@@ -82,6 +82,5 @@ export default async function getAllMyTasksWithUser(
         );
     }
 
-    const allAssignments = [...coordAssignments, ...riderAssignments];
-    return addAssigneesAndConvertToObject(filteredTasks, allAssignments);
+    return convertListDataToObject(filteredTasks);
 }

@@ -2,9 +2,9 @@ import { DataStore } from "aws-amplify";
 import { addAssigneesAndConvertToObject, isCompletedTab } from "./functions";
 import * as models from "../../../models";
 import moment from "moment";
+import { convertListDataToObject } from "../../../utilities";
 
 export default async function getTasksAll(keys = []) {
-    const allAssignments = await DataStore.query(models.TaskAssignee);
     let tasksResult = [];
     if (isCompletedTab(keys)) {
         tasksResult = await DataStore.query(
@@ -42,5 +42,5 @@ export default async function getTasksAll(keys = []) {
             }
         );
     }
-    return addAssigneesAndConvertToObject(tasksResult, allAssignments);
+    return convertListDataToObject(tasksResult);
 }

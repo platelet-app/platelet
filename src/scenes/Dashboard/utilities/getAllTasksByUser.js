@@ -1,22 +1,27 @@
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { userRoles } from "../../../apiConsts";
-import { addAssigneesAndConvertToObject, isCompletedTab } from "./functions";
+import { isCompletedTab } from "./functions";
+import store from "../../../redux/Store";
 import moment from "moment";
+import { convertListDataToObject } from "../../../utilities";
 
 export default async function getAllTasksByUser(
     keys,
     userId,
     role = userRoles.rider
 ) {
-    const allAssignments = await DataStore.query(models.TaskAssignee);
-    const roleAssignments = await DataStore.query(models.TaskAssignee, (a) =>
-        a.role("eq", role)
+    const allAssignments = store.getState().taskAssigneesReducer.items;
+    const roleAssignments = allAssignments.filter(
+        (assignment) => assignment.role === role
     );
     let allTasks = [];
     const riderTaskIds = roleAssignments
         .filter((a) => a.assignee && userId === a.assignee.id)
         .map((a) => a.task && a.task.id);
+    if (!riderTaskIds || riderTaskIds.length === 0) {
+        return {};
+    }
 
     if (isCompletedTab(keys)) {
         allTasks = await DataStore.query(
@@ -67,5 +72,5 @@ export default async function getAllTasksByUser(
             }
         );
     }
-    return addAssigneesAndConvertToObject(allTasks, allAssignments);
+    return convertListDataToObject(allTasks);
 }

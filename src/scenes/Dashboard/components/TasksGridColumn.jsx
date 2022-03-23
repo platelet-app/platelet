@@ -15,6 +15,8 @@ import {
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
+    taskAssigneesReadyStatusSelector,
+    taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
@@ -87,6 +89,7 @@ function TasksGridColumn(props) {
     const stateRef = useRef({});
     const { show, hide } = showHide();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const assigneesReadyStatus = useSelector(taskAssigneesReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
@@ -145,7 +148,7 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (!dataStoreReadyStatus || !visibility) {
+        if (!dataStoreReadyStatus || !assigneesReadyStatus || !visibility) {
             return;
         } else {
             try {
@@ -195,6 +198,7 @@ function TasksGridColumn(props) {
         [
             dataStoreReadyStatus,
             dashboardFilteredUser,
+            assigneesReadyStatus,
             visibility,
             roleView,
             JSON.stringify(props.taskKey),
