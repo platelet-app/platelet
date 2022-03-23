@@ -6,6 +6,7 @@ import {
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
+    taskAssigneesSelector,
 } from "../redux/Selectors";
 import { tasksStatus, userRoles } from "../apiConsts";
 import { convertListDataToObject } from "../utilities";
@@ -39,6 +40,7 @@ function RecentlyAssignedUsers(props) {
     const [activeRiders, setActiveRiders] = useState({});
     const [errorState, setErrorState] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
+    const allAssignees = useSelector(taskAssigneesSelector).items;
     const whoami = useSelector(getWhoami);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
@@ -50,37 +52,24 @@ function RecentlyAssignedUsers(props) {
         setIsFetching(true);
         let activeRidersResult = [];
         if (roleView === "ALL") {
-            const assignments = await DataStore.query(
-                models.TaskAssignee,
-                (a) => a.role("eq", props.role),
-                { limit: 100, sort: (s) => s.createdAt("desc") }
+            const assignments = allAssignees.filter(
+                (a) => a.role === props.role
             );
             activeRidersResult = assignments.map((a) => a.assignee);
-        } else if (roleView === userRoles.coordinator && whoami) {
-            const theirAssignments = await DataStore.query(
-                models.TaskAssignee,
-                (a) => a.role("eq", props.role),
-                { limit: 100, sort: (s) => s.createdAt("desc") }
-            );
-
-            let coordAssignments = theirAssignments;
-
-            if (props.role === userRoles.rider) {
-                coordAssignments = await DataStore.query(
-                    models.TaskAssignee,
-                    (a) => a.role("eq", userRoles.coordinator),
-                    { limit: 100, sort: (s) => s.createdAt("desc") }
-                );
-            }
-            const myAssignments = coordAssignments.filter(
-                (a) => a.assignee && a.assignee.id === whoami.id
+        } else if (whoami) {
+            const myAssignments = allAssignees.filter(
+                (a) =>
+                    a.role === roleView &&
+                    a.assignee &&
+                    a.assignee.id === whoami.id
             );
             const myAssignedTasksIds = myAssignments.map(
                 (a) => a.task && a.task.id
             );
             // find which tasks assigned to me are assigned to the rider
-            const assignedToMeUsers = theirAssignments.filter(
+            const assignedToMeUsers = allAssignees.filter(
                 (a) =>
+                    a.role === props.role &&
                     a.assignee &&
                     a.task &&
                     myAssignedTasksIds.includes(a.task.id)
@@ -109,7 +98,7 @@ function RecentlyAssignedUsers(props) {
 
     useEffect(() => {
         getActiveRiders();
-    }, [dataStoreReadyStatus, roleView, props.role]);
+    }, [dataStoreReadyStatus, roleView, props.role, allAssignees]);
 
     if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;
