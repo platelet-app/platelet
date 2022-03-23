@@ -9,7 +9,6 @@ export function initTaskAssignees() {
 export const SET_TASK_ASSIGNEES = "SET_TASK_ASSIGNEES";
 
 export function setTaskAssignees(taskAssignees) {
-    console.log("setTaskAssignees", taskAssignees);
     return {
         type: SET_TASK_ASSIGNEES,
         taskAssignees,

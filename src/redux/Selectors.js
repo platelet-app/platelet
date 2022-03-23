@@ -25,3 +25,5 @@ export const guidedSetupOpenSelector = (state) => state.guidedSetupOpen;
 export const dashboardFilteredUserSelector = (state) =>
     state.dashboardFilteredUser;
 export const taskAssigneesSelector = (state) => state.taskAssigneesReducer;
+export const taskAssigneesReadyStatusSelector = (state) =>
+    state.taskAssigneesReducer.ready;

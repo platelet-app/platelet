@@ -10,7 +10,6 @@ function listener() {
     return eventChannel((emitter) => {
         const observer = DataStore.observeQuery(models.TaskAssignee).subscribe(
             (result) => {
-                console.log("task assignees observer", result);
                 emitter(result);
             }
         );
@@ -30,7 +29,13 @@ function* initializeTaskAssigneesObserver() {
                 dataStoreNestedWorkAroundMapper,
                 result.items
             );
-            yield put(actions.setTaskAssignees({ ...result, items: fixed }));
+            yield put(
+                actions.setTaskAssignees({
+                    ...result,
+                    items: fixed,
+                    ready: true,
+                })
+            );
         }
     } finally {
         console.log("stop task assignees observer");

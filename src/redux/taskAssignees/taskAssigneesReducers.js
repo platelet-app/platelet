@@ -1,10 +1,11 @@
 import * as actions from "./taskAssigneesActions";
 
-const initialState = { items: [], isSynced: false };
+const initialState = { items: [], isSynced: false, ready: false };
 
 export function taskAssigneesReducer(state = initialState, action) {
     switch (action.type) {
         case actions.SET_TASK_ASSIGNEES:
+            console.log(action.taskAssignees);
             return action.taskAssignees;
         default:
             return state;

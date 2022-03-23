@@ -4,7 +4,6 @@ import * as models from "../../models";
 export default async function dataStoreNestedWorkAroundMapper(data = []) {
     return Promise.all(
         data.map(async (item) => {
-            console.log("item", item);
             if (!item.taskId && !item.assigneeId) {
                 return item;
             }
