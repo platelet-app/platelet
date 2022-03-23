@@ -7,6 +7,7 @@ import {
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
+    taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { convertListDataToObject } from "../../../utilities";
@@ -101,7 +102,7 @@ function ActiveRidersChips() {
     const whoami = useSelector(getWhoami);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const timeSet = useRef(null);
-    const assignmentsObserver = useRef({ unsubscribe: () => {} });
+    const allAssignees = useSelector(taskAssigneesSelector).items;
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
     const roleView = useSelector(getRoleView);
@@ -113,31 +114,26 @@ function ActiveRidersChips() {
     async function calculateRidersStatus() {
         let activeRidersResult = [];
         if (roleView === "ALL") {
-            const assignments = await DataStore.query(
-                models.TaskAssignee,
-                (a) => a.role("eq", userRoles.rider)
+            const assignments = allAssignees.filter(
+                (a) => a.role === userRoles.rider
             );
             activeRidersResult = assignments
                 .filter(olderThanOneWeek)
                 .map((a) => a.assignee);
         } else if (roleView === userRoles.coordinator && whoami) {
-            const riderAssignments = await DataStore.query(
-                models.TaskAssignee,
-                (a) => a.role("eq", userRoles.rider)
-            );
-            const coordAssignments = await DataStore.query(
-                models.TaskAssignee,
-                (a) => a.role("eq", userRoles.coordinator)
-            );
-            const myAssignments = coordAssignments.filter(
-                (a) => a.assignee && a.assignee.id === whoami.id
+            const myAssignments = allAssignees.filter(
+                (a) =>
+                    a.role === userRoles.coordinator &&
+                    a.assignee &&
+                    a.assignee.id === whoami.id
             );
             const myAssignedTasksIds = myAssignments.map(
                 (a) => a.task && a.task.id
             );
             // find which tasks assigned to me are assigned to the rider
-            const assignedToMeRiders = riderAssignments.filter(
+            const assignedToMeRiders = allAssignees.filter(
                 (a) =>
+                    a.role === userRoles.rider &&
                     a.assignee &&
                     a.task &&
                     myAssignedTasksIds.includes(a.task.id)
@@ -168,14 +164,6 @@ function ActiveRidersChips() {
             if (!dataStoreReadyStatus) return;
             setActiveRiders(await calculateRidersStatus());
             animate.current = true;
-            assignmentsObserver.current.unsubscribe();
-            assignmentsObserver.current = DataStore.observe(
-                models.TaskAssignee
-            ).subscribe(async (observeResult) => {
-                if (["INSERT", "DELETE"].includes(observeResult.opType)) {
-                    debouncedCalculateRidersStatus();
-                }
-            });
         } catch (error) {
             console.log(error);
             setErrorState(error);
@@ -184,14 +172,7 @@ function ActiveRidersChips() {
 
     useEffect(() => {
         getActiveRiders();
-    }, [dataStoreReadyStatus, roleView]);
-
-    useEffect(
-        () => () => {
-            assignmentsObserver.current.unsubscribe();
-        },
-        []
-    );
+    }, [dataStoreReadyStatus, roleView, allAssignees]);
 
     async function updateRiderHome(userId) {
         try {
