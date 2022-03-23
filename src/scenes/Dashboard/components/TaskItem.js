@@ -15,6 +15,7 @@ import {
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
+    taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
 import useWindowSize from "../../../hooks/useWindowSize";
@@ -59,6 +60,7 @@ function TaskItem(props) {
     const [commentCount, setCommentCount] = useState(0);
     const commentObserver = useRef({ unsubscribe: () => {} });
     const roleView = useSelector(getRoleView);
+    const allAssignees = useSelector(taskAssigneesSelector);
 
     const { ref, inView, entry } = useInView({
         threshold: 0,
@@ -79,21 +81,27 @@ function TaskItem(props) {
             (assignment) => assignment.task && assignment.task.id === task.id
         );
         */
-        const assignmentsNotMe =
-            props.task && props.task.assignees
-                ? Object.values(props.task.assignees).filter((assignment) => {
-                      const actualRole =
-                          roleView === "ALL" ? userRoles.coordinator : roleView;
-                      if (
-                          assignment.role.toLowerCase() !==
-                              actualRole.toLowerCase() ||
-                          assignment.assignee.id !== whoami.id
-                      ) {
-                          return true;
-                      }
-                      return false;
-                  })
+        const taskAssignees =
+            allAssignees && allAssignees.items
+                ? allAssignees.items.filter(
+                      (assignment) =>
+                          assignment.task && assignment.task.id === task.id
+                  )
                 : [];
+        const assignmentsNotMe = allAssignees
+            ? Object.values(taskAssignees).filter((assignment) => {
+                  const actualRole =
+                      roleView === "ALL" ? userRoles.coordinator : roleView;
+                  if (
+                      assignment.role.toLowerCase() !==
+                          actualRole.toLowerCase() ||
+                      assignment.assignee.id !== whoami.id
+                  ) {
+                      return true;
+                  }
+                  return false;
+              })
+            : [];
         const assignees = assignmentsNotMe.map((a) => a.assignee);
         setAssignees(assignees);
         const riders =
@@ -106,7 +114,7 @@ function TaskItem(props) {
     }
     useEffect(() => {
         getAssignees();
-    }, [visibility, props.task, dataStoreReadyStatus]);
+    }, [visibility, props.task, dataStoreReadyStatus, allAssignees.items]);
 
     async function getCommentCount() {
         if (!props.task || !props.task.id) return 0;
