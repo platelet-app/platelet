@@ -176,7 +176,10 @@ function render(
             </Provider>
         );
     }
-    return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
+    return {
+        store,
+        component: rtlRender(ui, { wrapper: Wrapper, ...renderOptions }),
+    };
 }
 // re-export everything
 export * from "@testing-library/react";
