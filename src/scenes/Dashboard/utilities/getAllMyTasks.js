@@ -18,6 +18,7 @@ export default async function getAllMyTasks(keys, userId, roleView) {
         return {};
     }
     if (isCompletedTab(keys)) {
+        const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
         filteredTasks = await DataStore.query(
             models.Task,
             (task) =>
@@ -31,9 +32,10 @@ export default async function getAllMyTasks(keys, userId, roleView) {
                             task
                         )
                     )
-                    .createdAt(
-                        "gt",
-                        moment.utc().subtract(7, "days").toISOString()
+                    .or((task) =>
+                        task
+                            .createdAt("eq", undefined)
+                            .createdAt("gt", oneWeekAgo)
                     ),
             {
                 sort: (s) => s.createdAt("desc"),

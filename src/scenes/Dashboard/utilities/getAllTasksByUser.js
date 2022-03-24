@@ -24,6 +24,7 @@ export default async function getAllTasksByUser(
     }
 
     if (isCompletedTab(keys)) {
+        const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
         allTasks = await DataStore.query(
             models.Task,
             (task) =>
@@ -40,9 +41,10 @@ export default async function getAllTasksByUser(
                             task
                         )
                     )
-                    .createdAt(
-                        "gt",
-                        moment.utc().subtract(7, "days").toISOString()
+                    .or((task) =>
+                        task
+                            .createdAt("eq", undefined)
+                            .createdAt("gt", oneWeekAgo)
                     ),
             {
                 sort: (s) => s.createdAt("desc"),
