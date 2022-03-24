@@ -2,7 +2,7 @@ import * as actions from "./taskAssigneesActions";
 import { takeLatest } from "@redux-saga/core/effects";
 import { call, take, put } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
-import { DataStore } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
 import * as models from "../../models";
 import dataStoreNestedWorkAroundMapper from "./dataStoreNestedWorkAroundMapper";
 
