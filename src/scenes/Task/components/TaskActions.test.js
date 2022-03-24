@@ -418,7 +418,7 @@ describe("TaskActions", () => {
             .spyOn(DataStore.observe, "subscribe")
             .mockImplementation(() => ({ unsubscribe }));
         const querySpy = jest.spyOn(DataStore, "query");
-        const component = render(<TaskActions taskId={mockTask.id} />);
+        const { component } = render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });

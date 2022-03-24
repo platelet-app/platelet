@@ -125,7 +125,7 @@ describe("TaskDetailsPanel", () => {
                 };
             });
         const querySpy = jest.spyOn(amplify.DataStore, "query");
-        const component = render(<TaskDetailsPanel taskId={mockTask.id} />);
+        const { component } = render(<TaskDetailsPanel taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });

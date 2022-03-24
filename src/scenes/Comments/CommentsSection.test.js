@@ -420,7 +420,7 @@ describe("CommentsSection", () => {
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
-        const component = render(<CommentsSection />);
+        const { component } = render(<CommentsSection />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
