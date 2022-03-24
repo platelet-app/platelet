@@ -6,41 +6,22 @@ import {
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
+    taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
 } from "../redux/Selectors";
-import { tasksStatus, userRoles } from "../apiConsts";
+import { userRoles } from "../apiConsts";
 import { convertListDataToObject } from "../utilities";
 import { Grid, Typography } from "@mui/material";
 import _ from "lodash";
 import UserChip from "./UserChip";
-import moment from "moment";
 import PropTypes from "prop-types";
-
-const olderThanOneWeek = (assignment) => {
-    // if the job is in completed tab then only find out riders from the last week
-    // to mimic the dashboard
-    if (
-        assignment.task &&
-        [
-            tasksStatus.completed,
-            tasksStatus.droppedOff,
-            tasksStatus.rejected,
-            tasksStatus.cancelled,
-        ].includes(assignment.task.status)
-    ) {
-        return moment(assignment.task.createdAt).isAfter(
-            moment().subtract(1, "week")
-        );
-    } else {
-        return true;
-    }
-};
 
 function RecentlyAssignedUsers(props) {
     const [activeRiders, setActiveRiders] = useState({});
     const [errorState, setErrorState] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const allAssignees = useSelector(taskAssigneesSelector).items;
+    const allAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const whoami = useSelector(getWhoami);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
@@ -98,7 +79,7 @@ function RecentlyAssignedUsers(props) {
 
     useEffect(() => {
         getActiveRiders();
-    }, [dataStoreReadyStatus, roleView, props.role, allAssignees]);
+    }, [dataStoreReadyStatus, roleView, props.role, allAssigneesReady]);
 
     if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;

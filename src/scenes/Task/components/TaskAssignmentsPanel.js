@@ -31,6 +31,8 @@ import {
 import _ from "lodash";
 import {
     dataStoreReadyStatusSelector,
+    taskAssigneesReadyStatusSelector,
+    taskAssigneesSelector,
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
@@ -63,6 +65,8 @@ function TaskAssignmentsPanel(props) {
     const [role, setRole] = useState(userRoles.rider);
     const [isPosting, setIsPosting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const taskAssignees = useSelector(taskAssigneesSelector).items;
+    const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const tenantId = useSelector(tenantIdSelector);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
@@ -79,9 +83,9 @@ function TaskAssignmentsPanel(props) {
 
     async function getAssignees() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus) return;
+        if (!dataStoreReadyStatus || !taskAssigneesReady) return;
         try {
-            const result = (await DataStore.query(models.TaskAssignee)).filter(
+            const result = taskAssignees.filter(
                 (assignee) => assignee.task && assignee.task.id === props.taskId
             );
             setState(convertListDataToObject(result));
@@ -94,7 +98,7 @@ function TaskAssignmentsPanel(props) {
     }
     useEffect(() => {
         getAssignees();
-    }, [props.taskId, dataStoreReadyStatus]);
+    }, [props.taskId, dataStoreReadyStatus, taskAssigneesReady]);
 
     async function addAssignee(user, role) {
         setIsPosting(true);

@@ -1,5 +1,5 @@
 import { DataStore } from "aws-amplify";
-import { addAssigneesAndConvertToObject, isCompletedTab } from "./functions";
+import { isCompletedTab } from "./functions";
 import * as models from "../../../models";
 import moment from "moment";
 import { convertListDataToObject } from "../../../utilities";
