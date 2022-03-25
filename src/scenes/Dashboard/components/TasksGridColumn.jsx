@@ -101,7 +101,6 @@ function TasksGridColumn(props) {
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
-    const roleViewRef = useRef(roleView);
     const getTasksRef = useRef(null);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
@@ -276,7 +275,7 @@ function TasksGridColumn(props) {
                         }
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
-                        if (roleViewRef.current !== "ALL") return;
+                        if (roleView !== "ALL") return;
                         if (props.taskKey.includes(newTask.element.status)) {
                             getTasksRef.current();
                         }
