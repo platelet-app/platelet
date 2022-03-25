@@ -88,7 +88,7 @@ function RecentlyAssignedUsers(props) {
             <Grid container direction="row">
                 {Object.values(activeRiders).map((rider) => {
                     if (props.exclude.includes(rider.id)) {
-                        return <></>;
+                        return <React.Fragment key={rider.id}></React.Fragment>;
                     } else {
                         return (
                             <Grid
