@@ -159,6 +159,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "disabled": {
+                    "name": "disabled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -935,6 +942,13 @@ export const schema = {
                         "associatedWith": "parentId"
                     }
                 },
+                "disabled": {
+                    "name": "disabled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1204,6 +1218,13 @@ export const schema = {
                     "attributes": [],
                     "isArrayNullable": true
                 },
+                "disabled": {
+                    "name": "disabled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1432,6 +1453,13 @@ export const schema = {
                         "associatedWith": "parentId"
                     }
                 },
+                "disabled": {
+                    "name": "disabled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1523,6 +1551,13 @@ export const schema = {
                     "name": "label",
                     "isArray": false,
                     "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "disabled": {
+                    "name": "disabled",
+                    "isArray": false,
+                    "type": "Int",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -1859,5 +1894,5 @@ export const schema = {
             }
         }
     },
-    "version": "1cc027705232f189290539e1c3781020"
+    "version": "4cdc1d880ea04133cf8e16134aca0b48"
 };

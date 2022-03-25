@@ -152,6 +152,7 @@ export declare class User {
   readonly assignments?: (TaskAssignee | null)[];
   readonly createdTasks?: (Task | null)[];
   readonly active: number;
+  readonly disabled: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<User, UserMetaData>);
@@ -227,6 +228,7 @@ export declare class Location {
   readonly tasksAsPickUp?: (Task | null)[];
   readonly tasksAsDropOff?: (Task | null)[];
   readonly comments?: (Comment | null)[];
+  readonly disabled: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Location, LocationMetaData>);
@@ -256,6 +258,7 @@ export declare class DeliverableType {
   readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;
   readonly deliverables?: (Deliverable | null)[];
   readonly tags?: (string | null)[];
+  readonly disabled: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);
@@ -284,6 +287,7 @@ export declare class Vehicle {
   readonly dateOfManufacture?: string;
   readonly dateOfRegistration?: string;
   readonly comments?: (Comment | null)[];
+  readonly disabled: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Vehicle, VehicleMetaData>);
@@ -294,6 +298,7 @@ export declare class RiderResponsibility {
   readonly id: string;
   readonly tenantId: string;
   readonly label: string;
+  readonly disabled: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<RiderResponsibility, RiderResponsibilityMetaData>);

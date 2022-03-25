@@ -36,6 +36,7 @@ type User
   assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
   createdTasks: [Task] @hasMany
   active: Int!
+  disabled: Int!
 }
 
 type S3Object {
@@ -59,6 +60,7 @@ type Vehicle
   dateOfManufacture: AWSDate
   dateOfRegistration: AWSDate
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
+  disabled: Int!
 }
 
 type AddressAndContactDetails {
@@ -102,6 +104,7 @@ type Location
   tasksAsPickUp: [Task] @hasMany(indexName: "byPickUpLocation", fields: ["id"])
   tasksAsDropOff: [Task] @hasMany(indexName: "byDropOffLocation", fields: ["id"])
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
+  disabled: Int!
 }
 
 type Task
@@ -175,6 +178,7 @@ type DeliverableType
   defaultUnit: DeliverableUnit
   deliverables: [Deliverable] @hasMany
   tags: [String]
+  disabled: Int!
 }
 
 type Deliverable
@@ -210,6 +214,7 @@ type RiderResponsibility
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   label: String!
+  disabled: Int!
 }
 
 enum TaskStatus {
