@@ -5,12 +5,11 @@ import "intersection-observer";
 import ActiveRidersChips from "./ActiveRidersChips";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models/index";
+import { DataStore } from "aws-amplify";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import faker from "faker";
 import { tasksStatus, userRoles } from "../../../apiConsts";
-
-jest.mock("aws-amplify");
 
 const fakeAssignments = Object.values(tasksStatus)
     .filter((s) => s !== tasksStatus.new)
@@ -76,28 +75,28 @@ const fakeAssignmentsRiders = [
     role: userRoles.rider,
 }));
 
+const preloadedState = {
+    taskAssigneesReducer: {
+        items: fakeAssignments,
+        ready: true,
+        isSynced: true,
+    },
+};
 describe("ActiveRiderChips", () => {
+    beforeEach(() => {
+        jest.restoreAllMocks();
+    });
+
     it("renders", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
         render(<ActiveRidersChips />);
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
-        });
     });
 
     it("displays the correct users", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
-        render(<ActiveRidersChips />);
+        render(<ActiveRidersChips />, { preloadedState });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(fakeAssignments[0].assignee.displayName)
+            ).toBeInTheDocument();
         });
         for (const assign of fakeAssignments) {
             expect(
@@ -107,14 +106,11 @@ describe("ActiveRiderChips", () => {
     });
 
     test("toggle and untoggle All chip", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
-        render(<ActiveRidersChips />);
+        render(<ActiveRidersChips />, { preloadedState });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(fakeAssignments[0].assignee.displayName)
+            ).toBeInTheDocument();
         });
         const allChip = screen.getByRole("button", {
             name: "All",
@@ -137,10 +133,6 @@ describe("ActiveRiderChips", () => {
     `(
         "don't display riders from completed jobs older than a week",
         async ({ taskStatus }) => {
-            const unsubscribe = jest.fn();
-            amplify.DataStore.observe.mockReturnValue({
-                subscribe: () => ({ unsubscribe }),
-            });
             const oldAssignmentModel = new models.TaskAssignee({
                 task: new models.Task({
                     status: taskStatus,
@@ -157,13 +149,20 @@ describe("ActiveRiderChips", () => {
                     ).toISOString(),
                 },
             };
-            amplify.DataStore.query.mockResolvedValue([
-                ...fakeAssignments,
-                oldAssignment,
-            ]);
-            render(<ActiveRidersChips />);
+            const newPreloadedState = {
+                ...preloadedState,
+                taskAssigneesReducer: {
+                    ...preloadedState.taskAssigneesReducer,
+                    items: [...fakeAssignments, oldAssignment],
+                },
+            };
+            render(<ActiveRidersChips />, {
+                preloadedState: newPreloadedState,
+            });
             await waitFor(() => {
-                expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+                expect(
+                    screen.getByText(fakeAssignments[0].assignee.displayName)
+                ).toBeInTheDocument();
             });
             for (const assign of fakeAssignments) {
                 expect(
@@ -185,53 +184,39 @@ describe("ActiveRiderChips", () => {
     );
 
     it("displays no riders when in rider mode", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        const preloadedState = {
+        const newPreloadedState = {
+            ...preloadedState,
             roleView: userRoles.rider,
             whoami: { user: fakeSingleUser },
         };
-        render(<ActiveRidersChips />, { preloadedState });
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(0);
-        });
+        render(<ActiveRidersChips />, { preloadedState: newPreloadedState });
         // get all the text elements
-        const textElements = screen.getAllByRole("button");
+        let textElements = [];
+        await waitFor(() => {
+            textElements = screen.getAllByRole("button");
+        });
         expect(textElements).toHaveLength(1);
         expect(textElements[0]).toHaveTextContent("All");
     });
 
     it("displays the correct riders when in coordinator view", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query
-            .mockResolvedValueOnce(fakeAssignmentsRiders)
-            .mockResolvedValue([
-                ...fakeAssignmentsSecondCoord,
-                ...fakeAssignmentsFirstCoord,
-            ]);
-        const preloadedState = {
+        const newPreloadedState = {
+            taskAssigneesReducer: {
+                ...preloadedState.taskAssigneesReducer,
+                items: [
+                    ...fakeAssignmentsRiders,
+                    ...fakeAssignmentsFirstCoord,
+                    ...fakeAssignmentsSecondCoord,
+                ],
+            },
             roleView: userRoles.coordinator,
             whoami: { user: fakeCoord1 },
         };
-        render(<ActiveRidersChips />, { preloadedState });
+        render(<ActiveRidersChips />, { preloadedState: newPreloadedState });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                1,
-                models.TaskAssignee,
-                expect.any(Function)
-            );
-        });
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                2,
-                models.TaskAssignee,
-                expect.any(Function)
-            );
+            expect(
+                screen.getByText(fakeAssignmentsRiders[0].assignee.displayName)
+            ).toBeInTheDocument();
         });
         for (const assign of fakeAssignmentsRiders.filter((a) =>
             fakeAssignmentsFirstCoord
@@ -249,20 +234,6 @@ describe("ActiveRiderChips", () => {
         )) {
             expect(screen.queryByText(assign.assignee.displayName)).toBeNull();
         }
-    });
-
-    test("the observer unsubscribes on unmount", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
-        const { unmount } = render(<ActiveRidersChips />);
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
-        });
-        unmount();
-        expect(unsubscribe).toHaveBeenCalledTimes(1);
     });
 
     // left here from when chips were for marking riders home but could be useful later
