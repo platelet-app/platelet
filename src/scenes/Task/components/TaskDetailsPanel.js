@@ -177,12 +177,16 @@ function TaskDetailsPanel(props) {
                             priority={state.priority}
                         />
                     </Stack>
-                    <Divider />
-                    <LabelItemPair label={"Responsibility"}>
-                        <Typography>
-                            {state.riderResponsibility || ""}
-                        </Typography>
-                    </LabelItemPair>
+                    {state.riderResponsibility && (
+                        <>
+                            <Divider />
+                            <LabelItemPair label={"Responsibility"}>
+                                <Typography>
+                                    {state.riderResponsibility}
+                                </Typography>
+                            </LabelItemPair>
+                        </>
+                    )}
                 </Stack>
             </Paper>
         );
