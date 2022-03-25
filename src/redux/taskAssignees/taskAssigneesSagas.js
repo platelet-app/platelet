@@ -38,6 +38,7 @@ function* initializeTaskAssigneesObserver() {
             );
         }
     } finally {
+        channel.close();
         console.log("stop task assignees observer");
     }
 }
