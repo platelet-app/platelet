@@ -12,6 +12,11 @@ import { v4 as uuidv4 } from "uuid";
 jest.mock("aws-amplify");
 
 const preloadedState = {
+    taskAssigneesReducer: {
+        items: [],
+        ready: true,
+        isSynced: true,
+    },
     whoami: {
         user: new models.User({
             roles: [userRoles.user, userRoles.coordinator],
@@ -99,33 +104,25 @@ const fakeAssignmentsRiders = [
 
 describe("RecentlyAssignedUsers", () => {
     it("renders without crashing", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
         render(<RecentlyAssignedUsers />, { preloadedState });
-        await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                1,
-                models.TaskAssignee,
-                expect.any(Function),
-                { limit: 100, sort: expect.any(Function) }
-            );
-        });
     });
 
     it("displays recent riders", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        const newPreloadedState = {
+            ...preloadedState,
+            taskAssigneesReducer: {
+                items: fakeAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
         render(<RecentlyAssignedUsers value={null} role={userRoles.rider} />, {
-            preloadedState,
+            preloadedState: newPreloadedState,
         });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(fakeAssignments[0].assignee.displayName)
+            ).toBeInTheDocument();
         });
         for (const assign of fakeAssignments) {
             expect(
@@ -135,11 +132,14 @@ describe("RecentlyAssignedUsers", () => {
     });
 
     it("limits display count", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        const newPreloadedState = {
+            ...preloadedState,
+            taskAssigneesReducer: {
+                items: fakeAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
         render(
             <RecentlyAssignedUsers
                 limit={3}
@@ -147,11 +147,13 @@ describe("RecentlyAssignedUsers", () => {
                 role={userRoles.rider}
             />,
             {
-                preloadedState,
+                preloadedState: newPreloadedState,
             }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(fakeAssignments[0].assignee.displayName)
+            ).toBeInTheDocument();
         });
         // separate fakeAssignments into first 3 and the rest
         const firstThree = fakeAssignments.slice(0, 3);
@@ -167,19 +169,26 @@ describe("RecentlyAssignedUsers", () => {
     });
 
     it("displays recent coordinators", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignmentsCoordinator);
+        const newPreloadedState = {
+            ...preloadedState,
+            taskAssigneesReducer: {
+                items: fakeAssignmentsCoordinator,
+                ready: true,
+                isSynced: true,
+            },
+        };
         render(
             <RecentlyAssignedUsers value={null} role={userRoles.coordinator} />,
             {
-                preloadedState,
+                preloadedState: newPreloadedState,
             }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(
+                    fakeAssignmentsCoordinator[0].assignee.displayName
+                )
+            ).toBeInTheDocument();
         });
         for (const assign of fakeAssignmentsCoordinator) {
             expect(
@@ -189,11 +198,14 @@ describe("RecentlyAssignedUsers", () => {
     });
 
     test("click on a user", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignmentsCoordinator);
+        const newPreloadedState = {
+            ...preloadedState,
+            taskAssigneesReducer: {
+                items: fakeAssignmentsCoordinator,
+                ready: true,
+                isSynced: true,
+            },
+        };
         const onChange = jest.fn();
         render(
             <RecentlyAssignedUsers
@@ -202,11 +214,15 @@ describe("RecentlyAssignedUsers", () => {
                 role={userRoles.coordinator}
             />,
             {
-                preloadedState,
+                preloadedState: newPreloadedState,
             }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(
+                    fakeAssignmentsCoordinator[0].assignee.displayName
+                )
+            ).toBeInTheDocument();
         });
         userEvent.click(
             screen.getByText(fakeAssignmentsCoordinator[0].assignee.displayName)
@@ -217,11 +233,14 @@ describe("RecentlyAssignedUsers", () => {
     });
 
     it("highlights the selected user", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        const newPreloadedState = {
+            ...preloadedState,
+            taskAssigneesReducer: {
+                items: fakeAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
         const onChange = jest.fn();
         render(
             <RecentlyAssignedUsers
@@ -230,11 +249,13 @@ describe("RecentlyAssignedUsers", () => {
                 role={userRoles.rider}
             />,
             {
-                preloadedState,
+                preloadedState: newPreloadedState,
             }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(fakeAssignments[0].assignee.displayName)
+            ).toBeInTheDocument();
         });
         const userChip = screen.getByRole("button", {
             name: fakeAssignments[0].assignee.displayName,
@@ -243,11 +264,14 @@ describe("RecentlyAssignedUsers", () => {
     });
 
     it("nulls on current selected user click", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        const newPreloadedState = {
+            ...preloadedState,
+            taskAssigneesReducer: {
+                items: fakeAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
         const onChange = jest.fn();
         render(
             <RecentlyAssignedUsers
@@ -256,11 +280,13 @@ describe("RecentlyAssignedUsers", () => {
                 role={userRoles.rider}
             />,
             {
-                preloadedState,
+                preloadedState: newPreloadedState,
             }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(fakeAssignments[0].assignee.displayName)
+            ).toBeInTheDocument();
         });
         userEvent.click(
             screen.getByText(fakeAssignments[0].assignee.displayName)
@@ -269,11 +295,14 @@ describe("RecentlyAssignedUsers", () => {
     });
 
     it("excludes users", async () => {
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        amplify.DataStore.query.mockResolvedValue(fakeAssignments);
+        const newPreloadedState = {
+            ...preloadedState,
+            taskAssigneesReducer: {
+                items: fakeAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
         render(
             <RecentlyAssignedUsers
                 exclude={[fakeAssignments[0].assignee.id]}
@@ -281,11 +310,13 @@ describe("RecentlyAssignedUsers", () => {
                 role={userRoles.rider}
             />,
             {
-                preloadedState,
+                preloadedState: newPreloadedState,
             }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByText(fakeAssignments[1].assignee.displayName)
+            ).toBeInTheDocument();
         });
         for (const assign of fakeAssignments.filter(
             (a) => a.assignee.id !== fakeAssignments[0].assignee.id
@@ -300,23 +331,26 @@ describe("RecentlyAssignedUsers", () => {
     });
 
     test("coordinator roleview shows only intersecting assignments", async () => {
-        amplify.DataStore.query
-            .mockResolvedValueOnce(fakeAssignmentsRiders)
-            .mockResolvedValue([
-                ...fakeAssignmentsSecondCoord,
-                ...fakeAssignmentsFirstCoord,
-            ]);
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        const preloadedState = {
+        const newPreloadedState = {
             roleView: userRoles.coordinator,
             whoami: { user: fakeCoord1 },
+            taskAssigneesReducer: {
+                items: [
+                    ...fakeAssignmentsRiders,
+                    ...fakeAssignmentsFirstCoord,
+                    ...fakeAssignmentsSecondCoord,
+                ],
+                ready: true,
+                isSynced: true,
+            },
         };
-        render(<RecentlyAssignedUsers />, { preloadedState });
+        render(<RecentlyAssignedUsers />, {
+            preloadedState: newPreloadedState,
+        });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+            expect(
+                screen.getByText(fakeAssignmentsRiders[0].assignee.displayName)
+            ).toBeInTheDocument();
         });
         for (const assign of fakeAssignmentsRiders.filter((a) =>
             fakeAssignmentsFirstCoord
@@ -335,29 +369,31 @@ describe("RecentlyAssignedUsers", () => {
             expect(screen.queryByText(assign.assignee.displayName)).toBeNull();
         }
     });
+
     test("exclude users while in coordinator roleview", async () => {
-        amplify.DataStore.query
-            .mockResolvedValueOnce([...fakeAssignmentsRiders])
-            .mockResolvedValue([
-                ...fakeAssignmentsSecondCoord,
-                ...fakeAssignmentsFirstCoord,
-            ]);
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        const preloadedState = {
+        const newPreloadedState = {
             roleView: userRoles.coordinator,
             whoami: { user: fakeCoord1 },
+            taskAssigneesReducer: {
+                items: [
+                    ...fakeAssignmentsRiders,
+                    ...fakeAssignmentsFirstCoord,
+                    ...fakeAssignmentsSecondCoord,
+                ],
+                ready: true,
+                isSynced: true,
+            },
         };
         render(
             <RecentlyAssignedUsers
                 exclude={[fakeAssignmentsRiders[0].assignee.id]}
             />,
-            { preloadedState }
+            { preloadedState: newPreloadedState }
         );
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(2);
+            expect(
+                screen.getByText(fakeAssignmentsRiders[1].assignee.displayName)
+            ).toBeInTheDocument();
         });
         expect(
             screen.queryByText(fakeAssignmentsRiders[0].assignee.displayName)
