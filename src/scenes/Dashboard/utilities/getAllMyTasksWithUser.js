@@ -4,15 +4,14 @@ import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import { convertListDataToObject } from "../../../utilities";
 import { isCompletedTab } from "./functions";
-import store from "../../../redux/Store";
 
 export default async function getAllMyTasksWithUser(
     keys,
     userId,
     roleView,
-    filteredUser
+    filteredUser,
+    allAssignments = []
 ) {
-    const allAssignments = store.getState().taskAssigneesReducer.items;
     const myAssignments = allAssignments.filter(
         (a) => a.role === roleView && a.assignee && a.assignee.id === userId
     );

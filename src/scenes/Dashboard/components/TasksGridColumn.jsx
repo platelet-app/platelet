@@ -89,7 +89,9 @@ function TasksGridColumn(props) {
     const stateRef = useRef({});
     const { show, hide } = showHide();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    const assigneesReadyStatus = useSelector(taskAssigneesReadyStatusSelector);
+    const taskAssignees = useSelector(taskAssigneesSelector);
+    const prevTaskAssigneesRef = useRef(null);
+    const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
@@ -148,7 +150,7 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (!dataStoreReadyStatus || !assigneesReadyStatus || !visibility) {
+        if (!dataStoreReadyStatus || !visibility || !taskAssigneesReady) {
             return;
         } else {
             try {
@@ -159,12 +161,18 @@ function TasksGridColumn(props) {
                         await getAllTasksByUser(
                             props.taskKey,
                             dashboardFilteredUser,
-                            userRoles.rider
+                            userRoles.rider,
+                            taskAssignees.items
                         )
                     );
                 } else if (roleView !== "ALL" && !dashboardFilteredUser) {
                     setState(
-                        await getAllMyTasks(props.taskKey, whoami.id, roleView)
+                        await getAllMyTasks(
+                            props.taskKey,
+                            whoami.id,
+                            roleView,
+                            taskAssignees.items
+                        )
                     );
                 } else if (roleView !== "ALL" && dashboardFilteredUser) {
                     setState(
@@ -172,12 +180,14 @@ function TasksGridColumn(props) {
                             props.taskKey,
                             whoami.id,
                             roleView,
-                            dashboardFilteredUser
+                            dashboardFilteredUser,
+                            taskAssignees.items
                         )
                     );
                 }
 
                 animate.current = false;
+                prevTaskAssigneesRef.current = taskAssignees.items;
                 setIsFetching(false);
             } catch (error) {
                 setErrorState(true);
@@ -198,12 +208,41 @@ function TasksGridColumn(props) {
         [
             dataStoreReadyStatus,
             dashboardFilteredUser,
-            assigneesReadyStatus,
+            taskAssigneesReady,
             visibility,
             roleView,
             JSON.stringify(props.taskKey),
         ]
     );
+
+    useEffect(() => {
+        try {
+            if (roleView === "ALL" || !prevTaskAssigneesRef.current) return;
+            const newItems = taskAssignees.items;
+            // get any items that are not in the previous list
+            const newItemsIds = newItems.map((item) => item.id);
+            const newItemsIdsSet = new Set(newItemsIds);
+            const prevItemsIds = prevTaskAssigneesRef.current.map(
+                (item) => item.id
+            );
+            const prevItemsIdsSet = new Set(prevItemsIds);
+            const addedItems = newItems.filter(
+                (item) => !prevItemsIdsSet.has(item.id)
+            );
+            const removedItems = prevTaskAssigneesRef.current.filter(
+                (item) => !newItemsIdsSet.has(item.id)
+            );
+            if (
+                [...addedItems, ...removedItems].map(
+                    (item) => item.assignee && item.assignee.id === whoami.id
+                ).length > 0
+            ) {
+                getTasksRef.current();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }, [taskAssignees, roleView, whoami]);
 
     function setUpObservers() {
         if (!dataStoreReadyStatus) return;
@@ -290,7 +329,8 @@ function TasksGridColumn(props) {
                 console.log(error);
             }
         });
-        taskAssigneesObserver.current.unsubscribe();
+        // big block of commented code for old way of getting assignments
+        /* taskAssigneesObserver.current.unsubscribe();
         taskAssigneesObserver.current = DataStore.observe(
             models.TaskAssignee
         ).subscribe((taskAssignee) => {
@@ -329,6 +369,7 @@ function TasksGridColumn(props) {
                 console.log(e);
             }
         });
+        */
     }
 
     useEffect(() => {

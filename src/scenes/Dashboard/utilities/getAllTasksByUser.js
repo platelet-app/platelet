@@ -2,16 +2,15 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { userRoles } from "../../../apiConsts";
 import { isCompletedTab } from "./functions";
-import store from "../../../redux/Store";
 import moment from "moment";
 import { convertListDataToObject } from "../../../utilities";
 
 export default async function getAllTasksByUser(
     keys,
     userId,
-    role = userRoles.rider
+    role = userRoles.rider,
+    allAssignments = []
 ) {
-    const allAssignments = store.getState().taskAssigneesReducer.items;
     const roleAssignments = allAssignments.filter(
         (assignment) => assignment.role === role
     );
