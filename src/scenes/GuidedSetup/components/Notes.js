@@ -55,7 +55,11 @@ export const Notes = ({ onChange, handleVisibilityChange }) => {
             />
             <TextField
                 id="notes"
-                label="Notes"
+                placeholder={
+                    visibility === commentVisibility.everyone
+                        ? "Write a comment that will be visible to anyone..."
+                        : "Write a comment only you can see..."
+                }
                 fullWidth
                 multiline
                 onChange={(e) => onChange(e.target.value)}
