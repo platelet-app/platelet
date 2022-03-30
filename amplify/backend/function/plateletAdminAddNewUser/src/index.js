@@ -31,7 +31,7 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                     Charset: "UTF-8",
                     Data: `
                     <p>
-                        Welcome to ${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
+                        Welcome to https://${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
                     </p>
                     <p>
                         An admin has created your account for you with a temporary password.
@@ -49,7 +49,7 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                 },
                 Text: {
                     Charset: "UTF-8",
-                    Data: `Welcome to ${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
+                    Data: `Welcome to https://${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
                     An admin has created your account for you. A temporary password has been generated for you.
                     Username: ${emailAddress}
                     Password: ${password}
