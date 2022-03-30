@@ -85,6 +85,7 @@ const olderThanOneWeek = (assignment) => {
             tasksStatus.completed,
             tasksStatus.droppedOff,
             tasksStatus.rejected,
+            tasksStatus.abandoned,
             tasksStatus.cancelled,
         ].includes(assignment.task.status)
     ) {
