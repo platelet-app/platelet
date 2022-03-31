@@ -256,7 +256,7 @@ function TaskContextMenu(props) {
                 >
                     Mark cancelled
                 </MenuItem>
-                <MenuItem onClick={copyToClipboard}>Save to clipboard</MenuItem>
+                <MenuItem onClick={copyToClipboard}>Copy to clipboard</MenuItem>
                 <MenuItem
                     className={
                         props.disableDeleted
