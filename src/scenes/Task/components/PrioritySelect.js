@@ -7,17 +7,19 @@ function PrioritySelect(props) {
     const [state, setState] = useState(null);
 
     const handleChange = (value) => {
-        setState(value);
-        props.onSelect(value);
+        const result = value === state ? null : value;
+        setState(result);
+        props.onSelect(result);
     };
 
     useEffect(() => setState(props.priority), [props.priority]);
 
     return (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
             {Object.values(priorities).map((priority) => (
                 <Chip
                     key={priority}
+                    variant={state === priority ? "default" : "outlined"}
                     label={priority}
                     onClick={() => handleChange(priority)}
                     color={state === priority ? "primary" : "default"}
