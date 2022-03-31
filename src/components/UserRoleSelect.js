@@ -17,9 +17,13 @@ function UserRoleSelect(props) {
                     <Chip
                         onClick={() => handleChange(value)}
                         label={value}
-                        color={props.value === value ? "primary" : "default"}
+                        color={
+                            props.value.includes(value) ? "primary" : "default"
+                        }
                         key={value}
-                        variant={props.value === value ? "default" : "outlined"}
+                        variant={
+                            props.value.includes(value) ? "default" : "outlined"
+                        }
                     />
                 ))}
         </Stack>
@@ -27,13 +31,13 @@ function UserRoleSelect(props) {
 }
 
 UserRoleSelect.propTypes = {
-    value: PropTypes.oneOf(Object.values(userRoles)),
+    value: PropTypes.arrayOf(Object.values(userRoles)),
     exclude: PropTypes.arrayOf(PropTypes.oneOf(Object.values(userRoles))),
     onSelect: PropTypes.func,
 };
 
 UserRoleSelect.defaultProps = {
-    value: null,
+    value: [],
     exclude: [],
     onSelect: () => {},
 };

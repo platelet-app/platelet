@@ -282,7 +282,7 @@ function TaskAssignmentsPanel(props) {
                             />
                             <Typography>Assign a user</Typography>
                             <UserRoleSelect
-                                value={role}
+                                value={[role]}
                                 onSelect={(value) => setRole(value)}
                                 exclude={Object.values(userRoles).filter(
                                     (value) =>
