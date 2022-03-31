@@ -39,6 +39,7 @@ const mockLocations = _.range(0, 10).map((i) => {
         country: uuidv4(),
         postcode: uuidv4(),
         what3words: uuidv4(),
+        disabled: 0,
     });
 });
 
