@@ -61,7 +61,7 @@ const sortByUserRole = (a, b) => {
 };
 
 function TaskAssignmentsPanel(props) {
-    const [collapsed, setCollapsed] = useState(true);
+    const [collapsed, setCollapsed] = useState(null);
     const [role, setRole] = useState(userRoles.rider);
     const [isPosting, setIsPosting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -71,13 +71,11 @@ function TaskAssignmentsPanel(props) {
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
-    const updating = useRef(false);
     const [state, setState] = useState({});
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
 
     function onSelect(value) {
-        updating.current = true;
         if (value) addAssignee(value, role);
     }
 
@@ -98,7 +96,7 @@ function TaskAssignmentsPanel(props) {
     }
     useEffect(() => {
         getAssignees();
-    }, [props.taskId, dataStoreReadyStatus, taskAssigneesReady]);
+    }, [props.taskId, dataStoreReadyStatus, taskAssigneesReady, taskAssignees]);
 
     async function addAssignee(user, role) {
         setIsPosting(true);
@@ -204,18 +202,27 @@ function TaskAssignmentsPanel(props) {
         }
     }
 
-    useEffect(() => {
-        if (updating.current) {
-            updating.current = false;
+    function setCollapsedOnFirstMount() {
+        if (_.isEmpty(state)) {
             return;
         }
+        if (!taskAssigneesReady || collapsed !== null) return;
         if (
             Object.values(state).filter((a) => a.role === userRoles.rider)
                 .length === 0
-        )
+        ) {
             setCollapsed(false);
-        else setCollapsed(true);
-    }, [state]);
+        } else {
+            setCollapsed(true);
+        }
+    }
+
+    useEffect(setCollapsedOnFirstMount, [
+        state,
+        taskAssigneesReady,
+        taskAssignees,
+        collapsed,
+    ]);
 
     if (errorState) {
         return <GetError />;
@@ -275,7 +282,6 @@ function TaskAssignmentsPanel(props) {
                             <TaskAssignees
                                 disabled={isDeleting}
                                 onRemove={(v) => {
-                                    updating.current = true;
                                     deleteAssignment(v);
                                 }}
                                 assignees={state}
