@@ -130,7 +130,7 @@ function StatisticsDashboard() {
             <Stack direction="row" spacing={2} alignItems="center">
                 {picker}
                 <UserRoleSelect
-                    value={role}
+                    value={[role]}
                     onSelect={(value) => setRole(value)}
                     exclude={[userRoles.user, userRoles.admin]}
                 />
