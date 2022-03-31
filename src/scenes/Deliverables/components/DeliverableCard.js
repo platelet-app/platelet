@@ -1,4 +1,3 @@
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import React from "react";
 import makeStyles from "@mui/styles/makeStyles";
@@ -13,7 +12,7 @@ const useStyles = makeStyles(() => ({
         backgroundColor: "rgba(180, 180, 180, 0.1)",
     }),
     label: (props) => ({
-        maxWidth: props.compact ? 110 : 200,
+        maxWidth: props.compact ? 120 : 200,
     }),
 }));
 
@@ -23,14 +22,19 @@ function DeliverableCard(props) {
     return (
         <Stack
             className={classes.root}
-            sx={{ padding: 1 }}
+            sx={{
+                paddingTop: 1,
+                paddingBottom: 1,
+                paddingLeft: 0.4,
+                paddingRight: 0.4,
+            }}
             direction="row"
             justifyContent="space-between"
             alignItems="center"
-            spacing={2}
+            spacing={0}
         >
             <Stack
-                spacing={2}
+                spacing={1}
                 justifyContent={"center"}
                 alignItems={"center"}
                 direction={"row"}
