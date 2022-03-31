@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
-import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
+import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import RiderResponsibilitySelect from "./RiderResponsibilitySelect";

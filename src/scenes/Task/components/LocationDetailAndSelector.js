@@ -7,8 +7,6 @@ import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSele
 import makeStyles from "@mui/styles/makeStyles";
 import Divider from "@mui/material/Divider";
 import { Box, Stack, Tooltip } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
 import { ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
@@ -17,7 +15,7 @@ import CollapsibleToggle from "../../../components/CollapsibleToggle";
 const useStyles = makeStyles((theme) => ({
     root: {},
     label: {
-        maxWidth: "250px",
+        width: "100%",
     },
     separator: {
         height: 10,
@@ -68,16 +66,7 @@ const contactFields = {
 function LocationDetailAndSelector(props) {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
-    const [editMode, setEditMode] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
-    const initialSetEdit = useRef(false);
-
-    useEffect(() => {
-        if (!initialSetEdit.current) {
-            initialSetEdit.current = true;
-            setEditMode(!!!props.location);
-        }
-    }, [props.location]);
 
     function updateStateFromProps() {
         if (props.location) {
@@ -101,16 +90,6 @@ function LocationDetailAndSelector(props) {
     }
 
     useEffect(updateStateFromProps, [props.location]);
-
-    function onSelectPreset(value) {
-        props.onSelectPreset(value);
-        setEditMode(false);
-    }
-
-    function onClickClearButton() {
-        props.onClear();
-        setEditMode(true);
-    }
 
     const presetName =
         props.location && props.location.name ? props.location.name : "";
@@ -136,7 +115,7 @@ function LocationDetailAndSelector(props) {
         );
     }
 
-    if (presetName.length > 30) {
+    if (presetName.length > 35) {
         locationTitle = <Tooltip title={presetName}>{locationTitle}</Tooltip>;
     }
 
@@ -147,32 +126,10 @@ function LocationDetailAndSelector(props) {
             direction={"row"}
         >
             {!props.location ? (
-                <FavouriteLocationsSelect onSelect={onSelectPreset} />
+                <FavouriteLocationsSelect onSelect={props.onSelectPreset} />
             ) : (
                 locationTitle
             )}
-            <Stack
-                direction={"row"}
-                justifyContent={"flex-end"}
-                alignItems={"center"}
-            >
-                {!!props.location && (
-                    <Tooltip title={"Edit"}>
-                        <IconButton
-                            aria-label={"Edit"}
-                            size={"small"}
-                            disabled={props.disabled}
-                            onClick={() =>
-                                setEditMode((prevState) => !prevState)
-                            }
-                        >
-                            <EditIcon
-                                color={editMode ? "secondary" : "inherit"}
-                            />
-                        </IconButton>
-                    </Tooltip>
-                )}
-            </Stack>
         </Stack>
     ) : (
         <></>
@@ -197,11 +154,13 @@ function LocationDetailAndSelector(props) {
                                 !collapsed) && (
                                 <LabelItemPair
                                     key={key}
-                                    label={collapsed || editMode ? label : ""}
+                                    label={
+                                        collapsed || props.editMode ? label : ""
+                                    }
                                 >
                                     <ClickableTextField
                                         label={label}
-                                        disabled={!editMode}
+                                        disabled={!props.editMode}
                                         onFinished={(v) => {
                                             setState((prevState) => ({
                                                 ...prevState,
@@ -229,7 +188,7 @@ function LocationDetailAndSelector(props) {
                                         <ClickableTextField
                                             label={label}
                                             tel={key === "telephoneNumber"}
-                                            disabled={!editMode}
+                                            disabled={!props.editMode}
                                             onFinished={(v) => {
                                                 setState((prevState) => ({
                                                     ...prevState,
@@ -260,10 +219,10 @@ function LocationDetailAndSelector(props) {
                         onClick={() => setCollapsed((prevState) => !prevState)}
                         value={collapsed}
                     />
-                    {props.location && !props.disableClear && editMode && (
+                    {props.location && !props.disableClear && props.editMode && (
                         <ClearButtonWithConfirmation
                             disabled={props.disabled}
-                            onClear={onClickClearButton}
+                            onClear={props.onClear}
                         >
                             <Typography>
                                 Are you sure you want to clear the {props.label}{" "}

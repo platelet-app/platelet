@@ -3,7 +3,7 @@ import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
 import PropTypes from "prop-types";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
-import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
+import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { convertListDataToObject } from "../../../utilities";
