@@ -15,7 +15,7 @@ import CollapsibleToggle from "../../../components/CollapsibleToggle";
 const useStyles = makeStyles((theme) => ({
     root: {},
     label: {
-        width: "100%",
+        width: "90%",
     },
     separator: {
         height: 10,
