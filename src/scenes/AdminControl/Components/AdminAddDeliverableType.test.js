@@ -50,6 +50,7 @@ describe("AdminAddDeliverableType", () => {
             icon: deliverableIcons.other,
             defaultUnit: deliverableUnits.none,
             tags: [],
+            disabled: 0,
         });
         render(<AdminAddDeliverableType />, { preloadedState });
         await waitFor(() => expect(amplify.DataStore.query).toHaveBeenCalled());
@@ -122,6 +123,7 @@ describe("AdminAddDeliverableType", () => {
             icon: deliverableIcons.bug,
             defaultUnit: deliverableUnits.item,
             tags: ["tag1", "tag2"],
+            disabled: 0,
         });
         render(<AdminAddDeliverableType />, { preloadedState });
         await waitFor(() => expect(amplify.DataStore.query).toHaveBeenCalled());

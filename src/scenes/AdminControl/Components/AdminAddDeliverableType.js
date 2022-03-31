@@ -54,7 +54,7 @@ function AdminAddDeliverableType() {
         try {
             setIsPosting(true);
             await DataStore.save(
-                new models.DeliverableType({ ...state, tenantId })
+                new models.DeliverableType({ ...state, tenantId, disabled: 0 })
             );
             setState(initialDeliverableTypeState);
             setIsPosting(false);

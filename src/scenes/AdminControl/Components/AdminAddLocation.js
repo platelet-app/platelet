@@ -85,7 +85,7 @@ function AdminAddLocation() {
         try {
             setIsPosting(true);
             const newLocation = await DataStore.save(
-                new models.Location({ ...state, tenantId })
+                new models.Location({ ...state, tenantId, disabled: 0 })
             );
             setState(initialLocationState);
             setIsPosting(false);
