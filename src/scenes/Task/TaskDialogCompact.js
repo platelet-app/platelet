@@ -23,7 +23,7 @@ import TaskAssignmentsPanel from "./components/TaskAssignmentsPanel";
 import PropTypes from "prop-types";
 
 const drawerWidth = 420;
-const drawerWidthMd = 320;
+const drawerWidthMd = 420;
 
 const useStyles = makeStyles((theme) => ({
     paper: {
