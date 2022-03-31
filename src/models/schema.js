@@ -946,7 +946,7 @@ export const schema = {
                     "name": "disabled",
                     "isArray": false,
                     "type": "Int",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -1894,5 +1894,5 @@ export const schema = {
             }
         }
     },
-    "version": "4cdc1d880ea04133cf8e16134aca0b48"
+    "version": "bbdd6717846197755447d53369ff7374"
 };

@@ -58,6 +58,7 @@ export const getTenant = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -97,6 +98,7 @@ export const listTenants = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -145,6 +147,7 @@ export const syncTenants = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -263,6 +266,7 @@ export const getUser = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
@@ -329,6 +333,7 @@ export const listUsers = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -404,6 +409,7 @@ export const syncUsers = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -481,6 +487,7 @@ export const getUserByCognitoId = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -521,6 +528,7 @@ export const getVehicle = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -549,6 +557,7 @@ export const listVehicles = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -586,6 +595,7 @@ export const syncVehicles = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -698,6 +708,7 @@ export const getLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -756,6 +767,7 @@ export const listLocations = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -823,6 +835,7 @@ export const syncLocations = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -890,6 +903,7 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -963,6 +977,7 @@ export const getTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1012,6 +1027,7 @@ export const getTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1105,6 +1121,7 @@ export const listTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1150,6 +1167,7 @@ export const listTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1171,6 +1189,7 @@ export const listTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1233,6 +1252,7 @@ export const syncTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1278,6 +1298,7 @@ export const syncTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1299,6 +1320,7 @@ export const syncTasks = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1363,6 +1385,7 @@ export const tasksByStatus = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1408,6 +1431,7 @@ export const tasksByStatus = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1429,6 +1453,7 @@ export const tasksByStatus = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1486,6 +1511,7 @@ export const getTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1531,6 +1557,7 @@ export const getTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1552,6 +1579,7 @@ export const getTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1631,6 +1659,7 @@ export const getTaskAssignee = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1692,6 +1721,7 @@ export const listTaskAssignees = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1762,6 +1792,7 @@ export const syncTaskAssignees = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1837,6 +1868,7 @@ export const getComment = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1879,6 +1911,7 @@ export const listComments = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1930,6 +1963,7 @@ export const syncComments = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1977,6 +2011,7 @@ export const getDeliverableType = /* GraphQL */ `
         startedAt
       }
       tags
+      disabled
       createdAt
       updatedAt
       _version
@@ -2007,6 +2042,7 @@ export const listDeliverableTypes = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -2042,6 +2078,7 @@ export const syncDeliverableTypes = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -2069,6 +2106,7 @@ export const getDeliverable = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -2091,6 +2129,7 @@ export const getDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -2136,6 +2175,7 @@ export const getDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2157,6 +2197,7 @@ export const getDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2233,6 +2274,7 @@ export const listDeliverables = /* GraphQL */ `
           icon
           defaultUnit
           tags
+          disabled
           createdAt
           updatedAt
           _version
@@ -2303,6 +2345,7 @@ export const syncDeliverables = /* GraphQL */ `
           icon
           defaultUnit
           tags
+          disabled
           createdAt
           updatedAt
           _version
@@ -2356,6 +2399,7 @@ export const getRiderResponsibility = /* GraphQL */ `
       id
       tenantId
       label
+      disabled
       createdAt
       updatedAt
       _version
@@ -2379,6 +2423,7 @@ export const listRiderResponsibilities = /* GraphQL */ `
         id
         tenantId
         label
+        disabled
         createdAt
         updatedAt
         _version
@@ -2407,6 +2452,7 @@ export const syncRiderResponsibilities = /* GraphQL */ `
         id
         tenantId
         label
+        disabled
         createdAt
         updatedAt
         _version

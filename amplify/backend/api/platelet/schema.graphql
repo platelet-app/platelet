@@ -104,7 +104,7 @@ type Location
   tasksAsPickUp: [Task] @hasMany(indexName: "byPickUpLocation", fields: ["id"])
   tasksAsDropOff: [Task] @hasMany(indexName: "byDropOffLocation", fields: ["id"])
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  disabled: Int!
+  disabled: Int
 }
 
 type Task
@@ -266,7 +266,7 @@ enum CommentVisibility {
 
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
-  registerTenant(name: String, email: String, tenantName: String, referenceIdentifier: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
+  registerTenant(name: String, email: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
   updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 

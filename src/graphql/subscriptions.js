@@ -58,6 +58,7 @@ export const onCreateTenant = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -130,6 +131,7 @@ export const onUpdateTenant = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -202,6 +204,7 @@ export const onDeleteTenant = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -317,6 +320,7 @@ export const onCreateUser = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
@@ -425,6 +429,7 @@ export const onUpdateUser = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
@@ -533,6 +538,7 @@ export const onDeleteUser = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
@@ -570,6 +576,7 @@ export const onCreateVehicle = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -607,6 +614,7 @@ export const onUpdateVehicle = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -644,6 +652,7 @@ export const onDeleteVehicle = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -753,6 +762,7 @@ export const onCreateLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -862,6 +872,7 @@ export const onUpdateLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -971,6 +982,7 @@ export const onDeleteLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -1035,6 +1047,7 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1108,6 +1121,7 @@ export const onCreateTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1157,6 +1171,7 @@ export const onCreateTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1283,6 +1298,7 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1356,6 +1372,7 @@ export const onUpdateTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1405,6 +1422,7 @@ export const onUpdateTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1531,6 +1549,7 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1604,6 +1623,7 @@ export const onDeleteTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1653,6 +1673,7 @@ export const onDeleteTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1747,6 +1768,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1792,6 +1814,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1813,6 +1836,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1892,6 +1916,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1930,6 +1955,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1975,6 +2001,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1996,6 +2023,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2075,6 +2103,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2113,6 +2142,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -2158,6 +2188,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2179,6 +2210,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2258,6 +2290,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2330,6 +2363,7 @@ export const onCreateComment = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2405,6 +2439,7 @@ export const onUpdateComment = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2480,6 +2515,7 @@ export const onDeleteComment = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2524,6 +2560,7 @@ export const onCreateDeliverableType = /* GraphQL */ `
         startedAt
       }
       tags
+      disabled
       createdAt
       updatedAt
       _version
@@ -2559,6 +2596,7 @@ export const onUpdateDeliverableType = /* GraphQL */ `
         startedAt
       }
       tags
+      disabled
       createdAt
       updatedAt
       _version
@@ -2594,6 +2632,7 @@ export const onDeleteDeliverableType = /* GraphQL */ `
         startedAt
       }
       tags
+      disabled
       createdAt
       updatedAt
       _version
@@ -2618,6 +2657,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -2640,6 +2680,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -2685,6 +2726,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2706,6 +2748,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2781,6 +2824,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -2803,6 +2847,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -2848,6 +2893,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2869,6 +2915,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2944,6 +2991,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -2966,6 +3014,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -3011,6 +3060,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -3032,6 +3082,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -3097,6 +3148,7 @@ export const onCreateRiderResponsibility = /* GraphQL */ `
       id
       tenantId
       label
+      disabled
       createdAt
       updatedAt
       _version
@@ -3111,6 +3163,7 @@ export const onUpdateRiderResponsibility = /* GraphQL */ `
       id
       tenantId
       label
+      disabled
       createdAt
       updatedAt
       _version
@@ -3125,6 +3178,7 @@ export const onDeleteRiderResponsibility = /* GraphQL */ `
       id
       tenantId
       label
+      disabled
       createdAt
       updatedAt
       _version

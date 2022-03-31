@@ -228,7 +228,7 @@ export declare class Location {
   readonly tasksAsPickUp?: (Task | null)[];
   readonly tasksAsDropOff?: (Task | null)[];
   readonly comments?: (Comment | null)[];
-  readonly disabled: number;
+  readonly disabled?: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Location, LocationMetaData>);

@@ -61,6 +61,7 @@ export const createTenant = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -136,6 +137,7 @@ export const updateTenant = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -211,6 +213,7 @@ export const deleteTenant = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -329,6 +332,7 @@ export const createUser = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
@@ -440,6 +444,7 @@ export const updateUser = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
@@ -551,6 +556,7 @@ export const deleteUser = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
@@ -591,6 +597,7 @@ export const createVehicle = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -631,6 +638,7 @@ export const updateVehicle = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -671,6 +679,7 @@ export const deleteVehicle = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -783,6 +792,7 @@ export const createLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -895,6 +905,7 @@ export const updateLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -1007,6 +1018,7 @@ export const deleteLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      disabled
       createdAt
       updatedAt
       _version
@@ -1074,6 +1086,7 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1147,6 +1160,7 @@ export const createTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1196,6 +1210,7 @@ export const createTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1325,6 +1340,7 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1398,6 +1414,7 @@ export const updateTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1447,6 +1464,7 @@ export const updateTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1576,6 +1594,7 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1649,6 +1668,7 @@ export const deleteTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1698,6 +1718,7 @@ export const deleteTask = /* GraphQL */ `
           nextToken
           startedAt
         }
+        disabled
         createdAt
         updatedAt
         _version
@@ -1795,6 +1816,7 @@ export const createTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -1840,6 +1862,7 @@ export const createTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1861,6 +1884,7 @@ export const createTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -1940,6 +1964,7 @@ export const createTaskAssignee = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -1981,6 +2006,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -2026,6 +2052,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2047,6 +2074,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2126,6 +2154,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2167,6 +2196,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -2212,6 +2242,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2233,6 +2264,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2312,6 +2344,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2387,6 +2420,7 @@ export const createComment = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2465,6 +2499,7 @@ export const updateComment = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2543,6 +2578,7 @@ export const deleteComment = /* GraphQL */ `
           startedAt
         }
         active
+        disabled
         createdAt
         updatedAt
         _version
@@ -2590,6 +2626,7 @@ export const createDeliverableType = /* GraphQL */ `
         startedAt
       }
       tags
+      disabled
       createdAt
       updatedAt
       _version
@@ -2628,6 +2665,7 @@ export const updateDeliverableType = /* GraphQL */ `
         startedAt
       }
       tags
+      disabled
       createdAt
       updatedAt
       _version
@@ -2666,6 +2704,7 @@ export const deleteDeliverableType = /* GraphQL */ `
         startedAt
       }
       tags
+      disabled
       createdAt
       updatedAt
       _version
@@ -2693,6 +2732,7 @@ export const createDeliverable = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -2715,6 +2755,7 @@ export const createDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -2760,6 +2801,7 @@ export const createDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2781,6 +2823,7 @@ export const createDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2859,6 +2902,7 @@ export const updateDeliverable = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -2881,6 +2925,7 @@ export const updateDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -2926,6 +2971,7 @@ export const updateDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -2947,6 +2993,7 @@ export const updateDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -3025,6 +3072,7 @@ export const deleteDeliverable = /* GraphQL */ `
           startedAt
         }
         tags
+        disabled
         createdAt
         updatedAt
         _version
@@ -3047,6 +3095,7 @@ export const deleteDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           active
+          disabled
           createdAt
           updatedAt
           _version
@@ -3092,6 +3141,7 @@ export const deleteDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -3113,6 +3163,7 @@ export const deleteDeliverable = /* GraphQL */ `
           country
           postcode
           what3words
+          disabled
           createdAt
           updatedAt
           _version
@@ -3181,6 +3232,7 @@ export const createRiderResponsibility = /* GraphQL */ `
       id
       tenantId
       label
+      disabled
       createdAt
       updatedAt
       _version
@@ -3198,6 +3250,7 @@ export const updateRiderResponsibility = /* GraphQL */ `
       id
       tenantId
       label
+      disabled
       createdAt
       updatedAt
       _version
@@ -3215,6 +3268,7 @@ export const deleteRiderResponsibility = /* GraphQL */ `
       id
       tenantId
       label
+      disabled
       createdAt
       updatedAt
       _version
@@ -3333,6 +3387,7 @@ export const registerUser = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
@@ -3342,120 +3397,75 @@ export const registerUser = /* GraphQL */ `
   }
 `;
 export const registerTenant = /* GraphQL */ `
-  mutation RegisterTenant(
-    $name: String
-    $email: String
-    $tenantName: String
-    $referenceIdentifier: String
-  ) {
-    registerTenant(
-      name: $name
-      email: $email
-      tenantName: $tenantName
-      referenceIdentifier: $referenceIdentifier
-    ) {
+  mutation RegisterTenant($name: String, $email: String, $tenantName: String) {
+    registerTenant(name: $name, email: $email, tenantName: $tenantName) {
       id
-      username
-      cognitoId
-      tenantId
-      contact {
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-      }
-      displayName
       name
-      roles
-      dateOfBirth
-      riderResponsibility
-      profilePictureURL
-      profilePictureThumbnailURL
-      profilePicture {
-        bucket
-        key
-        region
-      }
-      profilePictureThumbnail {
-        bucket
-        key
-        region
-      }
-      comments {
-        items {
-          id
-          parentId
-          tenantId
-          body
-          visibility
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCommentsId
-          owner
+      referenceIdentifier
+      admin {
+        id
+        username
+        cognitoId
+        tenantId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
         }
-        nextToken
-        startedAt
-      }
-      assignments {
-        items {
-          id
-          tenantId
-          taskId
-          assigneeId
-          role
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        profilePictureURL
+        profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
         }
-        nextToken
-        startedAt
-      }
-      createdTasks {
-        items {
-          id
-          tenantId
-          timeOfCall
-          timePickedUp
-          timeDroppedOff
-          timeCancelled
-          timeRejected
-          timeRiderHome
-          pickUpLocationId
-          dropOffLocationId
-          riderResponsibility
-          priority
-          status
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          userCreatedTasksId
+        profilePictureThumbnail {
+          bucket
+          key
+          region
         }
-        nextToken
-        startedAt
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
+          nextToken
+          startedAt
+        }
+        active
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
-      active
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      tenantAdminId
     }
   }
 `;
@@ -3559,6 +3569,7 @@ export const updateUserRoles = /* GraphQL */ `
         startedAt
       }
       active
+      disabled
       createdAt
       updatedAt
       _version
