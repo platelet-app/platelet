@@ -203,7 +203,6 @@ export const GuidedSetup = () => {
     };
 
     const handleDiscard = () => {
-        console.log(locations.current);
         if (
             !_.isEqual(formValues, defaultValues) ||
             !_.isEqual(requesterContact.current, defaultContact) ||
@@ -227,7 +226,6 @@ export const GuidedSetup = () => {
     };
 
     function setLocation(key, location) {
-        console.log(key, location);
         locations.current[key] = location;
     }
 
