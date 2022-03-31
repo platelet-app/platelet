@@ -8,11 +8,12 @@ import dataStoreNestedWorkAroundMapper from "./dataStoreNestedWorkAroundMapper";
 
 function listener() {
     return eventChannel((emitter) => {
-        const observer = DataStore.observeQuery(models.TaskAssignee).subscribe(
-            (result) => {
-                emitter(result);
-            }
-        );
+        const observer = DataStore.observeQuery(models.TaskAssignee, () => {}, {
+            sort: (s) => s.createdAt("desc"),
+        }).subscribe((result) => {
+            emitter(result);
+        });
+
         return () => {
             observer.unsubscribe();
         };
