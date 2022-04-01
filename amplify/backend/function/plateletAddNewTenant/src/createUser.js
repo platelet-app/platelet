@@ -13,9 +13,11 @@ exports.createUser = gql`
                 emailAddress
             }
             displayName
+            username
             name
             roles
             active
+            _version
         }
     }
 `;
