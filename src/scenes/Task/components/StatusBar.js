@@ -151,7 +151,7 @@ function StatusBar(props) {
                         <ArrowButton size={3} direction={"back"} />
                     </IconButton>
                 </Hidden>
-                <Typography>
+                <Typography className={classes.text}>
                     Status:{" "}
                     <span style={{ fontWeight: "bold" }}>
                         {statusHumanReadable}
