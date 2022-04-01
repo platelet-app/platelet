@@ -172,6 +172,46 @@ describe("CommentsSection", () => {
         expect(screen.getAllByText("Mock User")).toHaveLength(2);
     });
 
+    it("posts a private comment", async () => {
+        const mockWhoami = new models.User({
+            cognitoId: "test",
+            displayName: "Mock User",
+        });
+        const mockComment = new models.Comment({
+            body: "This is a comment",
+            visibility: commentVisibility.me,
+            author: mockWhoami,
+        });
+        amplify.DataStore.query
+            .mockResolvedValueOnce([])
+            .mockResolvedValue(mockWhoami);
+        amplify.DataStore.save.mockResolvedValue(mockComment);
+        const unsubscribe = jest.fn();
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        render(<CommentsSection parentId="test" />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByText("ONLY ME"));
+        const commentTextBox = screen.getByRole("textbox");
+        userEvent.type(commentTextBox, "This is a comment");
+        expect(commentTextBox).toHaveValue("This is a comment");
+        const postButton = screen.getByRole("button", { name: "Post" });
+        expect(postButton).toBeEnabled();
+        userEvent.click(postButton);
+        await waitFor(() => {
+            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+                1,
+                expect.objectContaining(_.omit(mockComment, "id"))
+            );
+        });
+        expect(commentTextBox).toHaveValue("");
+    });
+
     it("deletes a comment", async () => {
         const mockCommentInput = new models.Comment({
             ...mockPublicComments[0],

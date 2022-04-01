@@ -14,30 +14,13 @@ import {
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
-import { FormControl, Select, MenuItem } from "@mui/material";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
 
 const initialCommentState = {
     body: "",
     visibility: commentVisibility.everyone,
 };
-
-function VisibilityMenu(props) {
-    return (
-        <FormControl fullWidth>
-            <Select
-                id="visibility-menu"
-                value={props.value}
-                variant={"standard"}
-                label="Visibility"
-                onChange={props.onChange}
-            >
-                <MenuItem value={commentVisibility.everyone}>EVERYONE</MenuItem>
-                <MenuItem value={commentVisibility.me}>ONLY ME</MenuItem>
-            </Select>
-        </FormControl>
-    );
-}
 
 function NewCommentCard(props) {
     const [state, setState] = useState(initialCommentState);
@@ -111,12 +94,12 @@ function NewCommentCard(props) {
                             />
                         </Grid>
                         <Grid item>
-                            <VisibilityMenu
+                            <CommentVisibilitySelector
                                 value={state.visibility}
-                                onChange={(e) => {
+                                onChange={(value) => {
                                     setState((prevState) => ({
                                         ...prevState,
-                                        visibility: e.target.value,
+                                        visibility: value,
                                     }));
                                 }}
                             />
