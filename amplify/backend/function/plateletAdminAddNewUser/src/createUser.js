@@ -56,6 +56,7 @@ exports.createUser = gql`
                     _deleted
                     _lastChangedAt
                     userCommentsId
+                    owner
                 }
                 nextToken
                 startedAt
@@ -102,6 +103,7 @@ exports.createUser = gql`
                 startedAt
             }
             active
+            disabled
             createdAt
             updatedAt
             _version

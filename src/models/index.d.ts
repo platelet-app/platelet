@@ -55,6 +55,19 @@ export enum Patch {
   AIR_AMBULANCE = "AIR_AMBULANCE"
 }
 
+export declare class Statistics {
+  readonly numCancelled?: number;
+  readonly numCompleted?: number;
+  readonly numDroppedOff?: number;
+  readonly numRejected?: number;
+  readonly numAbandoned?: number;
+  readonly numActive?: number;
+  readonly numPickedUp?: number;
+  readonly numNew?: number;
+  readonly numTest?: number;
+  constructor(init: ModelInit<Statistics>);
+}
+
 export declare class AddressAndContactDetails {
   readonly name?: string;
   readonly telephoneNumber?: string;
@@ -78,19 +91,6 @@ export declare class S3Object {
   readonly key: string;
   readonly region: string;
   constructor(init: ModelInit<S3Object>);
-}
-
-export declare class Statistics {
-  readonly numCancelled?: number;
-  readonly numCompleted?: number;
-  readonly numDroppedOff?: number;
-  readonly numRejected?: number;
-  readonly numAbandoned?: number;
-  readonly numActive?: number;
-  readonly numPickedUp?: number;
-  readonly numNew?: number;
-  readonly numTest?: number;
-  constructor(init: ModelInit<Statistics>);
 }
 
 type UserMetaData = {

@@ -2464,3 +2464,18 @@ export const syncRiderResponsibilities = /* GraphQL */ `
     }
   }
 `;
+export const getStatistics = /* GraphQL */ `
+  query GetStatistics($tenantId: ID!) {
+    getStatistics(tenantId: $tenantId) {
+      numCancelled
+      numCompleted
+      numDroppedOff
+      numRejected
+      numAbandoned
+      numActive
+      numPickedUp
+      numNew
+      numTest
+    }
+  }
+`;

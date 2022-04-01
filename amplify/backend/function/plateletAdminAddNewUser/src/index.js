@@ -166,6 +166,7 @@ async function inviteNewUserToTeam(newUser, tenantId) {
         active: 1,
         cognitoId,
         name: newUser.name,
+        disabled: 0,
         username: newUser.username,
         displayName,
         roles:
