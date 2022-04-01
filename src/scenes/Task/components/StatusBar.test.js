@@ -94,9 +94,7 @@ describe("StatusBar", () => {
             .mockResolvedValueOnce(newTask)
             .mockResolvedValue(mockDeliverables);
         render(<StatusBar taskId={newTask.id} />);
-        const copyButton = screen.getByRole("button", {
-            name: "Copy to clipboard",
-        });
+        const copyButton = screen.getByText("Copy to clipboard");
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
         jest.spyOn(utils, "copyTaskDataToClipboard");
@@ -106,19 +104,15 @@ describe("StatusBar", () => {
                 deliverables: [],
             })
         );
-        expect(
-            await screen.findByText(/Copied to clipboard/)
-        ).toBeInTheDocument();
+        expect(await screen.findByText("Copy successful!")).toBeInTheDocument();
     });
     it("fails to copy task data to clipboard", async () => {
         jest.restoreAllMocks();
         render(<StatusBar taskId={"nope"} />);
-        const copyButton = screen.getByRole("button", {
-            name: "Copy to clipboard",
-        });
+        const copyButton = screen.getByText("Copy to clipboard");
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
-        expect(await screen.findByText("Copy failed.")).toBeInTheDocument();
+        expect(await screen.findByText("Copy failed!")).toBeInTheDocument();
     });
     test("click the close button", async () => {
         const mockClose = jest.fn();
