@@ -162,7 +162,7 @@ function StatusBar(props) {
                     disabled={!dataStoreReadyStatus}
                     variant={copied === null ? "outlined" : "default"}
                     color={copyColor}
-                    sx={{ marginRight: 2 }}
+                    sx={{ marginRight: isSm ? 0 : 2 }}
                     label={copyLabel}
                 />
             </Stack>
