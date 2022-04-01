@@ -3397,8 +3397,16 @@ export const registerUser = /* GraphQL */ `
   }
 `;
 export const registerTenant = /* GraphQL */ `
-  mutation RegisterTenant($name: String, $email: String, $tenantName: String) {
-    registerTenant(name: $name, email: $email, tenantName: $tenantName) {
+  mutation RegisterTenant(
+    $name: String
+    $emailAddress: String
+    $tenantName: String
+  ) {
+    registerTenant(
+      name: $name
+      emailAddress: $emailAddress
+      tenantName: $tenantName
+    ) {
       id
       name
       referenceIdentifier

@@ -1696,74 +1696,6 @@ export const schema = {
         }
     },
     "nonModels": {
-        "Statistics": {
-            "name": "Statistics",
-            "fields": {
-                "numCancelled": {
-                    "name": "numCancelled",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numCompleted": {
-                    "name": "numCompleted",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numDroppedOff": {
-                    "name": "numDroppedOff",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numRejected": {
-                    "name": "numRejected",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numAbandoned": {
-                    "name": "numAbandoned",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numActive": {
-                    "name": "numActive",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numPickedUp": {
-                    "name": "numPickedUp",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numNew": {
-                    "name": "numNew",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numTest": {
-                    "name": "numTest",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                }
-            }
-        },
         "AddressAndContactDetails": {
             "name": "AddressAndContactDetails",
             "fields": {
@@ -1889,6 +1821,74 @@ export const schema = {
                     "isArray": false,
                     "type": "String",
                     "isRequired": true,
+                    "attributes": []
+                }
+            }
+        },
+        "Statistics": {
+            "name": "Statistics",
+            "fields": {
+                "numCancelled": {
+                    "name": "numCancelled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numCompleted": {
+                    "name": "numCompleted",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numDroppedOff": {
+                    "name": "numDroppedOff",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numRejected": {
+                    "name": "numRejected",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numAbandoned": {
+                    "name": "numAbandoned",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numActive": {
+                    "name": "numActive",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numPickedUp": {
+                    "name": "numPickedUp",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numNew": {
+                    "name": "numNew",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numTest": {
+                    "name": "numTest",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
                     "attributes": []
                 }
             }
