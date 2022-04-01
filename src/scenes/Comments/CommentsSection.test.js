@@ -173,28 +173,19 @@ describe("CommentsSection", () => {
     });
 
     it("posts a private comment", async () => {
-        const mockWhoami = new models.User({
-            cognitoId: "test",
-            displayName: "Mock User",
-        });
+        const author = mockUser;
         const mockComment = new models.Comment({
             body: "This is a comment",
             visibility: commentVisibility.me,
-            author: mockWhoami,
+            author,
         });
-        amplify.DataStore.query
-            .mockResolvedValueOnce([])
-            .mockResolvedValue(mockWhoami);
-        amplify.DataStore.save.mockResolvedValue(mockComment);
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        render(<CommentsSection parentId="test" />, {
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<CommentsSection parentId={parentId} />, {
             preloadedState,
         });
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         userEvent.click(screen.getByText("ONLY ME"));
         const commentTextBox = screen.getByRole("textbox");
@@ -204,12 +195,15 @@ describe("CommentsSection", () => {
         expect(postButton).toBeEnabled();
         userEvent.click(postButton);
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
+            expect(saveSpy).toHaveBeenNthCalledWith(
                 1,
                 expect.objectContaining(_.omit(mockComment, "id"))
             );
         });
         expect(commentTextBox).toHaveValue("");
+        expect(postButton).toBeDisabled();
+        expect(screen.getByText("This is a comment")).toBeInTheDocument();
+        expect(screen.getAllByText("Mock User")).toHaveLength(2);
     });
 
     it("deletes a comment", async () => {

@@ -16,6 +16,7 @@ import {
 import { commentVisibility } from "../../../apiConsts";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
+import { TextField } from "@mui/material";
 
 const initialCommentState = {
     body: "",
@@ -75,6 +76,7 @@ function NewCommentCard(props) {
             >
                 <Grid style={{ width: "100%" }} item>
                     <Grid
+                        spacing={1}
                         container
                         direction={"row"}
                         alignItems={"center"}
@@ -93,7 +95,7 @@ function NewCommentCard(props) {
                                 }
                             />
                         </Grid>
-                        <Grid item>
+                        <Grid sx={{ marginLeft: "auto" }} item>
                             <CommentVisibilitySelector
                                 value={state.visibility}
                                 onChange={(value) => {
@@ -106,11 +108,8 @@ function NewCommentCard(props) {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item>
-                    <Divider />
-                </Grid>
                 <Grid item className={classes.newCommentTextField}>
-                    <TextFieldUncontrolled
+                    <TextField
                         className={classes.newCommentTextField}
                         placeholder={
                             state.visibility === commentVisibility.me
