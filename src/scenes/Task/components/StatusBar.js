@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { AppBar, Box, Hidden, Stack } from "@mui/material";
+import { AppBar, Box, Chip, Hidden, Stack } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import {
@@ -14,7 +14,7 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import IconButton from "@mui/material/IconButton";
 import clsx from "clsx";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     displayErrorNotification,
     displayInfoNotification,
@@ -23,6 +23,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import Tooltip from "@mui/material/Tooltip";
 import { tasksStatus } from "../../../apiConsts";
+import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 
 const colourBarPercent = "90%";
 
@@ -79,6 +80,8 @@ const dialogComponent = (props) =>
 
 function StatusBar(props) {
     const classes = dialogComponent(props)();
+    const [copied, setCopied] = useState(null);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const statusHumanReadable = taskStatusHumanReadable(props.status);
@@ -101,18 +104,29 @@ function StatusBar(props) {
             const result = { ...taskResult, deliverables };
             copyTaskDataToClipboard(result).then(
                 function () {
-                    dispatch(displayInfoNotification("Copied to clipboard."));
-                    /* clipboard successfully set */
+                    setCopied(true);
                 },
                 function () {
-                    dispatch(displayErrorNotification("Copy failed."));
-                    /* clipboard write failed */
+                    setCopied(false);
                 }
             );
         } catch (e) {
             console.log(e);
-            dispatch(displayErrorNotification("Copy failed."));
+            setCopied(false);
         }
+    }
+
+    let copyLabel = "Copy to clipboard";
+    if (copied !== null && copied) {
+        copyLabel = "Copy successful!";
+    } else if (copied !== null && !copied) {
+        copyLabel = "Copy failed!";
+    }
+    let copyColor = "default";
+    if (copied !== null && copied) {
+        copyColor = "primary";
+    } else if (copied !== null && !copied) {
+        copyColor = "secondary";
     }
     return (
         <AppBar
@@ -143,15 +157,14 @@ function StatusBar(props) {
                         {statusHumanReadable}
                     </span>
                 </Typography>
-                <Tooltip title={"Copy to clipboard"}>
-                    <IconButton
-                        sx={{ marginRight: 2 }}
-                        size={"small"}
-                        onClick={copyToClipboard}
-                    >
-                        <AssignmentIcon />
-                    </IconButton>
-                </Tooltip>
+                <Chip
+                    onClick={copyToClipboard}
+                    disabled={!dataStoreReadyStatus}
+                    variant={copied === null ? "outlined" : "default"}
+                    color={copyColor}
+                    sx={{ marginRight: 2 }}
+                    label={copyLabel}
+                />
             </Stack>
         </AppBar>
     );
