@@ -392,16 +392,7 @@ describe("DeliverableDetails", () => {
                 name: `${mockDeliverable.unit}. Click to change`,
             })
         );
-        userEvent.click(
-            screen.getByRole("button", {
-                name: mockDeliverable.unit,
-            })
-        );
-        const unitMenuItems = await screen.findAllByRole("option");
-        expect(unitMenuItems).toHaveLength(
-            Object.values(deliverableUnits).length
-        );
-        userEvent.click(unitMenuItems[0]);
+        userEvent.click(screen.getByText(deliverableUnits.none));
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(1);
         });

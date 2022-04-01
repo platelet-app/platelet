@@ -23,16 +23,6 @@ function EditableDeliverable(props) {
     const deliverable = props.deliverable;
     const [showUnit, setShowUnit] = useState(false);
     const classes = useStyles();
-    const unitSelect = showUnit ? (
-        <UnitSelector
-            value={deliverable.unit}
-            onChange={(unit) =>
-                props.onChangeUnit(deliverable.id, unit.target.value)
-            }
-        />
-    ) : (
-        <></>
-    );
 
     function handleCloseUnit() {
         setShowUnit((prevState) => !prevState);
@@ -46,34 +36,43 @@ function EditableDeliverable(props) {
     );
 
     return (
-        <DeliverableCard
-            compact
-            label={deliverable.label}
-            icon={deliverable.icon}
-        >
-            <Stack direction={"column"}>
-                <Stack direction={"row"}>
-                    <Tooltip title={`${deliverable.unit}. Click to change`}>
-                        <IconButton
-                            onClick={handleCloseUnit}
-                            className={classes.iconButton}
-                            size="large"
-                        >
-                            <ArchitectureIcon className={classes.button} />
-                        </IconButton>
-                    </Tooltip>
-                    <IncreaseDecreaseCounter
-                        value={deliverable.count || 0}
-                        disabled={props.disabled}
-                        onChange={(count) =>
-                            handleChange.current(deliverable.id, count)
-                        }
-                        onDelete={() => props.onDelete(deliverable.id)}
-                    />
+        <>
+            <DeliverableCard
+                compact
+                label={deliverable.label}
+                icon={deliverable.icon}
+            >
+                <Stack direction={"column"}>
+                    <Stack direction={"row"}>
+                        <Tooltip title={`${deliverable.unit}. Click to change`}>
+                            <IconButton
+                                onClick={handleCloseUnit}
+                                className={classes.iconButton}
+                                size="large"
+                            >
+                                <ArchitectureIcon className={classes.button} />
+                            </IconButton>
+                        </Tooltip>
+                        <IncreaseDecreaseCounter
+                            value={deliverable.count || 0}
+                            disabled={props.disabled}
+                            onChange={(count) =>
+                                handleChange.current(deliverable.id, count)
+                            }
+                            onDelete={() => props.onDelete(deliverable.id)}
+                        />
+                    </Stack>
                 </Stack>
-                {unitSelect}
-            </Stack>
-        </DeliverableCard>
+            </DeliverableCard>
+            {showUnit && (
+                <UnitSelector
+                    value={deliverable.unit}
+                    onChange={(unit) =>
+                        props.onChangeUnit(deliverable.id, unit)
+                    }
+                />
+            )}
+        </>
     );
 }
 

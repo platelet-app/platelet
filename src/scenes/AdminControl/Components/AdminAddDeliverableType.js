@@ -141,10 +141,10 @@ function AdminAddDeliverableType() {
                         <UnitSelector
                             value={state.defaultUnit}
                             label={"Default unit"}
-                            onChange={(e) =>
+                            onChange={(value) =>
                                 setState((prevState) => ({
                                     ...prevState,
-                                    defaultUnit: e.target.value,
+                                    defaultUnit: value,
                                 }))
                             }
                         />
@@ -157,7 +157,7 @@ function AdminAddDeliverableType() {
                                 marginBottom: 1,
                             }}
                         >
-                            Add tags to make finding this item easier:
+                            Add tags to make finding this item easier
                         </Typography>
                         <DeliverableTypeTagger
                             onAdd={addTag}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Autocomplete, Chip, Grid, TextField } from "@mui/material";
+import { Autocomplete, Chip, Grid, TextField, Typography } from "@mui/material";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import GetError from "../../../ErrorComponents/GetError";
@@ -71,6 +71,17 @@ export default function DeliverableTypeTagger(props) {
                         />
                     </Grid>
                 ))}
+                <Grid item>
+                    <Typography
+                        sx={{
+                            color: "gray",
+                            fontStyle: "italic",
+                            marginBottom: 1,
+                        }}
+                    >
+                        Press enter or comma to add another tag
+                    </Typography>
+                </Grid>
                 <Grid sx={{ width: "100%", maxWidth: 250 }} item>
                     <Autocomplete
                         freeSolo
