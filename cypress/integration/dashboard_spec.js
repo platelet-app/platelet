@@ -1,8 +1,22 @@
 describe("open the dashboard", () => {
-    // clear DataStore before running tests
     before(() => {
-        indexedDB.deleteDatabase("amplify-datastore");
+        cy.clearDataStore();
+        cy.signIn();
     });
+
+    after(() => {
+        cy.clearLocalStorageSnapshot();
+        cy.clearLocalStorage();
+    });
+
+    beforeEach(() => {
+        cy.restoreLocalStorage();
+    });
+
+    afterEach(() => {
+        cy.saveLocalStorage();
+    });
+
     it("successfully loads", () => {
         cy.visit("/");
     });
@@ -10,29 +24,46 @@ describe("open the dashboard", () => {
         //TODO this may change
         cy.title().should("include", "platelet");
     });
-    it("should display the correct number of tasks", () => {
-        cy.get("#tasks-kanban-column-NEW").children().should("have.length", 2);
-        cy.get("#tasks-kanban-column-ACTIVE")
-            .children()
-            .should("have.length", 10);
-        cy.get("#tasks-kanban-column-PICKED_UP")
-            .children()
-            .should("have.length", 5);
+
+    it("should display all the columns", () => {
+        cy.get(":nth-child(1) > .makeStyles-column-61").should(
+            "contain",
+            "NEW"
+        );
+        cy.get(":nth-child(2) > .makeStyles-column-61").should(
+            "contain",
+            "ACTIVE"
+        );
+        cy.get(":nth-child(3) > .makeStyles-column-61").should(
+            "contain",
+            "PICKED UP"
+        );
+        cy.get(":nth-child(4) > .makeStyles-column-61").should(
+            "contain",
+            "DELIVERED"
+        );
         cy.get("#dashboard-tab-1").click();
-        cy.get("#tasks-kanban-column-DROPPED_OFF")
-            .children()
-            .should("have.length", 10);
-        cy.get("#tasks-kanban-column-CANCELLED")
-            .children()
-            .should("have.length", 2);
-        cy.get("#tasks-kanban-column-REJECTED")
-            .children()
-            .should("have.length", 3);
+        cy.get(":nth-child(1) > .makeStyles-column-61").should(
+            "contain",
+            "COMPLETED"
+        );
+        cy.get(":nth-child(2) > .makeStyles-column-61").should(
+            "contain",
+            "CANCELLED"
+        );
+        cy.get(":nth-child(3) > .makeStyles-column-61").should(
+            "contain",
+            "ABANDONED"
+        );
+        cy.get(":nth-child(4) > .makeStyles-column-61").should(
+            "contain",
+            "REJECTED"
+        );
     });
-    it("should display the logged in user's name", () => {
-        cy.get("#whoami-display-name").should("contain", "Offline User");
+    it("should display the logged in user's initials", () => {
+        cy.get(".MuiAvatar-root").should("contain", "TU");
     });
-    it("should display the logged in user's avatar", () => {
+    it.skip("should display the logged in user's avatar", () => {
         cy.get("a > .MuiAvatar-root > .MuiAvatar-img").should(
             "have.attr",
             "src"
@@ -41,14 +72,29 @@ describe("open the dashboard", () => {
 });
 
 describe("create a new task and open it", () => {
-    // clear DataStore before running tests
     before(() => {
-        indexedDB.deleteDatabase("amplify-datastore");
+        cy.signIn();
     });
+
+    after(() => {
+        cy.clearLocalStorageSnapshot();
+        cy.clearLocalStorage();
+        cy.clearTasks();
+    });
+
+    beforeEach(() => {
+        cy.restoreLocalStorage();
+    });
+
+    afterEach(() => {
+        cy.saveLocalStorage();
+    });
+
     it("successfully creates a new task", () => {
         cy.visit("/");
         cy.get("#create-task-button").click();
-        cy.get("#tasks-kanban-column-NEW").children().should("have.length", 3);
+        cy.get("#save-to-dash-button").click();
+        cy.get("#tasks-kanban-column-NEW").children().should("have.length", 1);
     });
     it("opens a new task", () => {
         cy.visit("/");
@@ -58,6 +104,23 @@ describe("create a new task and open it", () => {
 });
 
 describe("change the role view of the dashboard", () => {
+    before(() => {
+        cy.signIn();
+    });
+
+    after(() => {
+        cy.clearLocalStorageSnapshot();
+        cy.clearLocalStorage();
+    });
+
+    beforeEach(() => {
+        cy.restoreLocalStorage();
+    });
+
+    afterEach(() => {
+        cy.saveLocalStorage();
+    });
+
     it("successfully changes the role view to COORDINATOR", () => {
         cy.visit("/");
         cy.get("#role-menu-button > [data-testid=ArrowDropDownIcon]").click();
@@ -90,13 +153,38 @@ describe("change the role view of the dashboard", () => {
 });
 
 describe("filter tasks by various terms", () => {
+    before(() => {
+        cy.signIn();
+        cy.populateTasks();
+    });
+
+    after(() => {
+        cy.clearLocalStorageSnapshot();
+        cy.clearLocalStorage();
+        cy.clearTasks();
+    });
+
+    beforeEach(() => {
+        cy.restoreLocalStorage();
+    });
+
+    afterEach(() => {
+        cy.saveLocalStorage();
+    });
+
     const filterCheck = ($el) => {
         if ($el.hasClass(".makeStyles-taskItem-26.makeStyles-show-4")) {
             cy.wrap($el).should("contain", "LOW");
         }
     };
-    it("successfully filters tasks by priority", () => {
+    it.skip("successfully filters tasks by priority", () => {
         cy.visit("/");
+        cy.get("#role-menu-button > [data-testid=ArrowDropDownIcon]").click();
+        // click the first menu option
+        cy.get(
+            "#role-menu > .MuiPaper-root > .MuiList-root > :nth-child(1)"
+        ).click();
+        cy.get("#role-identifier").should("contain", "ALL");
         cy.get("#tasks-filter-input").type("LOW");
         // wait because of debounce
         cy.wait(400);

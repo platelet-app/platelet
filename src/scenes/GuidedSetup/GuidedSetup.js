@@ -403,6 +403,7 @@ export const GuidedSetup = () => {
                         Discard
                     </Button>
                     <Button
+                        id="save-to-dash-button"
                         onClick={handleSave}
                         disabled={isPosting}
                         variant="contained"
