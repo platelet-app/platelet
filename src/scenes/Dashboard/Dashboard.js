@@ -17,6 +17,7 @@ import {
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
+    guidedSetupOpenSelector,
 } from "../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
@@ -29,33 +30,30 @@ function AddClearFab() {
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
-    const addClearFab =
-        !dashboardFilter && !dashboardFilteredUser ? (
-            <Fab
-                sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
-                variant="contained"
-                disabled={!dataStoreReadyStatus}
-                color="primary"
-                onClick={async () => {
-                    dispatch(setGuidedSetupOpen(true));
-                }}
-            >
-                <AddIcon />
-            </Fab>
-        ) : (
-            <Fab
-                sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
-                color="primary"
-                variant="extended"
-                onClick={() => {
-                    dispatch(clearDashboardFilter());
-                    dispatch(setDashboardFilteredUser(null));
-                }}
-            >
-                Clear Search
-            </Fab>
-        );
-    return addClearFab;
+    const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
+    const filterOn = !!dashboardFilter || !!dashboardFilteredUser;
+    const message = filterOn ? "Clear search" : "Create new";
+
+    function handleClick() {
+        if (filterOn) {
+            dispatch(clearDashboardFilter());
+            dispatch(setDashboardFilteredUser(null));
+        } else {
+            dispatch(setGuidedSetupOpen(true));
+        }
+    }
+
+    return (
+        <Fab
+            sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
+            color={filterOn ? "secondary" : "primary"}
+            variant="extended"
+            disabled={!dataStoreReadyStatus || guidedSetupOpen}
+            onClick={handleClick}
+        >
+            {message}
+        </Fab>
+    );
 }
 
 function Dashboard() {
