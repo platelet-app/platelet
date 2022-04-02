@@ -122,6 +122,7 @@ function TaskAssignmentsPanel(props) {
                     },
                     [result]
                 );
+                console.log("addass", status);
                 await DataStore.save(
                     models.Task.copyOf(task, (updated) => {
                         updated.status = status;
@@ -149,12 +150,27 @@ function TaskAssignmentsPanel(props) {
     async function deleteAssignment(assignmentId) {
         setIsDeleting(true);
         try {
+            console.log("delete", assignmentId);
             if (!assignmentId) throw new Error("Assignment ID not provided");
             let existingTask = await DataStore.query(models.Task, props.taskId);
             if (!existingTask) throw new Error("Task doesn't exist");
             const existingAssignment = await DataStore.query(
                 models.TaskAssignee,
                 assignmentId
+            );
+            if (existingAssignment) await DataStore.delete(existingAssignment);
+            const status = await determineTaskStatus(
+                {
+                    ...existingTask,
+                },
+                Object.values(_.omit(state, assignmentId)).filter(
+                    (a) => a.role === userRoles.rider
+                )
+            );
+            existingTask = await DataStore.save(
+                models.Task.copyOf(existingTask, (updated) => {
+                    updated.status = status;
+                })
             );
             if (
                 existingAssignment &&
@@ -179,20 +195,6 @@ function TaskAssignmentsPanel(props) {
                     })
                 );
             }
-            if (existingAssignment) await DataStore.delete(existingAssignment);
-            const status = await determineTaskStatus(
-                {
-                    ...existingTask,
-                },
-                Object.values(_.omit(state, assignmentId)).filter(
-                    (a) => a.role === userRoles.rider
-                )
-            );
-            await DataStore.save(
-                models.Task.copyOf(existingTask, (updated) => {
-                    updated.status = status;
-                })
-            );
             setState((prevState) => _.omit(prevState, assignmentId));
             setIsDeleting(false);
         } catch (error) {
