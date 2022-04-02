@@ -87,7 +87,7 @@ export async function determineTaskStatus(task, riderAssignees = null) {
     } else if (!!task.timeRejected) {
         return tasksStatus.rejected;
     }
-    if (!riderAssignees) {
+    if (riderAssignees === null) {
         riderAssignees = await DataStore.query(models.TaskAssignee, (a) =>
             a.role("eq", userRoles.rider)
         );
