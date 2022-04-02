@@ -97,7 +97,9 @@ function RecentlyAssignedUsers(props) {
                                 key={rider.id}
                             >
                                 <UserChip
-                                    showResponsibility
+                                    showResponsibility={
+                                        props.role === userRoles.rider
+                                    }
                                     disabled={isFetching || props.disabled}
                                     onClick={() => {
                                         if (selectedId === rider.id) {
