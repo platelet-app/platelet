@@ -136,18 +136,14 @@ function TaskItem(props) {
         if (!visibility || !dataStoreReadyStatus || !props.task) return;
         const commentCount = await getCommentCount();
         setCommentCount(commentCount);
+        // TODO: change this to observeQuery when the bug is fixed
         commentObserver.current.unsubscribe();
         commentObserver.current = DataStore.observe(models.Comment, (c) =>
             c.parentId("eq", props.task.id)
-        ).subscribe(async (observedResult) => {
-            if (
-                observedResult.opType === "INSERT" ||
-                observedResult.opType === "DELETE"
-            ) {
-                getCommentCount().then((count) => {
-                    setCommentCount(count);
-                });
-            }
+        ).subscribe(async () => {
+            getCommentCount().then((count) => {
+                setCommentCount(count);
+            });
         });
     }
     useEffect(() => {
