@@ -122,7 +122,6 @@ function TaskAssignmentsPanel(props) {
                     },
                     [result]
                 );
-                console.log("addass", status);
                 await DataStore.save(
                     models.Task.copyOf(task, (updated) => {
                         updated.status = status;
@@ -150,9 +149,11 @@ function TaskAssignmentsPanel(props) {
     async function deleteAssignment(assignmentId) {
         setIsDeleting(true);
         try {
-            console.log("delete", assignmentId);
             if (!assignmentId) throw new Error("Assignment ID not provided");
-            let existingTask = await DataStore.query(models.Task, props.taskId);
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
             if (!existingTask) throw new Error("Task doesn't exist");
             const existingAssignment = await DataStore.query(
                 models.TaskAssignee,
@@ -160,23 +161,16 @@ function TaskAssignmentsPanel(props) {
             );
             if (existingAssignment) await DataStore.delete(existingAssignment);
             const status = await determineTaskStatus(
-                {
-                    ...existingTask,
-                },
+                existingTask,
                 Object.values(_.omit(state, assignmentId)).filter(
                     (a) => a.role === userRoles.rider
                 )
             );
-            existingTask = await DataStore.save(
-                models.Task.copyOf(existingTask, (updated) => {
-                    updated.status = status;
-                })
-            );
+            let riderResponsibility = existingTask.riderResponsibility;
             if (
                 existingAssignment &&
                 existingAssignment.role === userRoles.rider
             ) {
-                let riderResponsibility = null;
                 const riders = Object.values(state)
                     .filter(
                         (a) =>
@@ -188,13 +182,16 @@ function TaskAssignmentsPanel(props) {
                     if (rider && rider.riderResponsibility) {
                         riderResponsibility = rider.riderResponsibility;
                     }
+                } else {
+                    riderResponsibility = null;
                 }
-                existingTask = await DataStore.save(
-                    models.Task.copyOf(existingTask, (updated) => {
-                        updated.riderResponsibility = riderResponsibility;
-                    })
-                );
             }
+            await DataStore.save(
+                models.Task.copyOf(existingTask, (updated) => {
+                    updated.status = status;
+                    updated.riderResponsibility = riderResponsibility;
+                })
+            );
             setState((prevState) => _.omit(prevState, assignmentId));
             setIsDeleting(false);
         } catch (error) {
