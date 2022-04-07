@@ -48,17 +48,6 @@ function LocationProfile(props) {
     }
 
     async function handleUpdate(obj){
-// await props.onUpdate({[obs.key]: obs.value});
-//  await props.onUpdate(
-//      _.omit(
-//          state,
-//          "_deleted",
-//          "_lastChangedAt",
-//          "_version",
-//          "createdAt",
-//          "updatedAt"
-//      )
-//  );
       obj.id = state.id;
       await props.onUpdate(obj);
       setEditMode(false);
@@ -107,42 +96,7 @@ function LocationProfile(props) {
             );
         }
     }
-
-    // const header = editMode ? (
-    //     <TextField
-    //         value={state.name}
-    //         variant={"standard"}
-    //         fullWidth
-    //         id={"edit-name"}
-    //         onChange={(e) => {
-    //             setState({
-    //                 ...state,
-    //                 name: e.target.value,
-    //             });
-    //         }}
-    //     />
-    // ) : (
-    //     <Typography variant={"h5"}>{state.name}</Typography>
-    // );
-    // const header = {return(
-    //     <LabelItemPair key="name" label="Name">
-    //         <ClickableTextField
-    //             label="Name"
-    //             disabled={!editMode}
-    //             onFinished={(v) => {
-    //                 setState((prevState) => ({
-    //                     ...prevState,
-    //                     ["name"]: v,
-    //                 }));
-    //                 handleUpdate({ ["name"]: v });
-    //             }}
-    //             value={state["name"]}
-    //         />
-    //     </LabelItemPair>
-    // );)
-    // }
-                   
-
+    
     return (
         <Stack direction={"column"} spacing={3}>
             <Stack
@@ -185,36 +139,6 @@ function LocationProfile(props) {
                         </LabelItemPair>
                     );
                 })}
-                {/* {Object.keys(fields).map((key) => {
-                    if (editMode) {
-                        return (
-                            <TextField
-                                key={key}
-                                value={state[key]}
-                                variant={"standard"}
-                                fullWidth
-                                label={fields[key]}
-                                id={key}
-                                onChange={(e) => {
-                                    setState({
-                                        ...state,
-                                        [key]: e.target.value,
-                                    });
-                                }}
-                            />
-                        );
-                    } else {
-                        return (
-                            <Stack
-                                direction={"row"}
-                                justifyContent={"space-between"}
-                                key={key}
-                            >
-                                <Typography>{state[key]}</Typography>
-                            </Stack>
-                        );
-                    }
-                })} */}
             </Box>
             <Divider />
             <Box sx={{ width: "100%" }}>
@@ -231,7 +155,6 @@ function LocationProfile(props) {
                                             ...prevState.contact,
                                             [key]: v,
                                         },
-                                        // [key]: v,
                                     }));
                                     handleUpdate({ contact: { [key]: v } });
                                 }}
@@ -240,66 +163,7 @@ function LocationProfile(props) {
                         </LabelItemPair>
                     );
                 })}
-                {/* {Object.keys(state.contact ? contactFields : []).map((key) => {
-                    if (editMode) {
-                        if (key === "telephoneNumber") {
-                            return (
-                                <TextFieldUncontrolled
-                                    key={key}
-                                    value={state.contact[key]}
-                                    variant={"standard"}
-                                    fullWidth
-                                    tel
-                                    label={contactFields[key]}
-                                    id={key}
-                                    onChange={(e) => {
-                                        setState({
-                                            ...state,
-                                            contact: {
-                                                ...state.contact,
-                                                [key]: e.target.value,
-                                            },
-                                        });
-                                    }}
-                                />
-                            );
-                        } else {
-                            return (
-                                <TextField
-                                    key={key}
-                                    value={state.contact[key]}
-                                    variant={"standard"}
-                                    fullWidth
-                                    tel={key === "telephoneNumber"}
-                                    label={contactFields[key]}
-                                    id={key}
-                                    onChange={(e) => {
-                                        setState({
-                                            ...state,
-                                            contact: {
-                                                ...state.contact,
-                                                [key]: e.target.value,
-                                            },
-                                        });
-                                    }}
-                                />
-                            );
-                        }
-                    } else {
-                        return (
-                            <Stack
-                                direction={"row"}
-                                justifyContent={"space-between"}
-                                key={key}
-                            >
-                                <Typography>{contactFields[key]}</Typography>
-                                <Typography>{state.contact[key]}</Typography>
-                            </Stack>
-                        );
-                    }
-                })} */}
             </Box>
-            {/* {saveButtons} */}
         </Stack>
     );
 }

@@ -92,24 +92,7 @@ function VehicleProfile(props) {
     let header = (
         <h2>{props.vehicle.name ? props.vehicle.name : "No name."}</h2>
     );
-
-    // const saveButtons = !editMode ? (
-    //     <></>
-    // ) : (
-    //     <SaveCancelButtons
-    //         disabled={isPosting}
-    //         onSave={() => {
-    //             props.onUpdate(state);
-    //             setOldState(state);
-    //             setEditMode(false);
-    //         }}
-    //         onCancel={() => {
-    //             setEditMode(false);
-    //             setState(oldState);
-    //         }}
-    //     />
-    // );
-
+    
     const divider = editMode ? (
         <></>
     ) : (
@@ -150,39 +133,8 @@ function VehicleProfile(props) {
                       />
                   </LabelItemPair>
                   )
-                    // if (editMode) {
-                    //     return (
-                    //         <TextField
-                    //             key={key}
-                    //             value={state[key]}
-                    //             variant={"standard"}
-                    //             fullWidth
-                    //             label={fields[key]}
-                    //             id={key}
-                    //             onChange={(e) => {
-                    //                 setState({
-                    //                     ...state,
-                    //                     [key]: e.target.value,
-                    //                 });
-                    //             }}
-                    //         />
-                    //     );
-                    // } else {
-                    //     return (
-                    //         <Stack
-                    //             direction={"row"}
-                    //             justifyContent={"space-between"}
-                    //             key={key}
-                    //         >
-                    //             <Typography>{fields[key]}</Typography>
-                    //             <Typography>{state[key]}</Typography>
-                    //         </Stack>
-                    //     );
-                    // }
                 })}
             </Stack>
-
-            {/* {saveButtons} */}
         </Stack>
     );
 }

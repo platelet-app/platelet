@@ -62,73 +62,12 @@ export default function VehicleDetail(props) {
         [props.location.key, dataStoreReadyStatus]
     );
 
-    async function onUpdate(value) {
-        setIsPosting(true);
-        try {
-            const existingVehicle = await DataStore.query(
-                models.Vehicle,
-                vehicle.id
-            );
-            await DataStore.save(
-                models.Vehicle.copyOf(existingVehicle, (updated) => {
-                    for (const [key, newValue] of Object.entries(value)) {
-                        if (!protectedFields.includes(key))
-                            updated[key] = newValue;
-                    }
-                })
-            );
-            setIsPosting(false);
-        } catch (error) {
-            console.log("Update request failed", error);
-            dispatch(displayErrorNotification(error.message));
-            setIsPosting(false);
-        }
-    }
-
     function onAssignUser(user) {
         return;
     }
 
-    async function editPreset(additionalValues) {
-        try {
-            const existingVehicle = await DataStore.query(
-                models.Vehicle,
-                vehicle.id
-            );
-            if (!existingVehicle) throw new Error("Vehicle doesn't exist");
-            const {
-                createdAt,
-                updatedAt,
-                id,
-                name,
-                _version,
-                _lastChangedAt,
-                _deleted,
-                ...rest
-            } = vehicle;
-            const newValues = {
-                ...rest,
-                ..._.omit(additionalValues, ...protectedFields),
-            };
-          // const newVehicle = await DataStore.save(
-          //       models.Vehicle.copyOf(existingVehicle, (updated) => {
-          //           for (const [key, newValue] of Object.entries(value)) {
-          //               if (!protectedFields.includes(key))
-          //                   updated[key] = newValue;
-          //           }
-          //       })
-          //   );
-            
-          //  return newVehicle;
-          return newValues;
-        } catch (error) {
-          console.log("Update request failed", error);
-          dispatch(displayErrorNotification(error.message));
-          setIsPosting(false);
-        }
-    }
-
     async function changeVehicleDetails(values) {
+      setIsPosting(true);
       try {
           let VehicleResult;
           const existingVehicle = await DataStore.query(
@@ -137,38 +76,19 @@ export default function VehicleDetail(props) {
           );
           if (!existingVehicle) throw new Error("Vehicle doesn't exist");
           if (!_.isEmpty(values)) {
-              if (!!existingVehicle.listed) {
-                  VehicleResult = await editPreset(values);
-              } else {
-                  VehicleResult = await DataStore.save(
-                      models.Vehicle.copyOf(existingVehicle, (updated) => {
-                          for (const [key, newValue] of Object.entries(
-                              values
-                          )) {
-                              if (!protectedFields.includes(key))
-                                  updated[key] = newValue;
-                          }
-                      })
-                  );
-              }
-          } else {
-              const result = {};
-              if (!_.isEmpty(values)) {
-                  for (const [key, value] of Object.entries(values)) {
-                      if (!!value) {
-                          result[key] = value;
-                      }
-                  }
-              }
-              if (_.isEmpty(result)) return;
-
               VehicleResult = await DataStore.save(
-                  new models.Vehicle({
-                      ...values,
+                  models.Vehicle.copyOf(existingVehicle, (updated) => {
+                      for (const [key, newValue] of Object.entries(
+                          values
+                      )) {
+                          if (!protectedFields.includes(key))
+                              updated[key] = newValue;
+                      }
                   })
               );
+              setVehicle(VehicleResult);
           }
-          setVehicle(VehicleResult);
+          setIsPosting(false);
       } catch (error) {
           console.log("Update request failed", error);
           dispatch(displayErrorNotification(error.message));
@@ -188,7 +108,6 @@ export default function VehicleDetail(props) {
             <Stack spacing={3} direction={"column"}>
                 <PaddedPaper maxWidth={700}>
                     <VehicleProfile
-                        onUpdate={onUpdate}
                         changeVehicleDetails={changeVehicleDetails}
                         vehicle={vehicle}
                     />
