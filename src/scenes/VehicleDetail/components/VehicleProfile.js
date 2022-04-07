@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
+import LabelItemPair from "../../../components/LabelItemPair";
+import ClickableTextField from "../../../components/ClickableTextField";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import UsersSelect from "../../../components/UsersSelect";
 import EditIcon from "@mui/icons-material/Edit";
@@ -71,7 +73,7 @@ function VehicleProfile(props) {
                 }}
                 size="large"
             >
-                <EditIcon />
+                <EditIcon color={editMode ? "secondary" : "inherit"}/>
             </IconButton>
         ) : (
             <IconButton
@@ -88,25 +90,25 @@ function VehicleProfile(props) {
     }
 
     let header = (
-        <h2>{props.vehicle.name ? props.vehicle.name : "No name"}.</h2>
+        <h2>{props.vehicle.name ? props.vehicle.name : "No name."}</h2>
     );
 
-    const saveButtons = !editMode ? (
-        <></>
-    ) : (
-        <SaveCancelButtons
-            disabled={isPosting}
-            onSave={() => {
-                props.onUpdate(state);
-                setOldState(state);
-                setEditMode(false);
-            }}
-            onCancel={() => {
-                setEditMode(false);
-                setState(oldState);
-            }}
-        />
-    );
+    // const saveButtons = !editMode ? (
+    //     <></>
+    // ) : (
+    //     <SaveCancelButtons
+    //         disabled={isPosting}
+    //         onSave={() => {
+    //             props.onUpdate(state);
+    //             setOldState(state);
+    //             setEditMode(false);
+    //         }}
+    //         onCancel={() => {
+    //             setEditMode(false);
+    //             setState(oldState);
+    //         }}
+    //     />
+    // );
 
     const divider = editMode ? (
         <></>
@@ -131,40 +133,56 @@ function VehicleProfile(props) {
             <Divider />
 
             <Stack>
-                {Object.keys(fields).map((key) => {
-                    if (editMode) {
-                        return (
-                            <TextField
-                                key={key}
-                                value={state[key]}
-                                variant={"standard"}
-                                fullWidth
-                                label={fields[key]}
-                                id={key}
-                                onChange={(e) => {
-                                    setState({
-                                        ...state,
-                                        [key]: e.target.value,
-                                    });
-                                }}
-                            />
-                        );
-                    } else {
-                        return (
-                            <Stack
-                                direction={"row"}
-                                justifyContent={"space-between"}
-                                key={key}
-                            >
-                                <Typography>{fields[key]}</Typography>
-                                <Typography>{state[key]}</Typography>
-                            </Stack>
-                        );
-                    }
+                {Object.entries(fields).map(([key, label]) => {
+                  return(
+                  <LabelItemPair key={key} label={label}>
+                      <ClickableTextField
+                          label={label}
+                          disabled={!editMode}
+                          onFinished={(v) => {
+                              setState((prevState) => ({
+                                  ...prevState,
+                                      [key]: v,
+                              }));
+                              props.changeVehicleDetails({ [key]: v });
+                          }}
+                          value={state[key]}
+                      />
+                  </LabelItemPair>
+                  )
+                    // if (editMode) {
+                    //     return (
+                    //         <TextField
+                    //             key={key}
+                    //             value={state[key]}
+                    //             variant={"standard"}
+                    //             fullWidth
+                    //             label={fields[key]}
+                    //             id={key}
+                    //             onChange={(e) => {
+                    //                 setState({
+                    //                     ...state,
+                    //                     [key]: e.target.value,
+                    //                 });
+                    //             }}
+                    //         />
+                    //     );
+                    // } else {
+                    //     return (
+                    //         <Stack
+                    //             direction={"row"}
+                    //             justifyContent={"space-between"}
+                    //             key={key}
+                    //         >
+                    //             <Typography>{fields[key]}</Typography>
+                    //             <Typography>{state[key]}</Typography>
+                    //         </Stack>
+                    //     );
+                    // }
                 })}
             </Stack>
 
-            {saveButtons}
+            {/* {saveButtons} */}
         </Stack>
     );
 }

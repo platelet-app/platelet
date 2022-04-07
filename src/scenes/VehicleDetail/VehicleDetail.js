@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import VehicleProfile from "./components/VehicleProfile";
 import { decodeUUID } from "../../utilities";
 import { useDispatch, useSelector } from "react-redux";
+import _ from "lodash";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@mui/material/Typography";
@@ -88,6 +89,96 @@ export default function VehicleDetail(props) {
         return;
     }
 
+    async function editPreset(additionalValues) {
+        try {
+            const existingVehicle = await DataStore.query(
+                models.Vehicle,
+                vehicle.id
+            );
+            if (!existingVehicle) throw new Error("Vehicle doesn't exist");
+            const {
+                createdAt,
+                updatedAt,
+                id,
+                name,
+                _version,
+                _lastChangedAt,
+                _deleted,
+                ...rest
+            } = vehicle;
+            const newValues = {
+                ...rest,
+                ..._.omit(additionalValues, ...protectedFields),
+            };
+          // const newVehicle = await DataStore.save(
+          //       models.Vehicle.copyOf(existingVehicle, (updated) => {
+          //           for (const [key, newValue] of Object.entries(value)) {
+          //               if (!protectedFields.includes(key))
+          //                   updated[key] = newValue;
+          //           }
+          //       })
+          //   );
+            
+          //  return newVehicle;
+          return newValues;
+        } catch (error) {
+          console.log("Update request failed", error);
+          dispatch(displayErrorNotification(error.message));
+          setIsPosting(false);
+        }
+    }
+
+    async function changeVehicleDetails(values) {
+      try {
+          let VehicleResult;
+          const existingVehicle = await DataStore.query(
+              models.Vehicle,
+              vehicle.id
+          );
+          if (!existingVehicle) throw new Error("Vehicle doesn't exist");
+          if (!_.isEmpty(values)) {
+              if (!!existingVehicle.listed) {
+                  VehicleResult = await editPreset(values);
+              } else {
+                  VehicleResult = await DataStore.save(
+                      models.Vehicle.copyOf(existingVehicle, (updated) => {
+                          for (const [key, newValue] of Object.entries(
+                              values
+                          )) {
+                              if (!protectedFields.includes(key))
+                                  updated[key] = newValue;
+                          }
+                      })
+                  );
+              }
+          } else {
+              const result = {};
+              if (!_.isEmpty(values)) {
+                  for (const [key, value] of Object.entries(values)) {
+                      if (!!value) {
+                          result[key] = value;
+                      }
+                  }
+              }
+              if (_.isEmpty(result)) return;
+
+              VehicleResult = await DataStore.save(
+                  new models.Vehicle({
+                      ...values,
+                  })
+              );
+          }
+          setVehicle(VehicleResult);
+      } catch (error) {
+          console.log("Update request failed", error);
+          dispatch(displayErrorNotification(error.message));
+          setIsPosting(false);
+      }
+  }
+
+
+
+
     if (isFetching) {
         return <FormSkeleton />;
     } else if (notFound) {
@@ -96,7 +187,11 @@ export default function VehicleDetail(props) {
         return (
             <Stack spacing={3} direction={"column"}>
                 <PaddedPaper maxWidth={700}>
-                    <VehicleProfile onUpdate={onUpdate} vehicle={vehicle} />
+                    <VehicleProfile
+                        onUpdate={onUpdate}
+                        changeVehicleDetails={changeVehicleDetails}
+                        vehicle={vehicle}
+                    />
                 </PaddedPaper>
                 <PaddedPaper width={"400px"}>
                     <Stack
