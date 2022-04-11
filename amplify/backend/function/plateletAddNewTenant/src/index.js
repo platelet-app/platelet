@@ -203,6 +203,24 @@ async function addUserToCognito(user) {
     };
 }
 
+async function setUserRoles(username) {
+    console.log("Amending roles for:", username);
+    const CognitoIdentityServiceProvider = aws.CognitoIdentityServiceProvider;
+    const cognitoClient = new CognitoIdentityServiceProvider({
+        apiVersion: "2016-04-19",
+    });
+    const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
+    for (const role of ["USER", "ADMIN"]) {
+        await cognitoClient
+            .adminAddUserToGroup({
+                GroupName: role,
+                UserPoolId: userPoolId,
+                Username: username,
+            })
+            .promise();
+    }
+}
+
 async function createNewAdminUser(newUser) {
     const tenantId = uuid.v4();
 
@@ -300,6 +318,7 @@ exports.handler = async (event) => {
         newTenant.id,
         cognitoUser.sub
     );
+    await setUserRoles(user.username);
     console.log("Tenant result:", newTenant);
     console.log("User result:", newUser);
     await sendWelcomeEmail(
