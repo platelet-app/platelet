@@ -4,7 +4,8 @@
       "platelet61a0ac07": [
         "create",
         "read",
-        "update"
+        "update",
+        "delete"
       ]
     },
     "api": {

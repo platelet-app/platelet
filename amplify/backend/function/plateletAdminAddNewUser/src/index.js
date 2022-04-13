@@ -202,7 +202,7 @@ async function cleanUp(user) {
             disableOffline: true,
         };
         const appSyncClient = new AWSAppSyncClient(config);
-        appSyncClient.mutate({
+        await appSyncClient.mutate({
             mutation: deleteUser,
             variables: {
                 input: {
@@ -217,6 +217,12 @@ async function cleanUp(user) {
         const cognitoClient = new CognitoIdentityServiceProvider({
             apiVersion: "2016-04-19",
         });
+        await cognitoClient
+            .adminDisableUser({
+                UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
+                Username: user.username,
+            })
+            .promise();
         return cognitoClient
             .adminDeleteUser({
                 UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
