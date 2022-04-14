@@ -149,7 +149,12 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (!dataStoreReadyStatus || !visibility || !taskAssigneesReady) {
+        if (
+            !dataStoreReadyStatus ||
+            !roleView ||
+            !visibility ||
+            !taskAssigneesReady
+        ) {
             return;
         } else {
             try {

@@ -68,7 +68,7 @@ function RecentlyAssignedUsers(props) {
 
     async function getActiveRiders() {
         try {
-            if (!dataStoreReadyStatus) return;
+            if (!dataStoreReadyStatus || !roleView) return;
             setActiveRiders(await calculateRidersStatus());
             animate.current = true;
         } catch (error) {

@@ -177,7 +177,7 @@ export function saveDashboardRoleMode(mode) {
 }
 
 export function getDashboardRoleMode() {
-    return localStorage.getItem("dashboardRoleMode") || "all";
+    return localStorage.getItem("dashboardRoleMode") || "ALL";
 }
 
 export function saveLogin(apiBearer) {

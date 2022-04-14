@@ -73,7 +73,8 @@ function TaskItem(props) {
     }, [inView]);
 
     async function getAssignees() {
-        if (!visibility || !dataStoreReadyStatus || !props.task) return;
+        if (!visibility || !dataStoreReadyStatus || !roleView || !props.task)
+            return;
         // inefficient method of getting assignees
         /*const allAssignments = (
             await DataStore.query(models.TaskAssignee)

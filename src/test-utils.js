@@ -150,12 +150,12 @@ function render(
             reducer: rootReducer,
             middleware: [sagaMiddleWare],
             preloadedState: {
-                ...preloadedState,
-
+                roleView: "ALL",
                 awsHubDataStoreEventsReducer: {
                     networkStatus: true,
                     ready: true,
                 },
+                ...preloadedState,
             },
         }),
         ...renderOptions

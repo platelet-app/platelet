@@ -180,7 +180,8 @@ export function DashboardDetailTabs(props) {
                         sx={{ cursor: "pointer" }}
                         id="role-identifier"
                     >
-                        {`${roleView.substring(0, 5).toUpperCase()}`}
+                        {roleView &&
+                            `${roleView.substring(0, 5).toUpperCase()}`}
                     </Typography>
                 </Hidden>
                 <IconButton
