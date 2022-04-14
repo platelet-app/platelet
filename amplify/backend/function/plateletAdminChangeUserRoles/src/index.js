@@ -94,10 +94,31 @@ async function cognitoAmendRoles(username, roles) {
     }
 }
 
+async function getCurrentUserRoles(userId) {
+    const currentUser = await appSyncClient.query({
+        query: getUser,
+        variables: {
+            id: userId,
+        },
+    });
+    return currentUser.data.getUser;
+}
+
+async function cleanUp(data) {
+    await appSyncAmendRoles(data.id, data.roles);
+    await cognitoAmendRoles(data.username, data.roles);
+}
+
 exports.handler = async (event) => {
     const roles = event.arguments.roles;
     const userId = event.arguments.userId;
-    const user = await appSyncAmendRoles(userId, roles);
-    await cognitoAmendRoles(user.username, roles);
-    return user;
+    const currentUserData = await getCurrentUserRoles(userId);
+    try {
+        const user = await appSyncAmendRoles(userId, roles);
+        await cognitoAmendRoles(user.username, roles);
+        return user;
+    } catch (e) {
+        await cleanUp(currentUserData);
+        throw e;
+    }
 };
