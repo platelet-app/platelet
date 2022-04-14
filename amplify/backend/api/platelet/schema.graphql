@@ -28,6 +28,7 @@ type User
   roles: [Role!]!
   dateOfBirth: AWSDate
   riderResponsibility: String
+  possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
   profilePictureURL: String
   profilePictureThumbnailURL: String
   profilePicture: S3Object
@@ -37,6 +38,19 @@ type User
   createdTasks: [Task] @hasMany
   active: Int!
   disabled: Int!
+}
+
+type PossibleRiderResponsibilities
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
+])
+@model {
+  id: ID!
+  tenantId: ID! @index(name: "byTenantId")
+  default: Int! @default(value: "0")
+  user: User! @belongsTo
+  riderResponsibility: RiderResponsibility! @belongsTo
 }
 
 type S3Object {
@@ -215,6 +229,7 @@ type RiderResponsibility
   tenantId: ID! @index(name: "byTenantId")
   label: String!
   disabled: Int!
+  possibleUsers: [PossibleRiderResponsibilities] @hasMany
 }
 
 enum TaskStatus {
