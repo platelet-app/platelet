@@ -53,8 +53,24 @@ export default function UserDetail(props) {
         } else {
             try {
                 const userResult = await DataStore.query(models.User, userUUID);
+                const possibleRiderResponsibilities = await DataStore.query(
+                    models.PossibleRiderResponsibilities
+                );
+                const userRiderResponsibilities = possibleRiderResponsibilities
+                    .filter((responsibility) => {
+                        return (
+                            responsibility.user.id &&
+                            userResult.id === responsibility.user.id
+                        );
+                    })
+                    .map((r) => r.riderResponsibility);
                 setIsFetching(false);
-                if (userResult) setUser(userResult);
+                if (userResult)
+                    setUser({
+                        ...userResult,
+                        possibleRiderResponsibilities:
+                            userRiderResponsibilities,
+                    });
                 else setNotFound(true);
             } catch (error) {
                 setIsFetching(false);
@@ -92,10 +108,15 @@ export default function UserDetail(props) {
 
     async function onUpdate(value) {
         setIsPosting(true);
-        debugger;
         try {
             const existingUser = await DataStore.query(models.User, user.id);
-            const { roles, riderResponsibility, contact, ...rest } = value;
+            const {
+                roles,
+                riderResponsibility,
+                possibleRiderResponsibilities,
+                contact,
+                ...rest
+            } = value;
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
                     for (const [key, newValue] of Object.entries(rest)) {
@@ -133,6 +154,28 @@ export default function UserDetail(props) {
                     graphqlOperation(mutations.updateUserRoles, {
                         userId: user.id,
                         roles,
+                    })
+                );
+            }
+            if (possibleRiderResponsibilities) {
+                DataStore.query(models.PossibleRiderResponsibilities).then(
+                    (result) => {
+                        const existing = result.filter(
+                            (r) => r.user && r.user.id === existingUser.id
+                        );
+                        for (const i of existing) {
+                            DataStore.delete(i);
+                        }
+                    }
+                );
+                await Promise.all(
+                    possibleRiderResponsibilities.map((riderResponsibility) => {
+                        return DataStore.save(
+                            new models.PossibleRiderResponsibilities({
+                                riderResponsibility,
+                                user: existingUser,
+                            })
+                        );
                     })
                 );
             }
