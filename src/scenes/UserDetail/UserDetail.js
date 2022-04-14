@@ -7,7 +7,10 @@ import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
-import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    tenantIdSelector,
+} from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -40,6 +43,7 @@ export default function UserDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
+    const tenantId = useSelector(tenantIdSelector);
     const [notFound, setNotFound] = useState(false);
     const [usersDisplayNames, setUsersDisplayNames] = useState([]);
     const dispatch = useDispatch();
@@ -157,7 +161,7 @@ export default function UserDetail(props) {
                     })
                 );
             }
-            if (possibleRiderResponsibilities) {
+            if (possibleRiderResponsibilities && tenantId) {
                 DataStore.query(models.PossibleRiderResponsibilities).then(
                     (result) => {
                         const existing = result.filter(
@@ -172,6 +176,7 @@ export default function UserDetail(props) {
                     possibleRiderResponsibilities.map((riderResponsibility) => {
                         return DataStore.save(
                             new models.PossibleRiderResponsibilities({
+                                tenantId,
                                 riderResponsibility,
                                 user: existingUser,
                             })
