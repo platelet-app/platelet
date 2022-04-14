@@ -11,6 +11,7 @@ function ConfirmationDialog(props) {
     return (
         <Dialog
             open={props.open}
+            fullScreen={props.fullScreen}
             onClose={props.onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -63,6 +64,7 @@ ConfirmationDialog.propTypes = {
     dialogTitle: PropTypes.string,
     hideCancel: PropTypes.bool,
     hideOk: PropTypes.bool,
+    fullScreen: PropTypes.bool,
 };
 
 ConfirmationDialog.defaultProps = {
@@ -73,6 +75,7 @@ ConfirmationDialog.defaultProps = {
     onClose: () => {},
     hideCancel: false,
     hideOk: false,
+    fullScreen: false,
 };
 
 export default ConfirmationDialog;
