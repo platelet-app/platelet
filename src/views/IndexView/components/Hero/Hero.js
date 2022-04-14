@@ -70,6 +70,7 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
       variant="contained"
       color="primary"
       component="a"
+      target="_blank"
       href="https://demo.platelet.app"
     >
       View a demo
