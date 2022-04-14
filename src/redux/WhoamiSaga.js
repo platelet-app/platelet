@@ -92,6 +92,7 @@ function* getWhoami() {
                             "Vehicle",
                             "Deliverable",
                             "DeliverableType",
+                            "PossibleRiderResponsibilities",
                         ].includes(model.name)
                     ) {
                         modelsToSync.push(model);
