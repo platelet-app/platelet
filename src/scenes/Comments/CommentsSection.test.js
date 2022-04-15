@@ -292,7 +292,7 @@ describe("CommentsSection", () => {
         });
     });
 
-    it.only("discard an in progress comment", async () => {
+    it("discard an in progress comment", async () => {
         const mockTask = await DataStore.save(new models.Task({}));
         const querySpy = jest.spyOn(DataStore, "query");
         render(<CommentsSection parentId={mockTask.id} />);
