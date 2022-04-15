@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
 import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
 import CommentAuthor from "./CommentAuthor";
@@ -16,7 +14,8 @@ import {
 import { commentVisibility } from "../../../apiConsts";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
-import { TextField } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const initialCommentState = {
     body: "",
@@ -26,6 +25,7 @@ const initialCommentState = {
 function NewCommentCard(props) {
     const [state, setState] = useState(initialCommentState);
     const [isPosting, setIsPosting] = useState(false);
+    const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const tenantId = useSelector(tenantIdSelector);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
@@ -149,12 +149,7 @@ function NewCommentCard(props) {
                         <Grid item>
                             <Button
                                 disabled={state.body.length === 0 || isPosting}
-                                onClick={() =>
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        body: "",
-                                    }))
-                                }
+                                onClick={() => setConfirmationDialogOpen(true)}
                             >
                                 Discard
                             </Button>
@@ -162,6 +157,19 @@ function NewCommentCard(props) {
                     </Grid>
                 </Grid>
             </Grid>
+            <ConfirmationDialog
+                open={confirmationDialogOpen}
+                onConfirmation={() => {
+                    setState((prevState) => ({
+                        ...prevState,
+                        body: "",
+                    }));
+                }}
+                onClose={() => setConfirmationDialogOpen(false)}
+                dialogTitle={"Discard comment?"}
+            >
+                <Typography>{state.body}</Typography>
+            </ConfirmationDialog>
         </CommentCardStyled>
     );
 }

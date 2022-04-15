@@ -292,6 +292,21 @@ describe("CommentsSection", () => {
         });
     });
 
+    it.only("discard an in progress comment", async () => {
+        const mockTask = await DataStore.save(new models.Task({}));
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<CommentsSection parentId={mockTask.id} />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        const textBox = screen.getByRole("textbox");
+        userEvent.type(textBox, "This is a comment");
+        userEvent.click(screen.getByRole("button", { name: "Discard" }));
+        expect(textBox).toHaveValue("This is a comment");
+        userEvent.click(screen.getByText("OK"));
+        expect(textBox).toHaveValue("");
+    });
+
     test("observing a new comment", async () => {
         const mockAuthor = new models.User({
             displayName: "Mock User",
