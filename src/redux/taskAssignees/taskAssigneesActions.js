@@ -14,21 +14,3 @@ export function setTaskAssignees(taskAssignees) {
         taskAssignees,
     };
 }
-
-export const INSERT_TASK_ASSIGNEE = "INSERT_TASK_ASSIGNEE";
-
-export function insertTaskAssignee(newTaskAssignee) {
-    return {
-        type: INSERT_TASK_ASSIGNEE,
-        newTaskAssignee,
-    };
-}
-
-export const DELETE_TASK_ASSIGNEE = "DELETE_TASK_ASSIGNEE";
-
-export function deleteTaskAssignee(deletedTaskAssignee) {
-    return {
-        type: DELETE_TASK_ASSIGNEE,
-        deletedTaskAssignee,
-    };
-}

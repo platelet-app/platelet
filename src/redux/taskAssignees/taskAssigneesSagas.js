@@ -4,10 +4,11 @@ import { call, take, put } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
+import dataStoreNestedWorkAroundMapper from "./dataStoreNestedWorkAroundMapper";
 
 function listener() {
     return eventChannel((emitter) => {
-        const observer = DataStore.observe(models.TaskAssignee, () => {}, {
+        const observer = DataStore.observeQuery(models.TaskAssignee, () => {}, {
             sort: (s) => s.createdAt("desc"),
         }).subscribe((result) => {
             emitter(result);
@@ -20,24 +21,22 @@ function listener() {
 }
 
 function* initializeTaskAssigneesObserver() {
-    const result = yield DataStore.query(models.TaskAssignee, () => {}, {
-        sort: (s) => s.createdAt("desc"),
-    });
-    yield put(actions.setTaskAssignees({ items: result, ready: true }));
     const channel = yield call(listener);
     try {
         while (true) {
-            const { opType, element } = yield take(channel);
-            if (opType === "INSERT") {
-                const { taskId, assigneeId, ...rest } = element;
-                const assignee = yield DataStore.query(models.User, assigneeId);
-                const task = yield DataStore.query(models.Task, taskId);
-                yield put(
-                    actions.insertTaskAssignee({ ...rest, assignee, task })
-                );
-            } else if (opType === "DELETE") {
-                yield put(actions.deleteTaskAssignee(element));
-            }
+            const result = yield take(channel);
+            // DataStore bug workaround for issue #9682 on github
+            const fixed = yield call(
+                dataStoreNestedWorkAroundMapper,
+                result.items
+            );
+            yield put(
+                actions.setTaskAssignees({
+                    ...result,
+                    items: fixed,
+                    ready: true,
+                })
+            );
         }
     } finally {
         channel.close();

@@ -1,7 +1,7 @@
 export function convertListDataToObjects(list) {
     const result = {};
     for (const item of list) {
-        result[item.id] = item;
+        result[item.uuid] = item
     }
     return result;
 }
