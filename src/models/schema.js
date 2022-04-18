@@ -166,18 +166,11 @@ export const schema = {
                         "associatedWith": "userCreatedTasksId"
                     }
                 },
-                "active": {
-                    "name": "active",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": true,
-                    "attributes": []
-                },
                 "disabled": {
                     "name": "disabled",
                     "isArray": false,
                     "type": "Int",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -282,13 +275,6 @@ export const schema = {
                     "name": "tenantId",
                     "isArray": false,
                     "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "default": {
-                    "name": "default",
-                    "isArray": false,
-                    "type": "Int",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -409,7 +395,7 @@ export const schema = {
                     "name": "disabled",
                     "isArray": false,
                     "type": "Int",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "possibleUsers": {
@@ -1456,7 +1442,7 @@ export const schema = {
                     "name": "disabled",
                     "isArray": false,
                     "type": "Int",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -1691,7 +1677,7 @@ export const schema = {
                     "name": "disabled",
                     "isArray": false,
                     "type": "Int",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -2035,5 +2021,5 @@ export const schema = {
             }
         }
     },
-    "version": "14bd244512faf06227279507d4730f47"
+    "version": "80201745af5ce2e8c7821fbcc3fea6d4"
 };

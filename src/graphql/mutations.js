@@ -36,6 +36,10 @@ export const createTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -60,7 +64,6 @@ export const createTenant = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -112,6 +115,10 @@ export const updateTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -136,7 +143,6 @@ export const updateTenant = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -188,6 +194,10 @@ export const deleteTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -212,7 +222,6 @@ export const deleteTenant = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -260,6 +269,21 @@ export const createUser = /* GraphQL */ `
       roles
       dateOfBirth
       riderResponsibility
+      possibleRiderResponsibilities {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userPossibleRiderResponsibilitiesId
+          riderResponsibilityPossibleUsersId
+        }
+        nextToken
+        startedAt
+      }
       profilePictureURL
       profilePictureThumbnailURL
       profilePicture {
@@ -331,7 +355,6 @@ export const createUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      active
       disabled
       createdAt
       updatedAt
@@ -372,6 +395,21 @@ export const updateUser = /* GraphQL */ `
       roles
       dateOfBirth
       riderResponsibility
+      possibleRiderResponsibilities {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userPossibleRiderResponsibilitiesId
+          riderResponsibilityPossibleUsersId
+        }
+        nextToken
+        startedAt
+      }
       profilePictureURL
       profilePictureThumbnailURL
       profilePicture {
@@ -443,7 +481,6 @@ export const updateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      active
       disabled
       createdAt
       updatedAt
@@ -484,6 +521,21 @@ export const deleteUser = /* GraphQL */ `
       roles
       dateOfBirth
       riderResponsibility
+      possibleRiderResponsibilities {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userPossibleRiderResponsibilitiesId
+          riderResponsibilityPossibleUsersId
+        }
+        nextToken
+        startedAt
+      }
       profilePictureURL
       profilePictureThumbnailURL
       profilePicture {
@@ -555,13 +607,294 @@ export const deleteUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      active
       disabled
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+    }
+  }
+`;
+export const createPossibleRiderResponsibilities = /* GraphQL */ `
+  mutation CreatePossibleRiderResponsibilities(
+    $input: CreatePossibleRiderResponsibilitiesInput!
+    $condition: ModelPossibleRiderResponsibilitiesConditionInput
+  ) {
+    createPossibleRiderResponsibilities(input: $input, condition: $condition) {
+      id
+      tenantId
+      user {
+        id
+        username
+        cognitoId
+        tenantId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      riderResponsibility {
+        id
+        tenantId
+        label
+        disabled
+        possibleUsers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userPossibleRiderResponsibilitiesId
+      riderResponsibilityPossibleUsersId
+    }
+  }
+`;
+export const updatePossibleRiderResponsibilities = /* GraphQL */ `
+  mutation UpdatePossibleRiderResponsibilities(
+    $input: UpdatePossibleRiderResponsibilitiesInput!
+    $condition: ModelPossibleRiderResponsibilitiesConditionInput
+  ) {
+    updatePossibleRiderResponsibilities(input: $input, condition: $condition) {
+      id
+      tenantId
+      user {
+        id
+        username
+        cognitoId
+        tenantId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      riderResponsibility {
+        id
+        tenantId
+        label
+        disabled
+        possibleUsers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userPossibleRiderResponsibilitiesId
+      riderResponsibilityPossibleUsersId
+    }
+  }
+`;
+export const deletePossibleRiderResponsibilities = /* GraphQL */ `
+  mutation DeletePossibleRiderResponsibilities(
+    $input: DeletePossibleRiderResponsibilitiesInput!
+    $condition: ModelPossibleRiderResponsibilitiesConditionInput
+  ) {
+    deletePossibleRiderResponsibilities(input: $input, condition: $condition) {
+      id
+      tenantId
+      user {
+        id
+        username
+        cognitoId
+        tenantId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
+        profilePictureURL
+        profilePictureThumbnailURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        profilePictureThumbnail {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      riderResponsibility {
+        id
+        tenantId
+        label
+        disabled
+        possibleUsers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userPossibleRiderResponsibilitiesId
+      riderResponsibilityPossibleUsersId
     }
   }
 `;
@@ -1061,6 +1394,10 @@ export const createTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -1085,7 +1422,6 @@ export const createTask = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -1315,6 +1651,10 @@ export const updateTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -1339,7 +1679,6 @@ export const updateTask = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -1569,6 +1908,10 @@ export const deleteTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -1593,7 +1936,6 @@ export const deleteTask = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -1815,7 +2157,6 @@ export const createTaskAssignee = /* GraphQL */ `
           riderResponsibility
           profilePictureURL
           profilePictureThumbnailURL
-          active
           disabled
           createdAt
           updatedAt
@@ -1939,6 +2280,10 @@ export const createTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -1963,7 +2308,6 @@ export const createTaskAssignee = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -2005,7 +2349,6 @@ export const updateTaskAssignee = /* GraphQL */ `
           riderResponsibility
           profilePictureURL
           profilePictureThumbnailURL
-          active
           disabled
           createdAt
           updatedAt
@@ -2129,6 +2472,10 @@ export const updateTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -2153,7 +2500,6 @@ export const updateTaskAssignee = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -2195,7 +2541,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
           riderResponsibility
           profilePictureURL
           profilePictureThumbnailURL
-          active
           disabled
           createdAt
           updatedAt
@@ -2319,6 +2664,10 @@ export const deleteTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -2343,7 +2692,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -2395,6 +2743,10 @@ export const createComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -2419,7 +2771,6 @@ export const createComment = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -2474,6 +2825,10 @@ export const updateComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -2498,7 +2853,6 @@ export const updateComment = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -2553,6 +2907,10 @@ export const deleteComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -2577,7 +2935,6 @@ export const deleteComment = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -2754,7 +3111,6 @@ export const createDeliverable = /* GraphQL */ `
           riderResponsibility
           profilePictureURL
           profilePictureThumbnailURL
-          active
           disabled
           createdAt
           updatedAt
@@ -2924,7 +3280,6 @@ export const updateDeliverable = /* GraphQL */ `
           riderResponsibility
           profilePictureURL
           profilePictureThumbnailURL
-          active
           disabled
           createdAt
           updatedAt
@@ -3094,7 +3449,6 @@ export const deleteDeliverable = /* GraphQL */ `
           riderResponsibility
           profilePictureURL
           profilePictureThumbnailURL
-          active
           disabled
           createdAt
           updatedAt
@@ -3233,6 +3587,21 @@ export const createRiderResponsibility = /* GraphQL */ `
       tenantId
       label
       disabled
+      possibleUsers {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userPossibleRiderResponsibilitiesId
+          riderResponsibilityPossibleUsersId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -3251,6 +3620,21 @@ export const updateRiderResponsibility = /* GraphQL */ `
       tenantId
       label
       disabled
+      possibleUsers {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userPossibleRiderResponsibilitiesId
+          riderResponsibilityPossibleUsersId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -3269,6 +3653,21 @@ export const deleteRiderResponsibility = /* GraphQL */ `
       tenantId
       label
       disabled
+      possibleUsers {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userPossibleRiderResponsibilitiesId
+          riderResponsibilityPossibleUsersId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -3315,6 +3714,21 @@ export const registerUser = /* GraphQL */ `
       roles
       dateOfBirth
       riderResponsibility
+      possibleRiderResponsibilities {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userPossibleRiderResponsibilitiesId
+          riderResponsibilityPossibleUsersId
+        }
+        nextToken
+        startedAt
+      }
       profilePictureURL
       profilePictureThumbnailURL
       profilePicture {
@@ -3386,7 +3800,6 @@ export const registerUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      active
       disabled
       createdAt
       updatedAt
@@ -3436,6 +3849,10 @@ export const registerTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
         profilePictureURL
         profilePictureThumbnailURL
         profilePicture {
@@ -3460,7 +3877,6 @@ export const registerTenant = /* GraphQL */ `
           nextToken
           startedAt
         }
-        active
         disabled
         createdAt
         updatedAt
@@ -3505,6 +3921,21 @@ export const updateUserRoles = /* GraphQL */ `
       roles
       dateOfBirth
       riderResponsibility
+      possibleRiderResponsibilities {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userPossibleRiderResponsibilitiesId
+          riderResponsibilityPossibleUsersId
+        }
+        nextToken
+        startedAt
+      }
       profilePictureURL
       profilePictureThumbnailURL
       profilePicture {
@@ -3576,7 +4007,6 @@ export const updateUserRoles = /* GraphQL */ `
         nextToken
         startedAt
       }
-      active
       disabled
       createdAt
       updatedAt
