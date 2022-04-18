@@ -36,8 +36,7 @@ type User
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
   createdTasks: [Task] @hasMany
-  active: Int!
-  disabled: Int!
+  disabled: Int @default(value: "0")
 }
 
 type PossibleRiderResponsibilities
@@ -48,7 +47,6 @@ type PossibleRiderResponsibilities
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  default: Int! @default(value: "0")
   user: User! @belongsTo
   riderResponsibility: RiderResponsibility! @belongsTo
 }
@@ -74,7 +72,7 @@ type Vehicle
   dateOfManufacture: AWSDate
   dateOfRegistration: AWSDate
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  disabled: Int!
+  disabled: Int @default(value: "0")
 }
 
 type AddressAndContactDetails {
@@ -118,7 +116,7 @@ type Location
   tasksAsPickUp: [Task] @hasMany(indexName: "byPickUpLocation", fields: ["id"])
   tasksAsDropOff: [Task] @hasMany(indexName: "byDropOffLocation", fields: ["id"])
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  disabled: Int
+  disabled: Int @default(value: "0")
 }
 
 type Task
@@ -192,7 +190,7 @@ type DeliverableType
   defaultUnit: DeliverableUnit
   deliverables: [Deliverable] @hasMany
   tags: [String]
-  disabled: Int!
+  disabled: Int @default(value: "0")
 }
 
 type Deliverable
@@ -228,7 +226,7 @@ type RiderResponsibility
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   label: String!
-  disabled: Int!
+  disabled: Int @default(value: "0")
   possibleUsers: [PossibleRiderResponsibilities] @hasMany
 }
 
