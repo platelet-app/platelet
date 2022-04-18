@@ -124,7 +124,7 @@ function StatusBar(props) {
     }
     let copyColor = "default";
     if (copied !== null && copied) {
-        copyColor = "primary";
+        copyColor = "success";
     } else if (copied !== null && !copied) {
         copyColor = "secondary";
     }
