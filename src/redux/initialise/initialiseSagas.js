@@ -125,11 +125,15 @@ async function populateFakeData() {
             thumbnailKey = `profilePictureThumbnails/${baseName}_thumbnail${extension}`;
             profilePictureKey = `profilePictures/${baseName}${extension}`;
         }
-        await DataStore.save(
+        const resp1 = _.sample(responsibilities);
+        const resp2 = _.sample(
+            responsibilities.filter((r) => r.id !== resp1.id)
+        );
+        const offlineUser = await DataStore.save(
             new models.User({
                 name: "offline",
                 username: "offline",
-                riderResponsibility: _.sample(responsibilities).label || null,
+                riderResponsibility: resp1.label,
                 displayName: "Demo User",
                 dateOfBirth: faker.date
                     .past(50, new Date())
@@ -152,6 +156,14 @@ async function populateFakeData() {
                 roles: [userRoles.rider, userRoles.coordinator, userRoles.user],
             })
         );
+        for (const i of [resp1, resp2]) {
+            await DataStore.save(
+                new models.PossibleRiderResponsibilities({
+                    user: offlineUser,
+                    riderResponsibility: i,
+                })
+            );
+        }
     }
     const checker = await DataStore.query(models.User);
     if (checker.length < 2) {
@@ -190,11 +202,14 @@ async function populateFakeData() {
                 profilePictureKey = `profilePictures/${baseName}${extension}`;
             }
 
-            await DataStore.save(
+            const resp1 = _.sample(responsibilities);
+            const resp2 = _.sample(
+                responsibilities.filter((r) => r.id !== resp1.id)
+            );
+            const newUser = await DataStore.save(
                 new models.User({
                     ...userToSave,
-                    riderResponsibility:
-                        _.sample(responsibilities).label || null,
+                    riderResponsibility: resp1.label,
                     profilePicture: {
                         key: profilePictureKey,
                         bucket: process.env
@@ -211,6 +226,14 @@ async function populateFakeData() {
                     },
                 })
             );
+            for (const i of [resp1, resp2]) {
+                await DataStore.save(
+                    new models.PossibleRiderResponsibilities({
+                        user: newUser,
+                        riderResponsibility: i,
+                    })
+                );
+            }
         }
     }
     if (fakeData.vehicles) {
