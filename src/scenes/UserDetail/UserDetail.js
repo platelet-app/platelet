@@ -19,6 +19,7 @@ import { Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import * as mutations from "../../graphql/mutations";
 import { API, graphqlOperation } from "aws-amplify";
+import CurrentRiderResponsibilitySelector from "./components/CurrentRiderResponsibilitySelector";
 
 const initialUserState = {
     id: "",
@@ -103,12 +104,33 @@ export default function UserDetail(props) {
         } catch (error) {
             dispatch(
                 displayErrorNotification(
-                    `Failed to get users lists: ${error.message}`
+                    `Failed to get users list: ${error.message}`
                 )
             );
         }
     }
     useEffect(() => getDisplayNames(), []);
+
+    function handleUpdateRiderResponsibility(riderResponsibility) {
+        setUser((prevState) => ({
+            ...prevState,
+            riderResponsibility,
+        }));
+        DataStore.query(models.User, user.id)
+            .then((currentUser) => {
+                DataStore.save(
+                    models.User.copyOf(currentUser, (updated) => {
+                        updated.riderResponsibility = riderResponsibility;
+                    })
+                );
+            })
+            .catch((error) => {
+                console.log(error);
+                dispatch(
+                    displayErrorNotification("Sorry, something went wrong")
+                );
+            });
+    }
 
     async function onUpdate(value) {
         setIsPosting(true);
@@ -203,6 +225,11 @@ export default function UserDetail(props) {
                 spacing={1}
             >
                 <PaddedPaper maxWidth={700}>
+                    <CurrentRiderResponsibilitySelector
+                        available={user.possibleRiderResponsibilities}
+                        value={user.riderResponsibility}
+                        onChange={handleUpdateRiderResponsibility}
+                    />
                     <UserProfile
                         displayNames={usersDisplayNames}
                         user={user}
