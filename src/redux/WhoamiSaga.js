@@ -22,7 +22,6 @@ const fakeUser = {
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
-    active: 1,
 };
 
 const testUserModel = new models.User({
@@ -32,7 +31,6 @@ const testUserModel = new models.User({
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
-    active: 1,
 });
 const testUser = { ...testUserModel, id: "whoami" };
 

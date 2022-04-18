@@ -31,7 +31,6 @@ const testUserModel = new models.User({
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
-    active: 1,
 });
 
 export const testUser = { ...testUserModel, id: "whoami" };

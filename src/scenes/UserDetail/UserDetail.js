@@ -34,7 +34,7 @@ const initialUserState = {
     patch: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
-    active: 1,
+    disabled: 0,
 };
 
 export default function UserDetail(props) {
