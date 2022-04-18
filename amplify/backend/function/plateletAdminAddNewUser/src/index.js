@@ -163,7 +163,6 @@ async function inviteNewUserToTeam(newUser, tenantId) {
     }
     const createUserInput = {
         tenantId: tenantId,
-        active: 1,
         cognitoId,
         name: newUser.name,
         disabled: 0,

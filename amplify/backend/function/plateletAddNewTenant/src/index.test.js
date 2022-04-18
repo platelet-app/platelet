@@ -162,7 +162,6 @@ describe("plateletAddNewTenant", () => {
             Username: expect.any(String),
         });
         const createUserInput = {
-            active: 1,
             cognitoId: "testSubId",
             name: mockEvent.arguments.name,
             displayName: mockEvent.arguments.name,

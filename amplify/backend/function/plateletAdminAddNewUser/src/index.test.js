@@ -177,7 +177,6 @@ describe("plateletAdminAddNewUser", () => {
         });
         const createUserInput = {
             tenantId: mockEvent.arguments.tenantId,
-            active: 1,
             cognitoId: "testSubId",
             name: mockEvent.arguments.name,
             displayName: mockEvent.arguments.name,
@@ -256,7 +255,6 @@ describe("plateletAdminAddNewUser", () => {
         });
         const createUserInput = {
             tenantId: mockEvent.arguments.tenantId,
-            active: 1,
             cognitoId: "testSubId",
             name: mockEvent.arguments.name,
             displayName: `${mockEvent.arguments.name}-2`,
