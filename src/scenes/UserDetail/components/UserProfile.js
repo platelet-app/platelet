@@ -287,11 +287,14 @@ export default function UserProfile(props) {
             </Box>
             <Divider />
             <Stack direction={"row"} justifyContent={"space-between"}>
-                {!editMode ? <Typography>Address</Typography> : <></>}
+                {!editMode && state.contact ? (
+                    <Typography>Address</Typography>
+                ) : (
+                    <></>
+                )}
                 <Box>
-                    {Object.keys(state.contact ? addressFields : [])
-                        .filter((k) => !!state.contact[k])
-                        .map((key) => {
+                    {Object.keys(state.contact ? addressFields : []).map(
+                        (key) => {
                             if (editMode) {
                                 return (
                                     <TextField
@@ -332,7 +335,8 @@ export default function UserProfile(props) {
                                     </Typography>
                                 );
                             }
-                        })}
+                        }
+                    )}
                 </Box>
             </Stack>
             <Divider />
