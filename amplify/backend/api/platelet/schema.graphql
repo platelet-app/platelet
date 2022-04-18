@@ -27,7 +27,12 @@ type User
   name: String
   roles: [Role!]!
   dateOfBirth: AWSDate
-  riderResponsibility: String
+  riderResponsibility: String @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: owner, ownerField: "cognitoId", operations: [update]},
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update]},
+    {allow: private, provider: iam, operations: [create, read, update, delete]}
+  ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
   profilePictureURL: String
   profilePictureThumbnailURL: String
