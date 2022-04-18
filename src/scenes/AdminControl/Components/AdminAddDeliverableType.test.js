@@ -74,7 +74,6 @@ describe("AdminAddDeliverableType", () => {
                 expect.objectContaining(_.omit(mockNewDeliverable, "id"))
             )
         );
-        expect(screen.getByText("Deliverable type added")).toBeInTheDocument();
     });
 
     test("tag suggestions in combobox", async () => {
@@ -157,7 +156,6 @@ describe("AdminAddDeliverableType", () => {
                 expect.objectContaining(_.omit(mockNewDeliverable, "id"))
             )
         );
-        expect(screen.getByText("Deliverable type added")).toBeInTheDocument();
         expect(screen.getByRole("textbox", { name: "Label" })).toHaveValue("");
         expect(
             screen.getByRole("button", { name: "Other icon" })

@@ -71,7 +71,6 @@ function AdminAddRiderResponsibility() {
             );
             setState(initialRiderResponsibilityState);
             setIsPosting(false);
-            dispatch(displayInfoNotification("Rider responsibility added"));
         } catch (error) {
             console.log("error adding rider responsibility:", error);
             setIsPosting(false);

@@ -58,11 +58,10 @@ function AdminAddDeliverableType() {
             );
             setState(initialDeliverableTypeState);
             setIsPosting(false);
-            dispatch(displayInfoNotification("Deliverable type added"));
         } catch (error) {
             console.log("error adding deliverable type:", error);
             setIsPosting(false);
-            dispatch(displayErrorNotification(error.message));
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
         }
     }
     const deleteTag = (tag) => {
