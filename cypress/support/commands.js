@@ -25,8 +25,11 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 const Auth = require("aws-amplify").Auth;
+const Amplify = require("aws-amplify").Amplify;
 const DataStore = require("aws-amplify").DataStore;
+const Hub = require("aws-amplify").Hub;
 const models = require("../../src/models");
+import { syncExpression } from "aws-amplify";
 import "cypress-localstorage-commands";
 import _ from "lodash";
 
@@ -35,13 +38,47 @@ const password = Cypress.env("password");
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
 const tenantId = Cypress.env("tenantId");
+const endpoint = Cypress.env("appsyncGraphqlEndpoint");
+const region = Cypress.env("appsyncRegion");
+const authType = Cypress.env("appsyncAuthenticationType");
 
 const awsconfig = {
     aws_user_pools_id: userPoolId,
     aws_user_pools_web_client_id: clientId,
+    aws_appsync_graphqlEndpoint: endpoint,
+    aws_appsync_region: region,
+    aws_appsync_authenticationType: authType,
 };
 
-Auth.configure(awsconfig);
+Amplify.configure(awsconfig);
+
+const modelsToSync = [];
+for (const model of Object.values(models)) {
+    if (
+        [
+            "Task",
+            "User",
+            "TaskAssignee",
+            "RiderResponsibility",
+            "Comment",
+            "Location",
+            "Vehicle",
+            "Deliverable",
+            "DeliverableType",
+        ].includes(model.name)
+    ) {
+        modelsToSync.push(model);
+    }
+}
+
+DataStore.configure({
+    syncExpressions: [
+        ...modelsToSync.map((model) =>
+            syncExpression(model, (m) => m.tenantId("eq", tenantId))
+        ),
+        syncExpression(models.Tenant, (m) => m.id("eq", tenantId)),
+    ],
+});
 
 Cypress.Commands.add("signIn", () => {
     cy.then(() => Auth.signIn(username, password)).then((cognitoUser) => {
@@ -62,26 +99,23 @@ Cypress.Commands.add("signIn", () => {
 });
 
 Cypress.Commands.add("clearTasks", () => {
-    DataStore.query(models.TaskAssignee).then((tasks) => {
-        console.log(tasks);
-        tasks.forEach((task) => {
-            DataStore.delete(models.Task, task.id);
+    // iterate through all tasks and mark them cancelled
+    cy.get("#tasks-kanban-column-NEW")
+        .children()
+        .each(($task) => {
+            cy.get($task).click();
+            cy.get("#task-timeCancelled-button").click();
+            cy.get("#confirmation-ok-button").click();
+            cy.get("#task-status-close").click();
         });
-    });
-    DataStore.query(models.Task).then((tasks) => {
-        console.log(tasks);
-        tasks.forEach((task) => {
-            DataStore.delete(models.Task, task.id);
-        });
-    });
 });
 
 Cypress.Commands.add("populateTasks", () => {
-    const promises = _.range(10).map((i) => {
-        return DataStore.save(
-            new models.Task({ tenantId, priority: i % 2 ? "HIGH" : "LOW" })
-        );
-    });
+    for (const i of _.range(1, 5)) {
+        cy.get("#create-task-button").click();
+        cy.get(i > 2 ? "#MEDIUM" : "#LOW").click();
+        cy.get("#save-to-dash-button").click();
+    }
 });
 
 Cypress.Commands.add("clearDataStore", () => {

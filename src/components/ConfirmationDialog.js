@@ -30,6 +30,7 @@ function ConfirmationDialog(props) {
                         <div></div>
                     ) : (
                         <Button
+                            id={"confirmation-cancel-button"}
                             onClick={() => {
                                 props.onCancel();
                                 props.onClose();
@@ -41,6 +42,7 @@ function ConfirmationDialog(props) {
                     )}{" "}
                     {!props.hideOk && (
                         <Button
+                            id={"confirmation-ok-button"}
                             onClick={() => {
                                 props.onConfirmation();
                                 props.onClose();

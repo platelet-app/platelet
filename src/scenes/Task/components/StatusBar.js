@@ -140,7 +140,9 @@ function StatusBar(props) {
                 sx={{ paddingTop: 1, width: "100%" }}
             >
                 <Hidden mdDown>
-                    <Button onClick={props.handleClose}>Close</Button>
+                    <Button id="task-status-close" onClick={props.handleClose}>
+                        Close
+                    </Button>
                 </Hidden>
                 <Hidden mdUp>
                     <IconButton

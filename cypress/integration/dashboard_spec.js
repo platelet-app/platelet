@@ -77,9 +77,9 @@ describe("create a new task and open it", () => {
     });
 
     after(() => {
+        cy.clearTasks();
         cy.clearLocalStorageSnapshot();
         cy.clearLocalStorage();
-        cy.clearTasks();
     });
 
     beforeEach(() => {
@@ -92,14 +92,28 @@ describe("create a new task and open it", () => {
 
     it("successfully creates a new task", () => {
         cy.visit("/");
+        // get the length of the tasks before creating a new one
+        let taskCount = 0;
+        if (Cypress.$("#tasks-kanban-column-NEW").children().length !== 0) {
+            cy.get("#tasks-kanban-column-NEW")
+                .children()
+                .then(($tasks) => {
+                    taskCount = $tasks.length;
+                });
+        }
         cy.get("#create-task-button").click();
         cy.get("#save-to-dash-button").click();
-        cy.get("#tasks-kanban-column-NEW").children().should("have.length", 1);
+        cy.get("#tasks-kanban-column-NEW")
+            .children()
+            .should("have.length", taskCount + 1);
     });
-    it("opens a new task", () => {
+    it("opens a new task and closes it", () => {
         cy.visit("/");
         cy.get("#tasks-kanban-column-NEW").children().first().click();
         cy.url().should("include", "/task/");
+        cy.get("#task-status-close").click();
+        cy.url().should("not.include", "/task/");
+        cy.get("#task-status-close").should("not.exist");
     });
 });
 
@@ -155,13 +169,12 @@ describe("change the role view of the dashboard", () => {
 describe("filter tasks by various terms", () => {
     before(() => {
         cy.signIn();
-        cy.populateTasks();
     });
 
     after(() => {
+        cy.clearTasks();
         cy.clearLocalStorageSnapshot();
         cy.clearLocalStorage();
-        cy.clearTasks();
     });
 
     beforeEach(() => {
@@ -173,12 +186,13 @@ describe("filter tasks by various terms", () => {
     });
 
     const filterCheck = ($el) => {
-        if ($el.hasClass(".makeStyles-taskItem-26.makeStyles-show-4")) {
-            cy.wrap($el).should("contain", "LOW");
-        }
+        // check if element contains LOW
+        cy.get($el).contains("LOW");
     };
-    it.skip("successfully filters tasks by priority", () => {
+    it("successfully filters tasks by priority", () => {
         cy.visit("/");
+        cy.populateTasks();
+
         cy.get("#role-menu-button > [data-testid=ArrowDropDownIcon]").click();
         // click the first menu option
         cy.get(
@@ -188,17 +202,10 @@ describe("filter tasks by various terms", () => {
         cy.get("#tasks-filter-input").type("LOW");
         // wait because of debounce
         cy.wait(400);
-        for (const status of ["NEW", "ACTIVE", "PICKED_UP"]) {
-            cy.get(`#tasks-kanban-column-${status}`)
-                .children()
-                .each(filterCheck);
-        }
-        cy.get("#dashboard-tab-1").click();
-        for (const status of ["DROPPED_OFF", "CANCELLED", "REJECTED"]) {
-            cy.get(`#tasks-kanban-column-${status}`)
-                .children()
-                .each(filterCheck);
-        }
+        cy.get(`#tasks-kanban-column-NEW`)
+            .children()
+            .filter(":visible")
+            .each(filterCheck);
     });
     it("clears the filter term", () => {
         cy.visit("/");
