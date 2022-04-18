@@ -178,7 +178,6 @@ async function populateFakeData() {
                 },
 
                 roles: [userRoles.rider, userRoles.coordinator, userRoles.user],
-                active: 1,
             };
 
             const profilePicture = profilePictures.pop();
