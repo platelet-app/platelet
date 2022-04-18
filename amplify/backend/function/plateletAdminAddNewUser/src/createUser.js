@@ -102,7 +102,6 @@ exports.createUser = gql`
                 nextToken
                 startedAt
             }
-            active
             disabled
             createdAt
             updatedAt
