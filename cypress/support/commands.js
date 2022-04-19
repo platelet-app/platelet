@@ -100,21 +100,28 @@ Cypress.Commands.add("signIn", () => {
 
 Cypress.Commands.add("clearTasks", () => {
     // iterate through all tasks and mark them cancelled
-    cy.get("#tasks-kanban-column-NEW")
+    cy.visit("/");
+    cy.get("[data-cy=NEW-title-skeleton]").should("not.exist");
+    cy.get(".MuiPaper-root").should("be.visible");
+    cy.get("[data-cy=tasks-kanban-column-NEW]")
         .children()
-        .each(($task) => {
-            cy.get($task).click();
-            cy.get("#task-timeCancelled-button").click();
-            cy.get("#confirmation-ok-button").click();
-            cy.get("#task-status-close").click();
+        .each((el, index) => {
+            cy.get(el).click();
+            cy.get("[data-cy=task-timeCancelled-button").click();
+            cy.get("[data-cy=confirmation-ok-button").click();
+            cy.get("[data-cy=task-status-close").click();
         });
 });
 
 Cypress.Commands.add("populateTasks", () => {
     for (const i of _.range(1, 5)) {
-        cy.get("#create-task-button").click();
-        cy.get(i > 2 ? "#MEDIUM" : "#LOW").click();
-        cy.get("#save-to-dash-button").click();
+        cy.get("[data-cy=create-task-button").click();
+        cy.get(
+            i > 2
+                ? "[data-cy=new-task-priority-MEDIUM"
+                : "[data-cy=new-task-priority-LOW"
+        ).click();
+        cy.get("[data-cy=save-to-dash-button").click();
     }
 });
 

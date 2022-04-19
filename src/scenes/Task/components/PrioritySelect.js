@@ -19,6 +19,7 @@ function PrioritySelect(props) {
             {Object.values(priorities).map((priority) => (
                 <Chip
                     key={priority}
+                    data-cy={`new-task-priority-${priority}`}
                     variant={state === priority ? "default" : "outlined"}
                     label={priority}
                     onClick={() => handleChange(priority)}

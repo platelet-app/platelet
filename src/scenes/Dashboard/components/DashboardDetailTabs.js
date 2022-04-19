@@ -40,7 +40,7 @@ export function TabPanel(props) {
         <div
             role="tabpanel"
             hidden={value !== index}
-            id={`dashboard-tabpanel-${index}`}
+            data-cy={`dashboard-tab-${index}`}
             aria-labelledby={`dashboard-tab-${index}`}
             {...other}
         >
@@ -57,8 +57,9 @@ TabPanel.propTypes = {
 
 function a11yProps(index) {
     return {
-        id: `dashboard-tab-${index}`,
         "aria-controls": `dashboard-tabpanel-${index}`,
+        "data-cy": `dashboard-tabpanel-${index}`,
+        "aria-labelledby": `dashboard-tabpanel-${index}`,
     };
 }
 
@@ -110,7 +111,7 @@ export function DashboardDetailTabs(props) {
             <Button
                 variant="contained"
                 color="primary"
-                id="create-task-button"
+                data-cy="create-task-button"
                 disabled={
                     guidedSetupOpen ||
                     !dataStoreReadyStatus ||
@@ -124,7 +125,7 @@ export function DashboardDetailTabs(props) {
             <Button
                 variant="contained"
                 color="primary"
-                id="clear-search-button"
+                data-cy="clear-search-button"
                 disabled={props.disableAddButton}
                 onClick={() => {
                     dispatch(clearDashboardFilter());
@@ -167,7 +168,7 @@ export function DashboardDetailTabs(props) {
                             setAnchorElRoleMenu(event.currentTarget);
                         }}
                         sx={{ cursor: "pointer" }}
-                        id="role-identifier"
+                        data-cy="role-identifier"
                     >
                         {`${roleView} view`.toUpperCase()}
                     </Typography>
@@ -178,14 +179,14 @@ export function DashboardDetailTabs(props) {
                             setAnchorElRoleMenu(event.currentTarget);
                         }}
                         sx={{ cursor: "pointer" }}
-                        id="role-identifier"
+                        data-cy="role-identifier"
                     >
                         {roleView &&
                             `${roleView.substring(0, 5).toUpperCase()}`}
                     </Typography>
                 </Hidden>
                 <IconButton
-                    id="role-menu-button"
+                    data-cy="role-menu-button"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
                     onClick={(event) => {
@@ -200,7 +201,7 @@ export function DashboardDetailTabs(props) {
                         addClearButton}
                 </Hidden>
                 <Menu
-                    id="role-menu"
+                    data-cy="role-menu"
                     anchorEl={anchorElRoleMenu}
                     keepMounted
                     open={Boolean(anchorElRoleMenu)}

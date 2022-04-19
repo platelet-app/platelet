@@ -409,6 +409,7 @@ function TasksGridColumn(props) {
                     <Skeleton
                         variant="rectangular"
                         width={"100%"}
+                        data-cy={`${props.title}-title-skeleton`}
                         height={50}
                     />
                     {_.range(4).map((i) => (
@@ -437,7 +438,7 @@ function TasksGridColumn(props) {
                 {header}
                 <Stack
                     direction={"column"}
-                    id={`tasks-kanban-column-${props.taskKey}`}
+                    data-cy={`tasks-kanban-column-${props.taskKey}`}
                     spacing={0}
                     alignItems={"center"}
                     justifyContent={"center"}

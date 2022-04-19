@@ -42,7 +42,7 @@ describe("open the dashboard", () => {
             "contain",
             "DELIVERED"
         );
-        cy.get("#dashboard-tab-1").click();
+        cy.get("[data-cy=dashboard-tabpanel-1]").click();
         cy.get(":nth-child(1) > .makeStyles-column-61").should(
             "contain",
             "COMPLETED"
@@ -77,7 +77,6 @@ describe("create a new task and open it", () => {
     });
 
     after(() => {
-        cy.clearTasks();
         cy.clearLocalStorageSnapshot();
         cy.clearLocalStorage();
     });
@@ -93,27 +92,23 @@ describe("create a new task and open it", () => {
     it("successfully creates a new task", () => {
         cy.visit("/");
         // get the length of the tasks before creating a new one
-        let taskCount = 0;
-        if (Cypress.$("#tasks-kanban-column-NEW").children().length !== 0) {
-            cy.get("#tasks-kanban-column-NEW")
-                .children()
-                .then(($tasks) => {
-                    taskCount = $tasks.length;
-                });
-        }
-        cy.get("#create-task-button").click();
-        cy.get("#save-to-dash-button").click();
-        cy.get("#tasks-kanban-column-NEW")
+        cy.get("[data-cy=NEW-title-skeleton]").should("not.exist");
+        cy.get(".MuiPaper-root").should("be.visible");
+        cy.get("[data-cy=create-task-button]").click();
+        cy.get("[data-cy=save-to-dash-button]").click();
+        cy.get("[data-cy=tasks-kanban-column-NEW]")
             .children()
-            .should("have.length", taskCount + 1);
+            .its("length")
+            .should("be.gt", 0);
     });
+
     it("opens a new task and closes it", () => {
         cy.visit("/");
-        cy.get("#tasks-kanban-column-NEW").children().first().click();
+        cy.get("[data-cy=tasks-kanban-column-NEW]").children().first().click();
         cy.url().should("include", "/task/");
-        cy.get("#task-status-close").click();
+        cy.get("[data-cy=task-status-close]").click();
         cy.url().should("not.include", "/task/");
-        cy.get("#task-status-close").should("not.exist");
+        cy.get("[data-cy=task-status-close]").should("not.exist");
     });
 });
 
@@ -137,42 +132,47 @@ describe("change the role view of the dashboard", () => {
 
     it("successfully changes the role view to COORDINATOR", () => {
         cy.visit("/");
-        cy.get("#role-menu-button > [data-testid=ArrowDropDownIcon]").click();
+        cy.get("[data-cy=role-identifier]").should("not.contain", "NULL VIEW");
+        cy.get("[data-cy=role-menu-button]").click();
         // click the second menu option
         cy.get(
-            "#role-menu > .MuiPaper-root > .MuiList-root > :nth-child(2)"
+            "[data-cy=role-menu] > .MuiPaper-root > .MuiList-root > :nth-child(2)"
         ).click();
-        cy.get("#role-identifier").should("contain", "COORDINATOR");
+        cy.get("[data-cy=role-identifier]").should("contain", "COORDINATOR");
+        cy.get("[data-cy=tasks-kanban-column-NEW]").should("exist");
     });
     it("successfully changes the role view to RIDER", () => {
         cy.visit("/");
-        cy.get("#role-menu-button > [data-testid=ArrowDropDownIcon]").click();
+        cy.get("[data-cy=role-identifier]").should("not.contain", "NULL VIEW");
+        cy.get("[data-cy=role-menu-button]").click();
         // click the third menu option
         cy.get(
-            "#role-menu > .MuiPaper-root > .MuiList-root > :nth-child(3)"
+            "[data-cy=role-menu] > .MuiPaper-root > .MuiList-root > :nth-child(3)"
         ).click();
-        cy.get("#role-identifier").should("contain", "RIDER");
+        cy.get("[data-cy=role-identifier]").should("contain", "RIDER");
         // assert that tasks-kanban-column-NEW is not present
-        cy.get("#tasks-kanban-column-NEW").should("not.exist");
+        cy.get("[data-cy=tasks-kanban-column-NEW]").should("not.exist");
     });
     it("successfully changes the role view to ALL", () => {
         cy.visit("/");
-        cy.get("#role-menu-button > [data-testid=ArrowDropDownIcon]").click();
+        cy.get("[data-cy=role-identifier]").should("not.contain", "NULL VIEW");
+        cy.get("[data-cy=role-menu-button]").click();
         // click the first menu option
         cy.get(
-            "#role-menu > .MuiPaper-root > .MuiList-root > :nth-child(1)"
+            "[data-cy=role-menu] > .MuiPaper-root > .MuiList-root > :nth-child(1)"
         ).click();
-        cy.get("#role-identifier").should("contain", "ALL");
+        cy.get("[data-cy=role-identifier]").should("contain", "ALL");
+        cy.get("[data-cy=tasks-kanban-column-NEW]").should("exist");
     });
 });
 
 describe("filter tasks by various terms", () => {
     before(() => {
         cy.signIn();
+        cy.clearTasks();
     });
 
     after(() => {
-        cy.clearTasks();
         cy.clearLocalStorageSnapshot();
         cy.clearLocalStorage();
     });
@@ -187,31 +187,22 @@ describe("filter tasks by various terms", () => {
 
     const filterCheck = ($el) => {
         // check if element contains LOW
+        console.log($el.text());
         cy.get($el).contains("LOW");
     };
-    it("successfully filters tasks by priority", () => {
+    it("successfully filters tasks by priority and clears the search term", () => {
         cy.visit("/");
         cy.populateTasks();
-
-        cy.get("#role-menu-button > [data-testid=ArrowDropDownIcon]").click();
-        // click the first menu option
-        cy.get(
-            "#role-menu > .MuiPaper-root > .MuiList-root > :nth-child(1)"
-        ).click();
-        cy.get("#role-identifier").should("contain", "ALL");
-        cy.get("#tasks-filter-input").type("LOW");
+        cy.scrollTo("bottom", { duration: 4000 });
+        cy.get("[data-cy=tasks-filter-input]").click().type("LOW");
         // wait because of debounce
-        cy.wait(400);
-        cy.get(`#tasks-kanban-column-NEW`)
+        cy.wait(1000);
+        cy.get(`[data-cy=tasks-kanban-column-NEW]`)
             .children()
             .filter(":visible")
             .each(filterCheck);
-    });
-    it("clears the filter term", () => {
-        cy.visit("/");
-        cy.get("#tasks-filter-input").type("LOW");
-        cy.get("#clear-search-button").click();
+        cy.get("[data-cy=clear-search-button]").click();
         // tasks-filter-input should be empty
-        cy.get("#tasks-filter-input").should("have.value", "");
+        cy.get("[data-cy=tasks-filter-input]").should("have.value", "");
     });
 });

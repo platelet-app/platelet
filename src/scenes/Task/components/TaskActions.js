@@ -211,7 +211,7 @@ function TaskActions(props) {
                                 {Object.entries(fields).map(([key, value]) => {
                                     return (
                                         <ToggleButton
-                                            id={`task-${key}-button`}
+                                            data-cy={`task-${key}-button`}
                                             sx={{
                                                 paddingTop: 1.5,
                                                 paddingBottom: 1.5,
