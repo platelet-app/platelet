@@ -33,7 +33,7 @@ function TaskContextMenu(props) {
     const [state, setState] = React.useState(initialState);
     const deleteButtonClasses = deleteButtonStyles();
     const useStyles = makeStyles({
-        button: {
+        taskContextButton: {
             color: props.iconColor || "primary",
         },
     });
@@ -189,7 +189,7 @@ function TaskContextMenu(props) {
                 disabled={isPosting}
                 size="large"
             >
-                <MoreVertIcon className={classes.button} />
+                <MoreVertIcon className={classes.taskContextButton} />
             </IconButton>
             <Menu
                 keepMounted

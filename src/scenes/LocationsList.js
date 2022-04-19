@@ -8,13 +8,12 @@ import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 import { Button, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
-import Skeleton from '@mui/material/Skeleton';
+import Skeleton from "@mui/material/Skeleton";
 import { matchSorter } from "match-sorter";
 import makeStyles from "@mui/styles/makeStyles";
 import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
-
 
 const useStyles = makeStyles((theme) => {
     return {
@@ -31,7 +30,6 @@ const useStyles = makeStyles((theme) => {
     };
 });
 
-
 export default function LocationsList() {
     const locationsRef = useRef([]);
     const [filteredLocations, setFilteredLocations] = useState([]);
@@ -42,7 +40,11 @@ export default function LocationsList() {
     const classes = useStyles();
 
     function onChangeFilterText(e) {
-        setFilteredLocations(matchSorter(locationsRef.current, e.target.value, {keys: ['name']}))
+        setFilteredLocations(
+            matchSorter(locationsRef.current, e.target.value, {
+                keys: ["name"],
+            })
+        );
     }
 
     async function getLocations() {
@@ -85,35 +87,34 @@ export default function LocationsList() {
             >
                 <PaddedPaper maxWidth={"800px"}>
                     <Stack direction={"column"}>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
+                        <Skeleton variant="text" width={500} height={50} />
+                        <Skeleton variant="text" width={500} height={50} />
+                        <Skeleton variant="text" width={500} height={50} />
+                        <Skeleton variant="text" width={500} height={50} />
                     </Stack>
                 </PaddedPaper>
             </Stack>
-        )
+        );
     } else {
         return (
-          <Stack
+            <Stack
                 direction={"column"}
                 spacing={3}
                 alignItems={"flex-start"}
                 justifyContent={"center"}
             >
                 <TextFieldControlled
-                    id="tasks-filter-input"
                     variant={"standard"}
                     placeholder={"Filter locations"}
                     onChange={onChangeFilterText}
                     color={"secondary"}
                     className={classes.root}
                     InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon className={classes.searchIcon} />
-                        </InputAdornment>
-                      ),
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon className={classes.searchIcon} />
+                            </InputAdornment>
+                        ),
                     }}
                 />
                 {addButton}

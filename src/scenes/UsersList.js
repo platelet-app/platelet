@@ -124,7 +124,6 @@ export default function UsersList(props) {
             >
                 {addButton}
                 <TextFieldControlled
-                    id="tasks-filter-input"
                     variant={"standard"}
                     placeholder={"Filter users"}
                     onChange={onChangeFilterText}
