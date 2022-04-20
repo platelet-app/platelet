@@ -23,9 +23,8 @@ import {
 } from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
-import { DataStore } from "aws-amplify";
-import * as models from "./models";
 import { getWhoami } from "./redux/Selectors";
+import registerServiceWorker from './register-worker'
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -145,6 +144,8 @@ function AppContents(props) {
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
+    
+    registerServiceWorker(props);
 
     return (
         <React.Fragment>
