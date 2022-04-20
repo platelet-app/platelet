@@ -104,6 +104,7 @@
         "@cypress/react": "^5.10.3",
         "@cypress/webpack-dev-server": "^1.7.0",
         "@peculiar/webcrypto": "^1.2.2",
+        "@testing-library/cypress": "^8.0.2",
         "@testing-library/jest-dom": "^5.15.0",
         "@welldone-software/why-did-you-render": "^6.2.3",
         "canvas": "^2.8.0",
