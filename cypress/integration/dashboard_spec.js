@@ -169,7 +169,7 @@ describe("change the role view of the dashboard", () => {
 describe("filter tasks by various terms", () => {
     before(() => {
         cy.signIn();
-        cy.clearTasks();
+        cy.clearTasks("NEW");
     });
 
     after(() => {
@@ -187,7 +187,6 @@ describe("filter tasks by various terms", () => {
 
     const filterCheck = ($el) => {
         // check if element contains LOW
-        console.log($el.text());
         cy.get($el).contains("LOW");
     };
     it("successfully filters tasks by priority and clears the search term", () => {
@@ -204,5 +203,42 @@ describe("filter tasks by various terms", () => {
         cy.get("[data-cy=clear-search-button]").click();
         // tasks-filter-input should be empty
         cy.get("[data-cy=tasks-filter-input]").should("have.value", "");
+    });
+});
+
+describe.only("assigning users to tasks", () => {
+    before(() => {
+        cy.signIn();
+        cy.clearTasks("ACTIVE");
+    });
+
+    after(() => {
+        cy.clearLocalStorageSnapshot();
+        cy.clearLocalStorage();
+    });
+
+    beforeEach(() => {
+        cy.restoreLocalStorage();
+    });
+
+    afterEach(() => {
+        cy.saveLocalStorage();
+    });
+
+    it("successfully assigns a rider to a task", () => {
+        cy.visit("/");
+        cy.addSingleTask();
+        cy.get("[data-cy=tasks-kanban-column-NEW]").children().first().click();
+        cy.get("[data-cy=combo-box-riders]").click().type("Test Rider");
+        cy.get('[id*="option-0"]').click();
+        cy.findAllByText("ACTIVE").should("exist");
+        cy.findAllByText("Test Rider").should("exist");
+        // I don't know why this causes cypress to freeze
+        // cy.findAllByText("Task moved to ACTIVE").should("exist");
+        cy.get("[data-cy=task-status-close]").click();
+        cy.get("[data-cy=tasks-kanban-column-ACTIVE]")
+            .children()
+            .its("length")
+            .should("eq", 1);
     });
 });

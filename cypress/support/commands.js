@@ -23,15 +23,15 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+import { syncExpression } from "aws-amplify";
+import "cypress-localstorage-commands";
+import _ from "lodash";
+import "@testing-library/cypress/add-commands";
 
 const Auth = require("aws-amplify").Auth;
 const Amplify = require("aws-amplify").Amplify;
 const DataStore = require("aws-amplify").DataStore;
-const Hub = require("aws-amplify").Hub;
 const models = require("../../src/models");
-import { syncExpression } from "aws-amplify";
-import "cypress-localstorage-commands";
-import _ from "lodash";
 
 const username = Cypress.env("username");
 const password = Cypress.env("password");
@@ -98,18 +98,32 @@ Cypress.Commands.add("signIn", () => {
     cy.saveLocalStorage();
 });
 
-Cypress.Commands.add("clearTasks", () => {
+Cypress.Commands.add("clearTasks", (status) => {
     // iterate through all tasks and mark them cancelled
     cy.visit("/");
-    cy.get("[data-cy=NEW-title-skeleton]").should("not.exist");
-    cy.get(".MuiPaper-root").should("be.visible");
-    cy.get("[data-cy=tasks-kanban-column-NEW]")
-        .children()
-        .each((el, index) => {
-            cy.get(el).click();
-            cy.get("[data-cy=task-timeCancelled-button").click();
-            cy.get("[data-cy=confirmation-ok-button").click();
-            cy.get("[data-cy=task-status-close").click();
+    cy.get(`[data-cy=${status}-title-skeleton]`)
+        .should("not.exist")
+        .then(() => {
+            cy.get(".MuiPaper-root")
+                .should("be.visible")
+                .then(() => {
+                    if (
+                        Cypress.$(
+                            `[data-cy=tasks-kanban-column-${status}]:empty`
+                        ).length === 1
+                    )
+                        return;
+                    cy.get(`[data-cy=tasks-kanban-column-${status}]`)
+                        .children()
+                        .each((el) => {
+                            cy.get(el).click();
+                            cy.get(
+                                "[data-cy=task-timeCancelled-button"
+                            ).click();
+                            cy.get("[data-cy=confirmation-ok-button").click();
+                            cy.get("[data-cy=task-status-close").click();
+                        });
+                });
         });
 });
 
@@ -127,4 +141,13 @@ Cypress.Commands.add("populateTasks", () => {
 
 Cypress.Commands.add("clearDataStore", () => {
     indexedDB.deleteDatabase("amplify-datastore");
+});
+
+Cypress.Commands.add("addSingleTask", () => {
+    cy.visit("/");
+    // get the length of the tasks before creating a new one
+    cy.get("[data-cy=NEW-title-skeleton]").should("not.exist");
+    cy.get(".MuiPaper-root").should("be.visible");
+    cy.get("[data-cy=create-task-button]").click();
+    cy.get("[data-cy=save-to-dash-button]").click();
 });
