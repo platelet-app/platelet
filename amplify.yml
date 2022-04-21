@@ -7,10 +7,6 @@ env:
     REACT_APP_RESIZE_BUCKET_NAME: platelet-resize-bucket
     REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME: platelet-demo-profilepics
     REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION: eu-west-1
-    resizeHeight: 300
-    resizeWidth: 300
-    thumbnailHeight: 128
-    thumbnailWidth: 128
 backend:
   phases:
     build:
