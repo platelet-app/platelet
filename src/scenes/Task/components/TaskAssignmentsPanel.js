@@ -242,6 +242,7 @@ function TaskAssignmentsPanel(props) {
                         <Tooltip title={"Edit Assignees"}>
                             <IconButton
                                 aria-label={"Edit Assignees"}
+                                data-cy="edit-task-assignees"
                                 size={"small"}
                                 disabled={props.disabled}
                                 onClick={() =>

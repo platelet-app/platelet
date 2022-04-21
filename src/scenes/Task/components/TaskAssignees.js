@@ -18,6 +18,7 @@ function TaskAssignees(props) {
                 <Grid
                     container
                     key={role}
+                    data-cy={`task-${role}-assignees`}
                     direction="row"
                     alignItems="center"
                     spacing={1}
