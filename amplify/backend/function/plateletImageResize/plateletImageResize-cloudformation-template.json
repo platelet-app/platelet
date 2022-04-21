@@ -31,9 +31,6 @@
     },
     "thumbnailHeight": {
       "Type": "String"
-    },
-    "amplifyStorageBucketName": {
-      "Type": "String"
     }
   },
   "Conditions": {
@@ -103,24 +100,6 @@
             },
             "THUMBNAIL_HEIGHT": {
               "Ref": "thumbnailHeight"
-            },
-            "AMPLIFY_STORAGE_BUCKET_NAME": {
-              "Ref": "amplifyStorageBucketName"
-            },
-            "resizeWidth": {
-              "Ref": "resizeWidth"
-            },
-            "resizeHeight": {
-              "Ref": "resizeHeight"
-            },
-            "thumbnailWidth": {
-              "Ref": "thumbnailWidth"
-            },
-            "thumbnailHeight": {
-              "Ref": "thumbnailHeight"
-            },
-            "amplifyStorageBucketName": {
-              "Ref": "amplifyStorageBucketName"
             }
           }
         },
@@ -276,6 +255,33 @@
           ]
         }
       }
+    },
+    "CustomLambdaExecutionPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "custom-lambda-execution-policy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:*",
+                "s3-object-lambda:*"
+              ],
+              "Resource": [
+                "*"
+              ],
+              "Effect": "Allow"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ]
+      },
+      "DependsOn": "LambdaExecutionRole"
     }
   },
   "Outputs": {
