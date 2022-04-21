@@ -101,7 +101,7 @@ Cypress.Commands.add("signIn", () => {
 Cypress.Commands.add("clearTasks", (status) => {
     // iterate through all tasks and mark them cancelled
     cy.visit("/");
-    cy.get(`[data-cy=${status}-title-skeleton]`)
+    cy.get(`[data-cy=${status}-title-skeleton]`, { timeout: 10000 })
         .should("not.exist")
         .then(() => {
             cy.get(".MuiPaper-root")
@@ -144,9 +144,9 @@ Cypress.Commands.add("clearDataStore", () => {
 });
 
 Cypress.Commands.add("addSingleTask", () => {
-    cy.visit("/");
-    // get the length of the tasks before creating a new one
-    cy.get("[data-cy=NEW-title-skeleton]").should("not.exist");
+    cy.get("[data-cy=NEW-title-skeleton]", { timeout: 10000 }).should(
+        "not.exist"
+    );
     cy.get(".MuiPaper-root").should("be.visible");
     cy.get("[data-cy=create-task-button]").click();
     cy.get("[data-cy=save-to-dash-button]").click();
