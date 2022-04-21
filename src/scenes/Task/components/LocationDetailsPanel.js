@@ -143,28 +143,32 @@ function LocationDetailsPanel(props) {
                         updated[props.locationKey] = null;
                     })
                 );
-                API.graphql(
-                    graphqlOperation(queries.getTask, { id: props.taskId })
-                )
-                    .then((result) => {
-                        const { id, _version } = result.data.getTask;
-                        API.graphql(
-                            graphqlOperation(mutations.updateTask, {
-                                input: {
-                                    id,
-                                    _version,
-                                    [`${props.locationKey}Id`]: null,
-                                },
-                            })
-                        ).catch((err) => {
+                if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
+                    API.graphql(
+                        graphqlOperation(queries.getTask, { id: props.taskId })
+                    )
+                        .then((result) => {
+                            const { id, _version } = result.data.getTask;
+                            API.graphql(
+                                graphqlOperation(mutations.updateTask, {
+                                    input: {
+                                        id,
+                                        _version,
+                                        [`${props.locationKey}Id`]: null,
+                                    },
+                                })
+                            ).catch((err) => {
+                                dispatch(
+                                    displayErrorNotification(errorMessage)
+                                );
+                                console.log(err);
+                            });
+                        })
+                        .catch((err) => {
                             dispatch(displayErrorNotification(errorMessage));
                             console.log(err);
                         });
-                    })
-                    .catch((err) => {
-                        dispatch(displayErrorNotification(errorMessage));
-                        console.log(err);
-                    });
+                }
             } else {
                 // clear the fields for an unlisted location before deleting it
                 await DataStore.save(
@@ -181,28 +185,32 @@ function LocationDetailsPanel(props) {
                         updated[props.locationKey] = null;
                     })
                 );
-                API.graphql(
-                    graphqlOperation(queries.getTask, { id: props.taskId })
-                )
-                    .then((result) => {
-                        const { id, _version } = result.data.getTask;
-                        API.graphql(
-                            graphqlOperation(mutations.updateTask, {
-                                input: {
-                                    id,
-                                    _version,
-                                    [`${props.locationKey}Id`]: null,
-                                },
-                            })
-                        ).catch((err) => {
+                if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
+                    API.graphql(
+                        graphqlOperation(queries.getTask, { id: props.taskId })
+                    )
+                        .then((result) => {
+                            const { id, _version } = result.data.getTask;
+                            API.graphql(
+                                graphqlOperation(mutations.updateTask, {
+                                    input: {
+                                        id,
+                                        _version,
+                                        [`${props.locationKey}Id`]: null,
+                                    },
+                                })
+                            ).catch((err) => {
+                                dispatch(
+                                    displayErrorNotification(errorMessage)
+                                );
+                                console.log(err);
+                            });
+                        })
+                        .catch((err) => {
                             dispatch(displayErrorNotification(errorMessage));
                             console.log(err);
                         });
-                    })
-                    .catch((err) => {
-                        dispatch(displayErrorNotification(errorMessage));
-                        console.log(err);
-                    });
+                }
                 DataStore.delete(currentLocation);
             }
             setState(null);
