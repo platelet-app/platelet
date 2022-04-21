@@ -14,7 +14,7 @@ import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import * as models from "../../../models/index";
-import { DataStore } from "aws-amplify";
+import { API, DataStore, graphqlOperation } from "aws-amplify";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
 import {
@@ -23,6 +23,8 @@ import {
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
+import * as mutations from "../../../graphql/mutations";
+import * as queries from "../../../graphql/queries";
 
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
@@ -128,7 +130,6 @@ function LocationDetailsPanel(props) {
     }
 
     async function clearLocation() {
-        console.log("clearLocation");
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
@@ -137,21 +138,33 @@ function LocationDetailsPanel(props) {
                 result[props.locationKey].id
             );
             if (currentLocation.listed === 1) {
-                // this is to trigger the observer on the dashboard and clear the card
-                const dummyLocation = await DataStore.save(
-                    new models.Location({ tenantId })
-                );
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated[props.locationKey] = dummyLocation;
-                    })
-                );
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
                         updated[props.locationKey] = null;
                     })
                 );
-                await DataStore.delete(dummyLocation);
+                API.graphql(
+                    graphqlOperation(queries.getTask, { id: props.taskId })
+                )
+                    .then((result) => {
+                        const { id, _version } = result.data.getTask;
+                        API.graphql(
+                            graphqlOperation(mutations.updateTask, {
+                                input: {
+                                    id,
+                                    _version,
+                                    [`${props.locationKey}Id`]: null,
+                                },
+                            })
+                        ).catch((err) => {
+                            dispatch(displayErrorNotification(errorMessage));
+                            console.log(err);
+                        });
+                    })
+                    .catch((err) => {
+                        dispatch(displayErrorNotification(errorMessage));
+                        console.log(err);
+                    });
             } else {
                 // clear the fields for an unlisted location before deleting it
                 await DataStore.save(
@@ -168,7 +181,29 @@ function LocationDetailsPanel(props) {
                         updated[props.locationKey] = null;
                     })
                 );
-                await DataStore.delete(currentLocation);
+                API.graphql(
+                    graphqlOperation(queries.getTask, { id: props.taskId })
+                )
+                    .then((result) => {
+                        const { id, _version } = result.data.getTask;
+                        API.graphql(
+                            graphqlOperation(mutations.updateTask, {
+                                input: {
+                                    id,
+                                    _version,
+                                    [`${props.locationKey}Id`]: null,
+                                },
+                            })
+                        ).catch((err) => {
+                            dispatch(displayErrorNotification(errorMessage));
+                            console.log(err);
+                        });
+                    })
+                    .catch((err) => {
+                        dispatch(displayErrorNotification(errorMessage));
+                        console.log(err);
+                    });
+                DataStore.delete(currentLocation);
             }
             setState(null);
         } catch (error) {

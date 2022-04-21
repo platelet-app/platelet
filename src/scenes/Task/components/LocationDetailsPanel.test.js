@@ -1,6 +1,6 @@
 import React from "react";
 import LocationDetailsPanel from "./LocationDetailsPanel";
-import { DataStore } from "aws-amplify";
+import { DataStore, API } from "aws-amplify";
 import { render } from "../../../test-utils";
 import { act, screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
@@ -9,6 +9,8 @@ import * as models from "../../../models/index";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
 import { v4 as uuidv4 } from "uuid";
+import * as mutations from "../../../graphql/mutations";
+import * as queries from "../../../graphql/queries";
 
 const errorMessage = "Sorry, something went wrong";
 
@@ -175,9 +177,13 @@ describe("LocationDetailsPanel", () => {
         const task = new models.Task({ [locationKey]: mockLocations[0] });
         await DataStore.save(task);
         const saveSpy = jest.spyOn(DataStore, "save");
-        const deleteSpy = jest.spyOn(DataStore, "delete");
         const querySpy = jest.spyOn(DataStore, "query");
-        const dummyLocation = new models.Location({});
+        jest.spyOn(amplify, "graphqlOperation").mockReturnValue();
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
+            data: {
+                getTask: { ...task, _version: 1 },
+            },
+        });
 
         render(
             <LocationDetailsPanel
@@ -199,23 +205,28 @@ describe("LocationDetailsPanel", () => {
             screen.getByRole("button", { name: "Cancel" })
         ).toBeInTheDocument();
         userEvent.click(okButton);
-        await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(3));
-        await waitFor(() => expect(deleteSpy).toHaveBeenCalledTimes(1));
-        expect(deleteSpy).toHaveBeenCalledWith(
-            expect.objectContaining(_.omit(dummyLocation, "id"))
-        );
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining(_.omit(dummyLocation, "id"))
-        );
-        expect(saveSpy).toHaveBeenCalledWith({
-            ...task,
-            [locationKey]: expect.objectContaining(_.omit(dummyLocation, "id")),
-        });
+        await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(apiSpy).toHaveBeenCalledTimes(2));
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
             [locationKey]: null,
         });
-        expect(deleteSpy).toHaveBeenCalledTimes(1);
+        expect(apiSpy).toHaveBeenNthCalledWith(
+            1,
+            amplify.graphqlOperation(queries.getTask, {
+                id: task.id,
+            })
+        );
+        expect(apiSpy).toHaveBeenNthCalledWith(
+            2,
+            amplify.graphqlOperation(mutations.updateTask, {
+                input: {
+                    id: task.id,
+                    _version: 1,
+                    [`${locationKey}Id`]: null,
+                },
+            })
+        );
         expect(screen.queryByText(mockLocations[0].line1)).toBeNull();
         expect(screen.getByRole("textbox")).toBeInTheDocument();
         expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
@@ -247,6 +258,12 @@ describe("LocationDetailsPanel", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         const deleteSpy = jest.spyOn(DataStore, "delete");
         const querySpy = jest.spyOn(DataStore, "query");
+        jest.spyOn(amplify, "graphqlOperation").mockReturnValue();
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
+            data: {
+                getTask: { ...task, _version: 1 },
+            },
+        });
 
         let clearedLocation = {};
         for (const field of Object.keys(
@@ -275,8 +292,22 @@ describe("LocationDetailsPanel", () => {
             screen.getByRole("button", { name: "Cancel" })
         ).toBeInTheDocument();
         userEvent.click(okButton);
-        await waitFor(() =>
-            expect(deleteSpy).toHaveBeenNthCalledWith(1, unlistedLocation)
+        await waitFor(() => expect(apiSpy).toHaveBeenCalledTimes(2));
+        expect(apiSpy).toHaveBeenNthCalledWith(
+            1,
+            amplify.graphqlOperation(queries.getTask, {
+                id: task.id,
+            })
+        );
+        expect(apiSpy).toHaveBeenNthCalledWith(
+            2,
+            amplify.graphqlOperation(mutations.updateTask, {
+                input: {
+                    id: task.id,
+                    _version: 1,
+                    [`${locationKey}Id`]: null,
+                },
+            })
         );
         await waitFor(() =>
             expect(saveSpy).toHaveBeenNthCalledWith(1, clearedLocation)
@@ -286,6 +317,9 @@ describe("LocationDetailsPanel", () => {
                 ...task,
                 [locationKey]: null,
             })
+        );
+        await waitFor(() =>
+            expect(deleteSpy).toHaveBeenNthCalledWith(1, unlistedLocation)
         );
         expect(screen.queryByText(mockLocations[0].line1)).toBeNull();
         expect(screen.getByRole("textbox")).toBeInTheDocument();
