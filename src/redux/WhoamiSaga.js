@@ -98,6 +98,9 @@ function* getWhoami() {
                 }
 
                 yield call([DataStore, DataStore.configure], {
+                    errorHandler: (err) => {
+                        console.log("DataStore error:", err);
+                    },
                     syncExpressions: [
                         ...modelsToSync.map((model) =>
                             syncExpression(model, (m) =>
