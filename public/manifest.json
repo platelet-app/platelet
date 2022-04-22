@@ -1,15 +1,25 @@
 {
     "short_name": "Platelet",
-    "name": "Platelet App for dispatch control",
+    "name": "Platelet",
     "icons": [
         {
-            "src": "favicon.ico",
-            "sizes": "64x64 32x32 24x24 16x16",
-            "type": "image/x-icon"
+            "src": "icon/lowres.webp",
+            "sizes": "48x48",
+            "type": "image/webp"
+        },
+        {
+            "src": "icon/hires.webp",
+            "sizes": "512x512",
+            "type": "image/webp"
+        },
+        {
+            "src": "icon/hd_hi.ico",
+            "sizes": "256x256"
         }
     ],
+
     "start_url": ".",
     "display": "standalone",
-    "theme_color": "#000000",
-    "background_color": "#ffffff"
+    "theme_color": "#fd6d2a",
+    "background_color": "#282828"
 }
