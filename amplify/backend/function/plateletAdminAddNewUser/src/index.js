@@ -1,3 +1,17 @@
+/*
+Use the following code to retrieve configured secrets from SSM:
+
+const aws = require('aws-sdk');
+
+const { Parameters } = await (new aws.SSM())
+  .getParameters({
+    Names: ["PLATELET_WELCOME_EMAIL","PLATELET_DOMAIN_NAME"].map(secretName => process.env[secretName]),
+    WithDecryption: true,
+  })
+  .promise();
+
+Parameters will be of the form { Name: 'secretName', Value: 'secretValue', ... }[]
+*/
 /* Amplify Params - DO NOT EDIT
 	API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT
 	API_PLATELET_GRAPHQLAPIIDOUTPUT
@@ -17,6 +31,19 @@ const deleteUser = require("./deleteUser").deleteUser;
 const listUsers = require("./listUsers").listUsers;
 
 async function sendWelcomeEmail(emailAddress, recipientName, password) {
+    const domainName = await new aws.SSM()
+        .getParameter({
+            Name: process.env.PLATELET_DOMAIN_NAME,
+            WithDecryption: true,
+        })
+        .promise();
+    const welcomeEmail = await new aws.SSM()
+        .getParameter({
+            Name: process.env.PLATELET_WELCOME_EMAIL,
+            WithDecryption: true,
+        })
+        .promise();
+    console.log(domainName, welcomeEmail);
     const ses = new aws.SES({
         apiVersion: "2010-12-01",
         region: process.env.REGION,
@@ -31,7 +58,7 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                     Charset: "UTF-8",
                     Data: `
                     <p>
-                        Welcome to https://${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
+                        Welcome to https://${domainName.Parameter.Value}, ${recipientName}!
                     </p>
                     <p>
                         An admin has created your account for you with a temporary password.
@@ -49,7 +76,7 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                 },
                 Text: {
                     Charset: "UTF-8",
-                    Data: `Welcome to https://${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
+                    Data: `Welcome to https://${domainName.Parameter.Value}, ${recipientName}!
                     An admin has created your account for you. A temporary password has been generated for you.
                     Username: ${emailAddress}
                     Password: ${password}
@@ -61,9 +88,9 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                 Data: "Welcome to Platelet!",
             },
         },
-        Source: process.env.PLATELET_WELCOME_EMAIL,
-        ReplyToAddresses: [process.env.PLATELET_WELCOME_EMAIL],
-        ReturnPath: process.env.PLATELET_WELCOME_EMAIL,
+        Source: welcomeEmail.Parameter.Value,
+        ReplyToAddresses: [welcomeEmail.Parameter.Value],
+        ReturnPath: welcomeEmail.Parameter.Value,
     };
 
     return await ses.sendEmail(params).promise();
