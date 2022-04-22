@@ -46,7 +46,7 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                     Charset: "UTF-8",
                     Data: `
                     <p>
-                        Welcome to ${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
+                        Welcome to https://${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
                     </p>
                     <p>
                         Your account has been created. You can now start adding users to your team.
@@ -67,7 +67,7 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                 },
                 Text: {
                     Charset: "UTF-8",
-                    Data: `Welcome to ${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
+                    Data: `Welcome to https://${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
                     Your account has been created. You can now start adding users to your team.
                     You will be asked to change your password on first log in.
                     Username: ${emailAddress}
