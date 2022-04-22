@@ -3,21 +3,11 @@
     "name": "Platelet",
     "icons": [
         {
-            "src": "icon/lowres.webp",
-            "sizes": "48x48",
-            "type": "image/webp"
-        },
-        {
-            "src": "icon/hires.webp",
+            "src": "icon/hires.png",
             "sizes": "512x512",
-            "type": "image/webp"
-        },
-        {
-            "src": "icon/hd_hi.ico",
-            "sizes": "256x256"
+            "type": "image/png"
         }
     ],
-
     "start_url": ".",
     "display": "standalone",
     "theme_color": "#fd6d2a",
