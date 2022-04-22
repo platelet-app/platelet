@@ -31,6 +31,21 @@ exports.updateUser = gql`
             roles
             dateOfBirth
             riderResponsibility
+            possibleRiderResponsibilities {
+                items {
+                    id
+                    tenantId
+                    createdAt
+                    updatedAt
+                    _version
+                    _deleted
+                    _lastChangedAt
+                    userPossibleRiderResponsibilitiesId
+                    riderResponsibilityPossibleUsersId
+                }
+                nextToken
+                startedAt
+            }
             profilePictureURL
             profilePictureThumbnailURL
             profilePicture {
@@ -102,7 +117,6 @@ exports.updateUser = gql`
                 nextToken
                 startedAt
             }
-            active
             disabled
             createdAt
             updatedAt
