@@ -170,7 +170,7 @@ describe("LocationDetailsPanel", () => {
         ).toBeInTheDocument();
     });
 
-    test.each`
+    test.skip.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("clear a listed location", async ({ locationKey }) => {
@@ -233,7 +233,7 @@ describe("LocationDetailsPanel", () => {
         expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
     });
 
-    test.each`
+    test.skip.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("clear a custom location", async ({ locationKey }) => {
