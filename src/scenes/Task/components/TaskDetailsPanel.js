@@ -139,14 +139,11 @@ function TaskDetailsPanel(props) {
         return (
             <Paper className={cardClasses.root}>
                 <Stack direction={"column"} spacing={1}>
-                    {
-                        // remove when reference is implemented
-                        false && (
-                            <LabelItemPair label={"Reference"}>
-                                <Typography>{state.reference}</Typography>
-                            </LabelItemPair>
-                        )
-                    }
+                    {state.reference && (
+                        <LabelItemPair label={"Reference"}>
+                            <Typography>{state.reference}</Typography>
+                        </LabelItemPair>
+                    )}
                     <LabelItemPair label={"Time of call"}>
                         <TimePicker
                             onChange={onChangeTimeOfCall}
