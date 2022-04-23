@@ -359,21 +359,14 @@ function TaskDialogCompact(props) {
                         onChangeTimeOfCall={setTimeOfCall}
                         onChangeRequesterContact={updateRequesterContact}
                     />
+                    <Hidden mdDown>
+                        <CommentsSideBar
+                            taskId={taskUUID}
+                            width={isMd ? drawerWidthMd : drawerWidth}
+                            parentUUID={taskUUID}
+                        />
+                    </Hidden>
                 </div>
-                <Hidden mdDown>
-                    <CommentsSideBar
-                        taskId={taskUUID}
-                        width={isMd ? drawerWidthMd : drawerWidth}
-                        parentUUID={taskUUID}
-                    />
-                </Hidden>
-                <Hidden mdUp>
-                    <Stack direction="column" spacing={2}>
-                        <TaskAssignmentsPanel taskId={taskUUID} />
-                        <Divider />
-                        <CommentsSection parentId={taskUUID} />
-                    </Stack>
-                </Hidden>
             </DialogWrapper>
         );
     }
