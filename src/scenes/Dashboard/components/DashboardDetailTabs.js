@@ -124,7 +124,7 @@ export function DashboardDetailTabs(props) {
         ) : (
             <Button
                 variant="contained"
-                color="primary"
+                color="secondary"
                 data-cy="clear-search-button"
                 disabled={props.disableAddButton}
                 onClick={() => {
