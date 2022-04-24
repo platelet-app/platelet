@@ -86,7 +86,7 @@ function Dashboard() {
 
     return (
         <>
-            <Paper sx={{ maxWidth: 1480 }}>
+            <Paper sx={{ marginBottom: 10, maxWidth: 1480 }}>
                 <Hidden mdUp>
                     <DashboardDetailTabs />
                 </Hidden>
