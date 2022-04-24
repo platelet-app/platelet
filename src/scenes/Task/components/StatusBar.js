@@ -69,7 +69,8 @@ const dialogComponent = (props) =>
     makeStyles((theme) => {
         return {
             root: generateClass(theme, props.status),
-            text: {
+            statusText: {
+                fontWeight: "bold",
                 color: theme.palette.mode === "dark" ? "white" : "black",
             },
             items: {
@@ -156,11 +157,8 @@ function StatusBar(props) {
                         <ArrowButton size={3} direction={"back"} />
                     </IconButton>
                 </Hidden>
-                <Typography className={classes.text}>
-                    Status:{" "}
-                    <span style={{ fontWeight: "bold" }}>
-                        {statusHumanReadable}
-                    </span>
+                <Typography className={classes.statusText}>
+                    {statusHumanReadable}
                 </Typography>
                 <Chip
                     onClick={copyToClipboard}
