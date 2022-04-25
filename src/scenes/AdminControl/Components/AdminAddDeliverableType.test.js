@@ -141,8 +141,10 @@ describe("AdminAddDeliverableType", () => {
         const tagBox = screen.getByRole("combobox");
         userEvent.type(tagBox, mockNewDeliverable.tags[0]);
         userEvent.type(screen.getByRole("combobox"), "{enter}");
-        userEvent.type(tagBox, mockNewDeliverable.tags[1]);
-        userEvent.type(tagBox, ",");
+        // work around the forced rerender
+        const tagBox2 = screen.getByRole("combobox");
+        userEvent.type(tagBox2, mockNewDeliverable.tags[1]);
+        userEvent.type(tagBox2, ",");
         for (const t of mockNewDeliverable.tags) {
             expect(screen.getByText(t)).toBeInTheDocument();
         }
