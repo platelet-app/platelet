@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { decodeUUID } from "../../utilities";
 import _ from "lodash";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,6 +44,9 @@ export default function UserDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
+    const [possibleRiderResponsibilities, setPossibleRiderResponsibilities] =
+        useState([]);
+    const riderRespObserver = useRef({ unsubscribe: () => {} });
     const tenantId = useSelector(tenantIdSelector);
     const [notFound, setNotFound] = useState(false);
     const [usersDisplayNames, setUsersDisplayNames] = useState([]);
@@ -58,24 +61,44 @@ export default function UserDetail(props) {
         } else {
             try {
                 const userResult = await DataStore.query(models.User, userUUID);
-                const possibleRiderResponsibilities = await DataStore.query(
-                    models.PossibleRiderResponsibilities
+                // TODO: make this observeQuery when https://github.com/aws-amplify/amplify-js/issues/9682 is fixed
+                DataStore.query(models.PossibleRiderResponsibilities).then(
+                    (result) => {
+                        const filtered = result
+                            .filter((responsibility) => {
+                                return (
+                                    userResult &&
+                                    responsibility.user &&
+                                    responsibility.user.id &&
+                                    userResult.id === responsibility.user.id
+                                );
+                            })
+                            .map((r) => r.riderResponsibility);
+                        setPossibleRiderResponsibilities(filtered);
+                    }
                 );
-                const userRiderResponsibilities = possibleRiderResponsibilities
-                    .filter((responsibility) => {
-                        return (
-                            responsibility.user.id &&
-                            userResult.id === responsibility.user.id
-                        );
-                    })
-                    .map((r) => r.riderResponsibility);
+                riderRespObserver.current.unsubscribe();
+                riderRespObserver.current = DataStore.observe(
+                    models.PossibleRiderResponsibilities
+                ).subscribe((result) => {
+                    DataStore.query(models.PossibleRiderResponsibilities).then(
+                        (result) => {
+                            const filtered = result
+                                .filter((responsibility) => {
+                                    return (
+                                        userResult &&
+                                        responsibility.user &&
+                                        responsibility.user.id &&
+                                        userResult.id === responsibility.user.id
+                                    );
+                                })
+                                .map((r) => r.riderResponsibility);
+                            setPossibleRiderResponsibilities(filtered);
+                        }
+                    );
+                });
                 setIsFetching(false);
-                if (userResult)
-                    setUser({
-                        ...userResult,
-                        possibleRiderResponsibilities:
-                            userRiderResponsibilities,
-                    });
+                if (userResult) setUser(userResult);
                 else setNotFound(true);
             } catch (error) {
                 setIsFetching(false);
@@ -110,6 +133,8 @@ export default function UserDetail(props) {
         }
     }
     useEffect(() => getDisplayNames(), []);
+
+    useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
 
     function handleUpdateRiderResponsibility(riderResponsibility) {
         setUser((prevState) => ({
@@ -226,13 +251,13 @@ export default function UserDetail(props) {
             >
                 <PaddedPaper maxWidth={700}>
                     <CurrentRiderResponsibilitySelector
-                        available={user.possibleRiderResponsibilities}
+                        available={possibleRiderResponsibilities}
                         value={user.riderResponsibility}
                         onChange={handleUpdateRiderResponsibility}
                     />
                     <UserProfile
                         displayNames={usersDisplayNames}
-                        user={user}
+                        user={{ ...user, possibleRiderResponsibilities }}
                         onUpdate={onUpdate}
                         isPosting={isPosting}
                     />
