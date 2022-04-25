@@ -17,22 +17,22 @@ import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 
 const initialLocationState = {
-    name: null,
+    name: "",
     contact: {
-        name: null,
-        telephoneNumber: null,
-        emailAddress: null,
+        name: "",
+        telephoneNumber: "",
+        emailAddress: "",
     },
-    ward: null,
-    line1: null,
-    line2: null,
-    line3: null,
-    town: null,
-    county: null,
-    country: null,
-    state: null,
-    postcode: null,
-    what3words: null,
+    ward: "",
+    line1: "",
+    line2: "",
+    line3: "",
+    town: "",
+    county: "",
+    country: "",
+    state: "",
+    postcode: "",
+    what3words: "",
     listed: 1,
 };
 
@@ -141,6 +141,7 @@ function AdminAddLocation() {
                             <TextField
                                 key={`contact-${key}`}
                                 fullWidth
+                                value={state.contact[key]}
                                 aria-label={`contact-${value}`}
                                 label={value}
                                 id={`contact-${key}`}
