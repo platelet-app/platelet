@@ -16,6 +16,7 @@ export default function DeliverableTypeTagger(props) {
     const [inputValue, setInputValue] = useState("");
     const [errorState, setErrorState] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
+    const [forceRerender, setForceRerender] = useState(false);
     const deliverableObserver = useRef({ unsubscribe: () => {} });
     const allSuggestions = useRef([]);
 
@@ -55,6 +56,7 @@ export default function DeliverableTypeTagger(props) {
 
     const handleAddition = (value) => {
         props.onAdd(value);
+        setForceRerender((prevState) => !prevState);
         setInputValue("");
     };
 
@@ -84,6 +86,7 @@ export default function DeliverableTypeTagger(props) {
                 </Grid>
                 <Grid sx={{ width: "100%", maxWidth: 250 }} item>
                     <Autocomplete
+                        key={forceRerender}
                         freeSolo
                         onChange={(event, newValue) => {
                             handleAddition(newValue);
