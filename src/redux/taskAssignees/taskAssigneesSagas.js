@@ -10,6 +10,7 @@ function listener() {
     return eventChannel((emitter) => {
         let observer = DataStore.observeQuery(models.TaskAssignee, () => {}, {
             sort: (s) => s.createdAt("desc"),
+            limit: 800,
         }).subscribe((result) => {
             emitter(result);
         });
