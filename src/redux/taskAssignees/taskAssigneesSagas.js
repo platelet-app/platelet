@@ -8,14 +8,32 @@ import dataStoreNestedWorkAroundMapper from "./dataStoreNestedWorkAroundMapper";
 
 function listener() {
     return eventChannel((emitter) => {
-        const observer = DataStore.observeQuery(models.TaskAssignee, () => {}, {
+        let observer = DataStore.observeQuery(models.TaskAssignee, () => {}, {
             sort: (s) => s.createdAt("desc"),
         }).subscribe((result) => {
             emitter(result);
         });
 
+        const userObserver = DataStore.observe(models.User).subscribe(
+            (result) => {
+                if (result.opType === "UPDATE") {
+                    observer.unsubscribe();
+                    observer = DataStore.observeQuery(
+                        models.TaskAssignee,
+                        () => {},
+                        {
+                            sort: (s) => s.createdAt("desc"),
+                        }
+                    ).subscribe((result) => {
+                        emitter(result);
+                    });
+                }
+            }
+        );
+
         return () => {
             observer.unsubscribe();
+            userObserver.unsubscribe();
         };
     });
 }
@@ -39,8 +57,8 @@ function* initializeTaskAssigneesObserver() {
             );
         }
     } finally {
+        console.log("stopping task assignees observer");
         channel.close();
-        console.log("stop task assignees observer");
     }
 }
 
