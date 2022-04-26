@@ -16,7 +16,7 @@ function CurrentRiderResponsibilitySelector(props) {
             {available.map((resp) => (
                 <Grid item key={resp.id}>
                     <Chip
-                        sx={{ width: 100, height: 40 }}
+                        sx={{ maxWidth: 300, height: 40 }}
                         label={resp.label}
                         key={resp.id}
                         variant={value === resp.label ? "default" : "outlined"}
