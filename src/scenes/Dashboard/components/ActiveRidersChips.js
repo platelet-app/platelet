@@ -166,7 +166,13 @@ function ActiveRidersChips() {
         ) {
             dispatch(setDashboardFilteredUser(null));
         }
-        return convertListDataToObject(activeRidersResult);
+
+        // resort alphabetically for now
+        // I have no idea why the completed tab sort function reverses the order
+        const sorted = activeRidersResult.sort((a, b) =>
+            a.displayName.localeCompare(b.displayName)
+        );
+        return convertListDataToObject(sorted);
     }
 
     // debounce the call in case multiple tasks are being updated at once
