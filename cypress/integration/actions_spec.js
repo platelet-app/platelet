@@ -23,9 +23,7 @@ describe("task actions", () => {
         cy.get('[id*="option-0"]').should("exist");
         cy.get('[id*="option-0"]').click();
         cy.get("[data-cy=task-status]").should("have.text", "ACTIVE");
-        cy.get("[data-cy=task-RIDER-assignees]")
-            .findAllByText("Test Rider")
-            .should("exist");
+        cy.get("[data-cy=task-RIDER-assignees]").contains("Test Rider");
         cy.get("[data-cy=task-timePickedUp-button]").should("be.enabled");
         cy.get("[data-cy=task-timePickedUp-button]").click();
         cy.get("[data-cy=confirmation-ok-button]").click();

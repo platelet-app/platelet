@@ -24,12 +24,8 @@ describe("assigning users to tasks", () => {
         cy.get("[data-cy=combo-box-riders]").click().type("Test Rider");
         cy.get('[id*="option-0"]').should("exist");
         cy.get('[id*="option-0"]').click();
-        cy.findAllByText("ACTIVE").should("exist");
-        cy.get("[data-cy=task-RIDER-assignees]")
-            .findAllByText("Test Rider")
-            .should("exist");
-        // I don't know why this causes cypress to freeze
-        // cy.findAllByText("Task moved to ACTIVE").should("exist");
+        cy.get("[data-cy=task-status]").should("have.text", "ACTIVE");
+        cy.get("[data-cy=task-RIDER-assignees]").contains("Test Rider");
         cy.get("[data-cy=task-status-close]").click();
         cy.get("[data-cy=tasks-kanban-column-ACTIVE]")
             .children()
@@ -40,13 +36,13 @@ describe("assigning users to tasks", () => {
             .first()
             .click();
         cy.get("[data-cy=edit-task-assignees]").click();
-        cy.wait(500);
         cy.get(
             "[data-cy=task-RIDER-assignees] > :nth-child(3) > .MuiButtonBase-root > [data-testid=CancelIcon]"
         ).click();
-        cy.get("[data-cy=task-RIDER-assignees]")
-            .findAllByText("Test Rider")
-            .should("not.exist");
+        cy.get("[data-cy=task-RIDER-assignees]").should(
+            "not.contain",
+            "Test Rider"
+        );
     });
 
     it("assigns and unassigns a coordinator to a task", () => {
@@ -59,15 +55,20 @@ describe("assigning users to tasks", () => {
             .type("Test Coordinator");
         cy.get('[id*="option-0"]').should("exist");
         cy.get('[id*="option-0"]').click();
+        cy.get("[data-cy=task-COORDINATOR-assignees]").contains(
+            "Test Coordinator"
+        );
         cy.get("[data-cy=task-COORDINATOR-assignees]")
-            .findAllByText("Test Coordinator")
-            .should("exist");
-        cy.wait(500);
-        cy.get(
-            "[data-cy=task-COORDINATOR-assignees] > :nth-child(4) > .MuiButtonBase-root > [data-testid=CancelIcon]"
-        ).click();
+            .findAllByTestId("CancelIcon")
+            .first()
+            .click();
         cy.get("[data-cy=task-COORDINATOR-assignees]")
-            .findAllByText("Test Coordinator")
-            .should("not.exist");
+            .findAllByTestId("CancelIcon")
+            .first()
+            .click();
+        cy.get("[data-cy=task-COORDINATOR-assignees]").should(
+            "not.contain",
+            "Test Coordinator"
+        );
     });
 });
