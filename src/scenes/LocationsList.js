@@ -30,6 +30,10 @@ const useStyles = makeStyles((theme) => {
     };
 });
 
+function sortByName(a, b) {
+    return a.name.localeCompare(b.name);
+}
+
 export default function LocationsList() {
     const locationsRef = useRef([]);
     const [filteredLocations, setFilteredLocations] = useState([]);
@@ -38,6 +42,7 @@ export default function LocationsList() {
     const dispatch = useDispatch();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const classes = useStyles();
+    const observer = useRef({ unsubscribe: () => {} });
 
     function onChangeFilterText(e) {
         setFilteredLocations(
@@ -52,13 +57,15 @@ export default function LocationsList() {
             setIsFetching(true);
         } else {
             try {
-                const locations = await DataStore.query(
+                observer.current = DataStore.observeQuery(
                     models.Location,
                     (loc) => loc.listed("eq", 1)
-                );
-                setIsFetching(false);
-                locationsRef.current = locations;
-                setFilteredLocations(locations);
+                ).subscribe((result) => {
+                    setIsFetching(false);
+                    const sorted = result.items.sort(sortByName);
+                    locationsRef.current = sorted;
+                    setFilteredLocations(sorted);
+                });
             } catch (error) {
                 console.log("Request failed", error);
                 if (error && error.message)
