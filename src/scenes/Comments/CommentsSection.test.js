@@ -134,9 +134,6 @@ describe("CommentsSection", () => {
         for (const comment of mockPrivateComments) {
             expect(screen.queryByText(comment.body)).toBeNull();
         }
-        expect(screen.getAllByText(mockUser.displayName)).toHaveLength(
-            mockPrivateCommentsForMe.length + 1
-        );
     });
 
     it("posts a new comment", async () => {
@@ -481,48 +478,36 @@ describe("CommentsSection", () => {
         expect(unsubscribe).toHaveBeenCalledTimes(1);
     });
 
-    // still broken yet
-    it.skip("edits a comment", async () => {
-        const mockWhoami = {
-            id: "whoami",
-            displayName: "Mock User",
-        };
-        amplify.Auth.currentAuthenticatedUser.mockReturnValue(mockWhoami);
-        const mockComment = new models.Comment({
-            ..._.omit(mockComments[0], "id", "createdAt"),
-        });
-
-        querySpy
-            .mockResolvedValueOnce(mockWhoami)
-            .mockResolvedValueOnce([mockComment])
-            .mockResolvedValue(mockComment);
-        saveSpy.mockResolvedValue({
-            ...mockComment,
-            body: `${mockComment.body} additional edit`,
-        });
-        const unsubscribe = jest.fn();
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe }),
-        });
-        render(<CommentsSection parentId={parentId} />);
+    it("edits a comment", async () => {
+        const mockTask = await DataStore.save(new models.Task({}));
+        const mockComment = await DataStore.save(
+            new models.Comment({
+                body: "This is a comment",
+                author: mockUser,
+                visibility: commentVisibility.everyone,
+                parentId: mockTask.id,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<CommentsSection parentId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         expect(screen.getAllByText("Mock User")).toHaveLength(2);
-        const body = screen.getByText("This is a comment");
+        const body = screen.getByText(mockComment.body);
         userEvent.hover(body);
         const contextMenu = await screen.findByTestId("comment-menu");
         userEvent.click(contextMenu);
         const editButton = await screen.findByText("Edit");
         userEvent.click(editButton);
-        const commentTextBoxes = await screen.findAllByRole("textbox");
-        const commentTextBox = commentTextBoxes[0];
+        const commentTextBox = screen.getByTestId("edit-comment-textbox");
         expect(commentTextBox).toHaveValue("This is a comment");
         userEvent.type(commentTextBox, " additional edit");
         expect(commentTextBox).toHaveValue(
             `${mockComment.body} additional edit`
         );
-        userEvent.click(screen.getByRole("button", { name: "Save" }));
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
         await waitFor(() => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockComment,

@@ -43,8 +43,8 @@ const CommentCard = React.memo((props) => {
             }
             spacing={1}
         >
-            {props.author && (
-                <Grid item className={props.showAuthor ? show : hide}>
+            {props.author && props.showAuthor && (
+                <Grid item>
                     <CommentAuthor
                         uuid={props.author.id}
                         displayName={props.author.displayName}
@@ -116,7 +116,8 @@ const CommentCard = React.memo((props) => {
                                         <Typography
                                             className={classes.timeStamp}
                                         >
-                                            {timeCreatedString}
+                                            {props.timeCreated &&
+                                                timeCreatedString}
                                         </Typography>
                                     </Tooltip>
                                 </Grid>
