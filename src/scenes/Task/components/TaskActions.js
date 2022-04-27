@@ -85,17 +85,8 @@ function TaskActions(props) {
         timeSet.current = time;
     }
 
-    function handleTimeChange(value) {
-        props.onChange(value);
-    }
-
     function onChange(key) {
         const value = state.includes(key) ? null : timeSet.current;
-        setState((prevState) => {
-            if (prevState.includes(key))
-                return prevState.filter((v) => v !== key);
-            else return [...prevState, key];
-        });
         setTimeWithKey(key, value);
     }
 

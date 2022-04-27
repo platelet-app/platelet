@@ -157,7 +157,10 @@ function StatusBar(props) {
                         <ArrowButton size={3} direction={"back"} />
                     </IconButton>
                 </Hidden>
-                <Typography className={classes.statusText}>
+                <Typography
+                    data-cy="task-status"
+                    className={classes.statusText}
+                >
                     {statusHumanReadable}
                 </Typography>
                 <Chip

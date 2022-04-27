@@ -69,7 +69,9 @@ describe("TaskActions", () => {
         expect(okButton).toBeInTheDocument();
         userEvent.click(okButton);
         // expect button to be toggled
-        expect(button).toHaveAttribute("aria-pressed", "true");
+        await waitFor(() => {
+            expect(button).toHaveAttribute("aria-pressed", "true");
+        });
         const buttonDroppedOff = await screen.findByRole("button", {
             name: "Delivered",
         });
@@ -119,7 +121,9 @@ describe("TaskActions", () => {
         userEvent.click(okButton);
         // expect the mock function to have been called with a Date object
         // expect button to be toggled
-        expect(button).toHaveAttribute("aria-pressed", "true");
+        await waitFor(() => {
+            expect(button).toHaveAttribute("aria-pressed", "true");
+        });
         await waitFor(() => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
@@ -155,7 +159,9 @@ describe("TaskActions", () => {
         userEvent.click(okButton);
         // expect the mock function to have been called with a Date object
         // expect button to be toggled
-        expect(button).toHaveAttribute("aria-pressed", "true");
+        await waitFor(() => {
+            expect(button).toHaveAttribute("aria-pressed", "true");
+        });
         await waitFor(() => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
@@ -203,7 +209,9 @@ describe("TaskActions", () => {
                 status: tasksStatus.cancelled,
             });
         });
-        expect(button).toHaveAttribute("aria-pressed", "true");
+        await waitFor(() => {
+            expect(button).toHaveAttribute("aria-pressed", "true");
+        });
         expect(
             await screen.findByRole("button", { name: "Cancelled" })
         ).toBeEnabled();
@@ -239,7 +247,9 @@ describe("TaskActions", () => {
             });
         });
         // expect button to be toggled
-        expect(button).toHaveAttribute("aria-pressed", "true");
+        await waitFor(() => {
+            expect(button).toHaveAttribute("aria-pressed", "true");
+        });
         expect(
             await screen.findByRole("button", { name: "Rejected" })
         ).toBeEnabled();
@@ -451,7 +461,9 @@ describe("TaskActions", () => {
             )
         );
         const button = screen.getByRole("button", { name: "Delivered" });
-        expect(button).toHaveAttribute("aria-pressed", "true");
+        await waitFor(() => {
+            expect(button).toHaveAttribute("aria-pressed", "true");
+        });
     });
 
     test("observer updates component on task deleted", async () => {

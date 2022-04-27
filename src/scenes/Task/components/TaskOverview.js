@@ -60,10 +60,6 @@ function TaskOverview(props) {
                             isFetching={props.isFetching}
                             onSelectPriority={props.onSelectPriority}
                             onChangeTimeOfCall={props.onChangeTimeOfCall}
-                            onChangeTimeDroppedOff={
-                                props.onChangeTimeDroppedOff
-                            }
-                            onChangeTimePickedUp={props.onChangeTimePickedUp}
                             onChangeRequesterContact={
                                 props.onChangeRequesterContact
                             }
@@ -137,15 +133,11 @@ TaskOverview.propTypes = {
     task: PropTypes.object,
     isFetching: PropTypes.bool,
     taskUUID: PropTypes.string,
-    onChangeTimeCancelled: PropTypes.func,
-    onChangeTimeRejected: PropTypes.func,
     onChangeTimeOfCall: PropTypes.func,
 };
 
 TaskOverview.defaultProps = {
     isFetching: false,
-    onChangeTimeCancelled: () => {},
-    onChangeTimeRejected: () => {},
     onChangeTimeOfCall: () => {},
 };
 
