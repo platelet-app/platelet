@@ -1,4 +1,4 @@
-describe.only("assigning users to tasks", () => {
+describe("assigning users to tasks", () => {
     before(() => {
         cy.signIn();
         cy.clearTasks("ACTIVE");
