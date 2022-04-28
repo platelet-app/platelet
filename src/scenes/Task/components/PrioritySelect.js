@@ -15,7 +15,7 @@ function PrioritySelect(props) {
     useEffect(() => setState(props.priority), [props.priority]);
 
     return (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row-reverse" spacing={1}>
             {Object.values(priorities).map((priority) => (
                 <Chip
                     key={priority}
