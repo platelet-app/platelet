@@ -33,7 +33,6 @@ function ConfirmationDialog(props) {
                             data-cy="confirmation-cancel-button"
                             onClick={() => {
                                 props.onCancel();
-                                props.onClose();
                             }}
                             autoFocus
                         >
@@ -45,7 +44,6 @@ function ConfirmationDialog(props) {
                             data-cy="confirmation-ok-button"
                             onClick={() => {
                                 props.onConfirmation();
-                                props.onClose();
                             }}
                             autoFocus
                         >
@@ -74,7 +72,7 @@ ConfirmationDialog.defaultProps = {
     dialogTitle: "",
     onConfirmation: () => {},
     onCancel: () => {},
-    onClose: () => {},
+    onClose: null,
     hideCancel: false,
     hideOk: false,
     fullScreen: false,

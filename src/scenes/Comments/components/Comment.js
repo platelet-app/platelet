@@ -93,6 +93,7 @@ function Comment(props) {
 
     async function onEditComment(value) {
         try {
+            setEditMode(false);
             const existingComment = await DataStore.query(
                 models.Comment,
                 state.id

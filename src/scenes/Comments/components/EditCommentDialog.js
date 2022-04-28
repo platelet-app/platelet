@@ -3,16 +3,24 @@ import React, { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import PropTypes from "prop-types";
 import CommentAuthor from "./CommentAuthor";
+import useFocus from "../../../hooks/useFocus";
 
 function EditCommentDialog(props) {
     const [state, setState] = useState("");
+    const [inputRef, setInputFocus] = useFocus();
+
+    function handleCancel() {
+        props.onClose();
+        setState(props.value);
+    }
+
     useEffect(() => {
         setState(props.value);
     }, [props.value]);
     return (
         <ConfirmationDialog
             open={props.open}
-            onClose={props.onClose}
+            onCancel={handleCancel}
             onConfirmation={() => {
                 props.onConfirm(state);
             }}
@@ -37,7 +45,11 @@ function EditCommentDialog(props) {
                     <TextField
                         aria-label="edit-comment"
                         multiline
-                        inputProps={{ "data-testid": "edit-comment-textbox" }}
+                        autoFocus
+                        inputRef={inputRef}
+                        inputProps={{
+                            "data-testid": "edit-comment-textbox",
+                        }}
                         value={state}
                         onChange={(e) => {
                             setState(e.target.value);

@@ -88,9 +88,11 @@ function RiderConfirmationHomeContents({
     return (
         <ConfirmationDialog
             onClose={onClose}
+            onCancel={onClose}
             hideCancel={state.droppedOff === 0}
             onConfirmation={() => {
                 if (state.droppedOff > 0) onSelect();
+                onClose();
             }}
             open={!!userId}
         >

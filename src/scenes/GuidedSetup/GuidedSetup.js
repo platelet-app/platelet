@@ -199,6 +199,7 @@ export const GuidedSetup = () => {
             return;
         }
         setIsPosting(false);
+        setDiscardConfirmationOpen(false);
         onCloseForm();
     };
 
@@ -417,7 +418,11 @@ export const GuidedSetup = () => {
                 open={discardConfirmationOpen}
                 dialogTitle={"Are you sure?"}
                 onClose={() => setDiscardConfirmationOpen(false)}
-                onConfirmation={onCloseForm}
+                onCancel={() => setDiscardConfirmationOpen(false)}
+                onConfirmation={() => {
+                    setDiscardConfirmationOpen(false);
+                    onCloseForm();
+                }}
             >
                 <Typography>
                     This will clear any data you have entered.

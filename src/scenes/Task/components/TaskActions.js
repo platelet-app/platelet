@@ -286,9 +286,14 @@ function TaskActions(props) {
                         state.includes(confirmationKey.current)
                     )}
                     onConfirmation={() => {
+                        setConfirmDialogOpen(false);
                         onChange(confirmationKey.current);
                     }}
-                    onClose={() => setConfirmDialogOpen(false)}
+                    onClose={() => {
+                        if (state.includes(confirmationKey.current))
+                            setConfirmDialogOpen(false);
+                    }}
+                    onCancel={() => setConfirmDialogOpen(false)}
                 >
                     <TaskActionConfirmationDialogContents
                         onChange={(v) => onAdjustTimeSet(v)}

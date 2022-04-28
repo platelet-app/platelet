@@ -164,8 +164,10 @@ function NewCommentCard(props) {
                         ...prevState,
                         body: "",
                     }));
+                    setConfirmationDialogOpen(false);
                 }}
                 onClose={() => setConfirmationDialogOpen(false)}
+                onCancel={() => setConfirmationDialogOpen(false)}
                 dialogTitle={"Discard comment?"}
             >
                 <Typography>{state.body}</Typography>

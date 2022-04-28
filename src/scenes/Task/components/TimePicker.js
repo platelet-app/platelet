@@ -115,8 +115,9 @@ function TimePicker(props) {
                     </div>
                 </Stack>
                 <ConfirmationDialog
-                    onClose={() => setEditMode(false)}
+                    onCancel={() => setEditMode(false)}
                     onConfirmation={() => {
+                        setEditMode(false);
                         props.onChange(state);
                     }}
                     open={editMode}
