@@ -1,5 +1,6 @@
 import * as actions from "./taskAssigneesActions";
 import { takeLatest } from "@redux-saga/core/effects";
+import _ from "lodash";
 import { call, take, put } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 import { DataStore } from "aws-amplify";
@@ -8,33 +9,49 @@ import dataStoreNestedWorkAroundMapper from "./dataStoreNestedWorkAroundMapper";
 
 function listener() {
     return eventChannel((emitter) => {
-        let observer = DataStore.observeQuery(models.TaskAssignee, () => {}, {
-            sort: (s) => s.createdAt("desc"),
-            limit: 800,
-        }).subscribe((result) => {
-            emitter(result);
-        });
+        let observer = { unsubscribe: () => {} };
+        function restartObserver() {
+            console.log("restarting task assignees observer");
+            observer.unsubscribe();
+            observer = DataStore.observeQuery(models.TaskAssignee, () => {}, {
+                sort: (s) => s.createdAt("desc"),
+                limit: 800,
+            }).subscribe((result) => {
+                emitter(result);
+            });
+        }
+
+        const debouncedRestartObserver = _.debounce(
+            restartObserver,
+            1000,
+
+            {
+                leading: true,
+                trailing: true,
+            }
+        );
 
         const userObserver = DataStore.observe(models.User).subscribe(
             (result) => {
                 if (result.opType === "UPDATE") {
-                    observer.unsubscribe();
-                    observer = DataStore.observeQuery(
-                        models.TaskAssignee,
-                        () => {},
-                        {
-                            sort: (s) => s.createdAt("desc"),
-                        }
-                    ).subscribe((result) => {
-                        emitter(result);
-                    });
+                    debouncedRestartObserver();
+                }
+            }
+        );
+        const taskObserver = DataStore.observe(models.Task).subscribe(
+            (result) => {
+                if (result.opType === "UPDATE") {
+                    debouncedRestartObserver();
                 }
             }
         );
 
+        restartObserver();
+
         return () => {
             observer.unsubscribe();
             userObserver.unsubscribe();
+            taskObserver.unsubscribe();
         };
     });
 }
