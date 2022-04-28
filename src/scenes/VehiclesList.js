@@ -80,7 +80,7 @@ function VehicleList() {
         return (
             <Stack
                 direction={"column"}
-                spacing={3}
+                spacing={2}
                 alignItems={"flex-start"}
                 justifyContent={"center"}
             >

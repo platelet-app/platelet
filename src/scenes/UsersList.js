@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => {
 export default function UsersList(props) {
     const usersRef = useRef([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
-    const [isFetching, setIsFetching] = useState(false);
+    const observer = useRef({ unsubscribe: () => {} });
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
@@ -50,24 +50,21 @@ export default function UsersList(props) {
     }
 
     async function getUsers() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-        } else {
-            try {
-                const users = await DataStore.query(models.User);
-                setIsFetching(false);
-                usersRef.current = users;
-                setFilteredUsers(users);
-            } catch (error) {
-                console.log("Request failed", error);
-                if (error && error.message)
-                    dispatch(displayErrorNotification(error.message));
-                setIsFetching(false);
-            }
+        try {
+            observer.current = DataStore.observeQuery(models.User).subscribe(
+                (data) => {
+                    usersRef.current = data.items;
+                    setFilteredUsers(data.items);
+                }
+            );
+        } catch (error) {
+            console.log("Request failed", error);
+            if (error && error.message)
+                dispatch(displayErrorNotification(error.message));
         }
     }
 
-    useEffect(() => getUsers(), [dataStoreReadyStatus]);
+    useEffect(() => getUsers(), []);
 
     const addButton = whoami.roles.includes(userRoles.admin) ? (
         <Button component={Link} to={`/admin/add-user`}>
@@ -77,93 +74,52 @@ export default function UsersList(props) {
         <></>
     );
 
-    if (isFetching) {
-        return (
-            <Stack
-                direction={"column"}
-                spacing={3}
-                alignItems={"flex-start"}
-                justifyContent={"center"}
-            >
-                <PaddedPaper maxWidth={"800px"}>
-                    <Stack spacing={1} direction={"column"}>
-                        {Array(5)
-                            .fill(1)
-                            .map((ele) => {
-                                return (
-                                    <Stack
-                                        spacing={2}
-                                        direction={"row"}
-                                        justifyContent={"flex-start"}
-                                        alignItems={"center"}
-                                    >
-                                        <Skeleton
-                                            variant="circular"
-                                            width={40}
-                                            height={40}
-                                        />
-                                        <Skeleton
-                                            variant="text"
-                                            width={500}
-                                            height={50}
-                                        />
-                                    </Stack>
-                                );
-                            })}
-                    </Stack>
-                </PaddedPaper>
-            </Stack>
-        );
-    } else {
-        return (
-            <Stack
-                direction={"column"}
-                spacing={3}
-                alignItems={"flex-start"}
-                justifyContent={"center"}
-            >
-                {addButton}
-                <TextFieldControlled
-                    variant={"standard"}
-                    placeholder={"Filter users"}
-                    onChange={onChangeFilterText}
-                    color={"secondary"}
-                    className={classes.root}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon className={classes.searchIcon} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-                <PaddedPaper maxWidth={"800px"}>
-                    <Stack
-                        spacing={1}
-                        direction={"column"}
-                        justifyContent={"center"}
-                        alignItems={"flex-start"}
-                    >
-                        {sortByCreatedTime(filteredUsers).map((user) => {
-                            return (
-                                <UserCard
-                                    key={user.id}
-                                    displayName={user.displayName}
-                                    riderResponsibility={
-                                        user.riderResponsibility
-                                    }
-                                    userUUID={user.id}
-                                    thumbnailKey={
-                                        user.profilePictureThumbnail
-                                            ? user.profilePictureThumbnail.key
-                                            : null
-                                    }
-                                />
-                            );
-                        })}
-                    </Stack>
-                </PaddedPaper>
-            </Stack>
-        );
-    }
+    return (
+        <Stack
+            direction={"column"}
+            spacing={2}
+            alignItems={"flex-start"}
+            justifyContent={"center"}
+        >
+            {addButton}
+            <TextFieldControlled
+                variant={"standard"}
+                placeholder={"Filter users"}
+                onChange={onChangeFilterText}
+                color={"secondary"}
+                className={classes.root}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon className={classes.searchIcon} />
+                        </InputAdornment>
+                    ),
+                }}
+            />
+            <PaddedPaper maxWidth={"800px"}>
+                <Stack
+                    spacing={1}
+                    direction={"column"}
+                    justifyContent={"center"}
+                    alignItems={"flex-start"}
+                >
+                    {sortByCreatedTime(filteredUsers).map((user) => {
+                        return (
+                            <UserCard
+                                key={user.id}
+                                displayName={user.displayName}
+                                riderResponsibility={user.riderResponsibility}
+                                userUUID={user.id}
+                                thumbnailKey={
+                                    user.profilePictureThumbnail
+                                        ? user.profilePictureThumbnail.key
+                                        : null
+                                }
+                            />
+                        );
+                    })}
+                </Stack>
+            </PaddedPaper>
+        </Stack>
+    );
 }
