@@ -47,6 +47,20 @@ export default function UserProfile(props) {
     }
     useEffect(updateStateFromProps, [props.user]);
 
+    function updateRiderResponsibilitiesFromProps() {
+        if (props.possibleRiderResponsibilities) {
+            setState({
+                ...state,
+                possibleRiderResponsibilities:
+                    props.possibleRiderResponsibilities,
+            });
+        }
+    }
+
+    useEffect(updateRiderResponsibilitiesFromProps, [
+        props.possibleRiderResponsibilities,
+    ]);
+
     let header = <h2>{state.displayName}</h2>;
 
     let editToggle = <></>;

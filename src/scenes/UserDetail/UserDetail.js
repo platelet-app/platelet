@@ -44,6 +44,7 @@ export default function UserDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
+    const [riderResponsibility, setRiderResponsibility] = useState(null);
     const [possibleRiderResponsibilities, setPossibleRiderResponsibilities] =
         useState([]);
     const riderRespObserver = useRef({ unsubscribe: () => {} });
@@ -98,8 +99,10 @@ export default function UserDetail(props) {
                     );
                 });
                 setIsFetching(false);
-                if (userResult) setUser(userResult);
-                else setNotFound(true);
+                if (userResult) {
+                    setUser(userResult);
+                    setRiderResponsibility(userResult.riderResponsibility);
+                } else setNotFound(true);
             } catch (error) {
                 setIsFetching(false);
                 dispatch(
@@ -137,10 +140,7 @@ export default function UserDetail(props) {
     useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
 
     function handleUpdateRiderResponsibility(riderResponsibility) {
-        setUser((prevState) => ({
-            ...prevState,
-            riderResponsibility,
-        }));
+        setRiderResponsibility(riderResponsibility);
         DataStore.query(models.User, user.id)
             .then((currentUser) => {
                 DataStore.save(
@@ -161,45 +161,23 @@ export default function UserDetail(props) {
         setIsPosting(true);
         try {
             const existingUser = await DataStore.query(models.User, user.id);
-            const {
-                roles,
-                riderResponsibility,
-                possibleRiderResponsibilities,
-                contact,
-                ...rest
-            } = value;
+            const { roles, possibleRiderResponsibilities, contact, ...rest } =
+                value;
+
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
                     for (const [key, newValue] of Object.entries(rest)) {
                         if (!protectedFields.includes(key))
                             updated[key] = newValue;
                     }
-                })
-            );
-            if (existingUser.contact && contact) {
-                await DataStore.save(
-                    models.User.copyOf(existingUser, (updated) => {
+                    if (existingUser.contact && contact) {
                         for (const [key, newValue] of Object.entries(contact)) {
                             if (!protectedFields.includes(key))
                                 updated.contact[key] = newValue;
                         }
-                    })
-                );
-            }
-            if (riderResponsibility) {
-                await DataStore.save(
-                    models.User.copyOf(existingUser, (updated) => {
-                        updated.riderResponsibility =
-                            riderResponsibility || null;
-                    })
-                );
-            } else if (riderResponsibility === null) {
-                await DataStore.save(
-                    models.User.copyOf(existingUser, (updated) => {
-                        updated.riderResponsibility = null;
-                    })
-                );
-            }
+                    }
+                })
+            );
             if (roles) {
                 await API.graphql(
                     graphqlOperation(mutations.updateUserRoles, {
@@ -252,12 +230,15 @@ export default function UserDetail(props) {
                 <PaddedPaper maxWidth={700}>
                     <CurrentRiderResponsibilitySelector
                         available={possibleRiderResponsibilities}
-                        value={user.riderResponsibility}
+                        value={riderResponsibility}
                         onChange={handleUpdateRiderResponsibility}
                     />
                     <UserProfile
                         displayNames={usersDisplayNames}
-                        user={{ ...user, possibleRiderResponsibilities }}
+                        user={user}
+                        possibleRiderResponsibilities={
+                            possibleRiderResponsibilities
+                        }
                         onUpdate={onUpdate}
                         isPosting={isPosting}
                     />
