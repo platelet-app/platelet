@@ -1,41 +1,9 @@
 import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Styles } from "../styles";
-import { Chip, Stack, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { commentVisibility } from "../../../apiConsts";
-
-function VisibilityMenu(props) {
-    return (
-        <Stack direction="row" spacing={1}>
-            <Chip
-                variant={
-                    props.value === commentVisibility.everyone
-                        ? "default"
-                        : "outlined"
-                }
-                color={
-                    props.value === commentVisibility.everyone
-                        ? "primary"
-                        : "default"
-                }
-                onClick={() => props.onChange(commentVisibility.everyone)}
-                label={"EVERYONE"}
-            />
-            <Chip
-                variant={
-                    props.value === commentVisibility.me
-                        ? "default"
-                        : "outlined"
-                }
-                color={
-                    props.value === commentVisibility.me ? "primary" : "default"
-                }
-                onClick={() => props.onChange(commentVisibility.me)}
-                label={"ONLY ME"}
-            />
-        </Stack>
-    );
-}
+import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
 
 export const Notes = ({ onChange, handleVisibilityChange }) => {
     const classes = Styles();
@@ -46,7 +14,7 @@ export const Notes = ({ onChange, handleVisibilityChange }) => {
             <Typography variant="h6" gutterBottom>
                 {"Who should the notes be visible to?"}
             </Typography>
-            <VisibilityMenu
+            <CommentVisibilitySelector
                 value={visibility}
                 onChange={(value) => {
                     setVisibility(value);
@@ -55,7 +23,11 @@ export const Notes = ({ onChange, handleVisibilityChange }) => {
             />
             <TextField
                 id="notes"
-                label="Notes"
+                placeholder={
+                    visibility === commentVisibility.everyone
+                        ? "Write a comment that will be visible to anyone..."
+                        : "Write a comment only you can see..."
+                }
                 fullWidth
                 multiline
                 onChange={(e) => onChange(e.target.value)}

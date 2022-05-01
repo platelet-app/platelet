@@ -18,6 +18,7 @@ const mockData = [
         defaultUnit: "ITEM",
         tags: ["sample"],
         tenantId: "tenant-id",
+        disabled: 0,
     }),
     new models.DeliverableType({
         label: "Covid sample",
@@ -25,6 +26,7 @@ const mockData = [
         defaultUnit: "ITEM",
         tags: ["sample"],
         tenantId: "tenant-id",
+        disabled: 0,
     }),
     new models.DeliverableType({
         label: "Document",
@@ -32,6 +34,7 @@ const mockData = [
         tags: ["other"],
         defaultUnit: "ITEM",
         tenantId: "tenant-id",
+        disabled: 0,
     }),
     new models.DeliverableType({
         label: "Milk",
@@ -39,6 +42,7 @@ const mockData = [
         tags: ["other"],
         defaultUnit: "LITRE",
         tenantId: "tenant-id",
+        disabled: 0,
     }),
     new models.DeliverableType({
         label: "Equipment",
@@ -46,12 +50,14 @@ const mockData = [
         tags: ["tag1", "tag2"],
         defaultUnit: "ITEM",
         tenantId: "tenant-id",
+        disabled: 0,
     }),
     new models.DeliverableType({
         label: "Other",
         tags: ["tag2", "tag3"],
         icon: "OTHER",
         tenantId: "tenant-id",
+        disabled: 0,
     }),
 ];
 
@@ -386,16 +392,7 @@ describe("DeliverableDetails", () => {
                 name: `${mockDeliverable.unit}. Click to change`,
             })
         );
-        userEvent.click(
-            screen.getByRole("button", {
-                name: mockDeliverable.unit,
-            })
-        );
-        const unitMenuItems = await screen.findAllByRole("option");
-        expect(unitMenuItems).toHaveLength(
-            Object.values(deliverableUnits).length
-        );
-        userEvent.click(unitMenuItems[0]);
+        userEvent.click(screen.getByText(deliverableUnits.none));
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(1);
         });

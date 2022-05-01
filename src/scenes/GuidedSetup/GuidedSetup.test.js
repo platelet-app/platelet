@@ -270,10 +270,7 @@ describe("GuidedSetup", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         userEvent.click(screen.getByText("NOTES"));
-        userEvent.type(
-            screen.getByRole("textbox", { name: "Notes" }),
-            mockComment.body
-        );
+        userEvent.type(screen.getByRole("textbox"), mockComment.body);
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
         );
@@ -327,10 +324,12 @@ describe("GuidedSetup", () => {
         const mockDeliverableType = new models.DeliverableType({
             label: "some item",
             tenantId: "test-tenant",
+            disabled: 0,
         });
         const mockDeliverableType2 = new models.DeliverableType({
             label: "another thing",
             tenantId: "test-tenant",
+            disabled: 0,
         });
         const mockDeliverable = new models.Deliverable({
             deliverableType: mockDeliverableType,
@@ -452,6 +451,7 @@ describe("GuidedSetup", () => {
             new models.DeliverableType({
                 label: "Fake Item",
                 tenantId: "test-tenant",
+                disabled: 0,
             }),
         ]);
         render(<GuidedSetup />, { preloadedState });
@@ -498,7 +498,7 @@ describe("GuidedSetup", () => {
             expect(amplify.DataStore.query).toHaveBeenCalledTimes(3)
         );
         userEvent.click(screen.getByText(/NOTES/));
-        const textBox = screen.getByRole("textbox", { name: "Notes" });
+        const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, "data");
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
         expect(screen.getByText(/Are you sure/)).toBeInTheDocument();

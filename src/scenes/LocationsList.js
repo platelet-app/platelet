@@ -8,13 +8,12 @@ import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 import { Button, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
-import Skeleton from '@mui/material/Skeleton';
+import Skeleton from "@mui/material/Skeleton";
 import { matchSorter } from "match-sorter";
 import makeStyles from "@mui/styles/makeStyles";
 import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
-
 
 const useStyles = makeStyles((theme) => {
     return {
@@ -31,41 +30,42 @@ const useStyles = makeStyles((theme) => {
     };
 });
 
+function sortByName(a, b) {
+    return a.name.localeCompare(b.name);
+}
 
 export default function LocationsList() {
     const locationsRef = useRef([]);
     const [filteredLocations, setFilteredLocations] = useState([]);
-    const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const classes = useStyles();
+    const observer = useRef({ unsubscribe: () => {} });
 
     function onChangeFilterText(e) {
-        setFilteredLocations(matchSorter(locationsRef.current, e.target.value, {keys: ['name']}))
+        setFilteredLocations(
+            matchSorter(locationsRef.current, e.target.value, {
+                keys: ["name"],
+            })
+        );
     }
 
     async function getLocations() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-        } else {
-            try {
-                const locations = await DataStore.query(
-                    models.Location,
-                    (loc) => loc.listed("eq", 1)
-                );
-                setIsFetching(false);
-                locationsRef.current = locations;
-                setFilteredLocations(locations);
-            } catch (error) {
-                console.log("Request failed", error);
-                if (error && error.message)
-                    dispatch(displayErrorNotification(error.message));
-                setIsFetching(false);
-            }
+        try {
+            observer.current = DataStore.observeQuery(models.Location, (loc) =>
+                loc.listed("eq", 1)
+            ).subscribe((result) => {
+                const sorted = result.items.sort(sortByName);
+                locationsRef.current = sorted;
+                setFilteredLocations(sorted);
+            });
+        } catch (error) {
+            console.log("Request failed", error);
+            if (error && error.message)
+                dispatch(displayErrorNotification(error.message));
         }
     }
-    useEffect(() => getLocations(), [dataStoreReadyStatus]);
+    useEffect(() => getLocations(), []);
 
     const addButton = whoami.roles.includes("ADMIN") ? (
         <Button component={Link} to={`/admin/add-location`}>
@@ -75,62 +75,41 @@ export default function LocationsList() {
         <></>
     );
 
-    if (isFetching) {
-        return (
-            <Stack
-                direction={"column"}
-                spacing={3}
-                alignItems={"flex-start"}
-                justifyContent={"center"}
-            >
-                <PaddedPaper maxWidth={"800px"}>
-                    <Stack direction={"column"}>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
-                    </Stack>
-                </PaddedPaper>
-            </Stack>
-        )
-    } else {
-        return (
-          <Stack
-                direction={"column"}
-                spacing={3}
-                alignItems={"flex-start"}
-                justifyContent={"center"}
-            >
-                <TextFieldControlled
-                    id="tasks-filter-input"
-                    variant={"standard"}
-                    placeholder={"Filter locations"}
-                    onChange={onChangeFilterText}
-                    color={"secondary"}
-                    className={classes.root}
-                    InputProps={{
+    return (
+        <Stack
+            direction={"column"}
+            spacing={2}
+            alignItems={"flex-start"}
+            justifyContent={"center"}
+        >
+            {addButton}
+            <TextFieldControlled
+                variant={"standard"}
+                placeholder={"Filter locations"}
+                onChange={onChangeFilterText}
+                color={"secondary"}
+                className={classes.root}
+                InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
                             <SearchIcon className={classes.searchIcon} />
                         </InputAdornment>
-                      ),
-                    }}
-                />
-                {addButton}
-                <PaddedPaper maxWidth={"800px"}>
-                    <Stack direction={"column"} spacing={1}>
-                        {Object.values(filteredLocations).map((loc) => {
-                            return (
-                                <LocationCard
-                                    key={loc.id}
-                                    uuid={loc.id}
-                                    name={loc.name}
-                                />
-                            );
-                        })}
-                    </Stack>
-                </PaddedPaper>
-            </Stack>
-        );
-    }
+                    ),
+                }}
+            />
+            <PaddedPaper maxWidth={"800px"}>
+                <Stack direction={"column"} spacing={1}>
+                    {Object.values(filteredLocations).map((loc) => {
+                        return (
+                            <LocationCard
+                                key={loc.id}
+                                uuid={loc.id}
+                                name={loc.name}
+                            />
+                        );
+                    })}
+                </Stack>
+            </PaddedPaper>
+        </Stack>
+    );
 }

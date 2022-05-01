@@ -1,15 +1,16 @@
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import { render } from "../../../test-utils";
 import _ from "lodash";
 import "intersection-observer";
 import ActiveRidersChips from "./ActiveRidersChips";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models/index";
-import { DataStore } from "aws-amplify";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import faker from "faker";
 import { tasksStatus, userRoles } from "../../../apiConsts";
+import moment from "moment";
 
 const fakeAssignments = Object.values(tasksStatus)
     .filter((s) => s !== tasksStatus.new)
@@ -20,7 +21,7 @@ const fakeAssignments = Object.values(tasksStatus)
                     status,
                 }),
                 assignee: new models.User({
-                    displayName: faker.name.findName(),
+                    displayName: uuidv4(),
                 }),
                 role: userRoles.rider,
             })
@@ -91,20 +92,6 @@ describe("ActiveRiderChips", () => {
         render(<ActiveRidersChips />);
     });
 
-    it("displays the correct users", async () => {
-        render(<ActiveRidersChips />, { preloadedState });
-        await waitFor(() => {
-            expect(
-                screen.getByText(fakeAssignments[0].assignee.displayName)
-            ).toBeInTheDocument();
-        });
-        for (const assign of fakeAssignments) {
-            expect(
-                screen.getByText(assign.assignee.displayName)
-            ).toBeInTheDocument();
-        }
-    });
-
     test("toggle and untoggle All chip", async () => {
         render(<ActiveRidersChips />, { preloadedState });
         await waitFor(() => {
@@ -128,32 +115,51 @@ describe("ActiveRiderChips", () => {
 
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}
+        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
     `(
         "don't display riders from completed jobs older than a week",
         async ({ taskStatus }) => {
+            const twoWeeksAgo = moment().subtract(2, "week");
+            const fakeUser1 = new models.User({
+                displayName: uuidv4(),
+            });
+            const fakeUser2 = new models.User({
+                displayName: uuidv4(),
+            });
             const oldAssignmentModel = new models.TaskAssignee({
                 task: new models.Task({
                     status: taskStatus,
                 }),
-                assignee: fakeSingleUser,
+                assignee: fakeUser1,
                 role: userRoles.rider,
             });
             const oldAssignment = {
                 ...oldAssignmentModel,
                 task: {
                     ...oldAssignmentModel.task,
-                    createdAt: new Date(
-                        Date.now() - 1000 * 60 * 60 * 24 * 8
-                    ).toISOString(),
+                    createdAt: twoWeeksAgo.toISOString(),
+                },
+            };
+            const newAssignmentModel = new models.TaskAssignee({
+                task: new models.Task({
+                    status: taskStatus,
+                }),
+                assignee: fakeUser2,
+                role: userRoles.rider,
+            });
+            const newAssignment = {
+                ...newAssignmentModel,
+                task: {
+                    ...newAssignmentModel.task,
+                    createdAt: moment().toISOString(),
                 },
             };
             const newPreloadedState = {
                 ...preloadedState,
+                dashboardTabIndex: 1,
                 taskAssigneesReducer: {
                     ...preloadedState.taskAssigneesReducer,
-                    items: [...fakeAssignments, oldAssignment],
+                    items: [newAssignment, oldAssignment],
                 },
             };
             render(<ActiveRidersChips />, {
@@ -161,25 +167,80 @@ describe("ActiveRiderChips", () => {
             });
             await waitFor(() => {
                 expect(
-                    screen.getByText(fakeAssignments[0].assignee.displayName)
+                    screen.getByText(newAssignment.assignee.displayName)
                 ).toBeInTheDocument();
             });
-            for (const assign of fakeAssignments) {
+            expect(
+                screen.queryByText(oldAssignment.assignee.displayName)
+            ).toBeNull();
+        }
+    );
+
+    test.each`
+        taskStatus
+        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${tasksStatus.new}       | ${tasksStatus.pickedUp}  | ${tasksStatus.active}   | ${tasksStatus.droppedOff}
+    `(
+        "only display riders that match the dashboard index",
+        async ({ taskStatus }) => {
+            const fakeUser1 = new models.User({
+                displayName: uuidv4(),
+            });
+            const fakeUser2 = new models.User({
+                displayName: uuidv4(),
+            });
+            const shownModel = new models.TaskAssignee({
+                task: new models.Task({
+                    status: taskStatus,
+                }),
+                assignee: fakeUser1,
+                role: userRoles.rider,
+            });
+            const shown = { ...shownModel, createdAt: moment().toISOString() };
+            const status = [
+                tasksStatus.rejected,
+                tasksStatus.cancelled,
+                tasksStatus.completed,
+                tasksStatus.abandoned,
+            ].includes(taskStatus)
+                ? tasksStatus.new
+                : tasksStatus.completed;
+            const hiddenModel = new models.TaskAssignee({
+                task: new models.Task({
+                    status,
+                }),
+                assignee: fakeUser2,
+                role: userRoles.rider,
+            });
+            const hidden = {
+                ...hiddenModel,
+                createdAt: moment().toISOString(),
+            };
+            const dashboardTabIndex = [
+                tasksStatus.rejected,
+                tasksStatus.cancelled,
+                tasksStatus.completed,
+                tasksStatus.abandoned,
+            ].includes(taskStatus)
+                ? 1
+                : 0;
+            const newPreloadedState = {
+                ...preloadedState,
+                dashboardTabIndex,
+                taskAssigneesReducer: {
+                    ...preloadedState.taskAssigneesReducer,
+                    items: [shown, hidden],
+                },
+            };
+            render(<ActiveRidersChips />, {
+                preloadedState: newPreloadedState,
+            });
+            await waitFor(() => {
                 expect(
-                    screen.getByText(assign.assignee.displayName)
+                    screen.getByText(shown.assignee.displayName)
                 ).toBeInTheDocument();
-            }
-            if (
-                [tasksStatus.active, tasksStatus.pickedUp].includes(taskStatus)
-            ) {
-                expect(
-                    screen.queryByText(oldAssignment.assignee.displayName)
-                ).toBeInTheDocument();
-            } else {
-                expect(
-                    screen.queryByText(oldAssignment.assignee.displayName)
-                ).toBeNull();
-            }
+            });
+            expect(screen.queryByText(hidden.assignee.displayName)).toBeNull();
         }
     );
 

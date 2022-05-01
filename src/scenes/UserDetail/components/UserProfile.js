@@ -3,14 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
-import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
+import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import RiderResponsibilitySelect from "./RiderResponsibilitySelect";
 import { userRoles } from "../../../apiConsts";
-import { Box, Stack, Typography } from "@mui/material";
-import { DataStore } from "aws-amplify";
-import * as models from "../../../models/index";
+import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import UserRolesAndSelector from "./UserRolesAndSelector";
 
 const fields = {
@@ -48,6 +46,20 @@ export default function UserProfile(props) {
         }
     }
     useEffect(updateStateFromProps, [props.user]);
+
+    function updateRiderResponsibilitiesFromProps() {
+        if (props.possibleRiderResponsibilities) {
+            setState({
+                ...state,
+                possibleRiderResponsibilities:
+                    props.possibleRiderResponsibilities,
+            });
+        }
+    }
+
+    useEffect(updateRiderResponsibilitiesFromProps, [
+        props.possibleRiderResponsibilities,
+    ]);
 
     let header = <h2>{state.displayName}</h2>;
 
@@ -127,38 +139,68 @@ export default function UserProfile(props) {
         />
     );
 
-    console.log(state);
+    function onChangePossibleResponsibilities(value) {
+        if (!toChange.current.possibleRiderResponsibilities) {
+            toChange.current.possibleRiderResponsibilities =
+                state.possibleRiderResponsibilities;
+        }
+        if (
+            state.possibleRiderResponsibilities
+                .map((r) => r.id)
+                .includes(value.id)
+        ) {
+            toChange.current = {
+                ...toChange.current,
+                possibleRiderResponsibilities:
+                    toChange.current.possibleRiderResponsibilities.filter(
+                        (r) => r.id !== value.id
+                    ),
+            };
+            setState((prevState) => ({
+                ...prevState,
+                possibleRiderResponsibilities:
+                    prevState.possibleRiderResponsibilities.filter(
+                        (r) => r.id !== value.id
+                    ),
+            }));
+        } else {
+            toChange.current = {
+                ...toChange.current,
+                possibleRiderResponsibilities: [
+                    ...toChange.current.possibleRiderResponsibilities,
+                    value,
+                ],
+            };
+            setState((prevState) => ({
+                ...prevState,
+                possibleRiderResponsibilities: [
+                    ...state.possibleRiderResponsibilities,
+                    value,
+                ],
+            }));
+        }
+    }
 
     const responsibility =
         props.user &&
         props.user.roles &&
         props.user.roles.includes(userRoles.rider) ? (
             editMode ? (
-                <>
-                    <RiderResponsibilitySelect
-                        onSelect={async (riderResponsibility) => {
-                            toChange.current = {
-                                ...toChange.current,
-                                riderResponsibility,
-                            };
-                            setState((prevState) => ({
-                                ...prevState,
-                                riderResponsibility,
-                            }));
-                        }}
-                        value={state.riderResponsibility}
-                    />
-                    <Divider />
-                </>
+                <RiderResponsibilitySelect
+                    onSelect={onChangePossibleResponsibilities}
+                    value={state.possibleRiderResponsibilities}
+                />
             ) : (
                 <>
-                    <Stack direction={"row"} justifyContent={"space-between"}>
-                        <Typography>Responsibility</Typography>
-                        <Typography>
-                            {state.riderResponsibility || "No responsibility"}
-                        </Typography>
-                    </Stack>
-                    <Divider />
+                    {state.possibleRiderResponsibilities && (
+                        <Grid container direction={"row"} spacing={1}>
+                            {state.possibleRiderResponsibilities.map((r) => (
+                                <Grid item key={r.id}>
+                                    <Chip label={r.label} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    )}
                 </>
             )
         ) : (
@@ -259,11 +301,14 @@ export default function UserProfile(props) {
             </Box>
             <Divider />
             <Stack direction={"row"} justifyContent={"space-between"}>
-                {!editMode ? <Typography>Address</Typography> : <></>}
+                {!editMode && state.contact ? (
+                    <Typography>Address</Typography>
+                ) : (
+                    <></>
+                )}
                 <Box>
-                    {Object.keys(state.contact ? addressFields : [])
-                        .filter((k) => !!state.contact[k])
-                        .map((key) => {
+                    {Object.keys(state.contact ? addressFields : []).map(
+                        (key) => {
                             if (editMode) {
                                 return (
                                     <TextField
@@ -304,19 +349,18 @@ export default function UserProfile(props) {
                                     </Typography>
                                 );
                             }
-                        })}
+                        }
+                    )}
                 </Box>
             </Stack>
             <Divider />
             {responsibility}
-
-            <Stack direction="row" spacing={1}>
-                <UserRolesAndSelector
-                    selectMode={editMode}
-                    onSelect={onSelectRole}
-                    value={state.roles}
-                />
-            </Stack>
+            <Divider />
+            <UserRolesAndSelector
+                selectMode={editMode}
+                onSelect={onSelectRole}
+                value={state.roles}
+            />
             {saveButtons}
         </Stack>
     );

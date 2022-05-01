@@ -199,11 +199,11 @@ export const GuidedSetup = () => {
             return;
         }
         setIsPosting(false);
+        setDiscardConfirmationOpen(false);
         onCloseForm();
     };
 
     const handleDiscard = () => {
-        console.log(locations.current);
         if (
             !_.isEqual(formValues, defaultValues) ||
             !_.isEqual(requesterContact.current, defaultContact) ||
@@ -227,7 +227,6 @@ export const GuidedSetup = () => {
     };
 
     function setLocation(key, location) {
-        console.log(key, location);
         locations.current[key] = location;
     }
 
@@ -405,6 +404,7 @@ export const GuidedSetup = () => {
                         Discard
                     </Button>
                     <Button
+                        data-cy="save-to-dash-button"
                         onClick={handleSave}
                         disabled={isPosting}
                         variant="contained"
@@ -418,7 +418,11 @@ export const GuidedSetup = () => {
                 open={discardConfirmationOpen}
                 dialogTitle={"Are you sure?"}
                 onClose={() => setDiscardConfirmationOpen(false)}
-                onConfirmation={onCloseForm}
+                onCancel={() => setDiscardConfirmationOpen(false)}
+                onConfirmation={() => {
+                    setDiscardConfirmationOpen(false);
+                    onCloseForm();
+                }}
             >
                 <Typography>
                     This will clear any data you have entered.

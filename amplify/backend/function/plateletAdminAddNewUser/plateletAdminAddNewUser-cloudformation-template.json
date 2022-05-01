@@ -28,10 +28,10 @@
       "Type": "String",
       "Default": "apiplateletGraphQLAPIEndpointOutput"
     },
-    "plateletDomainName": {
+    "plateletWelcomeEmail": {
       "Type": "String"
     },
-    "plateletWelcomeEmail": {
+    "plateletDomainName": {
       "Type": "String"
     }
   },
@@ -97,11 +97,11 @@
             "API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT": {
               "Ref": "apiplateletGraphQLAPIEndpointOutput"
             },
-            "PLATELET_DOMAIN_NAME": {
-              "Ref": "plateletDomainName"
-            },
             "PLATELET_WELCOME_EMAIL": {
               "Ref": "plateletWelcomeEmail"
+            },
+            "PLATELET_DOMAIN_NAME": {
+              "Ref": "plateletDomainName"
             }
           }
         },
@@ -286,7 +286,17 @@
                 "cognito-idp:UpdateGroup",
                 "cognito-idp:AdminUpdateAuthEventFeedback",
                 "cognito-idp:UpdateDeviceStatus",
-                "cognito-idp:UpdateUserPool"
+                "cognito-idp:UpdateUserPool",
+                "cognito-idp:DeleteUserPoolDomain",
+                "cognito-idp:DeleteResourceServer",
+                "cognito-idp:DeleteGroup",
+                "cognito-idp:AdminDeleteUserAttributes",
+                "cognito-idp:DeleteUserPoolClient",
+                "cognito-idp:DeleteUserAttributes",
+                "cognito-idp:DeleteUserPool",
+                "cognito-idp:AdminDeleteUser",
+                "cognito-idp:DeleteIdentityProvider",
+                "cognito-idp:DeleteUser"
               ],
               "Resource": [
                 {

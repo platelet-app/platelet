@@ -23,7 +23,7 @@ import TaskAssignmentsPanel from "./components/TaskAssignmentsPanel";
 import PropTypes from "prop-types";
 
 const drawerWidth = 420;
-const drawerWidthMd = 320;
+const drawerWidthMd = 420;
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -142,37 +142,15 @@ function TaskDialogCompact(props) {
                         taskUUID
                     ).subscribe(async (observeResult) => {
                         const taskData = observeResult.element;
-                        if (observeResult.opType === "INSERT") {
-                            setState(taskData);
-                        } else if (observeResult.opType === "UPDATE") {
-                            if (
-                                taskData.taskRiderResponsibilityId ||
-                                taskData.taskRiderResponsibilityId === null
-                            ) {
-                                let riderResponsibility = null;
-                                if (taskData.taskRiderResponsibilityId)
-                                    riderResponsibility = await DataStore.query(
-                                        models.RiderResponsibility,
-                                        taskData.taskRiderResponsibilityId
-                                    );
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    ...taskData,
-                                    riderResponsibility,
-                                }));
-                            } else {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    ...taskData,
-                                }));
-                            }
+                        if (observeResult.opType === "UPDATE") {
+                            setState((prevState) => ({
+                                ...prevState,
+                                ...taskData,
+                            }));
                         } else if (observeResult.opType === "DELETE") {
-                            console.log("DELETE", observeResult);
                             setNotFound(true);
                             setState(initialState);
                         }
-                        const task = observeResult.element;
-                        setState((prevState) => ({ ...prevState, ...task }));
                     });
                 } else {
                     setNotFound(true);
@@ -202,38 +180,6 @@ function TaskDialogCompact(props) {
             setState((prevState) => ({
                 ...prevState,
                 timeOfCall: value,
-            }));
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
-    async function setTimeWithKey(value, key) {
-        try {
-            let result;
-            if (value && typeof value === "object" && !!value.toISOString) {
-                result = value.toISOString();
-            } else {
-                result = value;
-            }
-            const existingTask = await DataStore.query(models.Task, taskUUID);
-            if (!existingTask) throw new Error("Task doesn't exist");
-            const status = await determineTaskStatus({
-                ...existingTask,
-                [key]: result,
-            });
-            await DataStore.save(
-                models.Task.copyOf(existingTask, (updated) => {
-                    updated[key] = result;
-                    updated.status = status;
-                })
-            );
-            taskRef.current = { ...taskRef.current, [key]: value };
-            setState((prevState) => ({
-                ...prevState,
-                status,
-                [key]: value,
             }));
         } catch (error) {
             console.log(error);
@@ -344,36 +290,17 @@ function TaskDialogCompact(props) {
                         task={state}
                         taskUUID={taskUUID}
                         onSelectPriority={selectPriority}
-                        onChangeTimePickedUp={(value) =>
-                            setTimeWithKey(value, "timePickedUp")
-                        }
-                        onChangeTimeDroppedOff={(value) =>
-                            setTimeWithKey(value, "timeDroppedOff")
-                        }
-                        onChangeTimeCancelled={(value) =>
-                            setTimeWithKey(value, "timeCancelled")
-                        }
-                        onChangeTimeRejected={(value) =>
-                            setTimeWithKey(value, "timeRejected")
-                        }
                         onChangeTimeOfCall={setTimeOfCall}
                         onChangeRequesterContact={updateRequesterContact}
                     />
+                    <Hidden mdDown>
+                        <CommentsSideBar
+                            taskId={taskUUID}
+                            width={isMd ? drawerWidthMd : drawerWidth}
+                            parentUUID={taskUUID}
+                        />
+                    </Hidden>
                 </div>
-                <Hidden mdDown>
-                    <CommentsSideBar
-                        taskId={taskUUID}
-                        width={isMd ? drawerWidthMd : drawerWidth}
-                        parentUUID={taskUUID}
-                    />
-                </Hidden>
-                <Hidden mdUp>
-                    <Stack direction="column" spacing={2}>
-                        <TaskAssignmentsPanel taskId={taskUUID} />
-                        <Divider />
-                        <CommentsSection parentId={taskUUID} />
-                    </Stack>
-                </Hidden>
             </DialogWrapper>
         );
     }

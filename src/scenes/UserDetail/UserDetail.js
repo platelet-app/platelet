@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { decodeUUID } from "../../utilities";
 import _ from "lodash";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +7,10 @@ import { PaddedPaper } from "../../styles/common";
 import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
-import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    tenantIdSelector,
+} from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -16,6 +19,7 @@ import { Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import * as mutations from "../../graphql/mutations";
 import { API, graphqlOperation } from "aws-amplify";
+import CurrentRiderResponsibilitySelector from "./components/CurrentRiderResponsibilitySelector";
 
 const initialUserState = {
     id: "",
@@ -31,7 +35,7 @@ const initialUserState = {
     patch: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
-    active: 1,
+    disabled: 0,
 };
 
 export default function UserDetail(props) {
@@ -40,6 +44,11 @@ export default function UserDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
+    const [riderResponsibility, setRiderResponsibility] = useState(null);
+    const [possibleRiderResponsibilities, setPossibleRiderResponsibilities] =
+        useState([]);
+    const riderRespObserver = useRef({ unsubscribe: () => {} });
+    const tenantId = useSelector(tenantIdSelector);
     const [notFound, setNotFound] = useState(false);
     const [usersDisplayNames, setUsersDisplayNames] = useState([]);
     const dispatch = useDispatch();
@@ -53,9 +62,47 @@ export default function UserDetail(props) {
         } else {
             try {
                 const userResult = await DataStore.query(models.User, userUUID);
+                // TODO: make this observeQuery when https://github.com/aws-amplify/amplify-js/issues/9682 is fixed
+                DataStore.query(models.PossibleRiderResponsibilities).then(
+                    (result) => {
+                        const filtered = result
+                            .filter((responsibility) => {
+                                return (
+                                    userResult &&
+                                    responsibility.user &&
+                                    responsibility.user.id &&
+                                    userResult.id === responsibility.user.id
+                                );
+                            })
+                            .map((r) => r.riderResponsibility);
+                        setPossibleRiderResponsibilities(filtered);
+                    }
+                );
+                riderRespObserver.current.unsubscribe();
+                riderRespObserver.current = DataStore.observe(
+                    models.PossibleRiderResponsibilities
+                ).subscribe((result) => {
+                    DataStore.query(models.PossibleRiderResponsibilities).then(
+                        (result) => {
+                            const filtered = result
+                                .filter((responsibility) => {
+                                    return (
+                                        userResult &&
+                                        responsibility.user &&
+                                        responsibility.user.id &&
+                                        userResult.id === responsibility.user.id
+                                    );
+                                })
+                                .map((r) => r.riderResponsibility);
+                            setPossibleRiderResponsibilities(filtered);
+                        }
+                    );
+                });
                 setIsFetching(false);
-                if (userResult) setUser(userResult);
-                else setNotFound(true);
+                if (userResult) {
+                    setUser(userResult);
+                    setRiderResponsibility(userResult.riderResponsibility);
+                } else setNotFound(true);
             } catch (error) {
                 setIsFetching(false);
                 dispatch(
@@ -83,56 +130,82 @@ export default function UserDetail(props) {
         } catch (error) {
             dispatch(
                 displayErrorNotification(
-                    `Failed to get users lists: ${error.message}`
+                    `Failed to get users list: ${error.message}`
                 )
             );
         }
     }
     useEffect(() => getDisplayNames(), []);
 
+    useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
+
+    function handleUpdateRiderResponsibility(riderResponsibility) {
+        setRiderResponsibility(riderResponsibility);
+        DataStore.query(models.User, user.id)
+            .then((currentUser) => {
+                DataStore.save(
+                    models.User.copyOf(currentUser, (updated) => {
+                        updated.riderResponsibility = riderResponsibility;
+                    })
+                );
+            })
+            .catch((error) => {
+                console.log(error);
+                dispatch(
+                    displayErrorNotification("Sorry, something went wrong")
+                );
+            });
+    }
+
     async function onUpdate(value) {
         setIsPosting(true);
-        debugger;
         try {
             const existingUser = await DataStore.query(models.User, user.id);
-            const { roles, riderResponsibility, contact, ...rest } = value;
+            const { roles, possibleRiderResponsibilities, contact, ...rest } =
+                value;
+
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
                     for (const [key, newValue] of Object.entries(rest)) {
                         if (!protectedFields.includes(key))
                             updated[key] = newValue;
                     }
-                })
-            );
-            if (existingUser.contact && contact) {
-                await DataStore.save(
-                    models.User.copyOf(existingUser, (updated) => {
+                    if (existingUser.contact && contact) {
                         for (const [key, newValue] of Object.entries(contact)) {
                             if (!protectedFields.includes(key))
                                 updated.contact[key] = newValue;
                         }
-                    })
-                );
-            }
-            if (riderResponsibility) {
-                await DataStore.save(
-                    models.User.copyOf(existingUser, (updated) => {
-                        updated.riderResponsibility =
-                            riderResponsibility || null;
-                    })
-                );
-            } else if (riderResponsibility === null) {
-                await DataStore.save(
-                    models.User.copyOf(existingUser, (updated) => {
-                        updated.riderResponsibility = null;
-                    })
-                );
-            }
+                    }
+                })
+            );
             if (roles) {
                 await API.graphql(
                     graphqlOperation(mutations.updateUserRoles, {
                         userId: user.id,
                         roles,
+                    })
+                );
+            }
+            if (possibleRiderResponsibilities && tenantId) {
+                DataStore.query(models.PossibleRiderResponsibilities).then(
+                    (result) => {
+                        const existing = result.filter(
+                            (r) => r.user && r.user.id === existingUser.id
+                        );
+                        for (const i of existing) {
+                            DataStore.delete(i);
+                        }
+                    }
+                );
+                await Promise.all(
+                    possibleRiderResponsibilities.map((riderResponsibility) => {
+                        return DataStore.save(
+                            new models.PossibleRiderResponsibilities({
+                                tenantId,
+                                riderResponsibility,
+                                user: existingUser,
+                            })
+                        );
                     })
                 );
             }
@@ -155,9 +228,17 @@ export default function UserDetail(props) {
                 spacing={1}
             >
                 <PaddedPaper maxWidth={700}>
+                    <CurrentRiderResponsibilitySelector
+                        available={possibleRiderResponsibilities}
+                        value={riderResponsibility}
+                        onChange={handleUpdateRiderResponsibility}
+                    />
                     <UserProfile
                         displayNames={usersDisplayNames}
                         user={user}
+                        possibleRiderResponsibilities={
+                            possibleRiderResponsibilities
+                        }
                         onUpdate={onUpdate}
                         isPosting={isPosting}
                     />

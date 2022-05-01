@@ -8,8 +8,10 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
-import { Stack } from "@mui/material";
+import { Divider, Hidden, Stack } from "@mui/material";
 import LocationDetailsPanel from "./LocationDetailsPanel";
+import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
+import CommentsSection from "../../Comments/CommentsSection";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -58,10 +60,6 @@ function TaskOverview(props) {
                             isFetching={props.isFetching}
                             onSelectPriority={props.onSelectPriority}
                             onChangeTimeOfCall={props.onChangeTimeOfCall}
-                            onChangeTimeDroppedOff={
-                                props.onChangeTimeDroppedOff
-                            }
-                            onChangeTimePickedUp={props.onChangeTimePickedUp}
                             onChangeRequesterContact={
                                 props.onChangeRequesterContact
                             }
@@ -69,6 +67,16 @@ function TaskOverview(props) {
                             task={task}
                         />
                         <TaskActions taskId={taskUUID} />
+                        <Hidden xlUp>
+                            <DeliverableDetails
+                                deliverables={
+                                    task.deliverables
+                                        ? Object.values(task.deliverables)
+                                        : []
+                                }
+                                taskId={taskUUID}
+                            />
+                        </Hidden>
                     </Stack>
                 </Grid>
                 <Grid item className={classes.item}>
@@ -94,10 +102,13 @@ function TaskOverview(props) {
                             }
                             locationKey={"dropOffLocation"}
                         />
+                        <Hidden mdUp>
+                            <TaskAssignmentsPanel taskId={taskUUID} />
+                        </Hidden>
                     </Stack>
                 </Grid>
-                <Grid item className={classes.item}>
-                    <Stack direction={"column"} spacing={isSm ? 1 : 3}>
+                <Hidden xlDown>
+                    <Grid item className={classes.item}>
                         <DeliverableDetails
                             deliverables={
                                 task.deliverables
@@ -106,8 +117,13 @@ function TaskOverview(props) {
                             }
                             taskId={taskUUID}
                         />
-                    </Stack>
-                </Grid>
+                    </Grid>
+                </Hidden>
+                <Hidden mdUp>
+                    <Grid item className={classes.item}>
+                        <CommentsSection parentId={taskUUID} />
+                    </Grid>
+                </Hidden>
             </Grid>
         </Container>
     );
@@ -117,15 +133,11 @@ TaskOverview.propTypes = {
     task: PropTypes.object,
     isFetching: PropTypes.bool,
     taskUUID: PropTypes.string,
-    onChangeTimeCancelled: PropTypes.func,
-    onChangeTimeRejected: PropTypes.func,
     onChangeTimeOfCall: PropTypes.func,
 };
 
 TaskOverview.defaultProps = {
     isFetching: false,
-    onChangeTimeCancelled: () => {},
-    onChangeTimeRejected: () => {},
     onChangeTimeOfCall: () => {},
 };
 

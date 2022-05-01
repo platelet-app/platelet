@@ -22,7 +22,6 @@ const fakeUser = {
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
-    active: 1,
 };
 
 const testUserModel = new models.User({
@@ -32,7 +31,6 @@ const testUserModel = new models.User({
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
-    active: 1,
 });
 const testUser = { ...testUserModel, id: "whoami" };
 
@@ -92,6 +90,7 @@ function* getWhoami() {
                             "Vehicle",
                             "Deliverable",
                             "DeliverableType",
+                            "PossibleRiderResponsibilities",
                         ].includes(model.name)
                     ) {
                         modelsToSync.push(model);
@@ -99,6 +98,9 @@ function* getWhoami() {
                 }
 
                 yield call([DataStore, DataStore.configure], {
+                    errorHandler: (err) => {
+                        console.log("DataStore error:", err);
+                    },
                     syncExpressions: [
                         ...modelsToSync.map((model) =>
                             syncExpression(model, (m) =>

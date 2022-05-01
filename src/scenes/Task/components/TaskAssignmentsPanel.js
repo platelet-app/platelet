@@ -61,7 +61,7 @@ const sortByUserRole = (a, b) => {
 };
 
 function TaskAssignmentsPanel(props) {
-    const [collapsed, setCollapsed] = useState(true);
+    const [collapsed, setCollapsed] = useState(null);
     const [role, setRole] = useState(userRoles.rider);
     const [isPosting, setIsPosting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -71,13 +71,11 @@ function TaskAssignmentsPanel(props) {
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
-    const updating = useRef(false);
     const [state, setState] = useState({});
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
 
     function onSelect(value) {
-        updating.current = true;
         if (value) addAssignee(value, role);
     }
 
@@ -98,7 +96,7 @@ function TaskAssignmentsPanel(props) {
     }
     useEffect(() => {
         getAssignees();
-    }, [props.taskId, dataStoreReadyStatus, taskAssigneesReady]);
+    }, [props.taskId, dataStoreReadyStatus, taskAssigneesReady, taskAssignees]);
 
     async function addAssignee(user, role) {
         setIsPosting(true);
@@ -152,17 +150,27 @@ function TaskAssignmentsPanel(props) {
         setIsDeleting(true);
         try {
             if (!assignmentId) throw new Error("Assignment ID not provided");
-            let existingTask = await DataStore.query(models.Task, props.taskId);
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
             if (!existingTask) throw new Error("Task doesn't exist");
             const existingAssignment = await DataStore.query(
                 models.TaskAssignee,
                 assignmentId
             );
+            if (existingAssignment) await DataStore.delete(existingAssignment);
+            const status = await determineTaskStatus(
+                existingTask,
+                Object.values(_.omit(state, assignmentId)).filter(
+                    (a) => a.role === userRoles.rider
+                )
+            );
+            let riderResponsibility = existingTask.riderResponsibility;
             if (
                 existingAssignment &&
                 existingAssignment.role === userRoles.rider
             ) {
-                let riderResponsibility = null;
                 const riders = Object.values(state)
                     .filter(
                         (a) =>
@@ -174,25 +182,14 @@ function TaskAssignmentsPanel(props) {
                     if (rider && rider.riderResponsibility) {
                         riderResponsibility = rider.riderResponsibility;
                     }
+                } else {
+                    riderResponsibility = null;
                 }
-                existingTask = await DataStore.save(
-                    models.Task.copyOf(existingTask, (updated) => {
-                        updated.riderResponsibility = riderResponsibility;
-                    })
-                );
             }
-            if (existingAssignment) await DataStore.delete(existingAssignment);
-            const status = await determineTaskStatus(
-                {
-                    ...existingTask,
-                },
-                Object.values(_.omit(state, assignmentId)).filter(
-                    (a) => a.role === userRoles.rider
-                )
-            );
             await DataStore.save(
                 models.Task.copyOf(existingTask, (updated) => {
                     updated.status = status;
+                    updated.riderResponsibility = riderResponsibility;
                 })
             );
             setState((prevState) => _.omit(prevState, assignmentId));
@@ -204,18 +201,27 @@ function TaskAssignmentsPanel(props) {
         }
     }
 
-    useEffect(() => {
-        if (updating.current) {
-            updating.current = false;
+    function setCollapsedOnFirstMount() {
+        if (_.isEmpty(state)) {
             return;
         }
+        if (!taskAssigneesReady || collapsed !== null) return;
         if (
             Object.values(state).filter((a) => a.role === userRoles.rider)
                 .length === 0
-        )
+        ) {
             setCollapsed(false);
-        else setCollapsed(true);
-    }, [state]);
+        } else {
+            setCollapsed(true);
+        }
+    }
+
+    useEffect(setCollapsedOnFirstMount, [
+        state,
+        taskAssigneesReady,
+        taskAssignees,
+        collapsed,
+    ]);
 
     if (errorState) {
         return <GetError />;
@@ -236,6 +242,7 @@ function TaskAssignmentsPanel(props) {
                         <Tooltip title={"Edit Assignees"}>
                             <IconButton
                                 aria-label={"Edit Assignees"}
+                                data-cy="edit-task-assignees"
                                 size={"small"}
                                 disabled={props.disabled}
                                 onClick={() =>
@@ -275,14 +282,13 @@ function TaskAssignmentsPanel(props) {
                             <TaskAssignees
                                 disabled={isDeleting}
                                 onRemove={(v) => {
-                                    updating.current = true;
                                     deleteAssignment(v);
                                 }}
                                 assignees={state}
                             />
                             <Typography>Assign a user</Typography>
                             <UserRoleSelect
-                                value={role}
+                                value={[role]}
                                 onSelect={(value) => setRole(value)}
                                 exclude={Object.values(userRoles).filter(
                                     (value) =>

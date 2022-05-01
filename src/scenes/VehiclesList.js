@@ -11,13 +11,12 @@ import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
 import { Stack } from "@mui/material";
-import Skeleton from '@mui/material/Skeleton';
+import Skeleton from "@mui/material/Skeleton";
 import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 import { matchSorter } from "match-sorter";
 import makeStyles from "@mui/styles/makeStyles";
-
 
 const useStyles = makeStyles((theme) => {
     return {
@@ -34,7 +33,6 @@ const useStyles = makeStyles((theme) => {
     };
 });
 
-
 function VehicleList() {
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
@@ -46,11 +44,10 @@ function VehicleList() {
 
     function onChangeFilterText(e) {
         setFilteredVehicles(
-          matchSorter( vehiclesRef.current, e.target.value, {keys: 
-              ['name','manufacturer','model','registrationNumber' ]
-            }
-          )
-        )
+            matchSorter(vehiclesRef.current, e.target.value, {
+                keys: ["name", "manufacturer", "model", "registrationNumber"],
+            })
+        );
     }
 
     const addButton = whoami.roles.includes("ADMIN") ? (
@@ -68,7 +65,7 @@ function VehicleList() {
                 const vehicles = await DataStore.query(models.Vehicle);
                 setIsFetching(false);
                 vehiclesRef.current = vehicles;
-                setFilteredVehicles(vehicles)
+                setFilteredVehicles(vehicles);
             } catch (error) {
                 console.log("Request failed", error);
                 if (error && error.message)
@@ -81,22 +78,22 @@ function VehicleList() {
     useEffect(() => getVehicles(), [dataStoreReadyStatus]);
     if (isFetching) {
         return (
-           <Stack
+            <Stack
                 direction={"column"}
-                spacing={3}
+                spacing={2}
                 alignItems={"flex-start"}
                 justifyContent={"center"}
             >
                 <PaddedPaper maxWidth={"800px"}>
                     <Stack direction={"column"}>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
-                        <Skeleton variant="text" width={500} height={50}/>
+                        <Skeleton variant="text" width={500} height={50} />
+                        <Skeleton variant="text" width={500} height={50} />
+                        <Skeleton variant="text" width={500} height={50} />
+                        <Skeleton variant="text" width={500} height={50} />
                     </Stack>
                 </PaddedPaper>
             </Stack>
-        )
+        );
     } else {
         return (
             <Stack
@@ -107,20 +104,19 @@ function VehicleList() {
             >
                 {addButton}
                 <TextFieldControlled
-                id="tasks-filter-input"
-                variant={"standard"}
-                placeholder={"Filter vehicles"}
-                onChange={onChangeFilterText}
-                color={"secondary"}
-                className={classes.root}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon className={classes.searchIcon} />
-                        </InputAdornment>
-                    ),
-                }}
-            />
+                    variant={"standard"}
+                    placeholder={"Filter vehicles"}
+                    onChange={onChangeFilterText}
+                    color={"secondary"}
+                    className={classes.root}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon className={classes.searchIcon} />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
                 <PaddedPaper width={"800px"}>
                     <Stack
                         spacing={1}
@@ -146,8 +142,5 @@ function VehicleList() {
         );
     }
 }
-
-
-
 
 export default VehicleList;

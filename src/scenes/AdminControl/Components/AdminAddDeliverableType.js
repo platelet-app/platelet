@@ -54,15 +54,14 @@ function AdminAddDeliverableType() {
         try {
             setIsPosting(true);
             await DataStore.save(
-                new models.DeliverableType({ ...state, tenantId })
+                new models.DeliverableType({ ...state, tenantId, disabled: 0 })
             );
             setState(initialDeliverableTypeState);
             setIsPosting(false);
-            dispatch(displayInfoNotification("Deliverable type added"));
         } catch (error) {
             console.log("error adding deliverable type:", error);
             setIsPosting(false);
-            dispatch(displayErrorNotification(error.message));
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
         }
     }
     const deleteTag = (tag) => {
@@ -141,10 +140,10 @@ function AdminAddDeliverableType() {
                         <UnitSelector
                             value={state.defaultUnit}
                             label={"Default unit"}
-                            onChange={(e) =>
+                            onChange={(value) =>
                                 setState((prevState) => ({
                                     ...prevState,
-                                    defaultUnit: e.target.value,
+                                    defaultUnit: value,
                                 }))
                             }
                         />
@@ -157,7 +156,7 @@ function AdminAddDeliverableType() {
                                 marginBottom: 1,
                             }}
                         >
-                            Add tags to make finding this item easier:
+                            Add tags to make finding this item easier
                         </Typography>
                         <DeliverableTypeTagger
                             onAdd={addTag}

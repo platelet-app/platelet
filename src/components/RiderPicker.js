@@ -60,7 +60,7 @@ function RiderPicker(props) {
                 fullWidth
                 key={reset}
                 filterOptions={filterOptions}
-                id="combo-box-riders"
+                data-cy="combo-box-riders"
                 options={filteredRiderSuggestions}
                 getOptionLabel={(option) => option.displayName}
                 size={props.size}

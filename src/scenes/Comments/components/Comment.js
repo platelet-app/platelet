@@ -14,6 +14,7 @@ import { commentVisibility } from "../../../apiConsts";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import EditCommentDialog from "./EditCommentDialog";
 
 const contextCreateStyles = makeStyles((theme) => {
     return {
@@ -90,86 +91,30 @@ function Comment(props) {
         setOldState(props.comment);
     }, [props.comment]);
 
+    async function onEditComment(value) {
+        try {
+            setEditMode(false);
+            const existingComment = await DataStore.query(
+                models.Comment,
+                state.id
+            );
+            await DataStore.save(
+                models.Comment.copyOf(
+                    existingComment,
+                    (updated) => (updated.body = value)
+                )
+            );
+        } catch (e) {
+            dispatch(displayErrorNotification("Sorry, an error occurred"));
+        }
+    }
+
     if (!comment) {
         return <></>;
-    } else if (editMode) {
-        return (
-            <Grid
-                container
-                direction={"column"}
-                wrap={"nowrap"}
-                alignItems={
-                    state.author && whoami.id === state.author.id
-                        ? "flex-end"
-                        : "flex-start"
-                }
-                spacing={1}
-            >
-                <Grid item>
-                    <CommentCardStyled>
-                        <TextFieldUncontrolled
-                            value={state.body}
-                            InputProps={{
-                                style: {
-                                    minWidth: 400,
-                                },
-                            }}
-                            className={classes.editTextField}
-                            multiline
-                            fullWidth
-                            disabled={isPosting}
-                            onChange={(e) =>
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    body: e.target.value,
-                                }))
-                            }
-                        />
-                        <SaveCancelButtons
-                            disabled={isPosting || !!!state.body}
-                            onCancel={() => {
-                                setState(oldState);
-                                setEditMode(false);
-                            }}
-                            onSave={async () => {
-                                try {
-                                    setIsPosting(true);
-                                    const existing = await DataStore.query(
-                                        models.Comment,
-                                        state.id
-                                    );
-                                    await DataStore.save(
-                                        models.Comment.copyOf(
-                                            existing,
-                                            (updated) => {
-                                                updated.body = state.body;
-                                            }
-                                        )
-                                    );
-                                    setEditMode(false);
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        _version: prevState._version + 1,
-                                    }));
-                                    setIsPosting(false);
-                                } catch (error) {
-                                    dispatch(
-                                        displayErrorNotification(
-                                            "Sorry, an error occured."
-                                        )
-                                    );
-                                }
-                            }}
-                        />
-                    </CommentCardStyled>
-                </Grid>
-            </Grid>
-        );
     } else {
         return (
             <div className={contextClasses.root}>
                 <CommentCard
-                    id={"comment-card"}
                     author={state.author}
                     numEdits={state._version - 1}
                     showAuthor={props.showAuthor}
@@ -188,6 +133,14 @@ function Comment(props) {
                         onRestore={() => props.onRestore(state)}
                     />
                 </div>
+                <EditCommentDialog
+                    open={editMode}
+                    visibility={state.visibility}
+                    author={state.author}
+                    onClose={() => setEditMode(false)}
+                    value={state.body}
+                    onConfirm={onEditComment}
+                />
             </div>
         );
     }

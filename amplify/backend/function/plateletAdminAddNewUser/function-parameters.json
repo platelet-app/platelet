@@ -4,7 +4,8 @@
       "platelet61a0ac07": [
         "create",
         "read",
-        "update"
+        "update",
+        "delete"
       ]
     },
     "api": {
@@ -17,12 +18,12 @@
   "lambdaLayers": [],
   "environmentVariableList": [
     {
-      "cloudFormationParameterName": "plateletDomainName",
-      "environmentVariableName": "PLATELET_DOMAIN_NAME"
-    },
-    {
       "cloudFormationParameterName": "plateletWelcomeEmail",
       "environmentVariableName": "PLATELET_WELCOME_EMAIL"
+    },
+    {
+      "cloudFormationParameterName": "plateletDomainName",
+      "environmentVariableName": "PLATELET_DOMAIN_NAME"
     }
   ]
 }

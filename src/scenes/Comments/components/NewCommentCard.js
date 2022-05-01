@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
 import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
 import CommentAuthor from "./CommentAuthor";
@@ -14,34 +12,20 @@ import {
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
-import { FormControl, Select, MenuItem } from "@mui/material";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
+import { TextField, Typography } from "@mui/material";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const initialCommentState = {
     body: "",
     visibility: commentVisibility.everyone,
 };
 
-function VisibilityMenu(props) {
-    return (
-        <FormControl fullWidth>
-            <Select
-                id="visibility-menu"
-                value={props.value}
-                variant={"standard"}
-                label="Visibility"
-                onChange={props.onChange}
-            >
-                <MenuItem value={commentVisibility.everyone}>EVERYONE</MenuItem>
-                <MenuItem value={commentVisibility.me}>ONLY ME</MenuItem>
-            </Select>
-        </FormControl>
-    );
-}
-
 function NewCommentCard(props) {
     const [state, setState] = useState(initialCommentState);
     const [isPosting, setIsPosting] = useState(false);
+    const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const tenantId = useSelector(tenantIdSelector);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
@@ -92,6 +76,7 @@ function NewCommentCard(props) {
             >
                 <Grid style={{ width: "100%" }} item>
                     <Grid
+                        spacing={1}
                         container
                         direction={"row"}
                         alignItems={"center"}
@@ -110,24 +95,21 @@ function NewCommentCard(props) {
                                 }
                             />
                         </Grid>
-                        <Grid item>
-                            <VisibilityMenu
+                        <Grid sx={{ marginLeft: "auto" }} item>
+                            <CommentVisibilitySelector
                                 value={state.visibility}
-                                onChange={(e) => {
+                                onChange={(value) => {
                                     setState((prevState) => ({
                                         ...prevState,
-                                        visibility: e.target.value,
+                                        visibility: value,
                                     }));
                                 }}
                             />
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item>
-                    <Divider />
-                </Grid>
                 <Grid item className={classes.newCommentTextField}>
-                    <TextFieldUncontrolled
+                    <TextField
                         className={classes.newCommentTextField}
                         placeholder={
                             state.visibility === commentVisibility.me
@@ -167,12 +149,7 @@ function NewCommentCard(props) {
                         <Grid item>
                             <Button
                                 disabled={state.body.length === 0 || isPosting}
-                                onClick={() =>
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        body: "",
-                                    }))
-                                }
+                                onClick={() => setConfirmationDialogOpen(true)}
                             >
                                 Discard
                             </Button>
@@ -180,6 +157,21 @@ function NewCommentCard(props) {
                     </Grid>
                 </Grid>
             </Grid>
+            <ConfirmationDialog
+                open={confirmationDialogOpen}
+                onConfirmation={() => {
+                    setState((prevState) => ({
+                        ...prevState,
+                        body: "",
+                    }));
+                    setConfirmationDialogOpen(false);
+                }}
+                onClose={() => setConfirmationDialogOpen(false)}
+                onCancel={() => setConfirmationDialogOpen(false)}
+                dialogTitle={"Discard comment?"}
+            >
+                <Typography>{state.body}</Typography>
+            </ConfirmationDialog>
         </CommentCardStyled>
     );
 }

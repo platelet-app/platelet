@@ -1,7 +1,7 @@
 import { Box, Divider, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { EditModeToggleButton } from "../../../components/EditModeToggleButton";
+import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
 import _ from "lodash";

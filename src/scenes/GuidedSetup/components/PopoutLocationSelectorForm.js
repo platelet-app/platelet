@@ -1,8 +1,9 @@
-import { TextField, Stack } from "@mui/material";
+import { TextField, Stack, useMediaQuery } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
+import { useTheme } from "@mui/styles";
 
 const initialState = {
     name: "",
@@ -36,20 +37,27 @@ const contactFields = {
 
 function PopOutLocationSelectorForm(props) {
     const [state, setState] = useState(initialState);
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     function updateStateFromProps() {
-        if (props.location) setState(props.location);
+        if (props.location) {
+            setState(props.location);
+        } else {
+            setState(initialState);
+        }
     }
     useEffect(updateStateFromProps, [props.location]);
 
     return (
         <ConfirmationDialog
+            fullScreen={isSm}
             dialogTitle={props.label}
             onCancel={props.onCancel}
             onConfirmation={() => props.onConfirmation(state)}
             open={props.open}
         >
-            <Stack sx={{ padding: 1, minWidth: 400 }} spacing={1}>
+            <Stack sx={{ width: "100%", minWidth: isSm ? 0 : 400 }} spacing={1}>
                 {Object.entries(addressFields).map(([key, label]) => (
                     <TextField
                         key={key}

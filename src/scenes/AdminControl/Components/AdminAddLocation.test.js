@@ -49,6 +49,7 @@ const savedData = new models.Location({
     contact: { ...contactFields, telephoneNumber: "01234567890" },
     listed: 1,
     tenantId: "tenant-id",
+    disabled: 0,
 });
 
 describe("AdminAddLocation", () => {

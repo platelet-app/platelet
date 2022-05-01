@@ -4,6 +4,7 @@ import * as models from "../../../models";
 import { useDispatch, useSelector } from "react-redux";
 import {
     dashboardFilteredUserSelector,
+    dashboardTabIndexSelector,
     dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
@@ -76,24 +77,31 @@ function RightArrow() {
     );
 }
 
-const olderThanOneWeek = (assignment) => {
+const completedTabFilter = (assignment) => {
     // if the job is in completed tab then only find out riders from the last week
     // to mimic the dashboard
-    if (
+    return (
         assignment.task &&
         [
-            tasksStatus.completed,
-            tasksStatus.droppedOff,
             tasksStatus.rejected,
+            tasksStatus.abandoned,
             tasksStatus.cancelled,
+            tasksStatus.completed,
+        ].includes(assignment.task.status) &&
+        moment(assignment.task.createdAt).isAfter(moment().subtract(1, "week"))
+    );
+};
+
+const inProgressTabFilter = (assignment) => {
+    return (
+        assignment.task &&
+        [
+            tasksStatus.new,
+            tasksStatus.active,
+            tasksStatus.pickedUp,
+            tasksStatus.droppedOff,
         ].includes(assignment.task.status)
-    ) {
-        return moment(assignment.task.createdAt).isAfter(
-            moment().subtract(1, "week")
-        );
-    } else {
-        return true;
-    }
+    );
 };
 
 function ActiveRidersChips() {
@@ -101,9 +109,9 @@ function ActiveRidersChips() {
     const [errorState, setErrorState] = useState(null);
     const whoami = useSelector(getWhoami);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
+    const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
     const timeSet = useRef(null);
     const allAssignees = useSelector(taskAssigneesSelector).items;
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
     const roleView = useSelector(getRoleView);
     const dashboardFilteredUserRef = useRef(null);
@@ -118,7 +126,11 @@ function ActiveRidersChips() {
                 (a) => a.role === userRoles.rider
             );
             activeRidersResult = assignments
-                .filter(olderThanOneWeek)
+                .filter(
+                    dashboardTabIndex === 0
+                        ? inProgressTabFilter
+                        : completedTabFilter
+                )
                 .map((a) => a.assignee);
         } else if (roleView === userRoles.coordinator && whoami) {
             const myAssignments = allAssignees.filter(
@@ -139,7 +151,11 @@ function ActiveRidersChips() {
                     myAssignedTasksIds.includes(a.task.id)
             );
             activeRidersResult = assignedToMeRiders
-                .filter(olderThanOneWeek)
+                .filter(
+                    dashboardTabIndex === 0
+                        ? inProgressTabFilter
+                        : completedTabFilter
+                )
                 .map((a) => a.assignee);
         }
         if (
@@ -150,7 +166,13 @@ function ActiveRidersChips() {
         ) {
             dispatch(setDashboardFilteredUser(null));
         }
-        return convertListDataToObject(activeRidersResult);
+
+        // resort alphabetically for now
+        // I have no idea why the completed tab sort function reverses the order
+        const sorted = activeRidersResult.sort((a, b) =>
+            a.displayName.localeCompare(b.displayName)
+        );
+        return convertListDataToObject(sorted);
     }
 
     // debounce the call in case multiple tasks are being updated at once
@@ -161,7 +183,6 @@ function ActiveRidersChips() {
 
     async function getActiveRiders() {
         try {
-            if (!dataStoreReadyStatus) return;
             setActiveRiders(await calculateRidersStatus());
             animate.current = true;
         } catch (error) {
@@ -172,7 +193,7 @@ function ActiveRidersChips() {
 
     useEffect(() => {
         getActiveRiders();
-    }, [dataStoreReadyStatus, roleView, allAssignees]);
+    }, [roleView, allAssignees, dashboardTabIndex]);
 
     async function updateRiderHome(userId) {
         try {

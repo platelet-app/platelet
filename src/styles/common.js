@@ -34,6 +34,7 @@ export function DismissButton(props) {
 
 export const ThemedLink = styled(withTheme(Link))((props) => ({
     color: props.theme.palette.text.primary,
+    width: "100%",
 }));
 
 export const StyledColumn = styled(Box)({

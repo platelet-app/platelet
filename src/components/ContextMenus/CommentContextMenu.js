@@ -61,9 +61,11 @@ export default function CommentContextMenu(props) {
             deleteComment();
             dispatch(displayInfoNotification("Comment deleted"));
             props.onDelete(props.commentUUID);
+            handleClose();
         } catch (error) {
             dispatch(displayInfoNotification("Sorry, something went wrong."));
             console.log(error);
+            handleClose();
         }
     }
 
@@ -73,6 +75,7 @@ export default function CommentContextMenu(props) {
     }
 
     const handleClose = () => {
+        setDeleteConfirmation(false);
         setState(initialState);
     };
 
@@ -82,10 +85,8 @@ export default function CommentContextMenu(props) {
                 dialogTitle="Are you sure you want to delete this comment?"
                 open={deleteConfirmation}
                 onConfirmation={onDelete}
-                onClose={() => {
-                    setDeleteConfirmation(false);
-                    handleClose();
-                }}
+                onCancel={handleClose}
+                onClose={handleClose}
             >
                 {comment && (
                     <Comment

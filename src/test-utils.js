@@ -31,7 +31,6 @@ const testUserModel = new models.User({
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
-    active: 1,
 });
 
 export const testUser = { ...testUserModel, id: "whoami" };
@@ -150,12 +149,12 @@ function render(
             reducer: rootReducer,
             middleware: [sagaMiddleWare],
             preloadedState: {
-                ...preloadedState,
-
+                roleView: "ALL",
                 awsHubDataStoreEventsReducer: {
                     networkStatus: true,
                     ready: true,
                 },
+                ...preloadedState,
             },
         }),
         ...renderOptions

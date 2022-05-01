@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Chip, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Button, TextField, Typography, Stack } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
@@ -19,6 +19,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import * as mutations from "../../../graphql/mutations";
 import { API, graphqlOperation } from "aws-amplify";
+import UserRoleSelect from "../../../components/UserRoleSelect";
 
 const useStyles = makeStyles({
     root: {
@@ -180,76 +181,11 @@ function AdminAddUser() {
                         </>
                     )}
 
-                    <Stack
-                        justifyContent="flex-start"
-                        alignItems="center"
-                        spacing={2}
-                        direction="row"
-                    >
-                        <ToggleButtonGroup
-                            value={rolesState}
-                            orientation="vertical"
-                            aria-label="task actions"
-                        >
-                            {Object.values(_.omit(userRoles, "user")).map(
-                                (value) => {
-                                    return (
-                                        <ToggleButton
-                                            sx={{
-                                                paddingTop: 1.5,
-                                                paddingBottom: 1.5,
-                                            }}
-                                            key={value}
-                                            disabled={isPosting}
-                                            aria-disabled={isPosting}
-                                            aria-label={value}
-                                            value={value}
-                                            onClick={() => onClickToggle(value)}
-                                        >
-                                            {rolesState.includes(value) ? (
-                                                <CheckBoxIcon />
-                                            ) : (
-                                                <CheckBoxOutlineBlankIcon />
-                                            )}
-                                        </ToggleButton>
-                                    );
-                                }
-                            )}
-                        </ToggleButtonGroup>
-                        <Stack sx={{ width: "100%" }} direction="column">
-                            {Object.values(_.omit(userRoles, "user")).map(
-                                (value) => {
-                                    const disabled = false;
-                                    return (
-                                        <Stack
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            direction="row"
-                                        >
-                                            <Typography
-                                                onClick={() => {
-                                                    if (disabled) return;
-                                                    onClickToggle(value);
-                                                }}
-                                                sx={{
-                                                    paddingTop: 1.5,
-                                                    paddingBottom: 1.5,
-                                                    cursor: disabled
-                                                        ? "default"
-                                                        : "pointer",
-                                                    color: disabled
-                                                        ? "gray"
-                                                        : "text.primary",
-                                                }}
-                                            >
-                                                {value}
-                                            </Typography>
-                                        </Stack>
-                                    );
-                                }
-                            )}
-                        </Stack>
-                    </Stack>
+                    <UserRoleSelect
+                        exclude={[userRoles.user]}
+                        onSelect={onClickToggle}
+                        value={rolesState}
+                    />
 
                     <Button
                         disabled={!inputVerified || isPosting}

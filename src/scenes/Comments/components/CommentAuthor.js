@@ -23,27 +23,40 @@ const CommentAuthor = React.memo((props) => {
     return (
         <Grid container alignItems={"center"} spacing={1} direction={"row"}>
             <Grid item>
-                <ThemedLink
-                    className={classes.avatar}
-                    component={RouterLink}
-                    to={"/user/" + encodeUUID(props.uuid)}
-                >
+                {props.disableLink ? (
                     <UserAvatar
                         size={5}
                         userUUID={props.uuid}
                         displayName={props.displayName}
                         thumbnailKey={props.thumbnailKey}
                     />
-                </ThemedLink>
+                ) : (
+                    <ThemedLink
+                        className={classes.avatar}
+                        component={RouterLink}
+                        to={"/user/" + encodeUUID(props.uuid)}
+                    >
+                        <UserAvatar
+                            size={5}
+                            userUUID={props.uuid}
+                            displayName={props.displayName}
+                            thumbnailKey={props.thumbnailKey}
+                        />
+                    </ThemedLink>
+                )}
             </Grid>
             <Grid item>
-                <ThemedLink
-                    className={classes.link}
-                    component={RouterLink}
-                    to={"/user/" + encodeUUID(props.uuid)}
-                >
+                {props.disableLink ? (
                     <Typography>{props.displayName}</Typography>
-                </ThemedLink>
+                ) : (
+                    <ThemedLink
+                        className={classes.link}
+                        component={RouterLink}
+                        to={"/user/" + encodeUUID(props.uuid)}
+                    >
+                        <Typography>{props.displayName}</Typography>
+                    </ThemedLink>
+                )}
             </Grid>
         </Grid>
     );
@@ -53,11 +66,13 @@ CommentAuthor.propTypes = {
     userUUID: PropTypes.string.isRequired,
     displayName: PropTypes.string,
     thumbnailKey: PropTypes.string,
+    disableLink: PropTypes.bool,
 };
 
 CommentAuthor.defaultProps = {
     displayName: "Unknown User",
     thumbnailKey: "",
+    disableLink: false,
 };
 
 export default CommentAuthor;

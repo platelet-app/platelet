@@ -50,6 +50,7 @@ describe("AdminAddDeliverableType", () => {
             icon: deliverableIcons.other,
             defaultUnit: deliverableUnits.none,
             tags: [],
+            disabled: 0,
         });
         render(<AdminAddDeliverableType />, { preloadedState });
         await waitFor(() => expect(amplify.DataStore.query).toHaveBeenCalled());
@@ -73,7 +74,6 @@ describe("AdminAddDeliverableType", () => {
                 expect.objectContaining(_.omit(mockNewDeliverable, "id"))
             )
         );
-        expect(screen.getByText("Deliverable type added")).toBeInTheDocument();
     });
 
     test("tag suggestions in combobox", async () => {
@@ -122,6 +122,7 @@ describe("AdminAddDeliverableType", () => {
             icon: deliverableIcons.bug,
             defaultUnit: deliverableUnits.item,
             tags: ["tag1", "tag2"],
+            disabled: 0,
         });
         render(<AdminAddDeliverableType />, { preloadedState });
         await waitFor(() => expect(amplify.DataStore.query).toHaveBeenCalled());
@@ -140,8 +141,10 @@ describe("AdminAddDeliverableType", () => {
         const tagBox = screen.getByRole("combobox");
         userEvent.type(tagBox, mockNewDeliverable.tags[0]);
         userEvent.type(screen.getByRole("combobox"), "{enter}");
-        userEvent.type(tagBox, mockNewDeliverable.tags[1]);
-        userEvent.type(tagBox, ",");
+        // work around the forced rerender
+        const tagBox2 = screen.getByRole("combobox");
+        userEvent.type(tagBox2, mockNewDeliverable.tags[1]);
+        userEvent.type(tagBox2, ",");
         for (const t of mockNewDeliverable.tags) {
             expect(screen.getByText(t)).toBeInTheDocument();
         }
@@ -155,7 +158,6 @@ describe("AdminAddDeliverableType", () => {
                 expect.objectContaining(_.omit(mockNewDeliverable, "id"))
             )
         );
-        expect(screen.getByText("Deliverable type added")).toBeInTheDocument();
         expect(screen.getByRole("textbox", { name: "Label" })).toHaveValue("");
         expect(
             screen.getByRole("button", { name: "Other icon" })

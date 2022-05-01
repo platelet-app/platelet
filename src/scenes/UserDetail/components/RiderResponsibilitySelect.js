@@ -1,4 +1,4 @@
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Chip, Grid } from "@mui/material";
 import { DataStore } from "aws-amplify";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -23,51 +23,49 @@ function RiderResponsibilitySelect(props) {
     }
     useEffect(() => getResponsibilities(), [dataStoreReadyStatus]);
 
-    const handleChange = (event) => {
-        props.onSelect(event.target.value);
+    const valueIds = props.value.map((v) => v.id);
+
+    const handleChange = (value) => {
+        props.onSelect(value);
     };
 
     return (
-        <Box sx={{ minWidth: 160 }}>
-            <FormControl fullWidth>
-                <InputLabel id="select-rider-responsibilities-label">
-                    Responsibility
-                </InputLabel>
-                <Select
-                    disabled={props.disabled}
-                    labelId="select-rider-responsibilities-label"
-                    id="select-rider-responsibilities"
-                    value={props.value || 0}
-                    label="Responsibility"
-                    onChange={handleChange}
-                >
-                    <MenuItem key={"none"} value={null}>
-                        None
-                    </MenuItem>
-                    {responsibilities
-                        .filter((value) => !props.exclude.includes(value.label))
-                        .map((value) => (
-                            <MenuItem key={value.label} value={value.label}>
-                                {value.label}
-                            </MenuItem>
-                        ))}
-                </Select>
-            </FormControl>
-        </Box>
+        <Grid direction="row" spacing={1} container>
+            {responsibilities
+                .filter((value) => !props.exclude.includes(value.label))
+                .map((value) => (
+                    <Grid item key={value.label}>
+                        <Chip
+                            variant={
+                                valueIds.includes(value.id)
+                                    ? "default"
+                                    : "outlined"
+                            }
+                            color={
+                                valueIds.includes(value.id)
+                                    ? "primary"
+                                    : "default"
+                            }
+                            onClick={() => handleChange(value)}
+                            label={value.label}
+                        />
+                    </Grid>
+                ))}
+        </Grid>
     );
 }
 
 RiderResponsibilitySelect.propTypes = {
     exclude: PropTypes.arrayOf(PropTypes.string),
     onSelect: PropTypes.func,
-    value: PropTypes.object,
+    value: PropTypes.array,
     disabled: PropTypes.bool,
 };
 
 RiderResponsibilitySelect.defaultProps = {
     exclude: [],
     onSelect: () => {},
-    value: { id: 0 },
+    value: [],
     disabled: false,
 };
 

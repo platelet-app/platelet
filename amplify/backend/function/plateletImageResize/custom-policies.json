@@ -1,6 +1,7 @@
 [
-  {
-    "Action": [],
-    "Resource": []
-  }
+    {
+        "Action": ["s3:*", "s3-object-lambda:*"],
+        "Resource": ["*"]
+    }
 ]
+

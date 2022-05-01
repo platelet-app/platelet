@@ -25,6 +25,7 @@ function ClearButtonWithConfirmation(props) {
                 onConfirmation={onSelect}
                 dialogTitle={"Are you sure?"}
                 onClose={handleClose}
+                onCancel={handleClose}
                 open={open}
             >
                 {props.children}

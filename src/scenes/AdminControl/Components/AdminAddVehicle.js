@@ -70,7 +70,7 @@ function AdminAddVehicle() {
                     .split("T")[0];
             }
             const newVehicle = await DataStore.save(
-                new models.Vehicle({ ...result, tenantId })
+                new models.Vehicle({ ...result, tenantId, disabled: 0 })
             );
             setState(initialVehicleState);
             setIsPosting(false);

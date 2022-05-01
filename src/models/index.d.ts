@@ -97,6 +97,14 @@ type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
+type PossibleRiderResponsibilitiesMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+type RiderResponsibilityMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type CommentMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -129,10 +137,6 @@ type VehicleMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type RiderResponsibilityMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
 export declare class User {
   readonly id: string;
   readonly username: string;
@@ -144,6 +148,7 @@ export declare class User {
   readonly roles: Role[] | keyof typeof Role;
   readonly dateOfBirth?: string;
   readonly riderResponsibility?: string;
+  readonly possibleRiderResponsibilities?: (PossibleRiderResponsibilities | null)[];
   readonly profilePictureURL?: string;
   readonly profilePictureThumbnailURL?: string;
   readonly profilePicture?: S3Object;
@@ -151,12 +156,34 @@ export declare class User {
   readonly comments?: (Comment | null)[];
   readonly assignments?: (TaskAssignee | null)[];
   readonly createdTasks?: (Task | null)[];
-  readonly active: number;
-  readonly disabled: number;
+  readonly disabled?: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<User, UserMetaData>);
   static copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
+}
+
+export declare class PossibleRiderResponsibilities {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly user: User;
+  readonly riderResponsibility: RiderResponsibility;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  constructor(init: ModelInit<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData>);
+  static copyOf(source: PossibleRiderResponsibilities, mutator: (draft: MutableModel<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData>) => MutableModel<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData> | void): PossibleRiderResponsibilities;
+}
+
+export declare class RiderResponsibility {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly label: string;
+  readonly disabled?: number;
+  readonly possibleUsers?: (PossibleRiderResponsibilities | null)[];
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  constructor(init: ModelInit<RiderResponsibility, RiderResponsibilityMetaData>);
+  static copyOf(source: RiderResponsibility, mutator: (draft: MutableModel<RiderResponsibility, RiderResponsibilityMetaData>) => MutableModel<RiderResponsibility, RiderResponsibilityMetaData> | void): RiderResponsibility;
 }
 
 export declare class Comment {
@@ -228,7 +255,7 @@ export declare class Location {
   readonly tasksAsPickUp?: (Task | null)[];
   readonly tasksAsDropOff?: (Task | null)[];
   readonly comments?: (Comment | null)[];
-  readonly disabled: number;
+  readonly disabled?: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Location, LocationMetaData>);
@@ -258,7 +285,7 @@ export declare class DeliverableType {
   readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;
   readonly deliverables?: (Deliverable | null)[];
   readonly tags?: (string | null)[];
-  readonly disabled: number;
+  readonly disabled?: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);
@@ -287,20 +314,9 @@ export declare class Vehicle {
   readonly dateOfManufacture?: string;
   readonly dateOfRegistration?: string;
   readonly comments?: (Comment | null)[];
-  readonly disabled: number;
+  readonly disabled?: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Vehicle, VehicleMetaData>);
   static copyOf(source: Vehicle, mutator: (draft: MutableModel<Vehicle, VehicleMetaData>) => MutableModel<Vehicle, VehicleMetaData> | void): Vehicle;
-}
-
-export declare class RiderResponsibility {
-  readonly id: string;
-  readonly tenantId: string;
-  readonly label: string;
-  readonly disabled: number;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
-  constructor(init: ModelInit<RiderResponsibility, RiderResponsibilityMetaData>);
-  static copyOf(source: RiderResponsibility, mutator: (draft: MutableModel<RiderResponsibility, RiderResponsibilityMetaData>) => MutableModel<RiderResponsibility, RiderResponsibilityMetaData> | void): RiderResponsibility;
 }

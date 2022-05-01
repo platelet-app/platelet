@@ -63,11 +63,14 @@ function AdminAddRiderResponsibility() {
             }
 
             await DataStore.save(
-                new models.RiderResponsibility({ ...state, tenantId })
+                new models.RiderResponsibility({
+                    ...state,
+                    tenantId,
+                    disabled: 0,
+                })
             );
             setState(initialRiderResponsibilityState);
             setIsPosting(false);
-            dispatch(displayInfoNotification("Rider responsibility added"));
         } catch (error) {
             console.log("error adding rider responsibility:", error);
             setIsPosting(false);

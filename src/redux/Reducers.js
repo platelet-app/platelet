@@ -66,7 +66,7 @@ function tenantId(state = null, action) {
     }
 }
 
-function roleView(state = "ALL", action) {
+function roleView(state = null, action) {
     switch (action.type) {
         case SET_ROLE_VIEW:
             return action.data;

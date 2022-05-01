@@ -58,7 +58,7 @@ function CoordinatorPicker(props) {
                 fullWidth
                 key={reset}
                 filterOptions={filterOptions}
-                id="combo-box-coordinators"
+                data-cy="combo-box-coordinators"
                 options={filteredCoordinatorSuggestions}
                 getOptionLabel={(option) => option.displayName}
                 size={props.size}

@@ -1,12 +1,20 @@
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
-import React, { useEffect, useState } from "react";
+import EditIcon from "@mui/icons-material/Edit";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
+import {
+    Divider,
+    IconButton,
+    Paper,
+    Skeleton,
+    Stack,
+    Typography,
+} from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import * as models from "../../../models/index";
-import { DataStore } from "aws-amplify";
+import { API, DataStore, graphqlOperation } from "aws-amplify";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
 import {
@@ -14,6 +22,9 @@ import {
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
+import EditModeToggleButton from "../../../components/EditModeToggleButton";
+import * as mutations from "../../../graphql/mutations";
+import * as queries from "../../../graphql/queries";
 
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
@@ -21,9 +32,12 @@ function LocationDetailsPanel(props) {
     // I have no idea why the imported selector is undefined here
     const tenantId = useSelector((state) => state.tenantId);
     const [state, setState] = useState(null);
+    const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+
+    const initialSetEdit = useRef(false);
 
     const errorMessage = "Sorry, an error occurred";
 
@@ -50,6 +64,13 @@ function LocationDetailsPanel(props) {
     }
 
     useEffect(() => getLocation(), [props.taskId, dataStoreReadyStatus]);
+
+    useEffect(() => {
+        if (!isFetching && !initialSetEdit.current) {
+            initialSetEdit.current = true;
+            setEditMode(!!!state);
+        }
+    }, [state, isFetching]);
 
     async function editPreset(additionalValues) {
         try {
@@ -101,6 +122,7 @@ function LocationDetailsPanel(props) {
                 );
             }
             setState(location);
+            setEditMode(false);
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -116,22 +138,26 @@ function LocationDetailsPanel(props) {
                 result[props.locationKey].id
             );
             if (currentLocation.listed === 1) {
-                debugger;
-                // this is to trigger the observer on the dashboard and clear the card
-                const dummyLocation = await DataStore.save(
-                    new models.Location({ tenantId })
-                );
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated[props.locationKey] = dummyLocation;
-                    })
-                );
                 await DataStore.save(
                     models.Task.copyOf(result, (updated) => {
                         updated[props.locationKey] = null;
                     })
                 );
-                await DataStore.delete(dummyLocation);
+                if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
+                    const gqlClearResult = await API.graphql(
+                        graphqlOperation(queries.getTask, { id: props.taskId })
+                    );
+                    const { id, _version } = gqlClearResult.data.getTask;
+                    await API.graphql(
+                        graphqlOperation(mutations.updateTask, {
+                            input: {
+                                id,
+                                _version,
+                                [`${props.locationKey}Id`]: null,
+                            },
+                        })
+                    );
+                }
             } else {
                 // clear the fields for an unlisted location before deleting it
                 await DataStore.save(
@@ -148,7 +174,22 @@ function LocationDetailsPanel(props) {
                         updated[props.locationKey] = null;
                     })
                 );
-                await DataStore.delete(currentLocation);
+                if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
+                    const gqlClearResult = await API.graphql(
+                        graphqlOperation(queries.getTask, { id: props.taskId })
+                    );
+                    const { id, _version } = gqlClearResult.data.getTask;
+                    await API.graphql(
+                        graphqlOperation(mutations.updateTask, {
+                            input: {
+                                id,
+                                _version,
+                                [`${props.locationKey}Id`]: null,
+                            },
+                        })
+                    );
+                }
+                DataStore.delete(currentLocation);
             }
             setState(null);
         } catch (error) {
@@ -300,11 +341,26 @@ function LocationDetailsPanel(props) {
                     justifyContent={"space-between"}
                     spacing={1}
                 >
-                    <Typography variant={"h6"}>
-                        {props.locationKey === "pickUpLocation"
-                            ? "Collect from"
-                            : "Deliver to"}
-                    </Typography>
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        spacing={1}
+                    >
+                        <Typography variant={"h6"}>
+                            {props.locationKey === "pickUpLocation"
+                                ? "Collect from"
+                                : "Deliver to"}
+                        </Typography>
+                        {state && (
+                            <EditModeToggleButton
+                                value={editMode}
+                                onChange={() =>
+                                    setEditMode((prevState) => !prevState)
+                                }
+                            />
+                        )}
+                    </Stack>
                     <Divider />
                     {isFetching ? (
                         <Skeleton
@@ -324,7 +380,8 @@ function LocationDetailsPanel(props) {
                             onChangeContact={changeContactDetails}
                             onClear={clearLocation}
                             location={state}
-                            displayPresets={true}
+                            displayPresets
+                            editMode={editMode}
                         />
                     )}
                 </Stack>

@@ -27,7 +27,13 @@ type User
   name: String
   roles: [Role!]!
   dateOfBirth: AWSDate
-  riderResponsibility: String
+  riderResponsibility: String @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: owner, ownerField: "cognitoId", operations: [update]},
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update]},
+    {allow: private, provider: iam, operations: [create, read, update, delete]}
+  ])
+  possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
   profilePictureURL: String
   profilePictureThumbnailURL: String
   profilePicture: S3Object
@@ -35,8 +41,19 @@ type User
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
   createdTasks: [Task] @hasMany
-  active: Int!
-  disabled: Int!
+  disabled: Int @default(value: "0")
+}
+
+type PossibleRiderResponsibilities
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
+])
+@model {
+  id: ID!
+  tenantId: ID! @index(name: "byTenantId")
+  user: User! @belongsTo
+  riderResponsibility: RiderResponsibility! @belongsTo
 }
 
 type S3Object {
@@ -60,7 +77,7 @@ type Vehicle
   dateOfManufacture: AWSDate
   dateOfRegistration: AWSDate
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  disabled: Int!
+  disabled: Int @default(value: "0")
 }
 
 type AddressAndContactDetails {
@@ -104,7 +121,7 @@ type Location
   tasksAsPickUp: [Task] @hasMany(indexName: "byPickUpLocation", fields: ["id"])
   tasksAsDropOff: [Task] @hasMany(indexName: "byDropOffLocation", fields: ["id"])
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  disabled: Int!
+  disabled: Int @default(value: "0")
 }
 
 type Task
@@ -178,7 +195,7 @@ type DeliverableType
   defaultUnit: DeliverableUnit
   deliverables: [Deliverable] @hasMany
   tags: [String]
-  disabled: Int!
+  disabled: Int @default(value: "0")
 }
 
 type Deliverable
@@ -214,7 +231,8 @@ type RiderResponsibility
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   label: String!
-  disabled: Int!
+  disabled: Int @default(value: "0")
+  possibleUsers: [PossibleRiderResponsibilities] @hasMany
 }
 
 enum TaskStatus {
@@ -266,7 +284,7 @@ enum CommentVisibility {
 
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
-  registerTenant(name: String, email: String, tenantName: String, referenceIdentifier: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
+  registerTenant(name: String, emailAddress: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
   updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 

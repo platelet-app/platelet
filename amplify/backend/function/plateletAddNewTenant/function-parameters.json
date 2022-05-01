@@ -20,6 +20,10 @@
     {
       "cloudFormationParameterName": "plateletWelcomeEmail",
       "environmentVariableName": "PLATELET_WELCOME_EMAIL"
+    },
+    {
+      "cloudFormationParameterName": "plateletDomainName",
+      "environmentVariableName": "PLATELET_DOMAIN_NAME"
     }
   ]
 }

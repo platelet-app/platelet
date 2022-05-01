@@ -5,6 +5,8 @@ exports.getUser = gql`
         getUser(id: $id) {
             id
             _version
+            roles
+            username
         }
     }
 `;

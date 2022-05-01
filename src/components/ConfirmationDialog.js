@@ -11,6 +11,7 @@ function ConfirmationDialog(props) {
     return (
         <Dialog
             open={props.open}
+            fullScreen={props.fullScreen}
             onClose={props.onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -29,9 +30,9 @@ function ConfirmationDialog(props) {
                         <div></div>
                     ) : (
                         <Button
+                            data-cy="confirmation-cancel-button"
                             onClick={() => {
                                 props.onCancel();
-                                props.onClose();
                             }}
                             autoFocus
                         >
@@ -40,9 +41,9 @@ function ConfirmationDialog(props) {
                     )}{" "}
                     {!props.hideOk && (
                         <Button
+                            data-cy="confirmation-ok-button"
                             onClick={() => {
                                 props.onConfirmation();
-                                props.onClose();
                             }}
                             autoFocus
                         >
@@ -63,6 +64,7 @@ ConfirmationDialog.propTypes = {
     dialogTitle: PropTypes.string,
     hideCancel: PropTypes.bool,
     hideOk: PropTypes.bool,
+    fullScreen: PropTypes.bool,
 };
 
 ConfirmationDialog.defaultProps = {
@@ -70,9 +72,10 @@ ConfirmationDialog.defaultProps = {
     dialogTitle: "",
     onConfirmation: () => {},
     onCancel: () => {},
-    onClose: () => {},
+    onClose: null,
     hideCancel: false,
     hideOk: false,
+    fullScreen: false,
 };
 
 export default ConfirmationDialog;

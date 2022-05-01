@@ -68,7 +68,7 @@ function RecentlyAssignedUsers(props) {
 
     async function getActiveRiders() {
         try {
-            if (!dataStoreReadyStatus) return;
+            if (!dataStoreReadyStatus || !roleView) return;
             setActiveRiders(await calculateRidersStatus());
             animate.current = true;
         } catch (error) {
@@ -97,7 +97,9 @@ function RecentlyAssignedUsers(props) {
                                 key={rider.id}
                             >
                                 <UserChip
-                                    showResponsibility
+                                    showResponsibility={
+                                        props.role === userRoles.rider
+                                    }
                                     disabled={isFetching || props.disabled}
                                     onClick={() => {
                                         if (selectedId === rider.id) {

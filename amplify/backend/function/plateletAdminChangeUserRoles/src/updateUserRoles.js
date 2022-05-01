@@ -56,6 +56,7 @@ exports.updateUser = gql`
                     _deleted
                     _lastChangedAt
                     userCommentsId
+                    owner
                 }
                 nextToken
                 startedAt
@@ -101,7 +102,7 @@ exports.updateUser = gql`
                 nextToken
                 startedAt
             }
-            active
+            disabled
             createdAt
             updatedAt
             _version

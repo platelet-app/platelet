@@ -1,8 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Autocomplete, Chip, Grid, TextField } from "@mui/material";
+import {
+    Autocomplete,
+    Button,
+    Chip,
+    Grid,
+    TextField,
+    Typography,
+} from "@mui/material";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import GetError from "../../../ErrorComponents/GetError";
+import useFocus from "../../../hooks/useFocus";
 
 const tagsReducer = (previousValue, currentValue = []) => {
     if (!currentValue) {
@@ -16,8 +24,11 @@ export default function DeliverableTypeTagger(props) {
     const [inputValue, setInputValue] = useState("");
     const [errorState, setErrorState] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
+    const [forceRerender, setForceRerender] = useState(null);
     const deliverableObserver = useRef({ unsubscribe: () => {} });
     const allSuggestions = useRef([]);
+
+    const [inputRef, setInputFocus] = useFocus();
 
     async function calculateSuggestions() {
         try {
@@ -55,8 +66,15 @@ export default function DeliverableTypeTagger(props) {
 
     const handleAddition = (value) => {
         props.onAdd(value);
+        setForceRerender((prevState) => !prevState);
         setInputValue("");
     };
+
+    useEffect(() => {
+        if (forceRerender !== null) {
+            setInputFocus();
+        }
+    }, [forceRerender]);
 
     if (errorState) {
         return <GetError />;
@@ -71,8 +89,20 @@ export default function DeliverableTypeTagger(props) {
                         />
                     </Grid>
                 ))}
+                <Grid item>
+                    <Typography
+                        sx={{
+                            color: "gray",
+                            fontStyle: "italic",
+                            marginBottom: 1,
+                        }}
+                    >
+                        Press enter or comma to add another tag
+                    </Typography>
+                </Grid>
                 <Grid sx={{ width: "100%", maxWidth: 250 }} item>
                     <Autocomplete
+                        key={forceRerender}
                         freeSolo
                         onChange={(event, newValue) => {
                             handleAddition(newValue);
@@ -99,6 +129,7 @@ export default function DeliverableTypeTagger(props) {
                                     ...params.InputProps,
                                     type: "search",
                                 }}
+                                inputRef={inputRef}
                                 fullWidth
                                 size="small"
                                 onKeyUp={(ev) => {
