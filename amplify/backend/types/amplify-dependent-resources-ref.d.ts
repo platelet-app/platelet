@@ -50,7 +50,7 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "geo": {
-        "plateletPlaceIndex": {
+        "plateletPlace": {
             "Name": "string",
             "Region": "string",
             "Arn": "string"

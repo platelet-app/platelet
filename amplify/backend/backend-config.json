@@ -116,14 +116,22 @@
     }
   },
   "geo": {
-    "plateletPlaceIndex": {
+    "plateletPlace": {
       "isDefault": true,
       "providerPlugin": "awscloudformation",
       "service": "PlaceIndex",
-      "dataProvider": "Esri",
+      "dataProvider": "HERE",
       "dataSourceIntendedUse": "SingleUse",
-      "pricingPlan": "RequestBasedUsage",
-      "accessType": "AuthorizedUsers"
+      "accessType": "AuthorizedUsers",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "platelet61a0ac07",
+          "attributes": [
+            "UserPoolId"
+          ]
+        }
+      ]
     }
   },
   "storage": {

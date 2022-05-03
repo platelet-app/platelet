@@ -25,5 +25,6 @@
       "cloudFormationParameterName": "plateletDomainName",
       "environmentVariableName": "PLATELET_DOMAIN_NAME"
     }
-  ]
+  ],
+  "secretNames": []
 }
