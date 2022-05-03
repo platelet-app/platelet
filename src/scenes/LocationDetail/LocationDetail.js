@@ -4,13 +4,14 @@ import { decodeUUID } from "../../utilities";
 import { PaddedPaper } from "../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
 import NotFound from "../../ErrorComponents/NotFound";
-import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
+import Skeleton from "@mui/material/Skeleton";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import LocationProfile from "./components/LocationProfile";
 import { protectedFields } from "../../apiConsts";
+import { Divider, Stack } from "@mui/material";
 
 const initialLocationState = {
     name: null,
@@ -98,7 +99,64 @@ export default function LocationDetail(props) {
     }
 
     if (isFetching) {
-        return <FormSkeleton />;
+        return (
+            <React.Fragment>
+                <PaddedPaper maxWidth={700}>
+                    <Stack direction={"column"} spacing={3}>
+                        <Stack
+                            direction={"row"}
+                            justifyContent={"space-between"}
+                            alignItems={"top"}
+                        >
+                            <Skeleton variant="text" width={300} height={50} />
+                        </Stack>
+                        <Divider />
+                        <Stack
+                            direction={"column"}
+                            justifyContent={"space-between"}
+                            alignItems={"top"}
+                            maxWidth={700}
+                        >
+                            {Array(4)
+                                .fill(1)
+                                .map((ele) => (
+                                    <Skeleton
+                                        variant="text"
+                                        maxWidth={700}
+                                        height={50}
+                                    />
+                                ))}
+                        </Stack>
+                        <Divider />
+                        <Stack
+                            direction={"column"}
+                            justifyContent={"space-between"}
+                            alignItems={"top"}
+                        >
+                            {Array(3)
+                                .fill(1)
+                                .map((ele) => (
+                                    <Skeleton
+                                        variant="text"
+                                        maxWidth={700}
+                                        height={50}
+                                    />
+                                ))}
+                        </Stack>
+                    </Stack>
+                </PaddedPaper>
+                <Stack height={10}></Stack>
+                <PaddedPaper maxWidth={850}>
+                    <Stack direction={"row"} spacing={3}>
+                        <Skeleton variant="circular" width={40} height={40} />
+                        <Skeleton variant="text" width={200} height={50} />
+                    </Stack>
+                    <Stack direction={"column"} spacing={3}>
+                        <Skeleton variant="text" MaxWidth={700} height={50} />
+                    </Stack>
+                </PaddedPaper>
+            </React.Fragment>
+        );
     } else if (notFound) {
         return <NotFound>Location {locationUUID} could not be found.</NotFound>;
     } else {

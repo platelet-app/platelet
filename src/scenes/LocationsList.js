@@ -36,6 +36,8 @@ function sortByName(a, b) {
 
 export default function LocationsList() {
     const locationsRef = useRef([]);
+    const [isFetching, setIsFetching] = useState(false);
+
     const [filteredLocations, setFilteredLocations] = useState([]);
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
@@ -75,21 +77,40 @@ export default function LocationsList() {
         <></>
     );
 
-    return (
-        <Stack
-            direction={"column"}
-            spacing={2}
-            alignItems={"flex-start"}
-            justifyContent={"center"}
-        >
-            {addButton}
-            <TextFieldControlled
-                variant={"standard"}
-                placeholder={"Filter locations"}
-                onChange={onChangeFilterText}
-                color={"secondary"}
-                className={classes.root}
-                InputProps={{
+    if (isFetching) {
+        return (
+            <Stack
+                direction={"column"}
+                spacing={3}
+                alignItems={"flex-start"}
+                justifyContent={"center"}
+            >
+                <PaddedPaper maxWidth={"800px"}>
+                    <Stack direction={"column"}>
+                        <Skeleton variant="text" maxWidth={700} height={50} />
+                        <Skeleton variant="text" maxWidth={500} height={50} />
+                        <Skeleton variant="text" maxWidth={500} height={50} />
+                        <Skeleton variant="text" maxWidth={500} height={50} />
+                    </Stack>
+                </PaddedPaper>
+            </Stack>
+        );
+    } else {
+        return (
+          <Stack
+                direction={"column"}
+                spacing={3}
+                alignItems={"flex-start"}
+                justifyContent={"center"}
+            >
+                <TextFieldControlled
+                    id="tasks-filter-input"
+                    variant={"standard"}
+                    placeholder={"Filter locations"}
+                    onChange={onChangeFilterText}
+                    color={"secondary"}
+                    className={classes.root}
+                    InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
                             <SearchIcon className={classes.searchIcon} />
@@ -112,4 +133,5 @@ export default function LocationsList() {
             </PaddedPaper>
         </Stack>
     );
+}
 }

@@ -4,7 +4,6 @@ import _ from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import UserProfile from "./components/UserProfile";
 import { PaddedPaper } from "../../styles/common";
-import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
 import {
@@ -15,11 +14,12 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { protectedFields } from "../../apiConsts";
-import { Stack, useMediaQuery } from "@mui/material";
+import { Stack, useMediaQuery,Divider } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import * as mutations from "../../graphql/mutations";
 import { API, graphqlOperation } from "aws-amplify";
 import CurrentRiderResponsibilitySelector from "./components/CurrentRiderResponsibilitySelector";
+import Skeleton from "@mui/material/Skeleton";
 
 const initialUserState = {
     id: "",
@@ -217,7 +217,65 @@ export default function UserDetail(props) {
         }
     }
     if (isFetching) {
-        return <DetailSkeleton />;
+        return (
+            <Stack
+                alignItems={isSm ? "center" : "flex-start"}
+                direction={isSm ? "column" : "row"}
+                spacing={1}
+            >
+                <PaddedPaper maxWidth={700}>
+                    <Stack direction={"row"} spacing={3}>
+                        <Skeleton variant="text" width={300} height={50} />
+                    </Stack>
+                    <Divider />
+                    <Stack direction={"column"}>
+                        <Skeleton variant="text" maxWidth={700} height={50} />
+                        <Skeleton variant="text" maxWidth={700} height={50} />
+                    </Stack>
+                    <Divider />
+                    <Stack direction={"column"}>
+                        {[...Array(4)].map((ele) => (
+                            <Skeleton
+                                variant="text"
+                                maxWidth={700}
+                                height={50}
+                            />
+                        ))}
+                    </Stack>
+                    <Divider />
+                    <Stack direction={"column"}>
+                        {[...Array(4)].map((ele) => (
+                            <Skeleton
+                                variant="text"
+                                maxWidth={700}
+                                height={50}
+                            />
+                        ))}
+                    </Stack>
+                    <Divider />
+                    <Stack direction={"row"} spacing={2}>
+                        {[...Array(4)].map((ele) => (
+                            <Skeleton variant="text" width={50} height={50} />
+                        ))}
+                    </Stack>
+                </PaddedPaper>
+                <PaddedPaper maxWidth={400}>
+                    <Stack
+                        container
+                        direction={"column"}
+                        alignItems={"center"}
+                        spacing={2}
+                    >
+                        <Skeleton
+                            variant="rectangular"
+                            width={250}
+                            height={250}
+                        />
+                        <Skeleton variant="text" width={150} height={50} />
+                    </Stack>
+                </PaddedPaper>
+            </Stack>
+        );
     } else if (notFound) {
         return <NotFound>User {userUUID} could not be found.</NotFound>;
     } else {

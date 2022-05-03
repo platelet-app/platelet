@@ -3,7 +3,6 @@ import VehicleProfile from "./components/VehicleProfile";
 import { decodeUUID } from "../../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
 import Typography from "@mui/material/Typography";
 import { PaddedPaper } from "../../styles/common";
@@ -14,7 +13,8 @@ import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
 import { protectedFields } from "../../apiConsts";
-import { Stack } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton";
+import { Divider, Stack } from "@mui/material";
 
 const initialVehicleState = {
     name: "",
@@ -66,28 +66,22 @@ export default function VehicleDetail(props) {
         return;
     }
 
-    async function changeVehicleDetails(values) {
+
+  async function onUpdate(value) {
       setIsPosting(true);
       try {
-          let VehicleResult;
           const existingVehicle = await DataStore.query(
               models.Vehicle,
               vehicle.id
           );
-          if (!existingVehicle) throw new Error("Vehicle doesn't exist");
-          if (!_.isEmpty(values)) {
-              VehicleResult = await DataStore.save(
-                  models.Vehicle.copyOf(existingVehicle, (updated) => {
-                      for (const [key, newValue] of Object.entries(
-                          values
-                      )) {
-                          if (!protectedFields.includes(key))
-                              updated[key] = newValue;
-                      }
-                  })
-              );
-              setVehicle(VehicleResult);
-          }
+          await DataStore.save(
+              models.Vehicle.copyOf(existingVehicle, (updated) => {
+                  for (const [key, newValue] of Object.entries(value)) {
+                      if (!protectedFields.includes(key))
+                          updated[key] = newValue;
+                  }
+              })
+          );
           setIsPosting(false);
       } catch (error) {
           console.log("Update request failed", error);
@@ -98,9 +92,47 @@ export default function VehicleDetail(props) {
 
 
 
-
     if (isFetching) {
-        return <FormSkeleton />;
+        return (
+            <React.Fragment>
+                <PaddedPaper maxWidth={700}>
+                    <Stack direction={"column"} spacing={3}>
+                        <Stack
+                            direction={"row"}
+                            justifyContent={"space-between"}
+                            alignItems={"top"}
+                        >
+                            <Skeleton variant="text" width={300} height={50} />
+                        </Stack>
+                        <Divider />
+                        <Stack
+                            direction={"column"}
+                            justifyContent={"space-between"}
+                            alignItems={"top"}
+                            maxWidth={700}
+                        >
+                          <Skeleton variant="text" maxWidth={700} height={50}/>
+                          <Skeleton variant="text" maxWidth={700} height={50}/>
+                          <Skeleton variant="text" maxWidth={700} height={50}/>
+                        </Stack>
+                    </Stack>
+                </PaddedPaper>
+                <Stack height={50}></Stack>
+                <PaddedPaper maxWidth={300}>
+                    <Skeleton variant="text" MaxWidth={700} height={50} />
+                </PaddedPaper>
+                <Stack height={50}></Stack>
+                <PaddedPaper maxWidth={850}>
+                    <Stack direction={"row"} spacing={3}>
+                        <Skeleton variant="circular" width={40} height={40} />
+                        <Skeleton variant="text" width={200} height={50} />
+                    </Stack>
+                    <Stack direction={"column"} spacing={3}>
+                        <Skeleton variant="text" MaxWidth={700} height={50} />
+                    </Stack>
+                </PaddedPaper>
+            </React.Fragment>
+        );
     } else if (notFound) {
         return <NotFound>Vehicle {vehicleUUID} could not be found.</NotFound>;
     } else {
@@ -108,8 +140,8 @@ export default function VehicleDetail(props) {
             <Stack spacing={3} direction={"column"}>
                 <PaddedPaper maxWidth={700}>
                     <VehicleProfile
-                        changeVehicleDetails={changeVehicleDetails}
                         vehicle={vehicle}
+                        onUpdate={onUpdate}
                     />
                 </PaddedPaper>
                 <PaddedPaper width={"400px"}>

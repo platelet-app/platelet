@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, TextField, Typography } from "@mui/material";
+import { Box, Divider, Stack, TextField, Typography,useMediaQuery } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
@@ -7,9 +7,12 @@ import { getWhoami } from "../../../redux/Selectors";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import { userRoles } from "../../../apiConsts";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
+import { TextFieldControlled} from "../../../components/TextFields";
 import LabelItemPair from "../../../components/LabelItemPair";
-import ClickableTextField from "../../../components/ClickableTextField";
+import { useTheme } from "@mui/styles";
+
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
+
 
 const fields = {
     ward: "Ward",
@@ -33,7 +36,11 @@ const contactFields = {
 function LocationProfile(props) {
     const [state, setState] = useState({ ...props.location });
     const [oldState, setOldState] = useState({ ...props.location });
-    const [editMode, setEditMode] = useState(false);
+    const [editAddressMode, setEditAddressMode] = useState(false);
+    const [editContactMode, setEditContactMode] = useState(false);
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
     const whoami = useSelector(getWhoami);
 
     useEffect(() => {
@@ -47,49 +54,72 @@ function LocationProfile(props) {
         return true;
     }
 
-    async function handleUpdate(obj){
-      obj.id = state.id;
-      await props.onUpdate(obj);
-      setEditMode(false);
-      setOldState(state);
-    }
-    const saveButtons = !editMode ? (
-        <></>
-    ) : (
-        <SaveCancelButtons
-            disabled={props.isPosting}
-            onSave={async () => {
-                if (verifyUpdate(state)) {
-                    await props.onUpdate(
-                        _.omit(
-                            state,
-                            "_deleted",
-                            "_lastChangedAt",
-                            "_version",
-                            "createdAt",
-                            "updatedAt"
-                        )
-                    );
-                    setEditMode(false);
-                    setOldState(state);
-                }
-            }}
-            onCancel={() => {
-                setEditMode(false);
-                setState(oldState);
-            }}
-        />
-    );
+    const onCancel = () => {
+      setEditAddressMode(false);
+      setEditContactMode(false);
+      setState(oldState);
+    };
 
-    let editToggle = <></>;
+    const onConfirmation = () => {
+        props.onUpdate(state);
+        setState(state);
+        setOldState(state);
+        setEditAddressMode(false);
+        setEditContactMode(false);
+    };
+    // const saveButtons = !editAddressMode ? (
+    //     <></>
+    // ) : (
+    //     <SaveCancelButtons
+    //         disabled={props.isPosting}
+    //         onSave={async () => {
+    //             if (verifyUpdate(state)) {
+    //                 await props.onUpdate(
+    //                     _.omit(
+    //                         state,
+    //                         "_deleted",
+    //                         "_lastChangedAt",
+    //                         "_version",
+    //                         "createdAt",
+    //                         "updatedAt"
+    //                     )
+    //                 );
+    //                 setEditAddressMode(false);
+    //                 setOldState(state);
+    //             }
+    //         }}
+    //         onCancel={() => {
+    //             setEditAddressMode(false);
+    //             setState(oldState);
+    //         }}
+    //     />
+    // );
+
+    let editAddressToggle = <></>;
     if (whoami.roles) {
         if (whoami.roles.includes(userRoles.admin)) {
-            editToggle = (
+            editAddressToggle = (
                 <EditModeToggleButton
                     tooltipDefault={"Edit this location"}
-                    value={editMode}
+                    value={editAddressMode}
                     onChange={(v) => {
-                        setEditMode(v);
+                        setEditAddressMode(v);
+                        if (!v) setState(oldState);
+                    }}
+                />
+            );
+        }
+    }
+
+    let editContactToggle = <></>;
+    if (whoami.roles) {
+        if (whoami.roles.includes(userRoles.admin)) {
+            editContactToggle = (
+                <EditModeToggleButton
+                    tooltipDefault={"Edit this contact"}
+                    value={editContactMode}
+                    onChange={(v) => {
+                        setEditContactMode(v);
                         if (!v) setState(oldState);
                     }}
                 />
@@ -105,65 +135,109 @@ function LocationProfile(props) {
                 alignItems={"top"}
                 spacing={3}
             >
-                    <ClickableTextField
-                        label="Name"
-                        disabled={!editMode}
-                        onFinished={(v) => {
-                            setState((prevState) => ({
-                                ...prevState,
-                                "name": v,
-                            }));
-                            handleUpdate({ ["name"]: v });
-                        }}
-                        value={state["name"]}
-                    />
-                {editToggle}
+                <Typography noWrap align={"right"}>
+                    {oldState["name"]}
+                </Typography>
+                {editAddressToggle}
             </Stack>
             <Divider />
             <Box sx={{ width: "100%" }}>
                 {Object.entries(fields).map(([key, label]) => {
                     return (
                         <LabelItemPair key={key} label={label}>
-                            <ClickableTextField
-                                label={label}
-                                disabled={!editMode}
-                                onFinished={(v) => {
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        [key]: v,
-                                    }));
-                                    handleUpdate({ [key]: v });
-                                }}
-                                value={state[key]}
-                            />
+                            <Typography noWrap align={"right"}>
+                                {oldState[key]}
+                            </Typography>
                         </LabelItemPair>
                     );
                 })}
             </Box>
             <Divider />
+            <Stack
+                direction={"row-reverse"}
+                justifyContent={"space-between"}
+                alignItems={"top"}
+                spacing={1}
+            >
+                {editContactToggle}
+            </Stack>
             <Box sx={{ width: "100%" }}>
                 {Object.entries(contactFields).map(([key, label]) => {
                     return (
                         <LabelItemPair key={key} label={label}>
-                            <ClickableTextField
-                                label={label}
-                                disabled={!editMode}
-                                onFinished={(v) => {
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        contact: {
-                                            ...prevState.contact,
-                                            [key]: v,
-                                        },
-                                    }));
-                                    handleUpdate({ contact: { [key]: v } });
-                                }}
-                                value={state.contact[key]}
-                            />
+                            <Typography noWrap align={"right"}>
+                                {oldState.contact[key]}
+                            </Typography>
                         </LabelItemPair>
                     );
                 })}
             </Box>
+            <ConfirmationDialog
+                fullScreen={isSm}
+                dialogTitle="Edit Location Information"
+                open={editAddressMode}
+                onCancel={onCancel}
+                onConfirmation={onConfirmation}
+            >
+                <Stack
+                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
+                    spacing={1}
+                >
+                    {Object.entries(fields).map(([key, label]) => {
+                        return (
+                            <TextField
+                                key={key}
+                                fullWidth
+                                aria-label={label}
+                                label={label}
+                                margin="normal"
+                                value={state[key]}
+                                onChange={(e) => {
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        [key]: e.target.value,
+                                    }));
+                                }}
+                            />
+                        );
+                    })}
+                </Stack>
+            </ConfirmationDialog>
+            <ConfirmationDialog
+                fullScreen={isSm}
+                dialogTitle="Edit Contact Information"
+                open={editContactMode}
+                onCancel={onCancel}
+                onConfirmation={onConfirmation}
+            >
+                <Stack
+                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
+                    spacing={1}
+                >
+                    {Object.entries(contactFields).map(([key, label]) => {
+                        return (
+                            <TextFieldControlled
+                                tel={key === "telephoneNumber"}
+                                key={key}
+                                fullWidth
+                                aria-label={label}
+                                label={label}
+                                margin="normal"
+                                value={state.contact[key]}
+                                onChange={(e) => {
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        contact: {
+                                            ...prevState.contact,
+                                            [key]: e.target.value,
+                                        },
+                                    }));
+                                }}
+                            />
+                        );
+                    })}
+                </Stack>
+            </ConfirmationDialog>
         </Stack>
     );
 }

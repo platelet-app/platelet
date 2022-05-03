@@ -12,7 +12,10 @@ import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
-import { Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/styles";
+
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const fields = {
     name: "Name",
@@ -26,6 +29,10 @@ function VehicleProfile(props) {
     const [editMode, setEditMode] = useState(false);
     const [state, setState] = useState({ ...props.vehicle });
     const [oldState, setOldState] = useState({ ...props.vehicle });
+        const theme = useTheme();
+
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
     const whoami = useSelector(getWhoami);
 
     function resetAfterPost() {
@@ -92,7 +99,20 @@ function VehicleProfile(props) {
     let header = (
         <h2>{props.vehicle.name ? props.vehicle.name : "No name."}</h2>
     );
-    
+
+    const onCancel = ()=>{
+      setEditMode(false);
+      setState(oldState);
+    }
+
+    const onConfirmation=()=>{
+      props.onUpdate(state);
+      setState(state);
+      setOldState(state);
+      setEditMode(false);
+    }
+
+
     const divider = editMode ? (
         <></>
     ) : (
@@ -110,31 +130,53 @@ function VehicleProfile(props) {
                 alignItems={"center"}
                 spacing={3}
             >
-                {header}
+                <h2>{oldState.name ? oldState.name : "No name."}</h2>
                 {editToggle}
             </Stack>
             <Divider />
 
             <Stack>
                 {Object.entries(fields).map(([key, label]) => {
-                  return(
-                  <LabelItemPair key={key} label={label}>
-                      <ClickableTextField
-                          label={label}
-                          disabled={!editMode}
-                          onFinished={(v) => {
-                              setState((prevState) => ({
-                                  ...prevState,
-                                      [key]: v,
-                              }));
-                              props.changeVehicleDetails({ [key]: v });
-                          }}
-                          value={state[key]}
-                      />
-                  </LabelItemPair>
-                  )
+                    return (
+                        <LabelItemPair key={key} label={label}>
+                            <Typography noWrap align={"right"}>
+                                {oldState[key]}
+                            </Typography>
+                        </LabelItemPair>
+                    );
                 })}
             </Stack>
+            <ConfirmationDialog
+                fullScreen={isSm}
+                dialogTitle="Edit Vehicle Information"
+                open={editMode}
+                onCancel={onCancel}
+                onConfirmation={onConfirmation}
+            >
+                <Stack
+                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
+                    spacing={1}
+                >
+                    {Object.entries(fields).map(([key, label]) => {
+                        return (
+                            <TextField
+                                key={key}
+                                fullWidth
+                                aria-label={label}
+                                label={label}
+                                margin="normal"
+                                value={state[key]}
+                                onChange={(e) => {
+                                    setState((prevState) => ({
+                                        ...prevState,
+                                        [key]: e.target.value,
+                                    }));
+                                }}
+                            />
+                        );
+                    })}
+                </Stack>
+            </ConfirmationDialog>
         </Stack>
     );
 }

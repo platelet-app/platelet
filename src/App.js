@@ -40,8 +40,8 @@ if (
 Logger.LOG_LEVEL = "ERROR";
 window.amplifyLogger = Logger;
 
-// window.DataStore = DataStore;
-// window.models = models;
+window.DataStore = DataStore;
+window.models = models;
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
