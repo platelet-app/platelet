@@ -257,7 +257,8 @@ function TasksGridColumn(props) {
                     if (newTask.opType === "UPDATE") {
                         if (
                             newTask.element.status &&
-                            props.taskKey.includes(newTask.element.status)
+                            props.taskKey.includes(newTask.element.status) &&
+                            !(newTask.element.id in stateRef.current)
                         ) {
                             animate.current = true;
                             getTasksRef
@@ -271,12 +272,7 @@ function TasksGridColumn(props) {
                             removeTaskFromState(newTask.element);
                             return;
                         } else if (newTask.element.id in stateRef.current) {
-                            DataStore.query(
-                                models.Task,
-                                newTask.element.id
-                            ).then((result) => {
-                                addTaskToState(result);
-                            });
+                            addTaskToState(newTask.element);
                         }
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
