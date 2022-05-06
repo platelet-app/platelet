@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 const fields = { name: "Name", telephoneNumber: "Telephone" };
 
-export const ContactForm = ({ values, onChange }) => {
+export const ContactForm = ({ values, onChange, italicTel }) => {
     const classes = useStyles();
 
     return (
@@ -27,6 +27,14 @@ export const ContactForm = ({ values, onChange }) => {
             {Object.entries(fields).map(([key, value]) => (
                 <TextFieldUncontrolled
                     key={key}
+                    InputProps={{
+                        sx: {
+                            fontStyle:
+                                italicTel && key === "telephoneNumber"
+                                    ? "italic"
+                                    : "normal",
+                        },
+                    }}
                     id={key}
                     fullWidth
                     tel={key === "telephoneNumber"}

@@ -133,6 +133,8 @@ export const GuidedSetup = () => {
     const classes = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
+    const [establishmentSameAsPickup, setEstablishmentSameAsPickup] =
+        useState(true);
     const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
     const [reset, setReset] = useState(false);
@@ -161,6 +163,17 @@ export const GuidedSetup = () => {
             ...prevState,
             priority: value,
         }));
+    };
+
+    const handleEstablishmentChange = (value) => {
+        setFormValues((prevState) => ({
+            ...prevState,
+            establishment: value,
+        }));
+    };
+
+    const handleEstablishmentSameAsPickupChange = () => {
+        setEstablishmentSameAsPickup((prevState) => !prevState);
     };
 
     const handleSenderContactChange = (value) => {
@@ -291,18 +304,8 @@ export const GuidedSetup = () => {
                     >
                         <Tab
                             icon={<PersonIcon className={classes.btnIcon} />}
-                            label={
-                                <div>
-                                    CALLER /<br /> PRIORITY
-                                </div>
-                            }
+                            label={"CALLER"}
                             {...a11yProps(0)}
-                            className={classes.tabButton}
-                        />
-                        <Tab
-                            icon={<ArchiveIcon className={classes.btnIcon} />}
-                            label={"ITEMS"}
-                            {...a11yProps(1)}
                             className={classes.tabButton}
                         />
                         <Tab
@@ -318,8 +321,18 @@ export const GuidedSetup = () => {
                             className={classes.tabButton}
                         />
                         <Tab
+                            icon={<ArchiveIcon className={classes.btnIcon} />}
+                            label={"ITEMS"}
+                            {...a11yProps(1)}
+                            className={classes.tabButton}
+                        />
+                        <Tab
                             icon={<NotesIcon className={classes.btnIcon} />}
-                            label={"NOTES"}
+                            label={
+                                <div>
+                                    NOTES /<br /> PRIORITY
+                                </div>
+                            }
                             {...a11yProps(3)}
                             className={classes.tabButton}
                         />
@@ -330,17 +343,18 @@ export const GuidedSetup = () => {
                     <Box className={tabIndex === 0 ? show : hide}>
                         <CallerDetails
                             values={formValues}
+                            establishmentSameAsPickup={
+                                establishmentSameAsPickup
+                            }
                             onChangeContact={handleCallerContactChange}
                             onChangePriority={handlePriorityChange}
+                            onChangeLocation={handleEstablishmentChange}
+                            onChangeEstablishmentSameAsPickup={
+                                handleEstablishmentSameAsPickupChange
+                            }
                         />
                     </Box>
                     <Box className={tabIndex === 1 ? show : hide}>
-                        <DeliverableDetails
-                            onChange={handleDeliverablesChange}
-                            onDelete={handleDeliverablesDelete}
-                        />
-                    </Box>
-                    <Box className={tabIndex === 2 ? show : hide}>
                         <PickUpAndDeliverDetails
                             onSetPickUpLocation={(value) => {
                                 setLocation("pickUpLocation", value);
@@ -354,6 +368,12 @@ export const GuidedSetup = () => {
                             onClearPickUpLocation={() =>
                                 (locations.current.pickUpLocation = null)
                             }
+                        />
+                    </Box>
+                    <Box className={tabIndex === 2 ? show : hide}>
+                        <DeliverableDetails
+                            onChange={handleDeliverablesChange}
+                            onDelete={handleDeliverablesDelete}
                         />
                     </Box>
                     <Box className={tabIndex === 3 ? show : hide}>
