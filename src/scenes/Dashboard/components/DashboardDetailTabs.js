@@ -1,4 +1,5 @@
 import React from "react";
+import AddIcon from "@mui/icons-material/Add";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -18,7 +19,7 @@ import {
     setRoleView,
 } from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Button, Hidden, Stack } from "@mui/material";
+import { Button, Chip, Fab, Hidden, Stack } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
@@ -108,22 +109,22 @@ export function DashboardDetailTabs(props) {
 
     const addClearButton =
         !dashboardFilter && !dashboardFilteredUser ? (
-            <Button
-                variant="contained"
+            <Fab
                 color="primary"
+                variant="extended"
                 data-cy="create-task-button"
                 disabled={
                     guidedSetupOpen ||
-                    !dataStoreReadyStatus ||
                     (roleView && roleView === userRoles.rider)
                 }
                 onClick={() => dispatch(setGuidedSetupOpen(true))}
             >
+                <AddIcon sx={{ mr: 1 }} />
                 Create New
-            </Button>
+            </Fab>
         ) : (
-            <Button
-                variant="contained"
+            <Fab
+                variant="extended"
                 color="secondary"
                 data-cy="clear-search-button"
                 disabled={props.disableAddButton}
@@ -133,7 +134,7 @@ export function DashboardDetailTabs(props) {
                 }}
             >
                 Clear Search
-            </Button>
+            </Fab>
         );
     return (
         <Stack
