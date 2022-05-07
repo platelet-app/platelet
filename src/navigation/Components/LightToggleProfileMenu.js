@@ -15,6 +15,7 @@ import { Auth } from "aws-amplify";
 import SignalWifiOff from "@mui/icons-material/SignalWifiOff";
 import { networkStatusSelector } from "../../redux/Selectors";
 import { logoutUser } from "../../redux/login/LoginActions";
+import SyncStatusCircleLoader from "./SyncStatusCircleLoader";
 
 function LightToggleProfileMenu() {
     const whoami = useSelector(getWhoami);
@@ -32,6 +33,7 @@ function LightToggleProfileMenu() {
             spacing={1}
         >
             <Box sx={{ width: 40 }}>
+                <SyncStatusCircleLoader />
                 {!networkStatus && (
                     <Tooltip title={"You are working offline"}>
                         <IconButton size="large">
