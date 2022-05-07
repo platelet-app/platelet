@@ -40,6 +40,8 @@ function* initialiseDataStoreListener() {
             } else if (event === "ready") {
                 yield put(actions.setReadyStatus(true));
                 console.log("DataStore is ready");
+            } else if (event === "modelSynced") {
+                yield put(actions.setModelSyncedStatus(data.model.name));
             }
         }
     } finally {
