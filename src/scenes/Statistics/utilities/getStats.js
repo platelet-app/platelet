@@ -1,7 +1,6 @@
 import { DataStore } from "aws-amplify";
 import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
-import { convertListDataToObject } from "../../../utilities";
 
 export default async function getStats(role, range, whoamiId) {
     const stats = {
@@ -12,7 +11,13 @@ export default async function getStats(role, range, whoamiId) {
     };
     // get all tasks within the date range
     const tasksWithinRange = await DataStore.query(models.Task, (t) =>
-        t.createdAt("le", range.start).createdAt("ge", range.end)
+        t.or((t) =>
+            t
+                .createdAt("eq", undefined)
+                .and((t) =>
+                    t.createdAt("le", range.start).createdAt("ge", range.end)
+                )
+        )
     );
     const taskIds = tasksWithinRange.map((t) => t.id);
     const coordAssignmentsAll = await DataStore.query(
@@ -42,7 +47,11 @@ export default async function getStats(role, range, whoamiId) {
             (task) => task.priority === priority
         ).length;
     }
+    // any unset priorities
     stats.priorities["NONE"] = myTasks.filter((task) => !task.priority).length;
+    stats.priorities["TOTAL"] = myTasks.length;
+
+    // get all the rider assignments that intersect with mine
     const riderAssignmentsAll = await DataStore.query(
         models.TaskAssignee,
         (a) => a.role("eq", userRoles.rider)
@@ -82,10 +91,6 @@ export default async function getStats(role, range, whoamiId) {
         riders[rider.displayName]["TOTAL"] = total;
         riders[rider.displayName]["NONE"] = noPriority;
     }
-    const availableResponsibilities = await DataStore.query(
-        models.RiderResponsibility
-    );
-    const resps = convertListDataToObject(availableResponsibilities);
     const responsibilities = { None: { Total: 0 } };
     const prioritiesTemplate = {
         [priorities.low]: 0,
@@ -109,24 +114,35 @@ export default async function getStats(role, range, whoamiId) {
             responsibilities[t.riderResponsibility].Total++;
         }
     }
-    const myTasksWithResps = myTasks.map((task) => {
-        const t = {
-            ...task,
-            riderResponsibility: resps[task.taskRiderResponsibilityId],
-        };
-        return t;
-    });
-    // this sucks
-    for (const resp of availableResponsibilities) {
+    for (const resp of Object.keys(responsibilities)) {
         for (const priority of Object.values(priorities)) {
-            if (responsibilities[resp.label]) {
-                responsibilities[resp.label][priority] =
-                    myTasksWithResps.filter(
+            if (resp === "None") {
+                responsibilities[resp][priority] = myTasks.filter(
+                    (t) => !t.riderResponsibility && t.priority === priority
+                ).length;
+            } else {
+                if (resp) {
+                    responsibilities[resp][priority] = myTasks.filter(
                         (t) =>
                             t.riderResponsibility &&
-                            t.riderResponsibility === resp.label &&
+                            t.riderResponsibility === resp &&
                             t.priority === priority
                     ).length;
+                }
+            }
+        }
+    }
+    for (const resp of Object.keys(responsibilities)) {
+        debugger;
+        if (resp === "None") {
+            responsibilities[resp]["None"] = myTasks.filter(
+                (t) => !t.riderResponsibility && !t.priority
+            ).length;
+        } else {
+            if (resp) {
+                responsibilities[resp]["None"] = myTasks.filter(
+                    (t) => t.riderResponsibility === resp && !t.priority
+                ).length;
             }
         }
     }

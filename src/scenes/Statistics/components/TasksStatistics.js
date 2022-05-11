@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { PaddedPaper } from "../../../styles/common";
+import React from "react";
 import Grid from "@mui/material/Grid";
-import { useSelector } from "react-redux";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -101,6 +99,9 @@ function PatchStats(props) {
         "Total",
     ];
 
+    const patchStats = props.stats.riderResponsibilities;
+    const priorityStats = props.stats.priorities;
+
     return (
         <TableContainer>
             <Table
@@ -116,7 +117,7 @@ function PatchStats(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.keys(props.stats || {}).map((patch) => {
+                    {Object.keys(patchStats || {}).map((patch) => {
                         return (
                             <TableRow key={patch} align="right">
                                 {columns.map((column) =>
@@ -126,11 +127,7 @@ function PatchStats(props) {
                                         </TableCell>
                                     ) : (
                                         <TableCell key={column}>
-                                            {
-                                                props.stats[patch][
-                                                    column.toUpperCase()
-                                                ]
-                                            }
+                                            {patchStats[patch][column]}
                                         </TableCell>
                                     )
                                 )}
@@ -139,7 +136,7 @@ function PatchStats(props) {
                     })}
                     <TableRow align="right">
                         {columns.map((column) => {
-                            if (column === "Responsibility")
+                            if (column === "Responsibility") {
                                 return (
                                     <TableCell
                                         key={column}
@@ -148,20 +145,16 @@ function PatchStats(props) {
                                         Totals:
                                     </TableCell>
                                 );
-                            else
+                            } else {
                                 return (
                                     <TableCell
                                         key={column}
                                         style={{ fontWeight: "bold" }}
                                     >
-                                        {props.stats &&
-                                        props.stats[column.toUpperCase()]
-                                            ? props.stats[column.toUpperCase()][
-                                                  "Total"
-                                              ]
-                                            : ""}
+                                        {priorityStats[column.toUpperCase()]}
                                     </TableCell>
                                 );
+                            }
                         })}
                     </TableRow>
                 </TableBody>
@@ -172,6 +165,7 @@ function PatchStats(props) {
 
 function RiderStats(props) {
     let columns = ["Assignee", ...Object.values(priorities), "None", "Total"];
+    const riderStats = props.stats.riders;
 
     return (
         <TableContainer>
@@ -188,29 +182,27 @@ function RiderStats(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.keys(props.stats ? props.stats : {}).map(
-                        (rider) => {
-                            return (
-                                <TableRow key={rider} align="right">
-                                    {columns.map((column) =>
-                                        column === "Assignee" ? (
-                                            <TableCell key={column}>
-                                                {rider}
-                                            </TableCell>
-                                        ) : (
-                                            <TableCell key={column}>
-                                                {
-                                                    props.stats[rider][
-                                                        column.toUpperCase()
-                                                    ]
-                                                }
-                                            </TableCell>
-                                        )
-                                    )}
-                                </TableRow>
-                            );
-                        }
-                    )}
+                    {Object.keys(riderStats ? riderStats : {}).map((rider) => {
+                        return (
+                            <TableRow key={rider} align="right">
+                                {columns.map((column) =>
+                                    column === "Assignee" ? (
+                                        <TableCell key={column}>
+                                            {rider}
+                                        </TableCell>
+                                    ) : (
+                                        <TableCell key={column}>
+                                            {
+                                                riderStats[rider][
+                                                    column.toUpperCase()
+                                                ]
+                                            }
+                                        </TableCell>
+                                    )
+                                )}
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
         </TableContainer>
@@ -224,10 +216,10 @@ export default function TasksStatistics(props) {
                 <CommonStats stats={props.data.common} />
             </Grid>
             <Grid item>
-                <RiderStats stats={props.data.riders} />
+                <RiderStats stats={props.data} />
             </Grid>
             <Grid item>
-                <PatchStats stats={props.data.riderResponsibilities} />
+                <PatchStats stats={props.data} />
             </Grid>
         </Grid>
     );
