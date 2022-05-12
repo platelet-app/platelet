@@ -11,7 +11,7 @@ import makeStyles from "@mui/styles/makeStyles";
 import ToggleButton from "@mui/material/ToggleButton";
 import FormControl from "@mui/material/FormControl";
 import { InputLabel, MenuItem, Select, Stack } from "@mui/material";
-import { getWhoami } from "../../redux/Selectors";
+import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
 import getStats from "./utilities/getStats";
 import { userRoles } from "../../apiConsts";
 import moment from "moment";
@@ -56,7 +56,7 @@ function StatisticsDashboard() {
         "GET_PRIORITIES",
         "GET_WHOAMI",
     ]);
-    const isFetching = useSelector((state) => loadingSelector(state));
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const whoami = useSelector(getWhoami);
     const [endDateTime, setEndDateTime] = useState(new Date());
     const [startDateTime, setStartDateTime] = useState(new Date());
@@ -123,7 +123,7 @@ function StatisticsDashboard() {
         }
     }
 
-    useEffect(() => getStatsData(), [role, days]);
+    useEffect(() => getStatsData(), [role, days, dataStoreReadyStatus]);
 
     return (
         <PaddedPaper>

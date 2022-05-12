@@ -120,6 +120,8 @@ export default async function getStats(role, range, whoamiId) {
                 responsibilities[resp][priority] = myTasks.filter(
                     (t) => !t.riderResponsibility && t.priority === priority
                 ).length;
+                responsibilities[resp]["Total"] +=
+                    responsibilities[resp][priority];
             } else {
                 if (resp) {
                     responsibilities[resp][priority] = myTasks.filter(
@@ -133,11 +135,11 @@ export default async function getStats(role, range, whoamiId) {
         }
     }
     for (const resp of Object.keys(responsibilities)) {
-        debugger;
         if (resp === "None") {
             responsibilities[resp]["None"] = myTasks.filter(
                 (t) => !t.riderResponsibility && !t.priority
             ).length;
+            responsibilities[resp]["Total"] += responsibilities[resp]["None"];
         } else {
             if (resp) {
                 responsibilities[resp]["None"] = myTasks.filter(
