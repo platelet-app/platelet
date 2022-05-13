@@ -32,32 +32,46 @@ function DeliverableDetails(props) {
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const dispatch = useDispatch();
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const updateDeliverableRef = useRef(null);
     const errorMessage = "Sorry, an error occurred";
 
     async function getDeliverables() {
         setIsFetching(true);
-        deliverablesObserver.current.unsubscribe();
-        deliverablesObserver.current = DataStore.observeQuery(
-            models.Deliverable
-        ).subscribe(async ({ items, isSynced }) => {
-            //TODO: once the observeQuery bug is fixed, don't do the duplicate query
-            DataStore.query(models.Deliverable)
-                .then((result) => {
-                    const filtered = result.filter(
-                        (d) => d.task && d.task.id === props.taskId
-                    );
-                    setState(convertListDataToObject(filtered));
-                })
-                .catch((error) => {
-                    console.log(error);
-                    setErrorState(true);
-                    setIsFetching(false);
-                });
+        try {
+            const result = await DataStore.query(models.Deliverable);
+            const filtered = result.filter(
+                (d) => d.task && d.task.id === props.taskId
+            );
+            setState(convertListDataToObject(filtered));
             setIsFetching(false);
-            return;
-        });
+            deliverablesObserver.current.unsubscribe();
+            deliverablesObserver.current = DataStore.observe(
+                models.Deliverable
+            ).subscribe(async ({ element, opType }) => {
+                console.log(element);
+                if (["INSERT", "UPDATE"].includes(opType)) {
+                    if (element.taskDeliverablesId === props.taskId) {
+                        DataStore.query(models.Deliverable)
+                            .then((result) => {
+                                const filtered = result.filter(
+                                    (d) => d.task && d.task.id === props.taskId
+                                );
+                                setState(convertListDataToObject(filtered));
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                setIsFetching(false);
+                            });
+                    }
+                } else if (opType === "DELETE") {
+                    setState((prevState) => _.omit(prevState, element.id));
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            setErrorState(true);
+            setIsFetching(false);
+        }
     }
 
     useEffect(() => {
