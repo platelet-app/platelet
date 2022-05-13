@@ -122,7 +122,7 @@ describe("DeliverableDetails", () => {
         });
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         const items = await screen.findAllByRole("button", { name: /Add / });
         expect(items).toHaveLength(5);
@@ -197,7 +197,7 @@ describe("DeliverableDetails", () => {
         });
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(screen.getByRole("button", { name: /increment/ }));
         await waitFor(() => {
@@ -269,7 +269,7 @@ describe("DeliverableDetails", () => {
         });
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(
             screen.getByRole("button", { name: `Add ${mockData[0].label}` })
@@ -321,13 +321,16 @@ describe("DeliverableDetails", () => {
         const tagsUnique = existingTags.reduce(tagsReducer, []);
         render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(1, models.Deliverable);
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenNthCalledWith(2, models.Deliverable);
         });
 
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
             expect(querySpy).toHaveBeenNthCalledWith(
-                2,
+                3,
                 models.DeliverableType,
                 expect.any(Function),
                 { sort: expect.any(Function) }

@@ -38,62 +38,31 @@ function DeliverableDetails(props) {
 
     async function getDeliverables() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus) {
-            return;
-        }
-        try {
-            const deliverables = (
-                await DataStore.query(models.Deliverable)
-            ).filter((d) => d.task && d.task.id === props.taskId);
-            setState(convertListDataToObject(deliverables));
-
-            if (deliverables) {
-                deliverablesObserver.current.unsubscribe();
-                deliverablesObserver.current = DataStore.observe(
-                    models.Deliverable
-                ).subscribe(async (observeResult) => {
-                    DataStore.query(
-                        models.Deliverable,
-                        observeResult.element.id
-                    ).then((deliverable) => {
-                        if (
-                            !deliverable ||
-                            !deliverable.task ||
-                            deliverable.task.id !== props.taskId
-                        ) {
-                            return;
-                        }
-                        if (observeResult.opType === "INSERT") {
-                            setState((prevState) => ({
-                                ...prevState,
-                                [deliverable.id]: deliverable,
-                            }));
-                        } else if (observeResult.opType === "UPDATE") {
-                            setState((prevState) => ({
-                                ...prevState,
-                                [deliverable.id]: {
-                                    ...prevState[deliverable.id],
-                                    ...deliverable,
-                                },
-                            }));
-                        }
-                        if (observeResult.opType === "DELETE") {
-                            setState((prevState) =>
-                                _.omit(prevState, deliverable.id)
-                            );
-                        }
-                    });
+        deliverablesObserver.current.unsubscribe();
+        deliverablesObserver.current = DataStore.observeQuery(
+            models.Deliverable
+        ).subscribe(async ({ items, isSynced }) => {
+            //TODO: once the observeQuery bug is fixed, don't do the duplicate query
+            DataStore.query(models.Deliverable)
+                .then((result) => {
+                    const filtered = result.filter(
+                        (d) => d.task && d.task.id === props.taskId
+                    );
+                    setState(convertListDataToObject(filtered));
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setErrorState(true);
+                    setIsFetching(false);
                 });
-                setIsFetching(false);
-            }
-        } catch (error) {
-            console.log(error);
-            setErrorState(true);
-        }
+            setIsFetching(false);
+            return;
+        });
     }
+
     useEffect(() => {
         getDeliverables();
-    }, [props.taskId, dataStoreReadyStatus]);
+    }, [props.taskId]);
 
     // stop observer when component unmounts
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
