@@ -14,7 +14,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import GetError from "../../../ErrorComponents/GetError";
 import { useDispatch, useSelector } from "react-redux";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import TaskActionConfirmationDialogContents from "./TaskActionConfirmationDialogContents";
@@ -69,9 +69,11 @@ function TaskActions(props) {
     const confirmationKey = useRef(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
     const timeSet = useRef(new Date());
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
+    const taskModelsSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Task;
 
     const errorMessage = "Sorry, something went wrong";
 
@@ -113,7 +115,6 @@ function TaskActions(props) {
     useEffect(calculateState, [task]);
 
     async function getTaskAndUpdateState() {
-        if (!dataStoreReadyStatus) return;
         try {
             const task = await DataStore.query(models.Task, props.taskId);
             if (!task) throw new Error("Task not found");
@@ -141,10 +142,7 @@ function TaskActions(props) {
         }
     }
 
-    useEffect(
-        () => getTaskAndUpdateState(),
-        [props.taskId, dataStoreReadyStatus]
-    );
+    useEffect(() => getTaskAndUpdateState(), [props.taskId, taskModelsSynced]);
 
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
