@@ -30,7 +30,6 @@ import {
 } from "../../../redux/notifications/NotificationsActions";
 import _ from "lodash";
 import {
-    dataStoreReadyStatusSelector,
     taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
     tenantIdSelector,
@@ -68,7 +67,6 @@ function TaskAssignmentsPanel(props) {
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const tenantId = useSelector(tenantIdSelector);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [state, setState] = useState({});
@@ -81,7 +79,7 @@ function TaskAssignmentsPanel(props) {
 
     async function getAssignees() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus || !taskAssigneesReady) return;
+        if (!taskAssigneesReady) return;
         try {
             const result = taskAssignees.filter(
                 (assignee) => assignee.task && assignee.task.id === props.taskId
@@ -96,7 +94,7 @@ function TaskAssignmentsPanel(props) {
     }
     useEffect(() => {
         getAssignees();
-    }, [props.taskId, dataStoreReadyStatus, taskAssigneesReady, taskAssignees]);
+    }, [props.taskId, taskAssigneesReady, taskAssignees]);
 
     async function addAssignee(user, role) {
         setIsPosting(true);
