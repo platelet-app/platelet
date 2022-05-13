@@ -6,7 +6,7 @@ import { matchSorter } from "match-sorter";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { useSelector } from "react-redux";
-import { dataStoreReadyStatusSelector } from "../redux/Selectors";
+import { dataStoreModelSyncedStatusSelector } from "../redux/Selectors";
 
 const filterOptions = (options, { inputValue }) => {
     return matchSorter(options, inputValue, { keys: ["name"] });
@@ -14,20 +14,21 @@ const filterOptions = (options, { inputValue }) => {
 
 function FavouriteLocationsSelect(props) {
     const [availableLocations, setAvailableLocations] = useState([]);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const locationModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Location;
     const onSelect = (event, selectedItem) => {
         if (selectedItem) props.onSelect(selectedItem);
     };
 
     async function getLocations() {
-        if (!dataStoreReadyStatus) return;
         const locations = await DataStore.query(models.Location, (l) =>
             l.listed("eq", 1)
         );
         setAvailableLocations(locations);
     }
 
-    useEffect(() => getLocations(), [dataStoreReadyStatus]);
+    useEffect(() => getLocations(), [locationModelSynced]);
 
     return (
         <Autocomplete
