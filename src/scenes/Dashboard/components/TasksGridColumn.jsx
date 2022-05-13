@@ -269,7 +269,18 @@ function TasksGridColumn(props) {
                             removeTaskFromState(newTask.element);
                             return;
                         } else if (newTask.element.id in stateRef.current) {
-                            addTaskToState(newTask.element);
+                            if (
+                                newTask.element.pickUpLocationId !==
+                                    stateRef.current[newTask.element.id]
+                                        .pickUpLocationId ||
+                                newTask.element.dropOffLocationId !==
+                                    stateRef.current[newTask.element.id]
+                                        .dropOffLocationId
+                            ) {
+                                getTasksRef.current();
+                            } else {
+                                addTaskToState(newTask.element);
+                            }
                         }
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
@@ -298,10 +309,7 @@ function TasksGridColumn(props) {
                                 ...prevState,
                                 [task.id]: {
                                     ...prevState[task.id],
-                                    pickUpLocation: {
-                                        ...task.pickUpLocation,
-                                        ...location.element,
-                                    },
+                                    pickUpLocation: location.element,
                                 },
                             }));
                         }
@@ -313,10 +321,7 @@ function TasksGridColumn(props) {
                                 ...prevState,
                                 [task.id]: {
                                     ...prevState[task.id],
-                                    dropOffLocation: {
-                                        ...task.dropOffLocation,
-                                        ...location.element,
-                                    },
+                                    dropOffLocation: location.element,
                                 },
                             }));
                         }
