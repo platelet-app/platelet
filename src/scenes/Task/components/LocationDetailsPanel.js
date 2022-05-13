@@ -18,6 +18,7 @@ import { API, DataStore, graphqlOperation } from "aws-amplify";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
 import {
+    dataStoreModelSyncedStatusSelector,
     dataStoreReadyStatusSelector,
     tenantIdSelector,
 } from "../../../redux/Selectors";
@@ -35,15 +36,18 @@ function LocationDetailsPanel(props) {
     const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const loadedOnce = useRef(false);
+    const locationModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Location;
 
     const initialSetEdit = useRef(false);
 
     const errorMessage = "Sorry, an error occurred";
 
     async function getLocation() {
-        setIsFetching(true);
-        if (!dataStoreReadyStatus || !props.task || !props.taskId) {
+        if (!loadedOnce.current) setIsFetching(true);
+        if (!props.task || !props.taskId) {
             return;
         }
         try {
@@ -55,6 +59,7 @@ function LocationDetailsPanel(props) {
                     props.task[props.locationKey].id
                 );
                 setState(location);
+                loadedOnce.current = true;
             }
             setIsFetching(false);
         } catch (err) {
@@ -63,7 +68,7 @@ function LocationDetailsPanel(props) {
         }
     }
 
-    useEffect(() => getLocation(), [props.taskId, dataStoreReadyStatus]);
+    useEffect(() => getLocation(), [props.taskId, locationModelSynced]);
 
     useEffect(() => {
         if (!isFetching && !initialSetEdit.current) {
