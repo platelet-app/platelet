@@ -1,4 +1,5 @@
 {
-    "plateletWelcomeEmail": "info@example.com",
-    "plateletDomainName": "app.example.com"
+
+    "plateletWelcomeEmail": "info@platelet.app",
+    "plateletDomainName": "app.platelet.app"
 }
