@@ -9,7 +9,7 @@ import VehicleCard from "../components/VehicleCard";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
-import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
+import { getWhoami } from "../redux/Selectors";
 import { Stack } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
 import { TextFieldControlled } from "../components/TextFields";
@@ -39,8 +39,8 @@ function VehicleList() {
     const [isFetching, setIsFetching] = useState(false);
     const vehiclesRef = useRef([]);
     const [filteredVehicles, setFilteredVehicles] = useState([]);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const classes = useStyles();
+    const vehiclesObserver = useRef({ unsubscribe: () => {} });
 
     function onChangeFilterText(e) {
         setFilteredVehicles(
@@ -58,24 +58,24 @@ function VehicleList() {
         <></>
     );
     async function getVehicles() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-        } else {
-            try {
-                const vehicles = await DataStore.query(models.Vehicle);
+        try {
+            vehiclesObserver.current = DataStore.observeQuery(
+                models.Vehicle
+            ).subscribe(({ items }) => {
                 setIsFetching(false);
-                vehiclesRef.current = vehicles;
-                setFilteredVehicles(vehicles);
-            } catch (error) {
-                console.log("Request failed", error);
-                if (error && error.message)
-                    dispatch(displayErrorNotification(error.message));
-                setIsFetching(false);
-            }
+                vehiclesRef.current = items;
+                setFilteredVehicles(items);
+            });
+        } catch (error) {
+            console.log("Request failed", error);
+            if (error && error.message)
+                dispatch(displayErrorNotification(error.message));
+            setIsFetching(false);
         }
     }
 
-    useEffect(() => getVehicles(), [dataStoreReadyStatus]);
+    useEffect(() => getVehicles(), []);
+
     if (isFetching) {
         return (
             <Stack
