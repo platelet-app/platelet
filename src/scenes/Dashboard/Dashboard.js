@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "../../App.css";
-import AddIcon from "@mui/icons-material/Add";
 import Paper from "@mui/material/Paper";
 import {
     setDashboardFilteredUser,
@@ -14,7 +13,6 @@ import { getDashboardRoleMode, saveDashboardRoleMode } from "../../utilities";
 import {
     dashboardFilteredUserSelector,
     dashboardTabIndexSelector,
-    dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
     guidedSetupOpenSelector,
@@ -29,7 +27,6 @@ function AddClearFab() {
     const dispatch = useDispatch();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
     const filterOn = !!dashboardFilter || !!dashboardFilteredUser;
     const message = filterOn ? "Clear search" : "Create new";
@@ -48,7 +45,7 @@ function AddClearFab() {
             sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
             color={filterOn ? "secondary" : "primary"}
             variant="extended"
-            disabled={!dataStoreReadyStatus || guidedSetupOpen}
+            disabled={guidedSetupOpen}
             onClick={handleClick}
         >
             {message}
