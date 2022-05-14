@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import { makeStyles } from "@mui/styles";
 import {
-    dataStoreReadyStatusSelector,
+    dataStoreModelSyncedStatusSelector,
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
@@ -31,12 +31,19 @@ function DeliverableDetails(props) {
     const deliverablesObserver = useRef({ unsubscribe: () => {} });
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
+    const loadedOnce = useRef(false);
     const dispatch = useDispatch();
     const updateDeliverableRef = useRef(null);
     const errorMessage = "Sorry, an error occurred";
+    const deliverablesSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Deliverable;
+    const deliverableTypesSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).DeliverableType;
 
     async function getDeliverables() {
-        setIsFetching(true);
+        if (!loadedOnce.current) setIsFetching(true);
         try {
             const result = await DataStore.query(models.Deliverable);
             const filtered = result.filter(
@@ -44,28 +51,34 @@ function DeliverableDetails(props) {
             );
             setState(convertListDataToObject(filtered));
             setIsFetching(false);
+            loadedOnce.current = true;
+
             deliverablesObserver.current.unsubscribe();
             deliverablesObserver.current = DataStore.observe(
                 models.Deliverable
-            ).subscribe(async ({ element, opType }) => {
-                console.log(element);
-                if (["INSERT", "UPDATE"].includes(opType)) {
-                    if (element.taskDeliverablesId === props.taskId) {
-                        DataStore.query(models.Deliverable)
-                            .then((result) => {
-                                const filtered = result.filter(
-                                    (d) => d.task && d.task.id === props.taskId
-                                );
-                                setState(convertListDataToObject(filtered));
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                                setIsFetching(false);
-                            });
+            ).subscribe(async ({ opType, element }) => {
+                DataStore.query(models.Deliverable, element.id).then(
+                    (result) => {
+                        if (opType === "DELETE") {
+                            setState((prevState) =>
+                                _.omit(prevState, element.id)
+                            );
+                            return;
+                        }
+                        if (element.taskDeliverablesId !== props.taskId) return;
+                        if (opType === "INSERT") {
+                            setState((prevState) => ({
+                                ...prevState,
+                                [element.id]: result,
+                            }));
+                        } else if (opType === "UPDATE") {
+                            setState((prevState) => ({
+                                ...prevState,
+                                [element.id]: result,
+                            }));
+                        }
                     }
-                } else if (opType === "DELETE") {
-                    setState((prevState) => _.omit(prevState, element.id));
-                }
+                );
             });
         } catch (error) {
             console.log(error);
@@ -76,7 +89,7 @@ function DeliverableDetails(props) {
 
     useEffect(() => {
         getDeliverables();
-    }, [props.taskId]);
+    }, [props.taskId, deliverablesSynced, deliverableTypesSynced]);
 
     // stop observer when component unmounts
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
