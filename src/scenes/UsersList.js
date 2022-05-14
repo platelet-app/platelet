@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserCard from "../components/UserCard";
-import { contextDots, PaddedPaper } from "../styles/common";
-import { convertListDataToObject, sortByCreatedTime } from "../utilities";
+import { PaddedPaper } from "../styles/common";
+import { sortByCreatedTime } from "../utilities";
 import { Button, Stack } from "@mui/material";
-import { dataStoreReadyStatusSelector, getWhoami } from "../redux/Selectors";
+import { getWhoami } from "../redux/Selectors";
 import { Link } from "react-router-dom";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 import { userRoles } from "../apiConsts";
-import Skeleton from "@mui/material/Skeleton";
 import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
@@ -38,7 +37,6 @@ export default function UsersList(props) {
     const observer = useRef({ unsubscribe: () => {} });
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const classes = useStyles();
 
     function onChangeFilterText(e) {

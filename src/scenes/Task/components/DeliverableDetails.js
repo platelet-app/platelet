@@ -144,7 +144,6 @@ function DeliverableDetails(props) {
                         ...rest,
                     })
                 );
-                // add it to the tracking reference
                 setState((prevState) => ({
                     ...prevState,
                     [newDeliverable.id]: newDeliverable,

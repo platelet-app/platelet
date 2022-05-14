@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import TaskCard from "./TaskCardsColoured";
-import { convertListDataToObject, encodeUUID } from "../../../utilities";
+import { encodeUUID } from "../../../utilities";
 import PropTypes from "prop-types";
 import { Box, Grow, Skeleton } from "@mui/material";
 import { makeStyles, useTheme } from "@mui/styles";
@@ -18,7 +17,6 @@ import {
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
-import useWindowSize from "../../../hooks/useWindowSize";
 
 const useStyles = makeStyles((theme) => ({
     root: {

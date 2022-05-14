@@ -11,7 +11,6 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import UserAvatar from "../../components/UserAvatar";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
-import { Auth } from "aws-amplify";
 import SignalWifiOff from "@mui/icons-material/SignalWifiOff";
 import { networkStatusSelector } from "../../redux/Selectors";
 import { logoutUser } from "../../redux/login/LoginActions";

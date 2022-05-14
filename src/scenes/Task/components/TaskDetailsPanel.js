@@ -11,10 +11,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import {
-    dataStoreModelSyncedStatusSelector,
-    dataStoreReadyStatusSelector,
-} from "../../../redux/Selectors";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import { saveTaskTimeWithKey } from "../utilities";
 import RequesterContact from "./RequesterContact";

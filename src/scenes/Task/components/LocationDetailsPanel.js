@@ -1,15 +1,7 @@
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
-import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import {
-    Divider,
-    IconButton,
-    Paper,
-    Skeleton,
-    Stack,
-    Typography,
-} from "@mui/material";
+import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
@@ -19,7 +11,6 @@ import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
 import {
     dataStoreModelSyncedStatusSelector,
-    dataStoreReadyStatusSelector,
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
