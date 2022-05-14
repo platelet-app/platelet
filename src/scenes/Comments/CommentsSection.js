@@ -5,7 +5,6 @@ import CommentsSkeleton from "./components/CommentsSkeleton";
 import PropTypes from "prop-types";
 import {
     dataStoreModelSyncedStatusSelector,
-    dataStoreReadyStatusSelector,
     getWhoami,
 } from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
