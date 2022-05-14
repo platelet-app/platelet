@@ -5,7 +5,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
-import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
+import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { convertListDataToObject } from "../../utilities";
 import PropTypes from "prop-types";
 import EditableDeliverable from "./components/EditableDeliverable";
@@ -50,7 +50,9 @@ function DeliverableGridSelect(props) {
     const [truncated, setTruncated] = useState(true);
     const [availableDeliverables, setAvailableDeliverables] = useState({});
     const [suggestedDeliverables, setSuggestedDeliverables] = useState([]);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const availableDeliverableModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).DeliverableType;
     const [isFetching, setIsFetching] = useState(false);
     const classes = useStyles();
 
@@ -109,29 +111,28 @@ function DeliverableGridSelect(props) {
     useEffect(sortDeliverables, [availableDeliverables, state]);
 
     async function getAvailableDeliverables() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-        } else {
-            try {
-                const availableDeliverablesResult = await DataStore.query(
-                    models.DeliverableType,
-                    Predicates.ALL,
-                    {
-                        sort: (s) => s.createdAt(SortDirection.ASCENDING),
-                    }
-                );
-                setAvailableDeliverables(
-                    convertListDataToObject(availableDeliverablesResult)
-                );
-                setIsFetching(false);
-            } catch (e) {
-                setErrorState(e);
-                console.log(e);
-            }
+        try {
+            const availableDeliverablesResult = await DataStore.query(
+                models.DeliverableType,
+                Predicates.ALL,
+                {
+                    sort: (s) => s.createdAt(SortDirection.ASCENDING),
+                }
+            );
+            setAvailableDeliverables(
+                convertListDataToObject(availableDeliverablesResult)
+            );
+            setIsFetching(false);
+        } catch (e) {
+            setErrorState(e);
+            console.log(e);
         }
     }
 
-    useEffect(() => getAvailableDeliverables(), [dataStoreReadyStatus]);
+    useEffect(
+        () => getAvailableDeliverables(),
+        [availableDeliverableModelSynced]
+    );
 
     function tagFilterAvailableDeliverables() {
         let result = [];
