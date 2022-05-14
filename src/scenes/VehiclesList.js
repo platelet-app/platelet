@@ -35,8 +35,6 @@ const useStyles = makeStyles((theme) => {
 
 function VehicleList() {
     const whoami = useSelector(getWhoami);
-    const dispatch = useDispatch();
-    const [isFetching, setIsFetching] = useState(false);
     const vehiclesRef = useRef([]);
     const [filteredVehicles, setFilteredVehicles] = useState([]);
     const classes = useStyles();
@@ -58,89 +56,62 @@ function VehicleList() {
         <></>
     );
     async function getVehicles() {
-        try {
-            vehiclesObserver.current = DataStore.observeQuery(
-                models.Vehicle
-            ).subscribe(({ items }) => {
-                setIsFetching(false);
-                vehiclesRef.current = items;
-                setFilteredVehicles(items);
-            });
-        } catch (error) {
-            console.log("Request failed", error);
-            if (error && error.message)
-                dispatch(displayErrorNotification(error.message));
-            setIsFetching(false);
-        }
+        vehiclesObserver.current = DataStore.observeQuery(
+            models.Vehicle
+        ).subscribe(({ items }) => {
+            vehiclesRef.current = items;
+            setFilteredVehicles(items);
+        });
+        return () => vehiclesObserver.current.unsubscribe();
     }
 
     useEffect(() => getVehicles(), []);
 
-    if (isFetching) {
-        return (
-            <Stack
-                direction={"column"}
-                spacing={2}
-                alignItems={"flex-start"}
-                justifyContent={"center"}
-            >
-                <PaddedPaper maxWidth={"800px"}>
-                    <Stack direction={"column"}>
-                        <Skeleton variant="text" width={500} height={50} />
-                        <Skeleton variant="text" width={500} height={50} />
-                        <Skeleton variant="text" width={500} height={50} />
-                        <Skeleton variant="text" width={500} height={50} />
-                    </Stack>
-                </PaddedPaper>
-            </Stack>
-        );
-    } else {
-        return (
-            <Stack
-                spacing={2}
-                direction={"column"}
-                justifyContent={"flex-start"}
-                alignItems={"flex-start"}
-            >
-                {addButton}
-                <TextFieldControlled
-                    variant={"standard"}
-                    placeholder={"Filter vehicles"}
-                    onChange={onChangeFilterText}
-                    color={"secondary"}
-                    className={classes.root}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon className={classes.searchIcon} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-                <PaddedPaper width={"800px"}>
-                    <Stack
-                        spacing={1}
-                        direction={"column"}
-                        justifyContent={"flex-start"}
-                    >
-                        {sortByCreatedTime(
-                            Object.values(filteredVehicles),
-                            "newest"
-                        ).map((vehicle) => (
-                            <ThemedLink
-                                to={"/vehicle/" + encodeUUID(vehicle.id)}
-                                style={{
-                                    textDecoration: "none",
-                                }}
-                            >
-                                <VehicleCard vehicle={vehicle} />
-                            </ThemedLink>
-                        ))}
-                    </Stack>
-                </PaddedPaper>
-            </Stack>
-        );
-    }
+    return (
+        <Stack
+            spacing={2}
+            direction={"column"}
+            justifyContent={"flex-start"}
+            alignItems={"flex-start"}
+        >
+            {addButton}
+            <TextFieldControlled
+                variant={"standard"}
+                placeholder={"Filter vehicles"}
+                onChange={onChangeFilterText}
+                color={"secondary"}
+                className={classes.root}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon className={classes.searchIcon} />
+                        </InputAdornment>
+                    ),
+                }}
+            />
+            <PaddedPaper width={"800px"}>
+                <Stack
+                    spacing={1}
+                    direction={"column"}
+                    justifyContent={"flex-start"}
+                >
+                    {sortByCreatedTime(
+                        Object.values(filteredVehicles),
+                        "newest"
+                    ).map((vehicle) => (
+                        <ThemedLink
+                            to={"/vehicle/" + encodeUUID(vehicle.id)}
+                            style={{
+                                textDecoration: "none",
+                            }}
+                        >
+                            <VehicleCard vehicle={vehicle} />
+                        </ThemedLink>
+                    ))}
+                </Stack>
+            </PaddedPaper>
+        </Stack>
+    );
 }
 
 export default VehicleList;
