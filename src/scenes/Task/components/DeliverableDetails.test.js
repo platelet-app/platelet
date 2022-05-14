@@ -500,14 +500,16 @@ describe("DeliverableDetails", () => {
             await screen.findByText(`${mockDeliverable.deliverableType.label}`)
         ).toBeInTheDocument();
         expect(
-            await screen.queryByText(
+            screen.queryByText(
                 `${mockDeliverable.count} x ${mockDeliverable.unit}`
             )
         ).toBeInTheDocument();
         await DataStore.delete(mockDeliverable);
-        expect(
-            screen.queryByText(`${mockDeliverable.deliverableType.label}`)
-        ).toBeNull();
+        await waitFor(() => {
+            expect(
+                screen.queryByText(`${mockDeliverable.deliverableType.label}`)
+            ).toBeNull();
+        });
         expect(
             screen.queryByText(
                 `${mockDeliverable.count} x ${mockDeliverable.unit}`
