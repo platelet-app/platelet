@@ -558,5 +558,7 @@ describe("TaskActions", () => {
                 status: tasksStatus.completed,
             });
         });
+        const result = await DataStore.query(models.Task, mockTask.id);
+        expect(result.status).toBe(tasksStatus.completed);
     });
 });
