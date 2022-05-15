@@ -15,10 +15,7 @@ export async function saveTaskTimeWithKey(key, value, taskId, taskAssignees) {
             ...existingTask,
             [key]: isoString,
         },
-        taskAssignees.filter(
-            (ta) =>
-                ta.assignee.roles && ta.assignee.roles.includes(userRoles.rider)
-        )
+        taskAssignees.filter((ta) => ta.role === userRoles.rider)
     );
     if (existingTask.status === status) {
         return await DataStore.save(
