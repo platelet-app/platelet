@@ -20,7 +20,8 @@ import {
     copyTaskDataToClipboard,
     determineTaskStatus,
 } from "../../utilities";
-import { tasksStatus } from "../../apiConsts";
+import { tasksStatus, userRoles } from "../../apiConsts";
+import { taskAssigneesSelector } from "../../redux/Selectors";
 
 const initialState = {
     mouseX: null,
@@ -31,24 +32,15 @@ function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const { task } = props;
     const [state, setState] = React.useState(initialState);
+    const [isPosting, setIsPosting] = React.useState(false);
     const deleteButtonClasses = deleteButtonStyles();
+    const taskAssignees = useSelector(taskAssigneesSelector).items;
     const useStyles = makeStyles({
         taskContextButton: {
             color: props.iconColor || "primary",
         },
     });
     const classes = useStyles();
-    const postingSelector = createPostingSelector([
-        "DELETE_TASK",
-        "ADD_TASK_RELAY",
-        "RESTORE_TASK",
-        "UPDATE_TASK",
-        "UPDATE_TASK_PICKUP_TIME",
-        "UPDATE_TASK_DROPOFF_TIME",
-        "UPDATE_TASK_CANCELLED_TIME",
-        "UPDATE_TASK_REJECTED_TIME",
-    ]);
-    const isPosting = useSelector((state) => postingSelector(state));
 
     async function copyToClipboard(e) {
         handleClose(e);
@@ -100,19 +92,25 @@ function TaskContextMenu(props) {
 
     async function setTimeValue(value, key) {
         try {
+            setIsPosting(true);
             const result = await DataStore.query(models.Task, task.id);
-            const status = await determineTaskStatus({
-                ...result,
-                [key]: value,
-            });
+            const status = await determineTaskStatus(
+                {
+                    ...result,
+                    [key]: value,
+                },
+                taskAssignees.filter((ta) => ta.role === userRoles.rider)
+            );
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
                     updated[key] = value;
                     updated.status = status;
                 })
             );
+            setIsPosting(false);
         } catch (e) {
             console.log(e);
+            setIsPosting(false);
             dispatch(displayErrorNotification("Sorry, an error occurred."));
         }
     }
