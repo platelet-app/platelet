@@ -121,10 +121,6 @@ function TasksGridColumn(props) {
         }
     }, [inView]);
 
-    useEffect(() => {
-        console.log(dataStoreModelSynced.Task);
-    }, [dataStoreModelSynced.Task]);
-
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     stateRef.current = state;

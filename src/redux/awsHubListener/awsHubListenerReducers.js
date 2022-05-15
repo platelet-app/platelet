@@ -12,7 +12,7 @@ const initialSyncState = Object.values(models).reduce((acc, model) => {
     else return acc;
 }, {});
 
-console.log("initialSyncState", initialSyncState);
+console.log("Syncing models: ", initialSyncState);
 
 export function awsHubDataStoreEventsReducer(state = initialState, action) {
     switch (action.type) {
@@ -32,6 +32,10 @@ export function awsHubDataStoreModelsSyncedStatusReducer(
     switch (action.type) {
         case actions.setModelSyncedStatusAction:
             return { ...state, [action.modelName]: true };
+        case actions.setModelSyncedAllAction:
+            return Object.keys(state).reduce((acc, key) => {
+                return { ...acc, [key]: true };
+            }, {});
         default:
             return state;
     }
