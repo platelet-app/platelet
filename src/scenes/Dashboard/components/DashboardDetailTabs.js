@@ -26,7 +26,6 @@ import ExploreIcon from "@mui/icons-material/Explore";
 import {
     dashboardFilteredUserSelector,
     dashboardTabIndexSelector,
-    dataStoreReadyStatusSelector,
     getWhoami,
     guidedSetupOpenSelector,
 } from "../../../redux/Selectors";
@@ -74,7 +73,6 @@ export function DashboardDetailTabs(props) {
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
 
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down("sm"));
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);

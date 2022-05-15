@@ -33,8 +33,6 @@ function SyncStatusCircleLoader() {
         }
     }, [progress]);
 
-    useEffect(() => console.log(modelSyncStatus), [modelSyncStatus]);
-
     if (completed || !dataStoreNetworkStatus) {
         return <></>;
     } else {
