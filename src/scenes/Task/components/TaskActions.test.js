@@ -485,4 +485,78 @@ describe("TaskActions", () => {
             expect(button).toBeDisabled();
         });
     });
+
+    test("multiple actions", async () => {
+        const mockTask = new models.Task({ status: tasksStatus.new });
+        const fakeAssignee = new models.User({
+            roles: [userRoles.rider, userRoles.user],
+            displayName: "test",
+        });
+        const fakeAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.rider,
+        });
+        await DataStore.save(mockTask);
+        await DataStore.save(fakeAssignee);
+        const spy = jest.spyOn(DataStore, "query");
+        render(<TaskActions taskId={mockTask.id} />);
+        await DataStore.save(fakeAssignment);
+        const saveSpy = jest.spyOn(DataStore, "save");
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        const button = screen.getByRole("button", { name: "Picked up" });
+        expect(button).toBeInTheDocument();
+        userEvent.click(button);
+        expect(screen.getByText(/Set the picked up time/)).toBeInTheDocument();
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        // expect button to be toggled
+        await waitFor(() => {
+            expect(button).toHaveAttribute("aria-pressed", "true");
+        });
+        const buttonDroppedOff = await screen.findByRole("button", {
+            name: "Delivered",
+        });
+        await waitFor(() => {
+            expect(buttonDroppedOff).toBeEnabled();
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                timePickedUp: isoDate,
+                status: tasksStatus.pickedUp,
+            });
+        });
+        userEvent.click(buttonDroppedOff);
+        const okButton2 = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton2);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                ...mockTask,
+                timePickedUp: isoDate,
+                timeDroppedOff: isoDate,
+                status: tasksStatus.droppedOff,
+            });
+        });
+        const buttonRiderHome = await screen.findByRole("button", {
+            name: "Rider home",
+        });
+        await waitFor(() => {
+            expect(buttonRiderHome).toBeEnabled();
+        });
+        userEvent.click(buttonRiderHome);
+        const okButton3 = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton3);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(3, {
+                ...mockTask,
+                timePickedUp: isoDate,
+                timeDroppedOff: isoDate,
+                timeRiderHome: isoDate,
+                status: tasksStatus.completed,
+            });
+        });
+    });
 });
