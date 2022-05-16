@@ -128,13 +128,10 @@ function TaskActions(props) {
             taskObserver.current = DataStore.observe(
                 models.Task,
                 props.taskId
-            ).subscribe(async (observeResult) => {
-                const taskData = observeResult.element;
-                if (observeResult.opType === "INSERT") {
-                    setTask(taskData);
-                } else if (observeResult.opType === "UPDATE") {
-                    setTask((prevState) => ({ ...prevState, ...taskData }));
-                } else if (observeResult.opType === "DELETE") {
+            ).subscribe(async ({ opType, element }) => {
+                if (["INSERT", "UPDATE"].includes(opType)) {
+                    setTask(element);
+                } else if (opType === "DELETE") {
                     // just disable the buttons if the task is deleted
                     setIsFetching(true);
                 }
