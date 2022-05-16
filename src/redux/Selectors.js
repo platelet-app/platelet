@@ -27,3 +27,5 @@ export const dashboardFilteredUserSelector = (state) =>
 export const taskAssigneesSelector = (state) => state.taskAssigneesReducer;
 export const taskAssigneesReadyStatusSelector = (state) =>
     state.taskAssigneesReducer.ready;
+export const dataStoreModelSyncedStatusSelector = (state) =>
+    state.awsHubDataStoreModelsSyncedStatusReducer;

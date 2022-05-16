@@ -1,27 +1,22 @@
 import { Chip, Grid } from "@mui/material";
 import { DataStore } from "aws-amplify";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
 import * as models from "../../../models/index";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 import PropTypes from "prop-types";
 
 function RiderResponsibilitySelect(props) {
     const [responsibilities, setResponsibilities] = useState([]);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const observer = useRef({ unsubscribe: () => {} });
 
     async function getResponsibilities() {
-        if (!dataStoreReadyStatus) return;
-        try {
-            const responsibilities = await DataStore.query(
-                models.RiderResponsibility
-            );
-            setResponsibilities(responsibilities);
-        } catch (error) {
-            console.log(error);
-        }
+        observer.current = DataStore.observeQuery(
+            models.RiderResponsibility
+        ).subscribe(({ items }) => {
+            setResponsibilities(items);
+        });
+        return () => observer.current.unsubscribe();
     }
-    useEffect(() => getResponsibilities(), [dataStoreReadyStatus]);
+    useEffect(() => getResponsibilities(), []);
 
     const valueIds = props.value.map((v) => v.id);
 

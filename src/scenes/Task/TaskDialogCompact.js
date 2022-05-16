@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
-import { decodeUUID, determineTaskStatus } from "../../utilities";
+import { decodeUUID } from "../../utilities";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -11,15 +11,12 @@ import GetError from "../../ErrorComponents/GetError";
 import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
-import { Button, Divider, Hidden, Stack } from "@mui/material";
-import CommentsSection from "../Comments/CommentsSection";
+import { Button, Hidden } from "@mui/material";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
-import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
-import _ from "lodash";
+import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useHistory, useLocation, useParams } from "react-router";
-import TaskAssignmentsPanel from "./components/TaskAssignmentsPanel";
 import PropTypes from "prop-types";
 
 const drawerWidth = 420;
@@ -110,7 +107,6 @@ const initialState = {
 };
 
 function TaskDialogCompact(props) {
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
     const classes = useStyles();
     const theme = useTheme();
@@ -121,49 +117,43 @@ function TaskDialogCompact(props) {
     const taskRef = useRef();
     taskRef.current = state;
     const taskObserver = useRef({ unsubscribe: () => {} });
+    const tasksSynced = useSelector(dataStoreModelSyncedStatusSelector).Task;
     const dispatch = useDispatch();
     let { task_uuid_b62 } = useParams();
     const taskUUID = decodeUUID(task_uuid_b62);
 
     async function getTask() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus) {
-            return;
-        } else {
-            try {
-                const taskData = await DataStore.query(models.Task, taskUUID);
-                if (taskData) {
-                    setState({
-                        ...taskData,
-                    });
-                    taskObserver.current.unsubscribe();
-                    taskObserver.current = DataStore.observe(
-                        models.Task,
-                        taskUUID
-                    ).subscribe(async (observeResult) => {
-                        const taskData = observeResult.element;
-                        if (observeResult.opType === "UPDATE") {
-                            setState((prevState) => ({
-                                ...prevState,
-                                ...taskData,
-                            }));
-                        } else if (observeResult.opType === "DELETE") {
-                            setNotFound(true);
-                            setState(initialState);
-                        }
-                    });
-                } else {
-                    setNotFound(true);
-                }
-                setIsFetching(false);
-            } catch (error) {
-                setIsFetching(false);
-                setErrorState(error);
-                console.error("Request failed", error);
+        try {
+            const taskData = await DataStore.query(models.Task, taskUUID);
+            if (taskData) {
+                setState(taskData);
+                setNotFound(false);
+                taskObserver.current.unsubscribe();
+                taskObserver.current = DataStore.observe(
+                    models.Task,
+                    taskUUID
+                ).subscribe(async (observeResult) => {
+                    const taskData = observeResult.element;
+                    if (["UPDATE", "INSERT"].includes(observeResult.opType)) {
+                        setState(taskData);
+                        setNotFound(false);
+                    } else if (observeResult.opType === "DELETE") {
+                        setNotFound(true);
+                        setState(initialState);
+                    }
+                });
+            } else {
+                setNotFound(true);
             }
+            setIsFetching(false);
+        } catch (error) {
+            setIsFetching(false);
+            setErrorState(error);
+            console.error("Request failed", error);
         }
     }
-    useEffect(() => getTask(), [dataStoreReadyStatus, props.taskId]);
+    useEffect(() => getTask(), [props.taskId, tasksSynced]);
 
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 

@@ -1,9 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import { DataStore } from "aws-amplify";
-import * as models from "../models";
 import { useSelector } from "react-redux";
 import {
-    dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
     taskAssigneesReadyStatusSelector,
@@ -23,7 +20,6 @@ function RecentlyAssignedUsers(props) {
     const allAssignees = useSelector(taskAssigneesSelector).items;
     const allAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const whoami = useSelector(getWhoami);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const animate = useRef(false);
     const roleView = useSelector(getRoleView);
 
@@ -74,7 +70,7 @@ function RecentlyAssignedUsers(props) {
 
     async function getActiveRiders() {
         try {
-            if (!dataStoreReadyStatus || !roleView) return;
+            if (!roleView) return;
             setActiveRiders(await calculateRidersStatus());
             animate.current = true;
         } catch (error) {
@@ -85,7 +81,7 @@ function RecentlyAssignedUsers(props) {
 
     useEffect(() => {
         getActiveRiders();
-    }, [dataStoreReadyStatus, roleView, props.role, allAssigneesReady]);
+    }, [roleView, props.role, allAssigneesReady]);
 
     if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;

@@ -3,7 +3,6 @@ import { screen, waitFor } from "@testing-library/react";
 import _ from "lodash";
 import { render } from "../../../test-utils";
 import DeliverableDetails from "./DeliverableDetails";
-import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import { deliverableUnits } from "../../../apiConsts";
 import * as models from "../../../models";
@@ -60,8 +59,6 @@ const mockData = [
         disabled: 0,
     }),
 ];
-
-const unsubscribe = jest.fn();
 
 const fakeTask = new models.Task({
     tenantId: "tenant-id",
@@ -404,5 +401,119 @@ describe("DeliverableDetails", () => {
             name: "NONE. Click to change",
         });
         expect(unitButtonUpdated).toBeInTheDocument();
+    });
+
+    it("respond to remote changes adding item", async () => {
+        const task = await DataStore.save(fakeTask);
+        await saveMockAvailableDeliverables();
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<DeliverableDetails taskId={fakeTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+
+        const mockDeliverable = await DataStore.save(
+            new models.Deliverable({
+                deliverableType: mockData[0],
+                task,
+                count: 1,
+                orderInGrid: 0,
+                unit: mockData[0].defaultUnit,
+                tenantId: "tenant-id",
+            })
+        );
+        expect(
+            await screen.findByText(`${mockDeliverable.deliverableType.label}`)
+        ).toBeInTheDocument();
+        expect(
+            await screen.findByText(
+                `${mockDeliverable.count} x ${mockDeliverable.unit}`
+            )
+        ).toBeInTheDocument();
+    });
+
+    it("respond to remote changes editing item", async () => {
+        const task = await DataStore.save(fakeTask);
+        await saveMockAvailableDeliverables();
+        const mockDeliverable = await DataStore.save(
+            new models.Deliverable({
+                deliverableType: mockData[0],
+                task,
+                count: 1,
+                orderInGrid: 0,
+                unit: mockData[0].defaultUnit,
+                tenantId: "tenant-id",
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<DeliverableDetails taskId={fakeTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            await screen.findByText(`${mockDeliverable.deliverableType.label}`)
+        ).toBeInTheDocument();
+        expect(
+            await screen.findByText(
+                `${mockDeliverable.count} x ${mockDeliverable.unit}`
+            )
+        ).toBeInTheDocument();
+        await DataStore.save(
+            models.Deliverable.copyOf(mockDeliverable, (upd) => {
+                upd.unit = deliverableUnits.litre;
+                upd.count = 20;
+            })
+        );
+        expect(
+            await screen.findByText(`${mockDeliverable.deliverableType.label}`)
+        ).toBeInTheDocument();
+        expect(
+            await screen.findByText(`${20} x ${deliverableUnits.litre}`)
+        ).toBeInTheDocument();
+    });
+
+    it("respond to remote changes removing item", async () => {
+        const task = await DataStore.save(fakeTask);
+        await saveMockAvailableDeliverables();
+        const mockDeliverable = await DataStore.save(
+            new models.Deliverable({
+                deliverableType: mockData[0],
+                task,
+                count: 1,
+                orderInGrid: 0,
+                unit: mockData[0].defaultUnit,
+                tenantId: "tenant-id",
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<DeliverableDetails taskId={fakeTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            await screen.findByText(`${mockDeliverable.deliverableType.label}`)
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                `${mockDeliverable.count} x ${mockDeliverable.unit}`
+            )
+        ).toBeInTheDocument();
+        await DataStore.delete(mockDeliverable);
+        await waitFor(() => {
+            expect(
+                screen.queryByText(`${mockDeliverable.deliverableType.label}`)
+            ).toBeNull();
+        });
+        expect(
+            screen.queryByText(
+                `${mockDeliverable.count} x ${mockDeliverable.unit}`
+            )
+        ).toBeNull();
     });
 });

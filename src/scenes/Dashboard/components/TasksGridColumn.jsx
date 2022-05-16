@@ -12,11 +12,11 @@ import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
 import {
     dashboardFilteredUserSelector,
-    dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
     taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
+    dataStoreModelSyncedStatusSelector,
 } from "../../../redux/Selectors";
 import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
@@ -88,11 +88,10 @@ function TasksGridColumn(props) {
     const [state, setState] = useState([]);
     const stateRef = useRef({});
     const { show, hide } = showHide();
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const taskAssignees = useSelector(taskAssigneesSelector);
     const prevTaskAssigneesRef = useRef(null);
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
-    const [isFetching, setIsFetching] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const [visibility, setVisibility] = useState(false);
@@ -101,14 +100,14 @@ function TasksGridColumn(props) {
     const dashboardFilter = useSelector((state) => state.dashboardFilter);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
+    const dataStoreModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    );
     const getTasksRef = useRef(null);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
     const locationsSubscription = useRef({
-        unsubscribe: () => {},
-    });
-    const taskAssigneesObserver = useRef({
         unsubscribe: () => {},
     });
     const theme = useTheme();
@@ -149,12 +148,7 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (
-            !dataStoreReadyStatus ||
-            !roleView ||
-            !visibility ||
-            !taskAssigneesReady
-        ) {
+        if (!roleView || !visibility || !taskAssigneesReady) {
             return;
         } else {
             try {
@@ -205,12 +199,12 @@ function TasksGridColumn(props) {
 
     useEffect(
         () => {
-            setIsFetching(true);
             getTasks();
         },
         // JSON.stringify prevents component remount from an array prop
         [
-            dataStoreReadyStatus,
+            dataStoreModelSynced.Task,
+            dataStoreModelSynced.Location,
             dashboardFilteredUser,
             taskAssigneesReady,
             visibility,
@@ -249,7 +243,6 @@ function TasksGridColumn(props) {
     }, [taskAssignees, roleView, whoami]);
 
     function setUpObservers() {
-        if (!dataStoreReadyStatus) return;
         tasksSubscription.current.unsubscribe();
         tasksSubscription.current = DataStore.observe(models.Task).subscribe(
             (newTask) => {
@@ -379,13 +372,12 @@ function TasksGridColumn(props) {
 
     useEffect(() => {
         setUpObservers();
-    }, [dataStoreReadyStatus, roleView]);
+    }, [roleView]);
 
     useEffect(() => {
         return () => {
             tasksSubscription.current.unsubscribe();
             locationsSubscription.current.unsubscribe();
-            taskAssigneesObserver.current.unsubscribe();
         };
     }, []);
 
@@ -400,8 +392,8 @@ function TasksGridColumn(props) {
     } else if (isFetching) {
         return (
             <Box
-                ref={ref}
                 className={classes.column}
+                ref={ref}
                 sx={{
                     width: isSm ? "100%" : width / 4.2,
                 }}
@@ -432,6 +424,7 @@ function TasksGridColumn(props) {
         return (
             <Box
                 className={classes.column}
+                ref={ref}
                 sx={{
                     width: isSm ? "100%" : width / 4.2,
                 }}
@@ -518,7 +511,6 @@ function TasksGridColumn(props) {
 
 TasksGridColumn.propTypes = {
     title: PropTypes.string,
-    // this array only works up to two keys for now
     taskKey: PropTypes.array.isRequired,
     showTasks: PropTypes.arrayOf(PropTypes.string),
     hideRelayIcons: PropTypes.bool,
