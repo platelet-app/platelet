@@ -4,12 +4,14 @@ import PropTypes from "prop-types";
 import { Divider, Grid } from "@mui/material";
 import { userRoles } from "../../../apiConsts";
 import UserChip from "../../../components/UserChip";
+import { sortByCreatedTime } from "../../../utilities";
 
 function TaskAssignees(props) {
     return [userRoles.coordinator, userRoles.rider].map((role) => {
-        const assignments = Object.values(props.assignees).filter(
+        const assignmentsUnsorted = Object.values(props.assignees).filter(
             (a) => a.role === role
         );
+        const assignments = sortByCreatedTime(assignmentsUnsorted, "oldest");
         const message = assignments.length === 0 ? "No one assigned" : "";
         const label =
             role === userRoles.coordinator ? "Coordinators:" : "Riders:";

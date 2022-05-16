@@ -22,6 +22,7 @@ import * as models from "../../../models";
 import {
     convertListDataToObject,
     determineTaskStatus,
+    sortByCreatedTime,
 } from "../../../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -190,7 +191,7 @@ function TaskAssignmentsPanel(props) {
                     updated.riderResponsibility = riderResponsibility;
                 })
             );
-            setState((prevState) => _.omit(prevState, assignmentId));
+            //setState((prevState) => _.omit(prevState, assignmentId));
             setIsDeleting(false);
         } catch (error) {
             console.log(error);
@@ -255,7 +256,7 @@ function TaskAssignmentsPanel(props) {
                     </Stack>
                     {collapsed && (
                         <Grid container spacing={1} direction={"row"}>
-                            {Object.values(state)
+                            {sortByCreatedTime(Object.values(state), "oldest")
                                 .sort(sortByUserRole)
                                 .map((assignment) => {
                                     return (
