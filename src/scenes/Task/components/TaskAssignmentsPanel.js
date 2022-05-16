@@ -135,7 +135,7 @@ function TaskAssignmentsPanel(props) {
                     dispatch(displayInfoNotification("Task moved to ACTIVE"));
                 }
             }
-            setState({ ...state, [result.id]: result });
+            //setState({ ...state, [result.id]: result });
             setIsPosting(false);
         } catch (error) {
             console.log(error);
