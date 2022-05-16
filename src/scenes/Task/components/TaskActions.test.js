@@ -563,7 +563,7 @@ describe("TaskActions", () => {
     });
 
     test("multiple actions", async () => {
-        const mockTask = new models.Task({ status: tasksStatus.new });
+        const mockTask = new models.Task({ status: tasksStatus.active });
         const fakeAssignee = new models.User({
             roles: [userRoles.rider, userRoles.user],
             displayName: "test",
@@ -573,17 +573,26 @@ describe("TaskActions", () => {
             assignee: fakeAssignee,
             role: userRoles.rider,
         });
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [fakeAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
         await DataStore.save(mockTask);
         await DataStore.save(fakeAssignee);
-        const spy = jest.spyOn(DataStore, "query");
-        render(<TaskActions taskId={mockTask.id} />);
         await DataStore.save(fakeAssignment);
+        const spy = jest.spyOn(DataStore, "query");
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
         const saveSpy = jest.spyOn(DataStore, "save");
         await waitFor(() => {
             expect(spy).toHaveBeenCalledTimes(1);
         });
         const button = screen.getByRole("button", { name: "Picked up" });
-        expect(button).toBeInTheDocument();
+        await waitFor(() => {
+            expect(button).toBeEnabled();
+        });
         userEvent.click(button);
         expect(screen.getByText(/Set the picked up time/)).toBeInTheDocument();
         const okButton = screen.getByRole("button", { name: "OK" });
