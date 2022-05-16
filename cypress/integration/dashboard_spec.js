@@ -25,39 +25,15 @@ describe("open the dashboard", () => {
     });
 
     it("should display all the columns", () => {
-        cy.get(":nth-child(1) > .makeStyles-column-61").should(
-            "contain",
-            "NEW"
-        );
-        cy.get(":nth-child(2) > .makeStyles-column-61").should(
-            "contain",
-            "ACTIVE"
-        );
-        cy.get(":nth-child(3) > .makeStyles-column-61").should(
-            "contain",
-            "PICKED UP"
-        );
-        cy.get(":nth-child(4) > .makeStyles-column-61").should(
-            "contain",
-            "DELIVERED"
-        );
+        cy.get("[data-cy=NEW-header]").should("contain", "NEW");
+        cy.get("[data-cy=ACTIVE-header]").should("contain", "ACTIVE");
+        cy.get('[data-cy="PICKED UP-header"]').should("contain", "PICKED UP");
+        cy.get("[data-cy=DELIVERED-header]").should("contain", "DELIVERED");
         cy.get("[data-cy=dashboard-tabpanel-1]").click();
-        cy.get(":nth-child(1) > .makeStyles-column-61").should(
-            "contain",
-            "COMPLETED"
-        );
-        cy.get(":nth-child(2) > .makeStyles-column-61").should(
-            "contain",
-            "CANCELLED"
-        );
-        cy.get(":nth-child(3) > .makeStyles-column-61").should(
-            "contain",
-            "ABANDONED"
-        );
-        cy.get(":nth-child(4) > .makeStyles-column-61").should(
-            "contain",
-            "REJECTED"
-        );
+        cy.get("[data-cy=COMPLETED-header]").should("contain", "COMPLETED");
+        cy.get("[data-cy=CANCELLED-header]").should("contain", "CANCELLED");
+        cy.get("[data-cy=ABANDONED-header]").should("contain", "ABANDONED");
+        cy.get("[data-cy=REJECTED-header]").should("contain", "REJECTED");
     });
     it("should display the logged in user's initials", () => {
         cy.get(".MuiAvatar-root").should("contain", "TU");

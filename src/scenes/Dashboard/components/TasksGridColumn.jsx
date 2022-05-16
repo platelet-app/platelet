@@ -382,7 +382,12 @@ function TasksGridColumn(props) {
     }, []);
 
     const header = (
-        <Typography className={classes.header}>{props.title}</Typography>
+        <Typography
+            data-cy={`${props.title}-header`}
+            className={classes.header}
+        >
+            {props.title}
+        </Typography>
     );
 
     const animate = useRef(false);
