@@ -13,11 +13,8 @@ import {
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import { protectedFields } from "../../apiConsts";
 import { Stack, useMediaQuery,Divider } from "@mui/material";
 import { useTheme } from "@mui/styles";
-import * as mutations from "../../graphql/mutations";
-import { API, graphqlOperation } from "aws-amplify";
 import CurrentRiderResponsibilitySelector from "./components/CurrentRiderResponsibilitySelector";
 import Skeleton from "@mui/material/Skeleton";
 
@@ -54,6 +51,10 @@ export default function UserDetail(props) {
     const dispatch = useDispatch();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
+    const observer = useRef({
+            unsubscribe: () => {},
+        });
+
 
     async function newUserProfile() {
         setNotFound(false);
@@ -78,6 +79,15 @@ export default function UserDetail(props) {
                         setPossibleRiderResponsibilities(filtered);
                     }
                 );
+                observer.current.unsubscribe();
+                observer.current = DataStore.observe(
+                    models.User
+                ).subscribe((result) => {
+                DataStore.query(models.User, userUUID).then((res)=>{
+                  setUser(res);
+                })
+
+                })
                 riderRespObserver.current.unsubscribe();
                 riderRespObserver.current = DataStore.observe(
                     models.PossibleRiderResponsibilities
@@ -139,6 +149,8 @@ export default function UserDetail(props) {
 
     useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
 
+    useEffect(() => () => observer.current.unsubscribe(), []);
+
     function handleUpdateRiderResponsibility(riderResponsibility) {
         setRiderResponsibility(riderResponsibility);
         DataStore.query(models.User, user.id)
@@ -157,65 +169,7 @@ export default function UserDetail(props) {
             });
     }
 
-    async function onUpdate(value) {
-        setIsPosting(true);
-        try {
-            const existingUser = await DataStore.query(models.User, user.id);
-            const { roles, possibleRiderResponsibilities, contact, ...rest } =
-                value;
 
-            await DataStore.save(
-                models.User.copyOf(existingUser, (updated) => {
-                    for (const [key, newValue] of Object.entries(rest)) {
-                        if (!protectedFields.includes(key))
-                            updated[key] = newValue;
-                    }
-                    if (existingUser.contact && contact) {
-                        for (const [key, newValue] of Object.entries(contact)) {
-                            if (!protectedFields.includes(key))
-                                updated.contact[key] = newValue;
-                        }
-                    }
-                })
-            );
-            if (roles) {
-                await API.graphql(
-                    graphqlOperation(mutations.updateUserRoles, {
-                        userId: user.id,
-                        roles,
-                    })
-                );
-            }
-            if (possibleRiderResponsibilities && tenantId) {
-                DataStore.query(models.PossibleRiderResponsibilities).then(
-                    (result) => {
-                        const existing = result.filter(
-                            (r) => r.user && r.user.id === existingUser.id
-                        );
-                        for (const i of existing) {
-                            DataStore.delete(i);
-                        }
-                    }
-                );
-                await Promise.all(
-                    possibleRiderResponsibilities.map((riderResponsibility) => {
-                        return DataStore.save(
-                            new models.PossibleRiderResponsibilities({
-                                tenantId,
-                                riderResponsibility,
-                                user: existingUser,
-                            })
-                        );
-                    })
-                );
-            }
-            setIsPosting(false);
-        } catch (error) {
-            console.error("Update request failed", error);
-            dispatch(displayErrorNotification("Sorry, an error occurred"));
-            setIsPosting(false);
-        }
-    }
     if (isFetching) {
         return (
             <Stack
@@ -297,7 +251,6 @@ export default function UserDetail(props) {
                         possibleRiderResponsibilities={
                             possibleRiderResponsibilities
                         }
-                        onUpdate={onUpdate}
                         isPosting={isPosting}
                     />
                 </PaddedPaper>

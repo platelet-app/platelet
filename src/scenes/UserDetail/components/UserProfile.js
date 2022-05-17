@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
@@ -6,19 +6,22 @@ import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import RiderResponsibilitySelect from "./RiderResponsibilitySelect";
 import { userRoles } from "../../../apiConsts";
-import { Box, Stack, Typography, Chip, Grid, useMediaQuery } from "@mui/material";
+import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import UserRolesAndSelector from "./UserRolesAndSelector";
-import PrioritySelect from "../../Task/components/PrioritySelect";
 import { useTheme } from "@mui/styles";
 import {
-    TextFieldUncontrolled,
     TextFieldControlled,
 } from "../../../components/TextFields";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { API, graphqlOperation } from "aws-amplify";
+import {
+    tenantIdSelector,
+} from "../../../redux/Selectors";
+import { protectedFields } from "../../../apiConsts";
+import * as mutations from "../../../graphql/mutations";
 
 const fields = {
     name: "Name",
@@ -49,7 +52,8 @@ export default function UserProfile(props) {
     const [oldState, setOldState] = useState({ ...props.user });
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
-    const toChange = useRef({});
+    const tenantId = useSelector(tenantIdSelector);
+
     
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -94,7 +98,7 @@ export default function UserProfile(props) {
                 <EditModeToggleButton
                     tooltipDefault={
                         props.user.id === whoami.id
-                            ? "Edit your profile"
+                            ? "Edit your display name"
                             : "Edit this user"
                     }
                     value={editNameMode}
@@ -109,7 +113,7 @@ export default function UserProfile(props) {
                 <EditModeToggleButton
                     tooltipDefault={
                         props.user.id === whoami.id
-                            ? "Edit your profile"
+                            ? "Edit your contact information"
                             : "Edit this user"
                     }
                     value={editContactMode}
@@ -124,7 +128,7 @@ export default function UserProfile(props) {
                 <EditModeToggleButton
                     tooltipDefault={
                         props.user.id === whoami.id
-                            ? "Edit your profile"
+                            ? "Edit your address"
                             : "Edit this user"
                     }
                     value={editAddressMode}
@@ -136,18 +140,27 @@ export default function UserProfile(props) {
             );
 
             editRoleToggle = (
-                <EditModeToggleButton
-                    tooltipDefault={
-                        props.user.id === whoami.id
-                            ? "Edit your role"
-                            : "Edit this user"
-                    }
-                    value={editRoleMode}
-                    onChange={(v) => {
-                        setEditRoleMode(v);
-                        if (!v) setState(oldState);
-                    }}
-                />
+                <Stack
+                    direction={"row"}
+                    alignItems={"top"}
+                    justifyContent={"space-between"}
+                    spacing={1}
+                >
+                    <Typography>Role</Typography>
+
+                    <EditModeToggleButton
+                        tooltipDefault={
+                            props.user.id === whoami.id
+                                ? "Edit your role"
+                                : "Edit this user"
+                        }
+                        value={editRoleMode}
+                        onChange={(v) => {
+                            setEditRoleMode(v);
+                            if (!v) setState(oldState);
+                        }}
+                    />
+                </Stack>
             );
         }
     }
@@ -155,14 +168,12 @@ export default function UserProfile(props) {
     function onSelectRole(role) {
         if (state.roles.includes(role)) {
             const result = state.roles.filter((r) => r !== role);
-            toChange.current.roles = result;
             setState({
                 ...state,
                 roles: result,
             });
         } else {
             const result = [...state.roles, role];
-            toChange.current.roles = result;
             setState({
                 ...state,
                 roles: result,
@@ -185,10 +196,66 @@ export default function UserProfile(props) {
         return true;
     }
 
+    async function onUpdate() {
+        try {
+            const existingUser = await DataStore.query(models.User, state.id);
+            const { roles, possibleRiderResponsibilities, contact, ...rest } =
+                state;
+
+            await DataStore.save(
+                models.User.copyOf(existingUser, (updated) => {
+                    for (const [key, newValue] of Object.entries(rest)) {
+                        if (!protectedFields.includes(key))
+                            updated[key] = newValue;
+                    }
+                    if (existingUser.contact && contact) {
+                        for (const [key, newValue] of Object.entries(contact)) {
+                            if (!protectedFields.includes(key))
+                                updated.contact[key] = newValue;
+                        }
+                    }
+                })
+            );
+            if (roles) {
+                await API.graphql(
+                    graphqlOperation(mutations.updateUserRoles, {
+                        userId: state.id,
+                        roles,
+                    })
+                );
+            }
+            if (possibleRiderResponsibilities && tenantId) {
+                DataStore.query(models.PossibleRiderResponsibilities).then(
+                    (result) => {
+                        const existing = result.filter(
+                            (r) => r.user && r.user.id === existingUser.id
+                        );
+                        for (const i of existing) {
+                            DataStore.delete(i);
+                        }
+                    }
+                );
+                await Promise.all(
+                    possibleRiderResponsibilities.map((riderResponsibility) => {
+                        return DataStore.save(
+                            new models.PossibleRiderResponsibilities({
+                                tenantId,
+                                riderResponsibility,
+                                user: existingUser,
+                            })
+                        );
+                    })
+                );
+            }
+        } catch (error) {
+            console.error("Update request failed", error);
+            dispatch(displayErrorNotification("Sorry, an error occurred"));
+        }
+    }
+
     const onConfirmation = ()=>{
       if(verifyUpdate(state)){
-        props.onUpdate(toChange.current);
-        toChange.current = {};
+        onUpdate(state);
         setEditNameMode(false);
         setEditContactMode(false);
         setEditAddressMode(false);
@@ -214,75 +281,8 @@ export default function UserProfile(props) {
             onCancel={onCancel}
         />
     );
+    console.log(state)
 
-    function onChangePossibleResponsibilities(value) {
-        if (!toChange.current.possibleRiderResponsibilities) {
-            toChange.current.possibleRiderResponsibilities =
-                state.possibleRiderResponsibilities;
-        }
-        if (
-            state.possibleRiderResponsibilities
-                .map((r) => r.id)
-                .includes(value.id)
-        ) {
-            toChange.current = {
-                ...toChange.current,
-                possibleRiderResponsibilities:
-                    toChange.current.possibleRiderResponsibilities.filter(
-                        (r) => r.id !== value.id
-                    ),
-            };
-            setState((prevState) => ({
-                ...prevState,
-                possibleRiderResponsibilities:
-                    prevState.possibleRiderResponsibilities.filter(
-                        (r) => r.id !== value.id
-                    ),
-            }));
-        } else {
-            toChange.current = {
-                ...toChange.current,
-                possibleRiderResponsibilities: [
-                    ...toChange.current.possibleRiderResponsibilities,
-                    value,
-                ],
-            };
-            setState((prevState) => ({
-                ...prevState,
-                possibleRiderResponsibilities: [
-                    ...state.possibleRiderResponsibilities,
-                    value,
-                ],
-            }));
-        }
-    }
-
-        
-    //  const responsibility =
-    //      props.user &&
-    //      props.user.roles &&
-    //      props.user.roles.includes(userRoles.rider) ? (
-    //          editMode ? (
-    //              <RiderResponsibilitySelect
-    //                  onSelect={onChangePossibleResponsibilities}
-    //                  value={state.possibleRiderResponsibilities}
-    //              />
-    //          ) : (
-    //              <>
-    //                  {state.possibleRiderResponsibilities && (
-    //                      <Grid container direction={"row"} spacing={1}>
-    //                          {state.possibleRiderResponsibilities.map((r) => (
-    //                              <Grid item key={r.id}>
-    //                                  <Chip label={r.label} />
-    //                              </Grid>
-    //                          ))}
-    //                      </Grid>
-    //                  )}
-    //              </>
-    //          )
-    //      ) : (
-    //          <></>
-    //      );
 
     return (
         <Stack direction={"column"} spacing={3}>
@@ -296,70 +296,63 @@ export default function UserProfile(props) {
                 {editNameToggle}
             </Stack>
             <Divider />
-            <Box sx={{ width: "100%" }}>
-                {Object.keys(fields).map((key) => {
-                    return (
-                        <Stack
-                            direction={"row"}
-                            justifyContent={"space-between"}
-                            key={key}
-                        >
-                            <Typography>{fields[key]}</Typography>
-                            <Typography>{state[key]}</Typography>
-                        </Stack>
-                    );
-                    // }
-                })}
-            </Box>
-            <Divider />
-            {state.contact && (
+            {oldState.contact && (
                 <Stack
-                    direction={"row-reverse"}
+                    direction={"row"}
                     justifyContent={"space-between"}
                     alignItems={"top"}
                     spacing={3}
                 >
+                    <Typography>Contact Information</Typography>
+
                     {editContactToggle}
                 </Stack>
             )}
             <Box sx={{ width: "100%" }}>
-                {Object.keys(state.contact ? contactFields : []).map((key) => {
-                    return (
-                        <Stack
-                            direction={"row"}
-                            justifyContent={"space-between"}
-                            key={key}
-                        >
-                            <Typography>{contactFields[key]}</Typography>
-                            <Typography>{state.contact[key]}</Typography>
-                        </Stack>
-                    );
-                })}
-            </Box>
-            <Divider />
-            {state.contact && (
-                <Stack
-                    direction={"row-reverse"}
-                    justifyContent={"space-between"}
-                    alignItems={"top"}
-                    spacing={3}
-                >
-                    {editAddressToggle}
+                <Stack direction={"row"} justifyContent={"space-between"}>
+                    <Typography>{fields.name}</Typography>
+                    <Typography>{oldState.name}</Typography>
                 </Stack>
-            )}
-            <Stack direction={"row"} justifyContent={"space-between"}>
-                {state.contact ? <Typography>Address</Typography> : <></>}
-                <Box>
-                    {Object.keys(state.contact ? addressFields : []).map(
-                        (key) => (
+                {Object.keys(oldState.contact ? contactFields : []).map(
+                    (key) => {
+                        return (
                             <Stack
                                 direction={"row"}
                                 justifyContent={"space-between"}
                                 key={key}
                             >
                                 <Typography>{contactFields[key]}</Typography>
+                                <Typography>{oldState.contact[key]}</Typography>
+                            </Stack>
+                        );
+                    }
+                )}
+            </Box>
+            <Divider />
+            {oldState.contact && (
+                <Stack
+                    direction={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"top"}
+                    spacing={3}
+                >
+                    <Typography>Address</Typography>
+
+                    {editAddressToggle}
+                </Stack>
+            )}
+            <Stack direction={"row"} justifyContent={"space-between"}>
+                <Box sx={{ width: "100%" }}>
+                    {Object.keys(oldState.contact ? addressFields : []).map(
+                        (key) => (
+                            <Stack
+                                direction={"row"}
+                                justifyContent={"space-between"}
+                                key={key}
+                            >
+                                <Typography>{addressFields[key]}</Typography>
                                 <Typography align={"right"}>
-                                    {state.contact[key]}
+                                    {oldState.contact[key]}
                                 </Typography>
                             </Stack>
                         )
@@ -368,7 +361,7 @@ export default function UserProfile(props) {
             </Stack>
             <ConfirmationDialog
                 fullScreen={isSm}
-                dialogTitle="Edit Name"
+                dialogTitle="Edit Display Name"
                 open={editNameMode}
                 onConfirmation={onConfirmation}
                 onCancel={onCancel}
@@ -377,28 +370,20 @@ export default function UserProfile(props) {
                     sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
                     spacing={1}
                 >
-                    {Object.entries(fields).map(([key, label]) => {
-                        return (
-                            <TextField
-                                key={key}
-                                fullWidth
-                                aria-label={label}
-                                label={fields[key]}
-                                margin="normal"
-                                value={state[key]}
-                                onChange={(e) => {
-                                    toChange.current = {
-                                        ...toChange.current,
-                                        [key]: e.target.value,
-                                    };
-                                    setState({
-                                        ...state,
-                                        [key]: e.target.value,
-                                    });
-                                }}
-                            />
-                        );
-                    })}
+                    <TextField
+                        key="displayname"
+                        fullWidth
+                        aria-label="displayName"
+                        label={fields.displayName}
+                        margin="normal"
+                        value={state.displayName}
+                        onChange={(e) => {
+                            setState({
+                                ...state,
+                                displayName: e.target.value,
+                            });
+                        }}
+                    />
                 </Stack>
             </ConfirmationDialog>
             <ConfirmationDialog
@@ -412,6 +397,21 @@ export default function UserProfile(props) {
                     sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
                     spacing={1}
                 >
+                    <TextFieldControlled
+                        key="name"
+                        variant={"standard"}
+                        fullWidth
+                        aria-label="name"
+                        label={fields.name}
+                        margin="normal"
+                        value={state.name}
+                        onChange={(e) => {
+                            setState({
+                                ...state,
+                                name: e.target.value,
+                            });
+                        }}
+                    />
                     {Object.keys(state.contact ? contactFields : []).map(
                         (key) => {
                             return (
@@ -424,13 +424,6 @@ export default function UserProfile(props) {
                                     label={contactFields[key]}
                                     id={key}
                                     onChange={(e) => {
-                                        toChange.current = {
-                                            ...toChange.current,
-                                            contact: {
-                                                ...toChange.current.contact,
-                                                [key]: e.target.value,
-                                            },
-                                        };
                                         setState({
                                             ...state,
                                             contact: {
@@ -467,19 +460,6 @@ export default function UserProfile(props) {
                                     label={addressFields[key]}
                                     id={key}
                                     onChange={(e) => {
-                                        if (!toChange.current.contact) {
-                                            toChange.current = {
-                                                ...toChange.current,
-                                                contact: {},
-                                            };
-                                        }
-                                        toChange.current = {
-                                            ...toChange.current,
-                                            contact: {
-                                                ...toChange.current.contact,
-                                                [key]: e.target.value,
-                                            },
-                                        };
                                         setState({
                                             ...state,
                                             contact: {
@@ -495,13 +475,20 @@ export default function UserProfile(props) {
                 </Stack>
             </ConfirmationDialog>
             <Divider />
-            <Stack direction="row" spacing={1}>
+            <Stack
+                direction={editRoleMode ? "column-reverse" : "column"}
+                justifyContent={"space-between"}
+                alignItems={"top"}
+                spacing={1}
+            >
+
+                    {saveButtons}
+
                 <UserRolesAndSelector
                     selectMode={editRoleMode}
                     onSelect={onSelectRole}
                     value={state.roles}
                 />
-                {saveButtons}
             </Stack>
         </Stack>
     );
