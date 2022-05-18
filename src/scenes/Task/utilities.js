@@ -17,19 +17,10 @@ export async function saveTaskTimeWithKey(key, value, taskId, taskAssignees) {
         },
         taskAssignees.filter((ta) => ta.role === userRoles.rider)
     );
-    if (existingTask.status === status) {
-        return await DataStore.save(
-            models.Task.copyOf(existingTask, (updated) => {
-                updated[key] = value ? isoString : null;
-                updated.status = status;
-            })
-        );
-    } else {
-        return await DataStore.save(
-            models.Task.copyOf(existingTask, (updated) => {
-                updated[key] = value ? isoString : null;
-                updated.status = status;
-            })
-        );
-    }
+    return await DataStore.save(
+        models.Task.copyOf(existingTask, (updated) => {
+            updated[key] = value ? isoString : null;
+            updated.status = status;
+        })
+    );
 }
