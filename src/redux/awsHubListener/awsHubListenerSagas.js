@@ -22,6 +22,7 @@ function* initialiseDataStoreListener() {
     ) {
         yield put(actions.setNetworkStatus(true));
         yield put(actions.setReadyStatus(true));
+        yield put(actions.setModelSyncedAll());
         return;
     } else if (process.env.REACT_APP_OFFLINE_ONLY === "true") {
         yield put(actions.setNetworkStatus(false));
