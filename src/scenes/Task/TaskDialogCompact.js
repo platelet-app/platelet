@@ -118,6 +118,9 @@ function TaskDialogCompact(props) {
     taskRef.current = state;
     const taskObserver = useRef({ unsubscribe: () => {} });
     const tasksSynced = useSelector(dataStoreModelSyncedStatusSelector).Task;
+    const locationsSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Location;
     const dispatch = useDispatch();
     let { task_uuid_b62 } = useParams();
     const taskUUID = decodeUUID(task_uuid_b62);
@@ -153,7 +156,7 @@ function TaskDialogCompact(props) {
             console.error("Request failed", error);
         }
     }
-    useEffect(() => getTask(), [props.taskId, tasksSynced]);
+    useEffect(() => getTask(), [props.taskId, tasksSynced, locationsSynced]);
 
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
