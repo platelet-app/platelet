@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -23,6 +23,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import Tooltip from "@mui/material/Tooltip";
 import { tasksStatus } from "../../../apiConsts";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 
 const colourBarPercent = "90%";
 
@@ -64,10 +65,10 @@ const generateClass = (theme, status) => {
     }
 };
 
-const dialogComponent = (props) =>
+const dialogComponent = (status) =>
     makeStyles((theme) => {
         return {
-            root: generateClass(theme, props.status),
+            root: generateClass(theme, status),
             statusText: {
                 fontWeight: "bold",
                 color: theme.palette.mode === "dark" ? "white" : "black",
@@ -79,14 +80,36 @@ const dialogComponent = (props) =>
     });
 
 function StatusBar(props) {
-    const classes = dialogComponent(props)();
     const [copied, setCopied] = useState(null);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
-    const statusHumanReadable = taskStatusHumanReadable(props.status);
     const dispatch = useDispatch();
+    const taskModelsSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Task;
+    const taskObserver = useRef({ unsubscribe: () => {} });
+    const [status, setStatus] = useState(null);
+    const classes = dialogComponent(status)();
+
+    async function getTask() {
+        try {
+            const task = await DataStore.query(models.Task, props.taskId);
+            taskObserver.current = DataStore.observe(
+                models.Task,
+                props.taskId
+            ).subscribe(({ element }) => {
+                setStatus(element.status);
+            });
+            setStatus(task.status);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    useEffect(() => getTask(), [props.taskId, taskModelsSynced]);
 
     async function copyToClipboard() {
+        debugger;
         if (!props.taskId) {
             dispatch(displayErrorNotification("Copy failed."));
             return;
@@ -159,7 +182,7 @@ function StatusBar(props) {
                     data-cy="task-status"
                     className={classes.statusText}
                 >
-                    {statusHumanReadable}
+                    {taskStatusHumanReadable(status)}
                 </Typography>
                 <Chip
                     onClick={copyToClipboard}
@@ -175,14 +198,12 @@ function StatusBar(props) {
 
 StatusBar.propTypes = {
     handleClose: PropTypes.func,
-    status: PropTypes.oneOf(Object.values(tasksStatus)),
     relayNext: PropTypes.string,
     relayPrevious: PropTypes.string,
     taskId: PropTypes.string,
 };
 
 StatusBar.defaultProps = {
-    status: null,
     handleClose: () => {},
 };
 
