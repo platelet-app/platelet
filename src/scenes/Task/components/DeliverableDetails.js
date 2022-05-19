@@ -280,14 +280,14 @@ function DeliverableDetails(props) {
 
 DeliverableDetails.propTypes = {
     deliverables: PropTypes.arrayOf(PropTypes.object),
-    taskUUID: PropTypes.string,
+    taskId: PropTypes.string,
     onChange: PropTypes.func,
     onDelete: PropTypes.func,
 };
 
 DeliverableDetails.defaultProps = {
     deliverables: [],
-    taskUUID: "",
+    taskId: "",
     onChange: () => {},
     onDelete: () => {},
 };
