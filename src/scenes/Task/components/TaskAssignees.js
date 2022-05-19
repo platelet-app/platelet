@@ -34,14 +34,13 @@ function TaskAssignees(props) {
                     {assignments.map((assignment) => {
                         const user = assignment.assignee || null;
                         return (
-                            <Grid item>
+                            <Grid key={assignment.id} item>
                                 <UserChip
                                     showResponsibility={
                                         role === userRoles.rider
                                     }
                                     disabled={props.disabled}
                                     user={user}
-                                    key={assignment.id}
                                     onDelete={() =>
                                         props.onRemove(assignment.id)
                                     }

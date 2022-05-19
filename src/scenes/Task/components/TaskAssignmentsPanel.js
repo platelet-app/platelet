@@ -267,7 +267,6 @@ function TaskAssignmentsPanel(props) {
                                                 item
                                             >
                                                 <UserChip
-                                                    key={assignment.assignee.id}
                                                     user={assignment.assignee}
                                                 />
                                             </Grid>
