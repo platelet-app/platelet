@@ -99,8 +99,9 @@ function TaskActions(props) {
     async function setTimeWithKey(key, value) {
         setIsPosting(true);
         try {
-            await saveTaskTimeWithKey(key, value, props.taskId, taskAssignees);
-            setIsPosting(false);
+            saveTaskTimeWithKey(key, value, props.taskId, taskAssignees).then(
+                () => setIsPosting(false)
+            );
         } catch (error) {
             console.log(error);
             setIsPosting(false);
@@ -249,6 +250,7 @@ function TaskActions(props) {
                                         checkDisabled(key);
                                     return (
                                         <Stack
+                                            key={key}
                                             justifyContent="space-between"
                                             alignItems="center"
                                             direction="row"
