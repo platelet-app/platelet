@@ -132,18 +132,50 @@ type Task
   createdBy: User @belongsTo
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   timeDroppedOff: AWSDateTime
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   timeCancelled: AWSDateTime
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   timeRejected: AWSDateTime
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   timeRiderHome: AWSDateTime
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   requesterContact: AddressAndContactDetails
   pickUpLocationId: ID @index(name: "byPickUpLocation")
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   dropOffLocationId: ID @index(name: "byDropOffLocation")
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   riderResponsibility: String
   assignees: [TaskAssignee] @hasMany(indexName: "byTask", fields: ["id"])
   priority: Priority
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   deliverables: [Deliverable] @hasMany
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
