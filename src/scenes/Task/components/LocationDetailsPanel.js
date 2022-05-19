@@ -31,6 +31,14 @@ function LocationDetailsPanel(props) {
     const locationModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Location;
+    const taskModelsSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Task;
+
+    const taskObserver = useRef({ unsubscribe: () => {} });
+    const locationObserver = useRef({ unsubscribe: () => {} });
+    const editModeRef = useRef(false);
+    editModeRef.current = editMode;
 
     const initialSetEdit = useRef(false);
 
@@ -38,20 +46,49 @@ function LocationDetailsPanel(props) {
 
     async function getLocation() {
         if (!loadedOnce.current) setIsFetching(true);
-        if (!props.task || !props.taskId) {
-            return;
-        }
         try {
-            if (!props.task[props.locationKey]) {
-                setState(null);
-            } else {
-                const location = await DataStore.query(
+            const task = await DataStore.query(models.Task, props.taskId);
+            taskObserver.current.unsubscribe();
+            taskObserver.current = DataStore.observe(
+                models.Task,
+                task.id
+            ).subscribe(({ opType, element }) => {
+                if (opType === "UPDATE") {
+                    debugger;
+                    const locId = element[`${props.locationKey}Id`];
+                    if ((!state && locId) || (state && locId !== state.id)) {
+                        DataStore.query(models.Location, locId).then((result) =>
+                            setState(result)
+                        );
+                        locationObserver.current.unsubscribe();
+                        locationObserver.current = DataStore.observe(
+                            models.Location,
+                            locId
+                        ).subscribe(({ opType, element }) => {
+                            if (opType === "UPDATE" && !editModeRef.current) {
+                                setState(element);
+                            }
+                        });
+                    } else if (!locId) {
+                        setState(null);
+                    }
+                }
+            });
+
+            const location = task[props.locationKey];
+            locationObserver.current.unsubscribe();
+            if (location) {
+                locationObserver.current = DataStore.observe(
                     models.Location,
-                    props.task[props.locationKey].id
-                );
-                setState(location);
-                loadedOnce.current = true;
+                    location.id
+                ).subscribe(({ opType, element }) => {
+                    if (opType === "UPDATE" && !editModeRef.current) {
+                        setState(element);
+                    }
+                });
             }
+            setState(location);
+            loadedOnce.current = true;
             setIsFetching(false);
         } catch (err) {
             console.log(err);
@@ -59,7 +96,18 @@ function LocationDetailsPanel(props) {
         }
     }
 
-    useEffect(() => getLocation(), [props.taskId, locationModelSynced]);
+    useEffect(
+        () => getLocation(),
+        [props.taskId, locationModelSynced, taskModelsSynced]
+    );
+
+    useEffect(
+        () => () => {
+            taskObserver.current.unsubscribe();
+            locationObserver.current.unsubscribe();
+        },
+        []
+    );
 
     useEffect(() => {
         if (!isFetching && !initialSetEdit.current) {
@@ -70,6 +118,7 @@ function LocationDetailsPanel(props) {
 
     async function editPreset(additionalValues) {
         try {
+            if (!props.taskId) throw new Error("No task id");
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
             const {
@@ -107,6 +156,7 @@ function LocationDetailsPanel(props) {
     }
     async function selectPreset(location) {
         try {
+            if (!props.taskId) throw new Error("No task id");
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
             if (!location) throw new Error("Location was not provided");
@@ -127,6 +177,7 @@ function LocationDetailsPanel(props) {
 
     async function clearLocation() {
         try {
+            if (!props.taskId) throw new Error("No task id");
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
             const currentLocation = await DataStore.query(
@@ -308,6 +359,7 @@ function LocationDetailsPanel(props) {
                     })
                 );
                 // find the existing task
+                if (!props.taskId) throw new Error("No task id");
                 const existingTask = await DataStore.query(
                     models.Task,
                     props.taskId
