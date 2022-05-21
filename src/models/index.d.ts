@@ -56,33 +56,33 @@ export enum Patch {
 }
 
 export declare class Statistics {
-  readonly numCancelled?: number;
-  readonly numCompleted?: number;
-  readonly numDroppedOff?: number;
-  readonly numRejected?: number;
-  readonly numAbandoned?: number;
-  readonly numActive?: number;
-  readonly numPickedUp?: number;
-  readonly numNew?: number;
-  readonly numTest?: number;
+  readonly numCancelled?: number | null;
+  readonly numCompleted?: number | null;
+  readonly numDroppedOff?: number | null;
+  readonly numRejected?: number | null;
+  readonly numAbandoned?: number | null;
+  readonly numActive?: number | null;
+  readonly numPickedUp?: number | null;
+  readonly numNew?: number | null;
+  readonly numTest?: number | null;
   constructor(init: ModelInit<Statistics>);
 }
 
 export declare class AddressAndContactDetails {
-  readonly name?: string;
-  readonly telephoneNumber?: string;
-  readonly mobileNumber?: string;
-  readonly emailAddress?: string;
-  readonly ward?: string;
-  readonly line1?: string;
-  readonly line2?: string;
-  readonly line3?: string;
-  readonly town?: string;
-  readonly county?: string;
-  readonly state?: string;
-  readonly country?: string;
-  readonly postcode?: string;
-  readonly what3words?: string;
+  readonly name?: string | null;
+  readonly telephoneNumber?: string | null;
+  readonly mobileNumber?: string | null;
+  readonly emailAddress?: string | null;
+  readonly ward?: string | null;
+  readonly line1?: string | null;
+  readonly line2?: string | null;
+  readonly line3?: string | null;
+  readonly town?: string | null;
+  readonly county?: string | null;
+  readonly state?: string | null;
+  readonly country?: string | null;
+  readonly postcode?: string | null;
+  readonly what3words?: string | null;
   constructor(init: ModelInit<AddressAndContactDetails>);
 }
 
@@ -142,23 +142,23 @@ export declare class User {
   readonly username: string;
   readonly cognitoId: string;
   readonly tenantId: string;
-  readonly contact?: AddressAndContactDetails;
+  readonly contact?: AddressAndContactDetails | null;
   readonly displayName: string;
-  readonly name?: string;
+  readonly name?: string | null;
   readonly roles: Role[] | keyof typeof Role;
-  readonly dateOfBirth?: string;
-  readonly riderResponsibility?: string;
-  readonly possibleRiderResponsibilities?: (PossibleRiderResponsibilities | null)[];
-  readonly profilePictureURL?: string;
-  readonly profilePictureThumbnailURL?: string;
-  readonly profilePicture?: S3Object;
-  readonly profilePictureThumbnail?: S3Object;
-  readonly comments?: (Comment | null)[];
-  readonly assignments?: (TaskAssignee | null)[];
-  readonly createdTasks?: (Task | null)[];
-  readonly disabled?: number;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly dateOfBirth?: string | null;
+  readonly riderResponsibility?: string | null;
+  readonly possibleRiderResponsibilities?: (PossibleRiderResponsibilities | null)[] | null;
+  readonly profilePictureURL?: string | null;
+  readonly profilePictureThumbnailURL?: string | null;
+  readonly profilePicture?: S3Object | null;
+  readonly profilePictureThumbnail?: S3Object | null;
+  readonly comments?: (Comment | null)[] | null;
+  readonly assignments?: (TaskAssignee | null)[] | null;
+  readonly createdTasks?: (Task | null)[] | null;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<User, UserMetaData>);
   static copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
 }
@@ -168,8 +168,8 @@ export declare class PossibleRiderResponsibilities {
   readonly tenantId: string;
   readonly user: User;
   readonly riderResponsibility: RiderResponsibility;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData>);
   static copyOf(source: PossibleRiderResponsibilities, mutator: (draft: MutableModel<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData>) => MutableModel<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData> | void): PossibleRiderResponsibilities;
 }
@@ -178,23 +178,23 @@ export declare class RiderResponsibility {
   readonly id: string;
   readonly tenantId: string;
   readonly label: string;
-  readonly disabled?: number;
-  readonly possibleUsers?: (PossibleRiderResponsibilities | null)[];
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly disabled?: number | null;
+  readonly possibleUsers?: (PossibleRiderResponsibilities | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<RiderResponsibility, RiderResponsibilityMetaData>);
   static copyOf(source: RiderResponsibility, mutator: (draft: MutableModel<RiderResponsibility, RiderResponsibilityMetaData>) => MutableModel<RiderResponsibility, RiderResponsibilityMetaData> | void): RiderResponsibility;
 }
 
 export declare class Comment {
   readonly id: string;
-  readonly parentId?: string;
+  readonly parentId?: string | null;
   readonly tenantId: string;
-  readonly body?: string;
-  readonly author?: User;
-  readonly visibility?: CommentVisibility | keyof typeof CommentVisibility;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly body?: string | null;
+  readonly author?: User | null;
+  readonly visibility?: CommentVisibility | keyof typeof CommentVisibility | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<Comment, CommentMetaData>);
   static copyOf(source: Comment, mutator: (draft: MutableModel<Comment, CommentMetaData>) => MutableModel<Comment, CommentMetaData> | void): Comment;
 }
@@ -205,8 +205,8 @@ export declare class TaskAssignee {
   readonly role: Role | keyof typeof Role;
   readonly task: Task;
   readonly assignee: User;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<TaskAssignee, TaskAssigneeMetaData>);
   static copyOf(source: TaskAssignee, mutator: (draft: MutableModel<TaskAssignee, TaskAssigneeMetaData>) => MutableModel<TaskAssignee, TaskAssigneeMetaData> | void): TaskAssignee;
 }
@@ -214,24 +214,24 @@ export declare class TaskAssignee {
 export declare class Task {
   readonly id: string;
   readonly tenantId: string;
-  readonly createdBy?: User;
-  readonly timeOfCall?: string;
-  readonly timePickedUp?: string;
-  readonly timeDroppedOff?: string;
-  readonly timeCancelled?: string;
-  readonly timeRejected?: string;
-  readonly timeRiderHome?: string;
-  readonly requesterContact?: AddressAndContactDetails;
-  readonly pickUpLocation?: Location;
-  readonly dropOffLocation?: Location;
-  readonly riderResponsibility?: string;
-  readonly assignees?: (TaskAssignee | null)[];
-  readonly priority?: Priority | keyof typeof Priority;
-  readonly deliverables?: (Deliverable | null)[];
-  readonly comments?: (Comment | null)[];
-  readonly status?: TaskStatus | keyof typeof TaskStatus;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly createdBy?: User | null;
+  readonly timeOfCall?: string | null;
+  readonly timePickedUp?: string | null;
+  readonly timeDroppedOff?: string | null;
+  readonly timeCancelled?: string | null;
+  readonly timeRejected?: string | null;
+  readonly timeRiderHome?: string | null;
+  readonly requesterContact?: AddressAndContactDetails | null;
+  readonly pickUpLocation?: Location | null;
+  readonly dropOffLocation?: Location | null;
+  readonly riderResponsibility?: string | null;
+  readonly assignees?: (TaskAssignee | null)[] | null;
+  readonly priority?: Priority | keyof typeof Priority | null;
+  readonly deliverables?: (Deliverable | null)[] | null;
+  readonly comments?: (Comment | null)[] | null;
+  readonly status?: TaskStatus | keyof typeof TaskStatus | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<Task, TaskMetaData>);
   static copyOf(source: Task, mutator: (draft: MutableModel<Task, TaskMetaData>) => MutableModel<Task, TaskMetaData> | void): Task;
 }
@@ -239,25 +239,25 @@ export declare class Task {
 export declare class Location {
   readonly id: string;
   readonly tenantId: string;
-  readonly name?: string;
-  readonly listed?: number;
-  readonly contact?: AddressAndContactDetails;
-  readonly ward?: string;
-  readonly line1?: string;
-  readonly line2?: string;
-  readonly line3?: string;
-  readonly town?: string;
-  readonly county?: string;
-  readonly state?: string;
-  readonly country?: string;
-  readonly postcode?: string;
-  readonly what3words?: string;
-  readonly tasksAsPickUp?: (Task | null)[];
-  readonly tasksAsDropOff?: (Task | null)[];
-  readonly comments?: (Comment | null)[];
-  readonly disabled?: number;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly name?: string | null;
+  readonly listed?: number | null;
+  readonly contact?: AddressAndContactDetails | null;
+  readonly ward?: string | null;
+  readonly line1?: string | null;
+  readonly line2?: string | null;
+  readonly line3?: string | null;
+  readonly town?: string | null;
+  readonly county?: string | null;
+  readonly state?: string | null;
+  readonly country?: string | null;
+  readonly postcode?: string | null;
+  readonly what3words?: string | null;
+  readonly tasksAsPickUp?: (Task | null)[] | null;
+  readonly tasksAsDropOff?: (Task | null)[] | null;
+  readonly comments?: (Comment | null)[] | null;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<Location, LocationMetaData>);
   static copyOf(source: Location, mutator: (draft: MutableModel<Location, LocationMetaData>) => MutableModel<Location, LocationMetaData> | void): Location;
 }
@@ -265,14 +265,14 @@ export declare class Location {
 export declare class Deliverable {
   readonly id: string;
   readonly tenantId: string;
-  readonly deliverableType?: DeliverableType;
-  readonly task?: Task;
-  readonly count?: number;
-  readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit;
-  readonly orderInGrid?: number;
-  readonly comments?: (Comment | null)[];
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly deliverableType?: DeliverableType | null;
+  readonly task?: Task | null;
+  readonly count?: number | null;
+  readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
+  readonly orderInGrid?: number | null;
+  readonly comments?: (Comment | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<Deliverable, DeliverableMetaData>);
   static copyOf(source: Deliverable, mutator: (draft: MutableModel<Deliverable, DeliverableMetaData>) => MutableModel<Deliverable, DeliverableMetaData> | void): Deliverable;
 }
@@ -281,13 +281,13 @@ export declare class DeliverableType {
   readonly id: string;
   readonly label: string;
   readonly tenantId: string;
-  readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon;
-  readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit;
-  readonly deliverables?: (Deliverable | null)[];
-  readonly tags?: (string | null)[];
-  readonly disabled?: number;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon | null;
+  readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
+  readonly deliverables?: (Deliverable | null)[] | null;
+  readonly tags?: (string | null)[] | null;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);
   static copyOf(source: DeliverableType, mutator: (draft: MutableModel<DeliverableType, DeliverableTypeMetaData>) => MutableModel<DeliverableType, DeliverableTypeMetaData> | void): DeliverableType;
 }
@@ -297,8 +297,8 @@ export declare class Tenant {
   readonly name: string;
   readonly referenceIdentifier: string;
   readonly admin: User;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   readonly tenantAdminId: string;
   constructor(init: ModelInit<Tenant, TenantMetaData>);
   static copyOf(source: Tenant, mutator: (draft: MutableModel<Tenant, TenantMetaData>) => MutableModel<Tenant, TenantMetaData> | void): Tenant;
@@ -307,16 +307,16 @@ export declare class Tenant {
 export declare class Vehicle {
   readonly id: string;
   readonly tenantId: string;
-  readonly assignedUserID?: string;
-  readonly name?: string;
-  readonly manufacturer?: string;
-  readonly model?: string;
-  readonly dateOfManufacture?: string;
-  readonly dateOfRegistration?: string;
-  readonly comments?: (Comment | null)[];
-  readonly disabled?: number;
-  readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly assignedUserID?: string | null;
+  readonly name?: string | null;
+  readonly manufacturer?: string | null;
+  readonly model?: string | null;
+  readonly dateOfManufacture?: string | null;
+  readonly dateOfRegistration?: string | null;
+  readonly comments?: (Comment | null)[] | null;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
   constructor(init: ModelInit<Vehicle, VehicleMetaData>);
   static copyOf(source: Vehicle, mutator: (draft: MutableModel<Vehicle, VehicleMetaData>) => MutableModel<Vehicle, VehicleMetaData> | void): Vehicle;
 }

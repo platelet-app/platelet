@@ -60,12 +60,9 @@ describe("assigning users to tasks", () => {
         );
         cy.get("[data-cy=task-COORDINATOR-assignees]")
             .findAllByTestId("CancelIcon")
-            .first()
-            .click();
-        cy.get("[data-cy=task-COORDINATOR-assignees]")
-            .findAllByTestId("CancelIcon")
-            .first()
-            .click();
+            .then((els) => {
+                cy.wrap(els[1]).click();
+            });
         cy.get("[data-cy=task-COORDINATOR-assignees]").should(
             "not.contain",
             "Test Coordinator"

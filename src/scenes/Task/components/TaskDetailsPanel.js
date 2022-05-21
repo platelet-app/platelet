@@ -5,13 +5,13 @@ import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import TimePicker from "./TimePicker";
-import { Divider, IconButton, Paper, Skeleton, Stack } from "@mui/material";
+import { Divider, Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import { saveTaskTimeWithKey } from "../utilities";
 import RequesterContact from "./RequesterContact";
@@ -43,16 +43,16 @@ function TaskDetailsPanel(props) {
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
     const classes = useStyles();
+
+    const taskModelsSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Task;
 
     const errorMessage = "Sorry, something went wrong";
 
     async function getTask() {
-        if (!dataStoreReadyStatus) {
-            return;
-        }
         try {
             const task = await DataStore.query(models.Task, props.taskId);
             if (!task) throw new Error("Task not found");
@@ -64,35 +64,11 @@ function TaskDetailsPanel(props) {
                 props.taskId
             ).subscribe(async (observeResult) => {
                 const taskData = observeResult.element;
-                if (observeResult.opType === "INSERT") {
+                if (["INSERT", "UPDATE"].includes(observeResult.opType)) {
                     setState(taskData);
-                } else if (observeResult.opType === "UPDATE") {
-                    if (
-                        taskData.taskRiderResponsibilityId ||
-                        taskData.taskRiderResponsibilityId === null
-                    ) {
-                        let riderResponsibility = null;
-                        if (taskData.taskRiderResponsibilityId)
-                            riderResponsibility = await DataStore.query(
-                                models.RiderResponsibility,
-                                taskData.taskRiderResponsibilityId
-                            );
-                        setState((prevState) => ({
-                            ...prevState,
-                            ...taskData,
-                            riderResponsibility,
-                        }));
-                    } else {
-                        setState((prevState) => ({
-                            ...prevState,
-                            ...taskData,
-                        }));
-                    }
                 } else if (observeResult.opType === "DELETE") {
                     setErrorState(new Error("Task was deleted"));
                 }
-                const task = observeResult.element;
-                setState((prevState) => ({ ...prevState, ...task }));
             });
         } catch (error) {
             console.log(error);
@@ -100,7 +76,7 @@ function TaskDetailsPanel(props) {
             setIsFetching(false);
         }
     }
-    useEffect(() => getTask(), [props.taskId, dataStoreReadyStatus]);
+    useEffect(() => getTask(), [props.taskId, taskModelsSynced]);
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
     async function setTimeWithKey(key, value) {

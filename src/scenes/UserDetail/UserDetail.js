@@ -7,7 +7,7 @@ import { PaddedPaper } from "../../styles/common";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
 import {
-    dataStoreReadyStatusSelector,
+    dataStoreModelSyncedStatusSelector,
     tenantIdSelector,
 } from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
@@ -37,7 +37,6 @@ const initialUserState = {
 
 export default function UserDetail(props) {
     const userUUID = decodeUUID(props.match.params.user_uuid_b62);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
@@ -55,15 +54,41 @@ export default function UserDetail(props) {
             unsubscribe: () => {},
         });
 
+    const loadedOnce = useRef(false);
+
+    const userModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).User;
+    const riderResponsibilityModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).RiderResponsibility;
 
     async function newUserProfile() {
+      console.log('here')
         setNotFound(false);
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-        } else {
-            try {
-                const userResult = await DataStore.query(models.User, userUUID);
-                // TODO: make this observeQuery when https://github.com/aws-amplify/amplify-js/issues/9682 is fixed
+        if (!loadedOnce.current) setIsFetching(true);
+        try {
+            const userResult = await DataStore.query(models.User, userUUID);
+            // TODO: make this observeQuery when https://github.com/aws-amplify/amplify-js/issues/9682 is fixed
+            DataStore.query(models.PossibleRiderResponsibilities).then(
+                (result) => {
+                    const filtered = result
+                        .filter((responsibility) => {
+                            return (
+                                userResult &&
+                                responsibility.user &&
+                                responsibility.user.id &&
+                                userResult.id === responsibility.user.id
+                            );
+                        })
+                        .map((r) => r.riderResponsibility);
+                    setPossibleRiderResponsibilities(filtered);
+                }
+            );
+            riderRespObserver.current.unsubscribe();
+            riderRespObserver.current = DataStore.observe(
+                models.PossibleRiderResponsibilities
+            ).subscribe((result) => {
                 DataStore.query(models.PossibleRiderResponsibilities).then(
                     (result) => {
                         const filtered = result
@@ -79,6 +104,7 @@ export default function UserDetail(props) {
                         setPossibleRiderResponsibilities(filtered);
                     }
                 );
+                  })
                 observer.current.unsubscribe();
                 observer.current = DataStore.observe(
                     models.User
@@ -88,32 +114,15 @@ export default function UserDetail(props) {
                 })
 
                 })
-                riderRespObserver.current.unsubscribe();
-                riderRespObserver.current = DataStore.observe(
-                    models.PossibleRiderResponsibilities
-                ).subscribe((result) => {
-                    DataStore.query(models.PossibleRiderResponsibilities).then(
-                        (result) => {
-                            const filtered = result
-                                .filter((responsibility) => {
-                                    return (
-                                        userResult &&
-                                        responsibility.user &&
-                                        responsibility.user.id &&
-                                        userResult.id === responsibility.user.id
-                                    );
-                                })
-                                .map((r) => r.riderResponsibility);
-                            setPossibleRiderResponsibilities(filtered);
-                        }
-                    );
-                });
                 setIsFetching(false);
+                loadedOnce.current = true;
                 if (userResult) {
                     setUser(userResult);
                     setRiderResponsibility(userResult.riderResponsibility);
-                } else setNotFound(true);
-            } catch (error) {
+                }else{
+                  setNotFound(true)
+                }
+              }catch(error) {
                 setIsFetching(false);
                 dispatch(
                     displayErrorNotification(
@@ -122,11 +131,10 @@ export default function UserDetail(props) {
                 );
                 console.log("Request failed", error);
             }
-        }
-    }
+      }
     useEffect(
         () => newUserProfile(),
-        [props.location.key, dataStoreReadyStatus]
+        [props.location.key, userModelSynced, riderResponsibilityModelSynced]
     );
 
     async function getDisplayNames() {
@@ -168,7 +176,7 @@ export default function UserDetail(props) {
                 );
             });
     }
-
+    console.log(user)
 
     if (isFetching) {
         return (

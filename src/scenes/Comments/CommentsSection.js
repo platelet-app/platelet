@@ -3,7 +3,10 @@ import { useSelector } from "react-redux";
 import CommentsMain from "./components/CommentsMain";
 import CommentsSkeleton from "./components/CommentsSkeleton";
 import PropTypes from "prop-types";
-import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import {
+    dataStoreModelSyncedStatusSelector,
+    getWhoami,
+} from "../../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { convertListDataToObject } from "../../utilities";
@@ -13,7 +16,6 @@ import GetError from "../../ErrorComponents/GetError";
 
 function CommentsSection(props) {
     const [isFetching, setIsFetching] = useState(false);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [comments, setComments] = useState({});
     const [errorState, setErrorState] = useState(null);
     const whoami = useSelector(getWhoami);
@@ -24,33 +26,34 @@ function CommentsSection(props) {
         unsubscribe: () => {},
     });
 
+    const commentsSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Comment;
+
     async function getComments() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-        } else {
-            //TODO: see if a more secure way to restrict private comment access
-            try {
-                const commentsGet = await DataStore.query(models.Comment, (c) =>
-                    c.parentId("eq", props.parentId)
-                );
-                const commentsResult = commentsGet.filter(
-                    (c) =>
-                        c.visibility === commentVisibility.everyone ||
-                        (c.visibility === commentVisibility.me &&
-                            c.author &&
-                            c.author.id === whoami.id)
-                );
-                const commentsObject = convertListDataToObject(commentsResult);
-                setComments(commentsObject);
-                setIsFetching(false);
-            } catch (error) {
-                setIsFetching(false);
-                setErrorState(error);
-                console.error("Request failed", error);
-            }
+        //TODO: see if a more secure way to restrict private comment access
+        console.log("comm", commentsSynced);
+        try {
+            const commentsGet = await DataStore.query(models.Comment, (c) =>
+                c.parentId("eq", props.parentId)
+            );
+            const commentsResult = commentsGet.filter(
+                (c) =>
+                    c.visibility === commentVisibility.everyone ||
+                    (c.visibility === commentVisibility.me &&
+                        c.author &&
+                        c.author.id === whoami.id)
+            );
+            const commentsObject = convertListDataToObject(commentsResult);
+            setComments(commentsObject);
+            setIsFetching(false);
+        } catch (error) {
+            setIsFetching(false);
+            setErrorState(error);
+            console.error("Request failed", error);
         }
     }
-    useEffect(() => getComments(), [props.parentId, dataStoreReadyStatus]);
+    useEffect(() => getComments(), [props.parentId, commentsSynced]);
     getCommentsRef.current = getComments;
 
     useEffect(() => {

@@ -14,7 +14,10 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import GetError from "../../../ErrorComponents/GetError";
 import { useDispatch, useSelector } from "react-redux";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import {
+    dataStoreModelSyncedStatusSelector,
+    taskAssigneesSelector,
+} from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import TaskActionConfirmationDialogContents from "./TaskActionConfirmationDialogContents";
@@ -22,7 +25,7 @@ import TimePicker from "./TimePicker";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { saveTaskTimeWithKey } from "../utilities";
-import { tasksStatus } from "../../../apiConsts";
+import { tasksStatus, userRoles } from "../../../apiConsts";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -66,12 +69,15 @@ function TaskActions(props) {
     const [isPosting, setIsPosting] = useState(false);
     const [errorState, setErrorState] = useState(null);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const taskAssignees = useSelector(taskAssigneesSelector).items;
     const confirmationKey = useRef(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
     const timeSet = useRef(new Date());
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
+    const taskModelsSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Task;
 
     const errorMessage = "Sorry, something went wrong";
 
@@ -93,7 +99,7 @@ function TaskActions(props) {
     async function setTimeWithKey(key, value) {
         setIsPosting(true);
         try {
-            await saveTaskTimeWithKey(key, value, props.taskId);
+            await saveTaskTimeWithKey(key, value, props.taskId, taskAssignees);
             setIsPosting(false);
         } catch (error) {
             console.log(error);
@@ -113,7 +119,6 @@ function TaskActions(props) {
     useEffect(calculateState, [task]);
 
     async function getTaskAndUpdateState() {
-        if (!dataStoreReadyStatus) return;
         try {
             const task = await DataStore.query(models.Task, props.taskId);
             if (!task) throw new Error("Task not found");
@@ -123,13 +128,10 @@ function TaskActions(props) {
             taskObserver.current = DataStore.observe(
                 models.Task,
                 props.taskId
-            ).subscribe(async (observeResult) => {
-                const taskData = observeResult.element;
-                if (observeResult.opType === "INSERT") {
-                    setTask(taskData);
-                } else if (observeResult.opType === "UPDATE") {
-                    setTask((prevState) => ({ ...prevState, ...taskData }));
-                } else if (observeResult.opType === "DELETE") {
+            ).subscribe(async ({ opType, element }) => {
+                if (["INSERT", "UPDATE"].includes(opType)) {
+                    setTask(element);
+                } else if (opType === "DELETE") {
                     // just disable the buttons if the task is deleted
                     setIsFetching(true);
                 }
@@ -141,10 +143,7 @@ function TaskActions(props) {
         }
     }
 
-    useEffect(
-        () => getTaskAndUpdateState(),
-        [props.taskId, dataStoreReadyStatus]
-    );
+    useEffect(() => getTaskAndUpdateState(), [props.taskId, taskModelsSynced]);
 
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
@@ -157,9 +156,20 @@ function TaskActions(props) {
                 !state.includes("timePickedUp") ||
                 stopped
             );
-        else if (key === "timePickedUp")
-            return state.includes("timeDroppedOff") || stopped;
-        else if (key === "timeRiderHome") {
+        else if (key === "timePickedUp") {
+            const assigneeCheck = taskAssignees.filter(
+                (ta) =>
+                    ta.role === userRoles.rider &&
+                    ta.task &&
+                    ta.task.id === props.taskId
+            );
+
+            return (
+                assigneeCheck.length === 0 ||
+                state.includes("timeDroppedOff") ||
+                stopped
+            );
+        } else if (key === "timeRiderHome") {
             if (task && task.status === tasksStatus.new) return true;
             return !state.includes("timeDroppedOff");
         } else if (key === "timeRejected") {

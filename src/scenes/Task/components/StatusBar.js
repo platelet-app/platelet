@@ -23,7 +23,6 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import Tooltip from "@mui/material/Tooltip";
 import { tasksStatus } from "../../../apiConsts";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
 
 const colourBarPercent = "90%";
 
@@ -82,7 +81,6 @@ const dialogComponent = (props) =>
 function StatusBar(props) {
     const classes = dialogComponent(props)();
     const [copied, setCopied] = useState(null);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const statusHumanReadable = taskStatusHumanReadable(props.status);
@@ -165,7 +163,6 @@ function StatusBar(props) {
                 </Typography>
                 <Chip
                     onClick={copyToClipboard}
-                    disabled={!dataStoreReadyStatus}
                     variant={copied === null ? "outlined" : "default"}
                     color={copyColor}
                     sx={{ marginRight: isSm ? 0 : 2 }}

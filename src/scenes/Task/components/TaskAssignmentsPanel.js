@@ -22,6 +22,7 @@ import * as models from "../../../models";
 import {
     convertListDataToObject,
     determineTaskStatus,
+    sortByCreatedTime,
 } from "../../../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,7 +31,6 @@ import {
 } from "../../../redux/notifications/NotificationsActions";
 import _ from "lodash";
 import {
-    dataStoreReadyStatusSelector,
     taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
     tenantIdSelector,
@@ -68,7 +68,6 @@ function TaskAssignmentsPanel(props) {
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const tenantId = useSelector(tenantIdSelector);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [state, setState] = useState({});
@@ -81,7 +80,7 @@ function TaskAssignmentsPanel(props) {
 
     async function getAssignees() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus || !taskAssigneesReady) return;
+        if (!taskAssigneesReady) return;
         try {
             const result = taskAssignees.filter(
                 (assignee) => assignee.task && assignee.task.id === props.taskId
@@ -96,7 +95,7 @@ function TaskAssignmentsPanel(props) {
     }
     useEffect(() => {
         getAssignees();
-    }, [props.taskId, dataStoreReadyStatus, taskAssigneesReady, taskAssignees]);
+    }, [props.taskId, taskAssigneesReady, taskAssignees]);
 
     async function addAssignee(user, role) {
         setIsPosting(true);
@@ -137,7 +136,7 @@ function TaskAssignmentsPanel(props) {
                     dispatch(displayInfoNotification("Task moved to ACTIVE"));
                 }
             }
-            setState({ ...state, [result.id]: result });
+            //setState({ ...state, [result.id]: result });
             setIsPosting(false);
         } catch (error) {
             console.log(error);
@@ -192,7 +191,7 @@ function TaskAssignmentsPanel(props) {
                     updated.riderResponsibility = riderResponsibility;
                 })
             );
-            setState((prevState) => _.omit(prevState, assignmentId));
+            //setState((prevState) => _.omit(prevState, assignmentId));
             setIsDeleting(false);
         } catch (error) {
             console.log(error);
@@ -257,7 +256,7 @@ function TaskAssignmentsPanel(props) {
                     </Stack>
                     {collapsed && (
                         <Grid container spacing={1} direction={"row"}>
-                            {Object.values(state)
+                            {sortByCreatedTime(Object.values(state), "oldest")
                                 .sort(sortByUserRole)
                                 .map((assignment) => {
                                     return (

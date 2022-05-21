@@ -18,7 +18,7 @@
         "@testing-library/react": "^12.1.2",
         "@testing-library/user-event": "^13.5.0",
         "autosuggest-highlight": "^3.1.1",
-        "aws-amplify": "^4.3.20",
+        "aws-amplify": "^4.3.22",
         "axios": "^0.21.1",
         "date-fns": "^2.23.0",
         "downshift": "^6.1.7",
@@ -82,7 +82,7 @@
         "test:debug": "react-scripts --inspect test --runInBand --no-cache --testTimeout=100000000",
         "eject": "react-scripts eject",
         "preserve:static": "npm run build",
-        "serve:static": "npx serve ./build  -p 3000" 
+        "serve:static": "npx serve ./build  -p 3000"
     },
     "eslintConfig": {
         "extends": [

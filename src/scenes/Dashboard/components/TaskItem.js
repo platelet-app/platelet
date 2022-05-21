@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import TaskCard from "./TaskCardsColoured";
-import { convertListDataToObject, encodeUUID } from "../../../utilities";
+import { encodeUUID } from "../../../utilities";
 import PropTypes from "prop-types";
 import { Box, Grow, Skeleton } from "@mui/material";
 import { makeStyles, useTheme } from "@mui/styles";
@@ -12,13 +11,12 @@ import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
 import { useSelector } from "react-redux";
 import {
-    dataStoreReadyStatusSelector,
+    dataStoreModelSyncedStatusSelector,
     getRoleView,
     getWhoami,
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
-import useWindowSize from "../../../hooks/useWindowSize";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -53,7 +51,6 @@ function TaskItem(props) {
     const classes = useStyles();
     const whoami = useSelector(getWhoami);
     const { task } = props;
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [assignees, setAssignees] = useState([]);
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [visibility, setVisibility] = useState(false);
@@ -61,6 +58,9 @@ function TaskItem(props) {
     const commentObserver = useRef({ unsubscribe: () => {} });
     const roleView = useSelector(getRoleView);
     const allAssignees = useSelector(taskAssigneesSelector);
+    const commentModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Comment;
 
     const { ref, inView, entry } = useInView({
         threshold: 0,
@@ -73,8 +73,7 @@ function TaskItem(props) {
     }, [inView]);
 
     async function getAssignees() {
-        if (!visibility || !dataStoreReadyStatus || !roleView || !props.task)
-            return;
+        if (!visibility || !roleView || !props.task) return;
         // inefficient method of getting assignees
         /*const allAssignments = (
             await DataStore.query(models.TaskAssignee)
@@ -115,7 +114,7 @@ function TaskItem(props) {
     }
     useEffect(() => {
         getAssignees();
-    }, [visibility, props.task, dataStoreReadyStatus, allAssignees.items]);
+    }, [visibility, props.task, allAssignees.items]);
 
     async function getCommentCount() {
         if (!props.task || !props.task.id) return 0;
@@ -134,7 +133,7 @@ function TaskItem(props) {
     }
 
     async function calculateCommentCount() {
-        if (!visibility || !dataStoreReadyStatus || !props.task) return;
+        if (!visibility || !props.task) return;
         const commentCount = await getCommentCount();
         setCommentCount(commentCount);
         // TODO: change this to observeQuery when the bug is fixed
@@ -149,7 +148,7 @@ function TaskItem(props) {
     }
     useEffect(() => {
         calculateCommentCount();
-    }, [visibility, props.task, dataStoreReadyStatus]);
+    }, [visibility, props.task, commentModelSynced]);
 
     useEffect(() => () => commentObserver.current.unsubscribe(), []);
 

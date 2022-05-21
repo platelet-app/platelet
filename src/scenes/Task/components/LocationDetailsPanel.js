@@ -1,15 +1,7 @@
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
-import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import {
-    Divider,
-    IconButton,
-    Paper,
-    Skeleton,
-    Stack,
-    Typography,
-} from "@mui/material";
+import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
@@ -18,7 +10,7 @@ import { API, DataStore, graphqlOperation } from "aws-amplify";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
 import {
-    dataStoreReadyStatusSelector,
+    dataStoreModelSyncedStatusSelector,
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
@@ -35,15 +27,18 @@ function LocationDetailsPanel(props) {
     const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const loadedOnce = useRef(false);
+    const locationModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Location;
 
     const initialSetEdit = useRef(false);
 
     const errorMessage = "Sorry, an error occurred";
 
     async function getLocation() {
-        setIsFetching(true);
-        if (!dataStoreReadyStatus || !props.task || !props.taskId) {
+        if (!loadedOnce.current) setIsFetching(true);
+        if (!props.task || !props.taskId) {
             return;
         }
         try {
@@ -55,6 +50,7 @@ function LocationDetailsPanel(props) {
                     props.task[props.locationKey].id
                 );
                 setState(location);
+                loadedOnce.current = true;
             }
             setIsFetching(false);
         } catch (err) {
@@ -63,7 +59,7 @@ function LocationDetailsPanel(props) {
         }
     }
 
-    useEffect(() => getLocation(), [props.taskId, dataStoreReadyStatus]);
+    useEffect(() => getLocation(), [props.taskId, locationModelSynced]);
 
     useEffect(() => {
         if (!isFetching && !initialSetEdit.current) {

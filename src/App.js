@@ -24,7 +24,9 @@ import {
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
 import { getWhoami } from "./redux/Selectors";
-import registerServiceWorker from './register-worker'
+import registerServiceWorker from "./register-worker";
+import { DataStore } from "aws-amplify";
+import * as models from "./models";
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -40,8 +42,8 @@ if (
 Logger.LOG_LEVEL = "ERROR";
 window.amplifyLogger = Logger;
 
-// window.DataStore = DataStore;
-// window.models = models;
+window.DataStore = DataStore;
+window.models = models;
 
 function AppContents(props) {
     const incomingNotification = useSelector((state) => state.notification);
@@ -144,7 +146,7 @@ function AppContents(props) {
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
-    
+
     registerServiceWorker(props);
 
     return (

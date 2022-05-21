@@ -37,21 +37,22 @@ export async function saveNewTaskToDataStore(
     );
 
     if (deliverables && !_.isEmpty(deliverables)) {
-        const deliverableTypes = await DataStore.query(models.DeliverableType);
-        const deliverableTypesObject =
-            convertListDataToObject(deliverableTypes);
-        for (const deliverable of Object.values(deliverables)) {
-            const deliverableType = deliverableTypesObject[deliverable.id];
-            DataStore.save(
-                new models.Deliverable({
-                    deliverableType,
-                    count: deliverable.count,
-                    unit: deliverable.unit || null,
-                    task: newTask,
-                    tenantId,
-                })
-            );
-        }
+        DataStore.query(models.DeliverableType).then((deliverableTypes) => {
+            const deliverableTypesObject =
+                convertListDataToObject(deliverableTypes);
+            for (const deliverable of Object.values(deliverables)) {
+                const deliverableType = deliverableTypesObject[deliverable.id];
+                DataStore.save(
+                    new models.Deliverable({
+                        deliverableType,
+                        count: deliverable.count,
+                        unit: deliverable.unit || null,
+                        task: newTask,
+                        tenantId,
+                    })
+                );
+            }
+        });
     }
 
     if (author) {

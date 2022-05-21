@@ -77,15 +77,12 @@ function* initialiseApp() {
             yield call(populateTasks);
         }
     }
+    yield put(initialiseAwsDataStoreListener());
     yield put(getWhoamiRequest());
 }
 
 export function* watchInitialiseApp() {
     yield takeLatest(actions.INITIALISE_APP, initialiseApp);
-}
-
-function* initialiseAwsHub() {
-    yield all([put(initialiseAwsDataStoreListener())]);
 }
 
 function* initialiseBroadcastAPI() {
@@ -97,7 +94,6 @@ function* initialiseTaskAssigneesObserver() {
 }
 
 export function* watchInitialWhoamiCompleted() {
-    yield takeLatest(GET_WHOAMI_SUCCESS, initialiseAwsHub);
     yield takeLatest(GET_WHOAMI_SUCCESS, initialiseBroadcastAPI);
     yield takeLatest(GET_WHOAMI_SUCCESS, initialiseTaskAssigneesObserver);
 }

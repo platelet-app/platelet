@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import Drawer from "@mui/material/Drawer";
 import NavDrawerItems from "./NavDrawerItems";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import makeStyles from "@mui/styles/makeStyles";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Stack } from "@mui/material";
+import { Stack, SwipeableDrawer } from "@mui/material";
 
 const useStyles = makeStyles({
     list: {
@@ -33,7 +32,7 @@ export default function MobileNavigationDrawer() {
             <IconButton onClick={toggleDrawer} color="inherit" size="large">
                 <MenuIcon />
             </IconButton>
-            <Drawer
+            <SwipeableDrawer
                 anchor={"left"}
                 open={open}
                 onClose={() => toggleDrawer(false)}
@@ -52,7 +51,7 @@ export default function MobileNavigationDrawer() {
                         onSelect={() => setOpen(false)}
                     />
                 </Stack>
-            </Drawer>
+            </SwipeableDrawer>
         </div>
     );
 }
