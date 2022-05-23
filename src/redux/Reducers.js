@@ -23,6 +23,7 @@ import {
     awsHubDataStoreModelsSyncedStatusReducer,
 } from "./awsHubListener/awsHubListenerReducers";
 import { taskAssigneesReducer } from "./taskAssignees/taskAssigneesReducers";
+import { selectionModeReducer } from "./selectionMode/selectionModeReducers";
 
 const darkModeInitialState = getDarkModePreference();
 
@@ -297,6 +298,7 @@ const appReducer = combineReducers({
     awsHubDataStoreEventsReducer,
     awsHubDataStoreModelsSyncedStatusReducer,
     taskAssigneesReducer,
+    selectionModeReducer,
 });
 
 const rootReducer = (state, action) => {
