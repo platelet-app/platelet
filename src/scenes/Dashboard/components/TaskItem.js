@@ -1,54 +1,83 @@
 import React, { useEffect, useRef, useState } from "react";
+import { alpha } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import TaskCard from "./TaskCardsColoured";
+import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
 import { encodeUUID } from "../../../utilities";
 import PropTypes from "prop-types";
-import { Box, Grow, Skeleton } from "@mui/material";
+import { Box, Grow, Skeleton, ToggleButton } from "@mui/material";
 import { makeStyles, useTheme } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { commentVisibility, userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     dataStoreModelSyncedStatusSelector,
     getRoleView,
     getWhoami,
+    selectedItemsSelector,
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        position: "relative",
-        "&:hover": {
-            "& $dots": {
-                display: "inline",
+const useStyles = (isSelected) =>
+    makeStyles((theme) => ({
+        root: {
+            position: "relative",
+            backgroundColor: isSelected
+                ? alpha(theme.palette.primary.main, 0.3)
+                : "transparent",
+            "&:hover": {
+                "& $dots": {
+                    display: isSelected ? "none" : "inline",
+                },
+                "& $select": {
+                    display: "inline",
+                },
             },
+            padding: 1,
+            width: "100%",
+            cursor: "context-menu",
         },
-        padding: 1,
-        width: "100%",
-        cursor: "context-menu",
-    },
-    dots: () => {
-        const background =
-            theme.palette.mode === "dark"
-                ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
-                : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
-        return {
-            background: background,
-            borderRadius: "1em",
-            position: "absolute",
-            bottom: 4,
-            right: 4,
-            display: "none",
-            zIndex: 90,
-        };
-    },
-}));
+        dots: () => {
+            const background =
+                theme.palette.mode === "dark"
+                    ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
+                    : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
+            return {
+                background: background,
+                borderRadius: "1em",
+                position: "absolute",
+                bottom: 4,
+                right: 4,
+                display: "none",
+                zIndex: 90,
+            };
+        },
+        select: () => {
+            const background =
+                theme.palette.mode === "dark"
+                    ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
+                    : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
+            return {
+                background: isSelected
+                    ? theme.palette.background.paper
+                    : background,
+                margin: 2,
+                borderRadius: "1em",
+                position: "absolute",
+                bottom: 4,
+                left: 4,
+                display: isSelected ? "inline" : "none",
+                zIndex: 90,
+            };
+        },
+    }));
 
 function TaskItem(props) {
-    const classes = useStyles();
     const whoami = useSelector(getWhoami);
     const { task } = props;
     const [assignees, setAssignees] = useState([]);
@@ -61,6 +90,10 @@ function TaskItem(props) {
     const commentModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Comment;
+    const selectedItems = useSelector(selectedItemsSelector);
+    const dispatch = useDispatch();
+    const isSelected = selectedItems.map((t) => t.id).includes(task.id);
+    const classes = useStyles(isSelected)();
 
     const { ref, inView, entry } = useInView({
         threshold: 0,
@@ -71,6 +104,14 @@ function TaskItem(props) {
             setVisibility(true);
         }
     }, [inView]);
+
+    function handleSelectItem() {
+        if (isSelected) {
+            dispatch(selectionActions.unselectItem(task.id));
+        } else {
+            dispatch(selectionActions.selectItem(task));
+        }
+    }
 
     async function getAssignees() {
         if (!visibility || !roleView || !props.task) return;
@@ -186,6 +227,15 @@ function TaskItem(props) {
                         assignedRiders={assignedRiders}
                         task={task}
                     />
+                </div>
+                <div className={classes.select}>
+                    <ToggleButton size="small" onClick={handleSelectItem}>
+                        {isSelected ? (
+                            <CheckBoxIcon />
+                        ) : (
+                            <CheckBoxOutlineBlankIcon />
+                        )}
+                    </ToggleButton>
                 </div>
             </Box>
         </Grow>
