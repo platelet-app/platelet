@@ -30,3 +30,5 @@ export const taskAssigneesReadyStatusSelector = (state) =>
 export const dataStoreModelSyncedStatusSelector = (state) =>
     state.awsHubDataStoreModelsSyncedStatusReducer;
 export const selectedItemsSelector = (state) => state.selectionModeReducer;
+export const availableSelectionItemsSelector = (state) =>
+    state.selectionModeAvailableItemsReducer;
