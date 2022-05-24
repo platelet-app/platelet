@@ -22,6 +22,7 @@ import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilte
 import { Fab, Hidden } from "@mui/material";
 import ActiveRidersChips from "./components/ActiveRidersChips";
 import GuidedSetupDrawer from "./components/GuidedSetupDrawer";
+import MultipleSelectionActionsMenu from "./components/MultipleSelectionActionsMenu";
 
 function AddClearFab() {
     const dispatch = useDispatch();
@@ -87,6 +88,7 @@ function Dashboard() {
                 <Hidden mdUp>
                     <DashboardDetailTabs />
                 </Hidden>
+                <MultipleSelectionActionsMenu />
                 {[userRoles.coordinator, "ALL"].includes(roleView) && (
                     <ActiveRidersChips />
                 )}

@@ -92,7 +92,9 @@ function TaskItem(props) {
     ).Comment;
     const selectedItems = useSelector(selectedItemsSelector);
     const dispatch = useDispatch();
-    const isSelected = selectedItems.map((t) => t.id).includes(task.id);
+    const isSelected = Object.values(selectedItems)
+        .map((t) => t.id)
+        .includes(task.id);
     const classes = useStyles(isSelected)();
 
     const { ref, inView, entry } = useInView({
@@ -112,6 +114,13 @@ function TaskItem(props) {
             dispatch(selectionActions.selectItem(task));
         }
     }
+
+    function addItemToAvailableSelection() {
+        dispatch(selectionActions.addToAvailableItems(task));
+        return () =>
+            dispatch(selectionActions.removeFromAvailableItems(task.id));
+    }
+    useEffect(addItemToAvailableSelection, [task]);
 
     async function getAssignees() {
         if (!visibility || !roleView || !props.task) return;
@@ -229,7 +238,11 @@ function TaskItem(props) {
                     />
                 </div>
                 <div className={classes.select}>
-                    <ToggleButton size="small" onClick={handleSelectItem}>
+                    <ToggleButton
+                        sx={{ border: 0 }}
+                        size="small"
+                        onClick={handleSelectItem}
+                    >
                         {isSelected ? (
                             <CheckBoxIcon />
                         ) : (
