@@ -166,17 +166,21 @@ function MultipleSelectionActionsMenu() {
             >
                 {checkBoxIcon}
             </ToggleButton>
-            {Object.values(actions).map((action) => (
-                <Button
-                    key={action}
-                    size="small"
-                    onClick={() => {}}
-                    disabled={checkButtonDisabled(action)}
-                >
-                    {action}
-                </Button>
-            ))}
-            {dotsMenu}
+            {selectedItems.length > 0 && (
+                <>
+                    {Object.values(actions).map((action) => (
+                        <Button
+                            key={action}
+                            size="small"
+                            onClick={() => {}}
+                            disabled={checkButtonDisabled(action)}
+                        >
+                            {action}
+                        </Button>
+                    ))}
+                    {dotsMenu}
+                </>
+            )}
         </Stack>
     );
 }
