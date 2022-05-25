@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { alpha } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import TaskCard from "./TaskCardsColoured";
@@ -22,6 +22,12 @@ import {
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
+import useLongPress from "../../../hooks/useLongPress";
+
+const defaultLongPressOptions = {
+    shouldPreventDefault: true,
+    delay: 500,
+};
 
 const useStyles = (isSelected) =>
     makeStyles((theme) => ({
@@ -96,6 +102,7 @@ function TaskItem(props) {
         .map((t) => t.id)
         .includes(task.id);
     const classes = useStyles(isSelected)();
+    const history = useHistory();
 
     const { ref, inView, entry } = useInView({
         threshold: 0,
@@ -107,7 +114,22 @@ function TaskItem(props) {
         }
     }, [inView]);
 
-    function handleSelectItem() {
+    const longPressEvent = useLongPress(
+        handleSelectItem,
+        handleClick,
+        defaultLongPressOptions
+    );
+
+    const location = useLocation();
+
+    function handleClick(e) {
+        history.push({
+            pathname: `/task/${encodeUUID(props.taskUUID)}`,
+            state: { background: location },
+        });
+    }
+
+    function handleSelectItem(e) {
         if (isSelected) {
             dispatch(selectionActions.unselectItem(task.id));
         } else {
@@ -202,18 +224,10 @@ function TaskItem(props) {
 
     useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
-    const location = useLocation();
-
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <Box className={classes.root}>
-                <Link
-                    style={{ textDecoration: "none" }}
-                    to={{
-                        pathname: `/task/${encodeUUID(props.taskUUID)}`,
-                        state: { background: location },
-                    }}
-                >
+                <Box {...longPressEvent}>
                     <TaskCard
                         title={"Task"}
                         status={task.status}
@@ -228,7 +242,7 @@ function TaskItem(props) {
                             .join(", ")}
                         commentCount={commentCount}
                     />
-                </Link>
+                </Box>
                 <div className={classes.dots}>
                     <TaskContextMenu
                         disableDeleted={props.deleteDisabled}
