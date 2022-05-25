@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
 import {
     availableSelectionItemsSelector,
+    dashboardFilterTermSelector,
     selectedItemsSelector,
 } from "../../../redux/Selectors";
 
@@ -14,6 +15,7 @@ function MultipleSelectionActionsMenu(props) {
     const selectedItems = Object.values(useSelector(selectedItemsSelector));
     const availableSelection = useSelector(availableSelectionItemsSelector);
     const availableSelectionItems = Object.values(availableSelection);
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
 
     let checkBoxIcon = <CheckBoxOutlineBlankIcon />;
 
@@ -46,6 +48,7 @@ function MultipleSelectionActionsMenu(props) {
                 sx={{ margin: 0.5 }}
                 size="small"
                 onClick={handleOnClickCheck}
+                disabled={!!dashboardFilter}
             >
                 {checkBoxIcon}
             </ToggleButton>
