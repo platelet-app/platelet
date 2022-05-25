@@ -60,6 +60,18 @@ function MultipleSelectionActionsMenu() {
         if (action === actions.assignUser) {
             return selectedItems.length === 0;
         }
+        if (
+            selectedItems.some((item) => {
+                return [
+                    tasksStatus.completed,
+                    tasksStatus.cancelled,
+                    tasksStatus.abandoned,
+                    tasksStatus.rejected,
+                ].includes(item.status);
+            })
+        ) {
+            return true;
+        }
         if (action === actions.markPickedUp) {
             return (
                 selectedItems.length === 0 ||
