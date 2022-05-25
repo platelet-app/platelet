@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
+import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import _ from "lodash";
 import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Skeleton, Stack, Typography, useMediaQuery } from "@mui/material";
+import {
+    IconButton,
+    Skeleton,
+    Stack,
+    Typography,
+    useMediaQuery,
+} from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
 import clsx from "clsx";
@@ -18,6 +28,7 @@ import {
     taskAssigneesSelector,
     dataStoreModelSyncedStatusSelector,
     dashboardFilterTermSelector,
+    selectedItemsSelector,
 } from "../../../redux/Selectors";
 import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
@@ -49,43 +60,57 @@ const loaderStyles = makeStyles((theme) => ({
     },
 }));
 
-const useStyles = makeStyles((theme) => ({
-    header: {
-        fontWeight: "bold",
-    },
-    divider: {
-        width: "95%",
-    },
-    spacer: {
-        height: 35,
-    },
-    column: {
-        padding: 5,
-        backgroundColor: "rgba(180, 180, 180, 0.1)",
-        borderRadius: 5,
-        border: 0,
-        boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
-        height: "100%",
-        maxWidth: 360,
-        minWidth: 285,
-        [theme.breakpoints.down("lg")]: {
-            padding: 0,
+const useStyles = (isSelected) =>
+    makeStyles((theme) => ({
+        header: {
+            fontWeight: "bold",
         },
-        [theme.breakpoints.down("sm")]: {
-            maxWidth: "100%",
+        headerParent: {},
+        divider: {
+            width: "95%",
+        },
+        spacer: {
+            height: 35,
+        },
+        column: {
+            "&:hover": {
+                "& $select": {
+                    display: "block",
+                },
+            },
+            padding: 5,
+            backgroundColor: "rgba(180, 180, 180, 0.1)",
+            borderRadius: 5,
+            border: 0,
+            boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
+            height: "100%",
+            maxWidth: 360,
+            minWidth: 285,
+            [theme.breakpoints.down("lg")]: {
+                padding: 0,
+            },
+            [theme.breakpoints.down("sm")]: {
+                maxWidth: "100%",
+                width: "100%",
+            },
+        },
+        taskItem: {
             width: "100%",
         },
-    },
-    taskItem: {
-        width: "100%",
-    },
-    gridItem: {
-        width: "100%",
-    },
-}));
+        gridItem: {
+            width: "100%",
+        },
+        select: () => {
+            return {
+                display: "none",
+                height: 0,
+                display: isSelected ? "inline" : "none",
+                zIndex: 90,
+            };
+        },
+    }));
 
 function TasksGridColumn(props) {
-    const classes = useStyles();
     const [state, setState] = useState([]);
     const stateRef = useRef({});
     const { show, hide } = showHide();
@@ -101,6 +126,7 @@ function TasksGridColumn(props) {
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
+    const selectedItems = Object.values(useSelector(selectedItemsSelector));
     const dataStoreModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     );
@@ -116,6 +142,14 @@ function TasksGridColumn(props) {
         threshold: 0,
     });
 
+    const dispatch = useDispatch();
+
+    const isSomeSelected = Object.values(state).some((t) =>
+        selectedItems.map((a) => a.id).includes(t.id)
+    );
+
+    const classes = useStyles(isSomeSelected)();
+
     useEffect(() => {
         if (inView && !visibility) {
             setVisibility(true);
@@ -125,6 +159,24 @@ function TasksGridColumn(props) {
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     stateRef.current = state;
+
+    let checkBoxIcon = <CheckBoxOutlineBlankIcon />;
+
+    if (
+        !Object.values(state).some((t) =>
+            selectedItems.map((a) => a.id).includes(t.id)
+        )
+    ) {
+        checkBoxIcon = <CheckBoxOutlineBlankIcon />;
+    } else if (
+        !Object.values(state).some(
+            (t) => !selectedItems.map((a) => a.id).includes(t.id)
+        )
+    ) {
+        checkBoxIcon = <CheckBoxIcon />;
+    } else if (isSomeSelected) {
+        checkBoxIcon = <IndeterminateCheckBoxIcon />;
+    }
 
     function addTaskToState(newTask) {
         animate.current = true;
@@ -382,13 +434,42 @@ function TasksGridColumn(props) {
         };
     }, []);
 
+    function handleSelectCheckBoxClick() {
+        if (
+            Object.values(state).some((t) =>
+                selectedItems.map((a) => a.id).includes(t.id)
+            )
+        ) {
+            for (const task of Object.values(state)) {
+                dispatch(selectionActions.unselectItem(task.id));
+            }
+        } else {
+            for (const task of Object.values(state)) {
+                dispatch(selectionActions.selectItem(task));
+            }
+        }
+    }
+
     const header = (
-        <Typography
-            data-cy={`${props.title}-header`}
-            className={classes.header}
+        <Stack
+            direction="row"
+            justifyContent="space-between"
+            className={classes.headerParent}
         >
-            {props.title}
-        </Typography>
+            <Typography
+                data-cy={`${props.title}-header`}
+                className={classes.header}
+            >
+                {props.title}
+            </Typography>
+            {Object.values(state).length > 0 && (
+                <Box className={classes.select}>
+                    <IconButton onClick={handleSelectCheckBoxClick}>
+                        {checkBoxIcon}
+                    </IconButton>
+                </Box>
+            )}
+        </Stack>
     );
 
     const animate = useRef(false);
