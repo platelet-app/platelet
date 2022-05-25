@@ -12,6 +12,7 @@ import { DashboardDetailTabs } from "./components/DashboardDetailTabs";
 import { getDashboardRoleMode, saveDashboardRoleMode } from "../../utilities";
 import {
     dashboardFilteredUserSelector,
+    dashboardFilterTermSelector,
     dashboardTabIndexSelector,
     getRoleView,
     getWhoami,
@@ -27,7 +28,7 @@ import MultipleSelectionActionsMenu from "./components/MultipleSelectionActionsM
 function AddClearFab() {
     const dispatch = useDispatch();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
     const filterOn = !!dashboardFilter || !!dashboardFilteredUser;
     const message = filterOn ? "Clear search" : "Create new";

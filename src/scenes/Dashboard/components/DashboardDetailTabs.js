@@ -25,6 +25,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import ExploreIcon from "@mui/icons-material/Explore";
 import {
     dashboardFilteredUserSelector,
+    dashboardFilterTermSelector,
     dashboardTabIndexSelector,
     getWhoami,
     guidedSetupOpenSelector,
@@ -67,7 +68,7 @@ export function DashboardDetailTabs(props) {
     const dispatch = useDispatch();
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(getWhoami);
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const roleView = useSelector((state) => state.roleView);
     const { show, hide } = showHide();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);

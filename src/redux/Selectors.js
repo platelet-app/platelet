@@ -22,6 +22,7 @@ export const onChangeTaskSelector = (state) => state.onChangeTask;
 export const dashboardTabIndexSelector = (state) => state.dashboardTabIndex;
 export const menuIndexSelector = (state) => state.menuIndex;
 export const guidedSetupOpenSelector = (state) => state.guidedSetupOpen;
+export const dashboardFilterTermSelector = (state) => state.dashboardFilter;
 export const dashboardFilteredUserSelector = (state) =>
     state.dashboardFilteredUser;
 export const taskAssigneesSelector = (state) => state.taskAssigneesReducer;

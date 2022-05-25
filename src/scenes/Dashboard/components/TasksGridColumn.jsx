@@ -17,6 +17,7 @@ import {
     taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
     dataStoreModelSyncedStatusSelector,
+    dashboardFilterTermSelector,
 } from "../../../redux/Selectors";
 import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
@@ -97,7 +98,7 @@ function TasksGridColumn(props) {
     const [visibility, setVisibility] = useState(false);
     const [width, height] = useWindowSize();
     const whoami = useSelector(getWhoami);
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
     const dataStoreModelSynced = useSelector(
