@@ -1,20 +1,6 @@
 describe("assigning users to tasks", () => {
-    before(() => {
-        cy.signIn();
-        cy.clearTasks("ACTIVE");
-    });
-
-    after(() => {
-        cy.clearLocalStorageSnapshot();
-        cy.clearLocalStorage();
-    });
-
     beforeEach(() => {
-        cy.restoreLocalStorage();
-    });
-
-    afterEach(() => {
-        cy.saveLocalStorage();
+        cy.loginByCognitoApi(Cypress.env("username"), Cypress.env("password"));
     });
 
     it("assigns and unassigns a rider to a task", () => {

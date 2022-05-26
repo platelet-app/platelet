@@ -1,20 +1,8 @@
 describe("task actions", () => {
-    before(() => {
-        cy.signIn();
-    });
-
-    after(() => {
-        cy.clearLocalStorageSnapshot();
-        cy.clearLocalStorage();
-    });
-
     beforeEach(() => {
-        cy.restoreLocalStorage();
+        cy.loginByCognitoApi(Cypress.env("username"), Cypress.env("password"));
     });
 
-    afterEach(() => {
-        cy.saveLocalStorage();
-    });
     it("picked up, delivered, rider home", () => {
         cy.visit("/");
         cy.addSingleTask();

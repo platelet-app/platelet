@@ -1,19 +1,6 @@
 describe("open the dashboard", () => {
-    before(() => {
-        cy.signIn();
-    });
-
-    after(() => {
-        cy.clearLocalStorageSnapshot();
-        cy.clearLocalStorage();
-    });
-
     beforeEach(() => {
-        cy.restoreLocalStorage();
-    });
-
-    afterEach(() => {
-        cy.saveLocalStorage();
+        cy.loginByCognitoApi(Cypress.env("username"), Cypress.env("password"));
     });
 
     it("successfully loads", () => {
