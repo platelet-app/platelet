@@ -101,9 +101,7 @@ function TaskActions(props) {
     async function setTimeWithKey(key, value) {
         setIsPosting(true);
         try {
-            saveTaskTimeWithKey(key, value, props.taskId, taskAssignees).then(
-                () => setIsPosting(false)
-            );
+            saveTaskTimeWithKey(key, value, props.taskId, taskAssignees);
         } catch (error) {
             console.log(error);
             setIsPosting(false);
@@ -113,11 +111,12 @@ function TaskActions(props) {
 
     function calculateState() {
         if (!task) return;
-        if (task._version !== taskVersion.current) {
+        if (!task._version || task._version !== taskVersion.current) {
             const result = Object.keys(fields).filter((key) => {
                 return !!task[key];
             });
             setState(result);
+            setIsPosting(false);
             taskVersion.current = task._version;
         }
     }
