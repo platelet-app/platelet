@@ -34,6 +34,7 @@ const generateClass = (theme, status) => {
 const useStyles = makeStyles((theme) => ({
     cardContent: {
         paddingTop: 5,
+        userSelect: "none",
     },
     NEW: generateClass(theme, "NEW"),
     ACTIVE: generateClass(theme, "ACTIVE"),
