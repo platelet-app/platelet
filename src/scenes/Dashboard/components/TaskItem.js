@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { alpha } from "@mui/material";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -23,11 +24,6 @@ import {
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
 import useLongPress from "../../../hooks/useLongPress";
-
-const defaultLongPressOptions = {
-    shouldPreventDefault: true,
-    delay: 500,
-};
 
 const useStyles = (isSelected) =>
     makeStyles((theme) => ({
@@ -98,6 +94,8 @@ function TaskItem(props) {
     ).Comment;
     const selectedItems = useSelector(selectedItemsSelector);
     const dispatch = useDispatch();
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const isSelected = Object.values(selectedItems)
         .map((t) => t.id)
         .includes(task.id);
@@ -114,11 +112,7 @@ function TaskItem(props) {
         }
     }, [inView]);
 
-    const longPressEvent = useLongPress(
-        handleSelectItem,
-        handleClick,
-        defaultLongPressOptions
-    );
+    const longPressEvent = useLongPress();
 
     const location = useLocation();
 
@@ -224,10 +218,34 @@ function TaskItem(props) {
 
     useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
+    const ItemWrapper = ({ children }) => {
+        if (isSm)
+            return (
+                <Box
+                    {...longPressEvent(handleSelectItem)}
+                    onClick={handleClick}
+                >
+                    {children}
+                </Box>
+            );
+        else
+            return (
+                <Link
+                    style={{ textDecoration: "none" }}
+                    to={{
+                        pathname: `/task/${encodeUUID(props.taskUUID)}`,
+                        state: { background: location },
+                    }}
+                >
+                    {children}
+                </Link>
+            );
+    };
+
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <Box className={classes.root}>
-                <Box {...longPressEvent}>
+                <ItemWrapper>
                     <TaskCard
                         title={"Task"}
                         status={task.status}
@@ -242,7 +260,7 @@ function TaskItem(props) {
                             .join(", ")}
                         commentCount={commentCount}
                     />
-                </Box>
+                </ItemWrapper>
                 <div className={classes.dots}>
                     <TaskContextMenu
                         disableDeleted={props.deleteDisabled}
